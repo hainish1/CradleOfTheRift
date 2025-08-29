@@ -1,7 +1,7 @@
 Capstone Team Capybara
 
 Engine - Unity  
-Version - TBD  
+Version - Unity 6(6000.0.31f1 [LTS])  
 Reference Game - Risk Of Rain 2
 
 Members-
