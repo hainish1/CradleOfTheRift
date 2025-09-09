@@ -7,11 +7,11 @@ public class PlayerGold : MonoBehaviour
     private int gold = 0;
     public int Gold
     {
-        get => gold;
+        get => this.gold;
         private set
         {
-            gold = value;
-            goldChanged.Invoke(gold);
+            this.gold = value;
+            this.goldChanged.Invoke(gold);
         }
     }
 

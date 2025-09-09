@@ -4,7 +4,8 @@ using UnityEngine.UIElements;
 
 public class ExtractionZone : MonoBehaviour
 {
-    public float chargeTime = 10f;
+    [SerializeField]
+    private float chargeTime = 10f;
     private float currentCharge = 0f;
     private bool isExtracting = false;
     private bool isInteracted = false;
@@ -26,6 +27,7 @@ public class ExtractionZone : MonoBehaviour
         {
             this.isExtracting = true;
 
+            // Notify UI to display extraction UI
             if (!this.isInteracted)
             {
                 this.isInteracted = true;
@@ -48,8 +50,11 @@ public class ExtractionZone : MonoBehaviour
     {
         if (this.isExtracting & this.currentCharge < this.chargeTime)
         {
-            this.currentCharge = Math.Clamp(this.currentCharge + Time.deltaTime, 0, this.chargeTime);
+            float zeroValue = 0f;
+            this.currentCharge = Math.Clamp(this.currentCharge + Time.deltaTime, zeroValue, this.chargeTime);
             this.ChargeChanged?.Invoke(this.currentCharge);
-        } 
+        }
     }
+
+    public float ChargeTime => this.chargeTime;
 }

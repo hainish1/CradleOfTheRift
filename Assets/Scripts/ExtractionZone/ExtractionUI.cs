@@ -19,7 +19,7 @@ public class ExtractionUI : MonoBehaviour
         this.extractionBar = root.Q<ProgressBar>(className: className);
 
         this.extractionBar.lowValue = zeroValue;
-        this.extractionBar.highValue = this.extractionZone.chargeTime;
+        this.extractionBar.highValue = this.extractionZone.ChargeTime;
         this.extractionBar.value = zeroValue;
 
         this.extractionZone.ChargeChanged += this.OnChargeChanged;
