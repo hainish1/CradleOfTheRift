@@ -194,6 +194,7 @@ GameObject:
   - component: {fileID: 288445207}
   - component: {fileID: 288445209}
   - component: {fileID: 288445210}
+  - component: {fileID: 288445211}
   m_Layer: 5
   m_Name: UIDocument
   m_TagString: Untagged
@@ -261,6 +262,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   extractionZone: {fileID: 1121424012}
+--- !u!114 &288445211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288445206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feb58a4dcecf24659811159e560f0c5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: {fileID: 463344688}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -394,6 +408,7 @@ GameObject:
   - component: {fileID: 463344685}
   - component: {fileID: 463344684}
   - component: {fileID: 463344687}
+  - component: {fileID: 463344688}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -488,6 +503,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcd7f59827f874952822de3a10d2096d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &463344688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 463344683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dd1f240a43d34c73a19827d6f6d380d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -549,7 +577,7 @@ GameObject:
   - component: {fileID: 1121424013}
   - component: {fileID: 1121424012}
   m_Layer: 0
-  m_Name: Teleporter
+  m_Name: Extraction
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
