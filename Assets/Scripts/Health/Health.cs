@@ -22,16 +22,6 @@ public class Health : MonoBehaviour
         this.currentHealth = maxHealth;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            this.TakeDamage(30);
-        }
-    }
-
     void TakeDamage(int damage)
     {
         CurrentHealth = Math.Max(0, CurrentHealth - damage);

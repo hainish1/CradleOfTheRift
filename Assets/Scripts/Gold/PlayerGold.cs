@@ -14,19 +14,6 @@ public class PlayerGold : MonoBehaviour
             this.goldChanged.Invoke(gold);
         }
     }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            this.AddGold(10);
-        }
-
-        if (Input.GetKeyDown(KeyCode.V)) {
-            this.SpendGold(30);
-        }
-    }
-
     public void AddGold(int amount)
     {
         this.Gold += amount;
