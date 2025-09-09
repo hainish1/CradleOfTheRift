@@ -11,6 +11,7 @@ public class Interactor : MonoBehaviour
 {
     public Transform InteractorSource;
     public float InteractRange;
+    [SerializeField] private LayerMask interactablesLayer;
 
     void Start()
     {
@@ -22,10 +23,11 @@ public class Interactor : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E)) // TODO: IDK if this uses the inputsystem interact, check with others and fix
         {
             Ray r = new Ray(InteractorSource.position, InteractorSource.forward);
-            if (Physics.Raycast(r, out RaycastHit hitInfo, InteractRange)) 
+            if (Physics.Raycast(r, out RaycastHit hitInfo, InteractRange, interactablesLayer)) 
             {
                 if (hitInfo.collider.gameObject.TryGetComponent(out IInteractable interactObj))
                 {
+                    Debug.Log("test");
                     interactObj.Interact();
                 }
             }
