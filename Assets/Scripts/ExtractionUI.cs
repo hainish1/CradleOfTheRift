@@ -4,16 +4,10 @@ using UnityEngine.UIElements;
 
 public class ExtractionUI : MonoBehaviour
 {
+    private ProgressBar extractionBar;
 
     [SerializeField]
-    private UIDocument uIDocument;
-    private ProgressBar extractionBar;
     private ExtractionZone extractionZone;
-
-    void Awake()
-    {
-        extractionZone = GetComponent<ExtractionZone>();
-    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,14 +15,8 @@ public class ExtractionUI : MonoBehaviour
         String className = "extraction-bar";
         float zeroValue = 0f;
 
-        VisualElement root = uIDocument.rootVisualElement;
+        VisualElement root = GetComponent<UIDocument>().rootVisualElement;
         this.extractionBar = root.Q<ProgressBar>(className: className);
-
-        if (extractionBar == null)
-        {
-            Debug.LogError("ExtractionBar not found!");
-            return;
-        }
 
         this.extractionBar.lowValue = zeroValue;
         this.extractionBar.highValue = this.extractionZone.chargeTime;
@@ -40,7 +28,7 @@ public class ExtractionUI : MonoBehaviour
 
     private void OnChargeChanged(float currentCharge)
     {
-        this.extractionBar.value = this.extractionZone.currentCharge;
+        this.extractionBar.value = currentCharge;
     }
 
     private void OnExtractionInteracted()

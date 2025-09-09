@@ -5,7 +5,7 @@
             <ui:ProgressBar value="22" title="my-progress" name="ExtractionBar" enabled="true" class="extraction-bar" style="display: flex; visibility: hidden;" />
         </ui:VisualElement>
         <ui:VisualElement name="GoldContainer" style="flex-grow: 1;">
-            <ui:Label text="Label" />
+            <ui:Label text="Label" name="GoldLabel" />
         </ui:VisualElement>
         <ui:VisualElement name="HealthContainer" style="flex-grow: 1; align-items: flex-start; justify-content: flex-start;">
             <ui:ProgressBar value="22" title="my-progress" name="HealthBar" />
