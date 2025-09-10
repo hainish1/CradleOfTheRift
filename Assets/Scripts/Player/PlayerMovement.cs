@@ -12,6 +12,9 @@ public class PlayerMovement : MonoBehaviour
     // private InputAction attackAction;
     // private InputAction pauseAction;
 
+    [SerializeField] private Transform cameraTransform;
+    [SerializeField] private bool shouldFaceMoveDirection = false;
+
     [Header("Player References")]
     [SerializeField] private Transform playerCenter;
     private CharacterController characterController;
@@ -92,13 +95,35 @@ public class PlayerMovement : MonoBehaviour
         Move();
     }
 
-
     private void Move()
     {
         moveInput = moveActions.ReadValue<Vector2>();
-        Vector3 inputDirection = new Vector3(moveInput.x, 0, moveInput.y);
-        moveVector = transform.TransformDirection(inputDirection).normalized;
+        
+        
+        Vector3 forward = cameraTransform.forward;
+        Vector3 right = cameraTransform.right;
+        
+        
+        forward.y = 0;
+        right.y = 0;
+        forward.Normalize();
+        right.Normalize();
+        
+        
+        Vector3 moveDirection = (forward * moveInput.y + right * moveInput.x).normalized;
+        
+        
+        moveVector = moveDirection;
 
+
+        if (shouldFaceMoveDirection && moveInput.sqrMagnitude > 0.001f)
+        {
+            
+            Quaternion toRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, toRotation, 10f * Time.deltaTime);
+        }
+
+        
         if (CheckIsGrounded())
         {
             if (didPerformJump)
@@ -129,8 +154,12 @@ public class PlayerMovement : MonoBehaviour
             characterController.Move(Time.deltaTime * verticalVector);
         }
 
+        
         characterController.Move(Time.deltaTime * movementMaxVelocity * moveVector);
     }
+
+
+
 
     private bool CheckIsGrounded()
     {
