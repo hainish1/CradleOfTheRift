@@ -2,17 +2,46 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chest : MonoBehaviour
+[RequireComponent(typeof(AudioSource))]
+public class Chest : MonoBehaviour, IInteractable
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private string prompt = "Press E to interact";
+    [SerializeField] private int price = 100;
+    [SerializeField] private bool singleActivation = true;
+    [SerializeField] private AudioSource audioData;
+    [SerializeField] private GameObject item;
+    public string InteractionPrompt => prompt;
+    public bool Interact(Interactor interactor)
     {
-        
-    }
+        Debug.Log("Interacted with " + gameObject.name);
+        if (singleActivation)
+        {
+            // Check if the interactor has enough money
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+            // if (interactor.GetComponent<PlayerMoney>() >= price)
+            // {
+            //`     interactor.GetComponent<PlayerMoney>() -= price;
+            // };
+            // Disable further interactions
+
+            // Play sounds
+            audioData = GetComponent<AudioSource>();
+            audioData.Play(0);
+            // Spawn items
+            if (item != null)
+            {
+                Instantiate(item, transform.position + Vector3.up, Quaternion.identity);
+            }
+            else
+            {
+                // Spawn random item perhaps
+                //Instantiate(item, transform.position + Vector3.up, Quaternion.identity);
+            }
+
+            singleActivation = false;
+            return true;
+        }
+
+        return false;
     }
 }
