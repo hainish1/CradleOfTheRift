@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -10,6 +11,7 @@ public class PlayerController : MonoBehaviour
     private InputAction lookActions;
     private InputAction moveActions;
     private InputAction jumpActions;
+    private InputAction dashActions;
     private InputAction attackActions;
     private InputAction pauseActions;
 
@@ -23,7 +25,6 @@ public class PlayerController : MonoBehaviour
     private float playerHalfWidth;
     private float groundedRaycastFloorDistance;
     private float groundedRaycastRadialDistance;
-
 
     [Header("Look Parameters")]
     [SerializeField] private float xSensitivity;
@@ -46,10 +47,12 @@ public class PlayerController : MonoBehaviour
 
     [Header("Jump Parameters")]
     [SerializeField] private float jumpForce;
+    [SerializeField] private int jumpMaxCharges;
     [SerializeField] private float groundedGravityScale;
     [SerializeField] private float midairGravityScale;
     [SerializeField] private float strafeScale;
     private bool didPerformJump;
+    private int jumpCharges;
     private Vector3 verticalVector;
 
     //[Header("Coyote Time Parameters")]
@@ -58,6 +61,15 @@ public class PlayerController : MonoBehaviour
     //private float earlyCoyoteTimer;
     //private float lateCoyoteTimer;
     //private bool canEarlyJump;
+
+    [Header("Dash Parameters")]
+    [SerializeField] private float dashSpeed;
+    [SerializeField] private float dashDistance;
+    [SerializeField] private float dashCooldown;
+    [SerializeField] private int dashMaxCharges;
+    private bool isDashing;
+    private int dashCharges;
+    private Vector3 dashVector;
 
     //[Header("UI References")]
     //public Image crosshair;
@@ -91,6 +103,10 @@ public class PlayerController : MonoBehaviour
         jumpActions.Enable();
         jumpActions.started += Jump;
 
+        dashActions = playerActions.Dash;
+        dashActions.Enable();
+        dashActions.started += Dash;
+
         attackActions = playerActions.Attack;
         attackActions.Enable();
         attackActions.started += Attack;
@@ -105,10 +121,12 @@ public class PlayerController : MonoBehaviour
         lookActions.Disable();
         moveActions.Disable();
         jumpActions.Disable();
+        dashActions.Disable();
         attackActions.Enable();
         pauseActions.Disable();
 
         jumpActions.started -= Jump;
+        dashActions.started -= Dash;
         attackActions.started -= Attack;
         pauseActions.started -= Pause;
     }
@@ -123,8 +141,11 @@ public class PlayerController : MonoBehaviour
         groundedRaycastFloorDistance = playerHalfHeight + 0.1f;
         groundedRaycastRadialDistance = playerHalfWidth * 0.7f;
 
-
         cameraCollisionMasks = environmentLayer.value;
+
+        jumpCharges = jumpMaxCharges;
+
+        dashCharges = dashMaxCharges;
 
         //crosshair.enabled = true;
         //pauseMenu.enabled = false;
@@ -219,7 +240,14 @@ public class PlayerController : MonoBehaviour
             characterController.Move(Time.deltaTime * verticalVector);
         }
 
-        characterController.Move(Time.deltaTime * movementMaxVelocity * moveVector);
+        if (isDashing)
+        {
+            characterController.Move(Time.deltaTime * dashSpeed * dashVector);
+        }
+        else
+        {
+            characterController.Move(Time.deltaTime * movementMaxVelocity * moveVector);
+        }
     }
 
     private bool CheckIsGrounded()
@@ -252,6 +280,45 @@ public class PlayerController : MonoBehaviour
         {
             didPerformJump = true;
         }
+    }
+
+    private void Dash(InputAction.CallbackContext context)
+    {
+        if (!isDashing && dashCharges != 0)
+        {
+            moveInput = moveActions.ReadValue<Vector2>();
+
+            if (moveInput.x == 0 && moveInput.y == 0)
+            {
+                dashVector = GetComponentInParent<Transform>().forward;
+            }
+            else
+            {
+                Vector3 inputDirection = new Vector3(moveInput.x, 0, moveInput.y);
+                dashVector = transform.TransformDirection(inputDirection).normalized;
+            }
+
+            StartCoroutine(InitiateDashCooldown(dashCooldown));
+            StartCoroutine(InitiateDashDuration(dashDistance / dashSpeed));
+        }
+    }
+
+    private IEnumerator InitiateDashCooldown(float seconds)
+    {
+        dashCharges--;
+
+        yield return new WaitForSeconds(seconds);
+
+        dashCharges++;
+    }
+
+    private IEnumerator InitiateDashDuration(float seconds)
+    {
+        isDashing = true;
+
+        yield return new WaitForSeconds(seconds);
+
+        isDashing = false;
     }
 
     private void Attack(InputAction.CallbackContext context)
