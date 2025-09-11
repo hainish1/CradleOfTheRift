@@ -8,12 +8,8 @@ public class PlayerMovement : MonoBehaviour
     private InputSystem_Actions.PlayerActions playerActions;
 
     private InputAction moveActions;
-    private InputAction jumpActions;
-    // private InputAction attackAction;
-    // private InputAction pauseAction;
+    private InputAction jumpActions; 
 
-    [SerializeField] private Transform cameraTransform;
-    [SerializeField] private bool shouldFaceMoveDirection = false;
 
     [Header("Player References")]
     [SerializeField] private Transform playerCenter;
@@ -38,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
     private bool didPerformJump;
     private Vector3 verticalVector;
 
+
     [Header("Layer Parameters")]
     [SerializeField] private LayerMask environmentLayer;
 
@@ -61,13 +58,6 @@ public class PlayerMovement : MonoBehaviour
         jumpActions.Enable();
         jumpActions.started += Jump;
 
-        // attackActions = playerActions.Attack;
-        // attackActions.Enable();
-        // attackActions.started += Attack;
-
-        // pauseActions = playerInput.UI.Pause;
-        // pauseActions.Enable();
-        // pauseActions.started += Pause;
     }
 
     private void OnDisable()
@@ -98,32 +88,9 @@ public class PlayerMovement : MonoBehaviour
     private void Move()
     {
         moveInput = moveActions.ReadValue<Vector2>();
-        
-        
-        Vector3 forward = cameraTransform.forward;
-        Vector3 right = cameraTransform.right;
-        
-        
-        forward.y = 0;
-        right.y = 0;
-        forward.Normalize();
-        right.Normalize();
-        
-        
-        Vector3 moveDirection = (forward * moveInput.y + right * moveInput.x).normalized;
-        
-        
-        moveVector = moveDirection;
+        Vector3 inputDirection = new Vector3(moveInput.x, 0, moveInput.y);
+        moveVector = transform.TransformDirection(inputDirection).normalized;
 
-
-        if (shouldFaceMoveDirection && moveInput.sqrMagnitude > 0.001f)
-        {
-            
-            Quaternion toRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, toRotation, 10f * Time.deltaTime);
-        }
-
-        
         if (CheckIsGrounded())
         {
             if (didPerformJump)
@@ -154,7 +121,6 @@ public class PlayerMovement : MonoBehaviour
             characterController.Move(Time.deltaTime * verticalVector);
         }
 
-        
         characterController.Move(Time.deltaTime * movementMaxVelocity * moveVector);
     }
 
@@ -191,25 +157,6 @@ public class PlayerMovement : MonoBehaviour
             didPerformJump = true;
         }
     }
-
-
-    //private void OnDrawGizmos()
-    //{
-    //    Gizmos.color = Color.red;
-
-    //    // Exact Center of the player's character.
-    //    Gizmos.DrawRay(playerCenter.position, Vector2.down * groundedRaycastFloorDistance);
-
-    //    // Four corners of the player's character.
-    //    for (int i = -1; i <= 1; i += 2)
-    //    {
-    //        for (int j = -1; j <= 1; j += 2)
-    //        {
-    //            Gizmos.DrawRay(playerCenter.position + new Vector3(groundedRaycastRadialDistance * i, 0, groundedRaycastRadialDistance * j),
-    //                           Vector2.down * groundedRaycastFloorDistance);
-    //        }
-    //    }
-    //}
 
 
 
