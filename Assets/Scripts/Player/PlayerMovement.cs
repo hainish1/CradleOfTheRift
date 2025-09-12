@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,7 +9,8 @@ public class PlayerMovement : MonoBehaviour
     private InputSystem_Actions.PlayerActions playerActions;
 
     private InputAction moveActions;
-    private InputAction jumpActions; 
+    private InputAction jumpActions;
+    private InputAction dashActions;
 
 
     [Header("Player References")]
@@ -35,13 +37,23 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float strafeScale;
     private bool didPerformJump;
     private Vector3 verticalVector;
+    [Space]
+
+    [Header("Dash Parameters")]
+    [SerializeField] private float dashSpeed =20f;
+    [SerializeField] private float dashDistance=8f;
+    [SerializeField] private float dashCooldown=.6f;
+    [SerializeField] private int dashMaxCharges=1;
+    private bool isDashing;
+    private int dashCharges;
+    private Vector3 dashVector;
 
     [Header("Layer Parameters")]
     [SerializeField] private LayerMask environmentLayer;
 
     public bool lockControls = false;
 
-        // set by AimController 
+    // set by AimController 
     private bool strafe = false;
     public void SetStrafeMode(bool on) => strafe = on;
 
@@ -55,13 +67,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        
+
         moveActions = playerActions.Move;
         moveActions.Enable();
 
         jumpActions = playerActions.Jump;
         jumpActions.Enable();
         jumpActions.started += Jump;
+
+        dashActions = playerActions.Dash;
+        dashActions.Enable();
+        dashActions.started += Dash;
 
     }
 
@@ -71,6 +87,8 @@ public class PlayerMovement : MonoBehaviour
         jumpActions.Disable();
 
         jumpActions.started -= Jump;
+        dashActions.Disable();
+        dashActions.started -= Dash;
     }
 
 
@@ -80,6 +98,8 @@ public class PlayerMovement : MonoBehaviour
         playerHalfWidth = GetComponent<CharacterController>().bounds.extents.x;
         groundedRaycastFloorDistance = playerHalfHeight + 0.1f;
         groundedRaycastRadialDistance = playerHalfWidth * 0.7f;
+
+        dashCharges = dashMaxCharges;
     }
 
 
@@ -141,7 +161,17 @@ public class PlayerMovement : MonoBehaviour
             characterController.Move(Time.deltaTime * verticalVector);
         }
 
-        characterController.Move(Time.deltaTime * movementMaxVelocity * moveVector);
+        // characterController.Move(Time.deltaTime * movementMaxVelocity * moveVector);
+        // Dash overrides normal movement while active
+        if (isDashing)
+        {
+            // I am making a CHANGE here to use moveVector instead of dashVector, to fix the direction bug while backward dash
+            characterController.Move(moveVector * dashSpeed * Time.deltaTime);
+        }
+        else
+        {
+            characterController.Move(Time.deltaTime * movementMaxVelocity * moveVector);
+        }
 
         // facing the movement stuff, turning player around
         if (!strafe && moveVector.sqrMagnitude > 0.0001f)
@@ -185,6 +215,49 @@ public class PlayerMovement : MonoBehaviour
         {
             didPerformJump = true;
         }
+    }
+
+
+    // DASH IMPLEMENTATION
+    // ALL OF SAMUEL's CODE
+
+    private void Dash(InputAction.CallbackContext context)
+    {
+        if (!isDashing && dashCharges != 0)
+        {
+            moveInput = moveActions.ReadValue<Vector2>();
+
+            if (moveInput.x == 0 && moveInput.y == 0)
+            {
+                dashVector = GetComponentInParent<Transform>().forward;
+            }
+            else
+            {
+                Vector3 inputDirection = new Vector3(moveInput.x, 0, moveInput.y);
+                dashVector = transform.TransformDirection(inputDirection).normalized;
+            }
+
+            StartCoroutine(InitiateDashCooldown(dashCooldown));
+            StartCoroutine(InitiateDashDuration(dashDistance / dashSpeed));
+        }
+    }
+
+    private IEnumerator InitiateDashCooldown(float seconds)
+    {
+        dashCharges--;
+
+        yield return new WaitForSeconds(seconds);
+
+        dashCharges++;
+    }
+
+    private IEnumerator InitiateDashDuration(float seconds)
+    {
+        isDashing = true;
+
+        yield return new WaitForSeconds(seconds);
+
+        isDashing = false;
     }
 
 

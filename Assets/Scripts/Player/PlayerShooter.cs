@@ -15,7 +15,7 @@ public class PlayerShooter : MonoBehaviour
 
     [Header("Fire info")]
     [SerializeField] private float fireRate = 10f;
-    [SerializeField] private float maxDistance = 200f;
+    // [SerializeField] private float maxDistance = 200f;
 
     // [Header("Debug")]
     // [SerializeField] private Color tracerColor = Color.red;
@@ -25,7 +25,6 @@ public class PlayerShooter : MonoBehaviour
     [SerializeField] private Projectile projectilePrefab;
     [SerializeField] private float projectileSpeed = 50f;
     [SerializeField] private float spawnOffset = 0.1f; // out of the muzzle alr 
-    [SerializeField] private float spreadDegrees = 0f;
 
     private InputSystem_Actions input;
     private InputSystem_Actions.PlayerActions actions;

@@ -3,7 +3,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [Header("Bullet motion")]
-    [SerializeField] float speed = 60f;
+    // [SerializeField] float speed = 60f;
     [SerializeField] float gravity = 0f;
     [SerializeField] float lifeTime = 5f; // just for now
     [SerializeField] float radius = 0.05f; // sphere ray cast check for collision n whatnot
