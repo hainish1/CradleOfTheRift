@@ -184,7 +184,7 @@ MonoBehaviour:
   ShoulderOffset: {x: 0.553536, y: 1.5, z: 0}
   VerticalArmLength: 1.05
   CameraSide: 0.5
-  CameraDistance: 14
+  CameraDistance: 20
   AvoidObstacles:
     Enabled: 1
     CollisionFilter:
@@ -246,7 +246,7 @@ Transform:
   m_GameObject: {fileID: 106511513}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.72981167, y: 3.744, z: -13.306574}
+  m_LocalPosition: {x: 0.72981167, y: 3.744, z: -19.306574}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -449,7 +449,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.72981167, y: 3.744, z: -13.306574}
+  m_LocalPosition: {x: 0.72981167, y: 3.744, z: -19.306574}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -896,6 +896,9 @@ MonoBehaviour:
     m_Bits: 119
   defaultDistance: 30
   minAimDistance: 3
+  playerRotation: 1
+  recenterDamping: 0.2
+  playerRoot: {fileID: 8034934882906623994}
 --- !u!33 &555521712848875778
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1101,7 +1104,6 @@ GameObject:
   - component: {fileID: 4783457066648104034}
   - component: {fileID: 6859564384681498235}
   - component: {fileID: 8034934882906623995}
-  - component: {fileID: 8034934882906623996}
   m_Layer: 7
   m_Name: Player_2
   m_TagString: Player
@@ -1172,9 +1174,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCenter: {fileID: 905910999}
+  cameraTransform: {fileID: 330585546}
   movementMaxVelocity: 10
   movementAcceleration: 0
   movementDeceleration: 0
+  rotationDamping: 0.25
   jumpForce: 25
   groundedGravityScale: 9.81
   midairGravityScale: 0
@@ -1183,22 +1187,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   lockControls: 0
---- !u!114 &8034934882906623996
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5013054202339310528}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a8b10296eee2d34780f208c11343b85, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  aimCore: {fileID: 1209290467}
-  turnSpeed: 3
-  onlyMoving: 0
-  cc: {fileID: 4783457066648104034}
 --- !u!1 &8839724977028756033
 GameObject:
   m_ObjectHideFlags: 0
