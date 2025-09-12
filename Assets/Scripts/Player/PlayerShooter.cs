@@ -17,9 +17,15 @@ public class PlayerShooter : MonoBehaviour
     [SerializeField] private float fireRate = 10f;
     [SerializeField] private float maxDistance = 200f;
 
-    [Header("Debug")]
-    [SerializeField] private Color tracerColor = Color.red;
-    [SerializeField] private float tracerTime = 0.05f;
+    // [Header("Debug")]
+    // [SerializeField] private Color tracerColor = Color.red;
+    // [SerializeField] private float tracerTime = 0.05f;
+
+    [Header("Projectiles")]
+    [SerializeField] private Projectile projectilePrefab;
+    [SerializeField] private float projectileSpeed = 50f;
+    [SerializeField] private float spawnOffset = 0.1f; // out of the muzzle alr 
+    [SerializeField] private float spreadDegrees = 0f;
 
     private InputSystem_Actions input;
     private InputSystem_Actions.PlayerActions actions;
@@ -27,6 +33,9 @@ public class PlayerShooter : MonoBehaviour
 
     private bool isFiring;
     private float nextFireTime;
+
+    // projectiles should ignore their own kind
+    Collider[] selfColliders;
 
     void OnEnable()
     {
@@ -80,27 +89,20 @@ public class PlayerShooter : MonoBehaviour
 
     private void TryToFire(bool force = false)
     {
-        if (!aim || !muzzle) return;
+        if (!aim || !muzzle || !projectilePrefab) return;
+        if (!force && Time.time > nextFireTime) return;
 
-        if (force || Time.time >= nextFireTime)
-        {
-            nextFireTime = Time.time + (1f / Mathf.Max(0.01f, fireRate));
+        nextFireTime = Time.time + (1f / Mathf.Max(0.01f, fireRate));
 
-            
-            // Vector3 direction = aim.AimDirectionFrom(muzzle);
-            Vector3 direction = aimTargetManager ? (aimTargetManager.transform.position - muzzle.position).normalized : aim.GetAimDirection(muzzle.position, muzzle.forward);
+        
+        Vector3 direction = aim.GetAimDirection(muzzle.position, muzzle.forward);
 
-            Vector3 start = muzzle.position;
+        Vector3 spawnPos = muzzle.position + direction * spawnOffset;
+        Quaternion spawnRot = Quaternion.LookRotation(direction, Vector3.up);
 
-            if (Physics.Raycast(start, direction, out var hit, maxDistance, shootMask, QueryTriggerInteraction.Ignore))
-            {
-                Debug.DrawLine(start, hit.point, tracerColor, tracerTime);
-            }
-            else
-            {
-                Debug.DrawLine(start, start + direction * maxDistance, tracerColor, tracerTime);
-            }
-        }
+        // NOTE TO SELF : USE OBJECT POOLING LATER TO REDUCE INSTANTIATING
+        var proj = Instantiate(projectilePrefab, spawnPos, spawnRot);
+        proj.Init(direction * projectileSpeed, shootMask, selfColliders);
     }
 
 }
