@@ -60,7 +60,7 @@ public class PlayerAimController : MonoBehaviour
         {
             return (aimTargetManager.transform.position - origin).normalized;
         }
-        return transform.forward;
+        return fallbackForward;
     }
 
     void OnEnable()
