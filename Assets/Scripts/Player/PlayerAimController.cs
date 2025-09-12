@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Cinemachine.Samples;
 
 public class PlayerAimController : MonoBehaviour
 {
@@ -22,18 +23,18 @@ public class PlayerAimController : MonoBehaviour
     [SerializeField] private float maxPitch = 70f;
 
 
-    [Header("Aim Target (world point)")]
-    [SerializeField] private Camera mainCam;
-    [SerializeField] private Transform aimTarget;
-    [SerializeField] private LayerMask aimLayers = ~0;
-    [SerializeField] private float defaultDistance = 30f;
-    [SerializeField] private float minAimDistance = 3f;
-
     [Header("Coupling Stuff")]
     [SerializeField] private CouplingMode playerRotation = CouplingMode.CoupledWhenMoving;
     [SerializeField] private float recenterDamping = 0.2f;
+    [SerializeField] private float fireRecenterDamping = 0.05f;
+    [SerializeField] private bool snapOnFire = false;
+    [SerializeField] private float snapAngleThreshold = 25f;
+
+
+
 
     [SerializeField] private Transform playerRoot;
+    [SerializeField] private AimTargetManager aimTargetManager;
 
     private CharacterController cc; // cached
     private PlayerMovement movement;
@@ -47,6 +48,21 @@ public class PlayerAimController : MonoBehaviour
     private float lastPlayerYaw;
     private bool coupledThisFrame;
 
+
+    float forceCoupleTimer = 0f;
+    const float kForceCoupleDuration = 0.3f; // sec
+
+    public void ForceCoupleOnFire() => forceCoupleTimer = kForceCoupleDuration;
+
+    public Vector3 GetAimDirection(Vector3 origin, Vector3 fallbackForward)
+    {
+        if (aimTargetManager != null)
+        {
+            return (aimTargetManager.transform.position - origin).normalized;
+        }
+        return transform.forward;
+    }
+
     void OnEnable()
     {
         if (playerInput == null) playerInput = new InputSystem_Actions();
@@ -57,8 +73,6 @@ public class PlayerAimController : MonoBehaviour
         lookAction.Enable();
         moveAction.Enable();
 
-        if (!mainCam) mainCam = Camera.main;
-
         if (!playerRoot && transform.parent) playerRoot = transform.parent;
         if (playerRoot)
         {
@@ -66,26 +80,36 @@ public class PlayerAimController : MonoBehaviour
             movement = playerRoot.GetComponent<PlayerMovement>();
             lastPlayerYaw = playerRoot.eulerAngles.y;
         }
-        
+
         var e = transform.localRotation.eulerAngles;
         yaw = e.y;
         pitch = Normalize180(e.x);
         pitch = ClampPitch(pitch);
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void OnDisable()
     {
         lookAction?.Disable();
         moveAction?.Disable();
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
-
 
     void Update()
     {
+        if (forceCoupleTimer > 0f) forceCoupleTimer -= Time.unscaledDeltaTime;
+
         lookChangedThisFrame = ReadLook(); // did my mouse move
 
-        bool shouldCouple = false;
 
+        bool moving = IsMoving();
+        bool aiming = lookChangedThisFrame;
+        bool forceCouple = forceCoupleTimer > 0;
+
+        bool shouldCouple = false;
         switch (playerRotation)
         {
             case CouplingMode.Coupled:
@@ -93,13 +117,11 @@ public class PlayerAimController : MonoBehaviour
                 SetStrafe(true);
                 break;
             case CouplingMode.CoupledWhenMoving:
-                bool moving = IsMoving();
-                bool aiming = lookChangedThisFrame;
-                shouldCouple = moving && aiming;
+                shouldCouple = (moving && aiming) || forceCouple;
                 SetStrafe(shouldCouple);
                 break;
             case CouplingMode.Decoupled:
-                shouldCouple = false;
+                shouldCouple = forceCouple;
                 SetStrafe(true);
                 break;
         }
@@ -107,13 +129,29 @@ public class PlayerAimController : MonoBehaviour
 
         if (shouldCouple)
         {
-            RecenterPlayerTowardsAim();
+            if (forceCouple && snapOnFire)
+            {
+                
+                Vector3 aimFlat = transform.forward; aimFlat.y = 0f;
+                Vector3 playerFlat = playerRoot.forward; playerFlat.y = 0f;
+                float targetYaw  = Mathf.Atan2(aimFlat.x,   aimFlat.z) * Mathf.Rad2Deg;
+                float currentYaw = Mathf.Atan2(playerFlat.x,playerFlat.z)* Mathf.Rad2Deg;
+                float delta = Mathf.DeltaAngle(currentYaw, targetYaw);
+                if (Mathf.Abs(delta) > snapAngleThreshold)
+                {
+                    playerRoot.rotation = Quaternion.Euler(0f, targetYaw, 0f);
+                    yaw -= delta; // keep camera stable
+                }
+                else
+                {
+                    RecenterPlayerTowardsAim(fireRecenterDamping); // fast
+                }
+            }
+            else
+            {
+                RecenterPlayerTowardsAim(); // normal damping
+            }
         }
-
-        // // recenter before we set aimCore transforms
-        // ApplyCoupling();
-
-        // ApplyAimCoreRotation();
 
         transform.localRotation = Quaternion.Euler(pitch, yaw, 0f);
         
@@ -135,7 +173,7 @@ public class PlayerAimController : MonoBehaviour
         }
 
 
-        UpdateAimTarget();
+        // UpdateAimTarget();
     }
 
     private bool ReadLook()
@@ -151,17 +189,17 @@ public class PlayerAimController : MonoBehaviour
         yaw += dx * mouseSensitivity;
         pitch += dy * mouseSensitivity;
 
-        // pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
-        pitch = ClampPitch(pitch);
+        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
         return true;
     }
 
 
-    private void RecenterPlayerTowardsAim()
+    private void RecenterPlayerTowardsAim(float dampingOverride = -1f)
     {
         if (!playerRoot) return;
 
-        
+        float damping = (dampingOverride >= 0f) ? dampingOverride : recenterDamping;
+
         Vector3 aimFlat = transform.forward; aimFlat.y = 0f;
         if (aimFlat.sqrMagnitude < 1e-6f) return;
 
@@ -171,7 +209,7 @@ public class PlayerAimController : MonoBehaviour
         float currentYaw = Mathf.Atan2(playerFlat.x, playerFlat.z) * Mathf.Rad2Deg;
         float targetYaw = Mathf.Atan2(aimFlat.x, aimFlat.z) * Mathf.Rad2Deg;
         
-        float t = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, recenterDamping));
+        float t = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, damping));
         float newYaw = Mathf.LerpAngle(currentYaw, targetYaw, t);
 
         // Apply delta to player root
@@ -203,33 +241,6 @@ public class PlayerAimController : MonoBehaviour
             movement.SetStrafeMode(on);
         }
     }
-
-    private void UpdateAimTarget()
-    {
-        if (!mainCam || !aimTarget) return;
-
-        float start = mainCam.nearClipPlane + 0.05f;
-        Ray ray = new Ray(mainCam.transform.position + mainCam.transform.forward * start,
-                          mainCam.transform.forward);
-
-        if (Physics.Raycast(ray, out var hit, 1000f, aimLayers, QueryTriggerInteraction.Ignore))
-        {
-            float d = Vector3.Distance(mainCam.transform.position, hit.point);
-            aimTarget.position = (d < minAimDistance)
-                ? mainCam.transform.position + mainCam.transform.forward * minAimDistance
-                : hit.point;
-        }
-        else
-        {
-            aimTarget.position = mainCam.transform.position + mainCam.transform.forward * defaultDistance;
-        }
-    }
-
-    // private void ApplyAimCoreRotation()
-    // {
-    //     // cinemachine forward should follow the forward along this axis, basically use this rotation for the camera rotation = voila AIM!
-    //     transform.localRotation = Quaternion.Euler(pitch, yaw, 0f);
-    // }
 
 
     private float ClampPitch(float p) => Mathf.Clamp(p, minPitch, maxPitch);
