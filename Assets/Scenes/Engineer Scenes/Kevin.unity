@@ -162,6 +162,7 @@ GameObject:
   - component: {fileID: 288445209}
   - component: {fileID: 288445210}
   - component: {fileID: 288445211}
+  - component: {fileID: 288445212}
   m_Layer: 5
   m_Name: UIDocument
   m_TagString: Untagged
@@ -242,6 +243,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: {fileID: 25332784}
+--- !u!114 &288445212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288445206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cdbc4f3ec387f04298244d6998b470e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  extractionZone: {fileID: 1121424012}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -518,11 +532,14 @@ MonoBehaviour:
     prefab: {fileID: 8153669102562936683, guid: 9c030e74b2a6c42e689c7c2fa9634eba, type: 3}
     cost: 2
     isFlying: 1
+  maxEnemiesPerWave: 5
+  EnemyWaveCapIncrease: 2
   timeBetweenWaves: 8
   timeBetweenEnemySpawns: 1
   creditGainRate: 1
   difficultyScale: 1.05
   credits: 5
+  maxCredits: 20
   playerLocation: {fileID: 542838643}
 --- !u!4 &1075943418
 Transform:
@@ -600,8 +617,8 @@ Transform:
   m_GameObject: {fileID: 1121424011}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.91, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 1, z: 2}
+  m_LocalPosition: {x: 4.45, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1417860745}
