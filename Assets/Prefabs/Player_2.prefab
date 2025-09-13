@@ -899,6 +899,9 @@ MonoBehaviour:
   movementAcceleration: 0
   movementDeceleration: 0
   rotationDamping: 0.25
+  externalDamping: 8
+  kbControlsLock: 0.18
+  kbDashLock: 0.12
   jumpForce: 25
   groundedGravityScale: 9.81
   midairGravityScale: 0
@@ -928,7 +931,7 @@ MonoBehaviour:
   aimTargetManager: {fileID: 882284263822469768}
   shootMask:
     serializedVersion: 2
-    m_Bits: 119
+    m_Bits: 1655
   fireRate: 10
   projectilePrefab: {fileID: 3140400090891409143, guid: a6fb9f8d0097a78469656e682c859c0d, type: 3}
   projectileSpeed: 150
@@ -957,7 +960,7 @@ MonoBehaviour:
   upwardForce: 0
   hitMask:
     serializedVersion: 2
-    m_Bits: 375
+    m_Bits: 1911
   drawGizmos: 1
   gizmoColor: {r: 0.015250206, g: 0, b: 1, a: 0.0627451}
 --- !u!1 &3681507385454597182

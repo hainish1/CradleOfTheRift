@@ -11,6 +11,7 @@ public class Projectile : MonoBehaviour
     [Header("Hit")]
     [SerializeField] LayerMask hitMask = ~0; // what this projectile thing can hit
     [SerializeField] float hitForce = 5f;
+    [SerializeField] int damage = 1; // LETTING THE PROJECTILES DO DAMAGE FOR NOW
     [SerializeField] GameObject impactFX;
 
     Vector3 velocity;
@@ -65,8 +66,20 @@ public class Projectile : MonoBehaviour
         // place at the impact point
         transform.position = hit.point;
 
+        // pure cosmetic stuff, for a thing that has rigidbody
         if (hit.rigidbody)
             hit.rigidbody.AddForceAtPosition(velocity.normalized * hitForce, hit.point, ForceMode.Impulse);
+
+        // DEAL DAMAGE TO THAT
+        var enemy = hit.collider.GetComponentInParent<Enemy>(); // check topmost
+        if (enemy != null)
+        {
+            var targetFlash = hit.collider.GetComponentInParent<TargetFlash>();
+            if (targetFlash != null)
+                targetFlash.Flash();
+
+            enemy.ApplyDamage(damage);
+        }
 
         Destroy(gameObject);
     }

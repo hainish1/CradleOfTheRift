@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -30,6 +29,14 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 moveInput;
     private Vector3 moveVector;
 
+    [Header("KnockBack Parameters")]
+    [SerializeField] private float externalDamping = 8f;
+    [SerializeField] private float kbControlsLock = 0.18f;
+    [SerializeField] private float kbDashLock = 0.12f; // for how much time after being knocked back can we not do dash, safety lock
+    private Vector3 externalVelocity; // our fake stuff
+    private float kbLockTimer; // blocks movement + rotaion
+    private float kbDashLockTimer; // blocks dash
+
     [Header("Jump Parameters")]
     [SerializeField] private float jumpForce;
     [SerializeField] private float groundedGravityScale;
@@ -40,10 +47,10 @@ public class PlayerMovement : MonoBehaviour
     [Space]
 
     [Header("Dash Parameters")]
-    [SerializeField] private float dashSpeed =20f;
-    [SerializeField] private float dashDistance=8f;
-    [SerializeField] private float dashCooldown=.6f;
-    [SerializeField] private int dashMaxCharges=1;
+    [SerializeField] private float dashSpeed = 20f;
+    [SerializeField] private float dashDistance = 8f;
+    [SerializeField] private float dashCooldown = .6f;
+    [SerializeField] private int dashMaxCharges = 1;
     private bool isDashing;
     private int dashCharges;
     private Vector3 dashVector;
@@ -107,12 +114,16 @@ public class PlayerMovement : MonoBehaviour
     {
         if (lockControls) return;
 
+        if (kbLockTimer > 0f) kbLockTimer -= Time.deltaTime;
+        if (kbDashLockTimer > 0f) kbDashLockTimer -= Time.deltaTime;
+
         Move();
     }
 
     private void Move()
     {
-        moveInput = moveActions.ReadValue<Vector2>();
+        // moveInput = moveActions.ReadValue<Vector2>();
+        moveInput = (kbLockTimer > 0f) ? Vector2.zero : moveActions.ReadValue<Vector2>(); // only read input if lock timer is over
 
         // CAMERA BASED vector calculations
         Vector3 fwd = cameraTransform ? cameraTransform.forward : Vector3.forward;
@@ -171,10 +182,21 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             characterController.Move(Time.deltaTime * movementMaxVelocity * moveVector);
+
+            // Apply knockback after normal movement
+            if (externalVelocity.sqrMagnitude > 1e-6f)
+            {
+                // optional clamp to avoid crazy impulses
+                // if (externalVelocity.magnitude > 100f)
+                //     externalVelocity = externalVelocity.normalized * 100f;
+
+                characterController.Move(externalVelocity * Time.deltaTime);
+                externalVelocity = Vector3.Lerp(externalVelocity, Vector3.zero, externalDamping * Time.deltaTime);
+            }
         }
 
         // facing the movement stuff, turning player around
-        if (!strafe && moveVector.sqrMagnitude > 0.0001f)
+        if (kbLockTimer <= 0f && !strafe && moveVector.sqrMagnitude > 0.0001f)
         {
             Quaternion qa = transform.rotation;
             Quaternion qb = Quaternion.LookRotation(moveVector, Vector3.up);
@@ -223,6 +245,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void Dash(InputAction.CallbackContext context)
     {
+        // first check if we are being knocked back
+        if (kbDashLockTimer > 0f) return;
+
         if (!isDashing && dashCharges != 0)
         {
             moveInput = moveActions.ReadValue<Vector2>();
@@ -259,6 +284,22 @@ public class PlayerMovement : MonoBehaviour
 
         isDashing = false;
     }
+
+
+
+
+    // FAKE KNOCKBACK STUFF, Called by ENEMIES
+    public void ApplyImpulse(Vector3 impulse)
+    {
+        externalVelocity += impulse;
+
+        // start lock timers
+        kbLockTimer = Mathf.Max(kbLockTimer, kbControlsLock);
+        kbDashLockTimer = Mathf.Max(kbDashLockTimer, kbControlsLock + kbDashLock);
+
+        isDashing = false; // just extra safety
+    }
+
 
 
 
