@@ -8,9 +8,15 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     private List<EnemyType> enemies;
     [SerializeField]
+    private int maxEnemiesPerWave = 5;
+    [SerializeField]
+    private int EnemyWaveCapIncrease = 2;
+    [SerializeField]
     private float timeBetweenWaves = 8f;
     [SerializeField]
     private float timeBetweenEnemySpawns = 1f;
+
+
     [SerializeField]
     private float creditGainRate = 1f;
     [SerializeField]
@@ -18,13 +24,20 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     private float credits = 5f;
     [SerializeField]
-    private Transform playerLocation;
+    private float maxCredits = 20f;
     [SerializeField]
     private Queue<EnemyType> enemiesToSpawn = new Queue<EnemyType>();
+
+
+    [SerializeField]
+    private Transform playerLocation;
     private float spawnRadius = 10f;
+
+
     private float waveCountdown;
     private float enemyCountdown;
     private bool isWaveInProgress = false;
+    private int currentWave = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -40,6 +53,7 @@ public class EnemySpawner : MonoBehaviour
     void Update()
     {
         this.credits += this.creditGainRate * Time.deltaTime;
+        this.credits = Mathf.Min(this.credits, this.maxCredits);
 
         // Start a new wave after the countdown has finished
         if (!this.isWaveInProgress)
@@ -66,8 +80,7 @@ public class EnemySpawner : MonoBehaviour
         // Reset properties when finishing a wave
         else if (this.isWaveInProgress)
         {
-            this.isWaveInProgress = false;
-            this.waveCountdown = this.timeBetweenWaves;
+            EndWave();
         }
     }
 
@@ -77,6 +90,7 @@ public class EnemySpawner : MonoBehaviour
 
         // Have the first enemy spawn immediately
         this.enemyCountdown = 0f;
+        this.currentWave++;
         GenerateWave();
     }
 
@@ -86,12 +100,15 @@ public class EnemySpawner : MonoBehaviour
         this.waveCountdown = this.timeBetweenWaves;
 
         this.creditGainRate *= this.difficultyScale;
+        this.maxEnemiesPerWave += this.EnemyWaveCapIncrease;
+        this.maxCredits *= this.difficultyScale;
     }
 
     private void GenerateWave()
     {
         int lowestCostEnemy = this.enemies[0].cost;
-        while (this.credits >= lowestCostEnemy)
+        int spawnedEnemies = 0;
+        while (this.credits >= lowestCostEnemy && spawnedEnemies < this.maxEnemiesPerWave)
         {
             EnemyType randomEnemy = enemies[UnityEngine.Random.Range(0, enemies.Count)];
 
@@ -99,6 +116,7 @@ public class EnemySpawner : MonoBehaviour
             {
                 this.credits -= randomEnemy.cost;
                 this.enemiesToSpawn.Enqueue(randomEnemy);
+                spawnedEnemies++;
             }
         }
     }
