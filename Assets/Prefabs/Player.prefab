@@ -111,9 +111,14 @@ MonoBehaviour:
   movementAcceleration: 0
   movementDeceleration: 0
   jumpForce: 25
+  jumpMaxCharges: 0
   groundedGravityScale: 9.81
   midairGravityScale: 0
   strafeScale: 0
+  dashSpeed: 50
+  dashDistance: 10
+  dashCooldown: 3
+  dashMaxCharges: 3
   environmentLayer:
     serializedVersion: 2
     m_Bits: 64
