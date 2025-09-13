@@ -8,64 +8,98 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     private List<EnemyType> enemies;
     [SerializeField]
-    private float spawnInterval = 4f;
+    private float timeBetweenWaves = 8f;
+    [SerializeField]
+    private float timeBetweenEnemySpawns = 1f;
     [SerializeField]
     private float creditGainRate = 1f;
     [SerializeField]
-    private float difficultyScale = 1.05f;
+    private float difficultyScale = 1.01f;
     [SerializeField]
-    private int credits = 5;
+    private float credits = 5f;
     [SerializeField]
     private Transform playerLocation;
     [SerializeField]
+    private Queue<EnemyType> enemiesToSpawn = new Queue<EnemyType>();
     private float spawnRadius = 10f;
-    private float spawnTimer;
-    private float waveTimer;
+    private float waveCountdown;
+    private float enemyCountdown;
+    private bool isWaveInProgress = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        this.spawnTimer = this.spawnInterval;
+        this.waveCountdown = this.timeBetweenWaves;
+        this.enemyCountdown = 0f;
+
+        // Sort the list of enemies from cheapest to most expensive
+        enemies.Sort((a, b) => { return a.cost - b.cost; });
     }
 
     // Update is called once per frame
     void Update()
     {
-        this.credits += (int)Math.Ceiling(this.creditGainRate * Time.deltaTime);
-        this.creditGainRate *= Mathf.Pow(difficultyScale, Time.deltaTime);
+        this.credits += this.creditGainRate * Time.deltaTime;
 
-        this.spawnTimer -= Time.deltaTime;
-        if (this.spawnTimer <= 0f)
+        // Start a new wave after the countdown has finished
+        if (!this.isWaveInProgress)
         {
-            GenerateWave();
+            this.waveCountdown -= Time.deltaTime;
 
-            this.spawnTimer = this.spawnInterval;
+            if (this.waveCountdown <= 0f)
+            {
+                StartWave();
+            }
         }
+
+        // Spawn enemies until queue is empty
+        if (this.enemiesToSpawn.Count > 0)
+        {
+            this.enemyCountdown -= Time.deltaTime;
+            if (this.enemyCountdown <= 0f)
+            {
+                SpawnEnemy(this.enemiesToSpawn.Dequeue());
+                this.enemyCountdown = this.timeBetweenEnemySpawns;
+            }
+        }
+
+        // Reset properties when finishing a wave
+        else if (this.isWaveInProgress)
+        {
+            this.isWaveInProgress = false;
+            this.waveCountdown = this.timeBetweenWaves;
+        }
+    }
+
+    private void StartWave()
+    {
+        this.isWaveInProgress = true;
+
+        // Have the first enemy spawn immediately
+        this.enemyCountdown = 0f;
+        GenerateWave();
+    }
+
+    private void EndWave()
+    {
+        this.isWaveInProgress = false;
+        this.waveCountdown = this.timeBetweenWaves;
+
+        this.creditGainRate *= this.difficultyScale;
     }
 
     private void GenerateWave()
     {
-        List<EnemyType> generatedEnemies = new List<EnemyType>();
-
-        while (this.credits > 0)
+        int lowestCostEnemy = this.enemies[0].cost;
+        while (this.credits >= lowestCostEnemy)
         {
             EnemyType randomEnemy = enemies[UnityEngine.Random.Range(0, enemies.Count)];
 
             if (this.credits >= randomEnemy.cost)
             {
                 this.credits -= randomEnemy.cost;
-                generatedEnemies.Add(randomEnemy);
+                this.enemiesToSpawn.Enqueue(randomEnemy);
             }
-
-            else
-            {
-                continue;
-            }
-        }
-
-        foreach (EnemyType enemy in generatedEnemies)
-        {
-            SpawnEnemy(enemy);
         }
     }
 
@@ -83,7 +117,7 @@ public class EnemySpawner : MonoBehaviour
 
         float heightOffset = 5f;
         float raycastLength = 40f;
-        
+
         // Shoot a raycast down to determine the grounds Y position
         if (Physics.Raycast(spawnLocation + Vector3.up * heightOffset, Vector3.down, out RaycastHit hitInfo, raycastLength))
         {
@@ -95,7 +129,7 @@ public class EnemySpawner : MonoBehaviour
 
     private Vector3 GetAirLocation()
     {
-        Vector3 locationOffset = UnityEngine.Random.onUnitSphere  * this.spawnRadius;
+        Vector3 locationOffset = UnityEngine.Random.onUnitSphere * this.spawnRadius;
         locationOffset.y = Math.Abs(locationOffset.y);
 
         return this.playerLocation.position + locationOffset;

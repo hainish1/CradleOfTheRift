@@ -426,6 +426,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 25332784}
   m_SourcePrefab: {fileID: 100100000, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+--- !u!4 &542838643 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3660251539360687449, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+  m_PrefabInstance: {fileID: 542838642}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -504,10 +509,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 368ec5540764147d38dcf85232ebd520, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemies: []
-  spawnInterval: 0
-  creditGainRate: 0
-  difficultyScale: 0
+  enemies:
+  - name: 
+    prefab: {fileID: 6015091181669726318, guid: ee6221c0a858544998909d34dff253ef, type: 3}
+    cost: 1
+    isFlying: 0
+  - name: 
+    prefab: {fileID: 8153669102562936683, guid: 9c030e74b2a6c42e689c7c2fa9634eba, type: 3}
+    cost: 2
+    isFlying: 1
+  timeBetweenWaves: 8
+  timeBetweenEnemySpawns: 1
+  creditGainRate: 1
+  difficultyScale: 1.05
+  credits: 5
+  playerLocation: {fileID: 542838643}
 --- !u!4 &1075943418
 Transform:
   m_ObjectHideFlags: 0
