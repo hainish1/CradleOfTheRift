@@ -81,32 +81,6 @@ public class AttackState_Melee : EnemyState
         }
     }
 
-    // private void TryApplyHit()
-    // {
-    //     // apply the hit if in range
-    //     if (enemy.target != null && PlayerInAttackRange(enemyMelee.attackRange + .1f))
-    //     {
-    //         if (Time.time < enemy.nextAttackAllowed) return;
-    //         // try to do a simple hit
-    //         // APPLY DAMAGE (TODO - NEED IDamageable)
-
-    //         // KNOCKBACK
-    //         var pm = enemy.target.GetComponentInParent<PlayerMovement>();
-    //         if (pm != null)
-    //         {
-    //             Vector3 direction = (enemy.target.position - enemy.transform.position);
-    //             direction.y = 0f; // we aren't pushing the player up
-    //             if (direction.sqrMagnitude > 0.0001f)
-    //             {
-    //                 direction.Normalize();
-    //                 pm.ApplyImpulse(direction * enemyMelee.knockbackPower);
-    //             }
-
-    //         }
-
-    //         enemy.nextAttackAllowed = Time.time + enemy.attackCooldown;
-    //     }
-    // }
 
     public override void Exit()
     {

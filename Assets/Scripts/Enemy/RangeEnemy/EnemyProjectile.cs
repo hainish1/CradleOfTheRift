@@ -1,19 +1,18 @@
 using UnityEngine;
 
-//TODO
-// THIS WHOLE THING IS DUMB IN CHECKING COLLISIONS SO I WILL DEF CHANGE IT
-public class Projectile : MonoBehaviour
+
+// almost a copy paste of my projectile script for player
+public class EnemyProjectile : MonoBehaviour
 {
     [Header("Bullet motion")]
-    // [SerializeField] float speed = 60f;
     [SerializeField] float gravity = 0f;
     [SerializeField] float lifeTime = 5f; // just for now
     [SerializeField] float radius = 0.05f; // sphere ray cast check for collision n whatnot
 
     [Header("Hit")]
     [SerializeField] LayerMask hitMask = ~0; // what this projectile thing can hit
-    [SerializeField] float hitForce = 5f;
-    [SerializeField] int damage = 1; // LETTING THE PROJECTILES DO DAMAGE FOR NOW
+    [SerializeField] float hitForce = 3f; // SHOULD BE ENOUGH TO NUDGE OUI PLAYER
+    // [SerializeField] int damage = 1; // LETTING THE PROJECTILES DO DAMAGE FOR NOW
     [SerializeField] GameObject impactFX;
 
     Vector3 velocity;
@@ -50,8 +49,7 @@ public class Projectile : MonoBehaviour
         float distance = displacement.magnitude;
         if (distance > 0f)
         {
-            if (Physics.SphereCast(transform.position, radius, displacement.normalized,
-                                   out var hit, distance, hitMask, QueryTriggerInteraction.Ignore))
+            if (Physics.SphereCast(transform.position, radius, displacement.normalized, out var hit, distance, hitMask, QueryTriggerInteraction.Ignore))
             {
                 OnHit(hit);
                 return;
@@ -62,32 +60,28 @@ public class Projectile : MonoBehaviour
         }
     }
 
-
+    // this is where the real magic will happen
     void OnHit(RaycastHit hit)
     {
         // place at the impact point
         transform.position = hit.point;
 
-        // pure cosmetic stuff, for a thing that has rigidbody
+        // pure cosmetic stuff, for a thing that has rigidbody, NOT FOR PLAYER BUT STILL KEEPING IN 
         if (hit.rigidbody)
             hit.rigidbody.AddForceAtPosition(velocity.normalized * hitForce, hit.point, ForceMode.Impulse);
 
-        // DEAL DAMAGE TO THAT
-        var enemy = hit.collider.GetComponentInParent<Enemy>(); // check topmost
-        if (enemy != null)
+        // now do a tiny bit of knockback to the enemy just teeni
+        PlayerMovement pm = hit.collider.GetComponentInParent<PlayerMovement>();
+        if (pm != null)
         {
-            var targetFlash = hit.collider.GetComponentInParent<TargetFlash>();
-            if (targetFlash != null)
-                targetFlash.Flash();
+            Vector3 direction = (hit.point - transform.position).normalized;
+            direction.y = 0f;
+            if (direction.sqrMagnitude < 0.0001f) direction = (pm.transform.position - transform.position).normalized;
+            pm.ApplyImpulse(direction * hitForce);
+        }
 
-            enemy.ApplyDamage(damage);
-        }
-        else
-        {
-            Debug.Log("Not found my g");
-        }
+        // when we get impact fx we will apply here
 
         Destroy(gameObject);
     }
-
 }

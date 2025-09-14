@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 7602645346483822257}
   - component: {fileID: 8798023174576497895}
   - component: {fileID: 7430822607540931534}
-  - component: {fileID: 3140400090891409143}
+  - component: {fileID: 377849133140131786}
   m_Layer: 8
-  m_Name: Projectile
+  m_Name: EnemyProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -109,7 +109,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3140400090891409143
+--- !u!114 &377849133140131786
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -118,15 +118,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 3232334194741932682}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d70ac87e40db904a88f5f56a07f4e6f, type: 3}
+  m_Script: {fileID: 11500000, guid: fd1b360601566334d9dad97ddd72e057, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   gravity: 0
   lifeTime: 5
-  radius: 0.1
+  radius: 0.05
   hitMask:
     serializedVersion: 2
-    m_Bits: 1655
-  hitForce: 5
-  damage: 1
+    m_Bits: 704
+  hitForce: 10
   impactFX: {fileID: 0}
