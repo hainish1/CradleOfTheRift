@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerMeleeAttack : MonoBehaviour
 {
+    [SerializeField] private int meleeDamge;
     [Header("whats forward")]
     [SerializeField] private Transform forwardSource;           
     [SerializeField] private float heightOffset = 0.9f;         
@@ -19,7 +20,7 @@ public class PlayerMeleeAttack : MonoBehaviour
     [SerializeField] private float activeTime = 0.08f;          
     [Header("Attack Impact phys stuff")]
     [SerializeField] private float pushForce = 12f;
-    [SerializeField] private float upwardForce = 0f;
+    // [SerializeField] private float upwardForce = 0f;
     [SerializeField] private LayerMask hitMask = ~0;
     [Header("Debug")]
     [SerializeField] private bool drawGizmos = true;
@@ -37,7 +38,7 @@ public class PlayerMeleeAttack : MonoBehaviour
     private float activeUntil;
 
     private readonly Collider[] overlapBuffer = new Collider[32]; // ts is for checking who got hit
-    private readonly HashSet<Transform> hitThisSwing = new();
+    private readonly HashSet<Enemy> hitThisSwing = new();
 
 
     // calculating the fwd
@@ -117,21 +118,34 @@ public class PlayerMeleeAttack : MonoBehaviour
             var c = overlapBuffer[i]; // get stuff into the array
             if (c == null) continue; // check if theres hit
 
+            // find enemy once
+            var enemy = c.GetComponentInParent<Enemy>();
+            if (enemy == null) continue;
+            if (hitThisSwing.Contains(enemy)) continue;
+
             
-            Transform root = c.attachedRigidbody ? c.attachedRigidbody.transform : c.transform; // check for attached rigidbody, this is need in enemy for pushing it back
-            if (root == transform || hitThisSwing.Contains(root)) continue;
+            // Transform root = c.attachedRigidbody ? c.attachedRigidbody.transform : c.transform; // check for attached rigidbody, this is need in enemy for pushing it back
       
-            Vector3 to = (root.position - (t.position + up * heightOffset));
+            Vector3 to = (enemy.transform.position - (t.position + up * heightOffset));
             to.y = 0f;
             Vector3 direction = (to.sqrMagnitude > 0.001f) ? to.normalized : fwd; // direction of hit
 
-            if (c.attachedRigidbody && !c.attachedRigidbody.isKinematic) // make sure object hitting is not kinematic
+            // probably dont need this anymore since our enemies dont have rigidbodies
+            // if (c.attachedRigidbody && !c.attachedRigidbody.isKinematic) // make sure object hitting is not kinematic
+            // {
+            //     Vector3 force = direction * pushForce + up * upwardForce;
+            //     c.attachedRigidbody.AddForce(force, ForceMode.Impulse);
+            // }
+            var kb = enemy.GetComponent<AgentKnockBack>();
+            if (kb != null)
             {
-                Vector3 force = direction * pushForce + up * upwardForce;
-                c.attachedRigidbody.AddForce(force, ForceMode.Impulse);
+                kb.ApplyImpulse(direction * pushForce);
             }
+            enemy.GetComponentInParent<TargetFlash>()?.Flash();
+            enemy.ApplyDamage(meleeDamge);
+            
 
-            hitThisSwing.Add(root);
+            hitThisSwing.Add(enemy);
         }
     }
 

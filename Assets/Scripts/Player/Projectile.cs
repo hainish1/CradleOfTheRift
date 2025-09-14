@@ -1,93 +1,75 @@
+using System.Reflection.Emit;
 using UnityEngine;
 
-//TODO
-// THIS WHOLE THING IS DUMB IN CHECKING COLLISIONS SO I WILL DEF CHANGE IT
 public class Projectile : MonoBehaviour
 {
-    [Header("Bullet motion")]
-    // [SerializeField] float speed = 60f;
-    [SerializeField] float gravity = 0f;
-    [SerializeField] float lifeTime = 5f; // just for now
-    [SerializeField] float radius = 0.05f; // sphere ray cast check for collision n whatnot
+    [Header("flight")]
+    [SerializeField] private float lifeTime = 6f;
+    [SerializeField] private float gravity = 0f;
 
-    [Header("Hit")]
-    [SerializeField] LayerMask hitMask = ~0; // what this projectile thing can hit
-    [SerializeField] float hitForce = 5f;
-    [SerializeField] int damage = 1; // LETTING THE PROJECTILES DO DAMAGE FOR NOW
-    [SerializeField] GameObject impactFX;
+    [Header("hit")]
+    [SerializeField] private int damage = 1;
+    [SerializeField] private float hitForce = 8f;
+    [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
 
-    Vector3 velocity;
-    float age;
-    Collider[] ignoreColliders; // shooter colliders to ignore
+    Rigidbody rb;
+    private float age;
 
-    public void Init(Vector3 initialVelocity, LayerMask mask, Collider[] ignore = null)
+    void Awake()
     {
-        velocity = initialVelocity;
-        hitMask = mask;
-        ignoreColliders = ignore;
+        rb = GetComponent<Rigidbody>();
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+    }
 
-        if (ignoreColliders != null)
-        {
-            var myCol = GetComponent<Collider>();
-            if (myCol)
-                foreach (var c in ignoreColliders)
-                    if (c && c.enabled) Physics.IgnoreCollision(myCol, c, true);
-        }
+    public void Init(Vector3 velocity, LayerMask mask)
+    {
+        rb.linearVelocity = velocity;
+        hitMask = mask;
+        age = 0f;
     }
 
 
     void Update()
     {
-        float dt = Time.deltaTime;
-        age += dt;
-        if (age >= lifeTime) { Destroy(gameObject); return; }
-
-        // gravity
-        if (gravity > 0f) velocity += Vector3.down * gravity * dt;
-
-        // move with spherecast to avoid tunneling
-        Vector3 displacement = velocity * dt;
-        float distance = displacement.magnitude;
-        if (distance > 0f)
+        age += Time.deltaTime;
+        if (age >= lifeTime)
         {
-            if (Physics.SphereCast(transform.position, radius, displacement.normalized,
-                                   out var hit, distance, hitMask, QueryTriggerInteraction.Ignore))
-            {
-                OnHit(hit);
-                return;
-            }
-            transform.position += displacement;
-            if (velocity.sqrMagnitude > 0.0001f)
-                transform.rotation = Quaternion.LookRotation(velocity);
+            Destroy(gameObject);
+            return;
         }
+        if (gravity != 0f)
+        {
+            rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
+        }
+
     }
 
-
-    void OnHit(RaycastHit hit)
+    void OnCollisionEnter(Collision collision)
     {
-        // place at the impact point
-        transform.position = hit.point;
+        if (((1 << collision.gameObject.layer) & hitMask) == 0)
+            return;
 
-        // pure cosmetic stuff, for a thing that has rigidbody
-        if (hit.rigidbody)
-            hit.rigidbody.AddForceAtPosition(velocity.normalized * hitForce, hit.point, ForceMode.Impulse);
-
-        // DEAL DAMAGE TO THAT
-        var enemy = hit.collider.GetComponentInParent<Enemy>(); // check topmost
+        // check if collided with enemy and if yes then damage it
+        var enemy = collision.collider.GetComponentInParent<Enemy>();
         if (enemy != null)
         {
-            var targetFlash = hit.collider.GetComponentInParent<TargetFlash>();
-            if (targetFlash != null)
-                targetFlash.Flash();
+            var flash = collision.collider.GetComponentInParent<TargetFlash>();
+            if (flash != null) flash.Flash();
 
             enemy.ApplyDamage(damage);
         }
-        else
+
+        if (collision.rigidbody != null)
         {
-            Debug.Log("Not found my g");
+            Vector3 force = rb.linearVelocity.normalized * hitForce;
+            collision.rigidbody.AddForceAtPosition(force, collision.contacts[0].point, ForceMode.Impulse);
         }
 
-        Destroy(gameObject);
+        // plkace to add impact effects later
+
+        Destroy(gameObject); // its done its job now
     }
+
 
 }

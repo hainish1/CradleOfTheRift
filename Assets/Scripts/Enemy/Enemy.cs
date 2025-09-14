@@ -6,7 +6,7 @@ public abstract class Enemy : MonoBehaviour
 {
     [Header("Test Health Stuff")]
     public int maxHealth = 3;
-    int currentHealth;
+    public int currentHealth;
 
     [Header("Target settings")]
     public Transform target;
