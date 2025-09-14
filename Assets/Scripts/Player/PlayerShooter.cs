@@ -15,11 +15,6 @@ public class PlayerShooter : MonoBehaviour
 
     [Header("Fire info")]
     [SerializeField] private float fireRate = 10f;
-    // [SerializeField] private float maxDistance = 200f;
-
-    // [Header("Debug")]
-    // [SerializeField] private Color tracerColor = Color.red;
-    // [SerializeField] private float tracerTime = 0.05f;
 
     [Header("Projectiles")]
     [SerializeField] private Projectile projectilePrefab;
@@ -65,6 +60,13 @@ public class PlayerShooter : MonoBehaviour
 
     void Update()
     {
+        if (!aim || !muzzle) return;
+        Vector3 direction = aim.GetAimDirection(muzzle.position, muzzle.forward);
+        if (direction.sqrMagnitude > 0.0001f)
+        {
+            Quaternion lookRot = Quaternion.LookRotation(direction, Vector3.up);
+            muzzle.rotation = Quaternion.Slerp(muzzle.rotation, lookRot, 20f * Time.deltaTime);
+        }
         if (isFiring) TryToFire();
     }
 
