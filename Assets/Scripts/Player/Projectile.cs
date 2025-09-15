@@ -1,0 +1,75 @@
+using System.Reflection.Emit;
+using UnityEngine;
+
+public class Projectile : MonoBehaviour
+{
+    [Header("flight")]
+    [SerializeField] private float lifeTime = 6f;
+    [SerializeField] private float gravity = 0f;
+
+    [Header("hit")]
+    [SerializeField] private int damage = 1;
+    [SerializeField] private float hitForce = 8f;
+    [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
+
+    Rigidbody rb;
+    private float age;
+
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+    }
+
+    public void Init(Vector3 velocity, LayerMask mask)
+    {
+        rb.linearVelocity = velocity;
+        hitMask = mask;
+        age = 0f;
+    }
+
+
+    void Update()
+    {
+        age += Time.deltaTime;
+        if (age >= lifeTime)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        if (gravity != 0f)
+        {
+            rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
+        }
+
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (((1 << collision.gameObject.layer) & hitMask) == 0)
+            return;
+
+        // check if collided with enemy and if yes then damage it
+        var enemy = collision.collider.GetComponentInParent<Enemy>();
+        if (enemy != null)
+        {
+            var flash = collision.collider.GetComponentInParent<TargetFlash>();
+            if (flash != null) flash.Flash();
+
+            enemy.ApplyDamage(damage);
+        }
+
+        if (collision.rigidbody != null)
+        {
+            Vector3 force = rb.linearVelocity.normalized * hitForce;
+            collision.rigidbody.AddForceAtPosition(force, collision.contacts[0].point, ForceMode.Impulse);
+        }
+
+        // plkace to add impact effects later
+
+        Destroy(gameObject); // its done its job now
+    }
+
+
+}

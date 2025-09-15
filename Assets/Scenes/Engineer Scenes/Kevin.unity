@@ -525,11 +525,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemies:
   - name: 
-    prefab: {fileID: 6015091181669726318, guid: ee6221c0a858544998909d34dff253ef, type: 3}
+    prefab: {fileID: 0}
     cost: 1
     isFlying: 0
   - name: 
-    prefab: {fileID: 8153669102562936683, guid: 9c030e74b2a6c42e689c7c2fa9634eba, type: 3}
+    prefab: {fileID: 0}
     cost: 2
     isFlying: 1
   maxEnemiesPerWave: 5
