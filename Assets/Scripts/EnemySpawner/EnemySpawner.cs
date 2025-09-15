@@ -6,6 +6,18 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField]
+    private ExtractionZone extractionZone;
+    private bool isExtractionZoneActive = false;
+    private bool isExtractionZoneDone = false;
+    [SerializeField]
+    private float extractionZoneCreditGainRate = 5f;
+    [SerializeField]
+    private float extractionZoneMaxCreditMultiplier = 5f;
+    [SerializeField]
+    private float extractionZoneMaxEnemyMultiplier = 5f;
+
+
+    [SerializeField]
     private List<EnemyType> enemies;
     [SerializeField]
     private int maxEnemiesPerWave = 5;
@@ -15,6 +27,9 @@ public class EnemySpawner : MonoBehaviour
     private float timeBetweenWaves = 8f;
     [SerializeField]
     private float timeBetweenEnemySpawns = 1f;
+    [SerializeField]
+    private int maxEnemyCap = 10;
+    private int currentEnemyCount = 0;
 
 
     [SerializeField]
@@ -42,6 +57,9 @@ public class EnemySpawner : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        this.extractionZone.ExtractionInteracted += OnExtractionZoneStarted;
+        this.extractionZone.ExtractionFinished += OnExtractionZoneFinished;
+
         this.waveCountdown = this.timeBetweenWaves;
         this.enemyCountdown = 0f;
 
@@ -51,6 +69,23 @@ public class EnemySpawner : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {
+        // if (this.isExtractionZoneDone) {
+        //     return;
+        // }
+
+        if (this.isExtractionZoneActive)
+        {
+            ExtractionZoneUpdate();
+        }
+
+        else
+        { 
+            RegularWaveUpdate();
+        }
+    }
+
+    private void RegularWaveUpdate()
     {
         this.credits += this.creditGainRate * Time.deltaTime;
         this.credits = Mathf.Min(this.credits, this.maxCredits);
@@ -84,6 +119,35 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    private void ExtractionZoneUpdate()
+    {
+        this.credits += this.extractionZoneCreditGainRate * Time.deltaTime;
+        this.credits = Mathf.Min(this.credits, this.maxCredits * this.extractionZoneMaxCreditMultiplier);
+
+        int extractionCap = (int)(this.maxEnemiesPerWave * this.extractionZoneMaxEnemyMultiplier);
+        int biggestEnemyCap = Mathf.Max(extractionCap, this.maxEnemyCap);
+
+        if (this.currentEnemyCount < biggestEnemyCap)
+        {
+            EnemyType randomEnemy = enemies[UnityEngine.Random.Range(0, enemies.Count)];
+
+            // float threshold = 0.3f;
+            // float minCostThreshold = this.credits * threshold;
+
+            // // Reduce spam generation of cheap enemies
+            // if (randomEnemy.cost < minCostThreshold)
+            // {
+            //     return;
+            // }
+
+            if (this.credits >= randomEnemy.cost)
+            {
+                this.credits -= randomEnemy.cost;
+                SpawnEnemy(randomEnemy);
+            }
+        }
+    }
+
     private void StartWave()
     {
         this.isWaveInProgress = true;
@@ -102,13 +166,14 @@ public class EnemySpawner : MonoBehaviour
         this.creditGainRate *= this.difficultyScale;
         this.maxEnemiesPerWave += this.EnemyWaveCapIncrease;
         this.maxCredits *= this.difficultyScale;
+        this.maxEnemyCap = Mathf.Min((int)(this.maxEnemyCap * this.difficultyScale) + this.EnemyWaveCapIncrease, 200);
     }
 
     private void GenerateWave()
     {
         int lowestCostEnemy = this.enemies[0].cost;
         int spawnedEnemies = 0;
-        while (this.credits >= lowestCostEnemy && spawnedEnemies < this.maxEnemiesPerWave)
+        while (this.credits >= lowestCostEnemy && spawnedEnemies < this.maxEnemiesPerWave && this.currentEnemyCount < this.maxEnemyCap)
         {
             EnemyType randomEnemy = enemies[UnityEngine.Random.Range(0, enemies.Count)];
 
@@ -117,6 +182,7 @@ public class EnemySpawner : MonoBehaviour
                 this.credits -= randomEnemy.cost;
                 this.enemiesToSpawn.Enqueue(randomEnemy);
                 spawnedEnemies++;
+                this.currentEnemyCount++;
             }
         }
     }
@@ -152,6 +218,18 @@ public class EnemySpawner : MonoBehaviour
 
         return this.playerLocation.position + locationOffset;
     }
+
+    private void OnExtractionZoneStarted()
+    {
+        this.isExtractionZoneActive = true;
+        // this.waveCountdown = 0f;
+    }
+
+    private void OnExtractionZoneFinished()
+    {
+        this.isExtractionZoneActive = false;
+        this.isExtractionZoneDone = true;
+    }
 }
 
 [Serializable]
@@ -161,4 +239,6 @@ public class EnemyType
     public GameObject prefab;
     public int cost;
     public bool isFlying;
+
+    
 }
