@@ -219,8 +219,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bb149bd0c36fe34ca334cfcc0a2be0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prompt: Press E to interact
-  price: 100
+  price: 10
   singleActivation: 1
   audioData: {fileID: 1938403164052929742}
   item: {fileID: 3673088095811726572, guid: 8a6001a849d5ec244afe1f4f7b3f612f, type: 3}
@@ -249,7 +248,7 @@ Transform:
   m_GameObject: {fileID: 7494185963611747978}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.09, y: 1.21, z: -2.8673954}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

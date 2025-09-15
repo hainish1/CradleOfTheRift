@@ -271,6 +271,17 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
+--- !u!114 &431937212 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5057434563459989669, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+  m_PrefabInstance: {fileID: 791410301}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87e650cd5297bb64e88e64ccfc9b42a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &643661424
 GameObject:
   m_ObjectHideFlags: 0
@@ -491,6 +502,7 @@ MonoBehaviour:
   interactablesLayer:
     serializedVersion: 2
     m_Bits: 128
+  interactionPromptUI: {fileID: 431937212}
   numCollidersFound: 0
 --- !u!1 &832575517
 GameObject:

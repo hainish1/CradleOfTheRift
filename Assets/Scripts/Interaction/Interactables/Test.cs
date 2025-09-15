@@ -6,6 +6,7 @@ public class Test : MonoBehaviour, IInteractable
 {
     [SerializeField] private string prompt = "Press E to interact";
     public string InteractionPrompt => prompt;
+    public bool SingleActivation => false;
     public bool Interact(Interactor interactor)
     {
         Debug.Log("Interacted with " + gameObject.name);
