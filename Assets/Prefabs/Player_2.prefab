@@ -948,16 +948,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99fc382ac2383f54a96683c81a0af53b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  meleeDamge: 1
   forwardSource: {fileID: 4520456902024227558}
   heightOffset: 0.1
-  boxWidth: 2.03
-  boxHeight: 1.5
+  boxWidth: 4.49
+  boxHeight: 5.6
   boxArea: 5
   cooldown: 0.35
   prep: 0.05
   activeTime: 0.02
   pushForce: 10
-  upwardForce: 0
   hitMask:
     serializedVersion: 2
     m_Bits: 1911
