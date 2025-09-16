@@ -37,7 +37,7 @@ public class EnemySpawner : MonoBehaviour
 
     [Header("Extraction Wave Settings")]
     [SerializeField]
-    private float extractionCreditGainRate = 2f;
+    private float extractionCreditGainRateMultiplier = 2f;
     [SerializeField]
     private float extractionZoneMaxCreditMultiplier = 1.5f;
     [SerializeField]
@@ -135,10 +135,11 @@ public class EnemySpawner : MonoBehaviour
         this.waveCountdown = this.timeBetweenWaves;
 
         this.baseCreditGainRate *= this.difficultyScale;
-        // this.currentMaxEnemiesPerWave += this.EnemyWaveCapIncrease;
-        this.baseMaxEnemiesPerWave += Mathf.CeilToInt(this.baseMaxEnemiesPerWave * difficultyScale);
         this.baseMaxCredits *= this.difficultyScale;
-        this.baseMaxEnemyCap = Mathf.Min((int)(this.baseMaxEnemyCap * this.difficultyScale), 200);
+
+        this.baseMaxEnemiesPerWave += this.EnemyWaveCapIncrease;
+        this.baseMaxEnemiesPerWave = Mathf.CeilToInt(this.baseMaxEnemiesPerWave * difficultyScale);
+        this.baseMaxEnemyCap = Mathf.Min((int)(this.baseMaxEnemyCap * this.difficultyScale + this.EnemyWaveCapIncrease), 200);
 
         if (this.isExtractionActive)
         {
@@ -226,10 +227,12 @@ public class EnemySpawner : MonoBehaviour
 
     private void SetSpawningParametersExtraction()
     {
-        this.currentCreditGainRate = this.extractionCreditGainRate;
+        this.currentCreditGainRate = this.baseCreditGainRate * this.extractionCreditGainRateMultiplier;
         this.currentMaxCredits = this.baseMaxCredits * this.extractionZoneMaxCreditMultiplier;
-        this.currentMaxEnemiesPerWave = (int)(baseMaxEnemiesPerWave * extractionMaxEnemyMultiplier);
-        this.currentMaxEnemyCap = (int)(this.baseMaxEnemyCap * this.extractionMaxEnemyMultiplier);
+
+        this.currentMaxEnemiesPerWave = Mathf.CeilToInt(this.baseMaxEnemiesPerWave* extractionMaxEnemyMultiplier);
+        this.currentMaxEnemyCap = Mathf.CeilToInt(this.baseMaxEnemyCap * this.extractionMaxEnemyMultiplier);
+
         this.currentTimeBetweenEnemySpawns = this.baseTimeBetweenEnemySpawns;
     }
 }
