@@ -149,9 +149,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   extractionZone: {fileID: 0}
-  extractionZoneCreditGainRate: 5
-  extractionZoneMaxCreditMultiplier: 5
-  extractionZoneMaxEnemyMultiplier: 5
   enemies:
   - name: 
     prefab: {fileID: 0}
@@ -161,16 +158,19 @@ MonoBehaviour:
     prefab: {fileID: 0}
     cost: 2
     isFlying: 1
-  maxEnemiesPerWave: 5
+  playerLocation: {fileID: 925894595}
   EnemyWaveCapIncrease: 2
   timeBetweenWaves: 8
-  timeBetweenEnemySpawns: 1
-  maxEnemyCap: 10
-  creditGainRate: 1
+  currentCredits: 5
+  baseCreditGainRate: 1
+  baseMaxEnemiesPerWave: 5
+  baseMaxEnemyCap: 10
+  baseTimeBetweenEnemySpawns: 1
+  baseMaxCredits: 20
+  extractionCreditGainRateMultiplier: 2
+  extractionZoneMaxCreditMultiplier: 5
+  extractionMaxEnemyMultiplier: 1.5
   difficultyScale: 1.05
-  credits: 5
-  maxCredits: 20
-  playerLocation: {fileID: 925894595}
 --- !u!4 &255809896
 Transform:
   m_ObjectHideFlags: 0
@@ -726,6 +726,57 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1054573164}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1388551278
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1388551280}
+  - component: {fileID: 1388551279}
+  m_Layer: 5
+  m_Name: UIDocumentDevTool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1388551279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1388551278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PanelSettings: {fileID: 11400000, guid: 1e78771022128b742a8650341387398f, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: ca2ad8328260f477bbc930d67720b9f7, type: 3}
+  m_SortingOrder: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+--- !u!4 &1388551280
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1388551278}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2073875264
 GameObject:
   m_ObjectHideFlags: 0
@@ -858,3 +909,4 @@ SceneRoots:
   - {fileID: 925894593}
   - {fileID: 2073875267}
   - {fileID: 621881428}
+  - {fileID: 1388551280}
