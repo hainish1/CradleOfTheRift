@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemySpawner : MonoBehaviour
 {
@@ -183,6 +184,12 @@ public class EnemySpawner : MonoBehaviour
     {
         Vector3 location = enemy.isFlying ? GetAirLocation() : GetGroundLocation();
 
+        // safety check here
+        if (IsSpawnPositionOnNavSurface(location) == false)
+        {
+            return;
+        }
+
         Instantiate(enemy.prefab, location, Quaternion.identity);
     }
 
@@ -233,12 +240,26 @@ public class EnemySpawner : MonoBehaviour
         this.currentTimeBetweenEnemySpawns = this.baseTimeBetweenEnemySpawns;
     }
 
+    private bool IsSpawnPositionOnNavSurface(Vector3 pos)
+    {
+        NavMeshHit hit;
+
+        if (NavMesh.SamplePosition(pos, out hit, spawnRadius, NavMesh.AllAreas))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     private void SetSpawningParametersExtraction()
     {
         this.currentCreditGainRate = this.baseCreditGainRate * this.extractionCreditGainRateMultiplier;
         this.currentMaxCredits = this.baseMaxCredits * this.extractionMaxCreditMultiplier;
 
-        this.currentMaxEnemiesPerWave = Mathf.CeilToInt(this.baseMaxEnemiesPerWave* extractionMaxEnemyMultiplier);
+        this.currentMaxEnemiesPerWave = Mathf.CeilToInt(this.baseMaxEnemiesPerWave * extractionMaxEnemyMultiplier);
         this.currentMaxEnemyCap = Mathf.CeilToInt(this.baseMaxEnemyCap * this.extractionMaxEnemyMultiplier);
 
         this.currentTimeBetweenEnemySpawns = this.baseTimeBetweenEnemySpawns;
