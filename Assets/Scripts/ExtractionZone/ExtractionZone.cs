@@ -12,7 +12,7 @@ public class ExtractionZone : MonoBehaviour
 
     public event Action<float> ChargeChanged;
     public event Action ExtractionInteracted;
-
+    public event Action ExtractionFinished;
     public event Action WinScreen;
 
     // Update is called once per frame
@@ -59,6 +59,7 @@ public class ExtractionZone : MonoBehaviour
             if (this.currentCharge == this.chargeTime)
             {
                 this.WinScreen.Invoke();
+                this.ExtractionFinished?.Invoke();
             }
         }
     }
