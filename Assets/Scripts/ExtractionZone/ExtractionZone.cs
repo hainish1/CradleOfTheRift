@@ -13,6 +13,8 @@ public class ExtractionZone : MonoBehaviour
     public event Action<float> ChargeChanged;
     public event Action ExtractionInteracted;
 
+    public event Action WinScreen;
+
     // Update is called once per frame
     void Update()
     {
@@ -53,6 +55,11 @@ public class ExtractionZone : MonoBehaviour
             float zeroValue = 0f;
             this.currentCharge = Math.Clamp(this.currentCharge + Time.deltaTime, zeroValue, this.chargeTime);
             this.ChargeChanged?.Invoke(this.currentCharge);
+
+            if (this.currentCharge == this.chargeTime)
+            {
+                this.WinScreen.Invoke();
+            }
         }
     }
 
