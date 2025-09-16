@@ -504,6 +504,17 @@ MonoBehaviour:
     m_Bits: 128
   interactionPromptUI: {fileID: 431937212}
   numCollidersFound: 0
+--- !u!114 &791410305 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7147516038626120348, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+  m_PrefabInstance: {fileID: 791410301}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 791410302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcd7f59827f874952822de3a10d2096d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -710,6 +721,42 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: playerGold
+      value: 
+      objectReference: {fileID: 791410305}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: lootTable.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: lootTable.Array.data[0].dropPercent
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: lootTable.Array.data[1].dropPercent
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: lootTable.Array.data[2].dropPercent
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: lootTable.Array.data[0].lootItemPrefab
+      value: 
+      objectReference: {fileID: 7560352760904144751, guid: a24f20ace697d664583cdf006ad04c1c, type: 3}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: lootTable.Array.data[1].lootItemPrefab
+      value: 
+      objectReference: {fileID: 2716613920656688563, guid: 6de56ea7634e8514e89615abd742a107, type: 3}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: lootTable.Array.data[2].lootItemPrefab
+      value: 
+      objectReference: {fileID: 253841469622825718, guid: aec211ac53c76bb469ad7b1a09483aa1, type: 3}
+    - target: {fileID: 1361198299530405468, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: lootTable
+      value: 
+      objectReference: {fileID: 3978146031558470781}
     - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
       propertyPath: m_Name
       value: Chest
@@ -719,6 +766,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+--- !u!114 &3978146031558470781 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+  m_PrefabInstance: {fileID: 3978146031558470780}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13bc2a9f213cd484b897c7472f0781eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
