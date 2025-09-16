@@ -39,7 +39,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     private float extractionCreditGainRateMultiplier = 2f;
     [SerializeField]
-    private float extractionZoneMaxCreditMultiplier = 1.5f;
+    private float extractionMaxCreditMultiplier = 1.5f;
     [SerializeField]
     private float extractionMaxEnemyMultiplier = 1.5f;
 
@@ -236,7 +236,7 @@ public class EnemySpawner : MonoBehaviour
     private void SetSpawningParametersExtraction()
     {
         this.currentCreditGainRate = this.baseCreditGainRate * this.extractionCreditGainRateMultiplier;
-        this.currentMaxCredits = this.baseMaxCredits * this.extractionZoneMaxCreditMultiplier;
+        this.currentMaxCredits = this.baseMaxCredits * this.extractionMaxCreditMultiplier;
 
         this.currentMaxEnemiesPerWave = Mathf.CeilToInt(this.baseMaxEnemiesPerWave* extractionMaxEnemyMultiplier);
         this.currentMaxEnemyCap = Mathf.CeilToInt(this.baseMaxEnemyCap * this.extractionMaxEnemyMultiplier);
