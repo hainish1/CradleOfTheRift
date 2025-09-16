@@ -4,8 +4,8 @@ using UnityEngine;
 [RequireComponent(typeof(LootTable))]
 public class PROTO_LootTableChest : MonoBehaviour
 {
-    LootTable lootTable;
-    private void OnCollisionEnter(Collision other)
+    public LootTable lootTable;
+    private void OnTriggerEnter(Collider other)
     {
         print("Some collision!");
         if (other.gameObject.CompareTag("Player"))
