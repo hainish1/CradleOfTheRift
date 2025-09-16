@@ -1,0 +1,15 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/DevToolsStyle.uss?fileID=7433441132597879392&amp;guid=13f462d2368714e429d0e9b57d3083a7&amp;type=3#DevToolsStyle" />
+    <engine:VisualElement name="Canvas" style="flex-grow: 1;">
+        <engine:Label text="Background Stats&#10;" name="BackgroundStats" class="display" style="align-self: flex-end; right: auto; translate: 0 20px; -unity-font-style: bold-and-italic;" />
+        <engine:GroupBox style="align-self: flex-end;">
+            <engine:VisualElement class="display" style="flex-grow: 1;">
+                <engine:Label text="MaxEnemiesPerWave:&#10;" name="MaxEnemiesPerWave" />
+                <engine:Label text="EnemyWaveCapIncrease:&#10;" name="EnemyWaveCapIncrease" />
+                <engine:Label text="TimeBetweenWaves:&#10;" name="TimeBetweenWaves" />
+                <engine:Label text="TimeBetweenEnemySpawn: &#10;&#10;" name="TimeBetweenEnemySpawn" style="height: 60px;" />
+                <engine:Label text="DifficultyScale:&#10;" name="DifficultyScale" />
+            </engine:VisualElement>
+        </engine:GroupBox>
+    </engine:VisualElement>
+</engine:UXML>
