@@ -20,7 +20,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform playerCamera;
     [SerializeField] private Transform cameraPivot;
     [SerializeField] private Transform cameraMount;
-    private CharacterController characterController;
+    //private CharacterController characterController;
+    private Rigidbody playerRB;
     private float playerHalfHeight;
     private float playerHalfWidth;
     private float groundedRaycastFloorDistance;
@@ -39,9 +40,10 @@ public class PlayerController : MonoBehaviour
     private Vector2 lookInput;
 
     [Header("Movement Parameters")]
-    [SerializeField] private float movementMaxVelocity;
+    [SerializeField] private float movementMaxSpeed;
     [SerializeField] private float movementAcceleration;
     [SerializeField] private float movementDeceleration;
+    private float currSpeed;
     private Vector2 moveInput;
     private Vector3 moveVector;
 
@@ -86,7 +88,8 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        characterController = GetComponent<CharacterController>();
+        //characterController = GetComponent<CharacterController>();
+        playerRB = GetComponent<Rigidbody>();
         playerInput = new InputSystem_Actions();
         playerActions = playerInput.Player;
     }
@@ -101,19 +104,19 @@ public class PlayerController : MonoBehaviour
 
         jumpActions = playerActions.Jump;
         jumpActions.Enable();
-        jumpActions.started += Jump;
+        jumpActions.started += JumpInputAction;
 
         dashActions = playerActions.Dash;
         dashActions.Enable();
-        dashActions.started += Dash;
+        dashActions.started += DashInputAction;
 
         attackActions = playerActions.Attack;
         attackActions.Enable();
-        attackActions.started += Attack;
+        attackActions.started += AttackInputAction;
 
         pauseActions = playerInput.UI.Pause;
         pauseActions.Enable();
-        pauseActions.started += Pause;
+        pauseActions.started += PauseInputAction;
     }
 
     private void OnDisable()
@@ -125,10 +128,10 @@ public class PlayerController : MonoBehaviour
         attackActions.Enable();
         pauseActions.Disable();
 
-        jumpActions.started -= Jump;
-        dashActions.started -= Dash;
-        attackActions.started -= Attack;
-        pauseActions.started -= Pause;
+        jumpActions.started -= JumpInputAction;
+        dashActions.started -= DashInputAction;
+        attackActions.started -= AttackInputAction;
+        pauseActions.started -= PauseInputAction;
     }
 
     void Start()
@@ -142,6 +145,10 @@ public class PlayerController : MonoBehaviour
         groundedRaycastRadialDistance = playerHalfWidth * 0.7f;
 
         cameraCollisionMasks = environmentLayer.value;
+
+        movementAcceleration = movementMaxSpeed / movementAcceleration;
+        movementDeceleration = movementMaxSpeed / movementDeceleration;
+        currSpeed = 0;
 
         jumpCharges = jumpMaxCharges;
 
@@ -162,7 +169,18 @@ public class PlayerController : MonoBehaviour
         if (lockControls) return;
 
         Look();
-        Move();
+    }
+
+    private void FixedUpdate()
+    {
+        if (isDashing)
+        {
+            DashCase();
+        }
+        else
+        {
+            MoveCase();
+        }
     }
 
     void LateUpdate()
@@ -171,6 +189,7 @@ public class PlayerController : MonoBehaviour
         
         CameraCollision();
     }
+
 
     private void Look()
     {
@@ -186,6 +205,7 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, yRotation, 0); // Rotate the player object horizontally around the y axis.
         cameraPivot.rotation = Quaternion.Euler(xRotation, yRotation, 0); // Rotate the player's camera pivot around the x and y axes.
     }
+
 
     private void CameraCollision()
     {
@@ -203,54 +223,52 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    
-    private void Move()
+
+
+    private Vector3 GetMoveInputDirection()
     {
         moveInput = moveActions.ReadValue<Vector2>();
         Vector3 inputDirection = new Vector3(moveInput.x, 0, moveInput.y);
-        moveVector = transform.TransformDirection(inputDirection).normalized;
+        
+        return transform.TransformDirection(inputDirection).normalized;
+    }
+    
 
-        if (CheckIsGrounded())
+    private void MoveCase()
+    {
+        moveVector = GetMoveInputDirection();
+
+        if (IsGrounded())
         {
-            if (didPerformJump)
-            {
-                verticalVector.y = jumpForce;
-            }
-            else
-            {
-                verticalVector.y = 0;
-            }
-
-            characterController.Move(Time.deltaTime * verticalVector);
+            playerRB.linearDamping = 50;
+            JumpCase();
         }
         else
         {
-            if (didPerformJump)
-            {
-                didPerformJump = false;
-            }
-
-            verticalVector.y += Physics.gravity.y * groundedGravityScale * Time.deltaTime;
-
-            if (verticalVector.y < Physics.gravity.y * groundedGravityScale)
-            {
-                verticalVector.y = Physics.gravity.y * groundedGravityScale;
-            }
-
-            characterController.Move(Time.deltaTime * verticalVector);
+            playerRB.linearDamping = 0;
+            MidairGravity();
         }
 
-        if (isDashing)
+        if (moveVector != Vector3.zero)
         {
-            characterController.Move(Time.deltaTime * dashSpeed * dashVector);
+            Vector3 moveIncrement = Vector3.MoveTowards(moveVector,
+                                                        Time.deltaTime * movementAcceleration * moveVector,
+                                                        Time.deltaTime * movementMaxSpeed);
+            
+            playerRB.AddForce(moveIncrement, ForceMode.VelocityChange);
         }
-        else
-        {
-            characterController.Move(Time.deltaTime * movementMaxVelocity * moveVector);
-        }
+        //else if (currSpeed > 0)
+        //{
+        //    float accelDecrement = currSpeed - movementDeceleration;
+        //    Vector3 moveDecrement = accelDecrement * moveVector;
+        //    Vector3 moveStep = Vector3.MoveTowards(transform.position, Time.deltaTime * moveDecrement, Time.deltaTime * movementMaxSpeed);
+
+        //    characterController.Move(moveStep);
+        //}
     }
 
-    private bool CheckIsGrounded()
+
+    private bool IsGrounded()
     {
         // Exact center of the player's character.
         if (Physics.Raycast(playerCenter.position, Vector2.down, groundedRaycastFloorDistance))
@@ -274,34 +292,71 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    private void Jump(InputAction.CallbackContext context)
+
+    private void JumpInputAction(InputAction.CallbackContext context)
     {
-        if (CheckIsGrounded())
+        if (IsGrounded())
         {
             didPerformJump = true;
         }
     }
 
-    private void Dash(InputAction.CallbackContext context)
+
+    private void JumpCase()
+    {
+        if (didPerformJump)
+        {
+            verticalVector.y = jumpForce;
+        }
+        else
+        {
+            verticalVector.y = 0;
+        }
+
+        //characterController.Move(Time.deltaTime * verticalVector);
+    }
+
+
+    private void MidairGravity()
+    {
+        if (didPerformJump)
+        {
+            didPerformJump = false;
+        }
+
+        verticalVector.y += Physics.gravity.y * groundedGravityScale * Time.deltaTime;
+
+        if (verticalVector.y < Physics.gravity.y * groundedGravityScale)
+        {
+            verticalVector.y = Physics.gravity.y * groundedGravityScale;
+        }
+
+        //characterController.Move(Time.deltaTime * verticalVector);
+    }
+
+
+    private void DashInputAction(InputAction.CallbackContext context)
     {
         if (!isDashing && dashCharges != 0)
         {
-            moveInput = moveActions.ReadValue<Vector2>();
+            dashVector = moveVector = GetMoveInputDirection();
 
-            if (moveInput.x == 0 && moveInput.y == 0)
+            if (dashVector.x == 0 && dashVector.z == 0)
             {
                 dashVector = GetComponentInParent<Transform>().forward;
-            }
-            else
-            {
-                Vector3 inputDirection = new Vector3(moveInput.x, 0, moveInput.y);
-                dashVector = transform.TransformDirection(inputDirection).normalized;
             }
 
             StartCoroutine(InitiateDashCooldown(dashCooldown));
             StartCoroutine(InitiateDashDuration(dashDistance / dashSpeed));
         }
     }
+
+
+    private void DashCase()
+    {
+        //characterController.Move(Time.deltaTime * dashSpeed * dashVector);
+    }
+
 
     private IEnumerator InitiateDashCooldown(float seconds)
     {
@@ -312,6 +367,7 @@ public class PlayerController : MonoBehaviour
         dashCharges++;
     }
 
+
     private IEnumerator InitiateDashDuration(float seconds)
     {
         isDashing = true;
@@ -321,12 +377,14 @@ public class PlayerController : MonoBehaviour
         isDashing = false;
     }
 
-    private void Attack(InputAction.CallbackContext context)
+
+    private void AttackInputAction(InputAction.CallbackContext context)
     {
         
     }
 
-    private void Pause(InputAction.CallbackContext context)
+
+    private void PauseInputAction(InputAction.CallbackContext context)
     {
         //if (gamePaused)
         //{
@@ -361,6 +419,7 @@ public class PlayerController : MonoBehaviour
         //    }
         //}
     }
+
 
     //private void OnDrawGizmos()
     //{
