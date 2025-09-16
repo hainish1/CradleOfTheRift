@@ -30,6 +30,11 @@ public class PlayerAimController : MonoBehaviour
     [SerializeField] private bool snapOnFire = false;
     [SerializeField] private float snapAngleThreshold = 25f;
 
+    [Header("CenterRay aim")]
+    [SerializeField] private Camera cam;
+    [SerializeField] private LayerMask aimMask = ~0;
+    private float maxAimDistance = 500f;
+
 
 
 
@@ -56,11 +61,21 @@ public class PlayerAimController : MonoBehaviour
 
     public Vector3 GetAimDirection(Vector3 origin, Vector3 fallbackForward)
     {
-        if (aimTargetManager != null)
+        // if (aimTargetManager != null)
+        // {
+        //     return (aimTargetManager.transform.position - origin).normalized;
+        // }
+        // return fallbackForward;
+
+        if (!cam) cam = Camera.main;
+        if (!cam) return fallbackForward;
+
+        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        if (Physics.Raycast(ray, out var hit, maxAimDistance, aimMask, QueryTriggerInteraction.Ignore))
         {
-            return (aimTargetManager.transform.position - origin).normalized;
+            return (hit.point - origin).normalized;
         }
-        return fallbackForward;
+        return ray.direction;
     }
 
     void OnEnable()

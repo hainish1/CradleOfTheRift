@@ -91,7 +91,9 @@ public class PlayerShooter : MonoBehaviour
     private void TryToFire(bool force = false)
     {
         if (!aim || !muzzle || !projectilePrefab) return;
-        if (!force && Time.time > nextFireTime) return;
+        // if (!force && Time.time > nextFireTime) return;
+        if (!force && Time.time < nextFireTime) return;
+
 
         nextFireTime = Time.time + (1f / Mathf.Max(0.01f, fireRate));
 
