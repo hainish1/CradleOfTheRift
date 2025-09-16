@@ -65,6 +65,14 @@ public class EnemySpawner : MonoBehaviour
     private float waveCountdown;
     private bool isWaveInProgress = false;
 
+    //Jared UIDEV Getters
+    public int GetCurrentMaxEnemiesPerWave => currentMaxEnemiesPerWave;
+    public float GetCurrentTimeBetweenEnemySpawns => currentTimeBetweenEnemySpawns;
+    public float GetDifficultyScale => difficultyScale;
+    public int GetEnemyWaveCapIncrease => EnemyWaveCapIncrease;  // already serialized
+    public float GetTimeBetweenWaves => timeBetweenWaves;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
