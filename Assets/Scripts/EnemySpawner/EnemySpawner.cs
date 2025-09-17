@@ -27,11 +27,14 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     private float baseWaveCredits = 10f;
     [SerializeField]
-    private int baseMaxEnemyCap = 10;
+    private int startingEnemyCap = 10;
+    [SerializeField]
+    private float enemyCapGrowth = 10f;
     [SerializeField]
     private float baseTimeBetweenEnemySpawns = 1f;
     [SerializeField]
-    private float enemyCapGrowth = 10f;
+    private int globalMaxEnemies = 200;
+
 
 
     [Header("Extraction Wave Settings")]
@@ -42,7 +45,6 @@ public class EnemySpawner : MonoBehaviour
 
 
     private int currentEnemyCount = 0;
-    private float currentWaveCredits;
     private float currentCredits;
     private int currentMaxEnemyCap;
     private float currentTimeBetweenEnemySpawns;
@@ -76,7 +78,6 @@ public class EnemySpawner : MonoBehaviour
         // Sort the list of enemies from cheapest to most expensive
         enemies.Sort((a, b) => { return a.cost - b.cost; });
 
-        SetSpawningParametersRegular();
     }
 
     // Update is called once per frame
@@ -125,19 +126,29 @@ public class EnemySpawner : MonoBehaviour
         this.enemySpawnCountdown = 0f;
         this.currentWave++;
         // Notify UI for change
-        CurrentWaveChanged.Invoke(this.currentWave);
+        CurrentWaveChanged?.Invoke(this.currentWave);
 
         float waveCredits = this.baseWaveCredits * Mathf.Pow(this.difficultyScale, this.currentWave);
+        int waveCap = Mathf.Min(Mathf.CeilToInt(this.startingEnemyCap + this.enemyCapGrowth * Mathf.Pow(difficultyScale, this.currentWave)), this.globalMaxEnemies);
 
         if (this.isExtractionActive)
         {
             waveCredits *= this.extractionCreditMultiplier;
+            waveCap = Mathf.Min(Mathf.CeilToInt(waveCap * this.extractionEnemyCapMultiplier), this.globalMaxEnemies);
+            this.currentTimeBetweenEnemySpawns = this.baseTimeBetweenEnemySpawns;
+        }
+        else
+        {
+            this.currentTimeBetweenEnemySpawns = this.baseTimeBetweenEnemySpawns;
         }
 
         this.currentCredits = waveCredits;
+        this.currentMaxEnemyCap = waveCap;
         
         // Notify UI for change
-        CurrentCreditsChanged.Invoke(this.currentCredits);
+        CurrentCreditsChanged?.Invoke(this.currentCredits);
+        CurrentMaxEnemyCapChanged?.Invoke(this.currentMaxEnemyCap);
+
         GenerateWave();
     }
 
@@ -145,25 +156,13 @@ public class EnemySpawner : MonoBehaviour
     {
         this.isWaveInProgress = false;
         this.waveCountdown = this.timeBetweenWaves;
-
-        this.enemyCapGrowth = this.enemyCapGrowth * this.difficultyScale + 0.25f;
-
-        this.baseMaxEnemyCap = Mathf.Min(Mathf.CeilToInt(enemyCapGrowth), 200);
-
-        if (this.isExtractionActive)
-        {
-            SetSpawningParametersExtraction();
-        }
-        else
-        {
-            SetSpawningParametersRegular();
-        }
     }
 
     private void GenerateWave()
     {
         int lowestCostEnemy = this.enemies[0].cost;
-        while (this.currentCredits >= lowestCostEnemy && this.currentEnemyCount < this.currentMaxEnemyCap)
+        int enemiesToSpawnCount = 0;
+        while (this.currentCredits >= lowestCostEnemy && this.currentEnemyCount + enemiesToSpawnCount < this.currentMaxEnemyCap)
         {
             EnemyType randomEnemy = enemies[UnityEngine.Random.Range(0, enemies.Count)];
 
@@ -171,6 +170,7 @@ public class EnemySpawner : MonoBehaviour
             {
                 this.currentCredits -= randomEnemy.cost;
                 this.enemiesToSpawn.Enqueue(randomEnemy);
+                enemiesToSpawnCount++;
             }
         }
     }
@@ -223,31 +223,11 @@ public class EnemySpawner : MonoBehaviour
     private void OnExtractionZoneStarted()
     {
         this.isExtractionActive = true;
-        SetSpawningParametersExtraction();
     }
 
     private void OnExtractionZoneFinished()
     {
         this.isExtractionActive = false;
-        SetSpawningParametersRegular();
-    }
-
-    private void SetSpawningParametersRegular()
-    {
-        this.currentMaxEnemyCap = this.baseMaxEnemyCap;
-        // Notify UI for change
-        CurrentMaxEnemyCapChanged.Invoke(this.currentMaxEnemyCap);
-
-        this.currentTimeBetweenEnemySpawns = this.baseTimeBetweenEnemySpawns;
-    }
-
-    private void SetSpawningParametersExtraction()
-    {
-        this.currentMaxEnemyCap = Mathf.CeilToInt(this.baseMaxEnemyCap * this.extractionEnemyCapMultiplier);
-        // Notify UI for change
-        CurrentMaxEnemyCapChanged.Invoke(this.currentMaxEnemyCap);
-
-        this.currentTimeBetweenEnemySpawns = this.baseTimeBetweenEnemySpawns;
     }
 
     private bool IsSpawnPositionOnNavSurface(Vector3 pos)
