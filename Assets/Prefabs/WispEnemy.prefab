@@ -602,7 +602,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4109922065730525467}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1b7684082c124f45893380d545b25c1, type: 3}
   m_Name: 
@@ -1020,6 +1020,7 @@ GameObject:
   - component: {fileID: 2155517362727479217}
   - component: {fileID: 4412303297756605295}
   - component: {fileID: 204557455612082024}
+  - component: {fileID: 2851529993679917071}
   m_Layer: 10
   m_Name: WispEnemy
   m_TagString: Untagged
@@ -1145,6 +1146,22 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 128
+  softBody: {fileID: 0}
+--- !u!114 &2851529993679917071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8841140246284276385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b7684082c124f45893380d545b25c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  original: {fileID: 2100000, guid: 6b38742730e330c488cc8d7964788813, type: 2}
+  flash: {fileID: 2100000, guid: a4b62a69d54e80347bd546999c6d4b9e, type: 2}
+  flashDuration: 0.1
 --- !u!1 &9064912426439065413
 GameObject:
   m_ObjectHideFlags: 0

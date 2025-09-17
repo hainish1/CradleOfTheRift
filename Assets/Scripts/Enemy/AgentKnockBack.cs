@@ -14,9 +14,13 @@ public class AgentKnockBack : MonoBehaviour
     float timer;
     bool active;
 
+    [Header("SoftBody")]
+    public SoftBodyPhysics softBody;
+
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        softBody = GetComponentInChildren<SoftBodyPhysics>();
     }
 
     void Update()
@@ -52,11 +56,19 @@ public class AgentKnockBack : MonoBehaviour
             active = true;
             timer = 0f;
             // pause steering 
-            agent.isStopped = true;
-            agent.updatePosition = false;
+            if (agent != null)
+            {
+                agent.isStopped = true;
+                agent.updatePosition = false;
+            }
         }
         externalVelocity += impulse;
         externalVelocity.y = 0f;
+
+        if (softBody != null)
+        {
+            softBody.Impulse();
+        }
     }
 
     void EndKnockback()
@@ -64,9 +76,12 @@ public class AgentKnockBack : MonoBehaviour
         active = false;
         externalVelocity = Vector3.zero;
 
-        agent.Warp(transform.position);
-        agent.updatePosition = true;
-        agent.isStopped = false;
+        if (agent != null)
+        {
+            agent.Warp(transform.position);
+            agent.updatePosition = true;
+            agent.isStopped = false;
+        }
     }
 
     public bool IsKnockbackActive => active;
