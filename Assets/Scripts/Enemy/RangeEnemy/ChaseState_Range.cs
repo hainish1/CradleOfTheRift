@@ -10,7 +10,7 @@ public class ChaseState_Range : EnemyState
 
     public override void Enter()
     {
-        if (enemy.agent != null)
+        if (enemy?.agent != null)
         {
             enemy.agent.isStopped = false;
             enemy.agent.speed = enemyRange.chaseSpeed; // set navmesh speed
