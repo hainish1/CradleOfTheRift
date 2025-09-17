@@ -21,6 +21,9 @@ public class EnemySpawner : MonoBehaviour
 
     [SerializeField]
     private float difficultyScale = 1.03f;
+    [SerializeField]
+    private float spawnRadius = 10f;
+
 
     [Header("Normal Waves Settings")]
     [SerializeField]
@@ -51,8 +54,6 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     private Queue<EnemyType> enemiesToSpawn = new Queue<EnemyType>();
 
-
-    private float spawnRadius = 10f;
     private bool isExtractionActive = false;
     private float waveCountdown;
     private bool isWaveInProgress = false;
