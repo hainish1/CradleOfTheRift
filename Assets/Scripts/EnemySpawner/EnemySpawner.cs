@@ -16,8 +16,6 @@ public class EnemySpawner : MonoBehaviour
 
     [SerializeField]
     private float timeBetweenWaves = 8f;
-    private int currentEnemyCount = 0;
-    private float currentCredits;
 
     [SerializeField]
     private float difficultyScale = 1.03f;
@@ -43,8 +41,8 @@ public class EnemySpawner : MonoBehaviour
     private float extractionEnemyCapMultiplier = 1.5f;
 
 
-
-    private int currentMaxEnemiesPerWave;
+    private int currentEnemyCount = 0;
+    private float currentCredits;
     private int currentMaxEnemyCap;
     private float currentTimeBetweenEnemySpawns;
     private float enemySpawnCountdown = 0f;
@@ -59,10 +57,8 @@ public class EnemySpawner : MonoBehaviour
     private bool isWaveInProgress = false;
 
     //Jared UIDEV Getters
-    public int GetCurrentMaxEnemiesPerWave => currentMaxEnemiesPerWave;
     public float GetCurrentTimeBetweenEnemySpawns => currentTimeBetweenEnemySpawns;
     public float GetDifficultyScale => difficultyScale;
-    // public int GetEnemyWaveCapIncrease => EnemyWaveCapIncrease;  // already serialized
     public float GetTimeBetweenWaves => timeBetweenWaves;
 
 
