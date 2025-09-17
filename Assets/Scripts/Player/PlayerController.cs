@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class PlayerController : MonoBehaviour
 {
@@ -20,7 +21,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform playerCamera;
     [SerializeField] private Transform cameraPivot;
     [SerializeField] private Transform cameraMount;
-    //private CharacterController characterController;
     private Rigidbody playerRB;
     private float playerHalfHeight;
     private float playerHalfWidth;
@@ -40,22 +40,21 @@ public class PlayerController : MonoBehaviour
     private Vector2 lookInput;
 
     [Header("Movement Parameters")]
-    [SerializeField] private float movementMaxSpeed;
-    [SerializeField] private float movementAcceleration;
-    [SerializeField] private float movementDeceleration;
-    private float currSpeed;
+    [SerializeField] private float m_MaxSpeed;
+    [SerializeField] private float m_AccelerationSeconds;
+    [SerializeField] private float m_Deceleration;
+    private float m_Acceleration;
     private Vector2 moveInput;
-    private Vector3 moveVector;
+    private Vector3 moveInputUnitVector;
 
     [Header("Jump Parameters")]
     [SerializeField] private float jumpForce;
     [SerializeField] private int jumpMaxCharges;
-    [SerializeField] private float groundedGravityScale;
-    [SerializeField] private float midairGravityScale;
+    [SerializeField] private float gravityScale;
     [SerializeField] private float strafeScale;
     private bool didPerformJump;
     private int jumpCharges;
-    private Vector3 verticalVector;
+    private Vector3 gravityVector;
 
     //[Header("Coyote Time Parameters")]
     //[SerializeField] private float earlyCoyoteTime;
@@ -65,13 +64,9 @@ public class PlayerController : MonoBehaviour
     //private bool canEarlyJump;
 
     [Header("Dash Parameters")]
-    [SerializeField] private float dashSpeed;
-    [SerializeField] private float dashDistance;
+    [SerializeField] private float dashForce;
     [SerializeField] private float dashCooldown;
-    [SerializeField] private int dashMaxCharges;
-    private bool isDashing;
-    private int dashCharges;
-    private Vector3 dashVector;
+    [SerializeField] private int dashCharges;
 
     //[Header("UI References")]
     //public Image crosshair;
@@ -139,20 +134,17 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        playerHalfHeight = GetComponent<CharacterController>().bounds.extents.y;
-        playerHalfWidth = GetComponent<CharacterController>().bounds.extents.x;
+        playerHalfHeight = GetComponent<CapsuleCollider>().bounds.extents.y;
+        playerHalfWidth = GetComponent<CapsuleCollider>().bounds.extents.x;
         groundedRaycastFloorDistance = playerHalfHeight + 0.1f;
         groundedRaycastRadialDistance = playerHalfWidth * 0.7f;
 
         cameraCollisionMasks = environmentLayer.value;
 
-        movementAcceleration = movementMaxSpeed / movementAcceleration;
-        movementDeceleration = movementMaxSpeed / movementDeceleration;
-        currSpeed = 0;
+        m_Acceleration = m_MaxSpeed / m_AccelerationSeconds;
 
+        gravityVector = gravityScale * Physics.gravity;
         jumpCharges = jumpMaxCharges;
-
-        dashCharges = dashMaxCharges;
 
         //crosshair.enabled = true;
         //pauseMenu.enabled = false;
@@ -173,14 +165,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isDashing)
-        {
-            DashCase();
-        }
-        else
-        {
-            MoveCase();
-        }
+        Move();
     }
 
     void LateUpdate()
@@ -234,37 +219,44 @@ public class PlayerController : MonoBehaviour
     }
     
 
-    private void MoveCase()
+    private void Move()
     {
-        moveVector = GetMoveInputDirection();
+        moveInputUnitVector = GetMoveInputDirection();
 
         if (IsGrounded())
         {
-            playerRB.linearDamping = 50;
-            JumpCase();
+            playerRB.linearDamping = m_Deceleration;
         }
         else
         {
-            playerRB.linearDamping = 0;
-            MidairGravity();
+            if (didPerformJump)
+            {
+                didPerformJump = false;
+            }
+
+            playerRB.linearDamping = 1;
+
+            ApplyGravity();
         }
 
-        if (moveVector != Vector3.zero)
+        // Acceleration
+        if (moveInputUnitVector != Vector3.zero)
         {
-            Vector3 moveIncrement = Vector3.MoveTowards(moveVector,
-                                                        Time.deltaTime * movementAcceleration * moveVector,
-                                                        Time.deltaTime * movementMaxSpeed);
-            
-            playerRB.AddForce(moveIncrement, ForceMode.VelocityChange);
-        }
-        //else if (currSpeed > 0)
-        //{
-        //    float accelDecrement = currSpeed - movementDeceleration;
-        //    Vector3 moveDecrement = accelDecrement * moveVector;
-        //    Vector3 moveStep = Vector3.MoveTowards(transform.position, Time.deltaTime * moveDecrement, Time.deltaTime * movementMaxSpeed);
+            Vector3 accelIncrement = m_Acceleration * moveInputUnitVector;
+            float currSpeed = playerRB.linearVelocity.magnitude;
 
-        //    characterController.Move(moveStep);
-        //}
+            if (currSpeed < m_MaxSpeed)
+            {
+                if (currSpeed + accelIncrement.magnitude > m_MaxSpeed)
+                {
+                    accelIncrement = (m_MaxSpeed - currSpeed) * moveInputUnitVector;
+                }
+
+                playerRB.AddForce(accelIncrement, ForceMode.Acceleration);
+            }
+
+            Debug.Log(playerRB.linearVelocity.magnitude);
+        }
     }
 
 
@@ -298,63 +290,25 @@ public class PlayerController : MonoBehaviour
         if (IsGrounded())
         {
             didPerformJump = true;
+            playerRB.AddForce(jumpForce * Vector3.up, ForceMode.Force);
         }
     }
 
 
-    private void JumpCase()
+    private void ApplyGravity()
     {
-        if (didPerformJump)
-        {
-            verticalVector.y = jumpForce;
-        }
-        else
-        {
-            verticalVector.y = 0;
-        }
-
-        //characterController.Move(Time.deltaTime * verticalVector);
-    }
-
-
-    private void MidairGravity()
-    {
-        if (didPerformJump)
-        {
-            didPerformJump = false;
-        }
-
-        verticalVector.y += Physics.gravity.y * groundedGravityScale * Time.deltaTime;
-
-        if (verticalVector.y < Physics.gravity.y * groundedGravityScale)
-        {
-            verticalVector.y = Physics.gravity.y * groundedGravityScale;
-        }
-
-        //characterController.Move(Time.deltaTime * verticalVector);
+        playerRB.AddForce(gravityVector, ForceMode.Acceleration);
     }
 
 
     private void DashInputAction(InputAction.CallbackContext context)
     {
-        if (!isDashing && dashCharges != 0)
+        if (dashCharges != 0)
         {
-            dashVector = moveVector = GetMoveInputDirection();
-
-            if (dashVector.x == 0 && dashVector.z == 0)
-            {
-                dashVector = GetComponentInParent<Transform>().forward;
-            }
-
-            StartCoroutine(InitiateDashCooldown(dashCooldown));
-            StartCoroutine(InitiateDashDuration(dashDistance / dashSpeed));
+            playerRB.AddForce(dashForce * GetMoveInputDirection(), ForceMode.Force);
         }
-    }
 
-
-    private void DashCase()
-    {
-        //characterController.Move(Time.deltaTime * dashSpeed * dashVector);
+        StartCoroutine(InitiateDashCooldown(dashCooldown));
     }
 
 
@@ -365,16 +319,6 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(seconds);
 
         dashCharges++;
-    }
-
-
-    private IEnumerator InitiateDashDuration(float seconds)
-    {
-        isDashing = true;
-
-        yield return new WaitForSeconds(seconds);
-
-        isDashing = false;
     }
 
 
