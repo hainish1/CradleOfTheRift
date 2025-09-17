@@ -135,9 +135,9 @@ MonoBehaviour:
   downwardClampAngle: -55
   cameraLerpSpeed: 1
   cameraCollisionOffset: 0.95
-  m_MaxSpeed: 10
-  m_AccelerationSeconds: 1
-  m_DecelerationSeconds: 1
+  m_MaxSpeed: 50
+  m_AccelerationSeconds: 0.5
+  m_LinearDamping: 10
   jumpForce: 1000
   jumpMaxCharges: 0
   gravityScale: 4.905

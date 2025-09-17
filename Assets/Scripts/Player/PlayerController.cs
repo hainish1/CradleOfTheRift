@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class PlayerController : MonoBehaviour
 {
@@ -42,7 +41,7 @@ public class PlayerController : MonoBehaviour
     [Header("Movement Parameters")]
     [SerializeField] private float m_MaxSpeed;
     [SerializeField] private float m_AccelerationSeconds;
-    [SerializeField] private float m_Deceleration;
+    [SerializeField] private float m_LinearDamping;
     private float m_Acceleration;
     private Vector2 moveInput;
     private Vector3 moveInputUnitVector;
@@ -142,6 +141,7 @@ public class PlayerController : MonoBehaviour
         cameraCollisionMasks = environmentLayer.value;
 
         m_Acceleration = m_MaxSpeed / m_AccelerationSeconds;
+        playerRB.linearDamping = m_LinearDamping;
 
         gravityVector = gravityScale * Physics.gravity;
         jumpCharges = jumpMaxCharges;
@@ -217,42 +217,56 @@ public class PlayerController : MonoBehaviour
         
         return transform.TransformDirection(inputDirection).normalized;
     }
+
+
+    private float GetLinearDampingCorrection()
+    {
+        float appliedDamping = 1 - m_LinearDamping * Time.deltaTime;
+        return 1 / appliedDamping;
+    }
     
 
     private void Move()
     {
         moveInputUnitVector = GetMoveInputDirection();
 
-        if (IsGrounded())
-        {
-            playerRB.linearDamping = m_Deceleration;
-        }
-        else
+        if (!IsGrounded())
         {
             if (didPerformJump)
             {
                 didPerformJump = false;
             }
 
-            playerRB.linearDamping = 1;
-
             ApplyGravity();
         }
 
-        // Acceleration
+        
         if (moveInputUnitVector != Vector3.zero)
         {
-            Vector3 accelIncrement = m_Acceleration * moveInputUnitVector;
-            float currSpeed = playerRB.linearVelocity.magnitude;
+            // IS NOT TAKING INTO ACCOUNT THE DIRECTION OF THE CURRSPEED
 
-            if (currSpeed < m_MaxSpeed)
+
+
+            float movementDampingCorrection = GetLinearDampingCorrection();
+
+            float linearVelX = playerRB.linearVelocity.x;
+            float linearVelY = playerRB.linearVelocity.y;
+            float linearVelZ = playerRB.linearVelocity.z;
+            playerRB.linearVelocity = new Vector3(linearVelX * movementDampingCorrection,
+                                                  linearVelY,
+                                                  linearVelZ * movementDampingCorrection);
+
+            Vector3 currSpeed = playerRB.linearVelocity;
+            Vector3 accelIncrement = Time.deltaTime * (m_MaxSpeed / m_AccelerationSeconds) * moveInputUnitVector;
+
+            if (currSpeed.magnitude < m_MaxSpeed)
             {
-                if (currSpeed + accelIncrement.magnitude > m_MaxSpeed)
+                if (currSpeed.magnitude + accelIncrement.magnitude > m_MaxSpeed)
                 {
-                    accelIncrement = (m_MaxSpeed - currSpeed) * moveInputUnitVector;
+                    accelIncrement = (m_MaxSpeed - currSpeed.magnitude) * moveInputUnitVector;
                 }
 
-                playerRB.AddForce(accelIncrement, ForceMode.Acceleration);
+                playerRB.AddForce(accelIncrement, ForceMode.VelocityChange);
             }
 
             Debug.Log(playerRB.linearVelocity.magnitude);
@@ -297,6 +311,13 @@ public class PlayerController : MonoBehaviour
 
     private void ApplyGravity()
     {
+        float gravityDampingCorrection = GetLinearDampingCorrection();
+
+        float linearVelX = playerRB.linearVelocity.x;
+        float linearVelY = playerRB.linearVelocity.y;
+        float linearVelZ = playerRB.linearVelocity.z;
+        playerRB.linearVelocity = new Vector3(linearVelX, linearVelY * gravityDampingCorrection, linearVelZ);
+
         playerRB.AddForce(gravityVector, ForceMode.Acceleration);
     }
 
