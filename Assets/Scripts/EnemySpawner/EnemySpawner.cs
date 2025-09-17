@@ -177,7 +177,9 @@ public class EnemySpawner : MonoBehaviour
             return;
         }
 
-        Instantiate(enemy.prefab, location, Quaternion.identity);
+        GameObject enemyObj = Instantiate(enemy.prefab, location, Quaternion.identity);
+        EnemyHealth enemyComponent = enemyObj.GetComponent<EnemyHealth>();
+        enemyComponent.EnemyDied += OnEnemyDied;
     }
 
     private Vector3 GetGroundLocation()
@@ -228,11 +230,17 @@ public class EnemySpawner : MonoBehaviour
         this.currentMaxEnemyCap = Mathf.CeilToInt(this.baseMaxEnemyCap * this.extractionEnemyCapMultiplier);
         this.currentTimeBetweenEnemySpawns = this.baseTimeBetweenEnemySpawns;
     }
-    
+
     private bool IsSpawnPositionOnNavSurface(Vector3 pos)
     {
         NavMeshHit hit;
         return NavMesh.SamplePosition(pos, out hit, spawnRadius, NavMesh.AllAreas);
+    }
+
+    private void OnEnemyDied(EnemyHealth enemy)
+    {
+        this.currentEnemyCount = Math.Max(0, this.currentEnemyCount - 1);
+        Debug.Log("Curent Enemy Count: " + this.currentEnemyCount + " Enemy cap: " + this.currentMaxEnemyCap);
     }
 }
 
