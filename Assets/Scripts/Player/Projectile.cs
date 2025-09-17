@@ -70,7 +70,7 @@ public class Projectile : MonoBehaviour
             var flash = collision.collider.GetComponentInParent<TargetFlash>();
             if (flash != null) flash.Flash();
 
-            enemy.ApplyDamage(damage);
+            // enemy.ApplyDamage(damage);
         }
 
         if (collision.rigidbody != null)
@@ -78,7 +78,11 @@ public class Projectile : MonoBehaviour
             Vector3 force = rb.linearVelocity.normalized * hitForce;
             collision.rigidbody.AddForceAtPosition(force, collision.contacts[0].point, ForceMode.Impulse);
         }
-        
+        var damageable = collision.collider.GetComponentInParent<IDamageable>();
+        if (damageable != null && !damageable.IsDead)
+        {
+            damageable.TakeDamage(damage);
+        }
 
         // plkace to add impact effects later
 

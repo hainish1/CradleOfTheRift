@@ -82,13 +82,14 @@ GameObject:
   - component: {fileID: 7738743892704107704}
   - component: {fileID: 8032525674095066417}
   - component: {fileID: 1932630377921340712}
+  - component: {fileID: 1162765825911862605}
   m_Layer: 10
   m_Name: SlimeEnemyWobble
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &984479434153791223
 Transform:
   m_ObjectHideFlags: 0
@@ -158,6 +159,7 @@ MonoBehaviour:
   dragSpeed: 6
   dragDuration: 1
   restDuration: 0.25
+  slamDamage: 1
   windupTime: 0.5
   chargeSpeed: 30
   chargetTime: 0.18
@@ -238,6 +240,20 @@ MonoBehaviour:
   tiltAmount: 0.05
   wobbleShake: 0.06
   fallBackWobble: 1
+--- !u!114 &1162765825911862605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6223163396465808229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 3
+  cleanupDelay: 0
 --- !u!1 &6380071158745332297
 GameObject:
   m_ObjectHideFlags: 0

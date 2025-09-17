@@ -17825,41 +17825,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1583709609}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1593096709 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2156074717465341535, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-  m_PrefabInstance: {fileID: 1246495085930366174}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1593096715
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1593096709}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca7de3aefa901374ba29464584a3109a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CameraRadius: 0.4
-  Decollision:
-    Enabled: 0
-    ObstacleLayers:
-      serializedVersion: 2
-      m_Bits: 1
-    UseFollowTarget:
-      Enabled: 0
-      YOffset: 0
-    Damping: 0.5
-    SmoothingTime: 0
-  TerrainResolution:
-    Enabled: 1
-    TerrainLayers:
-      serializedVersion: 2
-      m_Bits: 65
-    MaximumRaycast: 10
-    Damping: 0.5
 --- !u!1 &1593228986
 GameObject:
   m_ObjectHideFlags: 0
@@ -23976,93 +23941,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1432282888696024351, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: AimDistance
-      value: 500
-      objectReference: {fileID: 0}
-    - target: {fileID: 1432282888696024351, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: NoiseCancellation
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3125288608766874585, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
       propertyPath: m_Name
       value: Player_2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4121007117113672833, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: AvoidObstacles.CameraRadius
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4121007117113672833, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: AvoidObstacles.DampingFromCollision
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4121007117113672833, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: AvoidObstacles.DampingIntoCollision
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4790585195115854388, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.451
-      objectReference: {fileID: 0}
-    - target: {fileID: 4790585195115854388, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.481
       objectReference: {fileID: 0}
     - target: {fileID: 6144616804383424306, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
       propertyPath: cam
       value: 
       objectReference: {fileID: 330585545}
-    - target: {fileID: 6144616804383424306, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: aimMask.m_Bits
-      value: 1911
-      objectReference: {fileID: 0}
-    - target: {fileID: 6144616804383424306, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: snapAngleThreshold
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6556816101286639330, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 3.8009999
-      objectReference: {fileID: 0}
-    - target: {fileID: 6556816101286639330, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -26.481
-      objectReference: {fileID: 0}
-    - target: {fileID: 7027353974802658120, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7027353974802658120, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: AvoidObstacles.Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7027353974802658120, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: AvoidObstacles.Strategy
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7027353974802658120, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: TransparentLayers.m_Bits
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7027353974802658120, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: MinimumDistanceFromTarget
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7027353974802658120, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: AvoidObstacles.CameraRadius
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7027353974802658120, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      propertyPath: AvoidObstacles.MaximumEffort
-      value: 2
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2156074717465341535, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1593096715}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
 --- !u!1001 &3628816787624334220
 PrefabInstance:
@@ -24072,10 +23962,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 204557455612082024, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
-      propertyPath: collisionMask.m_Bits
-      value: 384
-      objectReference: {fileID: 0}
     - target: {fileID: 4412303297756605295, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
       propertyPath: target
       value: 
@@ -24083,10 +23969,6 @@ PrefabInstance:
     - target: {fileID: 8841140246284276385, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
       propertyPath: m_Name
       value: WispEnemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 8841140246284276385, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9083025586867818779, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -24188,10 +24070,6 @@ PrefabInstance:
     - target: {fileID: 9052771768225873463, guid: d4e3c7a37c4629546b7d24154a188a05, type: 3}
       propertyPath: m_Name
       value: SlimeEnemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 9052771768225873463, guid: d4e3c7a37c4629546b7d24154a188a05, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

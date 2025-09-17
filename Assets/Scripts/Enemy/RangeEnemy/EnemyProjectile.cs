@@ -77,7 +77,11 @@ public class EnemyProjectile : MonoBehaviour
             Vector3 force = rb.linearVelocity.normalized * hitForce;
             collision.rigidbody.AddForceAtPosition(force, collision.GetContact(0).point, ForceMode.Impulse);
         }
-        
+        var damageable = collision.collider.GetComponentInParent<IDamageable>();
+        if (damageable != null && !damageable.IsDead)
+        {
+            damageable.TakeDamage(damage);
+        }
         
 
         // plkace to add impact effects later

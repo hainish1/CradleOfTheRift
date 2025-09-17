@@ -1021,13 +1021,14 @@ GameObject:
   - component: {fileID: 4412303297756605295}
   - component: {fileID: 204557455612082024}
   - component: {fileID: 2851529993679917071}
+  - component: {fileID: 3349805392606994707}
   m_Layer: 10
   m_Name: WispEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &9083025586867818779
 Transform:
   m_ObjectHideFlags: 0
@@ -1036,7 +1037,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8841140246284276385}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: -0.00000035762784}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 12.21, y: 3.91, z: 15.38}
   m_LocalScale: {x: 2.15, y: 2.15, z: 2.15}
   m_ConstrainProportionsScale: 1
@@ -1145,7 +1146,7 @@ MonoBehaviour:
   maxDuration: 0.35
   collisionMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 384
   softBody: {fileID: 0}
 --- !u!114 &2851529993679917071
 MonoBehaviour:
@@ -1162,6 +1163,20 @@ MonoBehaviour:
   original: {fileID: 2100000, guid: 6b38742730e330c488cc8d7964788813, type: 2}
   flash: {fileID: 2100000, guid: a4b62a69d54e80347bd546999c6d4b9e, type: 2}
   flashDuration: 0.1
+--- !u!114 &3349805392606994707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8841140246284276385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 3
+  cleanupDelay: 0
 --- !u!1 &9064912426439065413
 GameObject:
   m_ObjectHideFlags: 0
