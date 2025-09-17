@@ -10,6 +10,7 @@ public class Projectile : MonoBehaviour
     [Header("hit")]
     [SerializeField] private int damage = 1;
     [SerializeField] private float hitForce = 8f;
+    [SerializeField] private float knockBackImpulse = 8f;
     [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
 
     Rigidbody rb;
@@ -52,18 +53,35 @@ public class Projectile : MonoBehaviour
 
         // check if collided with enemy and if yes then damage it
         var enemy = collision.collider.GetComponentInParent<Enemy>();
+        var kb = enemy?.GetComponent<AgentKnockBack>();
+
+        if (kb != null)
+        {
+            var contact = collision.GetContact(0);
+
+            Vector3 dir = -contact.normal; // opposite of contact point
+            dir.y = 0f;
+            if (dir.sqrMagnitude > 0.0001f) dir.Normalize();
+
+            kb.ApplyImpulse(dir * knockBackImpulse);
+        }
         if (enemy != null)
         {
             var flash = collision.collider.GetComponentInParent<TargetFlash>();
             if (flash != null) flash.Flash();
 
-            enemy.ApplyDamage(damage);
+            // enemy.ApplyDamage(damage);
         }
 
         if (collision.rigidbody != null)
         {
             Vector3 force = rb.linearVelocity.normalized * hitForce;
             collision.rigidbody.AddForceAtPosition(force, collision.contacts[0].point, ForceMode.Impulse);
+        }
+        var damageable = collision.collider.GetComponentInParent<IDamageable>();
+        if (damageable != null && !damageable.IsDead)
+        {
+            damageable.TakeDamage(damage);
         }
 
         // plkace to add impact effects later

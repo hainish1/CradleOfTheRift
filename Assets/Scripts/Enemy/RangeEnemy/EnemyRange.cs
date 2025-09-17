@@ -83,7 +83,7 @@ public class EnemyRange : Enemy
         Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
 
         EnemyProjectile projectile = Instantiate(projectilePrefab, spawnPoint, rotation);
-        projectile.Init(direction * projectileSpeed, projectileMask, GetComponentsInChildren<Collider>());
+        projectile.Init(direction * projectileSpeed, projectileMask);
     }
 
 }
