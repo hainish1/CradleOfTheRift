@@ -348,6 +348,7 @@ GameObject:
   - component: {fileID: 4121007117113672833}
   - component: {fileID: 1432282888696024351}
   - component: {fileID: 7027353974802658120}
+  - component: {fileID: 8092161170305604429}
   m_Layer: 0
   m_Name: Free Camera
   m_TagString: Untagged
@@ -364,7 +365,7 @@ Transform:
   m_GameObject: {fileID: 2156074717465341535}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.3500001, z: -26}
+  m_LocalPosition: {x: 0, y: 3.8009999, z: -26.481}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -436,9 +437,9 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 81
     IgnoreTag: Player
-    CameraRadius: 1
-    DampingIntoCollision: 0.17
-    DampingFromCollision: 0.17
+    CameraRadius: 0.2
+    DampingIntoCollision: 0
+    DampingFromCollision: 0.2
 --- !u!114 &1432282888696024351
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -455,7 +456,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 119
   IgnoreTag: Player
-  AimDistance: 200
+  AimDistance: 500
   NoiseCancellation: 1
 --- !u!114 &7027353974802658120
 MonoBehaviour:
@@ -464,7 +465,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2156074717465341535}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
   m_Name: 
@@ -476,17 +477,17 @@ MonoBehaviour:
   TransparentLayers:
     serializedVersion: 2
     m_Bits: 0
-  MinimumDistanceFromTarget: 5
+  MinimumDistanceFromTarget: 2
   AvoidObstacles:
     Enabled: 1
     DistanceLimit: 10
     MinimumOcclusionTime: 0.03
-    CameraRadius: 0.4
+    CameraRadius: 0.2
     UseFollowTarget:
       Enabled: 0
       YOffset: 0
-    Strategy: 0
-    MaximumEffort: 4
+    Strategy: 1
+    MaximumEffort: 2
     SmoothingTime: 0.034
     Damping: 3.68
     DampingWhenOccluded: 2.03
@@ -496,6 +497,36 @@ MonoBehaviour:
     NearLimit: 5
     FarLimit: 30
     MaxQualityBoost: 0.2
+--- !u!114 &8092161170305604429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2156074717465341535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca7de3aefa901374ba29464584a3109a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CameraRadius: 0.4
+  Decollision:
+    Enabled: 0
+    ObstacleLayers:
+      serializedVersion: 2
+      m_Bits: 1
+    UseFollowTarget:
+      Enabled: 0
+      YOffset: 0
+    Damping: 0.5
+    SmoothingTime: 0
+  TerrainResolution:
+    Enabled: 1
+    TerrainLayers:
+      serializedVersion: 2
+      m_Bits: 65
+    MaximumRaycast: 10
+    Damping: 0.5
 --- !u!1 &2552273778486149643
 GameObject:
   m_ObjectHideFlags: 0
@@ -801,6 +832,7 @@ GameObject:
   - component: {fileID: 1199098995977074769}
   - component: {fileID: 6357073012548001276}
   - component: {fileID: 8412994727944370136}
+  - component: {fileID: 4827005609282782493}
   - component: {fileID: 1052831856790605420}
   - component: {fileID: 1385593235523640700}
   - component: {fileID: 3685147122863142574}
@@ -881,6 +913,19 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4827005609282782493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3125288608766874585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a7ed60354613b458e535d5088edaa0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 5
 --- !u!114 &1052831856790605420
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1022,7 +1067,7 @@ Transform:
   m_GameObject: {fileID: 3788260245870153528}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.451, z: -0.481}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1049,7 +1094,11 @@ MonoBehaviour:
   recenterDamping: 0.05
   fireRecenterDamping: 0.05
   snapOnFire: 1
-  snapAngleThreshold: 25
+  snapAngleThreshold: 0
+  cam: {fileID: 0}
+  aimMask:
+    serializedVersion: 2
+    m_Bits: 1911
   playerRoot: {fileID: 1199098995977074769}
   aimTargetManager: {fileID: 882284263822469768}
 --- !u!1 &4058202553057823803

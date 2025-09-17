@@ -4,9 +4,9 @@ using UnityEngine.AI;
 
 public abstract class Enemy : MonoBehaviour
 {
-    [Header("Test Health Stuff")]
-    public int maxHealth = 3;
-    public int currentHealth;
+    // [Header("Test Health Stuff")]
+    // public int maxHealth = 3;
+    // public int currentHealth;
 
     [Header("Target settings")]
     public Transform target;
@@ -32,7 +32,7 @@ public abstract class Enemy : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         stateMachine = new EnemyStateMachine();
 
-        currentHealth = maxHealth;
+        // currentHealth = maxHealth;
     }
 
     public virtual void Start()
@@ -48,11 +48,11 @@ public abstract class Enemy : MonoBehaviour
         }
     }
 
-    public void ApplyDamage(int amount)
-    {
-        currentHealth -= amount;
-        if (currentHealth <= 0) Die();
-    }
+    // public void ApplyDamage(int amount)
+    // {
+    //     currentHealth -= amount;
+    //     if (currentHealth <= 0) Die();
+    // }
 
     public virtual void Die()
     {

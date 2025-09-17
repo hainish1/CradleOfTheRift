@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerGold : MonoBehaviour
 {
     public event Action<int> goldChanged;
-    private int gold = 0;
+    private int gold = 10;
     public int Gold
     {
         get => this.gold;
@@ -25,9 +25,9 @@ public class PlayerGold : MonoBehaviour
         {
             this.Gold -= cost;
 
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 }
