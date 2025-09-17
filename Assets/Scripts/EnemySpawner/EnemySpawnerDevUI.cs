@@ -5,40 +5,40 @@ using UnityEngine.UIElements;
 public class EnemySpawnerUI : MonoBehaviour
 {
     [SerializeField] private EnemySpawner spawner;
-
-    private Label maxEnemiesPerWaveLabel;
-    private Label enemyWaveCapIncreaseLabel;
-    private Label timeBetweenWavesLabel;
-    private Label timeBetweenEnemySpawnLabel;
-    private Label difficultyScaleLabel;
-
-
     private Label currentEnemyCountLabel;
     private Label currentCreditsLabel;
-    private Label currentMaxEnemyCap;
+    private Label currentMaxEnemyCapLabel;
     private Label currentWaveLabel;
 
-    private void OnEnable()
+    void Start()
     {
-        var root = GetComponent<UIDocument>().rootVisualElement;
+        VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
-        // Grab references to the labels by their UXML name attributes
-        maxEnemiesPerWaveLabel = root.Q<Label>("MaxEnemiesPerWave");
-        enemyWaveCapIncreaseLabel = root.Q<Label>("EnemyWaveCapIncrease");
-        timeBetweenWavesLabel = root.Q<Label>("TimeBetweenWaves");
-        timeBetweenEnemySpawnLabel = root.Q<Label>("TimeBetweenEnemySpawn");
-        difficultyScaleLabel = root.Q<Label>("DifficultyScale");
+        this.currentEnemyCountLabel = root.Q<Label>("CurrentEnemyCount");
+        this.currentCreditsLabel = root.Q<Label>("CurrentCredits");
+        this.currentMaxEnemyCapLabel = root.Q<Label>("CurrentMaxEnemyCap");
+        this.currentWaveLabel = root.Q<Label>("CurrentWave");
+
+        this.spawner.CurrentEnemyCountChanged += OnCurrentEnemyCountChanged;
+        this.spawner.CurrentCreditsChanged += OnCurrentCreditsChanged;
+        this.spawner.CurrentMaxEnemyCapChanged += OnCurrentMaxEnemyCapChanged;
+        this.spawner.CurrentWaveChanged += OnCurrentWaveChanged;
     }
 
-    private void Update()
-    {
-        if (spawner == null) return;
+    private void OnCurrentEnemyCountChanged(int currentChange) {
+        this.currentEnemyCountLabel.text = $"Current Enemy Count: {currentChange}";
+    }
 
-        // Update UI text every frame (cheap enough for these few fields in early Development)
-        // maxEnemiesPerWaveLabel.text     = $"MaxEnemiesPerWave: {spawner.GetCurrentMaxEnemiesPerWave}";
-        // enemyWaveCapIncreaseLabel.text  = $"EnemyWaveCapIncrease: {spawner.GetEnemyWaveCapIncrease}";
-        timeBetweenWavesLabel.text      = $"TimeBetweenWaves: {spawner.GetTimeBetweenWaves:F1}";
-        timeBetweenEnemySpawnLabel.text = $"TimeBetweenEnemySpawn: {spawner.GetCurrentTimeBetweenEnemySpawns:F1}";
-        difficultyScaleLabel.text       = $"DifficultyScale: {spawner.GetDifficultyScale:F2}";
+    private void OnCurrentCreditsChanged(float currentChange) {
+        this.currentCreditsLabel.text =  $"Current Credits: {currentChange:F3}";
+    }
+
+    private void OnCurrentMaxEnemyCapChanged(int currentChange) {
+        this.currentMaxEnemyCapLabel.text =  $"Current Max Enemy Cap: {currentChange}";
+
+    }
+
+    private void OnCurrentWaveChanged(int currentChange) { 
+        this.currentWaveLabel.text =  $"Current Wave: {currentChange}";
     }
 }
