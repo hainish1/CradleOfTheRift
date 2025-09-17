@@ -15,6 +15,7 @@ public class PlayerShooter : MonoBehaviour
 
     [Header("Fire info")]
     [SerializeField] private float fireRate = 10f;
+    [SerializeField] private bool fullAuto = false;
 
     [Header("Projectiles")]
     [SerializeField] private Projectile projectilePrefab;
@@ -73,14 +74,24 @@ public class PlayerShooter : MonoBehaviour
 
     private void OnFireStarted(InputAction.CallbackContext _)
     {
-        isFiring = true;
-        aim?.ForceCoupleOnFire();
-        TryToFire(true);
+        if (fullAuto)
+        {
+            isFiring = true;
+            aim?.ForceCoupleOnFire();
+            TryToFire(true);
+        }
+        else
+        {
+            TryToFire();
+        }
     }
 
     private void OnFirePerformed(InputAction.CallbackContext _)
     {
-        isFiring = false;
+        if (!fullAuto)
+        {
+            isFiring = false;
+        }
     }
 
     private void OnFireCancelled(InputAction.CallbackContext _)
