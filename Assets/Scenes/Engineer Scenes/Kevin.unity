@@ -555,7 +555,7 @@ Transform:
   m_GameObject: {fileID: 1121424011}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.45, y: 0, z: 0}
+  m_LocalPosition: {x: -0.3, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -776,7 +776,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 11.023, y: 1, z: 13.711}
+  m_LocalScale: {x: 3.6125677, y: 1, z: 3.081273}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -870,13 +870,33 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 542838643}
     - target: {fileID: 4574844188995543741, guid: 387d2b1a00bda40488a597a10c250d7c, type: 3}
+      propertyPath: difficultyScale
+      value: 1.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574844188995543741, guid: 387d2b1a00bda40488a597a10c250d7c, type: 3}
+      propertyPath: enemies.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574844188995543741, guid: 387d2b1a00bda40488a597a10c250d7c, type: 3}
+      propertyPath: enemies.Array.data[2].cost
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574844188995543741, guid: 387d2b1a00bda40488a597a10c250d7c, type: 3}
       propertyPath: enemies.Array.data[0].prefab
       value: 
-      objectReference: {fileID: 9052771768225873463, guid: d4e3c7a37c4629546b7d24154a188a05, type: 3}
+      objectReference: {fileID: 1811548768040379106, guid: 387975cf047156f47852761f4857d2a5, type: 3}
     - target: {fileID: 4574844188995543741, guid: 387d2b1a00bda40488a597a10c250d7c, type: 3}
       propertyPath: enemies.Array.data[1].prefab
       value: 
+      objectReference: {fileID: 3359697833677074510, guid: 92f2ea08ef58c7446bfa197b49ab3018, type: 3}
+    - target: {fileID: 4574844188995543741, guid: 387d2b1a00bda40488a597a10c250d7c, type: 3}
+      propertyPath: enemies.Array.data[2].prefab
+      value: 
       objectReference: {fileID: 8841140246284276385, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
+    - target: {fileID: 4574844188995543741, guid: 387d2b1a00bda40488a597a10c250d7c, type: 3}
+      propertyPath: enemies.Array.data[2].isFlying
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6882928657867200001, guid: 387d2b1a00bda40488a597a10c250d7c, type: 3}
       propertyPath: m_Name
       value: EnemySpawner
