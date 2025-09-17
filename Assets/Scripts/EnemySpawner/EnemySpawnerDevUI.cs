@@ -30,7 +30,7 @@ public class EnemySpawnerUI : MonoBehaviour
 
         // Update UI text every frame (cheap enough for these few fields in early Development)
         maxEnemiesPerWaveLabel.text     = $"MaxEnemiesPerWave: {spawner.GetCurrentMaxEnemiesPerWave}";
-        enemyWaveCapIncreaseLabel.text  = $"EnemyWaveCapIncrease: {spawner.GetEnemyWaveCapIncrease}";
+        // enemyWaveCapIncreaseLabel.text  = $"EnemyWaveCapIncrease: {spawner.GetEnemyWaveCapIncrease}";
         timeBetweenWavesLabel.text      = $"TimeBetweenWaves: {spawner.GetTimeBetweenWaves:F1}";
         timeBetweenEnemySpawnLabel.text = $"TimeBetweenEnemySpawn: {spawner.GetCurrentTimeBetweenEnemySpawns:F1}";
         difficultyScaleLabel.text       = $"DifficultyScale: {spawner.GetDifficultyScale:F2}";

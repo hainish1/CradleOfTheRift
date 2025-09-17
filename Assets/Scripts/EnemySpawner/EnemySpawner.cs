@@ -15,39 +15,32 @@ public class EnemySpawner : MonoBehaviour
 
 
     [SerializeField]
-    private int EnemyWaveCapIncrease = 2;
-    [SerializeField]
     private float timeBetweenWaves = 8f;
     private int currentEnemyCount = 0;
-    [SerializeField]
-    private float currentCredits = 5f;
+    private float currentCredits;
 
+    [SerializeField]
+    private float difficultyScale = 1.03f;
 
     [Header("Normal Waves Settings")]
     [SerializeField]
-    private float baseCreditGainRate = 1f;
-    [SerializeField]
-    private int baseMaxEnemiesPerWave = 5;
+    private float baseWaveCredits = 10f;
     [SerializeField]
     private int baseMaxEnemyCap = 10;
     [SerializeField]
     private float baseTimeBetweenEnemySpawns = 1f;
     [SerializeField]
-    private float baseMaxCredits = 20f;
+    private float enemyCapGrowth = 10f;
 
 
     [Header("Extraction Wave Settings")]
     [SerializeField]
-    private float extractionCreditGainRateMultiplier = 2f;
+    private float extractionCreditMultiplier = 2f;
     [SerializeField]
-    private float extractionMaxCreditMultiplier = 1.5f;
-    [SerializeField]
-    private float extractionMaxEnemyMultiplier = 1.5f;
+    private float extractionEnemyCapMultiplier = 1.5f;
 
 
 
-    private float currentCreditGainRate;
-    private float currentMaxCredits;
     private int currentMaxEnemiesPerWave;
     private int currentMaxEnemyCap;
     private float currentTimeBetweenEnemySpawns;
@@ -55,8 +48,6 @@ public class EnemySpawner : MonoBehaviour
     private int currentWave = 0;
 
 
-    [SerializeField]
-    private float difficultyScale = 1.01f;
     [SerializeField]
     private Queue<EnemyType> enemiesToSpawn = new Queue<EnemyType>();
 
@@ -70,7 +61,7 @@ public class EnemySpawner : MonoBehaviour
     public int GetCurrentMaxEnemiesPerWave => currentMaxEnemiesPerWave;
     public float GetCurrentTimeBetweenEnemySpawns => currentTimeBetweenEnemySpawns;
     public float GetDifficultyScale => difficultyScale;
-    public int GetEnemyWaveCapIncrease => EnemyWaveCapIncrease;  // already serialized
+    // public int GetEnemyWaveCapIncrease => EnemyWaveCapIncrease;  // already serialized
     public float GetTimeBetweenWaves => timeBetweenWaves;
 
 
@@ -96,9 +87,6 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnerUpdate()
     {
-        this.currentCredits += this.currentCreditGainRate * Time.deltaTime;
-        this.currentCredits = Mathf.Min(this.currentCredits, this.currentMaxCredits);
-
         // Start a new wave after the countdown has finished
         if (!this.isWaveInProgress)
         {
@@ -135,6 +123,15 @@ public class EnemySpawner : MonoBehaviour
         // Have the first enemy spawn immediately
         this.enemySpawnCountdown = 0f;
         this.currentWave++;
+
+        float waveCredits = this.baseWaveCredits * Mathf.Pow(this.difficultyScale, this.currentWave);
+
+        if (this.isExtractionActive)
+        {
+            waveCredits *= this.extractionCreditMultiplier;
+        }
+
+        this.currentCredits = waveCredits;
         GenerateWave();
     }
 
@@ -143,12 +140,9 @@ public class EnemySpawner : MonoBehaviour
         this.isWaveInProgress = false;
         this.waveCountdown = this.timeBetweenWaves;
 
-        this.baseCreditGainRate *= this.difficultyScale;
-        this.baseMaxCredits *= this.difficultyScale;
+        this.enemyCapGrowth = this.enemyCapGrowth * this.difficultyScale + 0.25f;
 
-        this.baseMaxEnemiesPerWave += this.EnemyWaveCapIncrease;
-        this.baseMaxEnemiesPerWave = Mathf.CeilToInt(this.baseMaxEnemiesPerWave * difficultyScale);
-        this.baseMaxEnemyCap = Mathf.Min((int)(this.baseMaxEnemyCap * this.difficultyScale + this.EnemyWaveCapIncrease), 200);
+        this.baseMaxEnemyCap = Mathf.Min(Mathf.CeilToInt(enemyCapGrowth), 200);
 
         if (this.isExtractionActive)
         {
@@ -158,15 +152,12 @@ public class EnemySpawner : MonoBehaviour
         {
             SetSpawningParametersRegular();
         }
-
-        Debug.Log("CAP: " +  this.currentMaxEnemyCap + " NUM ENEMEI: " + this.currentEnemyCount);
     }
 
     private void GenerateWave()
     {
         int lowestCostEnemy = this.enemies[0].cost;
-        int spawnedEnemies = 0;
-        while (this.currentCredits >= lowestCostEnemy && spawnedEnemies < this.currentMaxEnemiesPerWave && this.currentEnemyCount < this.currentMaxEnemyCap)
+        while (this.currentCredits >= lowestCostEnemy && this.currentEnemyCount < this.currentMaxEnemyCap)
         {
             EnemyType randomEnemy = enemies[UnityEngine.Random.Range(0, enemies.Count)];
 
@@ -174,7 +165,6 @@ public class EnemySpawner : MonoBehaviour
             {
                 this.currentCredits -= randomEnemy.cost;
                 this.enemiesToSpawn.Enqueue(randomEnemy);
-                spawnedEnemies++;
                 this.currentEnemyCount++;
             }
         }
@@ -185,7 +175,7 @@ public class EnemySpawner : MonoBehaviour
         Vector3 location = enemy.isFlying ? GetAirLocation() : GetGroundLocation();
 
         // safety check here
-        if (IsSpawnPositionOnNavSurface(location) == false)
+        if (!IsSpawnPositionOnNavSurface(location))
         {
             return;
         }
@@ -227,42 +217,25 @@ public class EnemySpawner : MonoBehaviour
     private void OnExtractionZoneFinished()
     {
         this.isExtractionActive = false;
-        // this.isExtractionZoneDone = true;
         SetSpawningParametersRegular();
     }
 
     private void SetSpawningParametersRegular()
     {
-        this.currentCreditGainRate = this.baseCreditGainRate;
-        this.currentMaxCredits = this.baseMaxCredits;
-        this.currentMaxEnemiesPerWave = this.baseMaxEnemiesPerWave;
         this.currentMaxEnemyCap = this.baseMaxEnemyCap;
         this.currentTimeBetweenEnemySpawns = this.baseTimeBetweenEnemySpawns;
     }
 
+    private void SetSpawningParametersExtraction()
+    {
+        this.currentMaxEnemyCap = Mathf.CeilToInt(this.baseMaxEnemyCap * this.extractionEnemyCapMultiplier);
+        this.currentTimeBetweenEnemySpawns = this.baseTimeBetweenEnemySpawns;
+    }
+    
     private bool IsSpawnPositionOnNavSurface(Vector3 pos)
     {
         NavMeshHit hit;
-
-        if (NavMesh.SamplePosition(pos, out hit, spawnRadius, NavMesh.AllAreas))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    private void SetSpawningParametersExtraction()
-    {
-        this.currentCreditGainRate = this.baseCreditGainRate * this.extractionCreditGainRateMultiplier;
-        this.currentMaxCredits = this.baseMaxCredits * this.extractionMaxCreditMultiplier;
-
-        this.currentMaxEnemiesPerWave = Mathf.CeilToInt(this.baseMaxEnemiesPerWave * extractionMaxEnemyMultiplier);
-        this.currentMaxEnemyCap = Mathf.CeilToInt(this.baseMaxEnemyCap * this.extractionMaxEnemyMultiplier);
-
-        this.currentTimeBetweenEnemySpawns = this.baseTimeBetweenEnemySpawns;
+        return NavMesh.SamplePosition(pos, out hit, spawnRadius, NavMesh.AllAreas);
     }
 }
 
