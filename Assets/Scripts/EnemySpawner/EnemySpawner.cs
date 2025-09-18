@@ -106,6 +106,7 @@ public class EnemySpawner : MonoBehaviour
             if (this.enemySpawnCountdown <= 0f)
             {
                 SpawnEnemy(this.enemiesToSpawn.Dequeue());
+                Debug.Log("Spawned enemy");
 
                 this.enemySpawnCountdown = this.currentTimeBetweenEnemySpawns;
             }
