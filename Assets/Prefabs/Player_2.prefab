@@ -836,6 +836,8 @@ GameObject:
   - component: {fileID: 1052831856790605420}
   - component: {fileID: 1385593235523640700}
   - component: {fileID: 3685147122863142574}
+  - component: {fileID: 8001323426608121485}
+  - component: {fileID: 737574113439449768}
   m_Layer: 7
   m_Name: Player_2
   m_TagString: Player
@@ -978,6 +980,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1655
   fireRate: 10
+  fullAuto: 0
   projectilePrefab: {fileID: 3140400090891409143, guid: a6fb9f8d0097a78469656e682c859c0d, type: 3}
   projectileSpeed: 150
   spawnOffset: 0.1
@@ -1008,6 +1011,31 @@ MonoBehaviour:
     m_Bits: 1911
   drawGizmos: 1
   gizmoColor: {r: 0.015250206, g: 0, b: 1, a: 0.0627451}
+--- !u!114 &8001323426608121485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3125288608766874585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcd7f59827f874952822de3a10d2096d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &737574113439449768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3125288608766874585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dd1f240a43d34c73a19827d6f6d380d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 0
 --- !u!1 &3681507385454597182
 GameObject:
   m_ObjectHideFlags: 0
@@ -1403,6 +1431,7 @@ GameObject:
   - component: {fileID: 825017196506902786}
   - component: {fileID: 5468705708517391686}
   - component: {fileID: 203302467794329149}
+  - component: {fileID: 3416299142316004342}
   m_Layer: 7
   m_Name: Capsule
   m_TagString: Untagged
@@ -1479,6 +1508,22 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &3416299142316004342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6115763287249915988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed611d35576b2e64a86ba01bff9a1a99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movement: {fileID: 1052831856790605420}
+  targetRenderer: {fileID: 203302467794329149}
+  readyColor: {r: 1, g: 0.7294118, b: 0.2509804, a: 1}
+  cooldownColor: {r: 0.23584908, g: 0.15190281, b: 0, a: 1}
 --- !u!1 &6713895393109624467
 GameObject:
   m_ObjectHideFlags: 0

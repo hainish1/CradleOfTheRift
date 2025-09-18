@@ -193,7 +193,7 @@ public class EnemySpawner : MonoBehaviour
         this.currentEnemyCount++;
 
         // Notify UI for change
-        CurrentEnemyCountChanged.Invoke(this.currentEnemyCount);
+        CurrentEnemyCountChanged?.Invoke(this.currentEnemyCount);
     }
 
     private Vector3 GetGroundLocation()
@@ -242,7 +242,7 @@ public class EnemySpawner : MonoBehaviour
         this.currentEnemyCount = Math.Max(0, this.currentEnemyCount - 1);
         
         // Notify UI for change
-        CurrentEnemyCountChanged.Invoke(this.currentEnemyCount);
+        CurrentEnemyCountChanged?.Invoke(this.currentEnemyCount);
     }
 }
 
