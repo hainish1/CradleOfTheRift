@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Interactor : MonoBehaviour
 {
@@ -8,12 +9,47 @@ public class Interactor : MonoBehaviour
     [SerializeField] private float interactRange = 0.5f;
     [SerializeField] private LayerMask interactablesLayer;
     [SerializeField] private InteractionPromptUI interactionPromptUI;
+    private InputSystem_Actions inputActions;
+    private InputSystem_Actions.PlayerActions playerActions;
+    private InputAction interactionActions;
 
     private readonly Collider[] colliders = new Collider[3];
 
     [SerializeField] private int numCollidersFound;
 
     private IInteractable interactable;
+
+    private void Awake()
+    {
+        inputActions = new InputSystem_Actions();
+        playerActions = inputActions.Player;
+    }
+
+    private void OnEnable()
+    {
+        interactionActions = playerActions.Interact;
+        interactionActions.Enable();
+        interactionActions.started += InteractActionStarted;
+    }
+
+    private void OnDisable()
+    {
+        interactionActions.Disable();
+        interactionActions.started -= InteractActionStarted;
+    }
+
+    private void InteractActionStarted(InputAction.CallbackContext context)
+    {
+        if (interactable != null)
+        {
+            interactable.Interact(this);
+            if (interactable.SingleActivation)
+            {
+                //interactable = null;
+                interactionPromptUI.HidePrompt();
+            }
+        }
+    }
 
     private void Update()
     {
@@ -31,16 +67,16 @@ public class Interactor : MonoBehaviour
                 }
 
                 //Debug.Log(interactable.InteractionPrompt);
-                if (Input.GetKeyDown(KeyCode.E))    // Again, replace with interaction key
-                {
-                    interactable.Interact(this);
+                //if (Input.GetKeyDown(KeyCode.E))    // Again, replace with interaction key
+                //{
+                //    interactable.Interact(this);
 
-                    if (interactable.SingleActivation)
-                    {
-                        //interactable = null;
-                        interactionPromptUI.HidePrompt();
-                    }
-                }
+                //    if (interactable.SingleActivation)
+                //    {
+                //        //interactable = null;
+                //        interactionPromptUI.HidePrompt();
+                //    }
+                //}
             }
         }
         else
