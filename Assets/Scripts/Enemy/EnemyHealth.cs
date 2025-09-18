@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -5,6 +6,7 @@ public class EnemyHealth : HealthController
 {
 
     [SerializeField] private float cleanupDelay = 0f;
+    public event Action<EnemyHealth> EnemyDied;
 
     protected override void Die()
     {
@@ -20,6 +22,7 @@ public class EnemyHealth : HealthController
         foreach (var col in GetComponentsInChildren<Collider>())
             col.enabled = false;
 
+        EnemyDied?.Invoke(this);
         Destroy(gameObject, cleanupDelay);
     }
 }

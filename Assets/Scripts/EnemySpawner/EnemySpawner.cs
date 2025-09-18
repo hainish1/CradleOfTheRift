@@ -16,21 +16,25 @@ public class EnemySpawner : MonoBehaviour
 
     [SerializeField]
     private float timeBetweenWaves = 8f;
-    private int currentEnemyCount = 0;
-    private float currentCredits;
 
     [SerializeField]
     private float difficultyScale = 1.03f;
+    [SerializeField]
+    private float spawnRadius = 10f;
+
 
     [Header("Normal Waves Settings")]
     [SerializeField]
     private float baseWaveCredits = 10f;
     [SerializeField]
-    private int baseMaxEnemyCap = 10;
+    private int startingEnemyCap = 10;
+    [SerializeField]
+    private float enemyCapGrowth = 10f;
     [SerializeField]
     private float baseTimeBetweenEnemySpawns = 1f;
     [SerializeField]
-    private float enemyCapGrowth = 10f;
+    private int globalMaxEnemies = 200;
+
 
 
     [Header("Extraction Wave Settings")]
@@ -40,8 +44,8 @@ public class EnemySpawner : MonoBehaviour
     private float extractionEnemyCapMultiplier = 1.5f;
 
 
-
-    private int currentMaxEnemiesPerWave;
+    private int currentEnemyCount = 0;
+    private float currentCredits;
     private int currentMaxEnemyCap;
     private float currentTimeBetweenEnemySpawns;
     private float enemySpawnCountdown = 0f;
@@ -51,18 +55,16 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     private Queue<EnemyType> enemiesToSpawn = new Queue<EnemyType>();
 
-
-    private float spawnRadius = 10f;
     private bool isExtractionActive = false;
     private float waveCountdown;
     private bool isWaveInProgress = false;
 
     //Jared UIDEV Getters
-    public int GetCurrentMaxEnemiesPerWave => currentMaxEnemiesPerWave;
-    public float GetCurrentTimeBetweenEnemySpawns => currentTimeBetweenEnemySpawns;
-    public float GetDifficultyScale => difficultyScale;
-    // public int GetEnemyWaveCapIncrease => EnemyWaveCapIncrease;  // already serialized
-    public float GetTimeBetweenWaves => timeBetweenWaves;
+
+    public event Action<int> CurrentEnemyCountChanged;
+    public event Action<float> CurrentCreditsChanged;
+    public event Action<int> CurrentMaxEnemyCapChanged;
+    public event Action<int> CurrentWaveChanged;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -76,7 +78,6 @@ public class EnemySpawner : MonoBehaviour
         // Sort the list of enemies from cheapest to most expensive
         enemies.Sort((a, b) => { return a.cost - b.cost; });
 
-        SetSpawningParametersRegular();
     }
 
     // Update is called once per frame
@@ -105,6 +106,7 @@ public class EnemySpawner : MonoBehaviour
             if (this.enemySpawnCountdown <= 0f)
             {
                 SpawnEnemy(this.enemiesToSpawn.Dequeue());
+
                 this.enemySpawnCountdown = this.currentTimeBetweenEnemySpawns;
             }
         }
@@ -123,15 +125,30 @@ public class EnemySpawner : MonoBehaviour
         // Have the first enemy spawn immediately
         this.enemySpawnCountdown = 0f;
         this.currentWave++;
+        // Notify UI for change
+        CurrentWaveChanged?.Invoke(this.currentWave);
 
         float waveCredits = this.baseWaveCredits * Mathf.Pow(this.difficultyScale, this.currentWave);
+        int waveCap = Mathf.Min(Mathf.CeilToInt(this.startingEnemyCap + this.enemyCapGrowth * Mathf.Pow(difficultyScale, this.currentWave)), this.globalMaxEnemies);
 
         if (this.isExtractionActive)
         {
             waveCredits *= this.extractionCreditMultiplier;
+            waveCap = Mathf.Min(Mathf.CeilToInt(waveCap * this.extractionEnemyCapMultiplier), this.globalMaxEnemies);
+            this.currentTimeBetweenEnemySpawns = this.baseTimeBetweenEnemySpawns;
+        }
+        else
+        {
+            this.currentTimeBetweenEnemySpawns = this.baseTimeBetweenEnemySpawns;
         }
 
         this.currentCredits = waveCredits;
+        this.currentMaxEnemyCap = waveCap;
+        
+        // Notify UI for change
+        CurrentCreditsChanged?.Invoke(this.currentCredits);
+        CurrentMaxEnemyCapChanged?.Invoke(this.currentMaxEnemyCap);
+
         GenerateWave();
     }
 
@@ -139,25 +156,13 @@ public class EnemySpawner : MonoBehaviour
     {
         this.isWaveInProgress = false;
         this.waveCountdown = this.timeBetweenWaves;
-
-        this.enemyCapGrowth = this.enemyCapGrowth * this.difficultyScale + 0.25f;
-
-        this.baseMaxEnemyCap = Mathf.Min(Mathf.CeilToInt(enemyCapGrowth), 200);
-
-        if (this.isExtractionActive)
-        {
-            SetSpawningParametersExtraction();
-        }
-        else
-        {
-            SetSpawningParametersRegular();
-        }
     }
 
     private void GenerateWave()
     {
         int lowestCostEnemy = this.enemies[0].cost;
-        while (this.currentCredits >= lowestCostEnemy && this.currentEnemyCount < this.currentMaxEnemyCap)
+        int enemiesToSpawnCount = 0;
+        while (this.currentCredits >= lowestCostEnemy && this.currentEnemyCount + enemiesToSpawnCount < this.currentMaxEnemyCap)
         {
             EnemyType randomEnemy = enemies[UnityEngine.Random.Range(0, enemies.Count)];
 
@@ -165,7 +170,7 @@ public class EnemySpawner : MonoBehaviour
             {
                 this.currentCredits -= randomEnemy.cost;
                 this.enemiesToSpawn.Enqueue(randomEnemy);
-                this.currentEnemyCount++;
+                enemiesToSpawnCount++;
             }
         }
     }
@@ -180,7 +185,14 @@ public class EnemySpawner : MonoBehaviour
             return;
         }
 
-        Instantiate(enemy.prefab, location, Quaternion.identity);
+        GameObject enemyObj = Instantiate(enemy.prefab, location, Quaternion.identity);
+        EnemyHealth enemyComponent = enemyObj.GetComponent<EnemyHealth>();
+        enemyComponent.EnemyDied += OnEnemyDied;
+
+        this.currentEnemyCount++;
+
+        // Notify UI for change
+        CurrentEnemyCountChanged.Invoke(this.currentEnemyCount);
     }
 
     private Vector3 GetGroundLocation()
@@ -211,31 +223,25 @@ public class EnemySpawner : MonoBehaviour
     private void OnExtractionZoneStarted()
     {
         this.isExtractionActive = true;
-        SetSpawningParametersExtraction();
     }
 
     private void OnExtractionZoneFinished()
     {
         this.isExtractionActive = false;
-        SetSpawningParametersRegular();
     }
 
-    private void SetSpawningParametersRegular()
-    {
-        this.currentMaxEnemyCap = this.baseMaxEnemyCap;
-        this.currentTimeBetweenEnemySpawns = this.baseTimeBetweenEnemySpawns;
-    }
-
-    private void SetSpawningParametersExtraction()
-    {
-        this.currentMaxEnemyCap = Mathf.CeilToInt(this.baseMaxEnemyCap * this.extractionEnemyCapMultiplier);
-        this.currentTimeBetweenEnemySpawns = this.baseTimeBetweenEnemySpawns;
-    }
-    
     private bool IsSpawnPositionOnNavSurface(Vector3 pos)
     {
         NavMeshHit hit;
         return NavMesh.SamplePosition(pos, out hit, spawnRadius, NavMesh.AllAreas);
+    }
+
+    private void OnEnemyDied(EnemyHealth enemy)
+    {
+        this.currentEnemyCount = Math.Max(0, this.currentEnemyCount - 1);
+        
+        // Notify UI for change
+        CurrentEnemyCountChanged.Invoke(this.currentEnemyCount);
     }
 }
 
