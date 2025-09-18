@@ -50,6 +50,8 @@ MonoBehaviour:
   timeBetweenWaves: 8
   difficultyScale: 1.03
   spawnRadius: 10
+  minSpawnDist: 5
+  isSpawning: 1
   baseWaveCredits: 10
   startingEnemyCap: 10
   enemyCapGrowth: 10

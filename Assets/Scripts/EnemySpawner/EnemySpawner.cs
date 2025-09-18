@@ -22,7 +22,9 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     private float spawnRadius = 10f;
     [SerializeField]
-    private bool isSpawning = false;
+    private float minSpawnDist = 5f;
+    [SerializeField]
+    private bool isSpawning = true;
 
 
     [Header("Normal Waves Settings")]
@@ -85,7 +87,7 @@ public class EnemySpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (this.isSpawning) { 
+        if (this.isSpawning) {
             SpawnerUpdate();
         }
     }
@@ -203,6 +205,20 @@ public class EnemySpawner : MonoBehaviour
     private Vector3 GetGroundLocation()
     {
         Vector2 locationOffset = UnityEngine.Random.insideUnitCircle * this.spawnRadius;
+        float distance = locationOffset.magnitude;
+
+        if (distance < this.minSpawnDist)
+        {
+            if (distance > 0f)
+            {
+                locationOffset = locationOffset.normalized * this.minSpawnDist;
+            }
+            else
+            {
+                locationOffset = new Vector2(this.minSpawnDist, 0f);
+            }
+        }
+
         Vector3 spawnLocation = this.playerLocation.position + new Vector3(locationOffset.x, 0, locationOffset.y);
 
         float heightOffset = 5f;
@@ -222,7 +238,27 @@ public class EnemySpawner : MonoBehaviour
         Vector3 locationOffset = UnityEngine.Random.onUnitSphere * this.spawnRadius;
         locationOffset.y = Math.Abs(locationOffset.y);
 
-        return this.playerLocation.position + locationOffset;
+        Vector2 horizontalOffset = new Vector2(locationOffset.x, locationOffset.z);
+        float horizontalDistance = horizontalOffset.magnitude;
+
+        if (horizontalDistance < this.minSpawnDist)
+        {
+            if (horizontalDistance > 0f)
+            {
+                horizontalOffset = horizontalOffset.normalized * this.minSpawnDist;
+            }
+            else
+            {
+                horizontalOffset = new Vector2(this.minSpawnDist, 0f);
+            }
+        
+            locationOffset.x = horizontalOffset.x;
+            locationOffset.z = horizontalOffset.y;
+        }
+
+        Vector3 spawnLocation = this.playerLocation.position + locationOffset;
+
+        return spawnLocation;
     }
 
     private void OnExtractionZoneStarted()
