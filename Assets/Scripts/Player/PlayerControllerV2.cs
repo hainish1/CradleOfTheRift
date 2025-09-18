@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerControllerV2 : MonoBehaviour
 {
     private InputSystem_Actions playerInput;
     private InputSystem_Actions.PlayerActions playerActions;
@@ -20,11 +20,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform playerCamera;
     [SerializeField] private Transform cameraPivot;
     [SerializeField] private Transform cameraMount;
-    private Rigidbody playerRB;
+    private CharacterController characterController;
     private float playerHalfHeight;
     private float playerHalfWidth;
     private float groundedRaycastFloorDistance;
     private float groundedRaycastRadialDistance;
+    private float originalStepOffset;
 
     [Header("Look Parameters")]
     [SerializeField] private float xSensitivity;
@@ -41,8 +42,10 @@ public class PlayerController : MonoBehaviour
     [Header("Movement Parameters")]
     [SerializeField] private float m_MaxSpeed;
     [SerializeField] private float m_AccelerationSeconds;
-    [SerializeField] private float m_LinearDamping;
+    [SerializeField] private float m_DecelerationSeconds;
     private float m_Acceleration;
+    private float m_Deceleration;
+    private Vector3 currSpeed;
     private Vector2 moveInput;
     private Vector3 moveInputUnitVector;
 
@@ -53,7 +56,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float strafeScale;
     private bool didPerformJump;
     private int jumpCharges;
-    private Vector3 gravityVector;
+    private Vector3 verticalVector;
 
     //[Header("Coyote Time Parameters")]
     //[SerializeField] private float earlyCoyoteTime;
@@ -63,9 +66,12 @@ public class PlayerController : MonoBehaviour
     //private bool canEarlyJump;
 
     [Header("Dash Parameters")]
-    [SerializeField] private float dashForce;
+    [SerializeField] private float dashDistance;
+    [SerializeField] private float dashSpeed;
     [SerializeField] private float dashCooldown;
     [SerializeField] private int dashCharges;
+    private bool isDashing;
+    private Vector3 dashVector;
 
     //[Header("UI References")]
     //public Image crosshair;
@@ -82,8 +88,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        //characterController = GetComponent<CharacterController>();
-        playerRB = GetComponent<Rigidbody>();
+        characterController = GetComponent<CharacterController>();
         playerInput = new InputSystem_Actions();
         playerActions = playerInput.Player;
     }
@@ -133,22 +138,25 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        playerHalfHeight = GetComponent<CapsuleCollider>().bounds.extents.y;
-        playerHalfWidth = GetComponent<CapsuleCollider>().bounds.extents.x;
+        playerHalfHeight = GetComponent<CharacterController>().bounds.extents.y;
+        playerHalfWidth = GetComponent<CharacterController>().bounds.extents.x;
         groundedRaycastFloorDistance = playerHalfHeight + 0.1f;
         groundedRaycastRadialDistance = playerHalfWidth * 0.7f;
+        originalStepOffset = characterController.stepOffset;
 
         cameraCollisionMasks = environmentLayer.value;
 
         m_Acceleration = m_MaxSpeed / m_AccelerationSeconds;
-        playerRB.linearDamping = m_LinearDamping;
-
-        gravityVector = gravityScale * Physics.gravity;
+        m_Deceleration = m_MaxSpeed / m_DecelerationSeconds;
+        
         jumpCharges = jumpMaxCharges;
+        didPerformJump = false;
+
+        isDashing = false;
 
         //crosshair.enabled = true;
         //pauseMenu.enabled = false;
-        
+
         //foreach (Transform child in pauseMenu.transform)
         //{
         //    child.gameObject.SetActive(false);
@@ -161,17 +169,21 @@ public class PlayerController : MonoBehaviour
         if (lockControls) return;
 
         Look();
-    }
 
-    private void FixedUpdate()
-    {
-        Move();
+        if (isDashing)
+        {
+            DashCase();
+        }
+        else
+        {
+            MoveCase();
+        }
     }
 
     void LateUpdate()
     {
         if (lockControls) return;
-        
+
         CameraCollision();
     }
 
@@ -214,67 +226,78 @@ public class PlayerController : MonoBehaviour
     {
         moveInput = moveActions.ReadValue<Vector2>();
         Vector3 inputDirection = new Vector3(moveInput.x, 0, moveInput.y);
-        
+
         return transform.TransformDirection(inputDirection).normalized;
     }
 
 
-    private float GetLinearDampingCorrection()
-    {
-        float appliedDamping = 1 - m_LinearDamping * Time.deltaTime;
-        return 1 / appliedDamping;
-    }
-    
-
-    private void Move()
+    private void MoveCase()
     {
         moveInputUnitVector = GetMoveInputDirection();
 
-        if (!IsGrounded())
+        if (IsGrounded())
         {
-            if (didPerformJump)
-            {
-                didPerformJump = false;
-            }
-
+            characterController.stepOffset = originalStepOffset;
+            JumpCase();
+        }
+        else
+        {
+            characterController.stepOffset = 0;
             ApplyGravity();
         }
 
-        
+
         if (moveInputUnitVector != Vector3.zero)
         {
-            // IS NOT TAKING INTO ACCOUNT THE DIRECTION OF THE CURRSPEED
+            Accelerate();
+        }
+        else
+        {
+            Decelerate();
+        }
+    }
 
 
+    private void Accelerate()
+    {
+        Vector3 accelIncrement = Time.deltaTime * m_Acceleration * moveInputUnitVector;
 
-            float movementDampingCorrection = GetLinearDampingCorrection();
-
-            float linearVelX = playerRB.linearVelocity.x;
-            float linearVelY = playerRB.linearVelocity.y;
-            float linearVelZ = playerRB.linearVelocity.z;
-            playerRB.linearVelocity = new Vector3(linearVelX * movementDampingCorrection,
-                                                  linearVelY * -0.5f,
-                                                  linearVelZ * movementDampingCorrection);
-
-            Vector3 currSpeed = playerRB.linearVelocity;
-            Vector3 accelIncrement = Time.deltaTime * (m_MaxSpeed / m_AccelerationSeconds) * moveInputUnitVector;
-
-            if (currSpeed.magnitude < m_MaxSpeed)
+        if (currSpeed.magnitude < m_MaxSpeed)
+        {
+            if (currSpeed.magnitude + accelIncrement.magnitude > m_MaxSpeed)
             {
-                if (currSpeed.magnitude + accelIncrement.magnitude > m_MaxSpeed)
-                {
-                    accelIncrement = (m_MaxSpeed - currSpeed.magnitude) * moveInputUnitVector;
-                }
-
-                playerRB.AddForce(accelIncrement, ForceMode.VelocityChange);
+                accelIncrement = (m_MaxSpeed - currSpeed.magnitude) * moveInputUnitVector;
             }
-            else
+        }
+        else
+        {
+            accelIncrement = Vector3.zero;
+        }
+
+        currSpeed = currSpeed.magnitude * moveInputUnitVector;
+        currSpeed += accelIncrement;
+        characterController.Move(Time.deltaTime * currSpeed);
+
+        Debug.Log(currSpeed.magnitude);
+    }
+
+
+    private void Decelerate()
+    {
+        if (currSpeed.magnitude > 0)
+        {
+            Vector3 decelIncrement = Time.deltaTime * m_Deceleration * currSpeed.normalized;
+
+            if (currSpeed.magnitude - decelIncrement.magnitude < 0)
             {
-                playerRB.AddForce(accelIncrement.magnitude * -currSpeed.normalized, ForceMode.VelocityChange);
-                playerRB.AddForce(accelIncrement, ForceMode.VelocityChange);
+                currSpeed = Vector3.zero;
+                decelIncrement = Vector3.zero;
             }
 
-            Debug.Log(playerRB.linearVelocity.magnitude);
+            currSpeed -= decelIncrement;
+            characterController.Move(Time.deltaTime * currSpeed);
+
+            Debug.Log(currSpeed.magnitude);
         }
     }
 
@@ -306,35 +329,72 @@ public class PlayerController : MonoBehaviour
 
     private void JumpInputAction(InputAction.CallbackContext context)
     {
-        if (IsGrounded())
+        if (IsGrounded() && !isDashing)
         {
             didPerformJump = true;
-            playerRB.AddForce(jumpForce * Vector3.up, ForceMode.Force);
         }
+    }
+
+
+    private void JumpCase()
+    {
+
+        if (didPerformJump)
+        {
+            didPerformJump = false;
+            verticalVector.y = jumpForce;
+        }
+        else
+        {
+            verticalVector.y = -0.5f;
+        }
+
+        characterController.Move(Time.deltaTime * verticalVector);
     }
 
 
     private void ApplyGravity()
     {
-        float gravityDampingCorrection = GetLinearDampingCorrection();
+        verticalVector += Time.deltaTime * gravityScale * Physics.gravity;
 
-        float linearVelX = playerRB.linearVelocity.x;
-        float linearVelY = playerRB.linearVelocity.y;
-        float linearVelZ = playerRB.linearVelocity.z;
-        playerRB.linearVelocity = new Vector3(linearVelX, linearVelY * gravityDampingCorrection, linearVelZ);
+        if (verticalVector.y < gravityScale * Physics.gravity.y)
+        {
+            verticalVector.y = gravityScale * Physics.gravity.y;
+        }
 
-        playerRB.AddForce(gravityVector, ForceMode.Acceleration);
+        characterController.Move(Time.deltaTime * verticalVector);
     }
 
 
     private void DashInputAction(InputAction.CallbackContext context)
     {
+        dashVector = GetMoveInputDirection();
+
         if (dashCharges != 0)
         {
-            playerRB.AddForce(dashForce * GetMoveInputDirection(), ForceMode.Force);
-        }
+            if (dashVector.x == 0 && dashVector.z == 0)
+            {
+                dashVector = GetComponentInParent<Transform>().forward;
+            }
 
-        StartCoroutine(InitiateDashCooldown(dashCooldown));
+            StartCoroutine(InitiateDashCooldown(dashCooldown));
+            StartCoroutine(InitiateDashDuration(dashDistance / dashSpeed));
+        }
+    }
+
+
+    private void DashCase()
+    {
+        if (IsGrounded())
+        {
+            verticalVector.y = -0.5f;
+        }
+        else
+        {
+            ApplyGravity();
+        }
+        
+        characterController.Move(Time.deltaTime * dashSpeed * dashVector);
     }
 
 
@@ -348,9 +408,19 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    private IEnumerator InitiateDashDuration(float seconds)
+    {
+        isDashing = true;
+
+        yield return new WaitForSeconds(seconds);
+
+        isDashing = false;
+    }
+
+
     private void AttackInputAction(InputAction.CallbackContext context)
     {
-        
+
     }
 
 
@@ -366,7 +436,7 @@ public class PlayerController : MonoBehaviour
         //    Cursor.visible = false;
         //    crosshair.enabled = true;
         //    pauseMenu.enabled = false;
-            
+
         //    foreach (Transform child in pauseMenu.transform)
         //    {
         //        child.gameObject.SetActive(false);
@@ -382,7 +452,7 @@ public class PlayerController : MonoBehaviour
         //    Cursor.visible = true;
         //    crosshair.enabled = false;
         //    pauseMenu.enabled = true;
-            
+
         //    foreach (Transform child in pauseMenu.transform)
         //    {
         //        child.gameObject.SetActive(true);
