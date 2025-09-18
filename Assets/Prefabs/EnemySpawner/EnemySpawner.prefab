@@ -49,11 +49,13 @@ MonoBehaviour:
   - name: 
     prefab: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
     cost: 1
-    isFlying: 0
+    isFlying: 1
   playerLocation: {fileID: 0}
   timeBetweenWaves: 8
   difficultyScale: 1.03
   spawnRadius: 10
+  minSpawnDist: 5
+  isSpawning: 1
   baseWaveCredits: 10
   startingEnemyCap: 10
   enemyCapGrowth: 10
