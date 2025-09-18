@@ -21,6 +21,8 @@ public class EnemySpawner : MonoBehaviour
     private float difficultyScale = 1.03f;
     [SerializeField]
     private float spawnRadius = 10f;
+    [SerializeField]
+    private bool isSpawning = false;
 
 
     [Header("Normal Waves Settings")]
@@ -83,7 +85,9 @@ public class EnemySpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        SpawnerUpdate();
+        if (this.isSpawning) { 
+            SpawnerUpdate();
+        }
     }
 
     private void SpawnerUpdate()
