@@ -312,7 +312,7 @@ MonoBehaviour:
     Enabled: 1
     CollisionFilter:
       serializedVersion: 2
-      m_Bits: 81
+      m_Bits: 65
     IgnoreTag: Player
     CameraRadius: 0.2
     DampingIntoCollision: 0
@@ -353,8 +353,8 @@ MonoBehaviour:
   IgnoreTag: Player
   TransparentLayers:
     serializedVersion: 2
-    m_Bits: 0
-  MinimumDistanceFromTarget: 2
+    m_Bits: 16
+  MinimumDistanceFromTarget: 10
   AvoidObstacles:
     Enabled: 1
     DistanceLimit: 10
@@ -388,13 +388,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CameraRadius: 0.4
   Decollision:
-    Enabled: 0
+    Enabled: 1
     ObstacleLayers:
       serializedVersion: 2
-      m_Bits: 1
+      m_Bits: 16
     UseFollowTarget:
-      Enabled: 0
-      YOffset: 0
+      Enabled: 1
+      YOffset: 10
     Damping: 0.5
     SmoothingTime: 0
   TerrainResolution:
@@ -623,7 +623,7 @@ MonoBehaviour:
   kbControlsLock: 0.18
   kbDashLock: 0.12
   jumpForce: 25
-  groundedGravityScale: 9.81
+  groundedGravityScale: 8.81
   midairGravityScale: 0
   strafeScale: 0
   dashSpeed: 150
