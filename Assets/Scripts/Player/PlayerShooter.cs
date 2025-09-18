@@ -32,6 +32,19 @@ public class PlayerShooter : MonoBehaviour
     // projectiles should ignore their own kind
     Collider[] selfColliders;
 
+    void Start()
+    {
+        var input = new InputAction("Toggle Spawning", binding: "<Keyboard>/b");
+        input.performed += _ => ToggleFullAuto();
+        input.Enable();
+    }
+
+    private void ToggleFullAuto()
+    {
+        fullAuto = !fullAuto;// toggling between true and false
+        Debug.Log("Full auto is now " + (fullAuto ? "enabled" : "disabled"));
+    }
+
     void OnEnable()
     {
         if (input == null) input = new InputSystem_Actions();
