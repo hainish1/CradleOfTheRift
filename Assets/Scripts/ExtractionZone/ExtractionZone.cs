@@ -58,7 +58,7 @@ public class ExtractionZone : MonoBehaviour
 
             if (this.currentCharge == this.chargeTime)
             {
-                this.WinScreen.Invoke();
+                this.WinScreen?.Invoke();
                 this.ExtractionFinished?.Invoke();
             }
         }
