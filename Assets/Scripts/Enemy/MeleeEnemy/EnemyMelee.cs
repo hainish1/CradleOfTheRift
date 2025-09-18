@@ -16,6 +16,7 @@ public class EnemyMelee : Enemy
 
 
     [Header("Slam attack")]
+    public int slamDamage = 1;
     public float windupTime = .15f;
     public float chargeSpeed = 12f;
     public float chargetTime = .18f;
@@ -58,7 +59,7 @@ public class EnemyMelee : Enemy
     {
         if (hitAppliedThisAttack) return;
         if (Time.time < nextAttackAllowed) return;
-        
+
         Vector3 toPlayer = playerCol.transform.position - transform.position;
         toPlayer.y = 0f;
         if (toPlayer.sqrMagnitude < 0.0001f) return;
@@ -69,10 +70,18 @@ public class EnemyMelee : Enemy
         if (pm != null)
         {
             pm.ApplyImpulse(toPlayer * knockbackPower);
+
+            var damageable = pm.GetComponentInParent<IDamageable>();
+            if (damageable != null && !damageable.IsDead)
+            {
+                damageable.TakeDamage(slamDamage);
+            }
         }
         hitAppliedThisAttack = true;
         nextAttackAllowed = Time.time + attackCooldown;
         EnableHitBox(false);
+        
+
     }
 
 

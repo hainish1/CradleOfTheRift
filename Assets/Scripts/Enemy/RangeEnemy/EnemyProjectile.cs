@@ -4,84 +4,90 @@ using UnityEngine;
 // almost a copy paste of my projectile script for player
 public class EnemyProjectile : MonoBehaviour
 {
-    [Header("Bullet motion")]
-    [SerializeField] float gravity = 0f;
-    [SerializeField] float lifeTime = 5f; // just for now
-    [SerializeField] float radius = 0.05f; // sphere ray cast check for collision n whatnot
 
-    [Header("Hit")]
-    [SerializeField] LayerMask hitMask = ~0; // what this projectile thing can hit
-    [SerializeField] float hitForce = 3f; // SHOULD BE ENOUGH TO NUDGE OUI PLAYER
-    // [SerializeField] int damage = 1; // LETTING THE PROJECTILES DO DAMAGE FOR NOW
-    [SerializeField] GameObject impactFX;
+    [Header("flight")]
+    [SerializeField] private float lifeTime = 6f;
+    [SerializeField] private float gravity = 0f;
 
-    Vector3 velocity;
-    float age;
-    Collider[] ignoreColliders; // shooter colliders to ignore
+    [Header("hit")]
+    [SerializeField] private int damage = 1;
+    [SerializeField] private float hitForce = 8f;
+    [SerializeField] private float knockBackImpulse = 8f;
+    [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
 
-    public void Init(Vector3 initialVelocity, LayerMask mask, Collider[] ignore = null)
+    Rigidbody rb;
+    private float age;
+
+    void Awake()
     {
-        velocity = initialVelocity;
-        hitMask = mask;
-        ignoreColliders = ignore;
+        rb = GetComponent<Rigidbody>();
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+    }
 
-        if (ignoreColliders != null)
-        {
-            var myCol = GetComponent<Collider>();
-            if (myCol)
-                foreach (var c in ignoreColliders)
-                    if (c && c.enabled) Physics.IgnoreCollision(myCol, c, true);
-        }
+    public void Init(Vector3 velocity, LayerMask mask)
+    {
+        rb.linearVelocity = velocity;
+        hitMask = mask;
+        age = 0f;
     }
 
 
     void Update()
     {
-        float dt = Time.deltaTime;
-        age += dt;
-        if (age >= lifeTime) { Destroy(gameObject); return; }
-
-        // gravity
-        if (gravity > 0f) velocity += Vector3.down * gravity * dt;
-
-        // move with spherecast to avoid tunneling
-        Vector3 displacement = velocity * dt;
-        float distance = displacement.magnitude;
-        if (distance > 0f)
+        age += Time.deltaTime;
+        if (age >= lifeTime)
         {
-            if (Physics.SphereCast(transform.position, radius, displacement.normalized, out var hit, distance, hitMask, QueryTriggerInteraction.Ignore))
-            {
-                OnHit(hit);
-                return;
-            }
-            transform.position += displacement;
-            if (velocity.sqrMagnitude > 0.0001f)
-                transform.rotation = Quaternion.LookRotation(velocity);
+            Destroy(gameObject);
+            return;
+        }
+        if (gravity != 0f)
+        {
+            rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
         }
     }
 
-    // this is where the real magic will happen
-    void OnHit(RaycastHit hit)
+    void OnCollisionEnter(Collision collision)
     {
-        // place at the impact point
-        transform.position = hit.point;
+        if (((1 << collision.gameObject.layer) & hitMask) == 0)
+            return;
 
-        // pure cosmetic stuff, for a thing that has rigidbody, NOT FOR PLAYER BUT STILL KEEPING IN 
-        if (hit.rigidbody)
-            hit.rigidbody.AddForceAtPosition(velocity.normalized * hitForce, hit.point, ForceMode.Impulse);
+        // check if collided with enemy and if yes then damage it
+        var pm = collision.collider.GetComponentInParent<PlayerMovement>();
 
-        // now do a tiny bit of knockback to the enemy just teeni
-        PlayerMovement pm = hit.collider.GetComponentInParent<PlayerMovement>();
+
         if (pm != null)
         {
-            Vector3 direction = (hit.point - transform.position).normalized;
-            direction.y = 0f;
-            if (direction.sqrMagnitude < 0.0001f) direction = (pm.transform.position - transform.position).normalized;
-            pm.ApplyImpulse(direction * hitForce);
+            var contact = collision.GetContact(0);
+
+            Vector3 dir = -contact.normal; // opposite of contact point
+            dir.y = 0f;
+            if (dir.sqrMagnitude > 0.0001f) dir.Normalize();
+
+            pm.ApplyImpulse(dir * knockBackImpulse);
+
+
+            // TODO
+            // Damage to Player's Health component here
         }
 
-        // when we get impact fx we will apply here
+        // other rigidbodies it might hit
+        if (collision.rigidbody != null)
+        {
+            Vector3 force = rb.linearVelocity.normalized * hitForce;
+            collision.rigidbody.AddForceAtPosition(force, collision.GetContact(0).point, ForceMode.Impulse);
+        }
+        var damageable = collision.collider.GetComponentInParent<IDamageable>();
+        if (damageable != null && !damageable.IsDead)
+        {
+            damageable.TakeDamage(damage);
+        }
+        
 
-        Destroy(gameObject);
+        // plkace to add impact effects later
+
+        Destroy(gameObject); // its done its job now
     }
+
+
 }
