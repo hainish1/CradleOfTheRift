@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem;
 
 public class EnemySpawner : MonoBehaviour
 {
@@ -24,7 +25,9 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     private float minSpawnDist = 5f;
     [SerializeField]
-    private bool isSpawning = true;
+    private bool isSpawning = true; // controlling with this
+
+    private InputAction spawnToggleAction;
 
 
     [Header("Normal Waves Settings")]
@@ -82,6 +85,16 @@ public class EnemySpawner : MonoBehaviour
         // Sort the list of enemies from cheapest to most expensive
         enemies.Sort((a, b) => { return a.cost - b.cost; });
 
+        var input = new InputAction("Toggle Spawning", binding: "<Keyboard>/l");
+        input.performed += _ => ToggleSpawning();
+        input.Enable();
+
+    }
+
+    private void ToggleSpawning()
+    {
+        isSpawning = !isSpawning;// toggling between true and false
+        Debug.Log("Spawning is now " + (isSpawning ? "enabled" : "disabled"));
     }
 
     // Update is called once per frame
