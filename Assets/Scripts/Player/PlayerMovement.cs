@@ -49,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Dash Parameters")]
     [SerializeField] private float dashSpeed = 20f;
     [SerializeField] private float dashDistance = 8f;
-    [SerializeField] private float dashCooldown = .6f;
+    public float dashCooldown = .6f; 
     [SerializeField] private int dashMaxCharges = 1;
     private bool isDashing;
     private int dashCharges;
@@ -270,6 +270,7 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator InitiateDashCooldown(float seconds)
     {
         dashCharges--;
+        DashCooldownStarted?.Invoke(seconds); // tell listener to start the faded
 
         yield return new WaitForSeconds(seconds);
 
@@ -300,7 +301,7 @@ public class PlayerMovement : MonoBehaviour
         isDashing = false; // just extra safety
     }
 
-
+    public event System.Action<float> DashCooldownStarted;
 
 
 }

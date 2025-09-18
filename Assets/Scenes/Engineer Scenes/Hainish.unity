@@ -23898,6 +23898,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1052831856790605420, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
+      propertyPath: dashCooldown
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1052831856790605420, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
       propertyPath: cameraTransform
       value: 
       objectReference: {fileID: 330585546}
@@ -23952,8 +23956,48 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6115763287249915988, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1246495085930366176}
   m_SourcePrefab: {fileID: 100100000, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
+--- !u!1 &1246495085930366175 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6115763287249915988, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
+  m_PrefabInstance: {fileID: 1246495085930366174}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1246495085930366176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1246495085930366175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed611d35576b2e64a86ba01bff9a1a99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movement: {fileID: 1246495085930366177}
+  targetRenderer: {fileID: 1246495085930366178}
+  readyColor: {r: 1, g: 0.7294118, b: 0.2509804, a: 1}
+  cooldownColor: {r: 0.23584908, g: 0.15190281, b: 0, a: 1}
+--- !u!114 &1246495085930366177 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1052831856790605420, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
+  m_PrefabInstance: {fileID: 1246495085930366174}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d357a0e7bf11f643ac8a4c338e181cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!23 &1246495085930366178 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 203302467794329149, guid: bc6af71632f10a842ba417c85b4f3102, type: 3}
+  m_PrefabInstance: {fileID: 1246495085930366174}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3628816787624334220
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24127,6 +24171,10 @@ PrefabInstance:
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: m_Name
       value: SlimeEnemyWobble
+      objectReference: {fileID: 0}
+    - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8200006461687915286, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: target
