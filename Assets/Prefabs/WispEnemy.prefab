@@ -1101,8 +1101,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3773936ee198de143b18692d451e3058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 3
-  currentHealth: 0
   target: {fileID: 0}
   aggressionRange: 20.14
   playerOutOfRange: 50
@@ -1160,7 +1158,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b7684082c124f45893380d545b25c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  original: {fileID: 2100000, guid: 6b38742730e330c488cc8d7964788813, type: 2}
+  original: {fileID: 2100000, guid: 27ad48d922d53ff41b20de5c34569594, type: 2}
   flash: {fileID: 2100000, guid: a4b62a69d54e80347bd546999c6d4b9e, type: 2}
   flashDuration: 0.1
 --- !u!114 &3349805392606994707
