@@ -97,31 +97,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb23cc3bed72bbf4ca6c9b3543fef1a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCenter: {fileID: 9115821396022595700}
-  playerCamera: {fileID: 5421691210956276077}
-  cameraPivot: {fileID: 241797090562604931}
-  cameraMount: {fileID: 2105944762929602172}
-  xSensitivity: 50
-  ySensitivity: 50
-  upwardClampAngle: 80
-  downwardClampAngle: -55
-  cameraLerpSpeed: 1
-  cameraCollisionOffset: 0.95
-  m_MaxSpeed: 10
-  m_AccelerationSeconds: 0.2
-  m_DecelerationSeconds: 0.1
-  jumpForce: 20
-  jumpMaxCharges: 0
-  gravityScale: 3
-  strafeScale: 0
-  dashDistance: 10
-  dashSpeed: 100
-  dashCooldown: 2
-  dashCharges: 1
-  environmentLayer:
+  _playerCenter: {fileID: 9115821396022595700}
+  _playerCamera: {fileID: 5421691210956276077}
+  _cameraPivot: {fileID: 241797090562604931}
+  _cameraMount: {fileID: 2105944762929602172}
+  _xSensitivity: 50
+  _ySensitivity: 50
+  _upwardClampAngle: 80
+  _downwardClampAngle: -55
+  _cameraLerpSpeed: 1
+  _cameraCollisionOffset: 0.95
+  _maxSpeed: 10
+  _accelerationSeconds: 0.2
+  _decelerationSeconds: 0.1
+  _JumpHeight: 10
+  _maxBoostEnergy: 100
+  _boostSpeed: 5
+  _boostRegenerationSpeed: 5
+  _strafeMultiplier: 1
+  _gravityMultiplier: 3
+  _dashDistance: 20
+  _dashSpeed: 100
+  _dashCooldown: 2
+  _dashCharges: 1
+  _environmentLayer:
     serializedVersion: 2
     m_Bits: 64
-  lockControls: 0
 --- !u!1 &3790380144339429628
 GameObject:
   m_ObjectHideFlags: 0
