@@ -487,7 +487,7 @@ MonoBehaviour:
   playerRotation: 1
   recenterDamping: 0.05
   fireRecenterDamping: 0.05
-  snapOnFire: 1
+  snapOnFire: 0
   snapAngleThreshold: 0
   cam: {fileID: 0}
   aimMask:
@@ -628,8 +628,8 @@ MonoBehaviour:
   strafeScale: 0
   dashSpeed: 150
   dashDistance: 14
-  dashCooldown: 0.6
-  dashMaxCharges: 1
+  dashCooldown: 2
+  dashMaxCharges: 3
   environmentLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -651,8 +651,8 @@ MonoBehaviour:
   aimTargetManager: {fileID: 0}
   shootMask:
     serializedVersion: 2
-    m_Bits: 3136
-  fireRate: 50
+    m_Bits: 3153
+  fireRate: 10
   fullAuto: 0
   projectilePrefab: {fileID: 3140400090891409143, guid: a6fb9f8d0097a78469656e682c859c0d, type: 3}
   projectileSpeed: 150

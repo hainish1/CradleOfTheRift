@@ -45,7 +45,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   extractionZone: {fileID: 0}
-  enemies: []
+  enemies:
+  - name: 
+    prefab: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+    cost: 1
+    isFlying: 0
+  - name: 
+    prefab: {fileID: 8841140246284276385, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
+    cost: 1
+    isFlying: 1
   playerLocation: {fileID: 0}
   timeBetweenWaves: 8
   difficultyScale: 1.03
