@@ -369,10 +369,19 @@ public class PlayerControllerV2 : MonoBehaviour
     {
         if (jumpActions.IsPressed())
         {
-            if (!IsGrounded())
+            if (!IsGrounded() && _boostEnergy > 0)
             {
                 Vector3 boostIncrement = Time.deltaTime * _boostSpeed * _verticalVector;
-                _boostEnergy -= boostIncrement.magnitude;
+
+                //if ((_boostEnergy - boostIncrement.magnitude) < 0)
+                //{
+                //    _boostEnergy = (_boostSpeed - boostIncrement).magnitude * _verticalVector;
+                //}
+                //else
+                //{
+                //    _boostEnergy -= boostIncrement.magnitude;
+                //}
+
                 _verticalVector += boostIncrement;
 
                 _characterController.Move(Time.deltaTime * _verticalVector);
