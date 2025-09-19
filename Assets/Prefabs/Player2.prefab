@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6758584188325404992}
   - component: {fileID: 3907876958505056836}
   - component: {fileID: 1614724851484801822}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -116,7 +116,7 @@ GameObject:
   - component: {fileID: 7554138544071178879}
   - component: {fileID: 623726287393205822}
   - component: {fileID: 3508878096951652194}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Nose
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -226,7 +226,7 @@ GameObject:
   - component: {fileID: 5560870965844128099}
   - component: {fileID: 2519168876799021596}
   - component: {fileID: 2460746839513632312}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Free Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -413,7 +413,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8832080125063188932}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: MeleePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -445,7 +445,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4150530052119579255}
   - component: {fileID: 6136032505310493038}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Player Aiming Core
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -492,7 +492,7 @@ MonoBehaviour:
   cam: {fileID: 0}
   aimMask:
     serializedVersion: 2
-    m_Bits: 1911
+    m_Bits: 3799
   playerRoot: {fileID: 1201876548339226324}
   aimTargetManager: {fileID: 0}
 --- !u!1 &3694253349153652309
@@ -512,7 +512,7 @@ GameObject:
   - component: {fileID: 1545799363735562861}
   - component: {fileID: 7428225188146732249}
   - component: {fileID: 5233778179470458429}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Player2
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -651,7 +651,7 @@ MonoBehaviour:
   aimTargetManager: {fileID: 0}
   shootMask:
     serializedVersion: 2
-    m_Bits: 1655
+    m_Bits: 3136
   fireRate: 50
   fullAuto: 0
   projectilePrefab: {fileID: 3140400090891409143, guid: a6fb9f8d0097a78469656e682c859c0d, type: 3}
@@ -681,7 +681,7 @@ MonoBehaviour:
   pushForce: 10
   hitMask:
     serializedVersion: 2
-    m_Bits: 1911
+    m_Bits: 7232
   drawGizmos: 1
   gizmoColor: {r: 0.015250206, g: 0, b: 1, a: 0.0627451}
 --- !u!114 &7428225188146732249
@@ -718,7 +718,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8712148786347245586}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: aimTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -752,7 +752,7 @@ GameObject:
   - component: {fileID: 831747457261918885}
   - component: {fileID: 3551559935133746136}
   - component: {fileID: 8093529793872308650}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -857,7 +857,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2015244756760834766}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: PlayerCenter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
