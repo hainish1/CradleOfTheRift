@@ -315,7 +315,7 @@ MonoBehaviour:
       m_Bits: 65
     IgnoreTag: Player
     CameraRadius: 0.2
-    DampingIntoCollision: 0
+    DampingIntoCollision: 0.21
     DampingFromCollision: 0.2
 --- !u!114 &5560870965844128099
 MonoBehaviour:
@@ -364,8 +364,8 @@ MonoBehaviour:
       Enabled: 0
       YOffset: 0
     Strategy: 1
-    MaximumEffort: 2
-    SmoothingTime: 0.034
+    MaximumEffort: 1
+    SmoothingTime: 0.069
     Damping: 3.68
     DampingWhenOccluded: 2.03
   ShotQualityEvaluation:
