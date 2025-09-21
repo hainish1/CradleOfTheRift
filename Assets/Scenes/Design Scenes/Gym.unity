@@ -2024,9 +2024,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1563859110}
     - target: {fileID: 7506041293616542779, guid: 5ea46562df90725499583dd45f12f207, type: 3}
+      propertyPath: dashSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7506041293616542779, guid: 5ea46562df90725499583dd45f12f207, type: 3}
       propertyPath: cameraTransform
       value: 
       objectReference: {fileID: 600023583}
+    - target: {fileID: 7506041293616542779, guid: 5ea46562df90725499583dd45f12f207, type: 3}
+      propertyPath: movementMaxVelocity
+      value: 11
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
