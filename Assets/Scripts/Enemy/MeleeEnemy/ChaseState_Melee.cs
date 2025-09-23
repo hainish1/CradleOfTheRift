@@ -15,12 +15,15 @@ public class ChaseState_Melee : EnemyState
 
     public override void Enter()
     {
-        if (enemy.agent != null)
+        if (enemy != null)
         {
-            enemy.agent.isStopped = false;
-            enemy.agent.speed = enemyMelee.dragSpeed;
-            dragging = true;
-            phaseTimer = enemyMelee.dragDuration;
+            if (enemy.agent != null)
+            {
+                enemy.agent.isStopped = false;
+                enemy.agent.speed = enemyMelee.dragSpeed;
+                dragging = true;
+                phaseTimer = enemyMelee.dragDuration;
+            }
         }
     }
 

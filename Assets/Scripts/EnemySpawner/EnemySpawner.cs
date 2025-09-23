@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem;
 
 public class EnemySpawner : MonoBehaviour
 {
@@ -21,6 +22,12 @@ public class EnemySpawner : MonoBehaviour
     private float difficultyScale = 1.03f;
     [SerializeField]
     private float spawnRadius = 10f;
+    [SerializeField]
+    private float minSpawnDist = 5f;
+    [SerializeField]
+    private bool isSpawning = true; // controlling with this
+
+    private InputAction spawnToggleAction;
 
 
     [Header("Normal Waves Settings")]
@@ -78,12 +85,24 @@ public class EnemySpawner : MonoBehaviour
         // Sort the list of enemies from cheapest to most expensive
         enemies.Sort((a, b) => { return a.cost - b.cost; });
 
+        var input = new InputAction("Toggle Spawning", binding: "<Keyboard>/l");
+        input.performed += _ => ToggleSpawning();
+        input.Enable();
+
+    }
+
+    private void ToggleSpawning()
+    {
+        isSpawning = !isSpawning;// toggling between true and false
+        Debug.Log("Spawning is now " + (isSpawning ? "enabled" : "disabled"));
     }
 
     // Update is called once per frame
     void Update()
     {
-        SpawnerUpdate();
+        if (this.isSpawning) {
+            SpawnerUpdate();
+        }
     }
 
     private void SpawnerUpdate()
@@ -106,6 +125,7 @@ public class EnemySpawner : MonoBehaviour
             if (this.enemySpawnCountdown <= 0f)
             {
                 SpawnEnemy(this.enemiesToSpawn.Dequeue());
+                Debug.Log("Spawned enemy");
 
                 this.enemySpawnCountdown = this.currentTimeBetweenEnemySpawns;
             }
@@ -192,12 +212,26 @@ public class EnemySpawner : MonoBehaviour
         this.currentEnemyCount++;
 
         // Notify UI for change
-        CurrentEnemyCountChanged.Invoke(this.currentEnemyCount);
+        CurrentEnemyCountChanged?.Invoke(this.currentEnemyCount);
     }
 
     private Vector3 GetGroundLocation()
     {
         Vector2 locationOffset = UnityEngine.Random.insideUnitCircle * this.spawnRadius;
+        float distance = locationOffset.magnitude;
+
+        if (distance < this.minSpawnDist)
+        {
+            if (distance > 0f)
+            {
+                locationOffset = locationOffset.normalized * this.minSpawnDist;
+            }
+            else
+            {
+                locationOffset = new Vector2(this.minSpawnDist, 0f);
+            }
+        }
+
         Vector3 spawnLocation = this.playerLocation.position + new Vector3(locationOffset.x, 0, locationOffset.y);
 
         float heightOffset = 5f;
@@ -217,7 +251,27 @@ public class EnemySpawner : MonoBehaviour
         Vector3 locationOffset = UnityEngine.Random.onUnitSphere * this.spawnRadius;
         locationOffset.y = Math.Abs(locationOffset.y);
 
-        return this.playerLocation.position + locationOffset;
+        Vector2 horizontalOffset = new Vector2(locationOffset.x, locationOffset.z);
+        float horizontalDistance = horizontalOffset.magnitude;
+
+        if (horizontalDistance < this.minSpawnDist)
+        {
+            if (horizontalDistance > 0f)
+            {
+                horizontalOffset = horizontalOffset.normalized * this.minSpawnDist;
+            }
+            else
+            {
+                horizontalOffset = new Vector2(this.minSpawnDist, 0f);
+            }
+        
+            locationOffset.x = horizontalOffset.x;
+            locationOffset.z = horizontalOffset.y;
+        }
+
+        Vector3 spawnLocation = this.playerLocation.position + locationOffset;
+
+        return spawnLocation;
     }
 
     private void OnExtractionZoneStarted()
@@ -241,7 +295,7 @@ public class EnemySpawner : MonoBehaviour
         this.currentEnemyCount = Math.Max(0, this.currentEnemyCount - 1);
         
         // Notify UI for change
-        CurrentEnemyCountChanged.Invoke(this.currentEnemyCount);
+        CurrentEnemyCountChanged?.Invoke(this.currentEnemyCount);
     }
 }
 

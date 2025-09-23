@@ -10,10 +10,13 @@ public class ChaseState_Range : EnemyState
 
     public override void Enter()
     {
-        if (enemy?.agent != null)
+        if (enemy != null)
+        {
+            if (enemy.agent != null)
         {
             enemy.agent.isStopped = false;
             enemy.agent.speed = enemyRange.chaseSpeed; // set navmesh speed
+        }
         }
     }
 
@@ -25,11 +28,14 @@ public class ChaseState_Range : EnemyState
         float distance = Vector3.Distance(enemy.transform.position, enemy.target.position); // go but keep distance
         if (distance > enemyRange.stopDistance * .9f)
         {
-            SetAgentDestination(enemy.target.position);
+            if(enemy != null) SetAgentDestination(enemy.target.position);
         }
         else
         {
-            if (enemy.agent) enemy.agent.isStopped = true; // too close, stop there
+            if (enemy != null)
+            {
+                if (enemy.agent) enemy.agent.isStopped = true; // too close, stop there
+            }
         }
 
         FaceTarget(enemy.turnSpeed);

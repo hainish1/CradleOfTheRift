@@ -11,7 +11,7 @@ public class PlayerGold : MonoBehaviour
         private set
         {
             this.gold = value;
-            this.goldChanged.Invoke(gold);
+            this.goldChanged?.Invoke(gold);
         }
     }
     public void AddGold(int amount)

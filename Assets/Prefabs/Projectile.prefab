@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7430822607540931534}
   - component: {fileID: 3140400090891409143}
   - component: {fileID: 729833330588080243}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,9 +126,10 @@ MonoBehaviour:
   gravity: 0
   damage: 1
   hitForce: 5
+  knockBackImpulse: 8
   hitMask:
     serializedVersion: 2
-    m_Bits: 1655
+    m_Bits: 3153
 --- !u!54 &729833330588080243
 Rigidbody:
   m_ObjectHideFlags: 0
