@@ -108,16 +108,16 @@ MonoBehaviour:
   _cameraLerpSpeed: 1
   _cameraCollisionOffset: 0.95
   _maxSpeed: 10
-  _accelerationSeconds: 0.2
-  _decelerationSeconds: 0.1
-  _JumpHeight: 10
+  _accelerationSeconds: 0.4
+  _decelerationSeconds: 0.2
+  _JumpHeight: 15
   _maxBoostEnergy: 100
-  _boostSpeed: 5
+  _boostSpeed: 30
   _boostRegenerationSpeed: 5
   _strafeMultiplier: 1
   _gravityMultiplier: 3
-  _dashDistance: 20
-  _dashSpeed: 100
+  _dashDistance: 10
+  _dashSpeed: 75
   _dashCooldown: 2
   _dashCharges: 1
   _environmentLayer:

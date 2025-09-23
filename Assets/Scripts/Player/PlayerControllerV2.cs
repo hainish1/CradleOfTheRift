@@ -45,8 +45,7 @@ public class PlayerControllerV2 : MonoBehaviour
     [SerializeField] private float _decelerationSeconds;
     private float _acceleration;
     private float _aeceleration;
-    private Vector3 _currSpeed;
-    private Vector2 _moveInput;
+    private Vector3 lateralVector;
     private Vector3 _moveInputUnitVector;
 
     [Header("Jump Parameters")]
@@ -59,7 +58,7 @@ public class PlayerControllerV2 : MonoBehaviour
     private float _boostEnergy;
     private bool _isRegeneratingBoost;
     private bool _didPerformJump;
-    private bool _isJumpInputHeld;
+    private bool _didPerformBoost;
     private Vector3 _verticalVector;
 
     //[Header("Coyote Time Parameters")]
@@ -108,7 +107,6 @@ public class PlayerControllerV2 : MonoBehaviour
         jumpActions = playerActions.Jump;
         jumpActions.Enable();
         jumpActions.started += JumpInputActionStarted;
-        jumpActions.canceled += JumpInputActionCanceled;
 
         dashActions = playerActions.Dash;
         dashActions.Enable();
@@ -133,7 +131,6 @@ public class PlayerControllerV2 : MonoBehaviour
         pauseActions.Disable();
 
         jumpActions.started -= JumpInputActionStarted;
-        jumpActions.canceled -= JumpInputActionCanceled;
         dashActions.started -= DashInputActionStarted;
         attackActions.started -= AttackInputActionStarted;
         pauseActions.started -= PauseInputActionStarted;
@@ -158,7 +155,7 @@ public class PlayerControllerV2 : MonoBehaviour
         _boostEnergy = _maxBoostEnergy;
         _isRegeneratingBoost = false;
         _didPerformJump = false;
-        _isJumpInputHeld = false;
+        _didPerformBoost = false;
 
         _isDashing = false;
 
@@ -234,8 +231,8 @@ public class PlayerControllerV2 : MonoBehaviour
 
     private Vector3 GetMoveInputDirection()
     {
-        _moveInput = moveActions.ReadValue<Vector2>();
-        Vector3 inputDirection = new Vector3(_moveInput.x, 0, _moveInput.y);
+        Vector3 moveInput = moveActions.ReadValue<Vector2>();
+        Vector3 inputDirection = new Vector3(moveInput.x, 0, moveInput.y);
 
         return transform.TransformDirection(inputDirection).normalized;
     }
@@ -260,11 +257,11 @@ public class PlayerControllerV2 : MonoBehaviour
     {
         Vector3 accelIncrement = Time.deltaTime * _acceleration * _moveInputUnitVector;
 
-        if (_currSpeed.magnitude < _maxSpeed)
+        if (lateralVector.magnitude < _maxSpeed)
         {
-            if (_currSpeed.magnitude + accelIncrement.magnitude > _maxSpeed)
+            if (lateralVector.magnitude + accelIncrement.magnitude > _maxSpeed)
             {
-                accelIncrement = (_maxSpeed - _currSpeed.magnitude) * _moveInputUnitVector;
+                accelIncrement = (_maxSpeed - lateralVector.magnitude) * _moveInputUnitVector;
             }
         }
         else
@@ -272,26 +269,26 @@ public class PlayerControllerV2 : MonoBehaviour
             accelIncrement = Vector3.zero;
         }
 
-        _currSpeed = _currSpeed.magnitude * _moveInputUnitVector;
-        _currSpeed += accelIncrement;
-        _characterController.Move(Time.deltaTime * _currSpeed);
+        lateralVector = lateralVector.magnitude * _moveInputUnitVector;
+        lateralVector += accelIncrement;
+        _characterController.Move(Time.deltaTime * lateralVector);
     }
 
 
     private void Decelerate()
     {
-        if (_currSpeed.magnitude > 0)
+        if (lateralVector.magnitude > 0)
         {
-            Vector3 decelIncrement = Time.deltaTime * _aeceleration * _currSpeed.normalized;
+            Vector3 decelIncrement = Time.deltaTime * _aeceleration * lateralVector.normalized;
 
-            if (_currSpeed.magnitude - decelIncrement.magnitude < 0)
+            if (lateralVector.magnitude - decelIncrement.magnitude < 0)
             {
-                _currSpeed = Vector3.zero;
+                lateralVector = Vector3.zero;
                 decelIncrement = Vector3.zero;
             }
 
-            _currSpeed -= decelIncrement;
-            _characterController.Move(Time.deltaTime * _currSpeed);
+            lateralVector -= decelIncrement;
+            _characterController.Move(Time.deltaTime * lateralVector);
         }
     }
 
@@ -323,25 +320,20 @@ public class PlayerControllerV2 : MonoBehaviour
 
     private void JumpInputActionStarted(InputAction.CallbackContext context)
     {
-        _isJumpInputHeld = true;
-
-
         if (IsGrounded() && !_isDashing)
         {
             _didPerformJump = true;
         }
-    }
-
-
-    private void JumpInputActionCanceled(InputAction.CallbackContext context)
-    {
-        _didPerformJump = false;
+        else if (!IsGrounded())
+        {
+            _didPerformBoost = true;
+        }
     }
 
 
     private void JumpCase()
     {
-        if (_isJumpInputHeld && IsGrounded())
+        if (jumpActions.IsPressed() && IsGrounded())
         {
             _characterController.stepOffset = _originalStepOffset;
 
@@ -350,37 +342,37 @@ public class PlayerControllerV2 : MonoBehaviour
                 _didPerformJump = false;
                 _verticalVector.y = _JumpHeight;
             }
-            else
-            {
-                _verticalVector.y = -0.5f;
-            }
 
             _characterController.Move(Time.deltaTime * _verticalVector);
         }
-        else
+        else if (!IsGrounded())
         {
             _characterController.stepOffset = 0;
             ApplyGravity();
+        }
+        else
+        {
+            LandedCase();
         }
     }
 
 
     private void BoostCase()
     {
-        if (jumpActions.IsPressed())
+        if (_didPerformBoost && jumpActions.IsPressed())
         {
             if (!IsGrounded() && _boostEnergy > 0)
             {
-                Vector3 boostIncrement = Time.deltaTime * _boostSpeed * _verticalVector;
+                Vector3 boostIncrement = Time.deltaTime * _boostSpeed * Vector3.up;
 
-                //if ((_boostEnergy - boostIncrement.magnitude) < 0)
-                //{
-                //    _boostEnergy = (_boostSpeed - boostIncrement).magnitude * _verticalVector;
-                //}
-                //else
-                //{
-                //    _boostEnergy -= boostIncrement.magnitude;
-                //}
+                if (_boostEnergy - boostIncrement.magnitude < 0)
+                {
+                    _boostEnergy = 0;
+                }
+                else
+                {
+                    _boostEnergy -= boostIncrement.magnitude;
+                }
 
                 _verticalVector += boostIncrement;
 
@@ -395,17 +387,28 @@ public class PlayerControllerV2 : MonoBehaviour
     }
 
 
+    private void LandedCase()
+    {
+        _didPerformBoost = false;
+        _boostEnergy = _maxBoostEnergy;
+        _verticalVector.y = -0.5f;
+    }
+
+
     private IEnumerator BoostRegeneration()
     {
         _isRegeneratingBoost = true;
 
         while (_boostEnergy != _maxBoostEnergy)
         {
-            _boostEnergy += Time.deltaTime * _boostRegenerationSpeed;
-
-            if (_boostEnergy > _maxBoostEnergy)
+            if (!jumpActions.IsPressed())
             {
-                _boostEnergy = _maxBoostEnergy;
+                _boostEnergy += Time.deltaTime * _boostRegenerationSpeed;
+
+                if (_boostEnergy > _maxBoostEnergy)
+                {
+                    _boostEnergy = _maxBoostEnergy;
+                }
             }
 
             yield return null;
