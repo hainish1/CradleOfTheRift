@@ -21,6 +21,8 @@ public class PlayerMovement : MonoBehaviour
     private float groundedRaycastFloorDistance;
     private float groundedRaycastRadialDistance;
 
+    private Entity playerEntity;
+
     [Header("Movement Parameters")]
     [SerializeField] private float movementMaxVelocity;
     [SerializeField] private float movementAcceleration;
@@ -101,6 +103,13 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
+        playerEntity = GetComponent<Entity>();
+
+        if (playerEntity != null)
+        {
+            // Debug.Log($"Player Movement initialized with movespeed: {playerEntity.Stats.MoveSpeed}");
+        }
+
         playerHalfHeight = GetComponent<CharacterController>().bounds.extents.y;
         playerHalfWidth = GetComponent<CharacterController>().bounds.extents.x;
         groundedRaycastFloorDistance = playerHalfHeight + 0.1f;
@@ -174,6 +183,7 @@ public class PlayerMovement : MonoBehaviour
 
         // characterController.Move(Time.deltaTime * movementMaxVelocity * moveVector);
         // Dash overrides normal movement while active
+        // MOVEMENT WITH STAT BASED STUFF
         if (isDashing)
         {
             // I am making a CHANGE here to use moveVector instead of dashVector, to fix the direction bug while backward dash
@@ -181,7 +191,9 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            characterController.Move(Time.deltaTime * movementMaxVelocity * moveVector);
+            // GET CURRENT MOVE SPEED FROM STATS SYSTEM
+            float currentMoveSpeed = playerEntity != null ? playerEntity.Stats.MoveSpeed : movementMaxVelocity;
+            characterController.Move(Time.deltaTime * currentMoveSpeed * moveVector); // use the Stat Speed Here
 
             // Apply knockback after normal movement
             if (externalVelocity.sqrMagnitude > 1e-6f)
