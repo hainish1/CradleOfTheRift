@@ -53,12 +53,14 @@ public class PlayerControllerV2 : MonoBehaviour
     [SerializeField] private int _maxBoostEnergy;
     [SerializeField] private int _boostSpeed;
     [SerializeField] private int _boostRegenerationSpeed;
+    [SerializeField] private float _boostTapDelay;
     [SerializeField] private float _strafeMultiplier;
     [SerializeField] private float _gravityMultiplier;
     private float _boostEnergy;
     private bool _isRegeneratingBoost;
     private bool _didPerformJump;
-    private bool _didPerformBoost;
+    private bool _isBoosting;
+    private float _currBoostTapDelay;
     private Vector3 _verticalVector;
 
     //[Header("Coyote Time Parameters")]
@@ -155,7 +157,8 @@ public class PlayerControllerV2 : MonoBehaviour
         _boostEnergy = _maxBoostEnergy;
         _isRegeneratingBoost = false;
         _didPerformJump = false;
-        _didPerformBoost = false;
+        _isBoosting = false;
+        _currBoostTapDelay = 0;
 
         _isDashing = false;
 
@@ -174,6 +177,8 @@ public class PlayerControllerV2 : MonoBehaviour
         if (_lockControls) return;
 
         Look();
+
+        ApplyGravity();
 
         if (_isDashing)
         {
@@ -324,9 +329,14 @@ public class PlayerControllerV2 : MonoBehaviour
         {
             _didPerformJump = true;
         }
-        else if (!IsGrounded())
+        
+        if (_currBoostTapDelay == 0)
         {
-            _didPerformBoost = true;
+            StartCoroutine(BoostTapDelay());
+        }
+        else if (_currBoostTapDelay < _boostTapDelay)
+        {
+            _isBoosting = true;
         }
     }
 
@@ -348,7 +358,6 @@ public class PlayerControllerV2 : MonoBehaviour
         else if (!IsGrounded())
         {
             _characterController.stepOffset = 0;
-            ApplyGravity();
         }
         else
         {
@@ -356,10 +365,29 @@ public class PlayerControllerV2 : MonoBehaviour
         }
     }
 
+    private IEnumerator BoostTapDelay()
+    {
+        while (_currBoostTapDelay < _boostTapDelay)
+        {
+            _currBoostTapDelay += Time.deltaTime;
+            
+            yield return null;
+        }
+
+        _currBoostTapDelay = 0;
+    }
+
 
     private void BoostCase()
     {
-        if (_didPerformBoost && jumpActions.IsPressed())
+        // Player let go of spacebar.
+        if (_isBoosting && !jumpActions.IsPressed())
+        {
+            _isBoosting = false;
+        }
+        
+        // Player is boosting.
+        if (_isBoosting && jumpActions.IsPressed())
         {
             if (!IsGrounded() && _boostEnergy > 0)
             {
@@ -380,6 +408,7 @@ public class PlayerControllerV2 : MonoBehaviour
             }
         }
 
+        // Initialize regeneration conditions if boosted.
         if (_boostEnergy != _maxBoostEnergy && !_isRegeneratingBoost)
         {
             StartCoroutine(BoostRegeneration());
@@ -389,8 +418,7 @@ public class PlayerControllerV2 : MonoBehaviour
 
     private void LandedCase()
     {
-        _didPerformBoost = false;
-        _boostEnergy = _maxBoostEnergy;
+        _isBoosting = false;
         _verticalVector.y = -0.5f;
     }
 
@@ -399,9 +427,9 @@ public class PlayerControllerV2 : MonoBehaviour
     {
         _isRegeneratingBoost = true;
 
-        while (_boostEnergy != _maxBoostEnergy)
+        while (_boostEnergy <= _maxBoostEnergy)
         {
-            if (!jumpActions.IsPressed())
+            if (!_isBoosting)
             {
                 _boostEnergy += Time.deltaTime * _boostRegenerationSpeed;
 
@@ -420,14 +448,18 @@ public class PlayerControllerV2 : MonoBehaviour
 
     private void ApplyGravity()
     {
-        _verticalVector += Time.deltaTime * _gravityMultiplier * Physics.gravity;
-
-        if (_verticalVector.y < _gravityMultiplier * Physics.gravity.y)
+        // Do not apply gravity when boosting.
+        if (!IsGrounded() && !_isBoosting)
         {
-            _verticalVector.y = _gravityMultiplier * Physics.gravity.y;
-        }
+            _verticalVector += Time.deltaTime * _gravityMultiplier * Physics.gravity;
 
-        _characterController.Move(Time.deltaTime * _verticalVector);
+            if (_verticalVector.y < _gravityMultiplier * Physics.gravity.y)
+            {
+                _verticalVector.y = _gravityMultiplier * Physics.gravity.y;
+            }
+
+            _characterController.Move(Time.deltaTime * _verticalVector);
+        }
     }
 
 
