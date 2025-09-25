@@ -107,7 +107,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (playerEntity != null)
         {
-            Debug.Log($"Player Movement initialized with movespeed: {playerEntity.Stats.MoveSpeed}");
+            // Debug.Log($"Player Movement initialized with movespeed: {playerEntity.Stats.MoveSpeed}");
         }
 
         playerHalfHeight = GetComponent<CharacterController>().bounds.extents.y;
