@@ -26,6 +26,8 @@ public class PlayerShooter : MonoBehaviour
     private InputSystem_Actions.PlayerActions actions;
     private InputAction fireAction;
 
+    private Entity playerEntity; // REF FOR STATS
+
     private bool isFiring;
     private float nextFireTime;
 
@@ -34,6 +36,8 @@ public class PlayerShooter : MonoBehaviour
 
     void Start()
     {
+        playerEntity = GetComponent<Entity>();
+
         var input = new InputAction("Toggle Spawning", binding: "<Keyboard>/b");
         input.performed += _ => ToggleFullAuto();
         input.Enable();
@@ -121,15 +125,20 @@ public class PlayerShooter : MonoBehaviour
 
         nextFireTime = Time.time + (1f / Mathf.Max(0.01f, fireRate));
 
-        
+
         Vector3 direction = aim.GetAimDirection(muzzle.position, muzzle.forward);
 
         Vector3 spawnPos = muzzle.position + direction * spawnOffset;
         Quaternion spawnRot = Quaternion.LookRotation(direction, Vector3.up);
 
+        // now stat timeeee 
+        int currentDamage = playerEntity.Stats.Attack;
+
         // NOTE TO SELF : USE OBJECT POOLING LATER TO REDUCE INSTANTIATING
         var proj = Instantiate(projectilePrefab, spawnPos, spawnRot);
-        proj.Init(direction * projectileSpeed, shootMask);
+        proj.Init(direction * projectileSpeed, shootMask, currentDamage);
+        
+        Debug.Log($"Fired projectile with {currentDamage} damage");
     }
 
 }

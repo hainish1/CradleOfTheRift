@@ -7,6 +7,7 @@ public class Stats
     readonly StatsMediator mediator;
     readonly BaseStats baseStats;
 
+    public StatsMediator Mediator => mediator;
 
     public int Attack
     {
@@ -39,6 +40,6 @@ public class Stats
 
     public override string ToString()
     {
-        return $"Projectile Damage: {Attack}, Health: {Health}";
+        return $"Health: {Health}, Projectile Damage: {Attack}";
     }
 }

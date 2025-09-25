@@ -3,7 +3,10 @@ using System;
 
 public abstract class StatModifier : IDisposable
 {
-    public bool MarkedForRemoval{ get; private set; }
+    public StatType Type { get; }
+    
+
+    public bool MarkedForRemoval { get; private set; }
     public event Action<StatModifier> OnDispose = delegate { };
 
     readonly CountdownTimer timer;
@@ -14,7 +17,7 @@ public abstract class StatModifier : IDisposable
 
         timer = new CountdownTimer(duration);
 
-        timer.OnTimerStop += Dispose;
+        timer.OnTimerStop += () => MarkedForRemoval = true;
         timer.Start();
     }
 
@@ -25,7 +28,7 @@ public abstract class StatModifier : IDisposable
 
     public void Dispose()
     {
-        MarkedForRemoval = true;
+        
         OnDispose.Invoke(this);
     }
 

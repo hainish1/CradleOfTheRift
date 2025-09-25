@@ -3,26 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class BasicStatsModifier : StatModifier
-{
-    readonly StatType type;
-    readonly Func<int, int> operation;
-
-    public BasicStatsModifier(StatType type, float duration, Func<int, int> operation) : base(duration)
-    {
-        this.type = type;
-        this.operation = operation;
-    }
-
-    public override void Handle(object sender, Query query)
-    {
-        if (query.StatType == type)
-        {
-            query.Value = operation(query.Value);
-        }
-    }
-}
-
 
 
 // this will sit in between the stat class and all of the stat modifiers
@@ -46,7 +26,7 @@ public class StatsMediator
         };
     }
 
-    public void Udpate(float deltaTime)
+    public void Update(float deltaTime)
     {
         // update all stat modifiers with delta time
         var node = modifiers.First;
@@ -73,6 +53,26 @@ public class StatsMediator
 
             node = nextNode;
 
+        }
+    }
+}
+
+public class BasicStatsModifier : StatModifier
+{
+    readonly StatType type ;
+    readonly Func<int, int> operation;
+
+    public BasicStatsModifier(StatType type, float duration, Func<int, int> operation) : base(duration)
+    {
+        this.type = type;
+        this.operation = operation;
+    }
+
+    public override void Handle(object sender, Query query)
+    {
+        if (query.StatType == type)
+        {
+            query.Value = operation(query.Value);
         }
     }
 }
