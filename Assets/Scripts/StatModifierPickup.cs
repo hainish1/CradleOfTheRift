@@ -5,7 +5,7 @@ public class StatModifierPickup : Pickup
 {
     public enum OperatorType { Add, Multiply }
 
-    [SerializeField] StatType type = StatType.Attack;
+    [SerializeField] StatType type = StatType.ProjectileDamage;
     [SerializeField] OperatorType operatorType = OperatorType.Add;
     [SerializeField] int value = 2;
     [SerializeField] int duration = -1;

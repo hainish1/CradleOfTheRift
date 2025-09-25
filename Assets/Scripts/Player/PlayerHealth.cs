@@ -11,7 +11,8 @@ public class PlayerHealth : HealthController
 
         if (playerEntity != null)
         {
-            maxHealth = playerEntity.Stats.Health;
+            maxHealth = Mathf.RoundToInt(playerEntity.Stats.Health);
+            
             currentHealth = maxHealth;
 
             Debug.Log($"Player health initialized with heatlh-statsL {maxHealth}");
@@ -22,7 +23,7 @@ public class PlayerHealth : HealthController
     {
         if (playerEntity != null)
         {
-            int newMaxHealth = playerEntity.Stats.Health;
+            int newMaxHealth = Mathf.RoundToInt(playerEntity.Stats.Health);
 
             // If max health changed (due to item pickup), adjust current health proportionally
             if (newMaxHealth != maxHealth)

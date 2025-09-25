@@ -60,9 +60,9 @@ public class StatsMediator
 public class BasicStatsModifier : StatModifier
 {
     readonly StatType type ;
-    readonly Func<int, int> operation;
+    readonly Func<float, float> operation;
 
-    public BasicStatsModifier(StatType type, float duration, Func<int, int> operation) : base(duration)
+    public BasicStatsModifier(StatType type, float duration, Func<float, float> operation) : base(duration)
     {
         this.type = type;
         this.operation = operation;
@@ -81,9 +81,9 @@ public class BasicStatsModifier : StatModifier
 public class Query
 {
     public readonly StatType StatType;
-    public int Value;
+    public float Value;
 
-    public Query(StatType statType, int value)
+    public Query(StatType statType, float value)
     {
         StatType = statType;
         Value = value;

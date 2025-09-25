@@ -19,6 +19,7 @@ public class PlayerManager : Entity
             Debug.Log($"Player initialized with stats: {Stats.ToString()}");
         }
     }
+
     
     void LateUpdate()
     {
@@ -32,7 +33,7 @@ public class PlayerManager : Entity
     [ContextMenu("Test Add Attack Item")]
     void TestAddAttack()
     {
-        var modifier = new BasicStatsModifier(StatType.Attack, -1, v => v + 5);
+        var modifier = new BasicStatsModifier(StatType.ProjectileDamage, -1, v => v + 5);
         Stats.Mediator.AddModifier(modifier);
         Debug.Log("Added +5 attack item");
     }
