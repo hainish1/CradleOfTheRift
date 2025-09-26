@@ -8,10 +8,12 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float gravity = 0f;
 
     [Header("hit")]
-    [SerializeField] private int damage = 1;
+    [SerializeField] private int baseDamage = 1;
     [SerializeField] private float hitForce = 8f;
     [SerializeField] private float knockBackImpulse = 8f;
     [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
+
+    private int actualDamage; // THIS WILL STORE DAMAGE FROM STATS SYSTEM
 
     Rigidbody rb;
     private float age;
@@ -23,11 +25,14 @@ public class Projectile : MonoBehaviour
         rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
-    public void Init(Vector3 velocity, LayerMask mask)
+    public void Init(Vector3 velocity, LayerMask mask, int damage)
     {
         rb.linearVelocity = velocity;
         hitMask = mask;
+        actualDamage = damage; // USE DAMAGE FROM STATS SYSTEM
         age = 0f;
+
+        Debug.Log($"Projectile initialized with damage: {actualDamage}");
     }
 
 
@@ -81,7 +86,9 @@ public class Projectile : MonoBehaviour
         var damageable = collision.collider.GetComponentInParent<IDamageable>();
         if (damageable != null && !damageable.IsDead)
         {
-            damageable.TakeDamage(damage);
+            // HERE NOW I WILL USE THE MODIFIED DAMAGE
+            damageable.TakeDamage(actualDamage);
+            Debug.Log($"Dealt {actualDamage} damage to {collision.gameObject.name}");
         }
 
         // plkace to add impact effects later
