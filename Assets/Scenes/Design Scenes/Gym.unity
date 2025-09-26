@@ -1644,11 +1644,19 @@ PrefabInstance:
       objectReference: {fileID: 20021972}
     - target: {fileID: 5420797678733100842, guid: 235b8c99059b34b2bb3226bc484e201d, type: 3}
       propertyPath: timeBetweenWaves
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5420797678733100842, guid: 235b8c99059b34b2bb3226bc484e201d, type: 3}
       propertyPath: enemies.Array.size
-      value: 1
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420797678733100842, guid: 235b8c99059b34b2bb3226bc484e201d, type: 3}
+      propertyPath: enemies.Array.data[1].prefab
+      value: 
+      objectReference: {fileID: 8841140246284276385, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
+    - target: {fileID: 5420797678733100842, guid: 235b8c99059b34b2bb3226bc484e201d, type: 3}
+      propertyPath: enemies.Array.data[1].isFlying
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
