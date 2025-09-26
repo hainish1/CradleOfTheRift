@@ -1642,6 +1642,14 @@ PrefabInstance:
       propertyPath: playerLocation
       value: 
       objectReference: {fileID: 20021972}
+    - target: {fileID: 5420797678733100842, guid: 235b8c99059b34b2bb3226bc484e201d, type: 3}
+      propertyPath: timeBetweenWaves
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420797678733100842, guid: 235b8c99059b34b2bb3226bc484e201d, type: 3}
+      propertyPath: enemies.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2209,63 +2217,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseStats: {fileID: 11400000, guid: 9e293433f38546341aeee2c4b7086f0e, type: 2}
   showStatsInConsole: 1
---- !u!1001 &1328174787
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 6141094693760935892, guid: d4e3c7a37c4629546b7d24154a188a05, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 25.12
-      objectReference: {fileID: 0}
-    - target: {fileID: 6141094693760935892, guid: d4e3c7a37c4629546b7d24154a188a05, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.35538542
-      objectReference: {fileID: 0}
-    - target: {fileID: 6141094693760935892, guid: d4e3c7a37c4629546b7d24154a188a05, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -39.83
-      objectReference: {fileID: 0}
-    - target: {fileID: 6141094693760935892, guid: d4e3c7a37c4629546b7d24154a188a05, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6141094693760935892, guid: d4e3c7a37c4629546b7d24154a188a05, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6141094693760935892, guid: d4e3c7a37c4629546b7d24154a188a05, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6141094693760935892, guid: d4e3c7a37c4629546b7d24154a188a05, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6141094693760935892, guid: d4e3c7a37c4629546b7d24154a188a05, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6141094693760935892, guid: d4e3c7a37c4629546b7d24154a188a05, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
-      objectReference: {fileID: 0}
-    - target: {fileID: 6141094693760935892, guid: d4e3c7a37c4629546b7d24154a188a05, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9052771768225873463, guid: d4e3c7a37c4629546b7d24154a188a05, type: 3}
-      propertyPath: m_Name
-      value: SlimeEnemy
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: d4e3c7a37c4629546b7d24154a188a05, type: 3}
 --- !u!1001 &1369407796
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11776,7 +11727,6 @@ SceneRoots:
   - {fileID: 530783517}
   - {fileID: 1700329370}
   - {fileID: 344156119}
-  - {fileID: 1328174787}
   - {fileID: 229439559}
   - {fileID: 4713841978785598813}
   - {fileID: 4498889096930254568}
