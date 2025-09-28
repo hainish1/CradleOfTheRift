@@ -407,11 +407,15 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 375451500750566820, guid: dcf5ff3c5dda3554abfec129ff1d8abf, type: 3}
-      propertyPath: _boostTapDelay
-      value: 0.3
+      propertyPath: _boostAcceleration
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 375451500750566820, guid: dcf5ff3c5dda3554abfec129ff1d8abf, type: 3}
-      propertyPath: _boostRegenerationSpeed
+      propertyPath: _boostDepletionRate
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 375451500750566820, guid: dcf5ff3c5dda3554abfec129ff1d8abf, type: 3}
+      propertyPath: _boostRegenerationRate
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 1791293462135853411, guid: dcf5ff3c5dda3554abfec129ff1d8abf, type: 3}

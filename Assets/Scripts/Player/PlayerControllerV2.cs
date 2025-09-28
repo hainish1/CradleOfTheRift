@@ -50,17 +50,12 @@ public class PlayerControllerV2 : MonoBehaviour
 
     [Header("Jump Parameters")]
     [SerializeField] private float _JumpHeight;
-    [SerializeField] private int _maxBoostEnergy;
-    [SerializeField] private int _boostSpeed;
-    [SerializeField] private int _boostRegenerationSpeed;
-    [SerializeField] private float _boostTapDelay;
     [SerializeField] private float _strafeMultiplier;
+    [SerializeField] [Range(0, 1)] private float _hoverDescentReductionMultiplier;
     [SerializeField] private float _gravityMultiplier;
-    private float _boostEnergy;
-    private bool _isRegeneratingBoost;
     private bool _didPerformJump;
-    private bool _isBoosting;
-    private float _currBoostTapDelay;
+    private bool _isHovering;
+    private float _aggregateGravityModifier;
     private Vector3 _verticalVector;
 
     //[Header("Coyote Time Parameters")]
@@ -69,6 +64,18 @@ public class PlayerControllerV2 : MonoBehaviour
     //private float earlyCoyoteTimer;
     //private float lateCoyoteTimer;
     //private bool canEarlyJump;
+
+    [Header("Boost Parameters")]
+    [SerializeField] private int _maxBoostEnergy;
+    [SerializeField] private int _maxBoostSpeed;
+    [SerializeField] private int _boostAcceleration;
+    [SerializeField] private int _boostRegenerationRate;
+    [SerializeField] private int _boostDepletionRate;
+    [SerializeField] private float _boostDoubleTapWindow;
+    private float _currBoostEnergy;
+    private float _currBoostDoubleTapTime;
+    private bool _isBoosting;
+    private bool _isRegeneratingBoost;
 
     [Header("Dash Parameters")]
     [SerializeField] private float _dashDistance;
@@ -109,6 +116,7 @@ public class PlayerControllerV2 : MonoBehaviour
         jumpActions = playerActions.Jump;
         jumpActions.Enable();
         jumpActions.started += JumpInputActionStarted;
+        jumpActions.canceled += JumpInputActionCanceled;
 
         dashActions = playerActions.Dash;
         dashActions.Enable();
@@ -133,6 +141,7 @@ public class PlayerControllerV2 : MonoBehaviour
         pauseActions.Disable();
 
         jumpActions.started -= JumpInputActionStarted;
+        jumpActions.canceled -= JumpInputActionCanceled;
         dashActions.started -= DashInputActionStarted;
         attackActions.started -= AttackInputActionStarted;
         pauseActions.started -= PauseInputActionStarted;
@@ -153,12 +162,15 @@ public class PlayerControllerV2 : MonoBehaviour
 
         _acceleration = _maxSpeed / _accelerationSeconds;
         _aeceleration = _maxSpeed / _decelerationSeconds;
-        
-        _boostEnergy = _maxBoostEnergy;
-        _isRegeneratingBoost = false;
+
         _didPerformJump = false;
+        _isHovering = false;
+        _aggregateGravityModifier = _gravityMultiplier;
+        
+        _currBoostEnergy = _maxBoostEnergy;
+        _currBoostDoubleTapTime = _boostDoubleTapWindow;
         _isBoosting = false;
-        _currBoostTapDelay = 0;
+        _isRegeneratingBoost = false;
 
         _isDashing = false;
 
@@ -189,6 +201,7 @@ public class PlayerControllerV2 : MonoBehaviour
             MoveCase();
             JumpCase();
             BoostCase();
+            HoverCase();
         }
     }
 
@@ -329,29 +342,40 @@ public class PlayerControllerV2 : MonoBehaviour
         {
             _didPerformJump = true;
         }
-        
-        if (_currBoostTapDelay == 0)
+        else if (!IsGrounded() && !_isDashing)
         {
-            StartCoroutine(BoostTapDelay());
+            _isHovering = true;
         }
-        else if (_currBoostTapDelay < _boostTapDelay)
+
+        if (_currBoostDoubleTapTime == _boostDoubleTapWindow)
         {
+            StartCoroutine(BoostDoubleTapTimer());
+        }
+        else if (IsWithinBoostWindow())
+        {
+            _isHovering = false;
             _isBoosting = true;
         }
     }
 
 
+    private void JumpInputActionCanceled(InputAction.CallbackContext context)
+    {
+        _isHovering = false;
+        _aggregateGravityModifier = _gravityMultiplier;
+
+        _isBoosting = false;
+
+    }
+
+
     private void JumpCase()
     {
-        if (jumpActions.IsPressed() && IsGrounded())
+        if (_didPerformJump && IsGrounded())
         {
-            _characterController.stepOffset = _originalStepOffset;
-
-            if (_didPerformJump)
-            {
-                _didPerformJump = false;
-                _verticalVector.y = _JumpHeight;
-            }
+            _didPerformJump = false;
+            _verticalVector.y = _JumpHeight;
+            _characterController.stepOffset = 0;
 
             _characterController.Move(Time.deltaTime * _verticalVector);
         }
@@ -361,65 +385,78 @@ public class PlayerControllerV2 : MonoBehaviour
         }
         else
         {
-            LandedCase();
+            _isBoosting = false;
+            _verticalVector.y = -0.5f;
+            _characterController.stepOffset = _originalStepOffset;
         }
     }
 
-    private IEnumerator BoostTapDelay()
+
+    private IEnumerator BoostDoubleTapTimer()
     {
-        while (_currBoostTapDelay < _boostTapDelay)
+        while (IsWithinBoostWindow())
         {
-            _currBoostTapDelay += Time.deltaTime;
+            _currBoostDoubleTapTime -= Time.deltaTime;
             
             yield return null;
         }
 
-        _currBoostTapDelay = 0;
+        _currBoostDoubleTapTime = _boostDoubleTapWindow;
+    }
+
+
+    private bool IsWithinBoostWindow()
+    {
+        return _currBoostDoubleTapTime > 0;
     }
 
 
     private void BoostCase()
     {
-        // Player let go of spacebar.
-        if (_isBoosting && !jumpActions.IsPressed())
+        // Player let go of spacebar or ran out of boost energy.
+        if ((_isBoosting && !jumpActions.IsPressed()) || _currBoostEnergy <= 0)
         {
             _isBoosting = false;
         }
         
         // Player is boosting.
-        if (_isBoosting && jumpActions.IsPressed())
+        if (!IsGrounded() && _isBoosting && jumpActions.IsPressed() && _currBoostEnergy > 0)
         {
-            if (!IsGrounded() && _boostEnergy > 0)
+            Vector3 boostIncrement = Time.deltaTime * _boostAcceleration * Vector3.up;
+            float depletionDecrement = Time.deltaTime * _boostDepletionRate;
+
+            // Decrease boost energy by the full decrement if not less than 0,
+            // otherwise set to exactly 0 and begin hovering.
+            if (_currBoostEnergy - depletionDecrement > 0)
             {
-                Vector3 boostIncrement = Time.deltaTime * _boostSpeed * Vector3.up;
+                _currBoostEnergy -= depletionDecrement;
+            }
+            else
+            {
+                _currBoostEnergy = 0;
+                _isHovering = true;
+            }
 
-                if (_boostEnergy - boostIncrement.magnitude < 0)
-                {
-                    _boostEnergy = 0;
-                }
-                else
-                {
-                    _boostEnergy -= boostIncrement.magnitude;
-                }
-
+            // Limit vertical boost speed to _maxBoostSpeed.
+            if (_verticalVector.magnitude < _maxBoostSpeed)
+            {
                 _verticalVector += boostIncrement;
 
-                _characterController.Move(Time.deltaTime * _verticalVector);
+                // Set vertical speed to exactly _maxBoostSpeed if the last increment went over.
+                if (_verticalVector.magnitude > _maxBoostSpeed)
+                {
+                    _verticalVector = new Vector3(_verticalVector.x, _maxBoostSpeed, _verticalVector.z);
+                }
             }
+
+            _characterController.Move(Time.deltaTime * _verticalVector);
         }
 
-        // Initialize regeneration conditions if boosted.
-        if (_boostEnergy != _maxBoostEnergy && !_isRegeneratingBoost)
+        // Initialize regeneration coroutine if boosted, touched the ground and not already regenerating.
+        if (IsGrounded() && _currBoostEnergy < _maxBoostEnergy && !_isRegeneratingBoost)
         {
             StartCoroutine(BoostRegeneration());
         }
-    }
-
-
-    private void LandedCase()
-    {
-        _isBoosting = false;
-        _verticalVector.y = -0.5f;
     }
 
 
@@ -427,16 +464,18 @@ public class PlayerControllerV2 : MonoBehaviour
     {
         _isRegeneratingBoost = true;
 
-        while (_boostEnergy <= _maxBoostEnergy)
+        while (_currBoostEnergy <= _maxBoostEnergy)
         {
-            if (!_isBoosting)
+            if (_isBoosting)
             {
-                _boostEnergy += Time.deltaTime * _boostRegenerationSpeed;
+                break;
+            }
 
-                if (_boostEnergy > _maxBoostEnergy)
-                {
-                    _boostEnergy = _maxBoostEnergy;
-                }
+            _currBoostEnergy += Time.deltaTime * _boostRegenerationRate;
+
+            if (_currBoostEnergy > _maxBoostEnergy)
+            {
+                _currBoostEnergy = _maxBoostEnergy;
             }
 
             yield return null;
@@ -451,14 +490,31 @@ public class PlayerControllerV2 : MonoBehaviour
         // Do not apply gravity when boosting.
         if (!IsGrounded() && !_isBoosting)
         {
-            _verticalVector += Time.deltaTime * _gravityMultiplier * Physics.gravity;
+            _verticalVector += Time.deltaTime * _aggregateGravityModifier * Physics.gravity;
 
-            if (_verticalVector.y < _gravityMultiplier * Physics.gravity.y)
+            if (_verticalVector.y < _aggregateGravityModifier * Physics.gravity.y)
             {
-                _verticalVector.y = _gravityMultiplier * Physics.gravity.y;
+                _verticalVector.y = _aggregateGravityModifier * Physics.gravity.y;
             }
 
             _characterController.Move(Time.deltaTime * _verticalVector);
+        }
+    }
+
+
+    private void HoverCase()
+    {
+        // Player let go of spacebar or landed.
+        if ((_isHovering && !jumpActions.IsPressed()) || IsGrounded())
+        {
+            _isHovering = false;
+            _aggregateGravityModifier = _gravityMultiplier;
+        }
+
+        // Player is hovering, only when falling.
+        if (_isHovering && jumpActions.IsPressed() && _verticalVector.y < 0)
+        {
+            _aggregateGravityModifier = _gravityMultiplier * _hoverDescentReductionMultiplier;
         }
     }
 
