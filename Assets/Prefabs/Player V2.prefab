@@ -116,8 +116,9 @@ MonoBehaviour:
   _gravityMultiplier: 3
   _maxBoostEnergy: 100
   _maxBoostSpeed: 30
-  _boostAcceleration: 30
-  _boostRegenerationSpeed: 20
+  _boostAcceleration: 20
+  _boostRegenerationRate: 30
+  _boostDepletionRate: 50
   _boostDoubleTapWindow: 0.3
   _dashDistance: 10
   _dashSpeed: 75
