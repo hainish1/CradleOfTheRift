@@ -36,7 +36,7 @@ public class Stats
     {
         get
         {
-            var q = new Query(StatType.MoveSpeed, Mathf.RoundToInt(baseStats.moveSpeed));
+            var q = new Query(StatType.MoveSpeed, baseStats.moveSpeed);
             mediator.PerformQuery(this, q);
             return q.Value;
         }

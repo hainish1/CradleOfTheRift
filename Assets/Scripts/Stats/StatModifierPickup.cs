@@ -1,13 +1,13 @@
 using System;
 using UnityEngine;
+public enum OperatorType { Add, Multiply }
 
 public class StatModifierPickup : Pickup
 {
-    public enum OperatorType { Add, Multiply }
 
     [SerializeField] StatType type = StatType.ProjectileDamage;
     [SerializeField] OperatorType operatorType = OperatorType.Add;
-    [SerializeField] int value = 2;
+    [SerializeField] float value = 2;
     [SerializeField] int duration = -1;
 
     protected override void ApplyPickupEffect(Entity entity)
