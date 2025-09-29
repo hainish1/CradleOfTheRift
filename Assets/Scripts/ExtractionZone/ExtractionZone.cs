@@ -23,7 +23,7 @@ public class ExtractionZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        PlayerController playerController = other.GetComponent<PlayerController>();
+        PlayerControllerV1 playerController = other.GetComponent<PlayerControllerV1>();
 
         if (playerController != null)
         {
@@ -40,7 +40,7 @@ public class ExtractionZone : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        PlayerController playerController = other.GetComponent<PlayerController>();
+        PlayerControllerV1 playerController = other.GetComponent<PlayerControllerV1>();
 
         if (playerController != null)
         {

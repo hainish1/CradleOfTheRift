@@ -44,7 +44,7 @@ public class PlayerControllerV1 : MonoBehaviour
     [SerializeField] private float _accelerationSeconds;
     [SerializeField] private float _decelerationSeconds;
     private float _acceleration;
-    private float _aeceleration;
+    private float _deceleration;
     private Vector3 lateralVector;
     private Vector3 _moveInputUnitVector;
 
@@ -161,7 +161,7 @@ public class PlayerControllerV1 : MonoBehaviour
         _cameraCollisionMasks = _environmentLayer.value;
 
         _acceleration = _maxSpeed / _accelerationSeconds;
-        _aeceleration = _maxSpeed / _decelerationSeconds;
+        _deceleration = _maxSpeed / _decelerationSeconds;
 
         _didPerformJump = false;
         _isHovering = false;
@@ -368,7 +368,7 @@ public class PlayerControllerV1 : MonoBehaviour
         // Skip deceleration calculations if not moving.
         if (lateralVector.magnitude > 0)
         {
-            Vector3 decelIncrement = Time.deltaTime * _aeceleration * lateralVector.normalized;
+            Vector3 decelIncrement = Time.deltaTime * _deceleration * lateralVector.normalized;
 
             // If deceleration decrement for the current frame exceeds zero,
             // then set current speed to exactly zero.
