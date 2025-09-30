@@ -60,7 +60,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _gravityMultiplier;
     private bool _didPerformJump;
     private bool _isHovering;
-    private float _aggregateGravityModifier;
+    public float _aggregateGravityModifier;
     private Vector3 _verticalVector;
 
     [Header("Boost Parameters")]

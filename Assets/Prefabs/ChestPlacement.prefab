@@ -44,4 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f2c3faa1c2bc514299da73d82ca418e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Chest: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+  chests: []
+  numberOfChestsToSpawn: 0
+  minDistanceBetweenChests: 5
