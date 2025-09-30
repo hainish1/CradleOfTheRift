@@ -198,9 +198,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: playerGold
+      value: 
+      objectReference: {fileID: 791410305}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: lootTable.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: lootTable.Array.data[0].dropPercent
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: lootTable.Array.data[1].dropPercent
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: lootTable.Array.data[2].dropPercent
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: lootTable.Array.data[0].lootItemPrefab
+      value: 
+      objectReference: {fileID: 7560352760904144751, guid: a24f20ace697d664583cdf006ad04c1c, type: 3}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: lootTable.Array.data[1].lootItemPrefab
+      value: 
+      objectReference: {fileID: 2716613920656688563, guid: 6de56ea7634e8514e89615abd742a107, type: 3}
+    - target: {fileID: 1228102177611050876, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: lootTable.Array.data[2].lootItemPrefab
+      value: 
+      objectReference: {fileID: 253841469622825718, guid: aec211ac53c76bb469ad7b1a09483aa1, type: 3}
     - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
       propertyPath: m_Name
       value: Chest
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -264,6 +300,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (26)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -325,6 +365,10 @@ PrefabInstance:
     - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
       propertyPath: m_Name
       value: Chest (19)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -520,6 +564,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (28)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -581,6 +629,10 @@ PrefabInstance:
     - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
       propertyPath: m_Name
       value: Chest (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -644,6 +696,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -706,6 +762,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (25)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -767,6 +827,10 @@ PrefabInstance:
     - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
       propertyPath: m_Name
       value: Chest (10)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -878,6 +942,17 @@ MonoBehaviour:
     m_Bits: 128
   interactionPromptUI: {fileID: 431937212}
   numCollidersFound: 0
+--- !u!114 &791410305 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7147516038626120348, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+  m_PrefabInstance: {fileID: 791410301}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 791410302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcd7f59827f874952822de3a10d2096d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -979,6 +1054,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1040,6 +1119,10 @@ PrefabInstance:
     - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
       propertyPath: m_Name
       value: Chest (15)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1103,6 +1186,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1164,6 +1251,10 @@ PrefabInstance:
     - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
       propertyPath: m_Name
       value: Chest (27)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1227,6 +1318,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (24)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1288,6 +1383,10 @@ PrefabInstance:
     - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
       propertyPath: m_Name
       value: Chest (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1351,6 +1450,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (21)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1412,6 +1515,10 @@ PrefabInstance:
     - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
       propertyPath: m_Name
       value: Chest (16)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1475,6 +1582,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (14)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1536,6 +1647,10 @@ PrefabInstance:
     - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
       propertyPath: m_Name
       value: Chest (23)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1599,6 +1714,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1660,6 +1779,10 @@ PrefabInstance:
     - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
       propertyPath: m_Name
       value: Chest (11)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1832,6 +1955,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (22)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1893,6 +2020,10 @@ PrefabInstance:
     - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
       propertyPath: m_Name
       value: Chest (12)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1956,6 +2087,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (29)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2017,6 +2152,10 @@ PrefabInstance:
     - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
       propertyPath: m_Name
       value: Chest (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2080,6 +2219,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (13)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2141,6 +2284,10 @@ PrefabInstance:
     - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
       propertyPath: m_Name
       value: Chest (17)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2204,6 +2351,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2265,6 +2416,10 @@ PrefabInstance:
     - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
       propertyPath: m_Name
       value: Chest (18)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2328,6 +2483,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (20)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2390,6 +2549,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 7494185963611747978, guid: 29ae2da6afb936543acf917abab29bff, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2451,6 +2614,10 @@ PrefabInstance:
     - target: {fileID: 7762395193692760586, guid: 5bb8c481a621a0b468cfca3557b3e743, type: 3}
       propertyPath: m_Name
       value: ChestPlacement
+      objectReference: {fileID: 0}
+    - target: {fileID: 7762395193692760586, guid: 5bb8c481a621a0b468cfca3557b3e743, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7968406341410066811, guid: 5bb8c481a621a0b468cfca3557b3e743, type: 3}
       propertyPath: chest

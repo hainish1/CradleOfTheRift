@@ -222,7 +222,7 @@ MonoBehaviour:
   price: 10
   singleActivation: 1
   audioData: {fileID: 1938403164052929742}
-  item: {fileID: 3673088095811726572, guid: 8a6001a849d5ec244afe1f4f7b3f612f, type: 3}
+  lootTable: {fileID: 1228102177611050876}
 --- !u!1 &7494185963611747978
 GameObject:
   m_ObjectHideFlags: 0
@@ -270,5 +270,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimumGold: 0
   maximumGold: 0
-  lootTable: []
+  lootTable:
+  - lootItemPrefab: {fileID: 7560352760904144751, guid: a24f20ace697d664583cdf006ad04c1c, type: 3}
+    dropPercent: 1
+  - lootItemPrefab: {fileID: 2716613920656688563, guid: 6de56ea7634e8514e89615abd742a107, type: 3}
+    dropPercent: 1
+  - lootItemPrefab: {fileID: 253841469622825718, guid: aec211ac53c76bb469ad7b1a09483aa1, type: 3}
+    dropPercent: 1
   playerGold: {fileID: 0}
