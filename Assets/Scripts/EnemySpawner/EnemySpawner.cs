@@ -7,17 +7,22 @@ using UnityEngine.InputSystem;
 
 public class EnemySpawner : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField]
     private ExtractionZone extractionZone;
     [SerializeField]
     private List<EnemyType> enemies;
     [SerializeField]
     private Transform playerLocation;
+    [SerializeField]
+    private DifficultyScaler difficultyScaler;
 
-
+    [Header("Settings")]
     [SerializeField]
     private float timeBetweenWaves = 8f;
 
+    // This is now controlled by the Difficulty Scaler object.
+    [Tooltip("If the DifficultyScaler object is set, this field is ignored!")]
     [SerializeField]
     private float difficultyScale = 1.03f;
     [SerializeField]
@@ -148,8 +153,8 @@ public class EnemySpawner : MonoBehaviour
         // Notify UI for change
         CurrentWaveChanged?.Invoke(this.currentWave);
 
-        float waveCredits = this.baseWaveCredits * Mathf.Pow(this.difficultyScale, this.currentWave);
-        int waveCap = Mathf.Min(Mathf.CeilToInt(this.startingEnemyCap + this.enemyCapGrowth * Mathf.Pow(difficultyScale, this.currentWave)), this.globalMaxEnemies);
+        float waveCredits = this.baseWaveCredits * Mathf.Pow(GetDifficulty(), this.currentWave);
+        int waveCap = Mathf.Min(Mathf.CeilToInt(this.startingEnemyCap + this.enemyCapGrowth * Mathf.Pow(GetDifficulty(), this.currentWave)), this.globalMaxEnemies);
 
         if (this.isExtractionActive)
         {
@@ -296,6 +301,22 @@ public class EnemySpawner : MonoBehaviour
         
         // Notify UI for change
         CurrentEnemyCountChanged?.Invoke(this.currentEnemyCount);
+    }
+
+    /// <summary>
+    /// Returns the Difficulty Scale.
+    /// Uses the DifficultyScaler object if it is set.
+    /// Otherwise, use the built-in difficultyScale.
+    /// </summary>
+    /// <returns>The difficulty scale.</returns>
+    private float GetDifficulty()
+    {
+        if (difficultyScaler)
+        {
+            return difficultyScaler.GetDifficultyScale();
+        }
+
+        return difficultyScale;
     }
 }
 
