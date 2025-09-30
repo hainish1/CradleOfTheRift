@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerControllerRigidbodyVersion : MonoBehaviour
 {
     private InputSystem_Actions playerInput;
     private InputSystem_Actions.PlayerActions playerActions;
@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform playerCamera;
     [SerializeField] private Transform cameraPivot;
     [SerializeField] private Transform cameraMount;
-    private CharacterController characterController;
+    private Rigidbody playerRB;
     private float playerHalfHeight;
     private float playerHalfWidth;
     private float groundedRaycastFloorDistance;
@@ -39,21 +39,21 @@ public class PlayerController : MonoBehaviour
     private Vector2 lookInput;
 
     [Header("Movement Parameters")]
-    [SerializeField] private float movementMaxVelocity;
-    [SerializeField] private float movementAcceleration;
-    [SerializeField] private float movementDeceleration;
+    [SerializeField] private float m_MaxSpeed;
+    [SerializeField] private float m_AccelerationSeconds;
+    [SerializeField] private float m_LinearDamping;
+    private float m_Acceleration;
     private Vector2 moveInput;
-    private Vector3 moveVector;
+    private Vector3 moveInputUnitVector;
 
     [Header("Jump Parameters")]
     [SerializeField] private float jumpForce;
     [SerializeField] private int jumpMaxCharges;
-    [SerializeField] private float groundedGravityScale;
-    [SerializeField] private float midairGravityScale;
+    [SerializeField] private float gravityScale;
     [SerializeField] private float strafeScale;
     private bool didPerformJump;
     private int jumpCharges;
-    private Vector3 verticalVector;
+    private Vector3 gravityVector;
 
     //[Header("Coyote Time Parameters")]
     //[SerializeField] private float earlyCoyoteTime;
@@ -63,13 +63,9 @@ public class PlayerController : MonoBehaviour
     //private bool canEarlyJump;
 
     [Header("Dash Parameters")]
-    [SerializeField] private float dashSpeed;
-    [SerializeField] private float dashDistance;
+    [SerializeField] private float dashForce;
     [SerializeField] private float dashCooldown;
-    [SerializeField] private int dashMaxCharges;
-    private bool isDashing;
-    private int dashCharges;
-    private Vector3 dashVector;
+    [SerializeField] private int dashCharges;
 
     //[Header("UI References")]
     //public Image crosshair;
@@ -86,7 +82,8 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        characterController = GetComponent<CharacterController>();
+        //characterController = GetComponent<CharacterController>();
+        playerRB = GetComponent<Rigidbody>();
         playerInput = new InputSystem_Actions();
         playerActions = playerInput.Player;
     }
@@ -101,19 +98,19 @@ public class PlayerController : MonoBehaviour
 
         jumpActions = playerActions.Jump;
         jumpActions.Enable();
-        jumpActions.started += Jump;
+        jumpActions.started += JumpInputAction;
 
         dashActions = playerActions.Dash;
         dashActions.Enable();
-        dashActions.started += Dash;
+        dashActions.started += DashInputAction;
 
         attackActions = playerActions.Attack;
         attackActions.Enable();
-        attackActions.started += Attack;
+        attackActions.started += AttackInputAction;
 
         pauseActions = playerInput.UI.Pause;
         pauseActions.Enable();
-        pauseActions.started += Pause;
+        pauseActions.started += PauseInputAction;
     }
 
     private void OnDisable()
@@ -125,10 +122,10 @@ public class PlayerController : MonoBehaviour
         attackActions.Enable();
         pauseActions.Disable();
 
-        jumpActions.started -= Jump;
-        dashActions.started -= Dash;
-        attackActions.started -= Attack;
-        pauseActions.started -= Pause;
+        jumpActions.started -= JumpInputAction;
+        dashActions.started -= DashInputAction;
+        attackActions.started -= AttackInputAction;
+        pauseActions.started -= PauseInputAction;
     }
 
     void Start()
@@ -136,16 +133,18 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        playerHalfHeight = GetComponent<CharacterController>().bounds.extents.y;
-        playerHalfWidth = GetComponent<CharacterController>().bounds.extents.x;
+        playerHalfHeight = GetComponent<CapsuleCollider>().bounds.extents.y;
+        playerHalfWidth = GetComponent<CapsuleCollider>().bounds.extents.x;
         groundedRaycastFloorDistance = playerHalfHeight + 0.1f;
         groundedRaycastRadialDistance = playerHalfWidth * 0.7f;
 
         cameraCollisionMasks = environmentLayer.value;
 
-        jumpCharges = jumpMaxCharges;
+        m_Acceleration = m_MaxSpeed / m_AccelerationSeconds;
+        playerRB.linearDamping = m_LinearDamping;
 
-        dashCharges = dashMaxCharges;
+        gravityVector = gravityScale * Physics.gravity;
+        jumpCharges = jumpMaxCharges;
 
         //crosshair.enabled = true;
         //pauseMenu.enabled = false;
@@ -162,6 +161,10 @@ public class PlayerController : MonoBehaviour
         if (lockControls) return;
 
         Look();
+    }
+
+    private void FixedUpdate()
+    {
         Move();
     }
 
@@ -171,6 +174,7 @@ public class PlayerController : MonoBehaviour
         
         CameraCollision();
     }
+
 
     private void Look()
     {
@@ -186,6 +190,7 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, yRotation, 0); // Rotate the player object horizontally around the y axis.
         cameraPivot.rotation = Quaternion.Euler(xRotation, yRotation, 0); // Rotate the player's camera pivot around the x and y axes.
     }
+
 
     private void CameraCollision()
     {
@@ -203,54 +208,78 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    
-    private void Move()
+
+
+    private Vector3 GetMoveInputDirection()
     {
         moveInput = moveActions.ReadValue<Vector2>();
         Vector3 inputDirection = new Vector3(moveInput.x, 0, moveInput.y);
-        moveVector = transform.TransformDirection(inputDirection).normalized;
+        
+        return transform.TransformDirection(inputDirection).normalized;
+    }
 
-        if (CheckIsGrounded())
-        {
-            if (didPerformJump)
-            {
-                verticalVector.y = jumpForce;
-            }
-            else
-            {
-                verticalVector.y = 0;
-            }
 
-            characterController.Move(Time.deltaTime * verticalVector);
-        }
-        else
+    private float GetLinearDampingCorrection()
+    {
+        float appliedDamping = 1 - m_LinearDamping * Time.deltaTime;
+        return 1 / appliedDamping;
+    }
+    
+
+    private void Move()
+    {
+        moveInputUnitVector = GetMoveInputDirection();
+
+        if (!IsGrounded())
         {
             if (didPerformJump)
             {
                 didPerformJump = false;
             }
 
-            verticalVector.y += Physics.gravity.y * groundedGravityScale * Time.deltaTime;
+            ApplyGravity();
+        }
 
-            if (verticalVector.y < Physics.gravity.y * groundedGravityScale)
+        
+        if (moveInputUnitVector != Vector3.zero)
+        {
+            // IS NOT TAKING INTO ACCOUNT THE DIRECTION OF THE CURRSPEED
+
+
+
+            float movementDampingCorrection = GetLinearDampingCorrection();
+
+            float linearVelX = playerRB.linearVelocity.x;
+            float linearVelY = playerRB.linearVelocity.y;
+            float linearVelZ = playerRB.linearVelocity.z;
+            playerRB.linearVelocity = new Vector3(linearVelX * movementDampingCorrection,
+                                                  linearVelY * -0.5f,
+                                                  linearVelZ * movementDampingCorrection);
+
+            Vector3 currSpeed = playerRB.linearVelocity;
+            Vector3 accelIncrement = Time.deltaTime * (m_MaxSpeed / m_AccelerationSeconds) * moveInputUnitVector;
+
+            if (currSpeed.magnitude < m_MaxSpeed)
             {
-                verticalVector.y = Physics.gravity.y * groundedGravityScale;
+                if (currSpeed.magnitude + accelIncrement.magnitude > m_MaxSpeed)
+                {
+                    accelIncrement = (m_MaxSpeed - currSpeed.magnitude) * moveInputUnitVector;
+                }
+
+                playerRB.AddForce(accelIncrement, ForceMode.VelocityChange);
+            }
+            else
+            {
+                playerRB.AddForce(accelIncrement.magnitude * -currSpeed.normalized, ForceMode.VelocityChange);
+                playerRB.AddForce(accelIncrement, ForceMode.VelocityChange);
             }
 
-            characterController.Move(Time.deltaTime * verticalVector);
-        }
-
-        if (isDashing)
-        {
-            characterController.Move(Time.deltaTime * dashSpeed * dashVector);
-        }
-        else
-        {
-            characterController.Move(Time.deltaTime * movementMaxVelocity * moveVector);
+            Debug.Log(playerRB.linearVelocity.magnitude);
         }
     }
 
-    private bool CheckIsGrounded()
+
+    private bool IsGrounded()
     {
         // Exact center of the player's character.
         if (Physics.Raycast(playerCenter.position, Vector2.down, groundedRaycastFloorDistance))
@@ -274,34 +303,40 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    private void Jump(InputAction.CallbackContext context)
+
+    private void JumpInputAction(InputAction.CallbackContext context)
     {
-        if (CheckIsGrounded())
+        if (IsGrounded())
         {
             didPerformJump = true;
+            playerRB.AddForce(jumpForce * Vector3.up, ForceMode.Force);
         }
     }
 
-    private void Dash(InputAction.CallbackContext context)
+
+    private void ApplyGravity()
     {
-        if (!isDashing && dashCharges != 0)
-        {
-            moveInput = moveActions.ReadValue<Vector2>();
+        float gravityDampingCorrection = GetLinearDampingCorrection();
 
-            if (moveInput.x == 0 && moveInput.y == 0)
-            {
-                dashVector = GetComponentInParent<Transform>().forward;
-            }
-            else
-            {
-                Vector3 inputDirection = new Vector3(moveInput.x, 0, moveInput.y);
-                dashVector = transform.TransformDirection(inputDirection).normalized;
-            }
+        float linearVelX = playerRB.linearVelocity.x;
+        float linearVelY = playerRB.linearVelocity.y;
+        float linearVelZ = playerRB.linearVelocity.z;
+        playerRB.linearVelocity = new Vector3(linearVelX, linearVelY * gravityDampingCorrection, linearVelZ);
 
-            StartCoroutine(InitiateDashCooldown(dashCooldown));
-            StartCoroutine(InitiateDashDuration(dashDistance / dashSpeed));
-        }
+        playerRB.AddForce(gravityVector, ForceMode.Acceleration);
     }
+
+
+    private void DashInputAction(InputAction.CallbackContext context)
+    {
+        if (dashCharges != 0)
+        {
+            playerRB.AddForce(dashForce * GetMoveInputDirection(), ForceMode.Force);
+        }
+
+        StartCoroutine(InitiateDashCooldown(dashCooldown));
+    }
+
 
     private IEnumerator InitiateDashCooldown(float seconds)
     {
@@ -312,21 +347,14 @@ public class PlayerController : MonoBehaviour
         dashCharges++;
     }
 
-    private IEnumerator InitiateDashDuration(float seconds)
-    {
-        isDashing = true;
 
-        yield return new WaitForSeconds(seconds);
-
-        isDashing = false;
-    }
-
-    private void Attack(InputAction.CallbackContext context)
+    private void AttackInputAction(InputAction.CallbackContext context)
     {
         
     }
 
-    private void Pause(InputAction.CallbackContext context)
+
+    private void PauseInputAction(InputAction.CallbackContext context)
     {
         //if (gamePaused)
         //{
@@ -361,6 +389,7 @@ public class PlayerController : MonoBehaviour
         //    }
         //}
     }
+
 
     //private void OnDrawGizmos()
     //{

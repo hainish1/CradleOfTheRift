@@ -74,6 +74,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3660251539360687449}
+  - component: {fileID: 1449121406130398094}
   - component: {fileID: 2245115946635396801}
   - component: {fileID: 177910479828319448}
   - component: {fileID: 6485602482842569239}
@@ -105,6 +106,33 @@ Transform:
   - {fileID: 245707667218138997}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &1449121406130398094
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1791293462135853411}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!143 &2245115946635396801
 CharacterController:
   m_ObjectHideFlags: 0
@@ -121,7 +149,7 @@ CharacterController:
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Height: 2
   m_Radius: 0.6
@@ -175,18 +203,16 @@ MonoBehaviour:
   downwardClampAngle: -55
   cameraLerpSpeed: 1
   cameraCollisionOffset: 0.95
-  movementMaxVelocity: 10
-  movementAcceleration: 0
-  movementDeceleration: 0
-  jumpForce: 25
+  m_MaxSpeed: 25
+  m_AccelerationSeconds: 0.5
+  m_LinearDamping: 10
+  jumpForce: 1000
   jumpMaxCharges: 0
-  groundedGravityScale: 9.81
-  midairGravityScale: 0
+  gravityScale: 4.905
   strafeScale: 0
-  dashSpeed: 50
-  dashDistance: 10
-  dashCooldown: 3
-  dashMaxCharges: 3
+  dashForce: 1000
+  dashCooldown: 2
+  dashCharges: 1
   environmentLayer:
     serializedVersion: 2
     m_Bits: 64

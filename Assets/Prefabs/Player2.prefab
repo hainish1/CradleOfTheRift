@@ -512,6 +512,8 @@ GameObject:
   - component: {fileID: 1545799363735562861}
   - component: {fileID: 7428225188146732249}
   - component: {fileID: 5233778179470458429}
+  - component: {fileID: 5954804187933579734}
+  - component: {fileID: 6324998485058705871}
   m_Layer: 8
   m_Name: Player2
   m_TagString: Player
@@ -613,27 +615,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d357a0e7bf11f643ac8a4c338e181cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCenter: {fileID: 2015244756760834766}
-  cameraTransform: {fileID: 0}
-  movementMaxVelocity: 10
-  movementAcceleration: 0
-  movementDeceleration: 0
-  rotationDamping: 0.25
-  externalDamping: 8
-  kbControlsLock: 0.18
-  kbDashLock: 0.12
-  jumpForce: 25
-  groundedGravityScale: 8.81
-  midairGravityScale: 0
-  strafeScale: 0
-  dashSpeed: 150
-  dashDistance: 14
-  dashCooldown: 2
-  dashMaxCharges: 3
-  environmentLayer:
+  _playerCenter: {fileID: 2015244756760834766}
+  _cameraTransform: {fileID: 0}
+  _maxSpeed: 11
+  _accelerationSeconds: 0.4
+  _decelerationSeconds: 0.2
+  _characterRotationDamping: 0.25
+  _kbDamping: 8
+  _kbControlsLockTime: 0.18
+  _kbDashLockTime: 0.12
+  _JumpHeight: 25
+  _midairStrafeMultiplier: 1
+  _hoverDescentReductionMultiplier: 0.1
+  _gravityMultiplier: 8.81
+  _maxBoostEnergy: 100
+  _maxBoostSpeed: 30
+  _boostAcceleration: 20
+  _boostRegenerationRate: 30
+  _boostDepletionRate: 50
+  _boostDoubleTapWindow: 0.3
+  _dashDistance: 14
+  _dashSpeed: 100
+  _dashCooldown: 2
+  _dashCharges: 1
+  _environmentLayer:
     serializedVersion: 2
     m_Bits: 64
-  lockControls: 0
 --- !u!114 &5449276939068111225
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -678,7 +685,7 @@ MonoBehaviour:
   cooldown: 0.35
   prep: 0.05
   activeTime: 0.02
-  pushForce: 10
+  pushForce: 18
   hitMask:
     serializedVersion: 2
     m_Bits: 7232
@@ -709,6 +716,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+--- !u!114 &5954804187933579734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3694253349153652309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b15a516c9632f3b4fbe6d95ef268569e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseStats: {fileID: 11400000, guid: 9e293433f38546341aeee2c4b7086f0e, type: 2}
+  showStatsInConsole: 1
+--- !u!114 &6324998485058705871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3694253349153652309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b32ac315caf68c74480d0e0358acd466, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5011806327356363257
 GameObject:
   m_ObjectHideFlags: 0
