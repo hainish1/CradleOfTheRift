@@ -224,7 +224,6 @@ GameObject:
   - component: {fileID: 8852912962140394275}
   - component: {fileID: 2826193904653084227}
   - component: {fileID: 5560870965844128099}
-  - component: {fileID: 2519168876799021596}
   - component: {fileID: 2460746839513632312}
   - component: {fileID: 5052082809843595001}
   - component: {fileID: 2695614172009170554}
@@ -337,45 +336,6 @@ MonoBehaviour:
   IgnoreTag: Player
   AimDistance: 500
   NoiseCancellation: 1
---- !u!114 &2519168876799021596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2348699201413622620}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollideAgainst:
-    serializedVersion: 2
-    m_Bits: 65
-  IgnoreTag: Player
-  TransparentLayers:
-    serializedVersion: 2
-    m_Bits: 16
-  MinimumDistanceFromTarget: 10
-  AvoidObstacles:
-    Enabled: 1
-    DistanceLimit: 10
-    MinimumOcclusionTime: 0.03
-    CameraRadius: 0.2
-    UseFollowTarget:
-      Enabled: 0
-      YOffset: 0
-    Strategy: 1
-    MaximumEffort: 1
-    SmoothingTime: 0.069
-    Damping: 3.68
-    DampingWhenOccluded: 2.03
-  ShotQualityEvaluation:
-    Enabled: 0
-    OptimalDistance: 10
-    NearLimit: 5
-    FarLimit: 30
-    MaxQualityBoost: 0.2
 --- !u!114 &2460746839513632312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -393,7 +353,7 @@ MonoBehaviour:
     Enabled: 1
     ObstacleLayers:
       serializedVersion: 2
-      m_Bits: 16
+      m_Bits: 2064
     UseFollowTarget:
       Enabled: 1
       YOffset: 10
@@ -935,7 +895,7 @@ MonoBehaviour:
   _dashDistance: 14
   _dashSpeed: 100
   _dashCooldown: 2
-  _dashCharges: 1
+  _dashCharges: 3
   _environmentLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -1001,6 +961,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcd7f59827f874952822de3a10d2096d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gold: 30
 --- !u!114 &5233778179470458429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1053,7 +1014,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slamStartDelay: 0.05
-  slamDownSpeed: 100
+  slamDownSpeed: 150
   minSlamHeight: 2
   slamRadius: 10
   slamDamage: 1

@@ -144,16 +144,16 @@ MonoBehaviour:
   aggressionRange: 20
   playerOutOfRange: 20
   turnSpeed: 10
-  attackCooldown: 1
+  attackCooldown: 3
   playerMask:
     serializedVersion: 2
     m_Bits: 256
   gizosOn: 1
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
   nextAttackAllowed: 0
-  chaseSpeed: 8
+  chaseSpeed: 7
   attackRange: 5
-  knockbackPower: 30
+  knockbackPower: 10
   dragSpeed: 6
   dragDuration: 1
   restDuration: 0.25
@@ -238,6 +238,9 @@ MonoBehaviour:
   tiltAmount: 0.05
   wobbleShake: 0.06
   fallBackWobble: 1
+  minScale: 0.1
+  maxScale: 3
+  maxVelocity: 50
 --- !u!114 &1162765825911862605
 MonoBehaviour:
   m_ObjectHideFlags: 0
