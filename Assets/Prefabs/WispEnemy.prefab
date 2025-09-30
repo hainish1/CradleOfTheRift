@@ -1105,13 +1105,13 @@ MonoBehaviour:
   aggressionRange: 20.14
   playerOutOfRange: 50
   turnSpeed: 5
-  attackCooldown: 1
+  attackCooldown: 3
   playerMask:
     serializedVersion: 2
     m_Bits: 256
   gizosOn: 1
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
-  nextAttackAllowed: 0
+  nextAttackAllowed: 2
   hoverHeight: 2
   hoverBobAmplitude: 0.25
   hoverBobSpeed: 2
@@ -1122,12 +1122,12 @@ MonoBehaviour:
   firePoint: {fileID: 7588448968403286001}
   projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
   projectileSpeed: 50
-  fireCooldown: 0.6
+  fireCooldown: 0.9
   projectileMask:
     serializedVersion: 2
     m_Bits: 1361
   spawnOffset: 0.1
-  recoveryTime: 0.4
+  recoveryTime: 3
 --- !u!114 &204557455612082024
 MonoBehaviour:
   m_ObjectHideFlags: 0
