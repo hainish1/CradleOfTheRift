@@ -80,6 +80,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _dashSpeed;
     [SerializeField] private float _dashCooldown;
     [SerializeField] private int _dashCharges;
+    [SerializeField] private int _dashChargesMax; 
     private bool _isDashing;
     private Vector3 _dashVector;
 
@@ -149,12 +150,23 @@ public class PlayerMovement : MonoBehaviour
         _isRegeneratingBoost = false;
 
         _isDashing = false;
+        _dashChargesMax = Mathf.Max(_dashChargesMax, _dashCharges);
     }
 
     void Update()
     {
         if (_lockControls) return;
+        if (_playerEntity != null)
+        {
+            int targetMax = Mathf.RoundToInt(_playerEntity.Stats.DashCharges); 
+            if (targetMax < 0) targetMax = 0;
 
+            if (targetMax != _dashChargesMax)
+            {
+                _dashChargesMax = targetMax;
+                _dashCharges = Mathf.Min(_dashCharges, _dashChargesMax); 
+            }
+        }
         if (_kbControlsLockTimer > 0) _kbControlsLockTimer -= Time.deltaTime;
         if (_kbDashLockTimer > 0) _kbDashLockTimer -= Time.deltaTime;
 
@@ -671,7 +683,7 @@ public class PlayerMovement : MonoBehaviour
 
         yield return new WaitForSeconds(seconds);
 
-        _dashCharges++;
+        _dashCharges = Mathf.Min(_dashCharges + 1, _dashChargesMax);
     }
 
     /// <summary>
