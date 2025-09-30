@@ -27,15 +27,16 @@ public class PlayerManager : Entity
         {
             Debug.Log($"Current Player Stats: {Stats.ToString()}");
         }
-        
+
         // Show stats when they change
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            Debug.Log($"=== CURRENT STATS ===");
-            Debug.Log($"Health: {Stats.Health}");
-            Debug.Log($"MoveSpeed: {Stats.MoveSpeed}");
-            Debug.Log($"Attack: {Stats.Attack}");
-            Debug.Log($"===================");
+            // Debug.Log($"=== CURRENT STATS ===");
+            // Debug.Log($"Health: {Stats.Health}");
+            // Debug.Log($"MoveSpeed: {Stats.MoveSpeed}");
+            // Debug.Log($"Attack: {Stats.Attack}");
+            // Debug.Log($"===================");
+            Debug.Log($"Health: {Stats.Health}, MoveSpeed: {Stats.MoveSpeed}, Projectile Damage: {Stats.Attack}");
         }
     }
     

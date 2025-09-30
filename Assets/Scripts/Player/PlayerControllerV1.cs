@@ -1,67 +1,69 @@
-// <summary>
-//   <authors>
-//     Samuel Rigby, Hainish Acharya
-//   </authors>
-//   <para>
-//     Written by Samuel Rigby for GAMES 4500, University of Utah, August 2025.
-//     Contributed to by Hainish Acharya for GAMES 4500, University of Utah, August 2025.
-//          -Added independent character rotation functionality.
-//          -Added knockback functionality.
-//          -Added support for stat data modification.
-//   </para>
-// </summary>
-
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerControllerV1 : MonoBehaviour
 {
     private InputSystem_Actions playerInput;
     private InputSystem_Actions.PlayerActions playerActions;
 
+    private InputAction lookActions;
     private InputAction moveActions;
     private InputAction jumpActions;
     private InputAction dashActions;
+    private InputAction attackActions;
+    private InputAction pauseActions;
 
     [Header("Player References")]
     [SerializeField] private Transform _playerCenter;
-    [SerializeField] private Transform _cameraTransform;
+    [SerializeField] private Transform _playerCamera;
+    [SerializeField] private Transform _cameraPivot;
+    [SerializeField] private Transform _cameraMount;
     private CharacterController _characterController;
-    private Entity _playerEntity;
     private float _playerHalfHeight;
     private float _playerHalfWidth;
     private float _groundedRaycastFloorDistance;
     private float _groundedRaycastRadialDistance;
     private float _originalStepOffset;
 
+    [Header("Look Parameters")]
+    [SerializeField] private float _xSensitivity;
+    [SerializeField] private float _ySensitivity;
+    [SerializeField] private float _upwardClampAngle;
+    [SerializeField] private float _downwardClampAngle;
+    [SerializeField] private float _cameraLerpSpeed;
+    [Range(0, 1)][SerializeField] private float _cameraCollisionOffset;
+    private int _cameraCollisionMasks;
+    private float _xRotation;
+    private float _yRotation;
+    private Vector2 _lookInput;
+
     [Header("Movement Parameters")]
     [SerializeField] private float _maxSpeed;
     [SerializeField] private float _accelerationSeconds;
     [SerializeField] private float _decelerationSeconds;
-    [SerializeField] private float _characterRotationDamping;
     private float _acceleration;
     private float _deceleration;
     private Vector3 lateralVector;
     private Vector3 _moveInputUnitVector;
 
-    [Header("KnockBack Parameters")]
-    [SerializeField] private float _kbDamping;
-    [SerializeField] private float _kbControlsLockTime;
-    [SerializeField] private float _kbDashLockTime;
-    private Vector3 _externalKnockbackVelocity;
-    private float _kbControlsLockTimer;
-    private float _kbDashLockTimer;
-
     [Header("Jump Parameters")]
     [SerializeField] private float _JumpHeight;
-    [SerializeField][Range(0, 1)] private float _midairStrafeMultiplier;
+    [SerializeField] private float _strafeMultiplier;
     [SerializeField] [Range(0, 1)] private float _hoverDescentReductionMultiplier;
     [SerializeField] private float _gravityMultiplier;
     private bool _didPerformJump;
     private bool _isHovering;
     private float _aggregateGravityModifier;
     private Vector3 _verticalVector;
+
+    //[Header("Coyote Time Parameters")]
+    //[SerializeField] private float earlyCoyoteTime;
+    //[SerializeField] private float lateCoyoteTime;
+    //private float earlyCoyoteTimer;
+    //private float lateCoyoteTimer;
+    //private bool canEarlyJump;
 
     [Header("Boost Parameters")]
     [SerializeField] private int _maxBoostEnergy;
@@ -83,17 +85,20 @@ public class PlayerMovement : MonoBehaviour
     private bool _isDashing;
     private Vector3 _dashVector;
 
-    [Header("Layer Parameter")]
+    //[Header("UI References")]
+    //public Image crosshair;
+    //public Image pauseMenu;
+    //public bool gamePaused;
+
+    [Header("Layer Parameters")]
     [SerializeField] private LayerMask _environmentLayer;
+    private RaycastHit _hitInfo;
 
     private bool _lockControls = false;
 
-    // Set by AimController.
-    private bool strafe = false;
-    
 
 
-    void Awake()
+    private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
         playerInput = new InputSystem_Actions();
@@ -102,33 +107,50 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEnable()
     {
+        lookActions = playerActions.Look;
+        lookActions.Enable();
+
         moveActions = playerActions.Move;
-        jumpActions = playerActions.Jump;
-        dashActions = playerActions.Dash;
-        
         moveActions.Enable();
+
+        jumpActions = playerActions.Jump;
         jumpActions.Enable();
-        dashActions.Enable();
-        
         jumpActions.started += JumpInputActionStarted;
         jumpActions.canceled += JumpInputActionCanceled;
+
+        dashActions = playerActions.Dash;
+        dashActions.Enable();
         dashActions.started += DashInputActionStarted;
+
+        attackActions = playerActions.Attack;
+        attackActions.Enable();
+        attackActions.started += AttackInputActionStarted;
+
+        pauseActions = playerInput.UI.Pause;
+        pauseActions.Enable();
+        pauseActions.started += PauseInputActionStarted;
     }
 
     private void OnDisable()
     {
+        lookActions.Disable();
         moveActions.Disable();
         jumpActions.Disable();
         dashActions.Disable();
+        attackActions.Enable();
+        pauseActions.Disable();
 
         jumpActions.started -= JumpInputActionStarted;
         jumpActions.canceled -= JumpInputActionCanceled;
         dashActions.started -= DashInputActionStarted;
+        attackActions.started -= AttackInputActionStarted;
+        pauseActions.started -= PauseInputActionStarted;
     }
 
     void Start()
     {
-        _playerEntity = GetComponent<Entity>();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
         _playerHalfHeight = GetComponent<CharacterController>().bounds.extents.y;
         _playerHalfWidth = GetComponent<CharacterController>().bounds.extents.x;
@@ -136,27 +158,37 @@ public class PlayerMovement : MonoBehaviour
         _groundedRaycastRadialDistance = _playerHalfWidth * 0.7f;
         _originalStepOffset = _characterController.stepOffset;
 
+        _cameraCollisionMasks = _environmentLayer.value;
+
         _acceleration = _maxSpeed / _accelerationSeconds;
         _deceleration = _maxSpeed / _decelerationSeconds;
 
         _didPerformJump = false;
         _isHovering = false;
         _aggregateGravityModifier = _gravityMultiplier;
-
+        
         _currBoostEnergy = _maxBoostEnergy;
         _currBoostDoubleTapTime = _boostDoubleTapWindow;
         _isBoosting = false;
         _isRegeneratingBoost = false;
 
         _isDashing = false;
+
+        //crosshair.enabled = true;
+        //pauseMenu.enabled = false;
+
+        //foreach (Transform child in pauseMenu.transform)
+        //{
+        //    child.gameObject.SetActive(false);
+        //}
+        //gamePaused = false;
     }
 
     void Update()
     {
         if (_lockControls) return;
 
-        if (_kbControlsLockTimer > 0) _kbControlsLockTimer -= Time.deltaTime;
-        if (_kbDashLockTimer > 0) _kbDashLockTimer -= Time.deltaTime;
+        Look();
 
         ApplyGravity();
 
@@ -173,37 +205,46 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    /// <summary>
-    ///   <para>
-    ///     
-    ///   </para>
-    /// </summary>
-    /// <param name="on">  </param>
-    public void SetStrafeMode(bool on) => strafe = on;
-
-
-    /// <summary>
-    ///   <para>
-    ///     Applies a knockback force to the player character any time this method is called.
-    ///   </para>
-    /// </summary>
-    /// <param name="impulse"> The total knockback force. </param>
-    public void ApplyImpulse(Vector3 impulse)
+    void LateUpdate()
     {
-        _externalKnockbackVelocity += impulse;
+        if (_lockControls) return;
 
-        _kbControlsLockTimer = Mathf.Max(_kbControlsLockTimer, _kbControlsLockTime);
-        _kbDashLockTimer = Mathf.Max(_kbDashLockTimer, _kbControlsLockTime + _kbDashLockTime);
-
-        _isDashing = false; // Cancel dashing immediately.
+        CameraCollision();
     }
 
-    /// <summary>
-    ///   <para>
-    ///     
-    ///   </para>
-    /// </summary>
-    public event System.Action<float> DashCooldownStarted;
+
+    private void Look()
+    {
+        if (_lockControls) return;
+
+        _lookInput = lookActions.ReadValue<Vector2>();
+
+        // NOTE: lookInput.x and lookInput.y are not mistakenly swapped.
+        _xRotation -= Time.deltaTime * _xSensitivity * _lookInput.y;
+        _yRotation += Time.deltaTime * _ySensitivity * _lookInput.x;
+        _xRotation = Mathf.Clamp(_xRotation, _downwardClampAngle, _upwardClampAngle);
+
+        transform.rotation = Quaternion.Euler(0, _yRotation, 0); // Rotate the player object horizontally around the y axis.
+        _cameraPivot.rotation = Quaternion.Euler(_xRotation, _yRotation, 0); // Rotate the player's camera pivot around the x and y axes.
+    }
+
+
+    private void CameraCollision()
+    {
+        // Raycast only registers for Environment.
+        if (Physics.Linecast(_cameraPivot.position, _cameraMount.position, out _hitInfo, _cameraCollisionMasks))
+        {
+            Vector3 newCameraPosition = new Vector3(_hitInfo.point.x, _hitInfo.point.y, _hitInfo.point.z);
+            _playerCamera.position = newCameraPosition * _cameraCollisionOffset;
+        }
+        else
+        {
+            if (_playerCamera.position != _cameraMount.position)
+            {
+                _playerCamera.position = _cameraMount.position;
+            }
+        }
+    }
 
     /// <summary>
     ///   <para>
@@ -213,18 +254,10 @@ public class PlayerMovement : MonoBehaviour
     /// <returns> A normalized vector parallel with the xz-plane. </returns>
     private Vector3 GetMoveInputDirection()
     {
-        Vector2 moveInput = moveActions.ReadValue<Vector2>();
-
-        Vector3 cameraPerspectiveForward = _cameraTransform ? _cameraTransform.forward : Vector3.forward;
-        Vector3 cameraPerspectiveRight = _cameraTransform ? _cameraTransform.right : Vector3.right;
-        cameraPerspectiveForward.y = 0;
-        cameraPerspectiveRight.y = 0;
-
+        Vector3 moveInput = moveActions.ReadValue<Vector2>();
         Vector3 inputDirection = new Vector3(moveInput.x, 0, moveInput.y);
-        Vector3 moveDirection = (cameraPerspectiveRight.normalized * inputDirection.x)
-                                 + (cameraPerspectiveForward.normalized * inputDirection.z);
 
-        return moveDirection.normalized;
+        return transform.TransformDirection(inputDirection).normalized;
     }
 
     /// <summary>
@@ -286,21 +319,8 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void MoveCase()
     {
-        // Update _maxSpeed, _acceleration and _deceleration values whenever movement stats are changed.
-        if (_playerEntity != null)
-        {
-            if (_maxSpeed != _playerEntity.Stats.MoveSpeed)
-            {
-                _maxSpeed = _playerEntity.Stats.MoveSpeed;
-                _acceleration = _maxSpeed / _accelerationSeconds;
-                _deceleration = _maxSpeed / _decelerationSeconds;
-            }
-        }
-
-        // Because move speed right before moment of knockback must be preserved for correct calculations,
-        // simply stop recording new movement values instead of completely skipping the MoveCase method.
-        _moveInputUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
-
+        _moveInputUnitVector = GetMoveInputDirection();
+        
         if (_moveInputUnitVector != Vector3.zero)
         {
             Accelerate();
@@ -308,26 +328,6 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             Decelerate();
-        }
-
-        // Apply knockback until it has dissipated.
-        if (_externalKnockbackVelocity.sqrMagnitude > 1e-6f)
-        {
-            // optional clamp to avoid crazy impulses
-            // if (externalVelocity.magnitude > 100f)
-            //     externalVelocity = externalVelocity.normalized * 100f;
-
-            _characterController.Move(Time.deltaTime * _externalKnockbackVelocity);
-            _externalKnockbackVelocity = Vector3.Lerp(_externalKnockbackVelocity, Vector3.zero, Time.deltaTime * _kbDamping);
-        }
-
-        // facing the movement stuff, turning player around
-        if (_kbControlsLockTimer <= 0 && !strafe && lateralVector.sqrMagnitude > 0.0001f)
-        {
-            Quaternion qa = transform.rotation;
-            Quaternion qb = Quaternion.LookRotation(lateralVector, Vector3.up);
-            float t = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, _characterRotationDamping));
-            transform.rotation = Quaternion.Slerp(qa, qb, t);
         }
     }
 
@@ -391,8 +391,6 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="context"> The jump input context. </param>
     private void JumpInputActionStarted(InputAction.CallbackContext context)
     {
-        if (_kbControlsLockTimer > 0) return;
-        
         // If on the ground and not dashing, then jump.
         if (IsGrounded() && !_isDashing)
         {
@@ -556,7 +554,7 @@ public class PlayerMovement : MonoBehaviour
 
         while (_currBoostEnergy <= _maxBoostEnergy)
         {
-            // Cancel boost energy regeneration if boost was inputted.
+            // Stop regenerating boost energy if boost was inputted.
             if (_isBoosting)
             {
                 break;
@@ -615,9 +613,6 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="context"> The dash input context. </param>
     private void DashInputActionStarted(InputAction.CallbackContext context)
     {
-        // Check if the player character is being knocked back.
-        if (_kbDashLockTimer > 0f) return;
-
         _dashVector = GetMoveInputDirection();
 
         if (_dashCharges != 0)
@@ -653,7 +648,7 @@ public class PlayerMovement : MonoBehaviour
         {
             ApplyGravity();
         }
-
+        
         _characterController.Move(Time.deltaTime * _dashSpeed * _dashVector);
     }
 
@@ -667,7 +662,6 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator InitiateDashCooldown(float seconds)
     {
         _dashCharges--;
-        DashCooldownStarted?.Invoke(seconds); // Tell listener to start the faded.
 
         yield return new WaitForSeconds(seconds);
 
@@ -689,6 +683,50 @@ public class PlayerMovement : MonoBehaviour
 
         _isDashing = false;
     }
+
+
+    private void AttackInputActionStarted(InputAction.CallbackContext context)
+    {
+
+    }
+
+
+    private void PauseInputActionStarted(InputAction.CallbackContext context)
+    {
+        //if (gamePaused)
+        //{
+        //    gamePaused = false;
+        //    Time.timeScale = 1;
+
+        //    lockControls = false;
+        //    Cursor.lockState = CursorLockMode.Locked;
+        //    Cursor.visible = false;
+        //    crosshair.enabled = true;
+        //    pauseMenu.enabled = false;
+
+        //    foreach (Transform child in pauseMenu.transform)
+        //    {
+        //        child.gameObject.SetActive(false);
+        //    }
+        //}
+        //else
+        //{
+        //    gamePaused = true;
+        //    Time.timeScale = 0;
+
+        //    lockControls = true;
+        //    Cursor.lockState = CursorLockMode.None;
+        //    Cursor.visible = true;
+        //    crosshair.enabled = false;
+        //    pauseMenu.enabled = true;
+
+        //    foreach (Transform child in pauseMenu.transform)
+        //    {
+        //        child.gameObject.SetActive(true);
+        //    }
+        //}
+    }
+
 
     //private void OnDrawGizmos()
     //{
