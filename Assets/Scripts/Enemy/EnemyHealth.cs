@@ -23,6 +23,8 @@ public class EnemyHealth : HealthController
             col.enabled = false;
 
         EnemyDied?.Invoke(this);
+        PlayerGold.Instance.AddGold(3); // Set it to 3 for now
+
         Destroy(gameObject, cleanupDelay);
     }
 }

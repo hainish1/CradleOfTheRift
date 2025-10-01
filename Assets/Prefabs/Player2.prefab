@@ -242,7 +242,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2348699201413622620}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.000000009360576, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 3.801, z: -26.481}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -442,7 +442,7 @@ MonoBehaviour:
     AmplitudeGain: 1
     FrequencyGain: 1
     Duration: 1
-    m_NoiseOffsets: {x: 0, y: 0, z: 0}
+    m_NoiseOffsets: {x: -311.1948, y: -786.52454, z: 781.57733}
 --- !u!1 &2425871910032743987
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,9 +599,9 @@ MonoBehaviour:
   invertY: 0
   minPitch: -40
   maxPitch: 70
-  playerRotation: 1
-  recenterDamping: 0.05
-  fireRecenterDamping: 0.05
+  playerRotation: 0
+  recenterDamping: 0.01
+  fireRecenterDamping: 0.01
   snapOnFire: 0
   snapAngleThreshold: 0
   cam: {fileID: 0}
@@ -877,9 +877,9 @@ MonoBehaviour:
   _maxSpeed: 11
   _accelerationSeconds: 0.4
   _decelerationSeconds: 0.2
-  _characterRotationDamping: 0.25
+  _characterRotationDamping: 0.05
   _kbDamping: 8
-  _kbControlsLockTime: 0.18
+  _kbControlsLockTime: 0
   _kbDashLockTime: 0.12
   _JumpHeight: 15
   _midairStrafeMultiplier: 1
