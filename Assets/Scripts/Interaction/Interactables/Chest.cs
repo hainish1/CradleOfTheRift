@@ -43,8 +43,8 @@ public class Chest : MonoBehaviour, IInteractable
                 if (SingleActivation)
                 {
                     canInteract = false;
+                    Destroy(gameObject, 1f); // Add a Delay to allow sound to play and block subsequent interactions
                 }   
-                Destroy(gameObject, 1f); // Add a Delay to allow sound to play and block subsequent interactions
                 return true;
             }
             else

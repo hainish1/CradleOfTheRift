@@ -2353,7 +2353,7 @@ PrefabInstance:
       objectReference: {fileID: 1563859110}
     - target: {fileID: 7428225188146732249, guid: 5ea46562df90725499583dd45f12f207, type: 3}
       propertyPath: gold
-      value: 0
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7506041293616542779, guid: 5ea46562df90725499583dd45f12f207, type: 3}
       propertyPath: _cameraTransform
@@ -4219,6 +4219,10 @@ PrefabInstance:
       propertyPath: playerGold
       value: 
       objectReference: {fileID: 1322272017}
+    - target: {fileID: 4725471317240977469, guid: 608b244a149ec0a42838f3796690a118, type: 3}
+      propertyPath: singleActivation
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7230606305362292675, guid: 608b244a149ec0a42838f3796690a118, type: 3}
       propertyPath: m_Name
       value: ChestBig
