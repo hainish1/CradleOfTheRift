@@ -50,6 +50,12 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     private float extractionEnemyCapMultiplier = 1.5f;
 
+    [Header("Enemy Stat multiplier")]
+    [SerializeField]
+    private float healthGrowth = 0.07f;
+    [SerializeField]
+    private float damageGrowth = 0.05f;
+
 
     private int currentEnemyCount = 0;
     private float currentCredits;
@@ -205,9 +211,15 @@ public class EnemySpawner : MonoBehaviour
             return;
         }
 
+        float healthMultiplier = Mathf.Pow(1f + this.healthGrowth, this.currentWave);
+        float damageMultiplier = Mathf.Pow(1f + this.damageGrowth, this.currentWave);
+
+
         GameObject enemyObj = Instantiate(enemy.prefab, location, Quaternion.identity);
-        EnemyHealth enemyComponent = enemyObj.GetComponent<EnemyHealth>();
-        enemyComponent.EnemyDied += OnEnemyDied;
+
+        EnemyHealth enemyHealth = enemyObj.GetComponent<EnemyHealth>();
+        enemyHealth.InitializeHealth(healthMultiplier);
+        enemyHealth.EnemyDied += OnEnemyDied;
 
         this.currentEnemyCount++;
 
