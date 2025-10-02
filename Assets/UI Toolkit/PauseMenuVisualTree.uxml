@@ -1,7 +1,9 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI%20Toolkit/PauseMenuStyleSheet.uss?fileID=7433441132597879392&amp;guid=e780f1131c06d4602ab181ccec82676f&amp;type=3#PauseMenuStyleSheet" />
-    <engine:VisualElement name="Canvas" style="flex-grow: 1;">
-        <engine:Label text="Label" class="header" />
-        <engine:Button text="Button" name="Button" class="button" />
+    <engine:VisualElement name="Canvas" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.39);">
+        <engine:Label text="Start Menu" name="LabelStartMenu" class="header" />
+        <engine:Button text="Start Game" name="ButtonStartGame" class="button" />
+        <engine:Button text="Settings" name="ButtonSettings" class="button" style="align-self: center; translate: 0 50px;" />
+        <engine:Button text="Quit Game" name="ButtonQuitGame" class="button" style="translate: 0 100px;" />
     </engine:VisualElement>
 </engine:UXML>
