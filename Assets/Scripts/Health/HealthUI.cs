@@ -13,25 +13,14 @@ public class HealthUI : MonoBehaviour
         healthBar = root.Q<ProgressBar>("HealthBar");
         healthBar.lowValue = 0;
 
-        EventCallback<GeometryChangedEvent> geometryCallback = null;
-        geometryCallback = (evt) =>
-        {
-            if (health != null)
-            {
-                healthBar.highValue = health.MaxHealth;
-                healthBar.value = health.CurrentHealth;
+        healthBar.highValue = health.MaxHealth;
+        healthBar.value = health.CurrentHealth;
 
-                healthBar.title = $"Health: {health.CurrentHealth}/{health.MaxHealth}";
+        healthBar.title = $"Health: {health.CurrentHealth}/{health.MaxHealth}";
 
-                healthBar.style.visibility = Visibility.Visible;
+        healthBar.style.visibility = Visibility.Visible;
 
-                health.healthChanged += OnHealthChange;
-            }
-
-            healthBar.UnregisterCallback<GeometryChangedEvent>(geometryCallback);
-        };
-
-        healthBar.RegisterCallback<GeometryChangedEvent>(geometryCallback);
+        health.healthChanged += OnHealthChange;
     }
 
     void OnDestroy()
