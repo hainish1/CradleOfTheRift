@@ -227,6 +227,7 @@ GameObject:
   - component: {fileID: 2460746839513632312}
   - component: {fileID: 5052082809843595001}
   - component: {fileID: 2695614172009170554}
+  - component: {fileID: 5946422024070184170}
   m_Layer: 8
   m_Name: Free Camera
   m_TagString: Untagged
@@ -243,7 +244,7 @@ Transform:
   m_GameObject: {fileID: 2348699201413622620}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.00000008519251, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.8009949, z: -26.480999}
+  m_LocalPosition: {x: 0, y: 3.8009949, z: -25.480999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -308,7 +309,7 @@ MonoBehaviour:
   ShoulderOffset: {x: 0.553536, y: 1.5, z: 0}
   VerticalArmLength: 1.85
   CameraSide: 0.5
-  CameraDistance: 26
+  CameraDistance: 25
   AvoidObstacles:
     Enabled: 1
     CollisionFilter:
@@ -316,8 +317,8 @@ MonoBehaviour:
       m_Bits: 65
     IgnoreTag: Player
     CameraRadius: 0.2
-    DampingIntoCollision: 0.21
-    DampingFromCollision: 0.2
+    DampingIntoCollision: 0.59
+    DampingFromCollision: 0.63
 --- !u!114 &5560870965844128099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -358,9 +359,9 @@ MonoBehaviour:
       Enabled: 1
       YOffset: 10
     Damping: 0.5
-    SmoothingTime: 0
+    SmoothingTime: 0.053
   TerrainResolution:
-    Enabled: 1
+    Enabled: 0
     TerrainLayers:
       serializedVersion: 2
       m_Bits: 65
@@ -443,6 +444,45 @@ MonoBehaviour:
     FrequencyGain: 1
     Duration: 1
     m_NoiseOffsets: {x: -311.1948, y: -786.52454, z: 781.57733}
+--- !u!114 &5946422024070184170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2348699201413622620}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollideAgainst:
+    serializedVersion: 2
+    m_Bits: 65
+  IgnoreTag: Player
+  TransparentLayers:
+    serializedVersion: 2
+    m_Bits: 2064
+  MinimumDistanceFromTarget: 0.3
+  AvoidObstacles:
+    Enabled: 1
+    DistanceLimit: 0
+    MinimumOcclusionTime: 0
+    CameraRadius: 0.4
+    UseFollowTarget:
+      Enabled: 0
+      YOffset: 0
+    Strategy: 2
+    MaximumEffort: 2
+    SmoothingTime: 0
+    Damping: 0.4
+    DampingWhenOccluded: 0.2
+  ShotQualityEvaluation:
+    Enabled: 0
+    OptimalDistance: 10
+    NearLimit: 5
+    FarLimit: 30
+    MaxQualityBoost: 0.2
 --- !u!1 &2425871910032743987
 GameObject:
   m_ObjectHideFlags: 0
@@ -820,7 +860,7 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.6
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0.4
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
@@ -895,7 +935,7 @@ MonoBehaviour:
   _dashDistance: 14
   _dashSpeed: 100
   _dashCooldown: 2
-  _dashCharges: 3
+  _dashCharges: 24
   _environmentLayer:
     serializedVersion: 2
     m_Bits: 64
