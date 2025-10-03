@@ -8,7 +8,7 @@
             <ui:Label text="Press L : Enable or Disable Enemy Spawn" name="GoldLabel" />
         </ui:VisualElement>
         <ui:VisualElement name="HealthContainer" style="flex-grow: 1; align-items: flex-start; justify-content: flex-start;">
-            <ui:ProgressBar value="22" title="my-progress" name="HealthBar" />
+            <ui:ProgressBar name="HealthBar" style="visibility: hidden;" />
         </ui:VisualElement>
     </ui:VisualElement>
     <ui:VisualElement name="SpawnerDev" style="flex-grow: 1; position: absolute; top: 42px; left: 438px; width: 291px; height: 216px;">
