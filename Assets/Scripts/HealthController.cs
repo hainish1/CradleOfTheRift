@@ -6,8 +6,6 @@ public abstract class HealthController : MonoBehaviour, IDamageable
     [SerializeField] protected int maxHealth = 5;
     protected int currentHealth;
 
-
-
     public bool IsDead { get; private set; }
 
     void Awake()
@@ -15,7 +13,7 @@ public abstract class HealthController : MonoBehaviour, IDamageable
         currentHealth = maxHealth;
     }
 
-    public void TakeDamage(int damage)
+    public virtual void TakeDamage(int damage)
     {
         if (IsDead) return;
 

@@ -23,6 +23,15 @@ public class EnemyHealth : HealthController
             col.enabled = false;
 
         EnemyDied?.Invoke(this);
+        PlayerGold.Instance.AddGold(3); // Set it to 3 for now
+
         Destroy(gameObject, cleanupDelay);
+    }
+
+    public void InitializeHealth(float healthMultiplier)
+    {
+        this.maxHealth = Mathf.CeilToInt(this.maxHealth * healthMultiplier);
+        this.currentHealth = this.maxHealth;
+        Debug.Log("Max Health: " + this.maxHealth);
     }
 }
