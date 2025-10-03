@@ -1,3 +1,16 @@
 .extraction-bar .unity-progress-bar__progress {
     background-color: green;
 }
+
+#HealthBar {
+    width: 300px;
+    height: 25px;
+}
+
+#HealthBar .unity-progress-bar__title {
+    color: white
+}
+
+#HealthBar .unity-progress-bar__progress {
+    background-color: red;
+}
