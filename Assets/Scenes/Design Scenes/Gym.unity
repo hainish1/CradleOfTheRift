@@ -586,11 +586,6 @@ Transform:
   - {fileID: 1164060711}
   m_Father: {fileID: 1090353411}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!1 &141903155 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7230606305362292675, guid: 608b244a149ec0a42838f3796690a118, type: 3}
-  m_PrefabInstance: {fileID: 855833624734637954}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &147757706
 GameObject:
   m_ObjectHideFlags: 0
@@ -1514,10 +1509,6 @@ PrefabInstance:
       propertyPath: health
       value: 
       objectReference: {fileID: 1322272016}
-    - target: {fileID: 8070210690962360478, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
-      propertyPath: playerHealth
-      value: 
-      objectReference: {fileID: 1322272025}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2183,14 +2174,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: ChestPlacement
       objectReference: {fileID: 0}
-    - target: {fileID: 7968406341410066811, guid: 5bb8c481a621a0b468cfca3557b3e743, type: 3}
-      propertyPath: chests.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7968406341410066811, guid: 5bb8c481a621a0b468cfca3557b3e743, type: 3}
-      propertyPath: 'chests.Array.data[0]'
-      value: 
-      objectReference: {fileID: 141903155}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2281,17 +2264,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fcd7f59827f874952822de3a10d2096d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1322272025 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1220069884552851021, guid: 5ea46562df90725499583dd45f12f207, type: 3}
-  m_PrefabInstance: {fileID: 1322272015}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a7ed60354613b458e535d5088edaa0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1369407796

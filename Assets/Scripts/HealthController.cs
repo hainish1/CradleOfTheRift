@@ -13,7 +13,7 @@ public abstract class HealthController : MonoBehaviour, IDamageable
         currentHealth = maxHealth;
     }
 
-    public virtual void TakeDamage(int damage)
+    public void TakeDamage(int damage)
     {
         if (IsDead) return;
 
