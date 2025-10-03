@@ -23,9 +23,9 @@ public class ExtractionZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        PlayerControllerV1 playerController = other.GetComponent<PlayerControllerV1>();
+        PlayerGold player = other.GetComponent<PlayerGold>();
 
-        if (playerController != null)
+        if (player != null)
         {
             this.isExtracting = true;
 
@@ -40,9 +40,9 @@ public class ExtractionZone : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        PlayerControllerV1 playerController = other.GetComponent<PlayerControllerV1>();
+        PlayerGold player = other.GetComponent<PlayerGold>();
 
-        if (playerController != null)
+        if (player != null)
         {
             this.isExtracting = false;
         }
