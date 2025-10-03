@@ -39,7 +39,11 @@ public class PlayerGroundSlam : MonoBehaviour
     {
         var action = new InputAction("GroundSlam", binding: "<Keyboard>/x");
         action.Enable();
-        action.performed += ctx => TryToStartSlam();
+        action.performed += ctx =>
+        {
+            TryToStartSlam();
+            Debug.Log("X pressed, trying to slam");
+        };
     }
 
     void TryToStartSlam()

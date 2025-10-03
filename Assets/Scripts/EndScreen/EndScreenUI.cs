@@ -5,6 +5,9 @@ public class EndScreenUI : MonoBehaviour
 {
     [SerializeField]
     private ExtractionZone extractionZone;
+
+    [SerializeField]
+    private PlayerHealth playerHealth;
     [SerializeField]
     private GameObject winScreen;
     [SerializeField]
@@ -15,11 +18,14 @@ public class EndScreenUI : MonoBehaviour
     void OnEnable()
     {
         this.extractionZone.WinScreen += OnWinScreen;
+        this.playerHealth.LoseScreen += OnLoseScreen;
     }
 
     void OnDisable()
     {
         this.extractionZone.WinScreen -= OnWinScreen;
+        this.playerHealth.LoseScreen -= OnLoseScreen;
+
     }
 
     private void OnWinScreen()

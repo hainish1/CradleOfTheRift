@@ -81,7 +81,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32bd53254f7414dd99c05cf5c2d5d0e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  extractionZone: {fileID: 0}
+  extractionZone: {fileID: 8052474352153079364, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
 --- !u!114 &8070210690962360478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,7 +107,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cdbc4f3ec387f04298244d6998b470e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  extractionZone: {fileID: 0}
+  extractionZone: {fileID: 8052474352153079364, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
+  winScreen: {fileID: 8088326504577411643, guid: 890f432691395444c95c60774c7e59c5, type: 3}
+  loseScreen: {fileID: 1740390286872208996, guid: 247f4cd2a1ef1754bae0212d89a70f9c, type: 3}
 --- !u!114 &5504009049952780630
 MonoBehaviour:
   m_ObjectHideFlags: 0

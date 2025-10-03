@@ -20,7 +20,7 @@ public class SpawnChest : MonoBehaviour
         // Check for null or empty array
         if (chests.Length == 0 || chests == null)
         {
-            Debug.LogError("No chests assigned in the inspector.");
+            Debug.Log("No chests assigned in the inspector.");
             return;
         }
 

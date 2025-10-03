@@ -48,7 +48,7 @@ public class PauseMenu : MonoBehaviour
     private void OnStartGameClick(ClickEvent evt)
     {
         // Debug.Log("You Pressed the Start Button");
-        SceneManager.LoadScene("Gym");// Change name to game
+        SceneManager.LoadScene("Design");// Change name to game
 
     }
 

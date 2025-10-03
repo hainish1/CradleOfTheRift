@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
     using UnityEngine.SceneManagement;
 
@@ -5,6 +6,8 @@ public class PlayerHealth : HealthController
 {
     // note to self - THIS is player MANAGER that INHERITS from entity
     private Entity playerEntity;
+    public event Action LoseScreen;
+
 
     void Start()
     {
@@ -43,8 +46,10 @@ public class PlayerHealth : HealthController
     protected override void Die()
     {
         Debug.Log("[PLAYER HEALTH] Player is DEADDD lmao");
+        this.LoseScreen?.Invoke();
 
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+        // SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         // end movement or change scene here if we want
     }
     
