@@ -211,20 +211,42 @@ public class EnemySpawner : MonoBehaviour
             return;
         }
 
-        float healthMultiplier = Mathf.Pow(1f + this.healthGrowth, this.currentWave);
-        float damageMultiplier = Mathf.Pow(1f + this.damageGrowth, this.currentWave);
-
-
         GameObject enemyObj = Instantiate(enemy.prefab, location, Quaternion.identity);
 
-        EnemyHealth enemyHealth = enemyObj.GetComponent<EnemyHealth>();
-        enemyHealth.InitializeHealth(healthMultiplier);
-        enemyHealth.EnemyDied += OnEnemyDied;
+        ScaleEnemyHealth(enemyObj);
+        ScaleEnemyDamage(enemyObj);
 
         this.currentEnemyCount++;
 
         // Notify UI for change
         CurrentEnemyCountChanged?.Invoke(this.currentEnemyCount);
+    }
+
+    private void ScaleEnemyHealth(GameObject enemyObj)
+    {
+        float healthMultiplier = Mathf.Pow(1f + this.healthGrowth, this.currentWave);
+
+        EnemyHealth enemyHealth = enemyObj.GetComponent<EnemyHealth>();
+        enemyHealth.InitializeHealth(healthMultiplier);
+        enemyHealth.EnemyDied += OnEnemyDied;
+    }
+
+    private void ScaleEnemyDamage(GameObject enemyObj)
+    {
+        float damageMultiplier = Mathf.Pow(1f + this.damageGrowth, this.currentWave);
+
+        EnemyMelee enemyMelee = enemyObj.GetComponent<EnemyMelee>();
+
+        if (enemyMelee != null)
+        {
+            enemyMelee.InitializeSlamDamage(damageMultiplier);
+        }
+        else
+        {
+            EnemyRange enemyRange = enemyObj.GetComponent<EnemyRange>();
+
+            enemyRange.InitializeDamage(damageMultiplier);
+        }
     }
 
     private Vector3 GetGroundLocation()

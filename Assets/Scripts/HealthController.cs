@@ -6,13 +6,6 @@ public abstract class HealthController : MonoBehaviour, IDamageable
     [SerializeField] protected int maxHealth = 5;
     protected int currentHealth;
 
-    public void InitializeHealth(float healthMultiplier)
-    {
-        this.maxHealth = Mathf.CeilToInt(this.maxHealth * healthMultiplier);
-        this.currentHealth = this.maxHealth;
-        Debug.Log("Max Health: " + this.maxHealth);
-    }
-
     public bool IsDead { get; private set; }
 
     void Awake()

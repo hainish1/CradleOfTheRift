@@ -29,6 +29,8 @@ public class EnemyRange : Enemy
 
     float bobPhase;
 
+    public int projectileDamage = 1;
+
 
     public override void Start()
     {
@@ -83,7 +85,13 @@ public class EnemyRange : Enemy
         Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
 
         EnemyProjectile projectile = Instantiate(projectilePrefab, spawnPoint, rotation);
-        projectile.Init(direction * projectileSpeed, projectileMask);
+        projectile.Init(direction * projectileSpeed, projectileMask, this.projectileDamage);
+    }
+
+    public void InitializeDamage(float damageMultiplier)
+    { 
+        this.projectileDamage = Mathf.CeilToInt(this.projectileDamage * damageMultiplier);
+        Debug.Log("Projectile Damage: " + this.projectileDamage);   
     }
 
 }
