@@ -11,12 +11,6 @@
             <ui:ProgressBar value="22" title="my-progress" name="HealthBar" />
         </ui:VisualElement>
     </ui:VisualElement>
-    <ui:VisualElement name="WinScreen" style="flex-grow: 1;">
-        <ui:Label text="WIN" />
-    </ui:VisualElement>
-    <ui:VisualElement name="LoseScreen" style="flex-grow: 1;">
-        <ui:Label text="LOSE" />
-    </ui:VisualElement>
     <ui:VisualElement name="SpawnerDev" style="flex-grow: 1; position: absolute; top: 42px; left: 438px; width: 291px; height: 216px;">
         <ui:Label name="CurrentEnemyCount" />
         <ui:Label name="CurrentCredits" />

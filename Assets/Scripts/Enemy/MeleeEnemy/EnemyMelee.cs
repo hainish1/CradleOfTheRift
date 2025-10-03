@@ -84,6 +84,11 @@ public class EnemyMelee : Enemy
 
     }
 
+    public void InitializeSlamDamage(float damageMultiplier)
+    {
+        this.slamDamage = Mathf.CeilToInt(this.slamDamage * damageMultiplier);
+        Debug.Log("Slam Damage: " + this.slamDamage);   
+    }
 
     public EnemyState GetIdle() => idle;
     public EnemyState GetChase()   => chase;

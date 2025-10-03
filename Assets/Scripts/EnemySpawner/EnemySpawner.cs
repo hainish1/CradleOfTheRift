@@ -7,17 +7,22 @@ using UnityEngine.InputSystem;
 
 public class EnemySpawner : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField]
     private ExtractionZone extractionZone;
     [SerializeField]
     private List<EnemyType> enemies;
     [SerializeField]
     private Transform playerLocation;
+    [SerializeField]
+    private DifficultyScaler difficultyScaler;
 
-
+    [Header("Settings")]
     [SerializeField]
     private float timeBetweenWaves = 8f;
 
+    // This is now controlled by the Difficulty Scaler object.
+    [Tooltip("If the DifficultyScaler object is set, this field is ignored!")]
     [SerializeField]
     private float difficultyScale = 1.03f;
     [SerializeField]
@@ -49,6 +54,12 @@ public class EnemySpawner : MonoBehaviour
     private float extractionCreditMultiplier = 2f;
     [SerializeField]
     private float extractionEnemyCapMultiplier = 1.5f;
+
+    [Header("Enemy Stat multiplier")]
+    [SerializeField]
+    private float healthGrowth = 0.07f;
+    [SerializeField]
+    private float damageGrowth = 0.05f;
 
 
     private int currentEnemyCount = 0;
@@ -148,8 +159,8 @@ public class EnemySpawner : MonoBehaviour
         // Notify UI for change
         CurrentWaveChanged?.Invoke(this.currentWave);
 
-        float waveCredits = this.baseWaveCredits * Mathf.Pow(this.difficultyScale, this.currentWave);
-        int waveCap = Mathf.Min(Mathf.CeilToInt(this.startingEnemyCap + this.enemyCapGrowth * Mathf.Pow(difficultyScale, this.currentWave)), this.globalMaxEnemies);
+        float waveCredits = this.baseWaveCredits * Mathf.Pow(GetDifficulty(), this.currentWave);
+        int waveCap = Mathf.Min(Mathf.CeilToInt(this.startingEnemyCap + this.enemyCapGrowth * Mathf.Pow(GetDifficulty(), this.currentWave)), this.globalMaxEnemies);
 
         if (this.isExtractionActive)
         {
@@ -206,13 +217,41 @@ public class EnemySpawner : MonoBehaviour
         }
 
         GameObject enemyObj = Instantiate(enemy.prefab, location, Quaternion.identity);
-        EnemyHealth enemyComponent = enemyObj.GetComponent<EnemyHealth>();
-        enemyComponent.EnemyDied += OnEnemyDied;
+
+        ScaleEnemyHealth(enemyObj);
+        ScaleEnemyDamage(enemyObj);
 
         this.currentEnemyCount++;
 
         // Notify UI for change
         CurrentEnemyCountChanged?.Invoke(this.currentEnemyCount);
+    }
+
+    private void ScaleEnemyHealth(GameObject enemyObj)
+    {
+        float healthMultiplier = Mathf.Pow(this.healthGrowth, this.currentWave);
+
+        EnemyHealth enemyHealth = enemyObj.GetComponent<EnemyHealth>();
+        enemyHealth.InitializeHealth(healthMultiplier);
+        enemyHealth.EnemyDied += OnEnemyDied;
+    }
+
+    private void ScaleEnemyDamage(GameObject enemyObj)
+    {
+        float damageMultiplier = Mathf.Pow(this.damageGrowth, this.currentWave);
+
+        EnemyMelee enemyMelee = enemyObj.GetComponent<EnemyMelee>();
+
+        if (enemyMelee != null)
+        {
+            enemyMelee.InitializeSlamDamage(damageMultiplier);
+        }
+        else
+        {
+            EnemyRange enemyRange = enemyObj.GetComponent<EnemyRange>();
+
+            enemyRange.InitializeDamage(damageMultiplier);
+        }
     }
 
     private Vector3 GetGroundLocation()
@@ -296,6 +335,22 @@ public class EnemySpawner : MonoBehaviour
         
         // Notify UI for change
         CurrentEnemyCountChanged?.Invoke(this.currentEnemyCount);
+    }
+
+    /// <summary>
+    /// Returns the Difficulty Scale.
+    /// Uses the DifficultyScaler object if it is set.
+    /// Otherwise, use the built-in difficultyScale.
+    /// </summary>
+    /// <returns>The difficulty scale.</returns>
+    private float GetDifficulty()
+    {
+        if (difficultyScaler)
+        {
+            return difficultyScaler.GetDifficultyScale();
+        }
+
+        return difficultyScale;
     }
 }
 

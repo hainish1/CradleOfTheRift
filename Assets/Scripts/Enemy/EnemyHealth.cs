@@ -27,4 +27,11 @@ public class EnemyHealth : HealthController
 
         Destroy(gameObject, cleanupDelay);
     }
+
+    public void InitializeHealth(float healthMultiplier)
+    {
+        this.maxHealth = Mathf.CeilToInt(this.maxHealth * healthMultiplier);
+        this.currentHealth = this.maxHealth;
+        Debug.Log("Max Health: " + this.maxHealth);
+    }
 }
