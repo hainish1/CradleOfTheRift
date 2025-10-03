@@ -224,7 +224,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void ScaleEnemyHealth(GameObject enemyObj)
     {
-        float healthMultiplier = Mathf.Pow(1f + this.healthGrowth, this.currentWave);
+        float healthMultiplier = Mathf.Pow(this.healthGrowth, this.currentWave);
 
         EnemyHealth enemyHealth = enemyObj.GetComponent<EnemyHealth>();
         enemyHealth.InitializeHealth(healthMultiplier);
@@ -233,7 +233,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void ScaleEnemyDamage(GameObject enemyObj)
     {
-        float damageMultiplier = Mathf.Pow(1f + this.damageGrowth, this.currentWave);
+        float damageMultiplier = Mathf.Pow(this.damageGrowth, this.currentWave);
 
         EnemyMelee enemyMelee = enemyObj.GetComponent<EnemyMelee>();
 
