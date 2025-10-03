@@ -5,26 +5,53 @@ public class HealthUI : MonoBehaviour
 {
     private ProgressBar healthBar;
     [SerializeField]
-    private Health health;
+    private PlayerHealth playerHealth;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
+        // Initialize UI reference in Awake
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
         string progressBarName = "HealthBar";
-
         this.healthBar = root.Q<ProgressBar>(name: progressBarName);
-        int zeroValue = 0;
-
-        this.healthBar.lowValue = zeroValue;
-        this.healthBar.highValue = this.health.MaxHealth;
-        this.healthBar.value = this.health.MaxHealth;
-
-        this.health.healthChanged += this.OnHealthChange;
+        
+        if (healthBar == null)
+        {
+            Debug.LogWarning("HealthBar not found! Check UIDocument element name.");
+        }
+        else
+        {
+            Debug.Log("HealthBar found successfully.");
+            this.healthBar.lowValue = 0;
+        }
+    }
+    
+    void Start()
+    {
+        // Subscribe to event in Start (after PlayerHealth.Start() sets initial values)
+        if (playerHealth != null)
+        {
+            this.playerHealth.HealthChanged += OnHealthChange;
+            // Force initial update - this now happens after PlayerHealth.Start()
+            OnHealthChange(playerHealth.CurrentHealth, playerHealth.MaxHealth);
+        }
+    }
+    
+    void OnDestroy()
+    {
+        // Clean up event subscription
+        if (playerHealth != null)
+        {
+            playerHealth.HealthChanged -= OnHealthChange;
+        }
     }
 
-    public void OnHealthChange(int healthChange)
+    public void OnHealthChange(int currentHealth, int maxHealth)
     {
-        this.healthBar.value = healthChange;
+        Debug.Log($"ONHEALTH : {currentHealth} / {maxHealth}");
+
+        this.healthBar.value = currentHealth;
+        this.healthBar.highValue = maxHealth;
+        this.healthBar.title = $"{currentHealth} / {maxHealth}";
+
     }
 }
