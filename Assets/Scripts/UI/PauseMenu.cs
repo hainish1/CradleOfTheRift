@@ -1,16 +1,24 @@
 using UnityEngine;
-
+using UnityEngine.UIElements;
 public class PauseMenu : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private UIDocument document;
+    private Button button;
+
+    private void Awake()
     {
-        
+        document = GetComponent<UIDocument>();
+        button = document.rootVisualElement.Q("ButtonStartGame") as Button;
+        button.RegisterCallback<ClickEvent>(OnStartGameClick);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDisable()
     {
-        
+        button.UnregisterCallback<ClickEvent>(OnStartGameClick);
+    }
+
+    private void OnStartGameClick(ClickEvent evt)
+    {
+        Debug.Log("You Pressed the Start Button");
     }
 }
