@@ -1,0 +1,125 @@
+using System.Collections;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using Unity.Cinemachine;
+using System.Collections.Generic;
+
+public class PlayerGroundSlam : MonoBehaviour
+{
+    [Header("Settings")]
+    public float slamStartDelay = .1f;
+    public float slamDownSpeed = 40f; // vertical down speed
+    public float minSlamHeight = 2.0f; // need this height
+    public float slamRadius = 5f;
+    public int slamDamage = 2; // for now
+    public float slamKnockbackForce = 30f;
+    public LayerMask enemyMask;
+
+    [Header("Cinemachine shake")]
+    public CinemachineImpulseSource slamImpulseSource; 
+    public float shakeForce = 1.0f;
+
+
+    [Header("debug")]
+    public bool debug = true;
+
+    private CharacterController controller;
+    private PlayerMovement playerMovement;
+    private bool isSlamming = false;
+    private bool canDoSlam => !controller.isGrounded && (controller.transform.position.y > minSlamHeight);
+
+
+    void Awake()
+    {
+        controller = GetComponent<CharacterController>();
+        playerMovement = GetComponent<PlayerMovement>();
+    }
+
+    void OnEnable()
+    {
+        var action = new InputAction("GroundSlam", binding: "<Keyboard>/x");
+        action.Enable();
+        action.performed += ctx => TryToStartSlam();
+    }
+
+    void TryToStartSlam()
+    {
+        if (!isSlamming && canDoSlam)
+        {
+            StartCoroutine(SlamRoutine());
+        }
+    }
+
+    private IEnumerator SlamRoutine()
+    {
+        // short freeze before drop to check
+        yield return new WaitForSeconds(slamStartDelay);
+
+        isSlamming = true;
+
+        float originalGravity = playerMovement != null ? playerMovement._aggregateGravityModifier : 1f;
+        if (playerMovement != null) playerMovement._aggregateGravityModifier = 0;
+
+        Vector3 fallVelocity = Vector3.down * slamDownSpeed;
+
+        // go down when not grounded
+        while (!controller.isGrounded)
+        {
+            controller.Move(fallVelocity * Time.deltaTime);
+            yield return null;
+        }
+
+        // restore normal gravity again
+        if (playerMovement != null) playerMovement._aggregateGravityModifier = originalGravity;
+
+        if (debug)
+        {
+            Debug.Log("Ground Slam!!");
+        }
+
+        // any effects we have
+        DoImpactEffect(); // i wanna do a camera shake here
+        HashSet<Enemy> uniqueEnemies = new HashSet<Enemy>();
+        // now do attacks to enemy in sphere overlap
+        Collider[] hits = Physics.OverlapSphere(transform.position, slamRadius, enemyMask);
+        foreach (Collider col in hits)
+        {
+            Enemy enemy = col.GetComponentInParent<Enemy>();
+            if (enemy != null && !uniqueEnemies.Contains(enemy))
+            {
+                uniqueEnemies.Add(enemy);
+                // first do knockback if enenmy has it
+                var kb = enemy?.GetComponent<AgentKnockBack>();
+                if (kb != null)
+                {
+                    Vector3 dir = (enemy.transform.position - transform.position).normalized + Vector3.up * 0.5f;
+                    kb.ApplyImpulse(dir * slamKnockbackForce);
+                }
+                var flash = col.GetComponentInParent<TargetFlash>();
+                if (flash != null) flash.Flash();
+                
+                // then do damage
+                var dmg = enemy?.GetComponent<IDamageable>();
+                if (dmg != null) dmg.TakeDamage(slamDamage);
+            }
+        }
+
+        isSlamming = false;
+    }
+
+    void DoImpactEffect()
+    {
+        // camera shake here
+        if (slamImpulseSource != null)
+        {
+            slamImpulseSource.GenerateImpulse(shakeForce);
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (!debug) return;
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, slamRadius);
+    }
+}

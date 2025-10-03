@@ -1,4 +1,5 @@
 using UnityEngine;
+    using UnityEngine.SceneManagement;
 
 public class PlayerHealth : HealthController
 {
@@ -43,6 +44,7 @@ public class PlayerHealth : HealthController
     {
         Debug.Log("[PLAYER HEALTH] Player is DEADDD lmao");
 
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         // end movement or change scene here if we want
     }
     
