@@ -142,7 +142,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   aggressionRange: 100
-  playerOutOfRange: 20
+  playerOutOfRange: 100
   turnSpeed: 10
   attackCooldown: 3
   playerMask:
@@ -255,6 +255,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 3
   cleanupDelay: 0
+  baseHealth: 3
 --- !u!1 &6380071158745332297
 GameObject:
   m_ObjectHideFlags: 0

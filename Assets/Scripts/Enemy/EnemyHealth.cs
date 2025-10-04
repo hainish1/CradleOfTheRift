@@ -8,6 +8,8 @@ public class EnemyHealth : HealthController
     [SerializeField] private float cleanupDelay = 0f;
     public event Action<EnemyHealth> EnemyDied;
 
+    public int baseHealth = 3;
+
     protected override void Die()
     {
         Debug.Log("[Enemy Health] Enemy died");
@@ -28,10 +30,23 @@ public class EnemyHealth : HealthController
         Destroy(gameObject, cleanupDelay);
     }
 
-    public void InitializeHealth(float healthMultiplier)
+    // public void InitializeHealth(float healthMultiplier)
+    // {
+    //     this.maxHealth = Mathf.CeilToInt(this.maxHealth * healthMultiplier);
+    //     this.currentHealth = this.maxHealth;
+    //     Debug.Log("Max Health: " + this.maxHealth);
+    // }
+    public void InitializeHealth(float newHealth)
     {
-        this.maxHealth = Mathf.CeilToInt(this.maxHealth * healthMultiplier);
+        // baseHealth = this.maxHealth;
+        this.maxHealth = Mathf.CeilToInt(newHealth);
         this.currentHealth = this.maxHealth;
         Debug.Log("Max Health: " + this.maxHealth);
+    }
+
+
+    public int GetMaxHealth()
+    {
+        return this.maxHealth;
     }
 }

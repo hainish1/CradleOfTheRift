@@ -88,10 +88,13 @@ public class EnemyRange : Enemy
         projectile.Init(direction * projectileSpeed, projectileMask, this.projectileDamage);
     }
 
-    public void InitializeDamage(float damageMultiplier)
-    { 
-        this.projectileDamage = Mathf.CeilToInt(this.projectileDamage * damageMultiplier);
-        Debug.Log("Projectile Damage: " + this.projectileDamage);   
+    public void InitializeDamage(float newDamage)
+    {
+        this.projectileDamage = Mathf.CeilToInt(newDamage);
+        Debug.Log("Projectile Damage: " + this.projectileDamage);
     }
+    
+    public float GetBaseDamage() => Mathf.CeilToInt(projectileDamage);
+    
 
 }

@@ -1102,7 +1102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  aggressionRange: 20.14
+  aggressionRange: 100
   playerOutOfRange: 50
   turnSpeed: 5
   attackCooldown: 3
@@ -1115,7 +1115,7 @@ MonoBehaviour:
   hoverHeight: 2
   hoverBobAmplitude: 0.25
   hoverBobSpeed: 2
-  chaseSpeed: 3.5
+  chaseSpeed: 5.5
   stopDistance: 7
   attackRange: 12
   turnSpeedWhileAiming: 12
@@ -1128,6 +1128,7 @@ MonoBehaviour:
     m_Bits: 1361
   spawnOffset: 0.1
   recoveryTime: 3
+  projectileDamage: 1
 --- !u!114 &204557455612082024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1175,6 +1176,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 3
   cleanupDelay: 0
+  baseHealth: 3
 --- !u!1 &9064912426439065413
 GameObject:
   m_ObjectHideFlags: 0

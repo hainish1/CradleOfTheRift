@@ -229,28 +229,34 @@ public class EnemySpawner : MonoBehaviour
 
     private void ScaleEnemyHealth(GameObject enemyObj)
     {
-        float healthMultiplier = Mathf.Pow(1 + this.healthGrowth, this.currentWave);
+        //     // 3 * (1 + (0.5) * (2 - 1)) = 4.5
+        //     // 3 * (1 + (0.5) * (3 - 1)) = 6
+        //     // 3 * (1 + (0,5) * (6 - 1)) = 10.5 rounded
 
+        // 3 * (1 + (0.5) * (0))
         EnemyHealth enemyHealth = enemyObj.GetComponent<EnemyHealth>();
-        enemyHealth.InitializeHealth(healthMultiplier);
+        float newHealthAfterMultiplier = enemyHealth.GetMaxHealth() * (1 + (this.healthGrowth - 1) * (currentWave - 1));
+        enemyHealth.InitializeHealth(Mathf.CeilToInt(newHealthAfterMultiplier));
         enemyHealth.EnemyDied += OnEnemyDied;
     }
 
     private void ScaleEnemyDamage(GameObject enemyObj)
-    {
-        float damageMultiplier = Mathf.Pow(1 + this.damageGrowth, this.currentWave);
+    {   
+
+        
 
         EnemyMelee enemyMelee = enemyObj.GetComponent<EnemyMelee>();
-
+            
         if (enemyMelee != null)
         {
-            enemyMelee.InitializeSlamDamage(damageMultiplier);
+            float newDamage = enemyMelee.GetBaseDamage() * (1 + (this.damageGrowth - 1) * (currentWave - 1));
+            enemyMelee?.InitializeSlamDamage(newDamage);
         }
         else
         {
             EnemyRange enemyRange = enemyObj.GetComponent<EnemyRange>();
-
-            enemyRange.InitializeDamage(damageMultiplier);
+            float newDamage = enemyRange.GetBaseDamage() * (1 + (this.damageGrowth - 1) * (currentWave - 1));
+            enemyRange?.InitializeDamage(newDamage);
         }
     }
 

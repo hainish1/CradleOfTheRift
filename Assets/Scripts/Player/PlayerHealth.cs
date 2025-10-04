@@ -38,7 +38,8 @@ public class PlayerHealth : HealthController
             {
                 float healthRatio = (float)currentHealth / maxHealth;
                 maxHealth = newMaxHealth;
-                currentHealth = Mathf.RoundToInt(healthRatio * maxHealth);
+                // currentHealth = Mathf.RoundToInt(healthRatio * maxHealth);
+                currentHealth = maxHealth;
 
                 Debug.Log($"Max health updated to: {maxHealth}, Current: {currentHealth}");
                 healthChanged?.Invoke(currentHealth, maxHealth);
