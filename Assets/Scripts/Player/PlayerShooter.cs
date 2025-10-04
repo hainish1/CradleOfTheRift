@@ -14,8 +14,8 @@ public class PlayerShooter : MonoBehaviour
 
 
     [Header("Fire info")]
-    [SerializeField] private float fireRate = 10f;
-    [SerializeField] private bool fullAuto = false;
+    [SerializeField] private float fireRate = 0.5f;
+    [SerializeField] private bool fullAuto = true;
 
     [Header("Projectiles")]
     [SerializeField] private Projectile projectilePrefab;

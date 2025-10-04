@@ -1102,10 +1102,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  aggressionRange: 100
-  playerOutOfRange: 50
+  aggressionRange: 200
+  playerOutOfRange: 200
   turnSpeed: 5
-  attackCooldown: 3
+  attackCooldown: 2
   playerMask:
     serializedVersion: 2
     m_Bits: 256
@@ -1115,8 +1115,8 @@ MonoBehaviour:
   hoverHeight: 2
   hoverBobAmplitude: 0.25
   hoverBobSpeed: 2
-  chaseSpeed: 5.5
-  stopDistance: 7
+  chaseSpeed: 10
+  stopDistance: 9
   attackRange: 12
   turnSpeedWhileAiming: 12
   firePoint: {fileID: 7588448968403286001}

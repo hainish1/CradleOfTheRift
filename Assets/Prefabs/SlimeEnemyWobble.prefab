@@ -141,8 +141,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  aggressionRange: 100
-  playerOutOfRange: 100
+  aggressionRange: 200
+  playerOutOfRange: 200
   turnSpeed: 10
   attackCooldown: 3
   playerMask:
@@ -151,7 +151,7 @@ MonoBehaviour:
   gizosOn: 1
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
   nextAttackAllowed: 0
-  chaseSpeed: 7
+  chaseSpeed: 15
   attackRange: 5
   knockbackPower: 10
   dragSpeed: 6
