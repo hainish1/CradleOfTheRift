@@ -8,7 +8,7 @@ public class EnemyHealth : HealthController
     [SerializeField] private float cleanupDelay = 0f;
     public event Action<EnemyHealth> EnemyDied;
 
-    public int baseHealth = 3;
+    public float baseHealth = 3;
 
     protected override void Die()
     {
@@ -39,13 +39,14 @@ public class EnemyHealth : HealthController
     public void InitializeHealth(float newHealth)
     {
         // baseHealth = this.maxHealth;
-        this.maxHealth = Mathf.CeilToInt(newHealth);
+        // this.maxHealth = Mathf.CeilToInt(newHealth);
+        this.maxHealth = newHealth;
         this.currentHealth = this.maxHealth;
         Debug.Log("Max Health: " + this.maxHealth);
     }
 
 
-    public int GetMaxHealth()
+    public float GetMaxHealth()
     {
         return this.maxHealth;
     }

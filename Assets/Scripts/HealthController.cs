@@ -3,8 +3,8 @@ using UnityEngine;
 public abstract class HealthController : MonoBehaviour, IDamageable
 {
     [Header("Health")]
-    [SerializeField] protected int maxHealth = 5;
-    protected int currentHealth;
+    [SerializeField] protected float maxHealth = 5;
+    protected float currentHealth;
 
     public bool IsDead { get; private set; }
 
@@ -13,7 +13,7 @@ public abstract class HealthController : MonoBehaviour, IDamageable
         currentHealth = maxHealth;
     }
 
-    public virtual void TakeDamage(int damage)
+    public virtual void TakeDamage(float damage)
     {
         if (IsDead) return;
 

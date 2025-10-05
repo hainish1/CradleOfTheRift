@@ -11,7 +11,7 @@ public class PlayerGroundSlam : MonoBehaviour
     public float slamDownSpeed = 40f; // vertical down speed
     public float minSlamHeight = 2.0f; // need this height
     public float slamRadius = 5f;
-    public int slamDamage = 2; // for now
+    public float slamDamage = 2; // for now
     public float slamKnockbackForce = 30f;
     public LayerMask enemyMask;
 

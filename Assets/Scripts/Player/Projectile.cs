@@ -8,12 +8,11 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float gravity = 0f;
 
     [Header("hit")]
-    [SerializeField] private int baseDamage = 1;
     [SerializeField] private float hitForce = 8f;
     [SerializeField] private float knockBackImpulse = 8f;
     [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
 
-    private int actualDamage; // THIS WILL STORE DAMAGE FROM STATS SYSTEM
+    private float actualDamage; // THIS WILL STORE DAMAGE FROM STATS SYSTEM
 
     Rigidbody rb;
     private float age;
@@ -25,7 +24,7 @@ public class Projectile : MonoBehaviour
         rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
-    public void Init(Vector3 velocity, LayerMask mask, int damage)
+    public void Init(Vector3 velocity, LayerMask mask, float damage)
     {
         rb.linearVelocity = velocity;
         hitMask = mask;

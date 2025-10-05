@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerMeleeAttack : MonoBehaviour
 {
-    [SerializeField] private int meleeDamge;
+    [SerializeField] private float meleeDamge;
     [Header("whats forward")]
     [SerializeField] private Transform forwardSource;           
     [SerializeField] private float heightOffset = 0.9f;         

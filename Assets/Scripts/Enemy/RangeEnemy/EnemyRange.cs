@@ -29,7 +29,7 @@ public class EnemyRange : Enemy
 
     float bobPhase;
 
-    public int projectileDamage = 1;
+    public float projectileDamage = 1;
 
 
     public override void Start()
@@ -90,11 +90,14 @@ public class EnemyRange : Enemy
 
     public void InitializeDamage(float newDamage)
     {
-        this.projectileDamage = Mathf.CeilToInt(newDamage);
+        // this.projectileDamage = Mathf.CeilToInt(newDamage);
+        this.projectileDamage = newDamage;
         Debug.Log("Projectile Damage: " + this.projectileDamage);
     }
+
+    // public float GetBaseDamage() => Mathf.CeilToInt(projectileDamage);
+    public float GetBaseDamage() => projectileDamage;
     
-    public float GetBaseDamage() => Mathf.CeilToInt(projectileDamage);
     
 
 }
