@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerMeleeAttack : MonoBehaviour
 {
-    [SerializeField] private float meleeDamge;
+    // [SerializeField] private float meleeDamge;
     [Header("whats forward")]
     [SerializeField] private Transform forwardSource;           
     [SerializeField] private float heightOffset = 0.9f;         
@@ -40,9 +40,18 @@ public class PlayerMeleeAttack : MonoBehaviour
     private readonly Collider[] overlapBuffer = new Collider[32]; // ts is for checking who got hit
     private readonly HashSet<Enemy> hitThisSwing = new();
 
+    private Entity _playerEntity;
+
 
     // calculating the fwd
     private Transform Forward => forwardSource ? forwardSource : transform;
+
+    private float MeleeDamage => _playerEntity.Stats.MeleeDamage;
+
+    void Awake()
+    {
+        _playerEntity = GetComponent<Entity>();
+    }
 
     void OnEnable()
     {
@@ -146,7 +155,7 @@ public class PlayerMeleeAttack : MonoBehaviour
             var damageable = enemy.GetComponentInParent<IDamageable>();
             if (damageable != null && !damageable.IsDead)
             {
-                damageable.TakeDamage(meleeDamge);
+                damageable.TakeDamage(MeleeDamage);
             }
 
             

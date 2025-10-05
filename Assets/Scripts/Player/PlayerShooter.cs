@@ -133,7 +133,7 @@ public class PlayerShooter : MonoBehaviour
 
         // now stat timeeee 
         
-        float currentDamage = playerEntity.Stats.Attack;
+        float currentDamage = playerEntity.Stats.ProjectileAttack;
         
 
         // NOTE TO SELF : USE OBJECT POOLING LATER TO REDUCE INSTANTIATING

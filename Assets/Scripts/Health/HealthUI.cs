@@ -14,10 +14,10 @@ public class HealthUI : MonoBehaviour
         healthBar = root.Q<ProgressBar>("HealthBar");
         healthBar.lowValue = 0;
 
-        healthBar.highValue = Mathf.CeilToInt(health.MaxHealth);
-        healthBar.value = Mathf.CeilToInt(health.CurrentHealth);
+        healthBar.highValue = health.MaxHealth;
+        healthBar.value = health.CurrentHealth;
 
-        healthBar.title = $"Health: {Mathf.CeilToInt(health.CurrentHealth)}/{Mathf.CeilToInt(health.MaxHealth)}";
+        healthBar.title = $"Health: {health.CurrentHealth}/{health.MaxHealth}";
 
         healthBar.style.visibility = Visibility.Visible;
 
@@ -34,8 +34,8 @@ public class HealthUI : MonoBehaviour
     {
         if (healthBar == null) return;
 
-        healthBar.highValue = Mathf.CeilToInt(maxHealth);
-        healthBar.value = Mathf.CeilToInt(currentHealth);
-        healthBar.title = $"Health: {Mathf.CeilToInt(currentHealth)}/{Mathf.CeilToInt(maxHealth)}";
+        healthBar.highValue = maxHealth;
+        healthBar.value = currentHealth;
+        healthBar.title = $"Health: {currentHealth}/{maxHealth}";
     }
 }

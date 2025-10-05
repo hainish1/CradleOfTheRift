@@ -11,7 +11,7 @@ public class PlayerGroundSlam : MonoBehaviour
     public float slamDownSpeed = 40f; // vertical down speed
     public float minSlamHeight = 2.0f; // need this height
     public float slamRadius = 5f;
-    public float slamDamage = 2; // for now
+    // public float slamDamage = 2; // for now
     public float slamKnockbackForce = 30f;
     public LayerMask enemyMask;
 
@@ -28,9 +28,12 @@ public class PlayerGroundSlam : MonoBehaviour
     private bool isSlamming = false;
     private bool canDoSlam => !controller.isGrounded && (controller.transform.position.y > minSlamHeight);
 
+    private Entity _playerEntity;
+    private float SlamDamage => _playerEntity.Stats.SlamDamage;
 
     void Awake()
     {
+        _playerEntity = GetComponent<Entity>();
         controller = GetComponent<CharacterController>();
         playerMovement = GetComponent<PlayerMovement>();
     }
@@ -104,7 +107,7 @@ public class PlayerGroundSlam : MonoBehaviour
                 
                 // then do damage
                 var dmg = enemy?.GetComponent<IDamageable>();
-                if (dmg != null) dmg.TakeDamage(slamDamage);
+                if (dmg != null) dmg.TakeDamage(SlamDamage);
             }
         }
 

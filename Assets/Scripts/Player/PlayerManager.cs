@@ -31,7 +31,7 @@ public class PlayerManager : Entity
         // Show stats when they change
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            Debug.Log($"Health: {Stats.Health}, MoveSpeed: {Stats.MoveSpeed}, Projectile Damage: {Stats.Attack}");
+            Debug.Log($"Health: {Stats.Health}, MoveSpeed: {Stats.MoveSpeed}, Projectile Damage: {Stats.ProjectileAttack}, Melee Damage: {Stats.MeleeDamage}, Slam Damage: {Stats.SlamDamage}");
         }
     }
 
