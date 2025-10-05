@@ -66,11 +66,18 @@ public class PlayerHealth : HealthController
     {
         return (float)currentHealth / maxHealth;
     }
-    
+
     public override void TakeDamage(float damage)
     {
         base.TakeDamage(damage);
         healthChanged?.Invoke(currentHealth, maxHealth);
         Debug.Log($"[PLAYER HEALTH] Player took {damage} damage, current health: {currentHealth}/{maxHealth}");
+    }
+
+    public virtual void RestoreFullHealth()
+    {
+        currentHealth = maxHealth;
+        healthChanged?.Invoke(currentHealth, maxHealth);
+        Debug.Log("Health Fully Resotored");
     }
 }
