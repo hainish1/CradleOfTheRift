@@ -210,14 +210,17 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnEnemy(EnemyType enemy)
     {
-        Vector3 location = enemy.isFlying ? GetAirLocation() : GetGroundLocation();
+        Vector3 location;
+        bool validLocation = TryGetGroundLocation(enemy.prefab, out location);
 
-        // safety check here
-        if (!IsSpawnPositionOnNavSurface(location))
+        if (!validLocation)
         {
+            Debug.Log("Failed to find valid ground spawn location after multiple attempts.");
             spawnDebugList.Add((location, false));
+
             return;
         }
+
         spawnDebugList.Add((location, true));
         GameObject enemyObj = Instantiate(enemy.prefab, location, Quaternion.identity);
 
@@ -228,6 +231,11 @@ public class EnemySpawner : MonoBehaviour
 
         // Notify UI for change
         CurrentEnemyCountChanged?.Invoke(this.currentEnemyCount);
+    }
+
+    private bool TryGetAirLocation(out Vector3 location)
+    {
+        throw new NotImplementedException();
     }
 
     private void ScaleEnemyHealth(GameObject enemyObj)
@@ -263,7 +271,7 @@ public class EnemySpawner : MonoBehaviour
     private Vector3 GetGroundLocation()
     {
         float angle = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
-    
+
         // Random distance between minSpawnDist and spawnRadius
         float distance = UnityEngine.Random.Range(minSpawnDist, spawnRadius);
 
@@ -352,12 +360,55 @@ public class EnemySpawner : MonoBehaviour
         // Draw min spawn distance (minSpawnDist)
         Gizmos.color = new Color(0f, 1f, 0f, 0.3f); // green, semi-transparent
         Gizmos.DrawWireSphere(playerLocation.position, minSpawnDist);
-        
+
         foreach (var spawn in spawnDebugList)
         {
             Gizmos.color = spawn.isValid ? Color.green : Color.red;
             Gizmos.DrawSphere(spawn.position, 0.3f);
         }
+    }
+
+    private bool IsSpawnLocationFree(Vector3 position, float radius)
+    {
+        // Check if any colliders are inside the spawn radius
+        Collider[] colliders = Physics.OverlapSphere(position, radius);
+        return colliders.Length == 0; // true if no obstacles
+    }
+
+    private bool TryGetGroundLocation(GameObject enemyPrefab, out Vector3 location)
+    {
+        float radius = GetEnemySpawnRadius(enemyPrefab);
+        int maxAttempts = 2;
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            Vector3 potentialLocation = GetGroundLocation();
+
+            bool isFree = IsSpawnPositionOnNavSurface(potentialLocation) && IsSpawnLocationFree(potentialLocation, radius);
+
+            spawnDebugList.Add((potentialLocation, isFree));
+            if (isFree)
+            {
+                location = potentialLocation;
+                return true;
+            }
+        }
+
+        location = Vector3.zero;
+        return false;
+    }
+
+    private float GetEnemySpawnRadius(GameObject enemyPrefab)
+    {
+        Collider collider = enemyPrefab.GetComponent<Collider>();
+
+        if (collider != null)
+        {
+            float radius = Mathf.Max(collider.bounds.extents.x, collider.bounds.extents.z);
+            return radius * 1.1f;
+        }
+
+        return 1f;
     }
 }
 
