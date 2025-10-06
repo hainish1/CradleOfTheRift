@@ -42,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _decelerationSeconds;
     [SerializeField] private float _characterRotationDamping;
     private float _currSprintMultiplierValue;
+    private bool _isSprintEnabled;
     private float _acceleration;
     private float _deceleration;
     private Vector3 lateralVector;
@@ -70,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _jumpBufferWindow;
     private float _currCoyoteTime;
     private float _currJumpBufferTime;
-    private bool _didPerformJump;
+    private bool _jumpBufferPending;
 
     [Header("Boost Parameters")]
     [SerializeField] private int _maxBoostEnergy;
@@ -124,7 +125,6 @@ public class PlayerMovement : MonoBehaviour
         jumpActions.started += JumpInputActionStarted;
         jumpActions.canceled += JumpInputActionCanceled;
         sprintActions.started += SprintInputActionStarted;
-        sprintActions.canceled += SprintInputActionCanceled;
         dashActions.started += DashInputActionStarted;
     }
 
@@ -138,7 +138,6 @@ public class PlayerMovement : MonoBehaviour
         jumpActions.started -= JumpInputActionStarted;
         jumpActions.canceled -= JumpInputActionCanceled;
         sprintActions.started -= SprintInputActionStarted;
-        sprintActions.canceled -= SprintInputActionCanceled;
         dashActions.started -= DashInputActionStarted;
     }
 
@@ -150,12 +149,13 @@ public class PlayerMovement : MonoBehaviour
         _originalStepOffset = _characterController.stepOffset;
 
         _currSprintMultiplierValue = 1;
+        _isSprintEnabled = false;
         _acceleration = _maxSpeed / _accelerationSeconds;
         _deceleration = _maxSpeed / _decelerationSeconds;
 
         _currHoverDescentReductionMultiplier = 1;
         IsGrounded = CheckIsGrounded();
-        _didPerformJump = false;
+        _jumpBufferPending = false;
         _isHovering = false;
 
         _currCoyoteTime = _coyoteTimeWindow;
@@ -185,15 +185,15 @@ public class PlayerMovement : MonoBehaviour
 
         if (_isDashing)
         {
-            DashCase();
+            DashConditions();
         }
         else
         {
-            MoveCase();
-            JumpCase();
+            MoveConditions();
+            JumpConditions();
             IsGrounded = CheckIsGrounded();
-            HoverCase();
-            BoostCase();
+            HoverConditions();
+            BoostConditions();
         }
     }
 
@@ -228,28 +228,6 @@ public class PlayerMovement : MonoBehaviour
     ///   </para>
     /// </summary>
     public event System.Action<float> DashCooldownStarted;
-
-    /// <summary>
-    ///   <para>
-    ///      Gets the current lateral input direction for every frame.
-    ///   </para>
-    /// </summary>
-    /// <returns> A normalized vector parallel with the xz-plane. </returns>
-    private Vector3 GetMoveInputDirection()
-    {
-        Vector2 moveInput = moveActions.ReadValue<Vector2>();
-
-        Vector3 cameraPerspectiveForward = _cameraTransform ? _cameraTransform.forward : Vector3.forward;
-        Vector3 cameraPerspectiveRight = _cameraTransform ? _cameraTransform.right : Vector3.right;
-        cameraPerspectiveForward.y = 0;
-        cameraPerspectiveRight.y = 0;
-
-        Vector3 inputDirection = new Vector3(moveInput.x, 0, moveInput.y);
-        Vector3 moveDirection = (cameraPerspectiveRight.normalized * inputDirection.x)
-                                 + (cameraPerspectiveForward.normalized * inputDirection.z);
-
-        return moveDirection.normalized;
-    }
 
     /// <summary>
     ///   <para>
@@ -312,7 +290,7 @@ public class PlayerMovement : MonoBehaviour
     ///     Moves the player in the input direction an amount of distance calculated for every frame.
     ///   </para>
     /// </summary>
-    private void MoveCase()
+    private void MoveConditions()
     {
         // Update _maxSpeed, _acceleration and _deceleration values whenever movement stats are changed.
         if (_playerEntity != null)
@@ -320,8 +298,7 @@ public class PlayerMovement : MonoBehaviour
             if (_maxSpeed != _playerEntity.Stats.MoveSpeed)
             {
                 _maxSpeed = _playerEntity.Stats.MoveSpeed;
-                _acceleration = _maxSpeed / _accelerationSeconds;
-                _deceleration = _maxSpeed / _decelerationSeconds;
+                RecalculateAccelDecel();
             }
         }
 
@@ -329,16 +306,17 @@ public class PlayerMovement : MonoBehaviour
         // simply stop recording new movement values instead of completely skipping the MoveCase method.
         _moveInputUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
 
-        float aggregateMaxSpeedValue = _maxSpeed * _currSprintMultiplierValue;
+        float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
 
-        // Accelerate if movement is being input and sprinting has not been canceled.
+        // Accelerate if movement is being input and sprint has not been canceled.
         if (_moveInputUnitVector != Vector3.zero && lateralVector.magnitude <= aggregateMaxSpeedValue)
         {
             Accelerate(aggregateMaxSpeedValue);
         }
-        // Otherwise, decelerate if no movement is being input or sprinting has been canceled.
+        // Otherwise, disable sprint and decelerate.
         else
         {
+            DisableSprint();
             Decelerate();
         }
 
@@ -357,6 +335,28 @@ public class PlayerMovement : MonoBehaviour
             float t = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, _characterRotationDamping));
             transform.rotation = Quaternion.Slerp(qa, qb, t);
         }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///      Gets the current lateral input direction for every frame.
+    ///   </para>
+    /// </summary>
+    /// <returns> A normalized vector parallel with the xz-plane. </returns>
+    private Vector3 GetMoveInputDirection()
+    {
+        Vector2 moveInput = moveActions.ReadValue<Vector2>();
+
+        Vector3 cameraPerspectiveForward = _cameraTransform ? _cameraTransform.forward : Vector3.forward;
+        Vector3 cameraPerspectiveRight = _cameraTransform ? _cameraTransform.right : Vector3.right;
+        cameraPerspectiveForward.y = 0;
+        cameraPerspectiveRight.y = 0;
+
+        Vector3 inputDirection = new Vector3(moveInput.x, 0, moveInput.y);
+        Vector3 moveDirection = (cameraPerspectiveRight.normalized * inputDirection.x)
+                                 + (cameraPerspectiveForward.normalized * inputDirection.z);
+
+        return moveDirection.normalized;
     }
 
     /// <summary>
@@ -383,6 +383,13 @@ public class PlayerMovement : MonoBehaviour
 
         lateralVector = lateralVector.magnitude * _moveInputUnitVector;
         lateralVector += aggregateAccelIncrement;
+
+        // Redundency check for limiting move speed to ensure sprint is not exited unexpectedly.
+        if (lateralVector.magnitude > aggregateMaxSpeedValue)
+        {
+            lateralVector = aggregateMaxSpeedValue * lateralVector.normalized;
+        }
+
         _characterController.Move(Time.deltaTime * lateralVector);
     }
 
@@ -411,28 +418,62 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+
+    private float CalculateAggregateMaxSpeedValue()
+    {
+        return _maxSpeed * _currSprintMultiplierValue;
+    }
+
+
+    private void RecalculateAccelDecel()
+    {
+        float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
+        _acceleration = aggregateMaxSpeedValue / _accelerationSeconds;
+        _deceleration = aggregateMaxSpeedValue / _decelerationSeconds;
+    }
+
     /// <summary>
     ///   <para>
-    ///     Initiates sprinting for the player character by setting the current sprint multiplier value
-    ///     to _sprintMultiplier on any frame that sprint is inputted.
+    ///     Toggles sprinting for the player character on any frame that sprint is inputted.
     ///   </para>
     /// </summary>
     /// <param name="context"> The sprint input context. </param>
     private void SprintInputActionStarted(InputAction.CallbackContext context)
     {
-        _currSprintMultiplierValue = _sprintMultiplier;
+        if (_isSprintEnabled)
+        {
+            DisableSprint();
+        }
+        else
+        {
+            EnableSprint();
+        }
     }
 
     /// <summary>
     ///   <para>
-    ///     Cancels sprinting for the player character by setting the current sprint multiplier value to 1
-    ///     on any frame that the sprint input is released.
+    ///     Sets the current sprint multiplier value to _sprintMultiplier and recalculates acceleration
+    ///     and deceleration on any frame this method is called.
     ///   </para>
     /// </summary>
-    /// <param name="context"></param>
-    private void SprintInputActionCanceled(InputAction.CallbackContext context)
+    private void EnableSprint()
     {
+        _isSprintEnabled = true;
+        _currSprintMultiplierValue = _sprintMultiplier;
+        RecalculateAccelDecel();
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Sets the current sprint multiplier value to 1 and recalculates acceleration and deceleration
+    ///     on any frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void DisableSprint()
+    {
+        _isSprintEnabled = false;
         _currSprintMultiplierValue = 1;
+        RecalculateAccelDecel();
     }
 
     /// <summary>
@@ -448,7 +489,7 @@ public class PlayerMovement : MonoBehaviour
         if (!_isDashing)
         {
             _inputtedJumpThisFrame = true;
-            _didPerformJump = true;
+            _jumpBufferPending = true;
         }
         if (!IsGrounded && !_isDashing)
         {
@@ -489,14 +530,14 @@ public class PlayerMovement : MonoBehaviour
     ///     on the frame this method is called.
     ///   </para>
     /// </summary>
-    private void JumpCase()
+    private void JumpConditions()
     {
         IsGrounded = CheckIsGrounded();
 
         // If on the ground and jump was inputted and jump buffer window is valid, or if walked off an edge and coyote time window is valid, then jump.
-        if ( (_didPerformJump && IsGrounded && IsWithinJumpBufferWindow()) || (_didPerformJump && !IsGrounded && IsWithinCoyoteTimeWindow()) )
+        if ( (_jumpBufferPending && IsGrounded && IsWithinJumpBufferWindow()) || (_inputtedJumpThisFrame && !IsGrounded && IsWithinCoyoteTimeWindow()) )
         {
-            _didPerformJump = false;
+            _jumpBufferPending = false;
             _currCoyoteTime = 0;
             _currJumpBufferTime = 0;
             _verticalVector.y = _JumpHeight;
@@ -515,11 +556,11 @@ public class PlayerMovement : MonoBehaviour
         {
             DecrementCoyoteAndBufferTimers();
         }
-        // Otherwise, reset boosting status, gravity force and stepOffset to original states
-        // because player charater is on the ground.
+        // Otherwise, reset coyote time, jump buffer time, boosting status, gravity force and stepOffset to
+        // original states because player charater is on the ground.
         else
         {
-            _didPerformJump = false;
+            _jumpBufferPending = false;
             _currCoyoteTime = _coyoteTimeWindow;
             _currJumpBufferTime = _jumpBufferWindow;
             _isBoosting = false;
@@ -571,7 +612,7 @@ public class PlayerMovement : MonoBehaviour
     ///     on the frame this method is called.
     ///   </para>
     /// </summary>
-    private void HoverCase()
+    private void HoverConditions()
     {
         // Cease hovering if jump input is no longer held or the player character landed.
         if ( (_isHovering && !jumpActions.IsPressed()) || (_isHovering && IsGrounded) )
@@ -593,7 +634,7 @@ public class PlayerMovement : MonoBehaviour
     ///     on the frame this method is called.
     ///   </para>
     /// </summary>
-    private void BoostCase()
+    private void BoostConditions()
     {
         // Cease hovering if jump input is no longer held or boost energy is depleted.
         if ( (_isBoosting && !jumpActions.IsPressed()) || _currBoostEnergy <= 0 )
@@ -739,7 +780,7 @@ public class PlayerMovement : MonoBehaviour
     ///     on the frame this method is called.
     ///   </para>
     /// </summary>
-    private void DashCase()
+    private void DashConditions()
     {
         IsGrounded = CheckIsGrounded();
         
@@ -749,7 +790,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (_isBoosting)
         {
-            BoostCase();
+            BoostConditions();
         }
 
         _characterController.Move(Time.deltaTime * _dashSpeed * _dashVector);
