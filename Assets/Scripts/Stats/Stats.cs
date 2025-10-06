@@ -1,6 +1,18 @@
+using System;
 using UnityEngine;
 
-public enum StatType {ProjectileDamage, Health, MoveSpeed, MeleeDamage, SlamDamage}
+public enum StatType
+{
+    ProjectileDamage,
+    Health,
+    MoveSpeed,
+    DashSpeed,
+    DashDistance,
+    DashCooldown,
+    DashCharges,
+    MeleeDamage,
+    SlamDamage
+}
 
 public class Stats
 {
@@ -42,6 +54,46 @@ public class Stats
         }
     }
 
+    public float DashSpeed
+    {
+        get
+        {
+            var q = new Query(StatType.DashSpeed, baseStats.dashSpeed);
+            mediator.PerformQuery(this, q);
+            return q.Value;
+        }
+    }
+
+    public float DashDistance
+    {
+        get
+        {
+            var q = new Query(StatType.DashDistance, baseStats.dashDistance);
+            mediator.PerformQuery(this, q);
+            return q.Value;
+        }
+    }
+
+    public float DashCooldown
+    {
+        get
+        {
+            var q = new Query(StatType.DashCooldown, baseStats.dashCooldown);
+            mediator.PerformQuery(this, q);
+            return q.Value;
+        }
+    }
+
+    public int DashCharges
+    {
+        get
+        {
+            var q = new Query(StatType.DashCharges, baseStats.dashCharges);
+            mediator.PerformQuery(this, q);
+            return Mathf.CeilToInt(q.Value);
+        }
+    }
+
     public float MeleeDamage
     {
         get
@@ -75,6 +127,12 @@ public class Stats
             StatType.Health => baseStats.health,
             StatType.ProjectileDamage => baseStats.projectileDamage,
             StatType.MoveSpeed => baseStats.moveSpeed,
+            StatType.MeleeDamage => baseStats.meleeDamage,
+            StatType.SlamDamage => baseStats.slamDamage,
+            StatType.DashSpeed => baseStats.dashSpeed,
+            StatType.DashDistance => baseStats.dashDistance,
+            StatType.DashCooldown => baseStats.dashCooldown,
+            StatType.DashCharges => baseStats.dashCharges,
             _ => 0f,
         };
     }
