@@ -785,25 +785,9 @@ PrefabInstance:
       value: Player2
       objectReference: {fileID: 0}
     - target: {fileID: 7506041293616542779, guid: 5ea46562df90725499583dd45f12f207, type: 3}
-      propertyPath: _dashSpeed
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 7506041293616542779, guid: 5ea46562df90725499583dd45f12f207, type: 3}
-      propertyPath: _JumpHeight
-      value: 18
-      objectReference: {fileID: 0}
-    - target: {fileID: 7506041293616542779, guid: 5ea46562df90725499583dd45f12f207, type: 3}
-      propertyPath: _dashDistance
-      value: 14
-      objectReference: {fileID: 0}
-    - target: {fileID: 7506041293616542779, guid: 5ea46562df90725499583dd45f12f207, type: 3}
       propertyPath: _cameraTransform
       value: 
       objectReference: {fileID: 1469625039}
-    - target: {fileID: 7506041293616542779, guid: 5ea46562df90725499583dd45f12f207, type: 3}
-      propertyPath: _gravityMultiplier
-      value: 4
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

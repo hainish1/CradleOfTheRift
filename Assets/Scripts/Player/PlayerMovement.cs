@@ -21,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     private InputSystem_Actions.PlayerActions playerActions;
 
     private InputAction moveActions;
+    private InputAction sprintActions;
     private InputAction jumpActions;
     private InputAction dashActions;
 
@@ -30,16 +31,17 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController _characterController;
     private Entity _playerEntity;
     private float _playerHalfHeight;
-    private float _playerHalfWidth;
-    private float _groundedRaycastFloorDistance;
-    private float _groundedRaycastRadialDistance;
+    private float _playerRadius;
+    private float _groundedShpereCastRadius;
     private float _originalStepOffset;
 
     [Header("Movement Parameters")]
     [SerializeField] private float _maxSpeed;
+    [SerializeField] [Range(1, 9)] private float _sprintMultiplier;
     [SerializeField] private float _accelerationSeconds;
     [SerializeField] private float _decelerationSeconds;
     [SerializeField] private float _characterRotationDamping;
+    private float _currSprintMultiplierValue;
     private float _acceleration;
     private float _deceleration;
     private Vector3 lateralVector;
@@ -55,13 +57,20 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Jump Parameters")]
     [SerializeField] private float _JumpHeight;
-    [SerializeField][Range(0, 1)] private float _midairStrafeMultiplier;
     [SerializeField] [Range(0, 1)] private float _hoverDescentReductionMultiplier;
     [SerializeField] private float _gravityMultiplier;
-    private bool _didPerformJump;
+    private float _currHoverDescentReductionMultiplier;
+    public bool IsGrounded { get; private set; }
+    private bool _inputtedJumpThisFrame;
     private bool _isHovering;
-    private float _aggregateGravityModifier;
     private Vector3 _verticalVector;
+
+    [Header("Coyote Time Parameters")]
+    [SerializeField] private float _coyoteTimeWindow;
+    [SerializeField] private float _jumpBufferWindow;
+    private float _currCoyoteTime;
+    private float _currJumpBufferTime;
+    private bool _didPerformJump;
 
     [Header("Boost Parameters")]
     [SerializeField] private int _maxBoostEnergy;
@@ -83,18 +92,18 @@ public class PlayerMovement : MonoBehaviour
     private bool _isDashing;
     private Vector3 _dashVector;
 
-    [Header("Layer Parameter")]
-    [SerializeField] private LayerMask _environmentLayer;
+    private int _groundCollisionLayerMasks;
 
     private bool _lockControls = false;
 
     // Set by AimController.
     private bool strafe = false;
-    
+
 
 
     void Awake()
     {
+        _playerEntity = GetComponent<Entity>();
         _characterController = GetComponent<CharacterController>();
         playerInput = new InputSystem_Actions();
         playerActions = playerInput.Player;
@@ -103,45 +112,54 @@ public class PlayerMovement : MonoBehaviour
     private void OnEnable()
     {
         moveActions = playerActions.Move;
+        sprintActions = playerActions.Sprint;
         jumpActions = playerActions.Jump;
         dashActions = playerActions.Dash;
         
         moveActions.Enable();
+        sprintActions.Enable();
         jumpActions.Enable();
         dashActions.Enable();
         
         jumpActions.started += JumpInputActionStarted;
         jumpActions.canceled += JumpInputActionCanceled;
+        sprintActions.started += SprintInputActionStarted;
+        sprintActions.canceled += SprintInputActionCanceled;
         dashActions.started += DashInputActionStarted;
     }
 
     private void OnDisable()
     {
         moveActions.Disable();
+        sprintActions.Disable();
         jumpActions.Disable();
         dashActions.Disable();
 
         jumpActions.started -= JumpInputActionStarted;
         jumpActions.canceled -= JumpInputActionCanceled;
+        sprintActions.started -= SprintInputActionStarted;
+        sprintActions.canceled -= SprintInputActionCanceled;
         dashActions.started -= DashInputActionStarted;
     }
 
     void Start()
     {
-        _playerEntity = GetComponent<Entity>();
-
-        _playerHalfHeight = GetComponent<CharacterController>().bounds.extents.y;
-        _playerHalfWidth = GetComponent<CharacterController>().bounds.extents.x;
-        _groundedRaycastFloorDistance = _playerHalfHeight + 0.1f;
-        _groundedRaycastRadialDistance = _playerHalfWidth * 0.7f;
+        _playerHalfHeight = GetComponent<CharacterController>().height / 2;
+        _playerRadius = GetComponent<CharacterController>().radius;
+        _groundedShpereCastRadius = _playerRadius - 0.1f;
         _originalStepOffset = _characterController.stepOffset;
 
+        _currSprintMultiplierValue = 1;
         _acceleration = _maxSpeed / _accelerationSeconds;
         _deceleration = _maxSpeed / _decelerationSeconds;
 
+        _currHoverDescentReductionMultiplier = 1;
+        IsGrounded = CheckIsGrounded();
         _didPerformJump = false;
         _isHovering = false;
-        _aggregateGravityModifier = _gravityMultiplier;
+
+        _currCoyoteTime = _coyoteTimeWindow;
+        _currJumpBufferTime = _jumpBufferWindow;
 
         _currBoostEnergy = _maxBoostEnergy;
         _currBoostDoubleTapTime = _boostDoubleTapWindow;
@@ -149,6 +167,11 @@ public class PlayerMovement : MonoBehaviour
         _isRegeneratingBoost = false;
 
         _isDashing = false;
+
+        _groundCollisionLayerMasks = LayerMask.GetMask("Environment");
+        _groundCollisionLayerMasks |= LayerMask.GetMask("Interactable");
+        _groundCollisionLayerMasks |= LayerMask.GetMask("Obstacles");
+        _groundCollisionLayerMasks |= LayerMask.GetMask("Enemy");
     }
 
     void Update()
@@ -168,6 +191,7 @@ public class PlayerMovement : MonoBehaviour
         {
             MoveCase();
             JumpCase();
+            IsGrounded = CheckIsGrounded();
             HoverCase();
             BoostCase();
         }
@@ -229,33 +253,34 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Checks if the player character is touching the ground during the frame this method is called.
+    ///     Checks if the player character is touching the ground on the frame this method is called.
     ///   </para>
     /// </summary>
     /// <returns> True if the player character is on the ground, otherwise false. </returns>
-    private bool IsGrounded()
+    private bool CheckIsGrounded()
     {
-        // Exact center of the player's character.
-        if (Physics.Raycast(_playerCenter.position, Vector2.down, _groundedRaycastFloorDistance))
+        Vector3 SphereCastOrigin = _playerCenter.position + new Vector3(0, -_playerHalfHeight + _groundedShpereCastRadius, 0);
+
+        if (Physics.SphereCast(SphereCastOrigin,
+                               _groundedShpereCastRadius,
+                               Vector2.down,
+                               hitInfo: out RaycastHit hitInfo,
+                               0.1f,
+                               _groundCollisionLayerMasks,
+                               QueryTriggerInteraction.Ignore))
         {
             return true;
         }
 
-        // Four corners of the player's character.
-        for (int i = -1; i <= 1; i += 2)
-        {
-            for (int j = -1; j <= 1; j += 2)
-            {
-                if (Physics.Raycast(_playerCenter.position + new Vector3(_groundedRaycastRadialDistance * i, 0, _groundedRaycastRadialDistance * j),
-                                    Vector2.down, _groundedRaycastFloorDistance))
-                {
-                    return true;
-                }
-            }
-        }
-
         return false;
     }
+
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.red;
+    //    Vector3 SphereCastOrigin = _playerCenter.position + new Vector3(0, -_playerHalfHeight + _groundedShpereCastRadius - 0.1f, 0);
+    //    Gizmos.DrawSphere(SphereCastOrigin, _groundedShpereCastRadius);
+    //}
 
     /// <summary>
     ///   <para>
@@ -264,15 +289,18 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void ApplyGravity()
     {
+        IsGrounded = CheckIsGrounded();
+        
         // Do not apply gravity when boosting.
-        if (!IsGrounded() && !_isBoosting)
+        if (!IsGrounded && !_isBoosting)
         {
-            _verticalVector += Time.deltaTime * _aggregateGravityModifier * Physics.gravity;
+            float aggregateGravityModifier = _gravityMultiplier * _currHoverDescentReductionMultiplier;
+            _verticalVector += Time.deltaTime * aggregateGravityModifier * Physics.gravity;
 
             // Limit descent speed to the strength of gravity.
-            if (_verticalVector.y < _aggregateGravityModifier * Physics.gravity.y)
+            if (_verticalVector.y < aggregateGravityModifier * Physics.gravity.y)
             {
-                _verticalVector.y = _aggregateGravityModifier * Physics.gravity.y;
+                _verticalVector.y = aggregateGravityModifier * Physics.gravity.y;
             }
 
             _characterController.Move(Time.deltaTime * _verticalVector);
@@ -301,10 +329,14 @@ public class PlayerMovement : MonoBehaviour
         // simply stop recording new movement values instead of completely skipping the MoveCase method.
         _moveInputUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
 
-        if (_moveInputUnitVector != Vector3.zero)
+        float aggregateMaxSpeedValue = _maxSpeed * _currSprintMultiplierValue;
+
+        // Accelerate if movement is being input and sprinting has not been canceled.
+        if (_moveInputUnitVector != Vector3.zero && lateralVector.magnitude <= aggregateMaxSpeedValue)
         {
-            Accelerate();
+            Accelerate(aggregateMaxSpeedValue);
         }
+        // Otherwise, decelerate if no movement is being input or sprinting has been canceled.
         else
         {
             Decelerate();
@@ -313,15 +345,11 @@ public class PlayerMovement : MonoBehaviour
         // Apply knockback until it has dissipated.
         if (_externalKnockbackVelocity.sqrMagnitude > 1e-6f)
         {
-            // optional clamp to avoid crazy impulses
-            // if (externalVelocity.magnitude > 100f)
-            //     externalVelocity = externalVelocity.normalized * 100f;
-
             _characterController.Move(Time.deltaTime * _externalKnockbackVelocity);
             _externalKnockbackVelocity = Vector3.Lerp(_externalKnockbackVelocity, Vector3.zero, Time.deltaTime * _kbDamping);
         }
 
-        // facing the movement stuff, turning player around
+        // Turn the player character toward the input direction.
         if (_kbControlsLockTimer <= 0 && !strafe && lateralVector.sqrMagnitude > 0.0001f)
         {
             Quaternion qa = transform.rotation;
@@ -332,29 +360,29 @@ public class PlayerMovement : MonoBehaviour
     }
 
     /// <summary>
-    ///   Accelerates the player character during any frame this method is called up to the max movement speed.
+    ///   Accelerates the player character on any frame this method is called up to the max movement speed.
     /// </summary>
-    private void Accelerate()
+    private void Accelerate(float aggregateMaxSpeedValue)
     {
-        Vector3 accelIncrement = Time.deltaTime * _acceleration * _moveInputUnitVector;
+        Vector3 aggregateAccelIncrement = Time.deltaTime * _acceleration * _currSprintMultiplierValue * _moveInputUnitVector;
 
-        // Limit lateral move speed to _maxSpeed.
-        if (lateralVector.magnitude < _maxSpeed)
+        // Limit lateral move speed to aggregateMaxSpeedValue.
+        if (lateralVector.magnitude < aggregateMaxSpeedValue)
         {
-            // If acceleration increment for the current frame exceeds _maxSpeed,
-            // then set current speed to exactly _maxSpeed.
-            if (lateralVector.magnitude + accelIncrement.magnitude > _maxSpeed)
+            // If acceleration increment for the current frame exceeds aggregateMaxSpeedValue,
+            // then set current speed to exactly aggregateMaxSpeedValue.
+            if (lateralVector.magnitude + aggregateAccelIncrement.magnitude > aggregateMaxSpeedValue)
             {
-                accelIncrement = (_maxSpeed - lateralVector.magnitude) * _moveInputUnitVector;
+                aggregateAccelIncrement = (aggregateMaxSpeedValue - lateralVector.magnitude) * _moveInputUnitVector;
             }
         }
         else
         {
-            accelIncrement = Vector3.zero;
+            aggregateAccelIncrement = Vector3.zero;
         }
 
         lateralVector = lateralVector.magnitude * _moveInputUnitVector;
-        lateralVector += accelIncrement;
+        lateralVector += aggregateAccelIncrement;
         _characterController.Move(Time.deltaTime * lateralVector);
     }
 
@@ -385,21 +413,44 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Executes a sequence of conditions during any frame that jump is inputted.
+    ///     Initiates sprinting for the player character by setting the current sprint multiplier value
+    ///     to _sprintMultiplier on any frame that sprint is inputted.
+    ///   </para>
+    /// </summary>
+    /// <param name="context"> The sprint input context. </param>
+    private void SprintInputActionStarted(InputAction.CallbackContext context)
+    {
+        _currSprintMultiplierValue = _sprintMultiplier;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Cancels sprinting for the player character by setting the current sprint multiplier value to 1
+    ///     on any frame that the sprint input is released.
+    ///   </para>
+    /// </summary>
+    /// <param name="context"></param>
+    private void SprintInputActionCanceled(InputAction.CallbackContext context)
+    {
+        _currSprintMultiplierValue = 1;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Executes a sequence of jump conditions on any frame that jump is inputted.
     ///   </para>
     /// </summary>
     /// <param name="context"> The jump input context. </param>
     private void JumpInputActionStarted(InputAction.CallbackContext context)
     {
         if (_kbControlsLockTimer > 0) return;
-        
-        // If on the ground and not dashing, then jump.
-        if (IsGrounded() && !_isDashing)
+
+        if (!_isDashing)
         {
+            _inputtedJumpThisFrame = true;
             _didPerformJump = true;
         }
-        // Otherwise, begin hovering if not on the ground and not dashing.
-        else if (!IsGrounded() && !_isDashing)
+        if (!IsGrounded && !_isDashing)
         {
             _isHovering = true;
         }
@@ -419,91 +470,139 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Failsafe to ensure the player character stops hovering or boosting when
-    ///     the jump input is no longer held.
+    ///     Failsafe to ensure the player character stops hovering or boosting on any
+    ///     frame that the jump input is released.
     ///   </para>
     /// </summary>
     /// <param name="context"> The jump input context. </param>
     private void JumpInputActionCanceled(InputAction.CallbackContext context)
     {
         _isHovering = false;
-        _aggregateGravityModifier = _gravityMultiplier;
+        _currHoverDescentReductionMultiplier = 1;
 
         _isBoosting = false;
-
     }
 
     /// <summary>
     ///   <para>
     ///     Makes the player character jump if the conditions necessary are satisfied
-    ///     during the frame this method is called.
+    ///     on the frame this method is called.
     ///   </para>
     /// </summary>
     private void JumpCase()
     {
-        // If on the ground and jump was inputted, then jump. 
-        // Disable stepOffset to prevent buggy movement behavior when near edges.
-        if (_didPerformJump && IsGrounded())
+        IsGrounded = CheckIsGrounded();
+
+        // If on the ground and jump was inputted and jump buffer window is valid, or if walked off an edge and coyote time window is valid, then jump.
+        if ( (_didPerformJump && IsGrounded && IsWithinJumpBufferWindow()) || (_didPerformJump && !IsGrounded && IsWithinCoyoteTimeWindow()) )
         {
             _didPerformJump = false;
+            _currCoyoteTime = 0;
+            _currJumpBufferTime = 0;
             _verticalVector.y = _JumpHeight;
-            _characterController.stepOffset = 0;
+            _characterController.stepOffset = 0; // Disable stepOffset in midair to prevent buggy movement behavior when near edges.
 
             _characterController.Move(Time.deltaTime * _verticalVector);
         }
-        // Otherwise, if still in midair then keep stepOffset disabled.
-        else if (!IsGrounded())
+        // If jump was inputted midair, reset jump buffer window and decrement coyote time and jump buffer timers.
+        else if (_inputtedJumpThisFrame && !IsGrounded)
         {
-            _characterController.stepOffset = 0;
+            _currJumpBufferTime = _jumpBufferWindow;
+            DecrementCoyoteAndBufferTimers();
+        }
+        // If in midair, decrement coyote time and jump buffer timers.
+        else if (!IsGrounded)
+        {
+            DecrementCoyoteAndBufferTimers();
         }
         // Otherwise, reset boosting status, gravity force and stepOffset to original states
         // because player charater is on the ground.
         else
         {
+            _didPerformJump = false;
+            _currCoyoteTime = _coyoteTimeWindow;
+            _currJumpBufferTime = _jumpBufferWindow;
             _isBoosting = false;
             _verticalVector.y = -0.5f;
             _characterController.stepOffset = _originalStepOffset;
         }
+
+        _inputtedJumpThisFrame = false;
     }
 
     /// <summary>
     ///   <para>
-    ///     Hovers the player character if the necessary conditions are satisfied
-    ///     during the frame this method is called.
+    ///     Decrements the coyote time and jump buffer timers on any frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void DecrementCoyoteAndBufferTimers()
+    {
+        if (IsWithinCoyoteTimeWindow()) _currCoyoteTime -= Time.deltaTime;
+        if (IsWithinJumpBufferWindow()) _currJumpBufferTime -= Time.deltaTime;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Checks if the window of time in which coyote time is valid has closed on the
+    ///     frame this method is called.
+    ///   </para>
+    /// </summary>
+    /// <returns></returns>
+    private bool IsWithinCoyoteTimeWindow()
+    {
+        return _currCoyoteTime > 0;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Checks if the window of time in which jump buffer is valid has closed on the
+    ///     frame thise method is called.
+    ///   </para>
+    /// </summary>
+    /// <returns></returns>
+    private bool IsWithinJumpBufferWindow()
+    {
+        return _currJumpBufferTime > 0;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Initiates hovering for the player character if the necessary conditions are satisfied
+    ///     on the frame this method is called.
     ///   </para>
     /// </summary>
     private void HoverCase()
     {
         // Cease hovering if jump input is no longer held or the player character landed.
-        if ((_isHovering && !jumpActions.IsPressed()) || IsGrounded())
+        if ( (_isHovering && !jumpActions.IsPressed()) || (_isHovering && IsGrounded) )
         {
             _isHovering = false;
-            _aggregateGravityModifier = _gravityMultiplier;
+            _currHoverDescentReductionMultiplier = 1;
         }
 
-        // Only modify gravity for hovering while falling.
-        if (_isHovering && jumpActions.IsPressed() && _verticalVector.y < 0)
+        // Only modify gravity for hovering while falling and while the coyote time and jump buffer windows are invalid.
+        if (_isHovering && !IsWithinCoyoteTimeWindow() && !IsWithinJumpBufferWindow() && _verticalVector.y <= 0)
         {
-            _aggregateGravityModifier = _gravityMultiplier * _hoverDescentReductionMultiplier;
+            _currHoverDescentReductionMultiplier = _hoverDescentReductionMultiplier;
         }
     }
 
     /// <summary>
     ///   <para>
     ///     Boosts the player character if the necessary conditions are satisfied
-    ///     during the frame this method is called.
+    ///     on the frame this method is called.
     ///   </para>
     /// </summary>
     private void BoostCase()
     {
         // Cease hovering if jump input is no longer held or boost energy is depleted.
-        if ((_isBoosting && !jumpActions.IsPressed()) || _currBoostEnergy <= 0)
+        if ( (_isBoosting && !jumpActions.IsPressed()) || _currBoostEnergy <= 0 )
         {
             _isBoosting = false;
         }
 
         // If in midair, jump input was double-tapped and is still held, and boost energy is not depleted, then boost.
-        if (!IsGrounded() && _isBoosting && jumpActions.IsPressed() && _currBoostEnergy > 0)
+        if (!IsGrounded && _isBoosting && jumpActions.IsPressed() && _currBoostEnergy > 0)
         {
             Vector3 boostSpeedIncrement = Time.deltaTime * _boostAcceleration * Vector3.up;
             float boostDepletionDecrement = Time.deltaTime * _boostDepletionRate;
@@ -538,7 +637,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Initialize regeneration coroutine if boosted, on the ground and not already regenerating.
-        if (IsGrounded() && _currBoostEnergy < _maxBoostEnergy && !_isRegeneratingBoost)
+        if (IsGrounded && _currBoostEnergy < _maxBoostEnergy && !_isRegeneratingBoost)
         {
             StartCoroutine(BoostRegeneration());
         }
@@ -554,7 +653,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _isRegeneratingBoost = true;
 
-        while (_currBoostEnergy <= _maxBoostEnergy)
+        while (_currBoostEnergy < _maxBoostEnergy)
         {
             // Cancel boost energy regeneration if boost was inputted.
             if (_isBoosting)
@@ -566,9 +665,10 @@ public class PlayerMovement : MonoBehaviour
 
             // If boost regeneration increment for the current frame exceeds _maxBoostEnergy,
             // then set boost energy to exactly _maxBoostEnergy.
-            if (_currBoostEnergy > _maxBoostEnergy)
+            if (_currBoostEnergy >= _maxBoostEnergy)
             {
                 _currBoostEnergy = _maxBoostEnergy;
+                break;
             }
 
             yield return null;
@@ -598,7 +698,7 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     ///   <para>
     ///     Checks if the window of time in which the jump input can be double-tapped has
-    ///     closed during the frame this method is called.
+    ///     closed on the frame this method is called.
     ///   </para>
     /// </summary>
     /// <returns> True if the window of time has not closed, otherwise false. </returns>
@@ -609,7 +709,7 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Executes a sequence of conditions during any frame that dash is inputted.
+    ///     Executes a sequence of dash conditions on any frame that dash is inputted.
     ///   </para>
     /// </summary>
     /// <param name="context"> The dash input context. </param>
@@ -620,7 +720,7 @@ public class PlayerMovement : MonoBehaviour
 
         _dashVector = GetMoveInputDirection();
 
-        if (_dashCharges != 0)
+        if (_dashCharges != 0 && !_isDashing)
         {
             // If not moving, default dash direction is forward.
             if (_dashVector.x == 0 && _dashVector.z == 0)
@@ -636,22 +736,20 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     ///   <para>
     ///     Makes the player character dash if the necessary conditions are satisfied
-    ///     during the frame this method is called.
+    ///     on the frame this method is called.
     ///   </para>
     /// </summary>
     private void DashCase()
     {
-        if (IsGrounded())
+        IsGrounded = CheckIsGrounded();
+        
+        if (IsGrounded)
         {
             _verticalVector.y = -0.5f;
         }
         else if (_isBoosting)
         {
             BoostCase();
-        }
-        else
-        {
-            ApplyGravity();
         }
 
         _characterController.Move(Time.deltaTime * _dashSpeed * _dashVector);
@@ -689,22 +787,4 @@ public class PlayerMovement : MonoBehaviour
 
         _isDashing = false;
     }
-
-    //private void OnDrawGizmos()
-    //{
-    //    Gizmos.color = Color.red;
-
-    //    // Exact Center of the player's character.
-    //    Gizmos.DrawRay(playerCenter.position, Vector2.down * groundedRaycastFloorDistance);
-
-    //    // Four corners of the player's character.
-    //    for (int i = -1; i <= 1; i += 2)
-    //    {
-    //        for (int j = -1; j <= 1; j += 2)
-    //        {
-    //            Gizmos.DrawRay(playerCenter.position + new Vector3(groundedRaycastRadialDistance * i, 0, groundedRaycastRadialDistance * j),
-    //                           Vector2.down * groundedRaycastFloorDistance);
-    //        }
-    //    }
-    //}
 }

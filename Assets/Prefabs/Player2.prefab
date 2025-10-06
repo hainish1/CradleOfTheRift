@@ -618,16 +618,18 @@ MonoBehaviour:
   _playerCenter: {fileID: 2015244756760834766}
   _cameraTransform: {fileID: 0}
   _maxSpeed: 11
+  _sprintMultiplier: 2
   _accelerationSeconds: 0.4
   _decelerationSeconds: 0.2
   _characterRotationDamping: 0.25
   _kbDamping: 8
   _kbControlsLockTime: 0.18
   _kbDashLockTime: 0.12
-  _JumpHeight: 25
-  _midairStrafeMultiplier: 1
+  _JumpHeight: 18
   _hoverDescentReductionMultiplier: 0.1
-  _gravityMultiplier: 8.81
+  _gravityMultiplier: 4
+  _coyoteTimeWindow: 0.15
+  _jumpBufferWindow: 0.15
   _maxBoostEnergy: 100
   _maxBoostSpeed: 30
   _boostAcceleration: 20
@@ -638,9 +640,6 @@ MonoBehaviour:
   _dashSpeed: 100
   _dashCooldown: 2
   _dashCharges: 1
-  _environmentLayer:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!114 &5449276939068111225
 MonoBehaviour:
   m_ObjectHideFlags: 0
