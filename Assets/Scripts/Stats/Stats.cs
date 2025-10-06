@@ -11,7 +11,8 @@ public enum StatType
     DashCooldown,
     DashCharges,
     MeleeDamage,
-    SlamDamage
+    SlamDamage,
+    SlamRadius
 }
 
 public class Stats
@@ -114,6 +115,16 @@ public class Stats
         }
     }
 
+    public float SlamRadius
+    {
+        get
+        {
+            var q = new Query(StatType.SlamRadius, baseStats.slamAttackRadius);
+            mediator.PerformQuery(this, q);
+            return q.Value;
+        }
+    }
+
     public Stats(StatsMediator mediator, BaseStats baseStats)
     {
         this.mediator = mediator;
@@ -129,6 +140,7 @@ public class Stats
             StatType.MoveSpeed => baseStats.moveSpeed,
             StatType.MeleeDamage => baseStats.meleeDamage,
             StatType.SlamDamage => baseStats.slamDamage,
+            StatType.SlamRadius => baseStats.slamAttackRadius,
             StatType.DashSpeed => baseStats.dashSpeed,
             StatType.DashDistance => baseStats.dashDistance,
             StatType.DashCooldown => baseStats.dashCooldown,

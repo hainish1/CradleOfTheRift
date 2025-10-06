@@ -17,10 +17,11 @@ public class BaseStats : ScriptableObject
     public int dashCharges = 2;
 
     [Space]
-    
+
     [Header("Player Attack")]
     public float projectileDamage = 1;
     public float meleeDamage = 1;
     public float slamDamage = 2;
+    public float slamAttackRadius = 10;
 }
 

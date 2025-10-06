@@ -10,7 +10,7 @@ public class PlayerGroundSlam : MonoBehaviour
     public float slamStartDelay = .1f;
     public float slamDownSpeed = 40f; // vertical down speed
     public float minSlamHeight = 2.0f; // need this height
-    public float slamRadius = 5f;
+    
     // public float slamDamage = 2; // for now
     public float slamKnockbackForce = 30f;
     public LayerMask enemyMask;
@@ -30,6 +30,22 @@ public class PlayerGroundSlam : MonoBehaviour
 
     private Entity _playerEntity;
     private float SlamDamage => _playerEntity.Stats.SlamDamage;
+    // private float SlamRadius => _playerEntity.Stats.SlamRadius;
+    // public float slamRadius = 5f;
+    [SerializeField] private float previewSlamRadius = 10f;
+
+    private float CurrentSlamRadius
+    {
+        get
+        {
+            if (_playerEntity != null)
+            {
+                return Mathf.Max(0.01f, _playerEntity.Stats.SlamRadius);
+            }
+            return Mathf.Max(0.01f, previewSlamRadius);
+        }
+    }
+    
 
     void Awake()
     {
@@ -88,7 +104,7 @@ public class PlayerGroundSlam : MonoBehaviour
         DoImpactEffect(); // i wanna do a camera shake here
         HashSet<Enemy> uniqueEnemies = new HashSet<Enemy>();
         // now do attacks to enemy in sphere overlap
-        Collider[] hits = Physics.OverlapSphere(transform.position, slamRadius, enemyMask);
+        Collider[] hits = Physics.OverlapSphere(transform.position, CurrentSlamRadius, enemyMask);
         foreach (Collider col in hits)
         {
             Enemy enemy = col.GetComponentInParent<Enemy>();
@@ -127,6 +143,6 @@ public class PlayerGroundSlam : MonoBehaviour
     {
         if (!debug) return;
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, slamRadius);
+        Gizmos.DrawWireSphere(transform.position, CurrentSlamRadius);
     }
 }
