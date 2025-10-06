@@ -211,13 +211,21 @@ public class EnemySpawner : MonoBehaviour
     private void SpawnEnemy(EnemyType enemy)
     {
         Vector3 location;
-        bool validLocation = TryGetGroundLocation(enemy.prefab, out location);
+        bool validLocation;
+
+        if (enemy.isFlying)
+        {
+            validLocation = TryGetAirLocation(enemy.prefab, out location);
+        }
+        else
+        { 
+            validLocation = TryGetGroundLocation(enemy.prefab, out location);
+        }
 
         if (!validLocation)
         {
             Debug.Log("Failed to find valid ground spawn location after multiple attempts.");
             spawnDebugList.Add((location, false));
-
             return;
         }
 
@@ -233,9 +241,27 @@ public class EnemySpawner : MonoBehaviour
         CurrentEnemyCountChanged?.Invoke(this.currentEnemyCount);
     }
 
-    private bool TryGetAirLocation(out Vector3 location)
+    private bool TryGetAirLocation(GameObject enemyPrefab, out Vector3 location)
     {
-        throw new NotImplementedException();
+        float radius = GetEnemySpawnRadius(enemyPrefab);
+        int maxAttempts = 10;
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            Vector3 potentialLocation = GetAirLocation();
+            bool isFree = IsSpawnLocationFree(potentialLocation, radius);
+
+            spawnDebugList.Add((potentialLocation, isFree));
+
+            if (isFree)
+            {
+                location = potentialLocation;
+                return true;
+            }
+        }
+
+        location = Vector3.zero;
+        return false;
     }
 
     private void ScaleEnemyHealth(GameObject enemyObj)
