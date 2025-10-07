@@ -28,16 +28,14 @@ public class PlayerMovement : MonoBehaviour
     [Header("Player References")]
     [SerializeField] private Transform _playerCenter;
     [SerializeField] private Transform _cameraTransform;
-    private CharacterController _characterController;
     private Entity _playerEntity;
+    private CharacterController _characterController;
     private float _playerHalfHeight;
     private float _playerRadius;
-    private float _groundedShpereCastRadius;
-    private float _originalStepOffset;
 
     [Header("Movement Parameters")]
     [SerializeField] private float _maxSpeed;
-    [SerializeField] [Range(1, 9)] private float _sprintMultiplier;
+    [SerializeField] [Range(1, 5)] private float _sprintMultiplier;
     [SerializeField] private float _accelerationSeconds;
     [SerializeField] private float _decelerationSeconds;
     [SerializeField] private float _characterRotationDamping;
@@ -45,8 +43,20 @@ public class PlayerMovement : MonoBehaviour
     private bool _isSprintEnabled;
     private float _acceleration;
     private float _deceleration;
-    private Vector3 lateralVector;
+    private Vector3 lateralVelocityVector;
     private Vector3 _moveInputUnitVector;
+
+    [Header("Hover Parameters")]
+    [SerializeField] private float _hoverHeight;
+    [SerializeField] private float _groundedCastLength;
+    [SerializeField] private float _groundedCastJumpPauseDuration;
+    [SerializeField] private float _hoverPullStrength;
+    [SerializeField] private float _hoverDampingStrength;
+    public bool IsGrounded { get; private set; }
+    private float _groundedCastRadius;
+    private float _groundedCastPauseTimer;
+    private RaycastHit _groundPoint;
+    private Vector3 _currHoverHeightLocation;
 
     [Header("KnockBack Parameters")]
     [SerializeField] private float _kbDamping;
@@ -56,15 +66,22 @@ public class PlayerMovement : MonoBehaviour
     private float _kbControlsLockTimer;
     private float _kbDashLockTimer;
 
+    [Header("Dash Parameters")]
+    [SerializeField] private float _dashDistance;
+    [SerializeField] private float _dashSpeed;
+    [SerializeField] private float _dashCooldown;
+    [SerializeField] private int _dashCharges;
+    private bool _isDashing;
+    private Vector3 _dashVector;
+
     [Header("Jump Parameters")]
     [SerializeField] private float _JumpHeight;
-    [SerializeField] [Range(0, 1)] private float _hoverDescentReductionMultiplier;
+    [SerializeField] [Range(0, 1)] private float _driftDescentReductionMultiplier;
     [SerializeField] private float _gravityMultiplier;
-    private float _currHoverDescentReductionMultiplier;
-    public bool IsGrounded { get; private set; }
+    private float _currDriftDescentReductionMultiplier;
     private bool _inputtedJumpThisFrame;
-    private bool _isHovering;
-    private Vector3 _verticalVector;
+    private bool _isDrifting;
+    private Vector3 _verticalVelocityVector;
 
     [Header("Coyote Time Parameters")]
     [SerializeField] private float _coyoteTimeWindow;
@@ -84,14 +101,6 @@ public class PlayerMovement : MonoBehaviour
     private float _currBoostDoubleTapTime;
     private bool _isBoosting;
     private bool _isRegeneratingBoost;
-
-    [Header("Dash Parameters")]
-    [SerializeField] private float _dashDistance;
-    [SerializeField] private float _dashSpeed;
-    [SerializeField] private float _dashCooldown;
-    [SerializeField] private int _dashCharges;
-    private bool _isDashing;
-    private Vector3 _dashVector;
 
     private int _groundCollisionLayerMasks;
 
@@ -145,18 +154,23 @@ public class PlayerMovement : MonoBehaviour
     {
         _playerHalfHeight = GetComponent<CharacterController>().height / 2;
         _playerRadius = GetComponent<CharacterController>().radius;
-        _groundedShpereCastRadius = _playerRadius - 0.1f;
-        _originalStepOffset = _characterController.stepOffset;
 
         _currSprintMultiplierValue = 1;
         _isSprintEnabled = false;
         _acceleration = _maxSpeed / _accelerationSeconds;
         _deceleration = _maxSpeed / _decelerationSeconds;
-
-        _currHoverDescentReductionMultiplier = 1;
         IsGrounded = CheckIsGrounded();
+        _groundedCastRadius = _playerRadius - 0.1f;
+        _groundedCastPauseTimer = 0;
+
+        _kbControlsLockTimer = 0;
+        _kbDashLockTimer = 0;
+
+        _isDashing = false;
+
+        _currDriftDescentReductionMultiplier = 1;
         _jumpBufferPending = false;
-        _isHovering = false;
+        _isDrifting = false;
 
         _currCoyoteTime = _coyoteTimeWindow;
         _currJumpBufferTime = _jumpBufferWindow;
@@ -165,8 +179,6 @@ public class PlayerMovement : MonoBehaviour
         _currBoostDoubleTapTime = _boostDoubleTapWindow;
         _isBoosting = false;
         _isRegeneratingBoost = false;
-
-        _isDashing = false;
 
         _groundCollisionLayerMasks = LayerMask.GetMask("Environment");
         _groundCollisionLayerMasks |= LayerMask.GetMask("Interactable");
@@ -180,6 +192,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (_kbControlsLockTimer > 0) _kbControlsLockTimer -= Time.deltaTime;
         if (_kbDashLockTimer > 0) _kbDashLockTimer -= Time.deltaTime;
+        if (_groundedCastPauseTimer > 0) _groundedCastPauseTimer -= Time.deltaTime;
 
         ApplyGravity();
 
@@ -190,9 +203,11 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             MoveConditions();
-            JumpConditions();
             IsGrounded = CheckIsGrounded();
             HoverConditions();
+            JumpConditions();
+            IsGrounded = CheckIsGrounded();
+            DriftConditions();
             BoostConditions();
         }
     }
@@ -237,16 +252,20 @@ public class PlayerMovement : MonoBehaviour
     /// <returns> True if the player character is on the ground, otherwise false. </returns>
     private bool CheckIsGrounded()
     {
-        Vector3 SphereCastOrigin = _playerCenter.position + new Vector3(0, -_playerHalfHeight + _groundedShpereCastRadius, 0);
+        if (_groundedCastPauseTimer > 0) return false;
+        
+        Vector3 SphereCastOrigin = GetPlayerCharacterBottom() + new Vector3(0, _groundedCastRadius, 0);
 
         if (Physics.SphereCast(SphereCastOrigin,
-                               _groundedShpereCastRadius,
+                               _groundedCastRadius,
                                Vector2.down,
                                hitInfo: out RaycastHit hitInfo,
-                               0.1f,
+                               _groundedCastLength + _groundedCastRadius, // Compensate for the SphereCast starting higher.
                                _groundCollisionLayerMasks,
-                               QueryTriggerInteraction.Ignore))
+                               QueryTriggerInteraction.Ignore)
+            && Vector3.Angle(Vector3.up, hitInfo.normal) <= 30)
         {
+            _groundPoint = hitInfo;
             return true;
         }
 
@@ -255,9 +274,11 @@ public class PlayerMovement : MonoBehaviour
 
     //private void OnDrawGizmos()
     //{
+    //    if (_groundedCastPauseTimer > 0) return;
+
     //    Gizmos.color = Color.red;
-    //    Vector3 SphereCastOrigin = _playerCenter.position + new Vector3(0, -_playerHalfHeight + _groundedShpereCastRadius - 0.1f, 0);
-    //    Gizmos.DrawSphere(SphereCastOrigin, _groundedShpereCastRadius);
+    //    Vector3 SphereCastOrigin = GetPlayerCharacterBottom() - new Vector3(0, _groundedCastLength, 0);
+    //    Gizmos.DrawSphere(SphereCastOrigin, _groundedCastRadius);
     //}
 
     /// <summary>
@@ -268,21 +289,20 @@ public class PlayerMovement : MonoBehaviour
     private void ApplyGravity()
     {
         IsGrounded = CheckIsGrounded();
+
+        // Do not apply gravity whenon the ground or boosting.
+        if (IsGrounded || _isBoosting) return;
         
-        // Do not apply gravity when boosting.
-        if (!IsGrounded && !_isBoosting)
+        float aggregateGravityModifier = _gravityMultiplier * _currDriftDescentReductionMultiplier;
+        _verticalVelocityVector += Time.deltaTime * aggregateGravityModifier * Physics.gravity;
+
+        // Limit descent speed to the strength of gravity.
+        if (_verticalVelocityVector.y < aggregateGravityModifier * Physics.gravity.y)
         {
-            float aggregateGravityModifier = _gravityMultiplier * _currHoverDescentReductionMultiplier;
-            _verticalVector += Time.deltaTime * aggregateGravityModifier * Physics.gravity;
-
-            // Limit descent speed to the strength of gravity.
-            if (_verticalVector.y < aggregateGravityModifier * Physics.gravity.y)
-            {
-                _verticalVector.y = aggregateGravityModifier * Physics.gravity.y;
-            }
-
-            _characterController.Move(Time.deltaTime * _verticalVector);
+            _verticalVelocityVector.y = aggregateGravityModifier * Physics.gravity.y;
         }
+
+        _characterController.Move(Time.deltaTime * _verticalVelocityVector);
     }
 
     /// <summary>
@@ -309,7 +329,7 @@ public class PlayerMovement : MonoBehaviour
         float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
 
         // Accelerate if movement is being input and sprint has not been canceled.
-        if (_moveInputUnitVector != Vector3.zero && lateralVector.magnitude <= aggregateMaxSpeedValue)
+        if (_moveInputUnitVector != Vector3.zero && lateralVelocityVector.magnitude <= aggregateMaxSpeedValue)
         {
             Accelerate(aggregateMaxSpeedValue);
         }
@@ -328,10 +348,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Turn the player character toward the input direction.
-        if (_kbControlsLockTimer <= 0 && !strafe && lateralVector.sqrMagnitude > 0.0001f)
+        if (_kbControlsLockTimer <= 0 && !strafe && lateralVelocityVector.sqrMagnitude > 0.0001f)
         {
             Quaternion qa = transform.rotation;
-            Quaternion qb = Quaternion.LookRotation(lateralVector, Vector3.up);
+            Quaternion qb = Quaternion.LookRotation(lateralVelocityVector, Vector3.up);
             float t = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, _characterRotationDamping));
             transform.rotation = Quaternion.Slerp(qa, qb, t);
         }
@@ -367,13 +387,13 @@ public class PlayerMovement : MonoBehaviour
         Vector3 aggregateAccelIncrement = Time.deltaTime * _acceleration * _currSprintMultiplierValue * _moveInputUnitVector;
 
         // Limit lateral move speed to aggregateMaxSpeedValue.
-        if (lateralVector.magnitude < aggregateMaxSpeedValue)
+        if (lateralVelocityVector.magnitude < aggregateMaxSpeedValue)
         {
             // If acceleration increment for the current frame exceeds aggregateMaxSpeedValue,
             // then set current speed to exactly aggregateMaxSpeedValue.
-            if (lateralVector.magnitude + aggregateAccelIncrement.magnitude > aggregateMaxSpeedValue)
+            if (lateralVelocityVector.magnitude + aggregateAccelIncrement.magnitude > aggregateMaxSpeedValue)
             {
-                aggregateAccelIncrement = (aggregateMaxSpeedValue - lateralVector.magnitude) * _moveInputUnitVector;
+                aggregateAccelIncrement = (aggregateMaxSpeedValue - lateralVelocityVector.magnitude) * _moveInputUnitVector;
             }
         }
         else
@@ -381,16 +401,16 @@ public class PlayerMovement : MonoBehaviour
             aggregateAccelIncrement = Vector3.zero;
         }
 
-        lateralVector = lateralVector.magnitude * _moveInputUnitVector;
-        lateralVector += aggregateAccelIncrement;
+        lateralVelocityVector = lateralVelocityVector.magnitude * _moveInputUnitVector;
+        lateralVelocityVector += aggregateAccelIncrement;
 
         // Redundency check for limiting move speed to ensure sprint is not exited unexpectedly.
-        if (lateralVector.magnitude > aggregateMaxSpeedValue)
+        if (lateralVelocityVector.magnitude > aggregateMaxSpeedValue)
         {
-            lateralVector = aggregateMaxSpeedValue * lateralVector.normalized;
+            lateralVelocityVector = aggregateMaxSpeedValue * lateralVelocityVector.normalized;
         }
 
-        _characterController.Move(Time.deltaTime * lateralVector);
+        _characterController.Move(Time.deltaTime * lateralVelocityVector);
     }
 
     /// <summary>
@@ -401,35 +421,95 @@ public class PlayerMovement : MonoBehaviour
     private void Decelerate()
     {
         // Skip deceleration calculations if not moving.
-        if (lateralVector.magnitude > 0)
+        if (lateralVelocityVector.magnitude <= 0) return;
+
+        Vector3 decelIncrement = Time.deltaTime * _deceleration * lateralVelocityVector.normalized;
+
+        // If deceleration decrement for the current frame exceeds zero,
+        // then set current speed to exactly zero.
+        if (lateralVelocityVector.magnitude - decelIncrement.magnitude < 0)
         {
-            Vector3 decelIncrement = Time.deltaTime * _deceleration * lateralVector.normalized;
-
-            // If deceleration decrement for the current frame exceeds zero,
-            // then set current speed to exactly zero.
-            if (lateralVector.magnitude - decelIncrement.magnitude < 0)
-            {
-                lateralVector = Vector3.zero;
-                decelIncrement = Vector3.zero;
-            }
-
-            lateralVector -= decelIncrement;
-            _characterController.Move(Time.deltaTime * lateralVector);
+            lateralVelocityVector = Vector3.zero;
+            decelIncrement = Vector3.zero;
         }
+
+        lateralVelocityVector -= decelIncrement;
+        _characterController.Move(Time.deltaTime * lateralVelocityVector);
     }
 
-
+    /// <summary>
+    ///   <para>
+    ///     Gets the combined max speed value considering all current speed parameters on the frame this
+    ///     method is called.
+    ///   </para>
+    /// </summary>
+    /// <returns> The aggregate max speed value. </returns>
     private float CalculateAggregateMaxSpeedValue()
     {
         return _maxSpeed * _currSprintMultiplierValue;
     }
 
-
+    /// <summary>
+    ///   <para>
+    ///     Recalculates the acceleration and deceleration rates for the aggregate max speed value on the
+    ///     frame this method is called.
+    ///   </para>
+    /// </summary>
     private void RecalculateAccelDecel()
     {
         float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
         _acceleration = aggregateMaxSpeedValue / _accelerationSeconds;
         _deceleration = aggregateMaxSpeedValue / _decelerationSeconds;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Makes the player character hover if the necessary conditions are satisfied on the frame this
+    ///     method is called.
+    ///   </para>
+    /// </summary>
+    private void HoverConditions()
+    {
+        // Skip hover calculations if not on the ground.
+        if (!IsGrounded) return;
+
+        _currHoverHeightLocation = new Vector3(_playerCenter.position.x, _groundPoint.point.y + _hoverHeight, _playerCenter.position.z);
+        Vector3 playerCharacterBottom = GetPlayerCharacterBottom();
+        Vector3 hoverDisplacement = _currHoverHeightLocation - playerCharacterBottom;
+
+        // Skip pull and damping calculations if the bottom of the player character is already at the hover height location.
+        if (hoverDisplacement.magnitude < 1e-3f)
+        {
+            _verticalVelocityVector = Vector3.zero;
+            return;
+        
+        }
+        
+        Vector3 hoverPullForce = _hoverPullStrength * hoverDisplacement; // Pull player character into the direction of hover height location.
+        Vector3 hoverDampingForce = _hoverDampingStrength * -_verticalVelocityVector; // Apply force in the opposite direction to dampen.
+        Vector3 hoverTotalPullForce = hoverPullForce + hoverDampingForce; // Combine pull and dampen forces.
+
+        // If the bottom of the player character is very close to the hover height location, then set it exactly there.
+        if (hoverTotalPullForce.magnitude < 1e-3f)
+        {
+            transform.position = new Vector3(_playerCenter.position.x, _currHoverHeightLocation.y + _playerHalfHeight, _playerCenter.position.z);
+            hoverTotalPullForce = Vector3.zero;
+            _verticalVelocityVector = Vector3.zero;
+        }
+
+        _verticalVelocityVector += Time.deltaTime * hoverTotalPullForce;
+        _characterController.Move(Time.deltaTime * _verticalVelocityVector);
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Gets the location of the bottom of the player character.
+    ///   </para>
+    /// </summary>
+    /// <returns> The location of the bottom of the player character. </returns>
+    private Vector3 GetPlayerCharacterBottom()
+    {
+        return new Vector3(_playerCenter.position.x, _playerCenter.position.y - _playerHalfHeight, _playerCenter.position.z);
     }
 
     /// <summary>
@@ -478,6 +558,87 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
+    ///     Executes a sequence of dash conditions on any frame that dash is inputted.
+    ///   </para>
+    /// </summary>
+    /// <param name="context"> The dash input context. </param>
+    private void DashInputActionStarted(InputAction.CallbackContext context)
+    {
+        // Check if the player character is being knocked back.
+        if (_kbDashLockTimer > 0) return;
+
+        _dashVector = GetMoveInputDirection();
+
+        if (_dashCharges != 0 && !_isDashing)
+        {
+            // If not moving, default dash direction is forward.
+            if (_dashVector.x == 0 && _dashVector.z == 0)
+            {
+                _dashVector = GetComponentInParent<Transform>().forward;
+            }
+
+            StartCoroutine(InitiateDashCooldown(_dashCooldown));
+            StartCoroutine(InitiateDashDuration(_dashDistance / _dashSpeed));
+        }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Makes the player character dash if the necessary conditions are satisfied
+    ///     on the frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void DashConditions()
+    {
+        IsGrounded = CheckIsGrounded();
+
+        if (IsGrounded)
+        {
+            _verticalVelocityVector.y = -0.5f;
+        }
+        else if (_isBoosting)
+        {
+            BoostConditions();
+        }
+
+        _characterController.Move(Time.deltaTime * _dashSpeed * _dashVector);
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Coroutine for regenerating individual dash charges over time.
+    ///   </para>
+    /// </summary>
+    /// <param name="seconds"> The cooldown time for dash regeneration. </param>
+    /// <returns> IEnumerator object. </returns>
+    private IEnumerator InitiateDashCooldown(float seconds)
+    {
+        _dashCharges--;
+        DashCooldownStarted?.Invoke(seconds); // Tell listener to start the faded.
+
+        yield return new WaitForSeconds(seconds);
+
+        _dashCharges++;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Coroutine for tracking the length of time in which a dash takes place.
+    ///   </para>
+    /// </summary>
+    /// <param name="seconds"> The duration of the dash. </param>
+    /// <returns> IEnumerator object. </returns>
+    private IEnumerator InitiateDashDuration(float seconds)
+    {
+        _isDashing = true;
+
+        yield return new WaitForSeconds(seconds);
+
+        _isDashing = false;
+    }
+
+    /// <summary>
+    ///   <para>
     ///     Executes a sequence of jump conditions on any frame that jump is inputted.
     ///   </para>
     /// </summary>
@@ -493,7 +654,7 @@ public class PlayerMovement : MonoBehaviour
         }
         if (!IsGrounded && !_isDashing)
         {
-            _isHovering = true;
+            _isDrifting = true;
         }
 
         // Begin the window of time for double-tapping the jump input if not already initiated.
@@ -504,46 +665,44 @@ public class PlayerMovement : MonoBehaviour
         // Otherwise, if the window of time has not closed then begin boosting.
         else if (IsWithinBoostWindow())
         {
-            _isHovering = false;
+            _isDrifting = false;
             _isBoosting = true;
         }
     }
 
     /// <summary>
     ///   <para>
-    ///     Failsafe to ensure the player character stops hovering or boosting on any
+    ///     Failsafe to ensure the player character stops drifting or boosting on any
     ///     frame that the jump input is released.
     ///   </para>
     /// </summary>
     /// <param name="context"> The jump input context. </param>
     private void JumpInputActionCanceled(InputAction.CallbackContext context)
     {
-        _isHovering = false;
-        _currHoverDescentReductionMultiplier = 1;
+        _isDrifting = false;
+        _currDriftDescentReductionMultiplier = 1;
 
         _isBoosting = false;
     }
 
     /// <summary>
     ///   <para>
-    ///     Makes the player character jump if the conditions necessary are satisfied
+    ///     Makes the player character jump if the necessary conditions are satisfied
     ///     on the frame this method is called.
     ///   </para>
     /// </summary>
     private void JumpConditions()
     {
-        IsGrounded = CheckIsGrounded();
-
         // If on the ground and jump was inputted and jump buffer window is valid, or if walked off an edge and coyote time window is valid, then jump.
         if ( (_jumpBufferPending && IsGrounded && IsWithinJumpBufferWindow()) || (_inputtedJumpThisFrame && !IsGrounded && IsWithinCoyoteTimeWindow()) )
         {
             _jumpBufferPending = false;
+            _groundedCastPauseTimer = _groundedCastJumpPauseDuration;
             _currCoyoteTime = 0;
             _currJumpBufferTime = 0;
-            _verticalVector.y = _JumpHeight;
-            _characterController.stepOffset = 0; // Disable stepOffset in midair to prevent buggy movement behavior when near edges.
+            _verticalVelocityVector.y = _JumpHeight;
 
-            _characterController.Move(Time.deltaTime * _verticalVector);
+            _characterController.Move(Time.deltaTime * _verticalVelocityVector);
         }
         // If jump was inputted midair, reset jump buffer window and decrement coyote time and jump buffer timers.
         else if (_inputtedJumpThisFrame && !IsGrounded)
@@ -556,16 +715,14 @@ public class PlayerMovement : MonoBehaviour
         {
             DecrementCoyoteAndBufferTimers();
         }
-        // Otherwise, reset coyote time, jump buffer time, boosting status, gravity force and stepOffset to
-        // original states because player charater is on the ground.
+        // Otherwise, reset coyote time, jump buffer time and boosting status to original states
+        // because player charater is on the ground.
         else
         {
-            _jumpBufferPending = false;
             _currCoyoteTime = _coyoteTimeWindow;
             _currJumpBufferTime = _jumpBufferWindow;
+            _jumpBufferPending = false;
             _isBoosting = false;
-            _verticalVector.y = -0.5f;
-            _characterController.stepOffset = _originalStepOffset;
         }
 
         _inputtedJumpThisFrame = false;
@@ -608,23 +765,23 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Initiates hovering for the player character if the necessary conditions are satisfied
+    ///     Initiates drifting for the player character if the necessary conditions are satisfied
     ///     on the frame this method is called.
     ///   </para>
     /// </summary>
-    private void HoverConditions()
+    private void DriftConditions()
     {
-        // Cease hovering if jump input is no longer held or the player character landed.
-        if ( (_isHovering && !jumpActions.IsPressed()) || (_isHovering && IsGrounded) )
+        // Cease drifting if jump input is no longer held or the player character landed.
+        if ( (_isDrifting && !jumpActions.IsPressed()) || (_isDrifting && IsGrounded) )
         {
-            _isHovering = false;
-            _currHoverDescentReductionMultiplier = 1;
+            _isDrifting = false;
+            _currDriftDescentReductionMultiplier = 1;
         }
 
-        // Only modify gravity for hovering while falling and while the coyote time and jump buffer windows are invalid.
-        if (_isHovering && !IsWithinCoyoteTimeWindow() && !IsWithinJumpBufferWindow() && _verticalVector.y <= 0)
+        // Only modify gravity for drifting while falling and while the coyote time and jump buffer windows are invalid.
+        if (_isDrifting && !IsWithinCoyoteTimeWindow() && !IsWithinJumpBufferWindow() && _verticalVelocityVector.y <= 0)
         {
-            _currHoverDescentReductionMultiplier = _hoverDescentReductionMultiplier;
+            _currDriftDescentReductionMultiplier = _driftDescentReductionMultiplier;
         }
     }
 
@@ -636,7 +793,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void BoostConditions()
     {
-        // Cease hovering if jump input is no longer held or boost energy is depleted.
+        // Cease drifting if jump input is no longer held or boost energy is depleted.
         if ( (_isBoosting && !jumpActions.IsPressed()) || _currBoostEnergy <= 0 )
         {
             _isBoosting = false;
@@ -654,27 +811,27 @@ public class PlayerMovement : MonoBehaviour
             {
                 _currBoostEnergy -= boostDepletionDecrement;
             }
-            // Otherwise set current boost energy to exactly zero and immediately begin hovering.
+            // Otherwise set current boost energy to exactly zero and immediately begin drifting.
             else
             {
                 _currBoostEnergy = 0;
-                _isHovering = true;
+                _isDrifting = true;
             }
 
             // Limit vertical move speed to _maxBoostSpeed.
-            if (_verticalVector.magnitude < _maxBoostSpeed)
+            if (_verticalVelocityVector.magnitude < _maxBoostSpeed)
             {
-                _verticalVector += boostSpeedIncrement;
+                _verticalVelocityVector += boostSpeedIncrement;
 
                 // If boost increment for the current frame exceeds _maxBoostSpeed,
                 // then set vertical move speed to exactly _maxBoostSpeed.
-                if (_verticalVector.magnitude > _maxBoostSpeed)
+                if (_verticalVelocityVector.magnitude > _maxBoostSpeed)
                 {
-                    _verticalVector = new Vector3(_verticalVector.x, _maxBoostSpeed, _verticalVector.z);
+                    _verticalVelocityVector = new Vector3(_verticalVelocityVector.x, _maxBoostSpeed, _verticalVelocityVector.z);
                 }
             }
 
-            _characterController.Move(Time.deltaTime * _verticalVector);
+            _characterController.Move(Time.deltaTime * _verticalVelocityVector);
         }
 
         // Initialize regeneration coroutine if boosted, on the ground and not already regenerating.
@@ -746,86 +903,5 @@ public class PlayerMovement : MonoBehaviour
     private bool IsWithinBoostWindow()
     {
         return _currBoostDoubleTapTime > 0;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Executes a sequence of dash conditions on any frame that dash is inputted.
-    ///   </para>
-    /// </summary>
-    /// <param name="context"> The dash input context. </param>
-    private void DashInputActionStarted(InputAction.CallbackContext context)
-    {
-        // Check if the player character is being knocked back.
-        if (_kbDashLockTimer > 0f) return;
-
-        _dashVector = GetMoveInputDirection();
-
-        if (_dashCharges != 0 && !_isDashing)
-        {
-            // If not moving, default dash direction is forward.
-            if (_dashVector.x == 0 && _dashVector.z == 0)
-            {
-                _dashVector = GetComponentInParent<Transform>().forward;
-            }
-
-            StartCoroutine(InitiateDashCooldown(_dashCooldown));
-            StartCoroutine(InitiateDashDuration(_dashDistance / _dashSpeed));
-        }
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Makes the player character dash if the necessary conditions are satisfied
-    ///     on the frame this method is called.
-    ///   </para>
-    /// </summary>
-    private void DashConditions()
-    {
-        IsGrounded = CheckIsGrounded();
-        
-        if (IsGrounded)
-        {
-            _verticalVector.y = -0.5f;
-        }
-        else if (_isBoosting)
-        {
-            BoostConditions();
-        }
-
-        _characterController.Move(Time.deltaTime * _dashSpeed * _dashVector);
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Coroutine for regenerating individual dash charges over time.
-    ///   </para>
-    /// </summary>
-    /// <param name="seconds"> The cooldown time for dash regeneration. </param>
-    /// <returns> IEnumerator object. </returns>
-    private IEnumerator InitiateDashCooldown(float seconds)
-    {
-        _dashCharges--;
-        DashCooldownStarted?.Invoke(seconds); // Tell listener to start the faded.
-
-        yield return new WaitForSeconds(seconds);
-
-        _dashCharges++;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Coroutine for tracking the length of time in which a dash takes place.
-    ///   </para>
-    /// </summary>
-    /// <param name="seconds"> The duration of the dash. </param>
-    /// <returns> IEnumerator object. </returns>
-    private IEnumerator InitiateDashDuration(float seconds)
-    {
-        _isDashing = true;
-
-        yield return new WaitForSeconds(seconds);
-
-        _isDashing = false;
     }
 }

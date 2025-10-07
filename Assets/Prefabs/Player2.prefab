@@ -622,12 +622,21 @@ MonoBehaviour:
   _accelerationSeconds: 0.4
   _decelerationSeconds: 0.2
   _characterRotationDamping: 0.25
+  _hoverHeight: 1
+  _groundedCastLength: 1.5
+  _groundedCastJumpPauseDuration: 0.2
+  _hoverPullStrength: 250
+  _hoverDampingStrength: 10
   _kbDamping: 8
   _kbControlsLockTime: 0.18
   _kbDashLockTime: 0.12
-  _JumpHeight: 18
-  _hoverDescentReductionMultiplier: 0.1
-  _gravityMultiplier: 4
+  _dashDistance: 14
+  _dashSpeed: 100
+  _dashCooldown: 2
+  _dashCharges: 1
+  _JumpHeight: 15
+  _driftDescentReductionMultiplier: 0.1
+  _gravityMultiplier: 3
   _coyoteTimeWindow: 0.15
   _jumpBufferWindow: 0.15
   _maxBoostEnergy: 100
@@ -636,10 +645,6 @@ MonoBehaviour:
   _boostRegenerationRate: 30
   _boostDepletionRate: 50
   _boostDoubleTapWindow: 0.3
-  _dashDistance: 14
-  _dashSpeed: 100
-  _dashCooldown: 2
-  _dashCharges: 1
 --- !u!114 &5449276939068111225
 MonoBehaviour:
   m_ObjectHideFlags: 0
