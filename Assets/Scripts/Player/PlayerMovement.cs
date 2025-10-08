@@ -40,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _decelerationSeconds;
     [SerializeField] private float _characterRotationDamping;
     private float _currSprintMultiplierValue;
-    private bool _isSprintEnabled;
+    private bool _isSprinting;
     private float _acceleration;
     private float _deceleration;
     private Vector3 lateralVelocityVector;
@@ -156,7 +156,7 @@ public class PlayerMovement : MonoBehaviour
         _playerRadius = GetComponent<CharacterController>().radius;
 
         _currSprintMultiplierValue = 1;
-        _isSprintEnabled = false;
+        _isSprinting = false;
         _acceleration = _maxSpeed / _accelerationSeconds;
         _deceleration = _maxSpeed / _decelerationSeconds;
         IsGrounded = CheckIsGrounded();
@@ -326,6 +326,12 @@ public class PlayerMovement : MonoBehaviour
         // simply stop recording new movement values instead of completely skipping the MoveCase method.
         _moveInputUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
 
+        // Disable sprint if not inputting forward movement or controls are locked.
+        if (moveActions.ReadValue<Vector2>().y <= 0 || _kbControlsLockTimer > 0)
+        {
+            DisableSprint();
+        }
+
         float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
 
         // Accelerate if movement is being input and sprint has not been canceled.
@@ -333,10 +339,9 @@ public class PlayerMovement : MonoBehaviour
         {
             Accelerate(aggregateMaxSpeedValue);
         }
-        // Otherwise, disable sprint and decelerate.
+        // Otherwise, decelerate.
         else
         {
-            DisableSprint();
             Decelerate();
         }
 
@@ -386,25 +391,10 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 aggregateAccelIncrement = Time.deltaTime * _acceleration * _currSprintMultiplierValue * _moveInputUnitVector;
 
-        // Limit lateral move speed to aggregateMaxSpeedValue.
-        if (lateralVelocityVector.magnitude < aggregateMaxSpeedValue)
-        {
-            // If acceleration increment for the current frame exceeds aggregateMaxSpeedValue,
-            // then set current speed to exactly aggregateMaxSpeedValue.
-            if (lateralVelocityVector.magnitude + aggregateAccelIncrement.magnitude > aggregateMaxSpeedValue)
-            {
-                aggregateAccelIncrement = (aggregateMaxSpeedValue - lateralVelocityVector.magnitude) * _moveInputUnitVector;
-            }
-        }
-        else
-        {
-            aggregateAccelIncrement = Vector3.zero;
-        }
-
         lateralVelocityVector = lateralVelocityVector.magnitude * _moveInputUnitVector;
         lateralVelocityVector += aggregateAccelIncrement;
 
-        // Redundency check for limiting move speed to ensure sprint is not exited unexpectedly.
+        // Limit lateral move speed to aggregateMaxSpeedValue.
         if (lateralVelocityVector.magnitude > aggregateMaxSpeedValue)
         {
             lateralVelocityVector = aggregateMaxSpeedValue * lateralVelocityVector.normalized;
@@ -520,7 +510,7 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="context"> The sprint input context. </param>
     private void SprintInputActionStarted(InputAction.CallbackContext context)
     {
-        if (_isSprintEnabled)
+        if (_isSprinting)
         {
             DisableSprint();
         }
@@ -538,7 +528,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void EnableSprint()
     {
-        _isSprintEnabled = true;
+        _isSprinting = true;
         _currSprintMultiplierValue = _sprintMultiplier;
         RecalculateAccelDecel();
     }
@@ -551,7 +541,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void DisableSprint()
     {
-        _isSprintEnabled = false;
+        _isSprinting = false;
         _currSprintMultiplierValue = 1;
         RecalculateAccelDecel();
     }
@@ -652,7 +642,12 @@ public class PlayerMovement : MonoBehaviour
             _inputtedJumpThisFrame = true;
             _jumpBufferPending = true;
         }
-        if (!IsGrounded && !_isDashing)
+        
+        if (_isDrifting && !IsGrounded && !_isDashing)
+        {
+            DisableDrift();
+        }
+        else if (!_isDrifting && !IsGrounded && !_isDashing)
         {
             _isDrifting = true;
         }
@@ -665,7 +660,7 @@ public class PlayerMovement : MonoBehaviour
         // Otherwise, if the window of time has not closed then begin boosting.
         else if (IsWithinBoostWindow())
         {
-            _isDrifting = false;
+            DisableDrift(); // Disable drift because it may have been enabled earlier in the method.
             _isBoosting = true;
         }
     }
@@ -679,9 +674,6 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="context"> The jump input context. </param>
     private void JumpInputActionCanceled(InputAction.CallbackContext context)
     {
-        _isDrifting = false;
-        _currDriftDescentReductionMultiplier = 1;
-
         _isBoosting = false;
     }
 
@@ -771,11 +763,10 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void DriftConditions()
     {
-        // Cease drifting if jump input is no longer held or the player character landed.
-        if ( (_isDrifting && !jumpActions.IsPressed()) || (_isDrifting && IsGrounded) )
+        // Cease drifting if the player character landed.
+        if (_isDrifting && IsGrounded)
         {
-            _isDrifting = false;
-            _currDriftDescentReductionMultiplier = 1;
+            DisableDrift();
         }
 
         // Only modify gravity for drifting while falling and while the coyote time and jump buffer windows are invalid.
@@ -783,6 +774,18 @@ public class PlayerMovement : MonoBehaviour
         {
             _currDriftDescentReductionMultiplier = _driftDescentReductionMultiplier;
         }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Sets drifting to false and sets the drift descent reduction multiplier to 1 on any
+    ///     frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void DisableDrift()
+    {
+        _isDrifting = false;
+        _currDriftDescentReductionMultiplier = 1;
     }
 
     /// <summary>
