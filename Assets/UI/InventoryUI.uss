@@ -1,0 +1,81 @@
+.inventory-root {
+    position: absolute;
+    top: 10px;          /* distance from top of screen */
+    left: 50px;         /* anchor to the left */
+    transform: none;    /* remove translateX(-50%) */
+    flex-direction: column;
+    align-items: flex-start; /* align children to the left */
+    width: auto;
+}
+
+
+/* Title */
+.inventory-title {
+    font-size: 20px;
+    color: white;
+    margin-bottom: 8px;
+    width: 100%;           /* stretch across parent */
+    text-align: center;    /* center text inside the label */
+}
+
+
+/* Scrollable grid wrapper */
+.scroll-view {
+    width: 500px; /* or adapt to screen width */
+    overflow-x: auto; 
+    overflow-y: hidden;
+}
+
+/* Grid inside scroll view */
+.item-grid {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 6px;
+    justify-content: flex-start; /* items added to the right */
+    align-items: center;
+}
+
+/* Item slot styling */
+.inventory-slot {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    border: 1px solid #888;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.item-icon {
+    width: 56px;
+    height: 56px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.count-bg {
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 2px rgba(0,0,0,0.8);
+}
+
+.item-count {
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    unity-text-align: center;
+    line-height: 20px;
+    padding: 0;
+    margin: 0;
+}

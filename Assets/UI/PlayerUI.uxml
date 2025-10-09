@@ -1,6 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=340cd68f9068b8147b6cb9f90ab8e93c&amp;type=3#Stylesheet" />
     <ui:VisualElement name="HUD" style="flex-grow: 1;">
+        <ui:VisualElement name="InventoryContainer" style="flex-grow: 1;" />
         <ui:VisualElement enabled="true" name="ExtractionContainer" style="flex-grow: 1; justify-content: flex-start;">
             <ui:ProgressBar value="22" title="my-progress" name="ExtractionBar" enabled="true" class="extraction-bar" style="display: flex; visibility: hidden;" />
         </ui:VisualElement>
