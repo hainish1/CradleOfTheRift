@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed611d35576b2e64a86ba01bff9a1a99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movement: {fileID: 7506041293616542779}
+  movement: {fileID: 0}
   targetRenderer: {fileID: 3907876958505056836}
   readyColor: {r: 1, g: 0.7294118, b: 0.2509804, a: 1}
   cooldownColor: {r: 0.23584908, g: 0.15190281, b: 0, a: 1}
@@ -507,7 +507,7 @@ GameObject:
   - component: {fileID: 4651147138949993724}
   - component: {fileID: 7494171734913767902}
   - component: {fileID: 1220069884552851021}
-  - component: {fileID: 7506041293616542779}
+  - component: {fileID: 7923653831177657747}
   - component: {fileID: 5449276939068111225}
   - component: {fileID: 1545799363735562861}
   - component: {fileID: 7428225188146732249}
@@ -515,7 +515,7 @@ GameObject:
   - component: {fileID: 5954804187933579734}
   - component: {fileID: 6324998485058705871}
   m_Layer: 8
-  m_Name: Player2
+  m_Name: Player4
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -603,7 +603,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
---- !u!114 &7506041293616542779
+--- !u!114 &7923653831177657747
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -612,7 +612,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3694253349153652309}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d357a0e7bf11f643ac8a4c338e181cf, type: 3}
+  m_Script: {fileID: 11500000, guid: 05022219ef63de24493df5e22444c2ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _playerCenter: {fileID: 2015244756760834766}
@@ -621,6 +621,8 @@ MonoBehaviour:
   _accelerationSeconds: 0.4
   _decelerationSeconds: 0.2
   _sprintMultiplier: 2
+  _boostMultiplier: 1.5
+  _boostForwardBonusMultiplier: 1.3
   _characterRotationDamping: 0.25
   _hoverHeight: 1
   _hoverPullStrength: 100
@@ -633,19 +635,13 @@ MonoBehaviour:
   _dashDistance: 14
   _dashSpeed: 100
   _dashCooldown: 2
-  _dashCharges: 1
+  _dashCharges: 3
   _JumpForce: 15
   _coyoteTimeWindow: 0.15
   _jumpBufferWindow: 0.15
   _driftDescentDivisor: 0.1
   _driftDelay: 0.5
   _gravityMultiplier: 3
-  _maxBoostEnergy: 100
-  _maxBoostSpeed: 30
-  _boostAccelerationSeconds: 1.5
-  _boostRegenerationRate: 30
-  _boostDepletionRate: 50
-  _boostDoubleTapWindow: 0.2
 --- !u!114 &5449276939068111225
 MonoBehaviour:
   m_ObjectHideFlags: 0
