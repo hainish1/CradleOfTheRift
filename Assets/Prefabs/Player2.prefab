@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1208299351960208489
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8434901490875656942}
+  m_Layer: 8
+  m_Name: groundSlamFXPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8434901490875656942
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1208299351960208489}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.013, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1201876548339226324}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1233696151667052659
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,7 +275,7 @@ Transform:
   m_GameObject: {fileID: 2348699201413622620}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.00000008519251, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.8009949, z: -25.480999}
+  m_LocalPosition: {x: 0.0000038146973, y: 3.801, z: -25.480997}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -838,6 +869,7 @@ Transform:
   - {fileID: 2609143438178442385}
   - {fileID: 8688930756732839875}
   - {fileID: 2103759639589913290}
+  - {fileID: 8434901490875656942}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &4651147138949993724
@@ -936,7 +968,7 @@ MonoBehaviour:
   _dashDistance: 14
   _dashSpeed: 100
   _dashCooldown: 2
-  _dashCharges: 24
+  _dashCharges: 2
   _environmentLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -958,8 +990,8 @@ MonoBehaviour:
   shootMask:
     serializedVersion: 2
     m_Bits: 3153
-  fireRate: 10
-  fullAuto: 0
+  fireRate: 4
+  fullAuto: 1
   projectilePrefab: {fileID: 3140400090891409143, guid: a6fb9f8d0097a78469656e682c859c0d, type: 3}
   projectileSpeed: 150
   spawnOffset: 0.1
@@ -975,7 +1007,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99fc382ac2383f54a96683c81a0af53b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamge: 1
   forwardSource: {fileID: 8832080125063188932}
   heightOffset: 0.1
   boxWidth: 4.49
@@ -1056,16 +1087,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slamStartDelay: 0.05
   slamDownSpeed: 150
-  minSlamHeight: 2
-  slamRadius: 10
-  slamDamage: 1
+  minSlamHeight: 1
   slamKnockbackForce: 15
   enemyMask:
     serializedVersion: 2
     m_Bits: 2048
   slamImpulseSource: {fileID: 5052082809843595001}
   shakeForce: 2
+  groundImpactFX: {fileID: 4994997792314849709, guid: 3dd50886582244645be87adb42aa8528, type: 3}
   debug: 1
+  previewSlamRadius: 10
 --- !u!114 &8761290523137956833
 MonoBehaviour:
   m_ObjectHideFlags: 0

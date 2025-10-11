@@ -10,14 +10,17 @@ public class PlayerGroundSlam : MonoBehaviour
     public float slamStartDelay = .1f;
     public float slamDownSpeed = 40f; // vertical down speed
     public float minSlamHeight = 2.0f; // need this height
-    
+
     // public float slamDamage = 2; // for now
     public float slamKnockbackForce = 30f;
     public LayerMask enemyMask;
 
     [Header("Cinemachine shake")]
-    public CinemachineImpulseSource slamImpulseSource; 
+    public CinemachineImpulseSource slamImpulseSource;
     public float shakeForce = 1.0f;
+    [SerializeField] private GameObject groundImpactFX;
+    [SerializeField] private Transform groundSlamPoint;
+
 
 
     [Header("debug")]
@@ -45,7 +48,7 @@ public class PlayerGroundSlam : MonoBehaviour
             return Mathf.Max(0.01f, previewSlamRadius);
         }
     }
-    
+
 
     void Awake()
     {
@@ -120,7 +123,7 @@ public class PlayerGroundSlam : MonoBehaviour
                 }
                 var flash = col.GetComponentInParent<TargetFlash>();
                 if (flash != null) flash.Flash();
-                
+
                 // then do damage
                 var dmg = enemy?.GetComponent<IDamageable>();
                 if (dmg != null) dmg.TakeDamage(SlamDamage);
@@ -137,6 +140,7 @@ public class PlayerGroundSlam : MonoBehaviour
         {
             slamImpulseSource.GenerateImpulse(shakeForce);
         }
+        CreateImpactFX();
     }
 
     void OnDrawGizmosSelected()
@@ -144,5 +148,25 @@ public class PlayerGroundSlam : MonoBehaviour
         if (!debug) return;
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, CurrentSlamRadius);
+    }
+    
+    protected void CreateImpactFX()
+    {
+        if (groundImpactFX == null) return;
+        GameObject newFX = Instantiate(groundImpactFX);
+        if (groundSlamPoint != null)
+        {
+            newFX.transform.position = groundSlamPoint.position;
+        }
+        else
+        {
+            newFX.transform.position = transform.position;
+        }
+
+        Destroy(newFX, 2);
+
+        // GameObject newImpacFX = ObjectPool.instance.GetObject(bulletImpactFX, transform);
+        // ObjectPool.instance.ReturnObject(newImpacFX, 1f); // return the effect back to the pool after 1 second of delay
+
     }
 }
