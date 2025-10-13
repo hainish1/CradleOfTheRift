@@ -25,11 +25,14 @@ public class EnemyProjectile : MonoBehaviour
         rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
-    public void Init(Vector3 velocity, LayerMask mask)
+    public void Init(Vector3 velocity, LayerMask mask, int newDamage)
     {
         rb.linearVelocity = velocity;
         hitMask = mask;
         age = 0f;
+
+
+        this.damage = newDamage;
     }
 
 
@@ -82,7 +85,7 @@ public class EnemyProjectile : MonoBehaviour
         {
             damageable.TakeDamage(damage);
         }
-        
+
 
         // plkace to add impact effects later
 

@@ -49,12 +49,17 @@ MonoBehaviour:
   - name: 
     prefab: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
     cost: 1
+    isFlying: 0
+  - name: 
+    prefab: {fileID: 8841140246284276385, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
+    cost: 1
     isFlying: 1
   playerLocation: {fileID: 0}
-  timeBetweenWaves: 8
+  difficultyScaler: {fileID: 0}
+  timeBetweenWaves: 12
   difficultyScale: 1.03
-  spawnRadius: 10
-  minSpawnDist: 5
+  spawnRadius: 15
+  minSpawnDist: 30
   isSpawning: 1
   baseWaveCredits: 10
   startingEnemyCap: 10
@@ -63,3 +68,5 @@ MonoBehaviour:
   globalMaxEnemies: 200
   extractionCreditMultiplier: 2
   extractionEnemyCapMultiplier: 1.5
+  healthGrowth: 1.5
+  damageGrowth: 1.5

@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 368ec5540764147d38dcf85232ebd520, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  extractionZone: {fileID: 0}
+  extractionZone: {fileID: 8052474352153079364, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
   enemies:
   - name: 
     prefab: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
@@ -53,13 +53,14 @@ MonoBehaviour:
   - name: 
     prefab: {fileID: 8841140246284276385, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
     cost: 1
-    isFlying: 1
+    isFlying: 0
   playerLocation: {fileID: 0}
-  timeBetweenWaves: 8
-  difficultyScale: 1.03
+  difficultyScaler: {fileID: 6609827799497779178, guid: 99aad37a7dec2da41aba6b1be47ec58d, type: 3}
+  timeBetweenWaves: 7
+  difficultyScale: 0.8
   spawnRadius: 10
   minSpawnDist: 5
-  isSpawning: 1
+  isSpawning: 0
   baseWaveCredits: 10
   startingEnemyCap: 10
   enemyCapGrowth: 10
@@ -67,3 +68,5 @@ MonoBehaviour:
   globalMaxEnemies: 200
   extractionCreditMultiplier: 2
   extractionEnemyCapMultiplier: 1.5
+  healthGrowth: 0.07
+  damageGrowth: 0.05

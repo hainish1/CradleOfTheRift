@@ -3,28 +3,38 @@ using UnityEngine.UIElements;
 
 public class HealthUI : MonoBehaviour
 {
-    private ProgressBar healthBar;
-    [SerializeField]
-    private Health health;
+    [SerializeField] private PlayerHealth health; 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private ProgressBar healthBar;
+
     void Start()
     {
-        VisualElement root = GetComponent<UIDocument>().rootVisualElement;
-        string progressBarName = "HealthBar";
+        var root = GetComponent<UIDocument>().rootVisualElement;
+        healthBar = root.Q<ProgressBar>("HealthBar");
+        healthBar.lowValue = 0;
 
-        this.healthBar = root.Q<ProgressBar>(name: progressBarName);
-        int zeroValue = 0;
+        healthBar.highValue = health.MaxHealth;
+        healthBar.value = health.CurrentHealth;
 
-        this.healthBar.lowValue = zeroValue;
-        this.healthBar.highValue = this.health.MaxHealth;
-        this.healthBar.value = this.health.MaxHealth;
+        healthBar.title = $"Health: {health.CurrentHealth}/{health.MaxHealth}";
 
-        this.health.healthChanged += this.OnHealthChange;
+        healthBar.style.visibility = Visibility.Visible;
+
+        health.healthChanged += OnHealthChange;
     }
 
-    public void OnHealthChange(int healthChange)
+    void OnDestroy()
     {
-        this.healthBar.value = healthChange;
+        if (health != null)
+            health.healthChanged -= OnHealthChange;
+    }
+
+    public void OnHealthChange(int currentHealth, int maxHealth)
+    {
+        if (healthBar == null) return;
+
+        healthBar.highValue = maxHealth;
+        healthBar.value = currentHealth;
+        healthBar.title = $"Health: {currentHealth}/{maxHealth}";
     }
 }

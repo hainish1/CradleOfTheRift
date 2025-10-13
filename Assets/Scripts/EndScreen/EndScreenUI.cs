@@ -1,49 +1,56 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
+using System.Collections;
+
 
 public class EndScreenUI : MonoBehaviour
 {
     [SerializeField]
     private ExtractionZone extractionZone;
-    private VisualElement winScreen;
-    private VisualElement loseScreen;
-    private VisualElement hud;
 
-    void Awake()
-    {
-        string hudName = "HUD";
-        string winScreenName = "WinScreen";
-        string loseScreen = "LoseScreen";
+    [SerializeField]
+    private PlayerHealth playerHealth;
+    [SerializeField]
+    private GameObject winScreen;
+    [SerializeField]
+    private GameObject loseScreen;
 
-        VisualElement root = GetComponent<UIDocument>().rootVisualElement;
-
-        this.hud = root.Q<VisualElement>(name: hudName);
-        this.winScreen = root.Q<VisualElement>(name: winScreenName);
-        this.loseScreen = root.Q<VisualElement>(name: loseScreen);
-
-        this.winScreen.style.display = DisplayStyle.None;
-        this.loseScreen.style.display = DisplayStyle.None;
-    }
+    private GameObject activeScreen;
 
     void OnEnable()
     {
         this.extractionZone.WinScreen += OnWinScreen;
+        this.playerHealth.LoseScreen += OnLoseScreen;
     }
 
     void OnDisable()
     {
         this.extractionZone.WinScreen -= OnWinScreen;
+        this.playerHealth.LoseScreen -= OnLoseScreen;
+
     }
 
     private void OnWinScreen()
     {
-        this.hud.style.display = DisplayStyle.None;
-        this.winScreen.style.display = DisplayStyle.Flex;
+        this.activeScreen = Instantiate(winScreen);
+
+        // go back to Start scene
+        StartCoroutine(LoadSceneAfterDelay("Jared", 5f)); // 5 second delay
     }
 
     private void OnLoseScreen()
-    {        
-        this.hud.style.display = DisplayStyle.None;
-        this.loseScreen.style.display = DisplayStyle.Flex;
+    {
+        this.activeScreen = Instantiate(loseScreen);
+
+        // go back to Start scene
+        StartCoroutine(LoadSceneAfterDelay("Jared", 5f)); // 5 second delay
     }
+    
+    private IEnumerator LoadSceneAfterDelay(string sceneName, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene(sceneName);
+    }
+
 }
