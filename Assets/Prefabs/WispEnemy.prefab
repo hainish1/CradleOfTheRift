@@ -1103,7 +1103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  aggressionRange: 1
+  aggressionRange: 100
   playerOutOfRange: 200
   turnSpeed: 5
   attackCooldown: 2
@@ -1130,6 +1130,7 @@ MonoBehaviour:
   spawnOffset: 0.1
   recoveryTime: 3
   projectileDamage: 1
+  orbitVisuals: {fileID: -3325380021058808314}
 --- !u!114 &204557455612082024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1191,9 +1192,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   orbitVisual: {fileID: 3232334194741932682, guid: 0156dea7ff4bdad4b9da5517c213d2f4, type: 3}
-  numOfOrbs: 6
+  numOfOrbs: 4
   orbitRadius: 1.5
-  orbitSpeed: 20
+  orbitSpeed: 80
+  orbitHeight: 1.5
 --- !u!1 &9064912426439065413
 GameObject:
   m_ObjectHideFlags: 0

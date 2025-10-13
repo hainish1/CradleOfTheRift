@@ -12,6 +12,14 @@ public class PlayerHealth : HealthController
     public float CurrentHealth => currentHealth;
     public float MaxHealth => maxHealth;
 
+    private bool canTakeDamage = true;
+
+    public static PlayerHealth instance;
+    void Awake()
+    {
+        instance = this;
+    }
+
     void Start()
     {
         playerEntity = GetComponent<Entity>();
@@ -69,6 +77,7 @@ public class PlayerHealth : HealthController
 
     public override void TakeDamage(float damage)
     {
+        if (canTakeDamage == false) return;
         base.TakeDamage(damage);
         healthChanged?.Invoke(currentHealth, maxHealth);
         Debug.Log($"[PLAYER HEALTH] Player took {damage} damage, current health: {currentHealth}/{maxHealth}");
@@ -79,5 +88,10 @@ public class PlayerHealth : HealthController
         currentHealth = maxHealth;
         healthChanged?.Invoke(currentHealth, maxHealth);
         Debug.Log("Health Fully Resotored");
+    }
+
+    public virtual void SetCanTakeDamage(bool enable)
+    {
+        this.canTakeDamage = enable;
     }
 }
