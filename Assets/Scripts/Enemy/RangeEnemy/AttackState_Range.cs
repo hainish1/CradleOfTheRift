@@ -3,6 +3,7 @@ using UnityEngine;
 public class AttackState_Range : EnemyState
 {
     EnemyRange enemyRange;
+    
 
     private float nextShootTime;
     private float endTime;
