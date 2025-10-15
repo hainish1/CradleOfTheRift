@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum StatType {ProjectileDamage, Health, MoveSpeed, DashCharges}
+public enum StatType {ProjectileDamage, Health, MoveSpeed, DashCharges, JumpHeight, DashCooldown }
 
 public class Stats
 {
@@ -51,6 +51,24 @@ public class Stats
             return q.Value;
         }
     }
+    public float JumpHeight
+    {
+        get
+        {
+            var q = new Query(StatType.JumpHeight, baseStats.JumpHeight);
+            mediator.PerformQuery(this, q);
+            return q.Value;
+        }
+    }
+    public float DashCooldown
+    {
+        get
+        {
+            var q = new Query(StatType.DashCooldown, baseStats.DashCooldown);
+            mediator.PerformQuery(this, q);
+            return q.Value;
+        }
+    }
 
     public Stats(StatsMediator mediator, BaseStats baseStats)
     {
@@ -60,6 +78,6 @@ public class Stats
 
     public override string ToString()
     {
-        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, Projectile Damage: {Attack},DashCharges: {DashCharges}";
+        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, Projectile Damage: {Attack},DashCharges: {DashCharges},JumpHeight: {JumpHeight},DashCooldown: {DashCooldown}";
     }
 }

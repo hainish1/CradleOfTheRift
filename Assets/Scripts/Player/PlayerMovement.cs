@@ -307,6 +307,20 @@ public class PlayerMovement : MonoBehaviour
                 _acceleration = _maxSpeed / _accelerationSeconds;
                 _deceleration = _maxSpeed / _decelerationSeconds;
             }
+
+            // new items
+            float targetJump = Mathf.Max(0f, _playerEntity.Stats.JumpHeight); 
+            if (!Mathf.Approximately(_JumpHeight, targetJump))
+            {
+                _JumpHeight = targetJump;
+            }
+
+            float targetDashCD = Mathf.Max(0.05f, _playerEntity.Stats.DashCooldown); 
+            if (!Mathf.Approximately(_dashCooldown, targetDashCD))
+            {
+                _dashCooldown = targetDashCD;
+            }
+
         }
 
         // Because move speed right before moment of knockback must be preserved for correct calculations,
