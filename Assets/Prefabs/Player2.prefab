@@ -1016,6 +1016,8 @@ MonoBehaviour:
   prep: 0.05
   activeTime: 0.02
   pushForce: 18
+  meleeImpactFX: {fileID: 2060900179291159282, guid: ca6705a3f9070d14d819d179493bcfa0, type: 3}
+  meleeFXPoint: {fileID: 8832080125063188932}
   hitMask:
     serializedVersion: 2
     m_Bits: 7232
@@ -1095,6 +1097,7 @@ MonoBehaviour:
   slamImpulseSource: {fileID: 5052082809843595001}
   shakeForce: 2
   groundImpactFX: {fileID: 4994997792314849709, guid: 3dd50886582244645be87adb42aa8528, type: 3}
+  groundSlamPoint: {fileID: 8434901490875656942}
   debug: 1
   previewSlamRadius: 10
 --- !u!114 &8761290523137956833
