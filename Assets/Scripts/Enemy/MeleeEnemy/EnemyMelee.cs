@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// Class - Represents a Melee Enemy, inherits from Base Enemy class 
+/// and defines functionality of its own
+/// </summary>
 public class EnemyMelee : Enemy
 {
     [Header("Melee related stuff")]
@@ -47,6 +51,10 @@ public class EnemyMelee : Enemy
 
     }
 
+    /// <summary>
+    /// Enable the hitbox used to detect gameobjects that this enemy hit
+    /// </summary>
+    /// <param name="enable"></param>
     public void EnableHitBox(bool enable)
     {
         if (hitbox != null && hitbox.gameObject.activeSelf != enable)
@@ -55,6 +63,10 @@ public class EnemyMelee : Enemy
         }
     }
 
+    /// <summary>
+    /// Try to apply damage and impulse to the player GameObject caught in colliders 
+    /// </summary>
+    /// <param name="playerCol"></param>
     public void TryApplyHit(Collider playerCol)
     {
         if (hitAppliedThisAttack) return;
@@ -84,6 +96,10 @@ public class EnemyMelee : Enemy
 
     }
 
+    /// <summary>
+    /// Initialize damage done by this enemy, can be updated by enemy spawner
+    /// </summary>
+    /// <param name="newDamage"></param>
     public void InitializeSlamDamage(float newDamage)
     {
         // this.slamDamage = Mathf.CeilToInt(newDamage);
@@ -91,12 +107,16 @@ public class EnemyMelee : Enemy
         Debug.Log("Slam Damage: " + this.slamDamage);
     }
 
+    //Getters for States that this Melee Enemy has
     public EnemyState GetIdle() => idle;
     public EnemyState GetChase() => chase;
     public EnemyState GetAttack() => attack;
     public EnemyState GetRecovery() => recovery;
 
-    // public float GetBaseDamage() => Mathf.CeilToInt(slamDamage);
+    /// <summary>
+    /// Get Base Damage for this enemy
+    /// </summary>
+    /// <returns></returns>
     public float GetBaseDamage() => slamDamage;
 
 }

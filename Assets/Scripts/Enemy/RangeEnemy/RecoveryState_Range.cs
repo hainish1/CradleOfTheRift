@@ -1,5 +1,9 @@
 using UnityEngine;
 
+
+/// <summary>
+/// Class - Represents the Recovery State for Range Enemy
+/// </summary>
 public class RecoveryState_Range : EnemyState
 {
     EnemyRange enemyRange;
@@ -10,12 +14,18 @@ public class RecoveryState_Range : EnemyState
         enemyRange = enemy as EnemyRange;
     }
 
+    /// <summary>
+    /// When entering recovery state, set the recovery time 
+    /// </summary>
     public override void Enter()
     {
         endTime = Time.time + enemyRange.recoveryTime; // set
         if (enemy.agent != null) enemy.agent.isStopped = false;
     }
 
+    /// <summary>
+    /// Check if recovery time is finished, then if player is in aggro range, switch to chase state, else switch to idle state
+    /// </summary>
     public override void Update()
     {
         if (Time.time >= endTime)
@@ -25,7 +35,7 @@ public class RecoveryState_Range : EnemyState
                 stateMachine.ChangeState(enemyRange.GetChase());
             }
             else
-            { 
+            {
                 stateMachine.ChangeState(enemyRange.GetIdle());
             }
         }

@@ -2,7 +2,9 @@ using System;
 using UnityEngine;
 
 
-
+/// <summary>
+/// Class : Used to create jelly like physics for MeleeEnemy(Slime)
+/// </summary>
 public class SoftBodyPhysics : MonoBehaviour
 {
     [Header("Refs")]
@@ -53,6 +55,9 @@ public class SoftBodyPhysics : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Soft body physics of enemy handled in LateUpdate
+    /// </summary>
     void LateUpdate()
     {
         if (!visual) return;
@@ -127,7 +132,10 @@ public class SoftBodyPhysics : MonoBehaviour
         visual.localScale = Vector3.Lerp(visual.localScale, targetScale, 1f - Mathf.Exp(-20f * deltaTime));
     }
 
-
+    /// <summary>
+    /// Used to add Impulse to enemy after incorporating the softbody phys
+    /// </summary>
+    /// <param name="strength"></param>
     public void Impulse(float strength = 1f)
     {
         // SAFETY: Clamp impulse strength

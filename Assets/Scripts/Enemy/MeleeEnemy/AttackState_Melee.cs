@@ -1,10 +1,13 @@
 using UnityEngine;
 
+/// <summary>
+/// Class - Represents the Attack State for Melee Enemy
+/// </summary>
 public class AttackState_Melee : EnemyState
 {
     private EnemyMelee enemyMelee;
 
-    private enum Phase {Windup, Charge}
+    private enum Phase { Windup, Charge }
     private Phase phase;
     private float timer;
     private Vector3 chargeDirection;
@@ -18,6 +21,9 @@ public class AttackState_Melee : EnemyState
 
     }
 
+    /// <summary>
+    /// What to do when Enemy enters the Attack State. Take control from navmeshagent and control physics manually
+    /// </summary>
     public override void Enter()
     {
         // // quick time window to do a hit
@@ -39,6 +45,10 @@ public class AttackState_Melee : EnemyState
         // TryApplyHit();
     }
 
+
+    /// <summary>
+    /// Face the Target, Enable the Attack Hitbox, and Charge towards the player, once done change to Recovery State
+    /// </summary>
     public override void Update()
     {
 
@@ -82,6 +92,9 @@ public class AttackState_Melee : EnemyState
     }
 
 
+    /// <summary>
+    /// When exiting the Attack State, disable hitbox, and give control back to navmeshagent
+    /// </summary>
     public override void Exit()
     {
         enemyMelee.EnableHitBox(false);

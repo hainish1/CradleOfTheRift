@@ -1,7 +1,10 @@
 using UnityEngine;
 
 
-// almost a copy paste of my projectile script for player
+/// <summary>
+/// Represents a EnemyProjectiles, which is shot by the EnemyRange.
+/// almost a copy paste of my projectile script for player
+/// </summary>
 public class EnemyProjectile : MonoBehaviour
 {
 
@@ -25,6 +28,12 @@ public class EnemyProjectile : MonoBehaviour
         rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
+    /// <summary>
+    /// Initiailize this projectile with things like damage, velocity and what can it hit
+    /// </summary>
+    /// <param name="velocity"></param>
+    /// <param name="mask"></param>
+    /// <param name="newDamage"></param>
     public void Init(Vector3 velocity, LayerMask mask, float newDamage)
     {
         rb.linearVelocity = velocity;
@@ -35,7 +44,9 @@ public class EnemyProjectile : MonoBehaviour
         this.damage = newDamage;
     }
 
-
+    /// <summary>
+    /// Check the lifetime of the projectile and add force to help move in a direction
+    /// </summary>
     void Update()
     {
         age += Time.deltaTime;
@@ -48,8 +59,12 @@ public class EnemyProjectile : MonoBehaviour
         {
             rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
         }
-    }
+    }   
 
+    /// <summary>
+    /// If collided with something, check if its a player. If yes, apply damage and knockback to it. Once that is done, Return to object pool or destroy it
+    /// </summary>
+    /// <param name="collision"></param>
     void OnCollisionEnter(Collision collision)
     {
         if (((1 << collision.gameObject.layer) & hitMask) == 0)
@@ -69,9 +84,6 @@ public class EnemyProjectile : MonoBehaviour
 
             pm.ApplyImpulse(dir * knockBackImpulse);
 
-
-            // TODO
-            // Damage to Player's Health component here
         }
 
         // other rigidbodies it might hit

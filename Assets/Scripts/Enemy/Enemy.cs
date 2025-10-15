@@ -1,7 +1,10 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-
+/// <summary>
+/// Class : Base Enemy class that Melee and Range Inherit from. 
+/// Declares common enemy properties
+/// </summary>
 public abstract class Enemy : MonoBehaviour
 {
     // [Header("Test Health Stuff")]
@@ -54,6 +57,11 @@ public abstract class Enemy : MonoBehaviour
     //     if (currentHealth <= 0) Die();
     // }
 
+    /// <summary>
+    /// Called when any Enemy dies, Resets navmesh agent and destroys gameObject(self)
+    /// 
+    /// Not being used now, Die controlled by Enemy Health
+    /// </summary>
     public virtual void Die()
     {
         if (agent != null)
@@ -64,6 +72,9 @@ public abstract class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 
+    /// <summary>
+    /// Enemy Update is used for checking the state an enemy is in
+    /// </summary>
     public virtual void Update()
     {
         stateMachine.Tick();
