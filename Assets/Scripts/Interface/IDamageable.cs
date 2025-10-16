@@ -5,6 +5,6 @@ using UnityEngine;
 public interface IDamageable
 {
     bool IsDead { get; }
-    void TakeDamage(int damage);
+    void TakeDamage(float damage);
 
 }

@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-public enum OperatorType { Add, Multiply }
+public enum OperatorType { Add, Multiply, Percentage}
 
 public class StatModifierPickup : Pickup
 {
@@ -12,10 +12,12 @@ public class StatModifierPickup : Pickup
 
     protected override void ApplyPickupEffect(Entity entity)
     {
+        float baseStatValue = entity.Stats.BaseValueForStat(type);
         StatModifier modifier = operatorType switch
         {
             OperatorType.Add => new BasicStatsModifier(type, duration, v => v + value),
             OperatorType.Multiply => new BasicStatsModifier(type, duration, v => v * value),
+            OperatorType.Percentage => new BasicStatsModifier(type, duration, v => v + baseStatValue * value),
             _ => throw new ArgumentOutOfRangeException()
         };
 

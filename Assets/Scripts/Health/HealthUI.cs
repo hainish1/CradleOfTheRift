@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -29,7 +30,7 @@ public class HealthUI : MonoBehaviour
             health.healthChanged -= OnHealthChange;
     }
 
-    public void OnHealthChange(int currentHealth, int maxHealth)
+    public void OnHealthChange(float currentHealth, float maxHealth)
     {
         if (healthBar == null) return;
 

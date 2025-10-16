@@ -236,15 +236,13 @@ public class EnemySpawner : MonoBehaviour
         // 3 * (1 + (0.5) * (0))
         EnemyHealth enemyHealth = enemyObj.GetComponent<EnemyHealth>();
         float newHealthAfterMultiplier = enemyHealth.GetMaxHealth() * (1 + (this.healthGrowth - 1) * (currentWave - 1));
-        enemyHealth.InitializeHealth(Mathf.CeilToInt(newHealthAfterMultiplier));
+        // enemyHealth.InitializeHealth(Mathf.CeilToInt(newHealthAfterMultiplier));
+        enemyHealth.InitializeHealth(newHealthAfterMultiplier);
         enemyHealth.EnemyDied += OnEnemyDied;
     }
 
     private void ScaleEnemyDamage(GameObject enemyObj)
     {   
-
-        
-
         EnemyMelee enemyMelee = enemyObj.GetComponent<EnemyMelee>();
             
         if (enemyMelee != null)

@@ -80,7 +80,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _dashSpeed;
     [SerializeField] private float _dashCooldown;
     [SerializeField] private int _dashCharges;
-    [SerializeField] private int _dashChargesMax; 
+
+    private float dashChargeRegenTimer = 0f;
+    private int currentDashCharges;
+
     private bool _isDashing;
     private Vector3 _dashVector;
 
@@ -91,6 +94,14 @@ public class PlayerMovement : MonoBehaviour
 
     // Set by AimController.
     private bool strafe = false;
+
+    private float DashSpeed => _playerEntity.Stats.DashSpeed;
+    private float DashDistance => _playerEntity.Stats.DashDistance;
+    private const float kMinDashCooldown = 0.001f;
+    private float DashCooldown => Mathf.Max(_playerEntity.Stats.DashCooldown, kMinDashCooldown);
+    // private float ClampedDashCooldown => Mathf.Max((_playerEntity ? _playerEntity.Stats.DashCooldown : _dashCooldown), kMinDashCooldown);
+    private int DashCharges => _playerEntity.Stats.DashCharges;
+    
     
 
 
@@ -150,23 +161,13 @@ public class PlayerMovement : MonoBehaviour
         _isRegeneratingBoost = false;
 
         _isDashing = false;
-        _dashChargesMax = Mathf.Max(_dashChargesMax, _dashCharges);
+        currentDashCharges = DashCharges;
     }
 
     void Update()
     {
         if (_lockControls) return;
-        if (_playerEntity != null)
-        {
-            int targetMax = Mathf.RoundToInt(_playerEntity.Stats.DashCharges); 
-            if (targetMax < 0) targetMax = 0;
 
-            if (targetMax != _dashChargesMax)
-            {
-                _dashChargesMax = targetMax;
-                _dashCharges = Mathf.Min(_dashCharges, _dashChargesMax); 
-            }
-        }
         if (_kbControlsLockTimer > 0) _kbControlsLockTimer -= Time.deltaTime;
         if (_kbDashLockTimer > 0) _kbDashLockTimer -= Time.deltaTime;
 
@@ -183,6 +184,20 @@ public class PlayerMovement : MonoBehaviour
             HoverCase();
             BoostCase();
         }
+
+        if (currentDashCharges < DashCharges)
+        {
+            dashChargeRegenTimer += Time.deltaTime;
+            if (dashChargeRegenTimer >= DashCooldown)
+            {
+                dashChargeRegenTimer = 0f;
+                currentDashCharges = Mathf.Min(currentDashCharges + 1, DashCharges);
+            }
+        }
+
+        if (currentDashCharges > DashCharges) currentDashCharges = DashCharges; // if player aquires new dash charges
+        
+
     }
 
     /// <summary>
@@ -307,20 +322,6 @@ public class PlayerMovement : MonoBehaviour
                 _acceleration = _maxSpeed / _accelerationSeconds;
                 _deceleration = _maxSpeed / _decelerationSeconds;
             }
-
-            // new items
-            float targetJump = Mathf.Max(0f, _playerEntity.Stats.JumpHeight); 
-            if (!Mathf.Approximately(_JumpHeight, targetJump))
-            {
-                _JumpHeight = targetJump;
-            }
-
-            float targetDashCD = Mathf.Max(0.05f, _playerEntity.Stats.DashCooldown); 
-            if (!Mathf.Approximately(_dashCooldown, targetDashCD))
-            {
-                _dashCooldown = targetDashCD;
-            }
-
         }
 
         // Because move speed right before moment of knockback must be preserved for correct calculations,
@@ -646,16 +647,18 @@ public class PlayerMovement : MonoBehaviour
 
         _dashVector = GetMoveInputDirection();
 
-        if (_dashCharges != 0)
+        if (currentDashCharges > 0)
         {
             // If not moving, default dash direction is forward.
             if (_dashVector.x == 0 && _dashVector.z == 0)
             {
                 _dashVector = GetComponentInParent<Transform>().forward;
             }
-
-            StartCoroutine(InitiateDashCooldown(_dashCooldown));
-            StartCoroutine(InitiateDashDuration(_dashDistance / _dashSpeed));
+            currentDashCharges--;
+            dashChargeRegenTimer = 0f;
+            // StartCoroutine(InitiateDashDuration(_dashDistance / _dashSpeed));
+            StartCoroutine(InitiateDashDuration(DashDistance / DashSpeed));
+            StartCoroutine(InitiateDashCooldown(DashCooldown)); // for UI
         }
     }
 
@@ -680,7 +683,7 @@ public class PlayerMovement : MonoBehaviour
             ApplyGravity();
         }
 
-        _characterController.Move(Time.deltaTime * _dashSpeed * _dashVector);
+        _characterController.Move(Time.deltaTime * DashSpeed * _dashVector);
     }
 
     /// <summary>
@@ -692,12 +695,12 @@ public class PlayerMovement : MonoBehaviour
     /// <returns> IEnumerator object. </returns>
     private IEnumerator InitiateDashCooldown(float seconds)
     {
-        _dashCharges--;
+        // _dashCharges--;
         DashCooldownStarted?.Invoke(seconds); // Tell listener to start the faded.
 
         yield return new WaitForSeconds(seconds);
 
-        _dashCharges = Mathf.Min(_dashCharges + 1, _dashChargesMax);
+        // _dashCharges++;
     }
 
     /// <summary>
