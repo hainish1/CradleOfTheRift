@@ -83,8 +83,8 @@ public class PlayerGroundSlam : MonoBehaviour
 
         isSlamming = true;
 
-        float originalGravity = playerMovement != null ? playerMovement._aggregateGravityModifier : 1f;
-        if (playerMovement != null) playerMovement._aggregateGravityModifier = 0;
+        float originalGravity = playerMovement != null ? playerMovement._gravityMultiplier : 1f;
+        if (playerMovement != null) playerMovement._gravityMultiplier = 0;
 
         Vector3 fallVelocity = Vector3.down * slamDownSpeed;
 
@@ -96,7 +96,7 @@ public class PlayerGroundSlam : MonoBehaviour
         }
 
         // restore normal gravity again
-        if (playerMovement != null) playerMovement._aggregateGravityModifier = originalGravity;
+        if (playerMovement != null) playerMovement._gravityMultiplier = originalGravity;
 
         if (debug)
         {

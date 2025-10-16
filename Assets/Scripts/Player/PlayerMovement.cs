@@ -116,7 +116,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     [Tooltip("Seconds before Drift Descent Divisor gradually reaches full effect.")] private float _driftDelay;
     [SerializeField]
-    [Tooltip("How much gravity is multiplied in units per second (base gravity value is -9.81).")] private float _gravityMultiplier;
+    [Tooltip("How much gravity is multiplied in units per second (base gravity value is -9.81).")] public float _gravityMultiplier;
     private bool _isDrifting;
     private float _currDriftDescentDivisor;
     private float _driftDelayTimer;
