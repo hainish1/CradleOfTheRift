@@ -4,15 +4,18 @@ using UnityEngine;
 public enum StatType
 {
     ProjectileDamage,
+    MeleeDamage,
+    AttackSpeed,
+
     Health,
     MoveSpeed,
     DashSpeed,
     DashDistance,
     DashCooldown,
     DashCharges,
-    MeleeDamage,
     SlamDamage,
-    SlamRadius
+    SlamRadius,
+    ProjectileSpread
 }
 
 public class Stats
@@ -31,6 +34,16 @@ public class Stats
             mediator.PerformQuery(this, q);
             return q.Value;
 
+        }
+    }
+
+    public float AttackSpeed
+    {
+        get
+        {
+            var q = new Query(StatType.AttackSpeed, baseStats.attackSpeed);
+            mediator.PerformQuery(this, q);
+            return q.Value;
         }
     }
 
@@ -120,6 +133,16 @@ public class Stats
         get
         {
             var q = new Query(StatType.SlamRadius, baseStats.slamAttackRadius);
+            mediator.PerformQuery(this, q);
+            return q.Value;
+        }
+    }
+
+    public float ProjectileSpread
+    {
+        get
+        {
+            var q = new Query(StatType.ProjectileSpread, baseStats.projectileSpread);
             mediator.PerformQuery(this, q);
             return q.Value;
         }

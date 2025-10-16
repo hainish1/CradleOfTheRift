@@ -23,5 +23,9 @@ public class BaseStats : ScriptableObject
     public float meleeDamage = 1;
     public float slamDamage = 2;
     public float slamAttackRadius = 10;
+
+    public float attackSpeed = 1; // attacks per second
+
+    public float projectileSpread = 0.1f; // in radians
 }
 
