@@ -132,15 +132,27 @@ public class PlayerShooter : MonoBehaviour
         Quaternion spawnRot = Quaternion.LookRotation(direction, Vector3.up);
 
         // now stat timeeee 
-        
-        float currentDamage = playerEntity.Stats.ProjectileAttack;
-        
 
-        // NOTE TO SELF : USE OBJECT POOLING LATER TO REDUCE INSTANTIATING
-        var proj = Instantiate(projectilePrefab, spawnPos, spawnRot);
-        proj.Init(direction * projectileSpeed, shootMask, currentDamage, 100);
-        
-        Debug.Log($"Fired projectile with {currentDamage} damage");
+        float currentDamage = playerEntity.Stats.ProjectileAttack;
+
+        Projectile proj = null;
+
+        if (ObjectPool.instance != null) // if there is object pooling, use that
+        {
+            GameObject pooled = ObjectPool.instance.GetObject(projectilePrefab.gameObject, muzzle); // spawn at muzzle
+            proj = pooled.GetComponent<Projectile>();
+            proj.transform.position = spawnPos;
+            proj.transform.rotation = spawnRot;
+            Debug.Log("Used ObjectPool");
+        }
+        else // use normal instantiating way
+        {
+            proj = Instantiate(projectilePrefab, spawnPos, spawnRot);
+            Debug.Log("Used Normal");
+        }
+        // // NOTE TO SELF : USE OBJECT POOLING LATER TO REDUCE INSTANTIATING
+        proj?.Init(direction * projectileSpeed, shootMask, currentDamage, 100);
+        // Debug.Log($"Fired projectile with {currentDamage} damage");
     }
 
 }

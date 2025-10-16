@@ -70,7 +70,7 @@ public class ObjectPool : MonoBehaviour
             CreateNewObject(prefab);
         }
     }
-    
+
     /// <summary>
     /// Helper to create a New Object that carries info about the original prefab, so it can be identified by the pool dictionary
     /// </summary>
@@ -82,4 +82,5 @@ public class ObjectPool : MonoBehaviour
         newObject.SetActive(false);
         poolDictionary[prefab].Enqueue(newObject);
     }
+
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 
 /// <summary>
-/// Represents a EnemyProjectiles, which is shot by the EnemyRange.
+/// Class - Represents a EnemyProjectiles, which is shot by the EnemyRange.
 /// almost a copy paste of my projectile script for player
 /// </summary>
 public class EnemyProjectile : MonoBehaviour
