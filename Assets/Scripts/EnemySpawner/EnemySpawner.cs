@@ -218,7 +218,7 @@ public class EnemySpawner : MonoBehaviour
             validLocation = TryGetAirLocation(enemy.prefab, out location);
         }
         else
-        { 
+        {
             validLocation = TryGetGroundLocation(enemy.prefab, out location);
         }
 
@@ -243,8 +243,8 @@ public class EnemySpawner : MonoBehaviour
 
     private bool TryGetAirLocation(GameObject enemyPrefab, out Vector3 location)
     {
-        float radius = GetEnemySpawnRadius(enemyPrefab);
-        int maxAttempts = 10;
+        float radius = GetEnemySpawnWidth(enemyPrefab);
+        int maxAttempts = 2;
 
         for (int attempt = 0; attempt < maxAttempts; attempt++)
         {
@@ -396,14 +396,13 @@ public class EnemySpawner : MonoBehaviour
 
     private bool IsSpawnLocationFree(Vector3 position, float radius)
     {
-        // Check if any colliders are inside the spawn radius
         Collider[] colliders = Physics.OverlapSphere(position, radius);
-        return colliders.Length == 0; // true if no obstacles
+        return colliders.Length == 0;
     }
 
     private bool TryGetGroundLocation(GameObject enemyPrefab, out Vector3 location)
     {
-        float radius = GetEnemySpawnRadius(enemyPrefab);
+        float radius = GetEnemySpawnWidth(enemyPrefab);
         int maxAttempts = 2;
 
         for (int attempt = 0; attempt < maxAttempts; attempt++)
@@ -424,19 +423,19 @@ public class EnemySpawner : MonoBehaviour
         return false;
     }
 
-    private float GetEnemySpawnRadius(GameObject enemyPrefab)
+    private float GetEnemySpawnWidth(GameObject enemyPrefab)
     {
-        Collider collider = enemyPrefab.GetComponent<Collider>();
+        BoxCollider box = enemyPrefab.GetComponent<BoxCollider>();
+        if (box == null)
+            return 1f;
 
-        if (collider != null)
-        {
-            float radius = Mathf.Max(collider.bounds.extents.x, collider.bounds.extents.z);
-            return radius * 1.1f;
-        }
+        Vector3 worldSize = Vector3.Scale(box.size, box.transform.lossyScale);
 
-        return 1f;
+        float size = Mathf.Max(worldSize.x, worldSize.z) * 0.5f * 1.1f;
+        return size;
     }
 }
+
 
 [Serializable]
 public class EnemyType
