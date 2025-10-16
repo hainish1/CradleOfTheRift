@@ -32,24 +32,25 @@ public class Chest : MonoBehaviour, IInteractable
                 {
                     //Instantiate(item, transform.position + Vector3.up, Quaternion.identity);
                     lootTable.DoDrop();
+                    Debug.Log("Dropped loot.");
                 }
                 else
                 {
                     // Spawn random item perhaps
                     //Instantiate(item, transform.position + Vector3.up, Quaternion.identity);
+                    Debug.Log("No loot table.");
                 }
-                Destroy(gameObject, 1f); // Add a Delay to allow sound to play and block subsequent interactions
+                if (SingleActivation)
+                {
+                    canInteract = false;
+                    Destroy(gameObject, 1f); // Add a Delay to allow sound to play and block subsequent interactions
+                }   
                 return true;
             }
             else
             {
                 Debug.Log("U broke.");
             }
-        }
-
-        if (SingleActivation)
-        {
-            canInteract = false; // I really dont know how to make this prettier but this will do
         }
 
         return false;

@@ -1,0 +1,6 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/SharedUI.uss?fileID=7433441132597879392&amp;guid=a2317670cc1114a448aab84ce19447a0&amp;type=3#SharedUI" />
+    <engine:VisualElement name="LoseContainer" class="screenContainer" style="flex-grow: 1;">
+        <engine:Label text="You Lost" class="titleLabel" />
+    </engine:VisualElement>
+</engine:UXML>

@@ -3,8 +3,9 @@ using UnityEngine;
 
 public class PlayerGold : MonoBehaviour
 {
+    public static PlayerGold Instance { get; private set; }
     public event Action<int> goldChanged;
-    private int gold = 10;
+    public int gold = 30;
     public int Gold
     {
         get => this.gold;
@@ -17,6 +18,7 @@ public class PlayerGold : MonoBehaviour
     public void AddGold(int amount)
     {
         this.Gold += amount;
+        Debug.Log("Added " + amount + " gold. Total: " + this.Gold);
     }
 
     public bool SpendGold(int cost)
@@ -29,5 +31,10 @@ public class PlayerGold : MonoBehaviour
         }
 
         return false;
+    }
+
+    void Awake()
+    {
+        Instance = this;
     }
 }

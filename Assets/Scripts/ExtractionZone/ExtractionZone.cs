@@ -14,6 +14,7 @@ public class ExtractionZone : MonoBehaviour
     public event Action ExtractionInteracted;
     public event Action ExtractionFinished;
     public event Action WinScreen;
+    
 
     // Update is called once per frame
     void Update()
@@ -23,9 +24,9 @@ public class ExtractionZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        PlayerControllerV1 playerController = other.GetComponent<PlayerControllerV1>();
+        PlayerGold player = other.GetComponent<PlayerGold>();
 
-        if (playerController != null)
+        if (player != null)
         {
             this.isExtracting = true;
 
@@ -40,9 +41,9 @@ public class ExtractionZone : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        PlayerControllerV1 playerController = other.GetComponent<PlayerControllerV1>();
+        PlayerGold player = other.GetComponent<PlayerGold>();
 
-        if (playerController != null)
+        if (player != null)
         {
             this.isExtracting = false;
         }
@@ -58,6 +59,7 @@ public class ExtractionZone : MonoBehaviour
 
             if (this.currentCharge == this.chargeTime)
             {
+                PlayerHealth.instance.SetCanTakeDamage(false);
                 this.WinScreen?.Invoke();
                 this.ExtractionFinished?.Invoke();
             }

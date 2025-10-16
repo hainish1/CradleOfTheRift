@@ -16,14 +16,14 @@ public class EnemyMelee : Enemy
 
 
     [Header("Slam attack")]
-    public int slamDamage = 1;
+    public float slamDamage = 1;
     public float windupTime = .15f;
     public float chargeSpeed = 12f;
     public float chargetTime = .18f;
 
     [Header("AttackHitbox")]
     [SerializeField] private EnemyMeleeHitbox hitbox;
-    [HideInInspector] public bool hitAppliedThisAttack; 
+    [HideInInspector] public bool hitAppliedThisAttack;
 
 
 
@@ -44,7 +44,7 @@ public class EnemyMelee : Enemy
         recovery = new RecoveryState_Melee(this, stateMachine);
 
         stateMachine.Initialize(idle);
-        
+
     }
 
     public void EnableHitBox(bool enable)
@@ -80,13 +80,23 @@ public class EnemyMelee : Enemy
         hitAppliedThisAttack = true;
         nextAttackAllowed = Time.time + attackCooldown;
         EnableHitBox(false);
-        
+
 
     }
 
+    public void InitializeSlamDamage(float newDamage)
+    {
+        // this.slamDamage = Mathf.CeilToInt(newDamage);
+        this.slamDamage = newDamage;
+        Debug.Log("Slam Damage: " + this.slamDamage);
+    }
 
     public EnemyState GetIdle() => idle;
-    public EnemyState GetChase()   => chase;
-    public EnemyState GetAttack()  => attack;
+    public EnemyState GetChase() => chase;
+    public EnemyState GetAttack() => attack;
     public EnemyState GetRecovery() => recovery;
+
+    // public float GetBaseDamage() => Mathf.CeilToInt(slamDamage);
+    public float GetBaseDamage() => slamDamage;
+
 }

@@ -80,14 +80,18 @@ public class PlayerInventory : MonoBehaviour
     {
         if (playerEntity == null || playerEntity.Stats == null) return; // cant do shit ma man
 
+        float baseValue = playerEntity.Stats.BaseValueForStat(itemData.statType);
+
         // we can use this if we want to stack the items and multiple their values but number of stack counts
         // float actualValue = CalculateStackedValue(itemData, stack.count);     < -----------
         float incrementalValue = itemData.value; // for now we use basic add on add
+        
 
         StatModifier modifier = itemData.operatorType switch
         {
             OperatorType.Add => new BasicStatsModifier(itemData.statType, itemData.duration, v => v + incrementalValue),
             OperatorType.Multiply => new BasicStatsModifier(itemData.statType, itemData.duration, v => v * incrementalValue),
+            OperatorType.Percentage => new BasicStatsModifier(itemData.statType, itemData.duration, v => v + baseValue * incrementalValue),
             _ => throw new ArgumentOutOfRangeException()
         };
 

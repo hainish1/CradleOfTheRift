@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerMeleeAttack : MonoBehaviour
 {
-    [SerializeField] private int meleeDamge;
+    // [SerializeField] private float meleeDamge;
     [Header("whats forward")]
     [SerializeField] private Transform forwardSource;           
     [SerializeField] private float heightOffset = 0.9f;         
@@ -17,10 +17,14 @@ public class PlayerMeleeAttack : MonoBehaviour
     [Header("Melee Timing stuff")]
     [SerializeField] private float cooldown = 0.35f;
     [SerializeField] private float prep = 0.05f;                
-    [SerializeField] private float activeTime = 0.08f;          
+    [SerializeField] private float activeTime = 0.08f;
     [Header("Attack Impact phys stuff")]
     [SerializeField] private float pushForce = 12f;
     // [SerializeField] private float upwardForce = 0f;
+    [SerializeField] private GameObject meleeImpactFX; // just a placeholder for testing things
+    [SerializeField] private Transform meleeFXPoint;
+
+    
     [SerializeField] private LayerMask hitMask = ~0;
     [Header("Debug")]
     [SerializeField] private bool drawGizmos = true;
@@ -40,9 +44,18 @@ public class PlayerMeleeAttack : MonoBehaviour
     private readonly Collider[] overlapBuffer = new Collider[32]; // ts is for checking who got hit
     private readonly HashSet<Enemy> hitThisSwing = new();
 
+    private Entity _playerEntity;
+
 
     // calculating the fwd
     private Transform Forward => forwardSource ? forwardSource : transform;
+
+    private float MeleeDamage => _playerEntity.Stats.MeleeDamage;
+
+    void Awake()
+    {
+        _playerEntity = GetComponent<Entity>();
+    }
 
     void OnEnable()
     {
@@ -99,6 +112,7 @@ public class PlayerMeleeAttack : MonoBehaviour
 
     private void DoHit()
     {
+        CreateImpactFX();
         // make the box in front of the player
         var t = Forward;
         Vector3 up = t.up;
@@ -146,7 +160,7 @@ public class PlayerMeleeAttack : MonoBehaviour
             var damageable = enemy.GetComponentInParent<IDamageable>();
             if (damageable != null && !damageable.IsDead)
             {
-                damageable.TakeDamage(meleeDamge);
+                damageable.TakeDamage(MeleeDamage);
             }
 
             
@@ -178,6 +192,28 @@ public class PlayerMeleeAttack : MonoBehaviour
 
         Gizmos.matrix = prevMatrix;
         Gizmos.color = prevColor;
+    }
+
+    protected void CreateImpactFX()
+    {
+        if (meleeImpactFX == null) return;
+        GameObject newFX = Instantiate(meleeImpactFX);
+        if (meleeFXPoint != null)
+        {
+            newFX.transform.position = meleeFXPoint.transform.position;
+            newFX.transform.rotation = meleeFXPoint.transform.rotation;
+        }
+        else
+        {
+            newFX.transform.position = transform.position;
+            newFX.transform.rotation = transform.rotation;
+        }
+
+        Destroy(newFX, 1);
+
+        // GameObject newImpacFX = ObjectPool.instance.GetObject(bulletImpactFX, transform);
+        // ObjectPool.instance.ReturnObject(newImpacFX, 1f); // return the effect back to the pool after 1 second of delay
+
     }
 
 }

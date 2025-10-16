@@ -29,11 +29,15 @@ public class EnemyRange : Enemy
 
     float bobPhase;
 
+    public float projectileDamage = 1;
+    public EnemyRangeOrbitVisuals orbitVisuals;
+
 
     public override void Start()
     {
         base.Start();
 
+        orbitVisuals = GetComponent<EnemyRangeOrbitVisuals>();
         if (agent != null)
         {
             agent.speed = chaseSpeed;
@@ -83,7 +87,32 @@ public class EnemyRange : Enemy
         Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
 
         EnemyProjectile projectile = Instantiate(projectilePrefab, spawnPoint, rotation);
-        projectile.Init(direction * projectileSpeed, projectileMask);
+        projectile.Init(direction * projectileSpeed, projectileMask, this.projectileDamage);
+
+        if(orbitVisuals != null)
+        {
+            int orbIndex = orbitVisuals.GetNextVisibleOrbIndex();
+            if (orbIndex >= 0)
+            {
+                orbitVisuals.HideOrb(orbIndex);
+            }
+            else
+            {
+                // no orbs left,maybe i can go to recovery
+            }
+        }
     }
+
+    public void InitializeDamage(float newDamage)
+    {
+        // this.projectileDamage = Mathf.CeilToInt(newDamage);
+        this.projectileDamage = newDamage;
+        Debug.Log("Projectile Damage: " + this.projectileDamage);
+    }
+
+    // public float GetBaseDamage() => Mathf.CeilToInt(projectileDamage);
+    public float GetBaseDamage() => projectileDamage;
+    
+    
 
 }
