@@ -75,18 +75,17 @@ public class SpawnChest : MonoBehaviour
             GameObject potentialChest = candidateChests[randomIndex];
             candidateChests.RemoveAt(randomIndex);
 
-            // Check if this chest's location is valid.
+            // Check if location is valid.
             bool isLocationValid = true;
             foreach (GameObject activeChest in activeChests)
             {
                 // Calculate the distance between the potential chest and an already active chest.
                 float distance = Vector3.Distance(potentialChest.transform.position, activeChest.transform.position);
 
-                // If it's too close, mark the location as invalid and stop checking.
                 if (distance < minDistanceBetweenChests)
                 {
                     isLocationValid = false;
-                    break; // No need to check against other active chests.
+                    break;
                 }
             }
 

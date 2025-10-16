@@ -10,7 +10,7 @@ public class EnemyProjectile : MonoBehaviour
     [SerializeField] private float gravity = 0f;
 
     [Header("hit")]
-    [SerializeField] private int damage = 1;
+    [SerializeField] private float damage = 1;
     [SerializeField] private float hitForce = 8f;
     [SerializeField] private float knockBackImpulse = 8f;
     [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
@@ -25,7 +25,7 @@ public class EnemyProjectile : MonoBehaviour
         rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
-    public void Init(Vector3 velocity, LayerMask mask, int newDamage)
+    public void Init(Vector3 velocity, LayerMask mask, float newDamage)
     {
         rb.linearVelocity = velocity;
         hitMask = mask;

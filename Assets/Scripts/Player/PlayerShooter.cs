@@ -132,12 +132,13 @@ public class PlayerShooter : MonoBehaviour
         Quaternion spawnRot = Quaternion.LookRotation(direction, Vector3.up);
 
         // now stat timeeee 
-        int currentDamage = Mathf.RoundToInt(playerEntity.Stats.Attack);
+        
+        float currentDamage = playerEntity.Stats.ProjectileAttack;
         
 
         // NOTE TO SELF : USE OBJECT POOLING LATER TO REDUCE INSTANTIATING
         var proj = Instantiate(projectilePrefab, spawnPos, spawnRot);
-        proj.Init(direction * projectileSpeed, shootMask, currentDamage);
+        proj.Init(direction * projectileSpeed, shootMask, currentDamage, 100);
         
         Debug.Log($"Fired projectile with {currentDamage} damage");
     }

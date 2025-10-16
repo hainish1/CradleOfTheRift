@@ -21,80 +21,130 @@ public class PlayerMovement : MonoBehaviour
     private InputSystem_Actions.PlayerActions playerActions;
 
     private InputAction moveActions;
+    private InputAction sprintActions;
     private InputAction jumpActions;
     private InputAction dashActions;
 
-    [Header("Player References")]
-    [SerializeField] private Transform _playerCenter;
-    [SerializeField] private Transform _cameraTransform;
-    private CharacterController _characterController;
+    [Header("Player References")] [Space]
+    [SerializeField]
+    [Tooltip("An empty object positioned at the exact center of the player character object.")] private Transform _playerCenter;
+    [SerializeField]
+    [Tooltip("The player camera object.")] private Transform _cameraTransform;
     private Entity _playerEntity;
+    private CharacterController _characterController;
     private float _playerHalfHeight;
-    private float _playerHalfWidth;
-    private float _groundedRaycastFloorDistance;
-    private float _groundedRaycastRadialDistance;
-    private float _originalStepOffset;
+    private float _playerRadius;
 
-    [Header("Movement Parameters")]
-    [SerializeField] private float _maxSpeed;
-    [SerializeField] private float _accelerationSeconds;
-    [SerializeField] private float _decelerationSeconds;
-    [SerializeField] private float _characterRotationDamping;
+    [Header("Movement Parameters")] [Space]
+    [SerializeField]
+    [Tooltip("Max move speed in units per second.")] private float _maxSpeed;
+    [SerializeField]
+    [Tooltip("Seconds needed to reach Max Speed.")] private float _accelerationSeconds;
+    [SerializeField]
+    [Tooltip("Seconds needed to fully stop after moving at Max Speed.")] private float _decelerationSeconds;
+    [SerializeField] [Range(1, 5)]
+    [Tooltip("How much Max Speed is multiplied when sprinting.")] private float _sprintMultiplier;
+    [SerializeField]
+    [Tooltip("How quickly the player character aligns with the camera direction in units per second.")] private float _characterRotationDamping;
     private float _acceleration;
     private float _deceleration;
-    private Vector3 lateralVector;
-    private Vector3 _moveInputUnitVector;
+    private bool _isSprinting;
+    private float _currSprintMultiplier;
+    private Vector3 lateralVelocityVector;
+    private Vector3 _moveDirectionUnitVector;
 
-    [Header("KnockBack Parameters")]
-    [SerializeField] private float _kbDamping;
-    [SerializeField] private float _kbControlsLockTime;
-    [SerializeField] private float _kbDashLockTime;
-    private Vector3 _externalKnockbackVelocity;
+    [Header("Hover Parameters")] [Space]
+    [SerializeField]
+    [Tooltip("Height above the ground the player character hovers in units.")] private float _hoverHeight;
+    [SerializeField]
+    [Tooltip("How strongly the player character is pulled to Hover Height in units per second.")] private float _hoverPullStrength;
+    [SerializeField]
+    [Tooltip("How strongly Hover Pull Strength dissipates in units per second.")] private float _hoverDampingStrength;
+    [SerializeField]
+    [Tooltip("Sphere casting distance below the player in units.")] private float _groundedCastLength;
+    [SerializeField]
+    [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private float _groundedCastJumpPauseDuration;
+    private float _currHoverHeight;
+    public bool IsGrounded { get; private set; }
+    private float _groundedCastRadius;
+    private float _groundedCastPauseTimer;
+    private int _groundedLayerMasks;
+    private RaycastHit _groundPoint;
+
+    [Header("KnockBack Parameters")] [Space]
+    [SerializeField]
+    [Tooltip("Seconds needed for a knockback impulse to dissipate.")] private float _kbDamping;
+    [SerializeField]
+    [Tooltip("Seconds that controls are locked after a knockback impulse.")] private float _kbControlsLockTime;
+    [SerializeField]
+    [Tooltip("Seconds that dashing is locked after a knockback impulse.")] private float _kbDashLockTime;
     private float _kbControlsLockTimer;
     private float _kbDashLockTimer;
+    private Vector3 _externalKnockbackVelocity;
 
-    [Header("Jump Parameters")]
-    [SerializeField] private float _JumpHeight;
-    [SerializeField][Range(0, 1)] private float _midairStrafeMultiplier;
-    [SerializeField] [Range(0, 1)] private float _hoverDescentReductionMultiplier;
-    [SerializeField] private float _gravityMultiplier;
-    private bool _didPerformJump;
-    private bool _isHovering;
-    public float _aggregateGravityModifier;
-    private Vector3 _verticalVector;
+    [Header("Dash Parameters")] [Space]
+    [SerializeField]
+    [Tooltip("Distance that the player character dashes in units.")] private float _dashDistance;
+    [SerializeField]
+    [Tooltip("How quickly the player character travels Dash Distance in units per second.")] private float _dashSpeed;
+    [SerializeField]
+    [Tooltip("Seconds needed for dash charges to come off cooldown.")] private float _dashCooldown;
+    [SerializeField]
+    [Tooltip("The quantity of available dash charges.")] private int _dashCharges;
+    private bool _isDashing;
+    private int _currDashCharges;
+    public event System.Action<float> DashCooldownStarted;
+    private Vector3 _dashDirectionUnitVector;
 
-    [Header("Boost Parameters")]
-    [SerializeField] private int _maxBoostEnergy;
-    [SerializeField] private int _maxBoostSpeed;
-    [SerializeField] private int _boostAcceleration;
-    [SerializeField] private int _boostRegenerationRate;
-    [SerializeField] private int _boostDepletionRate;
-    [SerializeField] private float _boostDoubleTapWindow;
-    private float _currBoostEnergy;
-    private float _currBoostDoubleTapTime;
+    [Header("Jump Parameters")] [Space]
+    [SerializeField]
+    [Tooltip("Vertical jump strength in units per second.")] private float _JumpForce;
+    private bool _inputtedJumpThisFrame;
+    private Vector3 _verticalVelocityVector;
+
+    [Header("Coyote Time Parameters")] [Space]
+    [SerializeField]
+    [Tooltip("Seconds that jump can still be registered after walking off an edge.")] private float _coyoteTimeWindow;
+    [SerializeField]
+    [Tooltip("Seconds that jump can still be registered before touching the ground.")] private float _jumpBufferWindow;
+    private float _coyoteTimer;
+    private float _jumpBufferTimer;
+    
+    [Header("Drift Parameters")] [Space]
+    [SerializeField] [Range(0, 1)]
+    [Tooltip("How much gravity is divided when drifting.")] private float _driftDescentDivisor;
+    [SerializeField]
+    [Tooltip("Seconds before Drift Descent Divisor gradually reaches full effect.")] private float _driftDelay;
+    [SerializeField]
+    [Tooltip("How much gravity is multiplied in units per second (base gravity value is -9.81).")] public float _gravityMultiplier;
+    private bool _isDrifting;
+    private float _currDriftDescentDivisor;
+    private float _driftDelayTimer;
+
+    [Header("Boost Parameters")] [Space]
+    [SerializeField]
+    [Tooltip("Max vertical boost speed in units per second.")] private float _maxBoostSpeed;
+    [SerializeField]
+    [Tooltip("Seconds needed to reach Max Boost Speed.")] private float _boostAccelerationSeconds;
+    [SerializeField]
+    [Tooltip("Amount of boost energy regeneration per second.")] private float _boostRegenerationRate;
+    [SerializeField]
+    [Tooltip("Capacity value of boost energy")] private int _maxBoostEnergy;
+    [SerializeField]
+    [Tooltip("Amount of boost energy depleted per second.")] private float _boostDepletionRate;
+    [SerializeField]
+    [Tooltip("Seconds in which a boost double-tap can still be registered after the first jump tap.")] private float _boostDoubleTapWindow;
     private bool _isBoosting;
     private bool _isRegeneratingBoost;
+    private float _currBoostEnergy;
+    private float _boostAcceleration;
+    private float _boostDoubleTapTimer;
 
-    [Header("Dash Parameters")]
-    [SerializeField] private float _dashDistance;
-    [SerializeField] private float _dashSpeed;
-    [SerializeField] private float _dashCooldown;
-    [SerializeField] private int _dashCharges;
-    private bool _isDashing;
-    private Vector3 _dashVector;
-
-    [Header("Layer Parameter")]
-    [SerializeField] private LayerMask _environmentLayer;
-
-    private bool _lockControls = false;
-
-    // Set by AimController.
-    private bool strafe = false;
-    
-
+    private bool strafe = false; // Set by AimController.
 
     void Awake()
     {
+        _playerEntity = GetComponent<Entity>();
         _characterController = GetComponent<CharacterController>();
         playerInput = new InputSystem_Actions();
         playerActions = playerInput.Player;
@@ -103,88 +153,120 @@ public class PlayerMovement : MonoBehaviour
     private void OnEnable()
     {
         moveActions = playerActions.Move;
+        sprintActions = playerActions.Sprint;
         jumpActions = playerActions.Jump;
         dashActions = playerActions.Dash;
         
         moveActions.Enable();
+        sprintActions.Enable();
         jumpActions.Enable();
         dashActions.Enable();
         
         jumpActions.started += JumpInputActionStarted;
         jumpActions.canceled += JumpInputActionCanceled;
+        sprintActions.started += SprintInputActionStarted;
         dashActions.started += DashInputActionStarted;
     }
 
     private void OnDisable()
     {
         moveActions.Disable();
+        sprintActions.Disable();
         jumpActions.Disable();
         dashActions.Disable();
 
         jumpActions.started -= JumpInputActionStarted;
         jumpActions.canceled -= JumpInputActionCanceled;
+        sprintActions.started -= SprintInputActionStarted;
         dashActions.started -= DashInputActionStarted;
     }
 
     void Start()
     {
-        _playerEntity = GetComponent<Entity>();
+        // Player References
+        _playerHalfHeight = GetComponent<CharacterController>().height / 2;
+        _playerRadius = GetComponent<CharacterController>().radius;
 
-        _playerHalfHeight = GetComponent<CharacterController>().bounds.extents.y;
-        _playerHalfWidth = GetComponent<CharacterController>().bounds.extents.x;
-        _groundedRaycastFloorDistance = _playerHalfHeight + 0.1f;
-        _groundedRaycastRadialDistance = _playerHalfWidth * 0.7f;
-        _originalStepOffset = _characterController.stepOffset;
-
+        // Movement Parameters
         _acceleration = _maxSpeed / _accelerationSeconds;
         _deceleration = _maxSpeed / _decelerationSeconds;
+        _isSprinting = false;
+        _currSprintMultiplier = 1;
 
-        _didPerformJump = false;
-        _isHovering = false;
-        _aggregateGravityModifier = _gravityMultiplier;
+        // Hover Parameters
+        IsGrounded = CheckIsGrounded();
+        _groundedCastRadius = _playerRadius - 0.1f;
+        _groundedCastPauseTimer = 0;
+        _groundedLayerMasks = LayerMask.GetMask("Environment");
+        _groundedLayerMasks |= LayerMask.GetMask("Interactable");
+        _groundedLayerMasks |= LayerMask.GetMask("Obstacles");
+        _groundedLayerMasks |= LayerMask.GetMask("Enemy");
 
-        _currBoostEnergy = _maxBoostEnergy;
-        _currBoostDoubleTapTime = _boostDoubleTapWindow;
+        // KnockBack Parameters
+        _kbControlsLockTimer = 0;
+        _kbDashLockTimer = 0;
+
+        //Dash Parameters
+        _isDashing = false;
+        _currDashCharges = _dashCharges;
+
+        // Jump Parameters
+        _inputtedJumpThisFrame = false;
+
+        // Coyote Time Parameters
+        _coyoteTimer = _coyoteTimeWindow;
+        _jumpBufferTimer = 0;
+
+        // Drift Parameters
+        _currDriftDescentDivisor = 1;
+        _driftDelayTimer = 0;
+        _isDrifting = false;
+
+        // Boost Parameters
         _isBoosting = false;
         _isRegeneratingBoost = false;
-
-        _isDashing = false;
+        _boostAcceleration = _maxBoostSpeed / _boostAccelerationSeconds;
+        _currBoostEnergy = _maxBoostEnergy;
+        _boostDoubleTapTimer = 0;
     }
 
     void Update()
     {
-        if (_lockControls) return;
+        IsGrounded = CheckIsGrounded();
+        DecrementAllTimers();
 
-        if (_kbControlsLockTimer > 0) _kbControlsLockTimer -= Time.deltaTime;
-        if (_kbDashLockTimer > 0) _kbDashLockTimer -= Time.deltaTime;
+        if (_kbControlsLockTimer > 0) return;
 
-        ApplyGravity();
+        GravityConditions();
 
         if (_isDashing)
         {
-            DashCase();
+            IsGrounded = CheckIsGrounded();
+            DashConditions();
         }
         else
         {
-            MoveCase();
-            JumpCase();
-            HoverCase();
-            BoostCase();
+            MoveConditions();
+            IsGrounded = CheckIsGrounded();
+            HoverConditions();
+            JumpConditions();
+            IsGrounded = CheckIsGrounded();
+            DriftConditions();
+            BoostConditions();
         }
     }
 
     /// <summary>
     ///   <para>
-    ///     
+    ///     Sets the strafe mode status for the player character.
     ///   </para>
     /// </summary>
-    /// <param name="on">  </param>
+    /// <param name="on"> Strafe mode status. </param>
     public void SetStrafeMode(bool on) => strafe = on;
-
 
     /// <summary>
     ///   <para>
-    ///     Applies a knockback force to the player character any time this method is called.
+    ///     Applies a knockback force to the player character.
     ///   </para>
     /// </summary>
     /// <param name="impulse"> The total knockback force. </param>
@@ -195,19 +277,146 @@ public class PlayerMovement : MonoBehaviour
         _kbControlsLockTimer = Mathf.Max(_kbControlsLockTimer, _kbControlsLockTime);
         _kbDashLockTimer = Mathf.Max(_kbDashLockTimer, _kbControlsLockTime + _kbDashLockTime);
 
+        DisableSprint();
         _isDashing = false; // Cancel dashing immediately.
     }
 
     /// <summary>
     ///   <para>
-    ///     
+    ///     Decrements all active timers every frame.
     ///   </para>
     /// </summary>
-    public event System.Action<float> DashCooldownStarted;
+    private void DecrementAllTimers()
+    {
+        if (_kbControlsLockTimer > 0) _kbControlsLockTimer -= Time.deltaTime;
+        if (_kbDashLockTimer > 0) _kbDashLockTimer -= Time.deltaTime;
+        if (_groundedCastPauseTimer > 0) _groundedCastPauseTimer -= Time.deltaTime;
+        if (IsWithinCoyoteTimeWindow() && !IsGrounded) _coyoteTimer -= Time.deltaTime;
+        if (IsWithinJumpBufferWindow() && !IsGrounded) _jumpBufferTimer -= Time.deltaTime;
+        if (AreDriftRequirementsValid()) _driftDelayTimer -= Time.deltaTime;
+        if (IsWithinBoostWindow()) _boostDoubleTapTimer -= Time.deltaTime;
+    }
 
     /// <summary>
     ///   <para>
-    ///      Gets the current lateral input direction for every frame.
+    ///     Checks if the player character is touching the ground on the frame this method is called.
+    ///   </para>
+    /// </summary>
+    /// <returns> True if the player character is on the ground, otherwise false. </returns>
+    private bool CheckIsGrounded()
+    {
+        if (_groundedCastPauseTimer > 0) return false;
+        
+        Vector3 SphereCastOrigin = GetPlayerCharacterBottom() + new Vector3(0, _groundedCastRadius, 0);
+
+        if (Physics.SphereCast(SphereCastOrigin,
+                               _groundedCastRadius,
+                               Vector2.down,
+                               hitInfo: out RaycastHit hitInfo,
+                               _groundedCastLength + _groundedCastRadius, // Compensate for the SphereCast starting higher.
+                               _groundedLayerMasks,
+                               QueryTriggerInteraction.Ignore)
+            && Vector3.Angle(Vector3.up, hitInfo.normal) <= 30)
+        {
+            _groundPoint = hitInfo;
+            return true;
+        }
+
+        return false;
+    }
+
+    //private void OnDrawGizmos()
+    //{
+    //    if (_groundedCastPauseTimer > 0) return;
+
+    //    Gizmos.color = Color.red;
+    //    Vector3 SphereCastOrigin = GetPlayerCharacterBottom() - new Vector3(0, _groundedCastLength, 0);
+    //    Gizmos.DrawSphere(SphereCastOrigin, _groundedCastRadius);
+    //}
+
+    /// <summary>
+    ///   <para>
+    ///     Applies calculated custom gravity to the player every frame.
+    ///   </para>
+    /// </summary>
+    private void GravityConditions()
+    {
+        // Do not apply gravity whenon the ground or boosting.
+        if (IsGrounded || _isBoosting) return;
+        
+        float aggregateGravityModifier = _gravityMultiplier * _currDriftDescentDivisor;
+        _verticalVelocityVector.y += Time.deltaTime * aggregateGravityModifier * Physics.gravity.y;
+
+        // Limit descent speed to the strength of gravity.
+        if (_verticalVelocityVector.y < aggregateGravityModifier * Physics.gravity.y)
+        {
+            _verticalVelocityVector.y = aggregateGravityModifier * Physics.gravity.y;
+        }
+
+        _characterController.Move(Time.deltaTime * _verticalVelocityVector);
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Moves the player in the input direction an amount of distance calculated on any frame
+    ///     this method is called.
+    ///   </para>
+    /// </summary>
+    private void MoveConditions()
+    {
+        // Update _maxSpeed, _acceleration and _deceleration values whenever movement stats are changed.
+        if (_playerEntity != null)
+        {
+            if (_maxSpeed != _playerEntity.Stats.MoveSpeed)
+            {
+                _maxSpeed = _playerEntity.Stats.MoveSpeed;
+                RecalculateAccelDecel();
+            }
+        }
+
+        // Because move speed right before moment of knockback must be preserved for correct calculations,
+        // simply stop recording new movement values instead of completely skipping the MoveCase method.
+        _moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
+
+        // Disable sprint if not inputting forward movement.
+        if (moveActions.ReadValue<Vector2>().y != 1)
+        {
+            DisableSprint();
+        }
+
+        float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
+
+        // Accelerate if movement is being input and sprint has not been canceled.
+        if (_moveDirectionUnitVector != Vector3.zero && lateralVelocityVector.magnitude <= aggregateMaxSpeedValue)
+        {
+            Accelerate(aggregateMaxSpeedValue);
+        }
+        // Otherwise, decelerate.
+        else
+        {
+            Decelerate();
+        }
+
+        // Apply knockback until it has dissipated.
+        if (_externalKnockbackVelocity.sqrMagnitude > 1e-6f)
+        {
+            _characterController.Move(Time.deltaTime * _externalKnockbackVelocity);
+            _externalKnockbackVelocity = Vector3.Lerp(_externalKnockbackVelocity, Vector3.zero, Time.deltaTime / _kbDamping);
+        }
+
+        // Turn the player character toward the input direction.
+        if (_kbControlsLockTimer <= 0 && !strafe && lateralVelocityVector.sqrMagnitude > 0.0001f)
+        {
+            Quaternion qa = transform.rotation;
+            Quaternion qb = Quaternion.LookRotation(lateralVelocityVector, Vector3.up);
+            float t = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, _characterRotationDamping));
+            transform.rotation = Quaternion.Slerp(qa, qb, t);
+        }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///      Gets the current lateral input direction on any frame this method is called.
     ///   </para>
     /// </summary>
     /// <returns> A normalized vector parallel with the xz-plane. </returns>
@@ -229,449 +438,226 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Checks if the player character is touching the ground during the frame this method is called.
+    ///     Accelerates the player character on any frame this method is called up to the max movement speed.
     ///   </para>
     /// </summary>
-    /// <returns> True if the player character is on the ground, otherwise false. </returns>
-    private bool IsGrounded()
+    private void Accelerate(float aggregateMaxSpeedValue)
     {
-        // Exact center of the player's character.
-        if (Physics.Raycast(_playerCenter.position, Vector2.down, _groundedRaycastFloorDistance))
+        Vector3 aggregateAccelIncrement = Time.deltaTime * _acceleration * _currSprintMultiplier * _moveDirectionUnitVector;
+
+        lateralVelocityVector = lateralVelocityVector.magnitude * _moveDirectionUnitVector;
+        lateralVelocityVector += aggregateAccelIncrement;
+
+        // Limit lateral move speed to aggregateMaxSpeedValue.
+        if (lateralVelocityVector.magnitude > aggregateMaxSpeedValue)
         {
-            return true;
+            lateralVelocityVector = aggregateMaxSpeedValue * lateralVelocityVector.normalized;
         }
 
-        // Four corners of the player's character.
-        for (int i = -1; i <= 1; i += 2)
-        {
-            for (int j = -1; j <= 1; j += 2)
-            {
-                if (Physics.Raycast(_playerCenter.position + new Vector3(_groundedRaycastRadialDistance * i, 0, _groundedRaycastRadialDistance * j),
-                                    Vector2.down, _groundedRaycastFloorDistance))
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        _characterController.Move(Time.deltaTime * lateralVelocityVector);
     }
 
     /// <summary>
     ///   <para>
-    ///     Applies calculated custom gravity to the player every frame.
-    ///   </para>
-    /// </summary>
-    private void ApplyGravity()
-    {
-        // Do not apply gravity when boosting.
-        if (!IsGrounded() && !_isBoosting)
-        {
-            _verticalVector += Time.deltaTime * _aggregateGravityModifier * Physics.gravity;
-
-            // Limit descent speed to the strength of gravity.
-            if (_verticalVector.y < _aggregateGravityModifier * Physics.gravity.y)
-            {
-                _verticalVector.y = _aggregateGravityModifier * Physics.gravity.y;
-            }
-
-            _characterController.Move(Time.deltaTime * _verticalVector);
-        }
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Moves the player in the input direction an amount of distance calculated for every frame.
-    ///   </para>
-    /// </summary>
-    private void MoveCase()
-    {
-        // Update _maxSpeed, _acceleration and _deceleration values whenever movement stats are changed.
-        if (_playerEntity != null)
-        {
-            if (_maxSpeed != _playerEntity.Stats.MoveSpeed)
-            {
-                _maxSpeed = _playerEntity.Stats.MoveSpeed;
-                _acceleration = _maxSpeed / _accelerationSeconds;
-                _deceleration = _maxSpeed / _decelerationSeconds;
-            }
-        }
-
-        // Because move speed right before moment of knockback must be preserved for correct calculations,
-        // simply stop recording new movement values instead of completely skipping the MoveCase method.
-        _moveInputUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
-
-        if (_moveInputUnitVector != Vector3.zero)
-        {
-            Accelerate();
-        }
-        else
-        {
-            Decelerate();
-        }
-
-        // Apply knockback until it has dissipated.
-        if (_externalKnockbackVelocity.sqrMagnitude > 1e-6f)
-        {
-            // optional clamp to avoid crazy impulses
-            // if (externalVelocity.magnitude > 100f)
-            //     externalVelocity = externalVelocity.normalized * 100f;
-
-            _characterController.Move(Time.deltaTime * _externalKnockbackVelocity);
-            _externalKnockbackVelocity = Vector3.Lerp(_externalKnockbackVelocity, Vector3.zero, Time.deltaTime * _kbDamping);
-        }
-
-        // facing the movement stuff, turning player around
-        if (_kbControlsLockTimer <= 0 && !strafe && lateralVector.sqrMagnitude > 0.0001f)
-        {
-            Quaternion qa = transform.rotation;
-            Quaternion qb = Quaternion.LookRotation(lateralVector, Vector3.up);
-            float t = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, _characterRotationDamping));
-            transform.rotation = Quaternion.Slerp(qa, qb, t);
-        }
-    }
-
-    /// <summary>
-    ///   Accelerates the player character during any frame this method is called up to the max movement speed.
-    /// </summary>
-    private void Accelerate()
-    {
-        Vector3 accelIncrement = Time.deltaTime * _acceleration * _moveInputUnitVector;
-
-        // Limit lateral move speed to _maxSpeed.
-        if (lateralVector.magnitude < _maxSpeed)
-        {
-            // If acceleration increment for the current frame exceeds _maxSpeed,
-            // then set current speed to exactly _maxSpeed.
-            if (lateralVector.magnitude + accelIncrement.magnitude > _maxSpeed)
-            {
-                accelIncrement = (_maxSpeed - lateralVector.magnitude) * _moveInputUnitVector;
-            }
-        }
-        else
-        {
-            accelIncrement = Vector3.zero;
-        }
-
-        lateralVector = lateralVector.magnitude * _moveInputUnitVector;
-        lateralVector += accelIncrement;
-        _characterController.Move(Time.deltaTime * lateralVector);
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Decelerates the player character during any frame this method is called until fully stopped.
+    ///     Decelerates the player character on any frame this method is called until fully stopped.
     ///   </para>
     /// </summary>
     private void Decelerate()
     {
         // Skip deceleration calculations if not moving.
-        if (lateralVector.magnitude > 0)
+        if (lateralVelocityVector.magnitude <= 0) return;
+
+        Vector3 decelDecrement = Time.deltaTime * _deceleration * lateralVelocityVector.normalized;
+
+        // If deceleration decrement for the current frame exceeds zero,
+        // then set current speed to exactly zero.
+        if (lateralVelocityVector.magnitude - decelDecrement.magnitude < 0)
         {
-            Vector3 decelIncrement = Time.deltaTime * _deceleration * lateralVector.normalized;
-
-            // If deceleration decrement for the current frame exceeds zero,
-            // then set current speed to exactly zero.
-            if (lateralVector.magnitude - decelIncrement.magnitude < 0)
-            {
-                lateralVector = Vector3.zero;
-                decelIncrement = Vector3.zero;
-            }
-
-            lateralVector -= decelIncrement;
-            _characterController.Move(Time.deltaTime * lateralVector);
+            lateralVelocityVector = Vector3.zero;
+            decelDecrement = Vector3.zero;
         }
+
+        lateralVelocityVector -= decelDecrement;
+        _characterController.Move(Time.deltaTime * lateralVelocityVector);
     }
 
     /// <summary>
     ///   <para>
-    ///     Executes a sequence of conditions during any frame that jump is inputted.
+    ///     Gets the combined max speed value considering all current speed parameters on any frame this
+    ///     method is called.
     ///   </para>
     /// </summary>
-    /// <param name="context"> The jump input context. </param>
-    private void JumpInputActionStarted(InputAction.CallbackContext context)
+    /// <returns> The aggregate max speed value. </returns>
+    private float CalculateAggregateMaxSpeedValue()
     {
-        if (_kbControlsLockTimer > 0) return;
-        
-        // If on the ground and not dashing, then jump.
-        if (IsGrounded() && !_isDashing)
-        {
-            _didPerformJump = true;
-        }
-        // Otherwise, begin hovering if not on the ground and not dashing.
-        else if (!IsGrounded() && !_isDashing)
-        {
-            _isHovering = true;
-        }
-
-        // Begin the window of time for double-tapping the jump input if not already initiated.
-        if (_currBoostDoubleTapTime == _boostDoubleTapWindow)
-        {
-            StartCoroutine(BoostDoubleTapTimer());
-        }
-        // Otherwise, if the window of time has not closed then begin boosting.
-        else if (IsWithinBoostWindow())
-        {
-            _isHovering = false;
-            _isBoosting = true;
-        }
+        return _maxSpeed * _currSprintMultiplier;
     }
 
     /// <summary>
     ///   <para>
-    ///     Failsafe to ensure the player character stops hovering or boosting when
-    ///     the jump input is no longer held.
+    ///     Recalculates the acceleration and deceleration rates for the aggregate max speed value on any
+    ///     frame this method is called.
     ///   </para>
     /// </summary>
-    /// <param name="context"> The jump input context. </param>
-    private void JumpInputActionCanceled(InputAction.CallbackContext context)
+    private void RecalculateAccelDecel()
     {
-        _isHovering = false;
-        _aggregateGravityModifier = _gravityMultiplier;
-
-        _isBoosting = false;
-
+        float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
+        _acceleration = aggregateMaxSpeedValue / _accelerationSeconds;
+        _deceleration = aggregateMaxSpeedValue / _decelerationSeconds;
     }
 
     /// <summary>
     ///   <para>
-    ///     Makes the player character jump if the conditions necessary are satisfied
-    ///     during the frame this method is called.
+    ///     Toggles sprinting for the player character on any frame that sprint is inputted.
     ///   </para>
     /// </summary>
-    private void JumpCase()
+    /// <param name="context"> The sprint input context. </param>
+    private void SprintInputActionStarted(InputAction.CallbackContext context)
     {
-        // If on the ground and jump was inputted, then jump. 
-        // Disable stepOffset to prevent buggy movement behavior when near edges.
-        if (_didPerformJump && IsGrounded())
+        if (_isSprinting)
         {
-            _didPerformJump = false;
-            _verticalVector.y = _JumpHeight;
-            _characterController.stepOffset = 0;
-
-            _characterController.Move(Time.deltaTime * _verticalVector);
+            DisableSprint();
         }
-        // Otherwise, if still in midair then keep stepOffset disabled.
-        else if (!IsGrounded())
-        {
-            _characterController.stepOffset = 0;
-        }
-        // Otherwise, reset boosting status, gravity force and stepOffset to original states
-        // because player charater is on the ground.
         else
         {
-            _isBoosting = false;
-            _verticalVector.y = -0.5f;
-            _characterController.stepOffset = _originalStepOffset;
+            EnableSprint();
         }
     }
 
     /// <summary>
     ///   <para>
-    ///     Hovers the player character if the necessary conditions are satisfied
-    ///     during the frame this method is called.
+    ///     Sets the current sprint multiplier value to _sprintMultiplier and recalculates acceleration
+    ///     and deceleration on any frame this method is called.
     ///   </para>
     /// </summary>
-    private void HoverCase()
+    private void EnableSprint()
     {
-        // Cease hovering if jump input is no longer held or the player character landed.
-        if ((_isHovering && !jumpActions.IsPressed()) || IsGrounded())
-        {
-            _isHovering = false;
-            _aggregateGravityModifier = _gravityMultiplier;
-        }
-
-        // Only modify gravity for hovering while falling.
-        if (_isHovering && jumpActions.IsPressed() && _verticalVector.y < 0)
-        {
-            _aggregateGravityModifier = _gravityMultiplier * _hoverDescentReductionMultiplier;
-        }
+        _isSprinting = true;
+        _currSprintMultiplier = _sprintMultiplier;
+        RecalculateAccelDecel();
     }
 
     /// <summary>
     ///   <para>
-    ///     Boosts the player character if the necessary conditions are satisfied
-    ///     during the frame this method is called.
+    ///     Sets the current sprint multiplier value to 1 and recalculates acceleration and deceleration
+    ///     on any frame this method is called.
     ///   </para>
     /// </summary>
-    private void BoostCase()
+    private void DisableSprint()
     {
-        // Cease hovering if jump input is no longer held or boost energy is depleted.
-        if ((_isBoosting && !jumpActions.IsPressed()) || _currBoostEnergy <= 0)
-        {
-            _isBoosting = false;
-        }
-
-        // If in midair, jump input was double-tapped and is still held, and boost energy is not depleted, then boost.
-        if (!IsGrounded() && _isBoosting && jumpActions.IsPressed() && _currBoostEnergy > 0)
-        {
-            Vector3 boostSpeedIncrement = Time.deltaTime * _boostAcceleration * Vector3.up;
-            float boostDepletionDecrement = Time.deltaTime * _boostDepletionRate;
-
-            // If boost energy decrement for the current frame does not exceed zero,
-            // then decrease current boost energy by the full decrement.
-            if (_currBoostEnergy - boostDepletionDecrement > 0)
-            {
-                _currBoostEnergy -= boostDepletionDecrement;
-            }
-            // Otherwise set current boost energy to exactly zero and immediately begin hovering.
-            else
-            {
-                _currBoostEnergy = 0;
-                _isHovering = true;
-            }
-
-            // Limit vertical move speed to _maxBoostSpeed.
-            if (_verticalVector.magnitude < _maxBoostSpeed)
-            {
-                _verticalVector += boostSpeedIncrement;
-
-                // If boost increment for the current frame exceeds _maxBoostSpeed,
-                // then set vertical move speed to exactly _maxBoostSpeed.
-                if (_verticalVector.magnitude > _maxBoostSpeed)
-                {
-                    _verticalVector = new Vector3(_verticalVector.x, _maxBoostSpeed, _verticalVector.z);
-                }
-            }
-
-            _characterController.Move(Time.deltaTime * _verticalVector);
-        }
-
-        // Initialize regeneration coroutine if boosted, on the ground and not already regenerating.
-        if (IsGrounded() && _currBoostEnergy < _maxBoostEnergy && !_isRegeneratingBoost)
-        {
-            StartCoroutine(BoostRegeneration());
-        }
+        _isSprinting = false;
+        _currSprintMultiplier = 1;
+        RecalculateAccelDecel();
     }
 
     /// <summary>
     ///   <para>
-    ///     Coroutine for regenerating boost energy to full capacity over time.
+    ///     Makes the player character hover if the necessary conditions are satisfied on any frame this
+    ///     method is called.
     ///   </para>
     /// </summary>
-    /// <returns> IEnumerator object. </returns>
-    private IEnumerator BoostRegeneration()
+    private void HoverConditions()
     {
-        _isRegeneratingBoost = true;
+        // Skip hover calculations if not on the ground.
+        if (!IsGrounded) return;
 
-        while (_currBoostEnergy <= _maxBoostEnergy)
+        _currHoverHeight = _groundPoint.point.y + _hoverHeight;
+        float playerCharacterBottomHeight = GetPlayerCharacterBottom().y;
+        float hoverHeightDisplacement = _currHoverHeight - playerCharacterBottomHeight;
+
+        // Skip pull and damping calculations and set position of the bottom of the player character exactly to current
+        // hover height if it is very close to it.
+        if (Mathf.Abs(hoverHeightDisplacement) < 1e-2f && Mathf.Abs(_verticalVelocityVector.y) < 0.1f)
         {
-            // Cancel boost energy regeneration if boost was inputted.
-            if (_isBoosting)
-            {
-                break;
-            }
-
-            _currBoostEnergy += Time.deltaTime * _boostRegenerationRate;
-
-            // If boost regeneration increment for the current frame exceeds _maxBoostEnergy,
-            // then set boost energy to exactly _maxBoostEnergy.
-            if (_currBoostEnergy > _maxBoostEnergy)
-            {
-                _currBoostEnergy = _maxBoostEnergy;
-            }
-
-            yield return null;
+            transform.position = new Vector3(_playerCenter.position.x, _currHoverHeight + _playerHalfHeight, _playerCenter.position.z);
+            hoverHeightDisplacement = 0;
+            _verticalVelocityVector.y = 0;
+            return;
         }
 
-        _isRegeneratingBoost = false;
+        float hoverPullForce = _hoverPullStrength * hoverHeightDisplacement; // Pull player character into the direction of current hover height.
+        float hoverDampingForce = _hoverDampingStrength * -_verticalVelocityVector.y; // Apply force in the opposite direction to dampen.
+        float hoverTotalPullForce = hoverPullForce + hoverDampingForce; // Combine pull and dampen forces.
+
+        _verticalVelocityVector.y += Time.deltaTime * hoverTotalPullForce;
+        _characterController.Move(Time.deltaTime * _verticalVelocityVector);
     }
 
     /// <summary>
     ///   <para>
-    ///     Coroutine for tracking the window of time in which the jump input can be double-tapped.
+    ///     Gets the location of the bottom of the player character.
     ///   </para>
     /// </summary>
-    /// <returns> IEnumerator object. </returns>
-    private IEnumerator BoostDoubleTapTimer()
+    /// <returns> The location of the bottom of the player character. </returns>
+    private Vector3 GetPlayerCharacterBottom()
     {
-        while (IsWithinBoostWindow())
-        {
-            _currBoostDoubleTapTime -= Time.deltaTime;
-
-            yield return null;
-        }
-
-        _currBoostDoubleTapTime = _boostDoubleTapWindow;
+        return new Vector3(_playerCenter.position.x, _playerCenter.position.y - _playerHalfHeight, _playerCenter.position.z);
     }
 
     /// <summary>
     ///   <para>
-    ///     Checks if the window of time in which the jump input can be double-tapped has
-    ///     closed during the frame this method is called.
-    ///   </para>
-    /// </summary>
-    /// <returns> True if the window of time has not closed, otherwise false. </returns>
-    private bool IsWithinBoostWindow()
-    {
-        return _currBoostDoubleTapTime > 0;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Executes a sequence of conditions during any frame that dash is inputted.
+    ///     Executes a sequence of dash conditions on any frame that dash is inputted.
     ///   </para>
     /// </summary>
     /// <param name="context"> The dash input context. </param>
     private void DashInputActionStarted(InputAction.CallbackContext context)
     {
         // Check if the player character is being knocked back.
-        if (_kbDashLockTimer > 0f) return;
+        if (_kbDashLockTimer > 0) return;
 
-        _dashVector = GetMoveInputDirection();
+        _dashDirectionUnitVector = GetMoveInputDirection();
 
-        if (_dashCharges != 0)
+        if (_currDashCharges != 0 && !_isDashing)
         {
             // If not moving, default dash direction is forward.
-            if (_dashVector.x == 0 && _dashVector.z == 0)
+            if (_dashDirectionUnitVector.x == 0 && _dashDirectionUnitVector.z == 0)
             {
-                _dashVector = GetComponentInParent<Transform>().forward;
+                _dashDirectionUnitVector = GetComponentInParent<Transform>().forward;
             }
 
-            StartCoroutine(InitiateDashCooldown(_dashCooldown));
-            StartCoroutine(InitiateDashDuration(_dashDistance / _dashSpeed));
+            _currDashCharges--;
+
+            // Only initialize regeneration coroutine if it hasn't already.
+            if (_currDashCharges == _dashCharges - 1)
+            {
+                StartCoroutine(DashChargesRegeneration());
+            }
+
+            float dashDuration = _dashDistance / _dashSpeed;
+            StartCoroutine(InitiateDashDuration(dashDuration));
+            DashCooldownStarted?.Invoke(dashDuration); // Notify listener to start the dash fade visual effect.
         }
     }
 
     /// <summary>
     ///   <para>
-    ///     Makes the player character dash if the necessary conditions are satisfied
-    ///     during the frame this method is called.
+    ///     Makes the player character dash on any frame this method is called.
     ///   </para>
     /// </summary>
-    private void DashCase()
+    private void DashConditions()
     {
-        if (IsGrounded())
+        if (_isBoosting)
         {
-            _verticalVector.y = -0.5f;
-        }
-        else if (_isBoosting)
-        {
-            BoostCase();
-        }
-        else
-        {
-            ApplyGravity();
+            BoostConditions();
         }
 
-        _characterController.Move(Time.deltaTime * _dashSpeed * _dashVector);
+        _characterController.Move(Time.deltaTime * _dashSpeed * _dashDirectionUnitVector);
     }
 
     /// <summary>
     ///   <para>
-    ///     Coroutine for regenerating individual dash charges over time.
+    ///     Coroutine for regenerating dash charges over time.
     ///   </para>
     /// </summary>
     /// <param name="seconds"> The cooldown time for dash regeneration. </param>
     /// <returns> IEnumerator object. </returns>
-    private IEnumerator InitiateDashCooldown(float seconds)
+    private IEnumerator DashChargesRegeneration()
     {
-        _dashCharges--;
-        DashCooldownStarted?.Invoke(seconds); // Tell listener to start the faded.
-
-        yield return new WaitForSeconds(seconds);
-
-        _dashCharges++;
+        while (_currDashCharges != _dashCharges)
+        {
+            yield return new WaitForSeconds(_dashCooldown);
+            _currDashCharges++;
+        }
     }
 
     /// <summary>
@@ -690,21 +676,266 @@ public class PlayerMovement : MonoBehaviour
         _isDashing = false;
     }
 
-    //private void OnDrawGizmos()
-    //{
-    //    Gizmos.color = Color.red;
+    /// <summary>
+    ///   <para>
+    ///     Executes a sequence of jump conditions on any frame that jump is inputted.
+    ///   </para>
+    /// </summary>
+    /// <param name="context"> The jump input context. </param>
+    private void JumpInputActionStarted(InputAction.CallbackContext context)
+    {
+        if (_kbControlsLockTimer > 0) return;
 
-    //    // Exact Center of the player's character.
-    //    Gizmos.DrawRay(playerCenter.position, Vector2.down * groundedRaycastFloorDistance);
+        if (!_isDashing)
+        {
+            _inputtedJumpThisFrame = true;
+            _jumpBufferTimer = _jumpBufferWindow;
+        }
+        
+        // Toggle drifting if in midair.
+        if (_isDrifting && !IsGrounded && !_isDashing)
+        {
+            DisableDrift();
+        }
+        else if (!_isDrifting && !IsGrounded && !_isDashing)
+        {
+            EnableDrift();
+        }
 
-    //    // Four corners of the player's character.
-    //    for (int i = -1; i <= 1; i += 2)
-    //    {
-    //        for (int j = -1; j <= 1; j += 2)
-    //        {
-    //            Gizmos.DrawRay(playerCenter.position + new Vector3(groundedRaycastRadialDistance * i, 0, groundedRaycastRadialDistance * j),
-    //                           Vector2.down * groundedRaycastFloorDistance);
-    //        }
-    //    }
-    //}
+        // Begin the window of time for double-tapping the jump input if not already initiated.
+        if (!IsWithinBoostWindow())
+        {
+            _boostDoubleTapTimer = _boostDoubleTapWindow;
+        }
+        // Otherwise, if the window of time has not closed then begin boosting.
+        else
+        {
+            DisableDrift(); // Disable drift because it may have been enabled earlier in the method.
+            _isBoosting = true;
+        }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Ensures the player character stops boosting on any frame that the jump input is released.
+    ///   </para>
+    /// </summary>
+    /// <param name="context"> The jump input context. </param>
+    private void JumpInputActionCanceled(InputAction.CallbackContext context)
+    {
+        _isBoosting = false;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Makes the player character jump if the necessary conditions are satisfied
+    ///     on any frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void JumpConditions()
+    {
+        // If on the ground and jump was inputted and jump buffer window is valid, or if walked off an edge and coyote time window is valid, then jump.
+        if ( (IsGrounded && IsWithinJumpBufferWindow()) || (_inputtedJumpThisFrame && !IsGrounded && IsWithinCoyoteTimeWindow()) )
+        {
+            _coyoteTimer = 0;
+            _jumpBufferTimer = 0;
+            _groundedCastPauseTimer = _groundedCastJumpPauseDuration;
+            _verticalVelocityVector.y = _JumpForce;
+
+            _characterController.Move(Time.deltaTime * _verticalVelocityVector);
+        }
+        // Otherwise, reset coyote time and jump buffer time to original states
+        // because player charater is on the ground.
+        else if (IsGrounded)
+        {
+            _coyoteTimer = _coyoteTimeWindow;
+            _jumpBufferTimer = 0;
+        }
+
+        _inputtedJumpThisFrame = false;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Checks if the window of time in which coyote time is valid has closed on any
+    ///     frame this method is called.
+    ///   </para>
+    /// </summary>
+    /// <returns> True if the window of time has not closed, otherwise false. </returns>
+    private bool IsWithinCoyoteTimeWindow()
+    {
+        return _coyoteTimer > 0;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Checks if the window of time in which jump buffer is valid has closed on any
+    ///     frame thise method is called.
+    ///   </para>
+    /// </summary>
+    /// <returns> True if the window of time has not closed, otherwise false. </returns>
+    private bool IsWithinJumpBufferWindow()
+    {
+        return _jumpBufferTimer > 0;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Initiates drifting for the player character if the necessary conditions are satisfied
+    ///     on any frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void DriftConditions()
+    {
+        // Cease drifting if the player character landed.
+        if (_isDrifting && IsGrounded)
+        {
+            DisableDrift();
+        }
+
+        // Only modify gravity for drifting while falling and while the coyote time and jump buffer windows are invalid.
+        if (AreDriftRequirementsValid() && _verticalVelocityVector.y <= 0)
+        {
+            float timeRatio = _driftDelayTimer / _driftDelay;
+
+            if (timeRatio > 0)
+            {
+                _currDriftDescentDivisor = _driftDescentDivisor + (timeRatio * (1 - _driftDescentDivisor));
+            }
+            else
+            {
+                _currDriftDescentDivisor = _driftDescentDivisor;
+            }
+        }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Checks if the necessary conditions for drifting have all been met on any frame this
+    ///     method is called.
+    ///   </para>
+    /// </summary>
+    /// <returns> True if the conditions are all met, otherwise false. </returns>
+    private bool AreDriftRequirementsValid()
+    {
+        return _isDrifting && !IsWithinCoyoteTimeWindow() && !IsWithinJumpBufferWindow();
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Sets drifting status to true and sets the drift delay timer to 0 on any frame this
+    ///     method is called.
+    ///   </para>
+    /// </summary>
+    private void EnableDrift()
+    {
+        _isDrifting = true;
+        _driftDelayTimer = _driftDelay;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Sets drifting status to false and sets the drift descent reduction multiplier to 1 on any
+    ///     frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void DisableDrift()
+    {
+        _isDrifting = false;
+        _currDriftDescentDivisor = 1;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Boosts the player character if the necessary conditions are satisfied
+    ///     on any frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void BoostConditions()
+    {
+        // Cease drifting if jump input is no longer held or boost energy is depleted.
+        if ( (_isBoosting && !jumpActions.IsPressed()) || _currBoostEnergy <= 0 )
+        {
+            _isBoosting = false;
+        }
+
+        // If in midair, jump input was double-tapped and is still held, and boost energy is not depleted, then boost.
+        if (!IsGrounded && _isBoosting && jumpActions.IsPressed() && _currBoostEnergy > 0)
+        {
+            float boostSpeedIncrement = Time.deltaTime * _boostAcceleration;
+            float boostDepletionDecrement = Time.deltaTime * _boostDepletionRate;
+            
+            _currBoostEnergy -= boostDepletionDecrement;
+
+            // If boost energy decrement for the current frame exceeds zero, then set
+            // current boost energy to exactly zero and immediately begin drifting.
+            if (_currBoostEnergy < 0)
+            {
+                _currBoostEnergy = 0;
+                EnableDrift();
+            }
+
+            _verticalVelocityVector.y += boostSpeedIncrement;
+
+            // Limit vertical move speed to _maxBoostSpeed.
+            if (_verticalVelocityVector.y > _maxBoostSpeed)
+            {
+                _verticalVelocityVector.y = _maxBoostSpeed;
+            }
+
+            _characterController.Move(Time.deltaTime * _verticalVelocityVector);
+        }
+
+        // Initialize regeneration coroutine if boosted, on the ground and not already regenerating.
+        if (IsGrounded && _currBoostEnergy < _maxBoostEnergy && !_isRegeneratingBoost)
+        {
+            StartCoroutine(BoostRegeneration());
+        }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Coroutine for regenerating boost energy to full capacity over time.
+    ///   </para>
+    /// </summary>
+    /// <returns> IEnumerator object. </returns>
+    private IEnumerator BoostRegeneration()
+    {
+        _isRegeneratingBoost = true;
+
+        while (_currBoostEnergy < _maxBoostEnergy)
+        {
+            // Cancel boost energy regeneration if boost was inputted.
+            if (_isBoosting)
+            {
+                break;
+            }
+
+            _currBoostEnergy += Time.deltaTime * _boostRegenerationRate;
+
+            // If boost regeneration increment for the current frame exceeds _maxBoostEnergy,
+            // then set boost energy to exactly _maxBoostEnergy.
+            if (_currBoostEnergy >= _maxBoostEnergy)
+            {
+                _currBoostEnergy = _maxBoostEnergy;
+                break;
+            }
+
+            yield return null;
+        }
+
+        _isRegeneratingBoost = false;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Checks if the window of time in which the jump input can be double-tapped has
+    ///     closed on any frame this method is called.
+    ///   </para>
+    /// </summary>
+    /// <returns> True if the window of time has not closed, otherwise false. </returns>
+    private bool IsWithinBoostWindow()
+    {
+        return _boostDoubleTapTimer > 0;
+    }
 }

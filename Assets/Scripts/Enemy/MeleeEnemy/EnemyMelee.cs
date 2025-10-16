@@ -16,7 +16,7 @@ public class EnemyMelee : Enemy
 
 
     [Header("Slam attack")]
-    public int slamDamage = 1;
+    public float slamDamage = 1;
     public float windupTime = .15f;
     public float chargeSpeed = 12f;
     public float chargetTime = .18f;
@@ -86,7 +86,8 @@ public class EnemyMelee : Enemy
 
     public void InitializeSlamDamage(float newDamage)
     {
-        this.slamDamage = Mathf.CeilToInt(newDamage);
+        // this.slamDamage = Mathf.CeilToInt(newDamage);
+        this.slamDamage = newDamage;
         Debug.Log("Slam Damage: " + this.slamDamage);
     }
 
@@ -95,5 +96,7 @@ public class EnemyMelee : Enemy
     public EnemyState GetAttack() => attack;
     public EnemyState GetRecovery() => recovery;
 
-    public float GetBaseDamage() => Mathf.CeilToInt(slamDamage);
+    // public float GetBaseDamage() => Mathf.CeilToInt(slamDamage);
+    public float GetBaseDamage() => slamDamage;
+
 }

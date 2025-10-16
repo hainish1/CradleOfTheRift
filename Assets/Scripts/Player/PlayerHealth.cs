@@ -8,9 +8,17 @@ public class PlayerHealth : HealthController
     private Entity playerEntity;
     public event Action LoseScreen;
 
-    public event Action<int, int> healthChanged;
-    public int CurrentHealth => currentHealth;
-    public int MaxHealth => maxHealth;
+    public event Action<float, float> healthChanged;
+    public float CurrentHealth => currentHealth;
+    public float MaxHealth => maxHealth;
+
+    private bool canTakeDamage = true;
+
+    public static PlayerHealth instance;
+    void Awake()
+    {
+        instance = this;
+    }
 
     void Start()
     {
@@ -18,7 +26,8 @@ public class PlayerHealth : HealthController
 
         if (playerEntity != null)
         {
-            maxHealth = Mathf.RoundToInt(playerEntity.Stats.Health);
+            // maxHealth = Mathf.RoundToInt(playerEntity.Stats.Health);
+            maxHealth = playerEntity.Stats.Health;
 
             currentHealth = maxHealth;
 
@@ -31,7 +40,8 @@ public class PlayerHealth : HealthController
     {
         if (playerEntity != null)
         {
-            int newMaxHealth = Mathf.RoundToInt(playerEntity.Stats.Health);
+            // int newMaxHealth = Mathf.RoundToInt(playerEntity.Stats.Health);
+            float newMaxHealth = playerEntity.Stats.Health;
 
             // If max health changed (due to item pickup), adjust current health proportionally
             if (newMaxHealth != maxHealth)
@@ -64,11 +74,24 @@ public class PlayerHealth : HealthController
     {
         return (float)currentHealth / maxHealth;
     }
-    
-    public override void TakeDamage(int damage)
+
+    public override void TakeDamage(float damage)
     {
+        if (canTakeDamage == false) return;
         base.TakeDamage(damage);
         healthChanged?.Invoke(currentHealth, maxHealth);
         Debug.Log($"[PLAYER HEALTH] Player took {damage} damage, current health: {currentHealth}/{maxHealth}");
+    }
+
+    public virtual void RestoreFullHealth()
+    {
+        currentHealth = maxHealth;
+        healthChanged?.Invoke(currentHealth, maxHealth);
+        Debug.Log("Health Fully Resotored");
+    }
+
+    public virtual void SetCanTakeDamage(bool enable)
+    {
+        this.canTakeDamage = enable;
     }
 }
