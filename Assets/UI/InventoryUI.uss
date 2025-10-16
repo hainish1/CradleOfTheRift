@@ -19,27 +19,30 @@
 }
 
 
-/* Scrollable grid wrapper */
+/* wrapper that holds the scrollable area */
 .scroll-view {
-    width: 500px; /* or adapt to screen width */
-    overflow-x: auto; 
-    overflow-y: hidden;
+    width: 500px; /* change to taste */
+    height: 300px; /* allows vertical scrolling when many rows */
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
-/* Grid inside scroll view */
+/* make this a real flex container, left-to-right, wrapping */
 .item-grid {
+    display: flex;          /* <-- required */
     flex-direction: row;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;        /* wrap to next row when full */
     gap: 6px;
-    justify-content: flex-start; /* items added to the right */
-    align-items: center;
+    justify-content: flex-start;
+    align-items: flex-start;
 }
 
-/* Item slot styling */
+/* fixed-size slots that won't shrink */
 .inventory-slot {
     position: relative;
     width: 64px;
     height: 64px;
+    flex: 0 0 auto;         /* <-- prevents shrinking/growing */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -47,6 +50,7 @@
     border: 1px solid #888;
     background-color: rgba(255, 255, 255, 0.05);
 }
+
 
 .item-icon {
     width: 56px;
