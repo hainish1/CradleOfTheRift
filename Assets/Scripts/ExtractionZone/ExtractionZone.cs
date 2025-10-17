@@ -14,7 +14,10 @@ public class ExtractionZone : MonoBehaviour
     public event Action ExtractionInteracted;
     public event Action ExtractionFinished;
     public event Action WinScreen;
-    
+    public float ChargeTime => this.chargeTime;
+
+    [SerializeField] private TimerUI timerUI;
+    [SerializeField] private GameObject extractionBeam;
 
     // Update is called once per frame
     void Update()
@@ -66,5 +69,31 @@ public class ExtractionZone : MonoBehaviour
         }
     }
 
-    public float ChargeTime => this.chargeTime;
+    private void OnEnable()
+    {
+        if (timerUI != null)
+        {
+            timerUI.DisplayExtraction += OnDisplayExtraction;
+            timerUI.DisplayEndGame += OnDisplayEndGame;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (timerUI != null)
+        {
+            timerUI.DisplayExtraction -= OnDisplayExtraction;
+            timerUI.DisplayEndGame -= OnDisplayEndGame;
+        }
+    }
+
+    private void OnDisplayExtraction()
+    {
+        extractionBeam.SetActive(true);
+    }
+
+    private void OnDisplayEndGame()
+    {
+        Debug.Log("Spawner received DisplayEndGame event!");
+    }
 }

@@ -12,8 +12,8 @@ public class TimerUI : MonoBehaviour
     private bool hasDisplayedExtraction = false;
     private bool hasTimeEnded = false;
 
-    private float timeToDisplayExtraction = 180f;
-    private float timeEnd = 320f;
+    private float timeToDisplayExtraction = 20f;
+    private float timeEnd = 40f;
 
     public event Action DisplayExtraction;
     public event Action DisplayEndGame;
