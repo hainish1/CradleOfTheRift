@@ -11,6 +11,9 @@
         <ui:VisualElement name="HealthContainer" style="flex-grow: 1; align-items: flex-start; justify-content: flex-start;">
             <ui:ProgressBar name="HealthBar" style="visibility: hidden;" />
         </ui:VisualElement>
+        <ui:VisualElement name="TimerContainer" style="flex-grow: 1;">
+            <ui:Label text="Label" name="TimerLabel" />
+        </ui:VisualElement>
     </ui:VisualElement>
     <ui:VisualElement name="SpawnerDev" style="flex-grow: 1; position: absolute; top: 42px; left: 438px; width: 291px; height: 216px;">
         <ui:Label name="CurrentEnemyCount" />
