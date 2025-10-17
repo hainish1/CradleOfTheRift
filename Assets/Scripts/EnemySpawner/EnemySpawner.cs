@@ -349,7 +349,7 @@ public class EnemySpawner : MonoBehaviour
     private bool IsSpawnPositionOnNavSurface(Vector3 pos)
     {
         NavMeshHit hit;
-        return NavMesh.SamplePosition(pos, out hit, spawnRadius, NavMesh.AllAreas);
+        return NavMesh.SamplePosition(pos, out hit, 2f, NavMesh.AllAreas);
     }
 
     private void OnEnemyDied(EnemyHealth enemy)
@@ -410,7 +410,7 @@ public class EnemySpawner : MonoBehaviour
         {
             Vector3 potentialLocation = GetGroundLocation();
 
-            bool isFree = IsSpawnPositionOnNavSurface(potentialLocation) && IsSpawnLocationFree(potentialLocation, radius);
+            bool isFree = IsSpawnPositionOnNavSurface(potentialLocation);
 
             spawnDebugList.Add((potentialLocation, isFree));
             if (isFree)
@@ -433,6 +433,7 @@ public class EnemySpawner : MonoBehaviour
         Vector3 worldSize = Vector3.Scale(box.size, box.transform.lossyScale);
 
         float size = Mathf.Max(worldSize.x, worldSize.z) * 0.5f * 1.1f;
+        Debug.Log("ENEMY SIZE: " + size);
         return size;
     }
 }
