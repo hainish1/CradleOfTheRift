@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -18,6 +19,10 @@ public class ExtractionZone : MonoBehaviour
 
     [SerializeField] private TimerUI timerUI;
     [SerializeField] private GameObject extractionBeam;
+
+    [Header("Beam Grow Settings")]
+    private Coroutine beamGrowRoutine;
+
 
     // Update is called once per frame
     void Update()
@@ -90,7 +95,41 @@ public class ExtractionZone : MonoBehaviour
     private void OnDisplayExtraction()
     {
         extractionBeam.SetActive(true);
+
+        // Animate beam growth when it appears
+        if (beamGrowRoutine != null)
+            StopCoroutine(beamGrowRoutine);
+
+        beamGrowRoutine = StartCoroutine(GrowBeam());
     }
+
+    private IEnumerator GrowBeam()
+    {
+        float finalHeight = 10f;
+        Vector3 startScale = new Vector3(0.5f, 0f, 0.5f);
+        Vector3 endScale = new Vector3(0.5f, finalHeight, 0.5f);
+
+        extractionBeam.transform.localScale = startScale;
+
+        float elapsed = 0f;
+        float duration = 1f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            float yScale = Mathf.Lerp(0f, finalHeight, t);
+            extractionBeam.transform.localScale = new Vector3(0.5f, yScale, 0.5f);
+            yield return null;
+        }
+
+        extractionBeam.transform.localScale = endScale;
+
+        // Move the beam up by half the final height
+        // Use localPosition if it's parented to keep it relative
+        extractionBeam.transform.localPosition = new Vector3(0f, finalHeight, 0f);
+    }
+
 
     private void OnDisplayEndGame()
     {
