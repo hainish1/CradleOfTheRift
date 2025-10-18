@@ -10,6 +10,8 @@ public class ExtractionZone : MonoBehaviour
     private float currentCharge = 0f;
     private bool isExtracting = false;
     private bool isInteracted = false;
+    private bool hasFinishedExtracting = false;
+
 
     public event Action<float> ChargeChanged;
     public event Action ExtractionInteracted;
@@ -62,22 +64,29 @@ public class ExtractionZone : MonoBehaviour
             this.isExtracting = false;
         }
     }
-
     private void OnExtraction()
     {
         if (this.isExtracting & this.currentCharge < this.chargeTime)
         {
-            float zeroValue = 0f;
-            this.currentCharge = Math.Clamp(this.currentCharge + Time.deltaTime, zeroValue, this.chargeTime);
-            this.ChargeChanged?.Invoke(this.currentCharge);
+            this.currentCharge = Math.Clamp(this.currentCharge + Time.deltaTime, 0, this.chargeTime);
 
-            if (this.currentCharge == this.chargeTime)
+            if (this.currentCharge == this.chargeTime && !this.hasFinishedExtracting)
             {
+                this.hasFinishedExtracting = true;
                 PlayerHealth.instance.SetCanTakeDamage(false);
                 this.WinScreen?.Invoke();
                 this.ExtractionFinished?.Invoke();
             }
         }
+        else
+        {
+            if (!this.hasFinishedExtracting)
+            {
+                this.currentCharge = Math.Clamp(this.currentCharge - Time.deltaTime, 0, this.chargeTime);
+            }
+        }
+
+        this.ChargeChanged?.Invoke(this.currentCharge);
     }
 
     private void OnEnable()
