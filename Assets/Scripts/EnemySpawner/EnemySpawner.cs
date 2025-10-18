@@ -388,7 +388,7 @@ public bool IsDevModeEnabled
 
     private void OnDrawGizmos()
     {
-        if (playerLocation == null) return;
+        if (playerLocation == null || !this.isDevModeEnabled) return;
 
         // Draw max spawn distance (spawnRadius)
         Gizmos.color = new Color(1f, 0f, 0f, 0.3f); // red, semi-transparent

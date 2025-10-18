@@ -18,10 +18,10 @@
             <ui:Label text="Label" name="TimerLabel" />
         </ui:VisualElement>
     </ui:VisualElement>
-    <ui:VisualElement name="SpawnerDev" style="flex-grow: 1; position: absolute; top: 42px; left: 438px; width: 291px; height: 216px;">
-        <ui:Label name="CurrentEnemyCount" />
-        <ui:Label name="CurrentCredits" />
-        <ui:Label name="CurrentMaxEnemyCap" />
-        <ui:Label name="CurrentWave" />
+    <ui:VisualElement name="SpawnerDev">
+        <ui:Label name="CurrentEnemyCount" text="Current Enemy Count: 0" />
+        <ui:Label name="CurrentCredits" text="Current Credits: N/A" />
+        <ui:Label name="CurrentMaxEnemyCap" text="Current Max Enemy Cap: N/A" />
+        <ui:Label name="CurrentWave" text="Current Wave: 0" />
     </ui:VisualElement>
 </ui:UXML>
