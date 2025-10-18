@@ -21,7 +21,12 @@ public class ExtractionZone : MonoBehaviour
     [SerializeField] private GameObject extractionBeam;
 
     [Header("Beam Grow Settings")]
-    
+    [SerializeField] private float beamHeight = 10f;
+    [SerializeField] private float beamWidth = 0.5f;
+    [SerializeField] private float beamDuration = 1f;
+
+
+
     private Coroutine beamGrowRoutine;
 
 
@@ -106,24 +111,22 @@ public class ExtractionZone : MonoBehaviour
 
     private IEnumerator GrowBeam()
     {
-    float finalHeight = 10f;
-    Vector3 startScale = new Vector3(0.5f, 0f, 0.5f);
-    Vector3 endScale = new Vector3(0.5f, finalHeight, 0.5f);
+    Vector3 startScale = new Vector3(this.beamWidth, 0f, this.beamWidth);
+    Vector3 endScale = new Vector3(this.beamWidth, this.beamHeight, this.beamWidth);
 
     extractionBeam.transform.localScale = startScale;
-    extractionBeam.transform.localPosition = Vector3.zero; // start at 0
+    extractionBeam.transform.localPosition = Vector3.zero; 
 
     float elapsed = 0f;
-    float duration = 1f;
 
-    while (elapsed < duration)
+    while (elapsed < this.beamDuration)
     {
         elapsed += Time.deltaTime;
-        float t = elapsed / duration;
+        float t = elapsed / this.beamDuration;
 
         // Smoothly scale Y
-        float yScale = Mathf.Lerp(0f, finalHeight, t);
-        extractionBeam.transform.localScale = new Vector3(0.5f, yScale, 0.5f);
+        float yScale = Mathf.Lerp(0f, this.beamHeight, t);
+        extractionBeam.transform.localScale = new Vector3(this.beamWidth, yScale, this.beamWidth);
 
         // Smoothly move up by half the current height
         extractionBeam.transform.localPosition = new Vector3(0f, yScale, 0f);
@@ -133,7 +136,7 @@ public class ExtractionZone : MonoBehaviour
 
     // Ensure final values are exact
     extractionBeam.transform.localScale = endScale;
-    extractionBeam.transform.localPosition = new Vector3(0f, finalHeight, 0f);
+    extractionBeam.transform.localPosition = new Vector3(0f, this.beamHeight, 0f);
     }
 
 
