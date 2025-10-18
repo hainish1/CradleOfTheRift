@@ -21,6 +21,7 @@ public class ExtractionZone : MonoBehaviour
     [SerializeField] private GameObject extractionBeam;
 
     [Header("Beam Grow Settings")]
+    
     private Coroutine beamGrowRoutine;
 
 
@@ -105,29 +106,34 @@ public class ExtractionZone : MonoBehaviour
 
     private IEnumerator GrowBeam()
     {
-        float finalHeight = 10f;
-        Vector3 startScale = new Vector3(0.5f, 0f, 0.5f);
-        Vector3 endScale = new Vector3(0.5f, finalHeight, 0.5f);
+    float finalHeight = 10f;
+    Vector3 startScale = new Vector3(0.5f, 0f, 0.5f);
+    Vector3 endScale = new Vector3(0.5f, finalHeight, 0.5f);
 
-        extractionBeam.transform.localScale = startScale;
+    extractionBeam.transform.localScale = startScale;
+    extractionBeam.transform.localPosition = Vector3.zero; // start at 0
 
-        float elapsed = 0f;
-        float duration = 1f;
+    float elapsed = 0f;
+    float duration = 1f;
 
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / duration;
-            float yScale = Mathf.Lerp(0f, finalHeight, t);
-            extractionBeam.transform.localScale = new Vector3(0.5f, yScale, 0.5f);
-            yield return null;
-        }
+    while (elapsed < duration)
+    {
+        elapsed += Time.deltaTime;
+        float t = elapsed / duration;
 
-        extractionBeam.transform.localScale = endScale;
+        // Smoothly scale Y
+        float yScale = Mathf.Lerp(0f, finalHeight, t);
+        extractionBeam.transform.localScale = new Vector3(0.5f, yScale, 0.5f);
 
-        // Move the beam up by half the final height
-        // Use localPosition if it's parented to keep it relative
-        extractionBeam.transform.localPosition = new Vector3(0f, finalHeight, 0f);
+        // Smoothly move up by half the current height
+        extractionBeam.transform.localPosition = new Vector3(0f, yScale, 0f);
+
+        yield return null;
+    }
+
+    // Ensure final values are exact
+    extractionBeam.transform.localScale = endScale;
+    extractionBeam.transform.localPosition = new Vector3(0f, finalHeight, 0f);
     }
 
 
