@@ -79,12 +79,22 @@ public class EnemySpawner : MonoBehaviour
     private bool isWaveInProgress = false;
 
     //Jared UIDEV Getters
-
+    public event Action<bool> DevModeChanged;
     public event Action<int> CurrentEnemyCountChanged;
     public event Action<float> CurrentCreditsChanged;
     public event Action<int> CurrentMaxEnemyCapChanged;
     public event Action<int> CurrentWaveChanged;
-
+    [SerializeField]
+    private bool isDevModeEnabled = false;
+public bool IsDevModeEnabled
+{
+    get => this.isDevModeEnabled;
+    set
+        {
+            this.isDevModeEnabled = value;
+            DevModeChanged?.Invoke(this.isDevModeEnabled);
+    }
+}
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
