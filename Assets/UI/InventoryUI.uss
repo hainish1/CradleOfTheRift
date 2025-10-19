@@ -30,11 +30,11 @@
 
 /* Scroll area */
 .scroll-view {
-    width: auto;
-    height: auto;
+    width: 500px;
+    height: auto;      /* shrink to fit items */
+    max-height: 300px; /* optional: limit for scrolling */
     overflow-x: hidden;
-    overflow-y: hidden; /* disable scroll if you don't want it */
-    padding: 4px;
+    overflow-y: auto;  /* scroll if items exceed max-height */
 }
 
 /* Item grid */
