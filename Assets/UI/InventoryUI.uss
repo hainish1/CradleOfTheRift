@@ -15,9 +15,10 @@
     flex-direction: column;
     padding: 4px;
     background-color: rgba(10, 10, 10, 0.7);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-width: 2px;
     border-radius: 6px;
     box-shadow: 0 0 12px rgba(0, 255, 255, 0.2);
+    min-height: 64px;
 }
 
 /* Title */
@@ -30,11 +31,12 @@
 
 /* Scroll area */
 .scroll-view {
-    width: 500px;
+    width: 576px; /* 64 * 10 = 640*/
     height: auto;      /* shrink to fit items */
     max-height: 300px; /* optional: limit for scrolling */
     overflow-x: hidden;
     overflow-y: auto;  /* scroll if items exceed max-height */
+    min-height: 64px; /* same as slot size */
 }
 
 /* Item grid */
