@@ -104,6 +104,9 @@ public class Projectile : MonoBehaviour
             {
                 // HERE NOW I WILL USE THE MODIFIED DAMAGE
                 damageable.TakeDamage(actualDamage);
+
+                // checking teh event here
+                
                 Debug.Log($"Dealt {actualDamage} damage to {collision.gameObject.name}");
             }
         }
