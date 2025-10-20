@@ -12,8 +12,8 @@ public class TimerUI : MonoBehaviour
     private bool hasDisplayedExtraction = false;
     private bool hasTimeEnded = false;
 
-    private float timeToDisplayExtraction = 5f;
-    private float timeEnd = 40f;
+    private float timeToDisplayExtraction = 180f;
+    private float timeEnd = 300f;
 
     public event Action DisplayExtraction;
     public event Action DisplayEndGame;
@@ -41,6 +41,13 @@ public class TimerUI : MonoBehaviour
             this.hasDisplayedExtraction = true;
             this.DisplayExtraction?.Invoke();
             Debug.Log("Timer hit 3 minutes");
+        }
+
+        if (!this.hasTimeEnded && this.elapsedTime >= this.timeEnd)
+        {
+            this.hasTimeEnded = true;
+            this.DisplayEndGame?.Invoke();
+            Debug.Log("Timer hit 5 minutes");
         }
     }
     private void UpdateTimerUI()
