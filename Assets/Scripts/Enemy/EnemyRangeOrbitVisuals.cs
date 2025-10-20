@@ -2,6 +2,9 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// Class - Used to make the orbit like visuals for Range Enemy
+/// </summary>
 public class EnemyRangeOrbitVisuals : MonoBehaviour
 {
     [Header("Projectiles Settings")]
@@ -25,6 +28,9 @@ public class EnemyRangeOrbitVisuals : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Set the angle step for orbs, and then move and rotate then in reference to the enemy
+    /// </summary>
     void Update()
     {
         float angleStep = 360f / numOfOrbs;
@@ -44,6 +50,10 @@ public class EnemyRangeOrbitVisuals : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Hide the orb once it is shot,
+    /// </summary>
+    /// <param name="index"></param>
     public void HideOrb(int index)
     {
         if (index < 0 || index >= transforms.Length || transforms[index] == null) return;
@@ -56,19 +66,25 @@ public class EnemyRangeOrbitVisuals : MonoBehaviour
             StartCoroutine(ReEnableOrbsAfterDelay());
         }
     }
+
+    /// <summary>
+    /// After all orbs are shot, re-enable them
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator ReEnableOrbsAfterDelay()
     {
         yield return new WaitForSeconds(1f);
-        // if (index > 0 || index < transforms.Length || transforms[index] != null)
-        // {
-        //     transforms[index].gameObject.SetActive(true);
-        // }
         for (int i = 0; i < transforms.Length; i++)
         {
             transforms[i].gameObject.SetActive(true);
         }
         hiddenOrbs = 0; // set fresh
     }
+
+    /// <summary>
+    /// Get the index of next orb that needs disabling/enabling. If none are available, then ReEnable all
+    /// </summary>
+    /// <returns></returns>
     public int GetNextVisibleOrbIndex()
     {
         for (int i = 0; i < transforms.Length; i++)
@@ -76,5 +92,5 @@ public class EnemyRangeOrbitVisuals : MonoBehaviour
                 return i;
         return -1; // None available
     }
-    
+
 }

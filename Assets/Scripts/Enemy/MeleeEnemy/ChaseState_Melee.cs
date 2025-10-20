@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Class - Represents the Chase State for Melee Enemy
+/// </summary>
 public class ChaseState_Melee : EnemyState
 {
     private EnemyMelee enemyMelee;
@@ -13,6 +16,9 @@ public class ChaseState_Melee : EnemyState
 
     }
 
+    /// <summary>
+    /// What to do when Enemy enters the Chase State
+    /// </summary>
     public override void Enter()
     {
         if (enemy != null)
@@ -27,6 +33,10 @@ public class ChaseState_Melee : EnemyState
         }
     }
 
+    /// <summary>
+    /// Chase towards the player using navmeshagent
+    /// If player is in attack range, then switch to Attack State
+    /// </summary>
     public override void Update()
     {
         if (enemy.target == null) return; // if there is not target then nothing to chase

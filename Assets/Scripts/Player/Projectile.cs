@@ -104,6 +104,9 @@ public class Projectile : MonoBehaviour
             {
                 // HERE NOW I WILL USE THE MODIFIED DAMAGE
                 damageable.TakeDamage(actualDamage);
+
+                // checking teh event here
+                
                 Debug.Log($"Dealt {actualDamage} damage to {collision.gameObject.name}");
             }
         }
@@ -117,9 +120,10 @@ public class Projectile : MonoBehaviour
 
 
         // plkace to add impact effects later
-        Destroy(gameObject); // its done its job now
+        // Destroy(gameObject); // its done its job now
+        ReturnToSource(); // use object pooling
     }
-    
+
     protected void CreateImpactFX()
     {
         GameObject newFX = Instantiate(bulletImpactFX);
@@ -130,6 +134,18 @@ public class Projectile : MonoBehaviour
         // GameObject newImpacFX = ObjectPool.instance.GetObject(bulletImpactFX, transform);
         // ObjectPool.instance.ReturnObject(newImpacFX, 1f); // return the effect back to the pool after 1 second of delay
 
+    }
+    
+    private void ReturnToSource()
+    {
+        if (ObjectPool.instance != null)
+        {
+            ObjectPool.instance.ReturnObject(gameObject, 0.01f);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
 

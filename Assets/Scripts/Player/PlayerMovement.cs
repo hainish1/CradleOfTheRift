@@ -938,4 +938,54 @@ public class PlayerMovement : MonoBehaviour
     {
         return _boostDoubleTapTimer > 0;
     }
+
+
+
+
+
+    // SOME GETTERS FOR MY USE
+    public float GetGroundPoint()
+    {
+        return _groundPoint.point.y;
+    }
+
+    public float GetHoverHeight()
+    {
+        return _hoverHeight;
+    }
+
+    public float GetHalfHeight()
+    {
+        return _playerHalfHeight;
+    }
+
+    public void SetVerticalVelocityFactor(float factor)
+    {
+        _verticalVelocityVector.y = factor;
+    }
+
+    public void SnapToHoverAfterSlam()
+    {
+        float targetY = _groundPoint.point.y + _hoverHeight + _playerHalfHeight;
+
+        _characterController.Move(Vector3.up * 0.02f); // tiny upward
+
+        // move vertically to exact hover height
+        float dy = targetY - transform.position.y;
+        if (Mathf.Abs(dy) > 1e-5f)
+            _characterController.Move(new Vector3(0f, dy, 0f));
+
+        // kill vertical velocity 
+        _verticalVelocityVector.y = 0f;
+
+
+        _coyoteTimer = _coyoteTimeWindow;
+        _jumpBufferTimer = 0f;
+        _groundedCastPauseTimer = 0f;
+    }
+    
+    public void SetPlayerIsGrounded(bool set)
+    {
+        IsGrounded = set;
+    }
 }

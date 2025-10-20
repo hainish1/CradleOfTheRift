@@ -1,6 +1,9 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Class : Used to flash a GameObject with some color when its hit
+/// </summary>
 public class TargetFlash : MonoBehaviour
 {
     [Header("Materials")]
@@ -25,7 +28,10 @@ public class TargetFlash : MonoBehaviour
             rend.material = original;
         }
     }
-    
+
+    /// <summary>
+    /// Start Flash coroutine
+    /// </summary>
     public void Flash()
     {
         if (flashRoutine != null)
@@ -33,6 +39,11 @@ public class TargetFlash : MonoBehaviour
         flashRoutine = StartCoroutine(DoFlash());
     }
 
+    /// <summary>
+    /// Set original renderer material to flash materials,
+    /// then change back to original after flash duration
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator DoFlash()
     {
         if (rend != null && flash != null)
