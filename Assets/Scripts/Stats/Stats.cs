@@ -168,6 +168,7 @@ public class Stats
             StatType.DashDistance => baseStats.dashDistance,
             StatType.DashCooldown => baseStats.dashCooldown,
             StatType.DashCharges => baseStats.dashCharges,
+            StatType.AttackSpeed => baseStats.attackSpeed,
             _ => 0f,
         };
     }
