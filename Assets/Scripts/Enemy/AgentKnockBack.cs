@@ -1,13 +1,15 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+/// <summary>
+/// Class : Used to knock back a GameObject(Enemy) with a NavMeshAgent on it, which requires special handling
+/// </summary>
 public class AgentKnockBack : MonoBehaviour
 {
     [Header("Tuning")]
     [SerializeField] float decay = 10f;
     [SerializeField] float maxDuration = 0.35f;
     [SerializeField] LayerMask collisionMask = ~0;
-
 
     NavMeshAgent agent;
     Vector3 externalVelocity;
@@ -49,6 +51,10 @@ public class AgentKnockBack : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Apply external impulse to this GameObject, pushing it back in that direction
+    /// </summary>
+    /// <param name="impulse"></param>
     public void ApplyImpulse(Vector3 impulse)
     {
         if (!active)
@@ -71,6 +77,10 @@ public class AgentKnockBack : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// End the external KnockBack on this GameObject and
+    /// give control back to the NavMeshAgent
+    /// </summary>
     void EndKnockback()
     {
         active = false;
@@ -84,5 +94,8 @@ public class AgentKnockBack : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Check if GameObject is in KnockBack state
+    /// </summary>
     public bool IsKnockbackActive => active;
 }
