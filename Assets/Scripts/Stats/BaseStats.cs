@@ -9,7 +9,7 @@ public class BaseStats : ScriptableObject
     [Space]
 
     [Header("Player Movement")]
-    public float moveSpeed = 10; // idk what this is
+    public float moveSpeed = 10;
     [Header("Player Dash")]
     public float dashSpeed = 100;
     public float dashDistance = 14;
@@ -24,7 +24,7 @@ public class BaseStats : ScriptableObject
     public float slamDamage = 2;
     public float slamAttackRadius = 10;
 
-    public float attackSpeed = 1; // attacks per second
+    public float attackSpeed = 5.0f; // attacks per second
 
     public float projectileSpread = 0.1f; // in radians
 }
