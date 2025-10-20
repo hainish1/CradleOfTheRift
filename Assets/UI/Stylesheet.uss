@@ -66,14 +66,6 @@ unity-content {
     width: auto;    /* or set a specific width if needed */
 }
 
-#InventoryContainer {
-    position: absolute;
-    top: 10px;       /* align with Gold label */
-    left: 220px;     /* 10px left + ~200px Gold width + 10px spacing */
-    display: flex;
-    gap: 5px;        /* spacing between inventory items */
-}
-
 #TimerContainer {
     position: absolute;
     top: 10px;        /* distance from top of the screen */
@@ -89,12 +81,25 @@ unity-content {
 
 
 #InventoryContainer {
-    position: absolute;
-    top: 10px;           /* align with top of HUD */
-    left: 220px;         /* right of Gold label */
     width: 500px;        /* match scroll-view width */
-    height: 300px;       /* match scroll-view height */
     display: flex;
     flex-direction: column;
     gap: 5px;
+}
+
+
+#ExtractionContainer {
+    width: 500px;    /* match inventory width */
+    height: 24px;    /* extraction bar height */
+    margin-top: 10px;
+}
+
+
+#InventoryGroup {
+    position: absolute;
+    top: 10px;
+    left: 300px;       /* aligns both inventory and extraction bar */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;          /* spacing between inventory and extraction bar */
 }
