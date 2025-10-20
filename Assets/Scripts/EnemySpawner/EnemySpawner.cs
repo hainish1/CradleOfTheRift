@@ -405,22 +405,23 @@ public bool IsDevModeEnabled
         }
     }
 
+    [SerializeField] private LayerMask obstacleMask;
     private bool IsSpawnLocationFree(Vector3 position, float radius)
     {
-        Collider[] colliders = Physics.OverlapSphere(position, radius);
+        Collider[] colliders = Physics.OverlapSphere(position, radius, obstacleMask);
         return colliders.Length == 0;
     }
 
     private bool TryGetGroundLocation(GameObject enemyPrefab, out Vector3 location)
     {
         float radius = GetEnemySpawnWidth(enemyPrefab);
-        int maxAttempts = 2;
+        int maxAttempts = 1;
 
         for (int attempt = 0; attempt < maxAttempts; attempt++)
         {
             Vector3 potentialLocation = GetGroundLocation();
 
-            bool isFree = IsSpawnPositionOnNavSurface(potentialLocation);
+            bool isFree = IsSpawnPositionOnNavSurface(potentialLocation) && IsSpawnLocationFree(potentialLocation, radius);
 
             spawnDebugList.Add((potentialLocation, isFree));
             if (isFree)
