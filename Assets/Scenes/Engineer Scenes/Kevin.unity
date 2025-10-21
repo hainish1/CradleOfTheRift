@@ -1069,41 +1069,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: a1da2cc8d183cdd42869479057bc7568, type: 3}
---- !u!1 &917536178 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6171083751830730270, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
+--- !u!114 &917536186 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 129042964921982419, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
   m_PrefabInstance: {fileID: 1292558185}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &917536186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 917536178}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7ceb5f08e15847598e5eedc53059062, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &917536194
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 917536178}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 195959d47562757459e115369008bf3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemSlotTemplate: {fileID: 9197481963319205126, guid: 925452721cfba164895b6760d6a155ba, type: 3}
-  commonColor: {r: 1, g: 1, b: 1, a: 1}
-  uncommonColor: {r: 0, g: 1, b: 0, a: 1}
-  rareColor: {r: 1, g: 0, b: 0, a: 1}
-  legendaryColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  maxVisibleItems: 20
 --- !u!1001 &937572337
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1511,14 +1487,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7473195389893767818, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
-      propertyPath: winScreen
-      value: 
-      objectReference: {fileID: 8088326504577411643, guid: 890f432691395444c95c60774c7e59c5, type: 3}
-    - target: {fileID: 7473195389893767818, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
-      propertyPath: loseScreen
-      value: 
-      objectReference: {fileID: 1740390286872208996, guid: 247f4cd2a1ef1754bae0212d89a70f9c, type: 3}
-    - target: {fileID: 7473195389893767818, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
       propertyPath: playerHealth
       value: 
       objectReference: {fileID: 463541990}
@@ -1533,13 +1501,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6171083751830730270, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 917536186}
-    - targetCorrespondingSourceObject: {fileID: 6171083751830730270, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 917536194}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
 --- !u!1 &1312125142
 GameObject:
@@ -2789,21 +2751,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1660392947867029309, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1660392947867029309, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2507317857035187405, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
       propertyPath: m_Name
       value: ExtractionBeam
-      objectReference: {fileID: 0}
-    - target: {fileID: 2507317857035187405, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4564698919316034889, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
       propertyPath: m_LocalScale.x
@@ -2877,10 +2827,6 @@ PrefabInstance:
       propertyPath: timerUI
       value: 
       objectReference: {fileID: 917536186}
-    - target: {fileID: 8052474352153079364, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
-      propertyPath: beamHeight
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 8052474352153079364, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
       propertyPath: chargeTime
       value: 20

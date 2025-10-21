@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 8070210690962360478}
   - component: {fileID: 7473195389893767818}
   - component: {fileID: 5504009049952780630}
+  - component: {fileID: 129042964921982419}
+  - component: {fileID: 899406527227418699}
   m_Layer: 5
   m_Name: UIDocument
   m_TagString: Untagged
@@ -81,7 +83,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32bd53254f7414dd99c05cf5c2d5d0e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  extractionZone: {fileID: 8052474352153079364, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
+  extractionZone: {fileID: 0}
 --- !u!114 &8070210690962360478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,7 +109,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cdbc4f3ec387f04298244d6998b470e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  extractionZone: {fileID: 8052474352153079364, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
+  extractionZone: {fileID: 0}
+  playerHealth: {fileID: 0}
   winScreen: {fileID: 8088326504577411643, guid: 890f432691395444c95c60774c7e59c5, type: 3}
   loseScreen: {fileID: 1740390286872208996, guid: 247f4cd2a1ef1754bae0212d89a70f9c, type: 3}
 --- !u!114 &5504009049952780630
@@ -123,3 +126,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawner: {fileID: 0}
+--- !u!114 &129042964921982419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6171083751830730270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7ceb5f08e15847598e5eedc53059062, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &899406527227418699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6171083751830730270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 195959d47562757459e115369008bf3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSlotTemplate: {fileID: 9197481963319205126, guid: 925452721cfba164895b6760d6a155ba, type: 3}
+  commonColor: {r: 1, g: 1, b: 1, a: 1}
+  uncommonColor: {r: 0, g: 1, b: 0, a: 1}
+  rareColor: {r: 1, g: 0, b: 0, a: 1}
+  legendaryColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  maxVisibleItems: 20
