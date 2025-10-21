@@ -69,6 +69,9 @@ public class EnemySpawner : MonoBehaviour
     private float enemySpawnCountdown = 0f;
     private int currentWave = 0;
 
+    [Header("Raycast Length for Ground Detection")]
+    [SerializeField]
+    private float downRaylength = 40f;
 
     [SerializeField]
     private Queue<EnemyType> enemiesToSpawn = new Queue<EnemyType>();
@@ -317,8 +320,7 @@ public bool IsDevModeEnabled
 
         // Adjust Y using raycast
         float heightOffset = 5f;
-        float raycastLength = 40f;
-        if (Physics.Raycast(spawnLocation + Vector3.up * heightOffset, Vector3.down, out RaycastHit hitInfo, raycastLength))
+        if (Physics.Raycast(spawnLocation + Vector3.up * heightOffset, Vector3.down, out RaycastHit hitInfo, downRaylength))
         {
             spawnLocation.y = hitInfo.point.y;
         }
