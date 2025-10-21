@@ -449,13 +449,12 @@ MonoBehaviour:
   _driftDescentDivisor: 0.1
   _driftDelay: 0.5
   _gravityMultiplier: 3
-  _maxGlideEnergy: 60
-  _glideDepletionRate: 30
-  _glideRegenerationRate: 30
-  _glideSpeedMultiplier: 2
-  _upwardDashForce: 35
-  _upwardDashCooldown: 2
-  _upwardDashCharges: 1
+  _maxFlightEnergy: 10
+  _flightDepletionRate: 6
+  _flightRegenerationRate: 2
+  _maxFlightSpeed: 15
+  _flightAccelerationSeconds: 0.5
+  _flightSpeedMultiplier: 1.5
 --- !u!1001 &745492881
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -775,6 +774,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1545799363735562861, guid: 5ea46562df90725499583dd45f12f207, type: 3}
+      propertyPath: cooldown
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2609143438178442385, guid: 5ea46562df90725499583dd45f12f207, type: 3}
       propertyPath: m_LocalPosition.y
       value: 3.801
@@ -790,6 +793,10 @@ PrefabInstance:
     - target: {fileID: 3694253349153652309, guid: 5ea46562df90725499583dd45f12f207, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5449276939068111225, guid: 5ea46562df90725499583dd45f12f207, type: 3}
+      propertyPath: fireRate
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 7506041293616542779, guid: 5ea46562df90725499583dd45f12f207, type: 3}
       propertyPath: _hoverRayLength
