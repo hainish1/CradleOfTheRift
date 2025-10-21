@@ -117,30 +117,26 @@ public class PlayerMovementV4 : MonoBehaviour
     private float _currDriftDescentDivisor;
     private float _driftDelayTimer;
 
-    [Header("Glide Energy Parameters")]
+    [Header("Flight Energy Parameters")]
     [Space]
     [SerializeField]
-    [Tooltip("Maximum glide energy capacity.")] private int _maxGlideEnergy = 100;
+    [Tooltip("Max flight energy.")] private int _maxFlightEnergy = 100;
     [SerializeField]
-    [Tooltip("Amount of glide energy depleted per second.")] private float _glideDepletionRate = 20f;
+    [Tooltip("Energy used per second when flying.")] private float _flightDepletionRate = 20f;
     [SerializeField]
-    [Tooltip("Amount of glide energy regeneration per second.")] private float _glideRegenerationRate = 30f;
+    [Tooltip("Energy refilled per second on ground.")] private float _flightRegenerationRate = 30f;
+    [SerializeField]
+    [Tooltip("Max upward speed when flying.")] private float _maxFlightSpeed = 15f;
+    [SerializeField]
+    [Tooltip("Time to reach max flight speed.")] private float _flightAccelerationSeconds = 0.5f;
     [SerializeField]
     [Range(1f, 3f)]
-    [Tooltip("Speed multiplier when gliding.")] private float _glideSpeedMultiplier = 1.5f;
-    private float _currGlideEnergy;
-    private bool _isRegeneratingGlide;
+    [Tooltip("Move speed boost while flying.")] private float _flightSpeedMultiplier = 1.5f;
+    private float _currFlightEnergy;
+    private bool _isRegeneratingFlight;
+    private float _flightAcceleration;
+    private bool _isFlying;
 
-    [Header("Upward Dash Parameters")]
-    [Space]
-    [SerializeField]
-    [Tooltip("Upward dash force (vertical velocity).")] private float _upwardDashForce = 25f;
-    [SerializeField]
-    [Tooltip("Cooldown time for upward dash in seconds.")] private float _upwardDashCooldown = 2f;
-    [SerializeField]
-    [Tooltip("Number of upward dash charges available.")] private int _upwardDashCharges = 1;
-    private int _currUpwardDashCharges;
-    private float _upwardDashCooldownTimer;
 
     private bool strafe = false; // Set by AimController.
 
@@ -166,7 +162,6 @@ public class PlayerMovementV4 : MonoBehaviour
         
         jumpActions.started += JumpInputActionStarted;
         jumpActions.canceled += JumpInputActionCanceled;
-        sprintActions.started += SprintInputActionStarted;
         dashActions.started += DashInputActionStarted;
     }
 
@@ -179,7 +174,6 @@ public class PlayerMovementV4 : MonoBehaviour
 
         jumpActions.started -= JumpInputActionStarted;
         jumpActions.canceled -= JumpInputActionCanceled;
-        sprintActions.started -= SprintInputActionStarted;
         dashActions.started -= DashInputActionStarted;
     }
 
@@ -222,13 +216,11 @@ public class PlayerMovementV4 : MonoBehaviour
         _driftDelayTimer = 0;
         _isDrifting = false;
 
-        // Glide Energy Parameters
-        _currGlideEnergy = _maxGlideEnergy;
-        _isRegeneratingGlide = false;
-
-        // Upward Dash Parameters
-        _currUpwardDashCharges = _upwardDashCharges;
-        _upwardDashCooldownTimer = 0;
+        // Flight Energy Parameters
+        _currFlightEnergy = _maxFlightEnergy;
+        _isRegeneratingFlight = false;
+        _flightAcceleration = _maxFlightSpeed / _flightAccelerationSeconds;
+        _isFlying = false;
     }
 
     void Update()
@@ -253,40 +245,7 @@ public class PlayerMovementV4 : MonoBehaviour
             JumpConditions();
             IsGrounded = CheckIsGrounded();
             DriftConditions();
-            
-            // Handle long press jump for gliding with energy system
-            if (!IsGrounded && !_isDashing && jumpActions.IsPressed() && _currGlideEnergy > 0)
-            {
-                // Enable gliding (drift) when long pressing jump and has energy
-                if (!_isDrifting)
-                {
-                    EnableDrift();
-                }
-                
-                // Deplete glide energy
-                _currGlideEnergy -= Time.deltaTime * _glideDepletionRate;
-                
-                // Stop gliding if energy is depleted
-                if (_currGlideEnergy <= 0)
-                {
-                    _currGlideEnergy = 0;
-                    DisableDrift();
-                }
-            }
-            else if (!IsGrounded && !_isDashing && !jumpActions.IsPressed())
-            {
-                // Disable gliding when not pressing jump
-                if (_isDrifting)
-                {
-                    DisableDrift();
-                }
-            }
-            
-            // Regenerate glide energy when on ground
-            if (IsGrounded && _currGlideEnergy < _maxGlideEnergy && !_isRegeneratingGlide)
-            {
-                StartCoroutine(GlideEnergyRegeneration());
-            }
+            FlightConditions();
         }
     }
 
@@ -327,7 +286,6 @@ public class PlayerMovementV4 : MonoBehaviour
         if (IsWithinCoyoteTimeWindow() && !IsGrounded) _coyoteTimer -= Time.deltaTime;
         if (IsWithinJumpBufferWindow() && !IsGrounded) _jumpBufferTimer -= Time.deltaTime;
         if (AreDriftRequirementsValid()) _driftDelayTimer -= Time.deltaTime;
-        if (_upwardDashCooldownTimer > 0) _upwardDashCooldownTimer -= Time.deltaTime;
     }
 
     /// <summary>
@@ -374,8 +332,8 @@ public class PlayerMovementV4 : MonoBehaviour
     /// </summary>
     private void GravityConditions()
     {
-        // Do not apply gravity when on the ground
-        if (IsGrounded) return;
+        // Do not apply gravity when on the ground or flying
+        if (IsGrounded || _isFlying) return;
         
         float aggregateGravityModifier = _gravityMultiplier * _currDriftDescentDivisor;
         _verticalVelocityVector.y += Time.deltaTime * aggregateGravityModifier * Physics.gravity.y;
@@ -517,10 +475,10 @@ public class PlayerMovementV4 : MonoBehaviour
     /// <returns> The aggregate max speed value. </returns>
     private float CalculateAggregateMaxSpeedValue()
     {
-        // Apply speed multiplier when gliding
-        if (_isDrifting && !IsGrounded)
+        // Apply speed multiplier when flying
+        if (_isFlying && !IsGrounded)
         {
-            return _maxSpeed * _glideSpeedMultiplier;
+            return _maxSpeed * _flightSpeedMultiplier;
         }
         return _maxSpeed;
     }
@@ -538,53 +496,6 @@ public class PlayerMovementV4 : MonoBehaviour
         _deceleration = aggregateMaxSpeedValue / _decelerationSeconds;
     }
 
-    /// <summary>
-    ///   <para>
-    ///     Executes upward dash when sprint key (Ctrl) is pressed.
-    ///   </para>
-    /// </summary>
-    /// <param name="context"> The sprint input context. </param>
-    private void SprintInputActionStarted(InputAction.CallbackContext context)
-    {
-        // Check if can perform upward dash
-        if (_kbControlsLockTimer > 0 || _isDashing) return;
-        
-        // Check if has charges and cooldown is ready
-        if (_currUpwardDashCharges > 0 && _upwardDashCooldownTimer <= 0)
-        {
-            // Apply upward dash force
-            _verticalVelocityVector.y = _upwardDashForce;
-            _characterController.Move(Time.deltaTime * _verticalVelocityVector);
-            
-            // Consume charge and start cooldown
-            _currUpwardDashCharges--;
-            _upwardDashCooldownTimer = _upwardDashCooldown;
-            
-            // Pause ground checking briefly
-            _groundedCastPauseTimer = _groundedCastJumpPauseDuration;
-            
-            // Start charge regeneration if this was the first charge used
-            if (_currUpwardDashCharges == _upwardDashCharges - 1)
-            {
-                StartCoroutine(UpwardDashChargeRegeneration());
-            }
-        }
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Coroutine for regenerating upward dash charges over time.
-    ///   </para>
-    /// </summary>
-    /// <returns> IEnumerator object. </returns>
-    private IEnumerator UpwardDashChargeRegeneration()
-    {
-        while (_currUpwardDashCharges < _upwardDashCharges)
-        {
-            yield return new WaitForSeconds(_upwardDashCooldown);
-            _currUpwardDashCharges++;
-        }
-    }
 
     /// <summary>
     ///   <para>
@@ -722,34 +633,17 @@ public class PlayerMovementV4 : MonoBehaviour
             _inputtedJumpThisFrame = true;
             _jumpBufferTimer = _jumpBufferWindow;
         }
-        
-        // Toggle drifting if in midair (only for single tap, not long press)
-        if (!IsGrounded && !_isDashing && !jumpActions.IsPressed())
-        {
-            if (_isDrifting)
-            {
-                DisableDrift();
-            }
-            else
-            {
-                EnableDrift();
-            }
-        }
     }
 
     /// <summary>
     ///   <para>
-    ///     Handles jump input release - stops gliding.
+    ///     Stops flying when jump button is released.
     ///   </para>
     /// </summary>
     /// <param name="context"> The jump input context. </param>
     private void JumpInputActionCanceled(InputAction.CallbackContext context)
     {
-        // Stop gliding when releasing jump
-        if (!IsGrounded && !_isDashing && _isDrifting)
-        {
-            DisableDrift();
-        }
+        _isFlying = false;
     }
 
     /// <summary>
@@ -878,35 +772,82 @@ public class PlayerMovementV4 : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Coroutine for regenerating glide energy to full capacity over time.
+    ///     Makes player fly when holding jump in midair.
+    ///   </para>
+    /// </summary>
+    private void FlightConditions()
+    {
+        // Hold jump in air to fly
+        if (!IsGrounded && !_isDashing && jumpActions.IsPressed() && _currFlightEnergy > 0)
+        {
+            _isFlying = true;
+            
+            // Push player upward
+            float flightSpeedIncrement = Time.deltaTime * _flightAcceleration;
+            _currFlightEnergy -= Time.deltaTime * _flightDepletionRate;
+            
+            // Stop when out of energy
+            if (_currFlightEnergy <= 0)
+            {
+                _currFlightEnergy = 0;
+                _isFlying = false;
+            }
+            else
+            {
+                _verticalVelocityVector.y += flightSpeedIncrement;
+                
+                // Cap at max speed
+                if (_verticalVelocityVector.y > _maxFlightSpeed)
+                {
+                    _verticalVelocityVector.y = _maxFlightSpeed;
+                }
+                
+                _characterController.Move(Time.deltaTime * _verticalVelocityVector);
+            }
+        }
+        else
+        {
+            _isFlying = false;
+        }
+        
+        // Refill energy on ground
+        if (IsGrounded && _currFlightEnergy < _maxFlightEnergy && !_isRegeneratingFlight)
+        {
+            StartCoroutine(FlightEnergyRegeneration());
+        }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Refills flight energy over time when on ground.
     ///   </para>
     /// </summary>
     /// <returns> IEnumerator object. </returns>
-    private IEnumerator GlideEnergyRegeneration()
+    private IEnumerator FlightEnergyRegeneration()
     {
-        _isRegeneratingGlide = true;
+        _isRegeneratingFlight = true;
 
-        while (_currGlideEnergy < _maxGlideEnergy)
+        while (_currFlightEnergy < _maxFlightEnergy)
         {
-            // Cancel glide energy regeneration if gliding is active
-            if (_isDrifting && !IsGrounded)
+            // Stop refilling if player starts flying
+            if (_isFlying)
             {
                 break;
             }
 
-            _currGlideEnergy += Time.deltaTime * _glideRegenerationRate;
+            _currFlightEnergy += Time.deltaTime * _flightRegenerationRate;
 
-            // If glide regeneration increment exceeds _maxGlideEnergy, set to exactly _maxGlideEnergy
-            if (_currGlideEnergy >= _maxGlideEnergy)
+            // Cap at max
+            if (_currFlightEnergy >= _maxFlightEnergy)
             {
-                _currGlideEnergy = _maxGlideEnergy;
+                _currFlightEnergy = _maxFlightEnergy;
                 break;
             }
 
             yield return null;
         }
 
-        _isRegeneratingGlide = false;
+        _isRegeneratingFlight = false;
     }
 
     // SOME GETTERS FOR MY USE
@@ -928,6 +869,21 @@ public class PlayerMovementV4 : MonoBehaviour
     public void SetVerticalVelocityFactor(float factor)
     {
         _verticalVelocityVector.y = factor;
+    }
+
+    public float GetCurrentFlightEnergy()
+    {
+        return _currFlightEnergy;
+    }
+
+    public float GetMaxFlightEnergy()
+    {
+        return _maxFlightEnergy;
+    }
+
+    public bool IsFlying()
+    {
+        return _isFlying;
     }
 
     public void SnapToHoverAfterSlam()

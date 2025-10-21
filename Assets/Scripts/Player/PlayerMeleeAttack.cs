@@ -64,7 +64,7 @@ public class PlayerMeleeAttack : MonoBehaviour
             input = new InputSystem_Actions();
         }
         actions = input.Player;
-        meleeAction = actions.Melee;
+        meleeAction = actions.Attack; // Changed to Attack (left click)
         meleeAction?.Enable();
     }
 

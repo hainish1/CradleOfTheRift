@@ -53,7 +53,7 @@ public class PlayerShooter : MonoBehaviour
     {
         if (input == null) input = new InputSystem_Actions();
         actions = input.Player;
-        fireAction = actions.Attack;
+        fireAction = actions.Melee; // Changed to Melee (right click in future)
         if (fireAction != null)
         {
             fireAction.Enable();

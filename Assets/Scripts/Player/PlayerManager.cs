@@ -7,12 +7,14 @@ public class PlayerManager : Entity
 
     private PlayerHealth playerHealth;
     private PlayerShooter playerShooter;
+    private PlayerMovementV4 playerMovement;
 
     void Start()
     {
         // Get references to player components
         playerHealth = GetComponent<PlayerHealth>();
         playerShooter = GetComponent<PlayerShooter>();
+        playerMovement = GetComponent<PlayerMovementV4>();
 
         if (showStatsInConsole)
         {
@@ -25,13 +27,25 @@ public class PlayerManager : Entity
     {
         if (showStatsInConsole && Time.time % 5f < Time.deltaTime) // Every 5 seconds
         {
-            Debug.Log($"Current Player Stats: {Stats.ToString()}");
+            string flightInfo = "";
+            if (playerMovement != null)
+            {
+                float currentEnergy = playerMovement.GetCurrentFlightEnergy();
+                flightInfo = $" | Flight Energy: {currentEnergy:F0}";
+            }
+            Debug.Log($"Current Player Stats: {Stats.ToString()}{flightInfo}");
         }
 
         // Show stats when they change
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            Debug.Log($"Health: {Stats.Health}, MoveSpeed: {Stats.MoveSpeed}, Projectile Damage: {Stats.ProjectileAttack}, Melee Damage: {Stats.MeleeDamage}, Slam Damage: {Stats.SlamDamage}");
+            string flightInfo = "";
+            if (playerMovement != null)
+            {
+                float currentEnergy = playerMovement.GetCurrentFlightEnergy();
+                flightInfo = $", Flight Energy: {currentEnergy:F0}";
+            }
+            Debug.Log($"Health: {Stats.Health}, MoveSpeed: {Stats.MoveSpeed}, Projectile Damage: {Stats.ProjectileAttack}, Melee Damage: {Stats.MeleeDamage}, Slam Damage: {Stats.SlamDamage}{flightInfo}");
         }
     }
 
