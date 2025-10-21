@@ -72,7 +72,7 @@ public class PlayerMovementV3 : MonoBehaviour
     [SerializeField]
     [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private float _groundedCastJumpPauseDuration;
     private float _currHoverHeight;
-    public bool IsGrounded { get; private set; }
+    private bool _isGrounded;
     private float _groundedCastRadius;
     private float _groundedCastPauseTimer;
     private int _groundedLayerMasks;
@@ -183,13 +183,13 @@ public class PlayerMovementV3 : MonoBehaviour
         _currBoostForwardBonusMultiplier = 1;
 
         // Hover Parameters
-        IsGrounded = CheckIsGrounded();
         _groundedCastRadius = _playerRadius - 0.1f;
         _groundedCastPauseTimer = 0;
         _groundedLayerMasks = LayerMask.GetMask("Environment");
         _groundedLayerMasks |= LayerMask.GetMask("Interactable");
         _groundedLayerMasks |= LayerMask.GetMask("Obstacles");
         _groundedLayerMasks |= LayerMask.GetMask("Enemy");
+        GetIsGrounded();
 
         // KnockBack Parameters
         _kbControlsLockTimer = 0;
@@ -214,7 +214,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
     void Update()
     {
-        IsGrounded = CheckIsGrounded();
+        GetIsGrounded();
         DecrementAllTimers();
 
         if (_kbControlsLockTimer > 0) return;
@@ -223,16 +223,16 @@ public class PlayerMovementV3 : MonoBehaviour
 
         if (_isDashing)
         {
-            IsGrounded = CheckIsGrounded();
+            GetIsGrounded();
             DashConditions();
         }
         else
         {
             MoveConditions();
-            IsGrounded = CheckIsGrounded();
+            GetIsGrounded();
             HoverConditions();
             JumpConditions();
-            IsGrounded = CheckIsGrounded();
+            GetIsGrounded();
             DriftConditions();
         }
     }
@@ -272,37 +272,26 @@ public class PlayerMovementV3 : MonoBehaviour
         if (_kbControlsLockTimer > 0) _kbControlsLockTimer -= Time.deltaTime;
         if (_kbDashLockTimer > 0) _kbDashLockTimer -= Time.deltaTime;
         if (_groundedCastPauseTimer > 0) _groundedCastPauseTimer -= Time.deltaTime;
-        if (IsWithinCoyoteTimeWindow() && !IsGrounded) _coyoteTimer -= Time.deltaTime;
-        if (IsWithinJumpBufferWindow() && !IsGrounded) _jumpBufferTimer -= Time.deltaTime;
+        if (IsWithinCoyoteTimeWindow() && !_isGrounded) _coyoteTimer -= Time.deltaTime;
+        if (IsWithinJumpBufferWindow() && !_isGrounded) _jumpBufferTimer -= Time.deltaTime;
         if (AreDriftRequirementsValid()) _driftDelayTimer -= Time.deltaTime;
     }
 
     /// <summary>
     ///   <para>
-    ///     Checks if the player character is touching the ground on the frame this method is called.
+    ///     Updates all grounded information on the frame this method is called.
     ///   </para>
     /// </summary>
-    /// <returns> True if the player character is on the ground, otherwise false. </returns>
-    private bool CheckIsGrounded()
+    private void GetIsGrounded()
     {
-        if (_groundedCastPauseTimer > 0) return false;
-
-        Vector3 SphereCastOrigin = GetPlayerCharacterBottom() + new Vector3(0, _groundedCastRadius, 0);
-
-        if (Physics.SphereCast(SphereCastOrigin,
-                               _groundedCastRadius,
-                               Vector2.down,
-                               hitInfo: out RaycastHit hitInfo,
-                               _groundedCastLength + _groundedCastRadius, // Compensate for the SphereCast starting higher.
-                               _groundedLayerMasks,
-                               QueryTriggerInteraction.Ignore)
-            && Vector3.Angle(Vector3.up, hitInfo.normal) <= 30)
-        {
-            _groundPoint = hitInfo;
-            return true;
-        }
-
-        return false;
+        PlayerGroundCheck.CheckIsGrounded(GetPlayerCharacterBottom(),
+                                          _groundedCastLength,
+                                          _groundedCastRadius,
+                                          _groundedLayerMasks,
+                                          out RaycastHit hitInfo,
+                                          _groundedCastPauseTimer);
+        _groundPoint = hitInfo;
+        _isGrounded = PlayerGroundCheck.IsGrounded;
     }
 
     //private void OnDrawGizmos()
@@ -322,7 +311,7 @@ public class PlayerMovementV3 : MonoBehaviour
     private void GravityConditions()
     {
         // Do not apply gravity whenon the ground or boosting.
-        if (IsGrounded) return;
+        if (_isGrounded) return;
 
         float aggregateGravityModifier = _gravityMultiplier * _currDriftDescentDivisor;
         _verticalVelocityVector.y += Time.deltaTime * aggregateGravityModifier * Physics.gravity.y;
@@ -365,14 +354,14 @@ public class PlayerMovementV3 : MonoBehaviour
         }
 
         // Move in direction of camera tilt if inputting forward movement while boosting midair.
-        if (moveActions.ReadValue<Vector2>().y == 1 && !IsGrounded && _isSprinting)
+        if (moveActions.ReadValue<Vector2>().y == 1 && !_isGrounded && _isSprinting)
         {
             _moveDirectionUnitVector.y = GetCameraForwardDirection().y;
             _moveDirectionUnitVector = _moveDirectionUnitVector.normalized;
         }
 
         // Apply boost speed if sprinting in midair.
-        if (_isSprinting && !IsGrounded)
+        if (_isSprinting && !_isGrounded)
         {
             _currBoostMultiplier = _boostMultiplier;
 
@@ -580,7 +569,7 @@ public class PlayerMovementV3 : MonoBehaviour
     private void HoverConditions()
     {
         // Skip hover calculations if not on the ground.
-        if (!IsGrounded) return;
+        if (!_isGrounded) return;
 
         _currHoverHeight = _groundPoint.point.y + _hoverHeight;
         float playerCharacterBottomHeight = GetPlayerCharacterBottom().y;
@@ -627,7 +616,7 @@ public class PlayerMovementV3 : MonoBehaviour
         if (_kbDashLockTimer > 0) return;
 
         // Dash into camera directon when boosting.
-        if (IsGrounded)
+        if (_isGrounded)
         {
             _dashDirectionUnitVector = GetMoveInputDirection();
         }
@@ -720,11 +709,11 @@ public class PlayerMovementV3 : MonoBehaviour
         }
 
         // Toggle drifting if in midair.
-        if (_isDrifting && !IsGrounded && !_isDashing)
+        if (_isDrifting && !_isGrounded && !_isDashing)
         {
             DisableDrift();
         }
-        else if (!_isDrifting && !IsGrounded && !_isDashing)
+        else if (!_isDrifting && !_isGrounded && !_isDashing)
         {
             EnableDrift();
         }
@@ -739,7 +728,7 @@ public class PlayerMovementV3 : MonoBehaviour
     private void JumpConditions()
     {
         // If on the ground and jump was inputted and jump buffer window is valid, or if walked off an edge and coyote time window is valid, then jump.
-        if ((IsGrounded && IsWithinJumpBufferWindow()) || (_inputtedJumpThisFrame && !IsGrounded && IsWithinCoyoteTimeWindow()))
+        if ((_isGrounded && IsWithinJumpBufferWindow()) || (_inputtedJumpThisFrame && !_isGrounded && IsWithinCoyoteTimeWindow()))
         {
             _coyoteTimer = 0;
             _jumpBufferTimer = 0;
@@ -750,7 +739,7 @@ public class PlayerMovementV3 : MonoBehaviour
         }
         // Otherwise, reset coyote time and jump buffer time to original states
         // because player charater is on the ground.
-        else if (IsGrounded)
+        else if (_isGrounded)
         {
             _coyoteTimer = _coyoteTimeWindow;
             _jumpBufferTimer = 0;
@@ -792,7 +781,7 @@ public class PlayerMovementV3 : MonoBehaviour
     private void DriftConditions()
     {
         // Cease drifting if the player character landed.
-        if (_isDrifting && IsGrounded)
+        if (_isDrifting && _isGrounded)
         {
             DisableDrift();
         }
