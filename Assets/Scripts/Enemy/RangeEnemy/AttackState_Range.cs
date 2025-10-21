@@ -1,9 +1,13 @@
 using UnityEngine;
 
+
+/// <summary>
+/// Class - Represents the Attack State for Range Enemy
+/// </summary>
 public class AttackState_Range : EnemyState
 {
     EnemyRange enemyRange;
-    
+
 
     private float nextShootTime;
     private float endTime;
@@ -13,7 +17,9 @@ public class AttackState_Range : EnemyState
         enemyRange = enemy as EnemyRange;
     }
 
-
+    /// <summary>
+    /// When entering Attack State, take control from navmeshagent and control it manually
+    /// </summary>
     public override void Enter()
     {
         if (enemy.agent != null)
@@ -26,7 +32,9 @@ public class AttackState_Range : EnemyState
         nextShootTime = Time.time; // first shoot immedietly
     }
 
-
+    /// <summary>
+    /// While inside attack state, look towards the player and try shooting if fireCooldown allows. Else switch to recovery state
+    /// </summary>
     public override void Update()
     {
         if (enemy.target == null)

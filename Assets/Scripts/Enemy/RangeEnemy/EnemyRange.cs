@@ -1,5 +1,10 @@
 using UnityEngine;
 
+
+/// <summary>
+/// Class - Represents a Range Enemy, inherits from Base Enemy class 
+/// ,also defines functionality of its own
+/// </summary>
 public class EnemyRange : Enemy
 {
     [Header("Hover and movement")]
@@ -62,6 +67,9 @@ public class EnemyRange : Enemy
         UpdateHover();
     }
 
+    /// <summary>
+    /// Apply Hovering Visuals to the Enemy
+    /// </summary>
     void UpdateHover()
     {
         if (agent == null) return;
@@ -77,6 +85,9 @@ public class EnemyRange : Enemy
     public EnemyState GetAttack() => attack;
     public EnemyState GetRecovery() => recovery;
 
+    /// <summary>
+    /// Used to fire one projectile in direction of te target
+    /// </summary>
     public void FireOnce()
     {
         if (!firePoint || !projectilePrefab) return;
@@ -89,7 +100,7 @@ public class EnemyRange : Enemy
         EnemyProjectile projectile = Instantiate(projectilePrefab, spawnPoint, rotation);
         projectile.Init(direction * projectileSpeed, projectileMask, this.projectileDamage);
 
-        if(orbitVisuals != null)
+        if (orbitVisuals != null)
         {
             int orbIndex = orbitVisuals.GetNextVisibleOrbIndex();
             if (orbIndex >= 0)
@@ -103,6 +114,10 @@ public class EnemyRange : Enemy
         }
     }
 
+    /// <summary>
+    /// Used to initialize damage done by this Range enemy when it is initialized. New Damage value can be initialized using this.
+    /// </summary>
+    /// <param name="newDamage"></param>
     public void InitializeDamage(float newDamage)
     {
         // this.projectileDamage = Mathf.CeilToInt(newDamage);
@@ -110,9 +125,12 @@ public class EnemyRange : Enemy
         Debug.Log("Projectile Damage: " + this.projectileDamage);
     }
 
-    // public float GetBaseDamage() => Mathf.CeilToInt(projectileDamage);
+    /// <summary>
+    /// Get Base Damage of this Range Enemy
+    /// </summary>
+    /// <returns></returns>
     public float GetBaseDamage() => projectileDamage;
-    
-    
+
+
 
 }

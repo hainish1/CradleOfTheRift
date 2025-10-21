@@ -2,14 +2,20 @@ using System;
 using UnityEngine;
 using UnityEngine.AI;
 
+/// <summary>
+/// Class : Handles Enemy Health, implements methods defined in the health controller
+/// </summary>
 public class EnemyHealth : HealthController
 {
 
     [SerializeField] private float cleanupDelay = 0f;
     public event Action<EnemyHealth> EnemyDied;
-
     public float baseHealth = 3;
 
+    /// <summary>
+    /// Called when any Enemy dies, Resets navmesh agent and destroys gameObject(self)
+    /// and does any other required cleanup
+    /// </summary>
     protected override void Die()
     {
         Debug.Log("[Enemy Health] Enemy died");
@@ -30,22 +36,23 @@ public class EnemyHealth : HealthController
         Destroy(gameObject, cleanupDelay);
     }
 
-    // public void InitializeHealth(float healthMultiplier)
-    // {
-    //     this.maxHealth = Mathf.CeilToInt(this.maxHealth * healthMultiplier);
-    //     this.currentHealth = this.maxHealth;
-    //     Debug.Log("Max Health: " + this.maxHealth);
-    // }
+    /// <summary>
+    /// Initializes Enemy health when it is created
+    /// </summary>
+    /// <param name="newHealth"></param>
     public void InitializeHealth(float newHealth)
     {
         // baseHealth = this.maxHealth;
         // this.maxHealth = Mathf.CeilToInt(newHealth);
         this.maxHealth = newHealth;
         this.currentHealth = this.maxHealth;
-        Debug.Log("Max Health: " + this.maxHealth);
+        Debug.Log("Max Health: " + this.maxHealth); // not needed anymore
     }
 
-
+    /// <summary>
+    /// Get current MaxHealth of enemy
+    /// </summary>
+    /// <returns></returns>
     public float GetMaxHealth()
     {
         return this.maxHealth;
