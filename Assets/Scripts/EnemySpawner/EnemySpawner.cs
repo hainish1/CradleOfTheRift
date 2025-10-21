@@ -398,18 +398,31 @@ public bool IsDevModeEnabled
         Gizmos.color = new Color(0f, 1f, 0f, 0.3f); // green, semi-transparent
         Gizmos.DrawWireSphere(playerLocation.position, minSpawnDist);
 
+        // Draw spawn positions
         foreach (var spawn in spawnDebugList)
         {
             Gizmos.color = spawn.isValid ? Color.green : Color.red;
             Gizmos.DrawSphere(spawn.position, 0.3f);
         }
+
+        // Draw overlap check spheres
+        foreach (var sphere in overlapDebugList)
+        {
+            Gizmos.color = sphere.isFree ? Color.black : Color.red; // black = free, red = blocked
+            Gizmos.DrawWireSphere(sphere.position, sphere.radius);
+        }
     }
 
     [SerializeField] private LayerMask obstacleMask;
+    private List<(Vector3 position, float radius, bool isFree)> overlapDebugList = new List<(Vector3, float, bool)>();
     private bool IsSpawnLocationFree(Vector3 position, float radius)
     {
         Collider[] colliders = Physics.OverlapSphere(position, radius, obstacleMask);
-        return colliders.Length == 0;
+        bool isFree = colliders.Length == 0;
+
+        overlapDebugList.Add((position, radius, isFree));
+
+        return isFree;
     }
 
     private bool TryGetGroundLocation(GameObject enemyPrefab, out Vector3 location)
