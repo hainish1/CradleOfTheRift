@@ -25,5 +25,11 @@ public abstract class HealthController : MonoBehaviour, IDamageable
         }
     }
 
+    public virtual void Heal(float amount)
+    {
+        if (IsDead) return;
+        currentHealth = Mathf.Min(maxHealth, currentHealth + amount); // either this or that
+    }
+
     protected abstract void Die();
 }

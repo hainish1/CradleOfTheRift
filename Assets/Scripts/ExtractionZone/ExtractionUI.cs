@@ -12,11 +12,11 @@ public class ExtractionUI : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        String className = "extraction-bar";
+        String name = "ExtractionBar";
         float zeroValue = 0f;
 
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
-        this.extractionBar = root.Q<ProgressBar>(className: className);
+        this.extractionBar = root.Q<ProgressBar>(name);
 
         this.extractionBar.lowValue = zeroValue;
         this.extractionBar.highValue = this.extractionZone.ChargeTime;
@@ -30,6 +30,9 @@ public class ExtractionUI : MonoBehaviour
     private void OnChargeChanged(float currentCharge)
     {
         this.extractionBar.value = currentCharge;
+
+        float percent = (currentCharge / this.extractionZone.ChargeTime) * 100f;
+        this.extractionBar.title = $"Extraction: [{Mathf.RoundToInt(percent)}%]";
     }
 
     private void OnExtractionInteracted()

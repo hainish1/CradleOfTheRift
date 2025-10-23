@@ -89,14 +89,31 @@ public class PlayerGroundSlam : MonoBehaviour
         Vector3 fallVelocity = Vector3.down * slamDownSpeed;
 
         // go down when not grounded
-        while (!controller.isGrounded) 
+        // while (!controller.isGrounded)
+        // {
+        //     controller.Move(fallVelocity * Time.deltaTime);
+        //     yield return null;
+        // }
+
+        // now using this instead of fall velocity thing
+        CollisionFlags flags;
+        do
         {
-            controller.Move(fallVelocity * Time.deltaTime);
+            flags = controller.Move(Vector3.down * slamDownSpeed * Time.deltaTime);
             yield return null;
         }
+        while ((flags & CollisionFlags.Below) == 0);
+
 
         // restore normal gravity again
-        if (playerMovement != null) playerMovement._gravityMultiplier = originalGravity;
+        // if (playerMovement != null) playerMovement._gravityMultiplier = originalGravity;
+        // restore original hover now 
+        if(playerMovement != null)
+        {
+            playerMovement._gravityMultiplier = originalGravity;
+            playerMovement.SetPlayerIsGrounded(true);
+            playerMovement.SnapToHoverAfterSlam();
+        }
 
         if (debug)
         {

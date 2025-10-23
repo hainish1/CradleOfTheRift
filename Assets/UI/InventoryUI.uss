@@ -1,0 +1,97 @@
+.inventory-root {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0;
+    gap: 6px;
+}
+
+/* Frame around the actual inventory */
+.inventory-frame {
+    display: flex;
+    flex-direction: column;
+    padding: 4px;
+    background-color: rgba(10, 10, 10, 0.7);
+    border-width: 2px;
+    border-radius: 6px;
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.2);
+    min-height: 64px;
+}
+
+/* Title */
+.inventory-title {
+    font-size: 18px;
+    color: white;
+    margin-left: 4px;
+    opacity: 0.8;
+}
+
+/* Scroll area */
+.scroll-view {
+    width: 576px; /* 64 * 10 = 640*/
+    height: auto;      /* shrink to fit items */
+    max-height: 300px; /* optional: limit for scrolling */
+    overflow-x: hidden;
+    overflow-y: auto;  /* scroll if items exceed max-height */
+    min-height: 64px; /* same as slot size */
+}
+
+/* Item grid */
+.item-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+/* Inventory slot */
+.inventory-slot {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background-color: rgba(255,255,255,0.03);
+    transition: background-color 0.1s ease-in-out;
+}
+
+.inventory-slot:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+/* Icon */
+.item-icon {
+    width: 56px;
+    height: 56px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Stack count */
+.count-bg {
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.item-count {
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0;
+    height: 100%;    
+}

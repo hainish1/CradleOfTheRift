@@ -20,6 +20,8 @@ public class Projectile : MonoBehaviour
     private float age;
     private Vector3 startPos;
     private float flyDistance;
+    private Entity attacker;
+    private bool hasHit;
 
     void Awake()
     {
@@ -31,11 +33,12 @@ public class Projectile : MonoBehaviour
         // meshRenderer = GetComponent<MeshRenderer>();
     }
 
-    public void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100)
+    public void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
     {
         rb.linearVelocity = velocity;
         hitMask = mask;
         actualDamage = damage; // USE DAMAGE FROM STATS SYSTEM
+        this.attacker = attacker;
         age = 0f;
 
         trail.Clear();
@@ -62,6 +65,10 @@ public class Projectile : MonoBehaviour
         }
 
     }
+    void OnEnable()
+    {
+        hasHit = false; // so it does not double do it
+    }
 
     protected virtual void FadeTrailVisuals()
     {
@@ -73,6 +80,7 @@ public class Projectile : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        if (hasHit) return;
         // alright documenting time
         // check layer mask
         if (((1 << collision.gameObject.layer) & hitMask) == 0)
@@ -104,6 +112,13 @@ public class Projectile : MonoBehaviour
             {
                 // HERE NOW I WILL USE THE MODIFIED DAMAGE
                 damageable.TakeDamage(actualDamage);
+
+                // report the combat event for damage
+                CombatEvents.ReportDamage(attacker, enemy, actualDamage);
+                hasHit = true;
+
+                // checking teh event here
+                
                 Debug.Log($"Dealt {actualDamage} damage to {collision.gameObject.name}");
             }
         }
@@ -117,9 +132,10 @@ public class Projectile : MonoBehaviour
 
 
         // plkace to add impact effects later
-        Destroy(gameObject); // its done its job now
+        // Destroy(gameObject); // its done its job now
+        ReturnToSource(); // use object pooling
     }
-    
+
     protected void CreateImpactFX()
     {
         GameObject newFX = Instantiate(bulletImpactFX);
@@ -130,6 +146,18 @@ public class Projectile : MonoBehaviour
         // GameObject newImpacFX = ObjectPool.instance.GetObject(bulletImpactFX, transform);
         // ObjectPool.instance.ReturnObject(newImpacFX, 1f); // return the effect back to the pool after 1 second of delay
 
+    }
+    
+    private void ReturnToSource()
+    {
+        if (ObjectPool.instance != null)
+        {
+            ObjectPool.instance.ReturnObject(gameObject, 0.01f);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
 
