@@ -17,6 +17,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovementV2 : MonoBehaviour
 {
+    public bool IsGrounded { get; private set; }
+
     private InputSystem_Actions playerInput;
     private InputSystem_Actions.PlayerActions playerActions;
 
@@ -66,7 +68,6 @@ public class PlayerMovementV2 : MonoBehaviour
     [SerializeField]
     [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private float _groundedCastJumpPauseDuration;
     private float _currHoverHeight;
-    public bool IsGrounded { get; private set; }
     private float _groundedCastRadius;
     private float _groundedCastPauseTimer;
     private int _groundedLayerMasks;
@@ -175,13 +176,13 @@ public class PlayerMovementV2 : MonoBehaviour
         _currSprintMultiplier = 1;
 
         // Hover Parameters
-        IsGrounded = CheckIsGrounded();
         _groundedCastRadius = _playerRadius - 0.1f;
         _groundedCastPauseTimer = 0;
         _groundedLayerMasks = LayerMask.GetMask("Environment");
         _groundedLayerMasks |= LayerMask.GetMask("Interactable");
         _groundedLayerMasks |= LayerMask.GetMask("Obstacles");
         _groundedLayerMasks |= LayerMask.GetMask("Enemy");
+        GetIsGrounded();
 
         // KnockBack Parameters
         _kbControlsLockTimer = 0;
@@ -206,25 +207,24 @@ public class PlayerMovementV2 : MonoBehaviour
 
     void Update()
     {
-        IsGrounded = CheckIsGrounded();
+        GetIsGrounded();
+        GravityConditions();
         DecrementAllTimers();
 
         if (_kbControlsLockTimer > 0) return;
 
-        GravityConditions();
-
         if (_isDashing)
         {
-            IsGrounded = CheckIsGrounded();
+            GetIsGrounded();
             DashConditions();
         }
         else
         {
             MoveConditions();
-            IsGrounded = CheckIsGrounded();
+            GetIsGrounded();
             HoverConditions();
             JumpConditions();
-            IsGrounded = CheckIsGrounded();
+            GetIsGrounded();
             DriftConditions();
         }
     }
@@ -256,45 +256,18 @@ public class PlayerMovementV2 : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Decrements all active timers every frame.
+    ///     Updates all grounded information on the frame this method is called.
     ///   </para>
     /// </summary>
-    private void DecrementAllTimers()
+    private void GetIsGrounded()
     {
-        if (_kbControlsLockTimer > 0) _kbControlsLockTimer -= Time.deltaTime;
-        if (_kbDashLockTimer > 0) _kbDashLockTimer -= Time.deltaTime;
-        if (_groundedCastPauseTimer > 0) _groundedCastPauseTimer -= Time.deltaTime;
-        if (IsWithinCoyoteTimeWindow() && !IsGrounded) _coyoteTimer -= Time.deltaTime;
-        if (IsWithinJumpBufferWindow() && !IsGrounded) _jumpBufferTimer -= Time.deltaTime;
-        if (AreDriftRequirementsValid()) _driftDelayTimer -= Time.deltaTime;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Checks if the player character is touching the ground on the frame this method is called.
-    ///   </para>
-    /// </summary>
-    /// <returns> True if the player character is on the ground, otherwise false. </returns>
-    private bool CheckIsGrounded()
-    {
-        if (_groundedCastPauseTimer > 0) return false;
-
-        Vector3 SphereCastOrigin = GetPlayerCharacterBottom() + new Vector3(0, _groundedCastRadius, 0);
-
-        if (Physics.SphereCast(SphereCastOrigin,
-                               _groundedCastRadius,
-                               Vector2.down,
-                               hitInfo: out RaycastHit hitInfo,
-                               _groundedCastLength + _groundedCastRadius, // Compensate for the SphereCast starting higher.
-                               _groundedLayerMasks,
-                               QueryTriggerInteraction.Ignore)
-            && Vector3.Angle(Vector3.up, hitInfo.normal) <= 30)
-        {
-            _groundPoint = hitInfo;
-            return true;
-        }
-
-        return false;
+        IsGrounded = PlayerGroundCheck.GetIsGrounded(GetPlayerCharacterBottom(),
+                                                     _groundedCastLength,
+                                                     _groundedCastRadius,
+                                                     _groundedLayerMasks,
+                                                     out RaycastHit hitInfo,
+                                                     _groundedCastPauseTimer);
+        _groundPoint = hitInfo;
     }
 
     //private void OnDrawGizmos()
@@ -326,6 +299,21 @@ public class PlayerMovementV2 : MonoBehaviour
         }
 
         _characterController.Move(Time.deltaTime * _verticalVelocityVector);
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Decrements all active timers every frame.
+    ///   </para>
+    /// </summary>
+    private void DecrementAllTimers()
+    {
+        if (_kbControlsLockTimer > 0) _kbControlsLockTimer -= Time.deltaTime;
+        if (_kbDashLockTimer > 0) _kbDashLockTimer -= Time.deltaTime;
+        if (_groundedCastPauseTimer > 0) _groundedCastPauseTimer -= Time.deltaTime;
+        if (IsWithinCoyoteTimeWindow() && !IsGrounded) _coyoteTimer -= Time.deltaTime;
+        if (IsWithinJumpBufferWindow() && !IsGrounded) _jumpBufferTimer -= Time.deltaTime;
+        if (AreDriftRequirementsValid()) _driftDelayTimer -= Time.deltaTime;
     }
 
     /// <summary>

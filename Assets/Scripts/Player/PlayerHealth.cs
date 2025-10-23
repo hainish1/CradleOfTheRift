@@ -94,4 +94,10 @@ public class PlayerHealth : HealthController
     {
         this.canTakeDamage = enable;
     }
+
+    public override void Heal(float amount)
+    {
+        base.Heal(amount);
+        healthChanged?.Invoke(currentHealth, maxHealth); // notify UI
+    }
 }
