@@ -69,21 +69,35 @@ public class EnemySpawner : MonoBehaviour
     private float enemySpawnCountdown = 0f;
     private int currentWave = 0;
 
+    [Header("Raycast Length for Ground Detection")]
+    [SerializeField]
+    private float downRaylength = 40f;
 
     [SerializeField]
     private Queue<EnemyType> enemiesToSpawn = new Queue<EnemyType>();
+    private List<(Vector3 position, bool isValid)> spawnDebugList = new List<(Vector3, bool)>();
 
     private bool isExtractionActive = false;
     private float waveCountdown;
     private bool isWaveInProgress = false;
 
     //Jared UIDEV Getters
-
+    public event Action<bool> DevModeChanged;
     public event Action<int> CurrentEnemyCountChanged;
     public event Action<float> CurrentCreditsChanged;
     public event Action<int> CurrentMaxEnemyCapChanged;
     public event Action<int> CurrentWaveChanged;
-
+    [SerializeField]
+    private bool isDevModeEnabled = false;
+public bool IsDevModeEnabled
+{
+    get => this.isDevModeEnabled;
+    set
+        {
+            this.isDevModeEnabled = value;
+            DevModeChanged?.Invoke(this.isDevModeEnabled);
+    }
+}
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -111,7 +125,8 @@ public class EnemySpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (this.isSpawning) {
+        if (this.isSpawning)
+        {
             SpawnerUpdate();
         }
     }
@@ -175,7 +190,7 @@ public class EnemySpawner : MonoBehaviour
 
         this.currentCredits = waveCredits;
         this.currentMaxEnemyCap = waveCap;
-        
+
         // Notify UI for change
         CurrentCreditsChanged?.Invoke(this.currentCredits);
         CurrentMaxEnemyCapChanged?.Invoke(this.currentMaxEnemyCap);
@@ -208,14 +223,26 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnEnemy(EnemyType enemy)
     {
-        Vector3 location = enemy.isFlying ? GetAirLocation() : GetGroundLocation();
+        Vector3 location;
+        bool validLocation;
 
-        // safety check here
-        if (!IsSpawnPositionOnNavSurface(location))
+        if (enemy.isFlying)
         {
+            validLocation = TryGetAirLocation(enemy.prefab, out location);
+        }
+        else
+        {
+            validLocation = TryGetGroundLocation(enemy.prefab, out location);
+        }
+
+        if (!validLocation)
+        {
+            Debug.Log("Failed to find valid ground spawn location after multiple attempts.");
+            spawnDebugList.Add((location, false));
             return;
         }
 
+        spawnDebugList.Add((location, true));
         GameObject enemyObj = Instantiate(enemy.prefab, location, Quaternion.identity);
 
         ScaleEnemyHealth(enemyObj);
@@ -225,6 +252,29 @@ public class EnemySpawner : MonoBehaviour
 
         // Notify UI for change
         CurrentEnemyCountChanged?.Invoke(this.currentEnemyCount);
+    }
+
+    private bool TryGetAirLocation(GameObject enemyPrefab, out Vector3 location)
+    {
+        float radius = GetEnemySpawnWidth(enemyPrefab);
+        int maxAttempts = 2;
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            Vector3 potentialLocation = GetAirLocation();
+            bool isFree = IsSpawnLocationFree(potentialLocation, radius);
+
+            spawnDebugList.Add((potentialLocation, isFree));
+
+            if (isFree)
+            {
+                location = potentialLocation;
+                return true;
+            }
+        }
+
+        location = Vector3.zero;
+        return false;
     }
 
     private void ScaleEnemyHealth(GameObject enemyObj)
@@ -244,7 +294,7 @@ public class EnemySpawner : MonoBehaviour
     private void ScaleEnemyDamage(GameObject enemyObj)
     {   
         EnemyMelee enemyMelee = enemyObj.GetComponent<EnemyMelee>();
-            
+
         if (enemyMelee != null)
         {
             float newDamage = enemyMelee.GetBaseDamage() * (1 + (this.damageGrowth - 1) * (currentWave - 1));
@@ -260,28 +310,17 @@ public class EnemySpawner : MonoBehaviour
 
     private Vector3 GetGroundLocation()
     {
-        Vector2 locationOffset = UnityEngine.Random.insideUnitCircle * this.spawnRadius;
-        float distance = locationOffset.magnitude;
+        float angle = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
 
-        if (distance < this.minSpawnDist)
-        {
-            if (distance > 0f)
-            {
-                locationOffset = locationOffset.normalized * this.minSpawnDist;
-            }
-            else
-            {
-                locationOffset = new Vector2(this.minSpawnDist, 0f);
-            }
-        }
+        // Random distance between minSpawnDist and spawnRadius
+        float distance = UnityEngine.Random.Range(minSpawnDist, spawnRadius);
 
-        Vector3 spawnLocation = this.playerLocation.position + new Vector3(locationOffset.x, 0, locationOffset.y);
+        Vector3 offset = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * distance;
+        Vector3 spawnLocation = playerLocation.position + offset;
 
+        // Adjust Y using raycast
         float heightOffset = 5f;
-        float raycastLength = 40f;
-
-        // Shoot a raycast down to determine the grounds Y position
-        if (Physics.Raycast(spawnLocation + Vector3.up * heightOffset, Vector3.down, out RaycastHit hitInfo, raycastLength))
+        if (Physics.Raycast(spawnLocation + Vector3.up * heightOffset, Vector3.down, out RaycastHit hitInfo, downRaylength))
         {
             spawnLocation.y = hitInfo.point.y;
         }
@@ -291,30 +330,22 @@ public class EnemySpawner : MonoBehaviour
 
     private Vector3 GetAirLocation()
     {
-        Vector3 locationOffset = UnityEngine.Random.onUnitSphere * this.spawnRadius;
-        locationOffset.y = Math.Abs(locationOffset.y);
+        // Random point on a unit sphere
+        Vector3 locationOffset = UnityEngine.Random.onUnitSphere * spawnRadius;
 
+        // Ensure it's above the player
+        locationOffset.y = Mathf.Abs(locationOffset.y);
+
+        // Maintain minimum horizontal distance
         Vector2 horizontalOffset = new Vector2(locationOffset.x, locationOffset.z);
-        float horizontalDistance = horizontalOffset.magnitude;
-
-        if (horizontalDistance < this.minSpawnDist)
+        if (horizontalOffset.magnitude < minSpawnDist)
         {
-            if (horizontalDistance > 0f)
-            {
-                horizontalOffset = horizontalOffset.normalized * this.minSpawnDist;
-            }
-            else
-            {
-                horizontalOffset = new Vector2(this.minSpawnDist, 0f);
-            }
-        
+            horizontalOffset = horizontalOffset.normalized * minSpawnDist;
             locationOffset.x = horizontalOffset.x;
             locationOffset.z = horizontalOffset.y;
         }
 
-        Vector3 spawnLocation = this.playerLocation.position + locationOffset;
-
-        return spawnLocation;
+        return playerLocation.position + locationOffset;
     }
 
     private void OnExtractionZoneStarted()
@@ -330,13 +361,13 @@ public class EnemySpawner : MonoBehaviour
     private bool IsSpawnPositionOnNavSurface(Vector3 pos)
     {
         NavMeshHit hit;
-        return NavMesh.SamplePosition(pos, out hit, spawnRadius, NavMesh.AllAreas);
+        return NavMesh.SamplePosition(pos, out hit, 2f, NavMesh.AllAreas);
     }
 
     private void OnEnemyDied(EnemyHealth enemy)
     {
         this.currentEnemyCount = Math.Max(0, this.currentEnemyCount - 1);
-        
+
         // Notify UI for change
         CurrentEnemyCountChanged?.Invoke(this.currentEnemyCount);
     }
@@ -356,7 +387,83 @@ public class EnemySpawner : MonoBehaviour
 
         return difficultyScale;
     }
+
+    private void OnDrawGizmos()
+    {
+        if (playerLocation == null || !this.isDevModeEnabled) return;
+
+        // Draw max spawn distance (spawnRadius)
+        Gizmos.color = new Color(1f, 0f, 0f, 0.3f); // red, semi-transparent
+        Gizmos.DrawWireSphere(playerLocation.position, spawnRadius);
+
+        // Draw min spawn distance (minSpawnDist)
+        Gizmos.color = new Color(0f, 1f, 0f, 0.3f); // green, semi-transparent
+        Gizmos.DrawWireSphere(playerLocation.position, minSpawnDist);
+
+        // Draw spawn positions
+        foreach (var spawn in spawnDebugList)
+        {
+            Gizmos.color = spawn.isValid ? Color.green : Color.red;
+            Gizmos.DrawSphere(spawn.position, 0.3f);
+        }
+
+        // Draw overlap check spheres
+        foreach (var sphere in overlapDebugList)
+        {
+            Gizmos.color = sphere.isFree ? Color.black : Color.red; // black = free, red = blocked
+            Gizmos.DrawWireSphere(sphere.position, sphere.radius);
+        }
+    }
+
+    [SerializeField] private LayerMask obstacleMask;
+    private List<(Vector3 position, float radius, bool isFree)> overlapDebugList = new List<(Vector3, float, bool)>();
+    private bool IsSpawnLocationFree(Vector3 position, float radius)
+    {
+        Collider[] colliders = Physics.OverlapSphere(position, radius, obstacleMask);
+        bool isFree = colliders.Length == 0;
+
+        overlapDebugList.Add((position, radius, isFree));
+
+        return isFree;
+    }
+
+    private bool TryGetGroundLocation(GameObject enemyPrefab, out Vector3 location)
+    {
+        float radius = GetEnemySpawnWidth(enemyPrefab);
+        int maxAttempts = 1;
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            Vector3 potentialLocation = GetGroundLocation();
+
+            bool isFree = IsSpawnPositionOnNavSurface(potentialLocation) && IsSpawnLocationFree(potentialLocation, radius);
+
+            spawnDebugList.Add((potentialLocation, isFree));
+            if (isFree)
+            {
+                location = potentialLocation;
+                return true;
+            }
+        }
+
+        location = Vector3.zero;
+        return false;
+    }
+
+    private float GetEnemySpawnWidth(GameObject enemyPrefab)
+    {
+        BoxCollider box = enemyPrefab.GetComponent<BoxCollider>();
+        if (box == null)
+            return 1f;
+
+        Vector3 worldSize = Vector3.Scale(box.size, box.transform.lossyScale);
+
+        float size = Mathf.Max(worldSize.x, worldSize.z) * 0.5f * 1.1f;
+        Debug.Log("ENEMY SIZE: " + size);
+        return size;
+    }
 }
+
 
 [Serializable]
 public class EnemyType

@@ -158,7 +158,7 @@ public class PlayerShooter : MonoBehaviour
             Debug.Log("Used Normal");
         }
         // // NOTE TO SELF : USE OBJECT POOLING LATER TO REDUCE INSTANTIATING
-        proj?.Init(direction * projectileSpeed, shootMask, currentDamage, 100);
+        proj?.Init(direction * projectileSpeed, shootMask, currentDamage, 100, playerEntity);
         
         // Debug.Log($"Fired projectile with {currentDamage} damage");
     }

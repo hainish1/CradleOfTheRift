@@ -10,6 +10,8 @@ public class EnemySpawnerUI : MonoBehaviour
     private Label currentMaxEnemyCapLabel;
     private Label currentWaveLabel;
 
+    private VisualElement devContainer;
+
     void Start()
     {
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
@@ -18,11 +20,15 @@ public class EnemySpawnerUI : MonoBehaviour
         this.currentCreditsLabel = root.Q<Label>("CurrentCredits");
         this.currentMaxEnemyCapLabel = root.Q<Label>("CurrentMaxEnemyCap");
         this.currentWaveLabel = root.Q<Label>("CurrentWave");
+        this.devContainer = root.Q<VisualElement>("SpawnerDev");
 
         this.spawner.CurrentEnemyCountChanged += OnCurrentEnemyCountChanged;
         this.spawner.CurrentCreditsChanged += OnCurrentCreditsChanged;
         this.spawner.CurrentMaxEnemyCapChanged += OnCurrentMaxEnemyCapChanged;
         this.spawner.CurrentWaveChanged += OnCurrentWaveChanged;
+        this.spawner.DevModeChanged += OnDevModeChanged;
+
+        OnDevModeChanged(this.spawner.IsDevModeEnabled);        
     }
 
     private void OnCurrentEnemyCountChanged(int currentChange) {
@@ -38,7 +44,15 @@ public class EnemySpawnerUI : MonoBehaviour
 
     }
 
-    private void OnCurrentWaveChanged(int currentChange) { 
-        this.currentWaveLabel.text =  $"Current Wave: {currentChange}";
+    private void OnCurrentWaveChanged(int currentChange) {
+        this.currentWaveLabel.text = $"Current Wave: {currentChange}";
+    }
+
+    private void OnDevModeChanged(bool devMode)
+    {
+        if (devContainer != null)
+        {
+            devContainer.style.display = devMode ? DisplayStyle.Flex : DisplayStyle.None;
+        }
     }
 }
