@@ -256,6 +256,12 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+
+    public void SetPlayerIsGrounded(bool set)
+    {
+        IsGrounded = set;
+    }
+
     /// <summary>
     ///   <para>
     ///     Sets the strafe mode status for the player character.
@@ -263,6 +269,27 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     /// <param name="on"> Strafe mode status. </param>
     public void SetStrafeMode(bool on) => strafe = on;
+
+
+    public void SnapToHoverAfterSlam()
+    {
+        float targetY = _groundPoint.point.y + _hoverHeight + _playerHalfHeight;
+
+        _characterController.Move(Vector3.up * 0.02f); // tiny upward
+
+        // move vertically to exact hover height
+        float dy = targetY - transform.position.y;
+        if (Mathf.Abs(dy) > 1e-5f)
+            _characterController.Move(new Vector3(0f, dy, 0f));
+
+        // kill vertical velocity 
+        _verticalVelocityVector.y = 0f;
+
+
+        _coyoteTimer = _coyoteTimeWindow;
+        _jumpBufferTimer = 0f;
+        _groundedCastPauseTimer = 0f;
+    }
 
     /// <summary>
     ///   <para>
@@ -362,15 +389,15 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // Because move speed right before moment of knockback must be preserved for correct calculations,
-        // simply stop recording new movement values instead of completely skipping the MoveCase method.
-        _moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
-
-        // Disable sprint if not inputting forward movement.
-        if (moveActions.ReadValue<Vector2>().y != 1)
+        // Disable sprinting if sprint input was released.
+        if (_isSprinting && !sprintActions.IsPressed())
         {
             DisableSprint();
         }
+
+        // Because move speed right before moment of knockback must be preserved for correct calculations,
+        // simply stop recording new movement values instead of completely skipping the MoveCase method.
+        _moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
 
         float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
 
@@ -496,20 +523,13 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Toggles sprinting for the player character on any frame that sprint is inputted.
+    ///     Enables sprinting for the player character on any frame that sprint is inputted.
     ///   </para>
     /// </summary>
     /// <param name="context"> The sprint input context. </param>
     private void SprintInputActionStarted(InputAction.CallbackContext context)
     {
-        if (_isSprinting)
-        {
-            DisableSprint();
-        }
-        else
-        {
-            EnableSprint();
-        }
+        EnableSprint();
     }
 
     /// <summary>
@@ -679,13 +699,8 @@ public class PlayerMovement : MonoBehaviour
             _inputtedJumpThisFrame = true;
             _jumpBufferTimer = _jumpBufferWindow;
         }
-        
-        // Toggle drifting if in midair.
-        if (_isDrifting && !IsGrounded && !_isDashing)
-        {
-            DisableDrift();
-        }
-        else if (!_isDrifting && !IsGrounded && !_isDashing)
+
+        if (!IsGrounded && !_isDashing)
         {
             EnableDrift();
         }
@@ -775,8 +790,8 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void DriftConditions()
     {
-        // Cease drifting if the player character landed.
-        if (_isDrifting && IsGrounded)
+        // Cease drifting if jump input was released or player character landed.
+        if (_isDrifting && (!jumpActions.IsPressed() || IsGrounded))
         {
             DisableDrift();
         }
@@ -841,7 +856,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void BoostConditions()
     {
-        // Cease drifting if jump input is no longer held or boost energy is depleted.
+        // Cease boosting if jump input was released or boost energy is depleted.
         if ( (_isBoosting && !jumpActions.IsPressed()) || _currBoostEnergy <= 0 )
         {
             _isBoosting = false;
@@ -925,55 +940,5 @@ public class PlayerMovement : MonoBehaviour
     private bool IsWithinBoostWindow()
     {
         return _boostDoubleTapTimer > 0;
-    }
-
-
-
-
-
-    // SOME GETTERS FOR MY USE
-    public float GetGroundPoint()
-    {
-        return _groundPoint.point.y;
-    }
-
-    public float GetHoverHeight()
-    {
-        return _hoverHeight;
-    }
-
-    public float GetHalfHeight()
-    {
-        return _playerHalfHeight;
-    }
-
-    public void SetVerticalVelocityFactor(float factor)
-    {
-        _verticalVelocityVector.y = factor;
-    }
-
-    public void SnapToHoverAfterSlam()
-    {
-        float targetY = _groundPoint.point.y + _hoverHeight + _playerHalfHeight;
-
-        _characterController.Move(Vector3.up * 0.02f); // tiny upward
-
-        // move vertically to exact hover height
-        float dy = targetY - transform.position.y;
-        if (Mathf.Abs(dy) > 1e-5f)
-            _characterController.Move(new Vector3(0f, dy, 0f));
-
-        // kill vertical velocity 
-        _verticalVelocityVector.y = 0f;
-
-
-        _coyoteTimer = _coyoteTimeWindow;
-        _jumpBufferTimer = 0f;
-        _groundedCastPauseTimer = 0f;
-    }
-    
-    public void SetPlayerIsGrounded(bool set)
-    {
-        IsGrounded = set;
     }
 }

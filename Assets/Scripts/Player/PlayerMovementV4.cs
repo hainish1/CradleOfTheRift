@@ -15,7 +15,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerMovementV2 : MonoBehaviour
+public class PlayerMovementV4 : MonoBehaviour
 {
     public bool IsGrounded { get; private set; }
 
@@ -27,7 +27,8 @@ public class PlayerMovementV2 : MonoBehaviour
     private InputAction jumpActions;
     private InputAction dashActions;
 
-    [Header("Player References")] [Space]
+    [Header("Player References")]
+    [Space]
     [SerializeField]
     [Tooltip("An empty object positioned at the exact center of the player character object.")] private Transform _playerCenter;
     [SerializeField]
@@ -37,7 +38,8 @@ public class PlayerMovementV2 : MonoBehaviour
     private float _playerHalfHeight;
     private float _playerRadius;
 
-    [Header("Movement Parameters")] [Space]
+    [Header("Movement Parameters")]
+    [Space]
     [SerializeField]
     [Tooltip("Max move speed in units per second.")] private float _maxSpeed;
     [SerializeField]
@@ -56,7 +58,8 @@ public class PlayerMovementV2 : MonoBehaviour
     private Vector3 lateralVelocityVector;
     private Vector3 _moveDirectionUnitVector;
 
-    [Header("Hover Parameters")] [Space]
+    [Header("Hover Parameters")]
+    [Space]
     [SerializeField]
     [Tooltip("Height above the ground the player character hovers in units.")] private float _hoverHeight;
     [SerializeField]
@@ -73,7 +76,8 @@ public class PlayerMovementV2 : MonoBehaviour
     private int _groundedLayerMasks;
     private RaycastHit _groundPoint;
 
-    [Header("KnockBack Parameters")] [Space]
+    [Header("KnockBack Parameters")]
+    [Space]
     [SerializeField]
     [Tooltip("Seconds needed for a knockback impulse to dissipate.")] private float _kbDamping;
     [SerializeField]
@@ -84,7 +88,8 @@ public class PlayerMovementV2 : MonoBehaviour
     private float _kbDashLockTimer;
     private Vector3 _externalKnockbackVelocity;
 
-    [Header("Dash Parameters")] [Space]
+    [Header("Dash Parameters")]
+    [Space]
     [SerializeField]
     [Tooltip("Distance that the player character dashes in units.")] private float _dashDistance;
     [SerializeField]
@@ -98,13 +103,15 @@ public class PlayerMovementV2 : MonoBehaviour
     public event System.Action<float> DashCooldownStarted;
     private Vector3 _dashDirectionUnitVector;
 
-    [Header("Jump Parameters")] [Space]
+    [Header("Jump Parameters")]
+    [Space]
     [SerializeField]
     [Tooltip("Vertical jump strength in units per second.")] private float _JumpForce;
     private bool _inputtedJumpThisFrame;
     private Vector3 _verticalVelocityVector;
 
-    [Header("Coyote Time Parameters")] [Space]
+    [Header("Coyote Time Parameters")]
+    [Space]
     [SerializeField]
     [Tooltip("Seconds that jump can still be registered after walking off an edge.")] private float _coyoteTimeWindow;
     [SerializeField]
@@ -112,17 +119,38 @@ public class PlayerMovementV2 : MonoBehaviour
     private float _coyoteTimer;
     private float _jumpBufferTimer;
 
-    [Header("Drift Parameters")] [Space]
+    [Header("Drift Parameters")]
+    [Space]
     [SerializeField]
     [Range(0, 1)]
     [Tooltip("How much gravity is divided when drifting.")] private float _driftDescentDivisor;
     [SerializeField]
     [Tooltip("Seconds before Drift Descent Divisor gradually reaches full effect.")] private float _driftDelay;
     [SerializeField]
-    [Tooltip("How much gravity is multiplied in units per second (base gravity value is -9.81).")] private float _gravityMultiplier;
+    [Tooltip("How much gravity is multiplied in units per second (base gravity value is -9.81).")] public float _gravityMultiplier;
     private bool _isDrifting;
     private float _currDriftDescentDivisor;
     private float _driftDelayTimer;
+
+    [Header("Boost Parameters")]
+    [Space]
+    [SerializeField]
+    [Tooltip("Max vertical boost speed in units per second.")] private float _maxBoostSpeed;
+    [SerializeField]
+    [Tooltip("Seconds needed to reach Max Boost Speed.")] private float _boostAccelerationSeconds;
+    [SerializeField]
+    [Tooltip("Amount of boost energy regeneration per second.")] private float _boostRegenerationRate;
+    [SerializeField]
+    [Tooltip("Capacity value of boost energy")] private int _maxBoostEnergy;
+    [SerializeField]
+    [Tooltip("Amount of boost energy depleted per second.")] private float _boostDepletionRate;
+    [SerializeField]
+    [Tooltip("Seconds in which a boost double-tap can still be registered after the first jump tap.")] private float _boostDoubleTapWindow;
+    private bool _isBoosting;
+    private bool _isRegeneratingBoost;
+    private float _currBoostEnergy;
+    private float _boostAcceleration;
+    private float _boostDoubleTapTimer;
 
     private bool strafe = false; // Set by AimController.
 
@@ -147,6 +175,7 @@ public class PlayerMovementV2 : MonoBehaviour
         dashActions.Enable();
 
         jumpActions.started += JumpInputActionStarted;
+        jumpActions.canceled += JumpInputActionCanceled;
         sprintActions.started += SprintInputActionStarted;
         dashActions.started += DashInputActionStarted;
     }
@@ -159,6 +188,7 @@ public class PlayerMovementV2 : MonoBehaviour
         dashActions.Disable();
 
         jumpActions.started -= JumpInputActionStarted;
+        jumpActions.canceled -= JumpInputActionCanceled;
         sprintActions.started -= SprintInputActionStarted;
         dashActions.started -= DashInputActionStarted;
     }
@@ -203,6 +233,13 @@ public class PlayerMovementV2 : MonoBehaviour
         _currDriftDescentDivisor = 1;
         _driftDelayTimer = 0;
         _isDrifting = false;
+
+        // Boost Parameters
+        _isBoosting = false;
+        _isRegeneratingBoost = false;
+        _boostAcceleration = _maxBoostSpeed / _boostAccelerationSeconds;
+        _currBoostEnergy = _maxBoostEnergy;
+        _boostDoubleTapTimer = 0;
     }
 
     void Update()
@@ -226,6 +263,7 @@ public class PlayerMovementV2 : MonoBehaviour
             JumpConditions();
             GetIsGrounded();
             DriftConditions();
+            BoostConditions();
         }
     }
 
@@ -314,7 +352,7 @@ public class PlayerMovementV2 : MonoBehaviour
     private void GravityConditions()
     {
         // Do not apply gravity whenon the ground or boosting.
-        if (IsGrounded) return;
+        if (IsGrounded || _isBoosting) return;
 
         float aggregateGravityModifier = _gravityMultiplier * _currDriftDescentDivisor;
         _verticalVelocityVector.y += Time.deltaTime * aggregateGravityModifier * Physics.gravity.y;
@@ -341,6 +379,7 @@ public class PlayerMovementV2 : MonoBehaviour
         if (IsWithinCoyoteTimeWindow() && !IsGrounded) _coyoteTimer -= Time.deltaTime;
         if (IsWithinJumpBufferWindow() && !IsGrounded) _jumpBufferTimer -= Time.deltaTime;
         if (AreDriftRequirementsValid()) _driftDelayTimer -= Time.deltaTime;
+        if (IsWithinBoostWindow()) _boostDoubleTapTimer -= Time.deltaTime;
     }
 
     /// <summary>
@@ -392,13 +431,13 @@ public class PlayerMovementV2 : MonoBehaviour
         }
 
         // Turn the player character toward the input direction.
-        //if (_kbControlsLockTimer <= 0 && !strafe && lateralVelocityVector.sqrMagnitude > 0.0001f)
-        //{
-        //    Quaternion qa = transform.rotation;
-        //    Quaternion qb = Quaternion.LookRotation(lateralVelocityVector, Vector3.up);
-        //    float t = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, _characterRotationDamping));
-        //    transform.rotation = Quaternion.Slerp(qa, qb, t);
-        //}
+        if (_kbControlsLockTimer <= 0 && !strafe && lateralVelocityVector.sqrMagnitude > 0.0001f)
+        {
+            Quaternion qa = transform.rotation;
+            Quaternion qb = Quaternion.LookRotation(lateralVelocityVector, Vector3.up);
+            float t = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, _characterRotationDamping));
+            transform.rotation = Quaternion.Slerp(qa, qb, t);
+        }
     }
 
     /// <summary>
@@ -585,15 +624,7 @@ public class PlayerMovementV2 : MonoBehaviour
         // Check if the player character is being knocked back.
         if (_kbDashLockTimer > 0) return;
 
-        // Dash into camera direction when midair.
-        if (IsGrounded)
-        {
-            _dashDirectionUnitVector = GetMoveInputDirection();
-        }
-        else
-        {
-            _dashDirectionUnitVector = GetCameraForwardDirection();
-        }
+        _dashDirectionUnitVector = GetMoveInputDirection();
 
         if (_currDashCharges != 0 && !_isDashing)
         {
@@ -619,24 +650,16 @@ public class PlayerMovementV2 : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///      Gets the current camera perspective forward direction on any frame this method is called.
-    ///   </para>
-    /// </summary>
-    /// <returns> A normalized vector in the direction of where the camera is facing. </returns>
-    private Vector3 GetCameraForwardDirection()
-    {
-        Vector3 cameraPerspectiveForward = _cameraTransform ? _cameraTransform.forward : Vector3.forward;
-
-        return cameraPerspectiveForward.normalized;
-    }
-
-    /// <summary>
-    ///   <para>
     ///     Makes the player character dash on any frame this method is called.
     ///   </para>
     /// </summary>
     private void DashConditions()
     {
+        if (_isBoosting)
+        {
+            BoostConditions();
+        }
+
         _characterController.Move(Time.deltaTime * _dashSpeed * _dashDirectionUnitVector);
     }
 
@@ -688,10 +711,38 @@ public class PlayerMovementV2 : MonoBehaviour
             _jumpBufferTimer = _jumpBufferWindow;
         }
 
-        if (!IsGrounded && !_isDashing)
+        // Toggle drifting if in midair.
+        if (_isDrifting && !IsGrounded && !_isDashing)
+        {
+            DisableDrift();
+        }
+        else if (!_isDrifting && !IsGrounded && !_isDashing)
         {
             EnableDrift();
         }
+
+        // Begin the window of time for double-tapping the jump input if not already initiated.
+        if (!IsWithinBoostWindow())
+        {
+            _boostDoubleTapTimer = _boostDoubleTapWindow;
+        }
+        // Otherwise, if the window of time has not closed then begin boosting.
+        else
+        {
+            DisableDrift(); // Disable drift because it may have been enabled earlier in the method.
+            _isBoosting = true;
+        }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Ensures the player character stops boosting on any frame that the jump input is released.
+    ///   </para>
+    /// </summary>
+    /// <param name="context"> The jump input context. </param>
+    private void JumpInputActionCanceled(InputAction.CallbackContext context)
+    {
+        _isBoosting = false;
     }
 
     /// <summary>
@@ -755,8 +806,8 @@ public class PlayerMovementV2 : MonoBehaviour
     /// </summary>
     private void DriftConditions()
     {
-        // Cease drifting if jump input was released or player character landed.
-        if (_isDrifting && (!jumpActions.IsPressed() || IsGrounded))
+        // Cease drifting if the player character landed.
+        if (_isDrifting && IsGrounded)
         {
             DisableDrift();
         }
@@ -811,5 +862,124 @@ public class PlayerMovementV2 : MonoBehaviour
     {
         _isDrifting = false;
         _currDriftDescentDivisor = 1;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Boosts the player character if the necessary conditions are satisfied
+    ///     on any frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void BoostConditions()
+    {
+        // Cease drifting if jump input is no longer held or boost energy is depleted.
+        if ((_isBoosting && !jumpActions.IsPressed()) || _currBoostEnergy <= 0)
+        {
+            _isBoosting = false;
+        }
+
+        // If in midair, jump input was double-tapped and is still held, and boost energy is not depleted, then boost.
+        if (!IsGrounded && _isBoosting && jumpActions.IsPressed() && _currBoostEnergy > 0)
+        {
+            float boostSpeedIncrement = Time.deltaTime * _boostAcceleration;
+            float boostDepletionDecrement = Time.deltaTime * _boostDepletionRate;
+
+            _currBoostEnergy -= boostDepletionDecrement;
+
+            // If boost energy decrement for the current frame exceeds zero, then set
+            // current boost energy to exactly zero and immediately begin drifting.
+            if (_currBoostEnergy < 0)
+            {
+                _currBoostEnergy = 0;
+                EnableDrift();
+            }
+
+            _verticalVelocityVector.y += boostSpeedIncrement;
+
+            // Limit vertical move speed to _maxBoostSpeed.
+            if (_verticalVelocityVector.y > _maxBoostSpeed)
+            {
+                _verticalVelocityVector.y = _maxBoostSpeed;
+            }
+
+            _characterController.Move(Time.deltaTime * _verticalVelocityVector);
+        }
+
+        // Initialize regeneration coroutine if boosted, on the ground and not already regenerating.
+        if (IsGrounded && _currBoostEnergy < _maxBoostEnergy && !_isRegeneratingBoost)
+        {
+            StartCoroutine(BoostRegeneration());
+        }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Coroutine for regenerating boost energy to full capacity over time.
+    ///   </para>
+    /// </summary>
+    /// <returns> IEnumerator object. </returns>
+    private IEnumerator BoostRegeneration()
+    {
+        _isRegeneratingBoost = true;
+
+        while (_currBoostEnergy < _maxBoostEnergy)
+        {
+            // Cancel boost energy regeneration if boost was inputted.
+            if (_isBoosting)
+            {
+                break;
+            }
+
+            _currBoostEnergy += Time.deltaTime * _boostRegenerationRate;
+
+            // If boost regeneration increment for the current frame exceeds _maxBoostEnergy,
+            // then set boost energy to exactly _maxBoostEnergy.
+            if (_currBoostEnergy >= _maxBoostEnergy)
+            {
+                _currBoostEnergy = _maxBoostEnergy;
+                break;
+            }
+
+            yield return null;
+        }
+
+        _isRegeneratingBoost = false;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Checks if the window of time in which the jump input can be double-tapped has
+    ///     closed on any frame this method is called.
+    ///   </para>
+    /// </summary>
+    /// <returns> True if the window of time has not closed, otherwise false. </returns>
+    private bool IsWithinBoostWindow()
+    {
+        return _boostDoubleTapTimer > 0;
+    }
+
+
+
+
+
+    // SOME GETTERS FOR MY USE
+    public float GetGroundPoint()
+    {
+        return _groundPoint.point.y;
+    }
+
+    public float GetHoverHeight()
+    {
+        return _hoverHeight;
+    }
+
+    public float GetHalfHeight()
+    {
+        return _playerHalfHeight;
+    }
+
+    public void SetVerticalVelocityFactor(float factor)
+    {
+        _verticalVelocityVector.y = factor;
     }
 }
