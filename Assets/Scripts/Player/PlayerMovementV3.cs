@@ -17,6 +17,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovementV3 : MonoBehaviour
 {
+    public bool IsGrounded { get; private set; }
+
     private InputSystem_Actions playerInput;
     private InputSystem_Actions.PlayerActions playerActions;
 
@@ -72,7 +74,6 @@ public class PlayerMovementV3 : MonoBehaviour
     [SerializeField]
     [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private float _groundedCastJumpPauseDuration;
     private float _currHoverHeight;
-    private bool _isGrounded;
     private float _groundedCastRadius;
     private float _groundedCastPauseTimer;
     private int _groundedLayerMasks;
@@ -215,11 +216,10 @@ public class PlayerMovementV3 : MonoBehaviour
     void Update()
     {
         GetIsGrounded();
+        GravityConditions();
         DecrementAllTimers();
 
         if (_kbControlsLockTimer > 0) return;
-
-        GravityConditions();
 
         if (_isDashing)
         {
@@ -264,34 +264,18 @@ public class PlayerMovementV3 : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Decrements all active timers every frame.
-    ///   </para>
-    /// </summary>
-    private void DecrementAllTimers()
-    {
-        if (_kbControlsLockTimer > 0) _kbControlsLockTimer -= Time.deltaTime;
-        if (_kbDashLockTimer > 0) _kbDashLockTimer -= Time.deltaTime;
-        if (_groundedCastPauseTimer > 0) _groundedCastPauseTimer -= Time.deltaTime;
-        if (IsWithinCoyoteTimeWindow() && !_isGrounded) _coyoteTimer -= Time.deltaTime;
-        if (IsWithinJumpBufferWindow() && !_isGrounded) _jumpBufferTimer -= Time.deltaTime;
-        if (AreDriftRequirementsValid()) _driftDelayTimer -= Time.deltaTime;
-    }
-
-    /// <summary>
-    ///   <para>
     ///     Updates all grounded information on the frame this method is called.
     ///   </para>
     /// </summary>
     private void GetIsGrounded()
     {
-        PlayerGroundCheck.CheckIsGrounded(GetPlayerCharacterBottom(),
-                                          _groundedCastLength,
-                                          _groundedCastRadius,
-                                          _groundedLayerMasks,
-                                          out RaycastHit hitInfo,
-                                          _groundedCastPauseTimer);
+        IsGrounded = PlayerGroundCheck.GetIsGrounded(GetPlayerCharacterBottom(),
+                                                     _groundedCastLength,
+                                                     _groundedCastRadius,
+                                                     _groundedLayerMasks,
+                                                     out RaycastHit hitInfo,
+                                                     _groundedCastPauseTimer);
         _groundPoint = hitInfo;
-        _isGrounded = PlayerGroundCheck.IsGrounded;
     }
 
     //private void OnDrawGizmos()
@@ -311,7 +295,7 @@ public class PlayerMovementV3 : MonoBehaviour
     private void GravityConditions()
     {
         // Do not apply gravity whenon the ground or boosting.
-        if (_isGrounded) return;
+        if (IsGrounded) return;
 
         float aggregateGravityModifier = _gravityMultiplier * _currDriftDescentDivisor;
         _verticalVelocityVector.y += Time.deltaTime * aggregateGravityModifier * Physics.gravity.y;
@@ -323,6 +307,21 @@ public class PlayerMovementV3 : MonoBehaviour
         }
 
         _characterController.Move(Time.deltaTime * _verticalVelocityVector);
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Decrements all active timers every frame.
+    ///   </para>
+    /// </summary>
+    private void DecrementAllTimers()
+    {
+        if (_kbControlsLockTimer > 0) _kbControlsLockTimer -= Time.deltaTime;
+        if (_kbDashLockTimer > 0) _kbDashLockTimer -= Time.deltaTime;
+        if (_groundedCastPauseTimer > 0) _groundedCastPauseTimer -= Time.deltaTime;
+        if (IsWithinCoyoteTimeWindow() && !IsGrounded) _coyoteTimer -= Time.deltaTime;
+        if (IsWithinJumpBufferWindow() && !IsGrounded) _jumpBufferTimer -= Time.deltaTime;
+        if (AreDriftRequirementsValid()) _driftDelayTimer -= Time.deltaTime;
     }
 
     /// <summary>
@@ -354,14 +353,14 @@ public class PlayerMovementV3 : MonoBehaviour
         }
 
         // Move in direction of camera tilt if inputting forward movement while boosting midair.
-        if (moveActions.ReadValue<Vector2>().y == 1 && !_isGrounded && _isSprinting)
+        if (moveActions.ReadValue<Vector2>().y == 1 && !IsGrounded && _isSprinting)
         {
             _moveDirectionUnitVector.y = GetCameraForwardDirection().y;
             _moveDirectionUnitVector = _moveDirectionUnitVector.normalized;
         }
 
         // Apply boost speed if sprinting in midair.
-        if (_isSprinting && !_isGrounded)
+        if (_isSprinting && !IsGrounded)
         {
             _currBoostMultiplier = _boostMultiplier;
 
@@ -569,7 +568,7 @@ public class PlayerMovementV3 : MonoBehaviour
     private void HoverConditions()
     {
         // Skip hover calculations if not on the ground.
-        if (!_isGrounded) return;
+        if (!IsGrounded) return;
 
         _currHoverHeight = _groundPoint.point.y + _hoverHeight;
         float playerCharacterBottomHeight = GetPlayerCharacterBottom().y;
@@ -616,7 +615,7 @@ public class PlayerMovementV3 : MonoBehaviour
         if (_kbDashLockTimer > 0) return;
 
         // Dash into camera directon when boosting.
-        if (_isGrounded)
+        if (IsGrounded)
         {
             _dashDirectionUnitVector = GetMoveInputDirection();
         }
@@ -709,11 +708,11 @@ public class PlayerMovementV3 : MonoBehaviour
         }
 
         // Toggle drifting if in midair.
-        if (_isDrifting && !_isGrounded && !_isDashing)
+        if (_isDrifting && !IsGrounded && !_isDashing)
         {
             DisableDrift();
         }
-        else if (!_isDrifting && !_isGrounded && !_isDashing)
+        else if (!_isDrifting && !IsGrounded && !_isDashing)
         {
             EnableDrift();
         }
@@ -728,7 +727,7 @@ public class PlayerMovementV3 : MonoBehaviour
     private void JumpConditions()
     {
         // If on the ground and jump was inputted and jump buffer window is valid, or if walked off an edge and coyote time window is valid, then jump.
-        if ((_isGrounded && IsWithinJumpBufferWindow()) || (_inputtedJumpThisFrame && !_isGrounded && IsWithinCoyoteTimeWindow()))
+        if ((IsGrounded && IsWithinJumpBufferWindow()) || (_inputtedJumpThisFrame && !IsGrounded && IsWithinCoyoteTimeWindow()))
         {
             _coyoteTimer = 0;
             _jumpBufferTimer = 0;
@@ -739,7 +738,7 @@ public class PlayerMovementV3 : MonoBehaviour
         }
         // Otherwise, reset coyote time and jump buffer time to original states
         // because player charater is on the ground.
-        else if (_isGrounded)
+        else if (IsGrounded)
         {
             _coyoteTimer = _coyoteTimeWindow;
             _jumpBufferTimer = 0;
@@ -781,7 +780,7 @@ public class PlayerMovementV3 : MonoBehaviour
     private void DriftConditions()
     {
         // Cease drifting if the player character landed.
-        if (_isDrifting && _isGrounded)
+        if (_isDrifting && IsGrounded)
         {
             DisableDrift();
         }
