@@ -86,6 +86,13 @@ public class PlayerShooter : MonoBehaviour
             muzzle.rotation = Quaternion.Slerp(muzzle.rotation, lookRot, 20f * Time.deltaTime);
         }
         if (isFiring) TryToFire();
+
+
+        // TESTING : Update fire rate with stats
+        if (playerEntity != null)
+        {
+            fireRate = playerEntity.Stats.AttackSpeed;
+        }    
     }
 
 
