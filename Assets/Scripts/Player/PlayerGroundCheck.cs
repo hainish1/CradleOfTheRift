@@ -51,7 +51,7 @@ public class PlayerGroundCheck : MonoBehaviour
     /// <param name="maxHeight"> Maximum height above the ground that should be registered. </param>
     /// <param name="layerMasks"> Layers that should be treated as ground. </param>
     /// <returns> The player character's height above the ground, or -1 if too high to register. </returns>
-    public static float GetHeightAboveGround(Vector3 playerBottom, float maxHeight, int layerMasks)
+    public static float GetHeightAboveGround(Vector3 playerBottom, int layerMasks, int maxHeight = 99)
     {
         if (Physics.Raycast(playerBottom, Vector3.down, out RaycastHit hitInfo, maxHeight, layerMasks, QueryTriggerInteraction.Ignore))
         {

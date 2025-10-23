@@ -89,7 +89,7 @@ public class PlayerGroundSlam : MonoBehaviour
         Vector3 fallVelocity = Vector3.down * slamDownSpeed;
 
         // go down when not grounded
-        while (!controller.isGrounded)
+        while (!controller.isGrounded) 
         {
             controller.Move(fallVelocity * Time.deltaTime);
             yield return null;
