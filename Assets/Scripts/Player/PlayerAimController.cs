@@ -43,6 +43,7 @@ public class PlayerAimController : MonoBehaviour
 
     private CharacterController cc; // cached
     private PlayerMovement movement;
+    private PlayerMovementV4 movementV4;
 
 
     private float yaw;
@@ -92,7 +93,12 @@ public class PlayerAimController : MonoBehaviour
         if (playerRoot)
         {
             cc = playerRoot.GetComponent<CharacterController>();
+            // Try PlayerMovement first, then PlayerMovementV4 for compatibility
             movement = playerRoot.GetComponent<PlayerMovement>();
+            if (movement == null)
+            {
+                movementV4 = playerRoot.GetComponent<PlayerMovementV4>();
+            }
             lastPlayerYaw = playerRoot.eulerAngles.y;
         }
 
@@ -254,6 +260,10 @@ public class PlayerAimController : MonoBehaviour
         if (movement != null)
         {
             movement.SetStrafeMode(on);
+        }
+        else if (movementV4 != null)
+        {
+            movementV4.SetStrafeMode(on);
         }
     }
 

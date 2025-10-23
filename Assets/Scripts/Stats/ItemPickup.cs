@@ -25,7 +25,8 @@ public class ItemPickup : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (!other.GetComponent<PlayerMovement>())
+        // Check for PlayerMovement or PlayerMovementV4
+        if (!other.GetComponent<PlayerMovement>() && !other.GetComponent<PlayerMovementV4>())
         {
             return;
         }

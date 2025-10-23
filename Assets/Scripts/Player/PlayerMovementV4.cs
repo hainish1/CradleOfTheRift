@@ -17,6 +17,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovementV4 : MonoBehaviour
 {
+    
     private InputSystem_Actions playerInput;
     private InputSystem_Actions.PlayerActions playerActions;
 
@@ -221,6 +222,7 @@ public class PlayerMovementV4 : MonoBehaviour
         _isRegeneratingFlight = false;
         _flightAcceleration = _maxFlightSpeed / _flightAccelerationSeconds;
         _isFlying = false;
+        
     }
 
     void Update()
@@ -777,6 +779,12 @@ public class PlayerMovementV4 : MonoBehaviour
     /// </summary>
     private void FlightConditions()
     {
+        // Debug: Check flight conditions
+        if (!IsGrounded && jumpActions.IsPressed())
+        {
+            Debug.Log($"Flight Check - Energy: {_currFlightEnergy}, IsGrounded: {IsGrounded}, IsDashing: {_isDashing}");
+        }
+        
         // Hold jump in air to fly
         if (!IsGrounded && !_isDashing && jumpActions.IsPressed() && _currFlightEnergy > 0)
         {
@@ -884,6 +892,20 @@ public class PlayerMovementV4 : MonoBehaviour
     public bool IsFlying()
     {
         return _isFlying;
+    }
+
+    // Debug helper method
+    public void DebugFlightStatus()
+    {
+        Debug.Log("=== Flight System Debug ===");
+        Debug.Log($"IsGrounded: {IsGrounded}");
+        Debug.Log($"IsDashing: {_isDashing}");
+        Debug.Log($"Jump Pressed: {jumpActions.IsPressed()}");
+        Debug.Log($"Current Flight Energy: {_currFlightEnergy} / {_maxFlightEnergy}");
+        Debug.Log($"IsFlying: {_isFlying}");
+        Debug.Log($"Max Flight Speed: {_maxFlightSpeed}");
+        Debug.Log($"Flight Acceleration: {_flightAcceleration}");
+        Debug.Log($"Vertical Velocity: {_verticalVelocityVector.y}");
     }
 
     public void SnapToHoverAfterSlam()

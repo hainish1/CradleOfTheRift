@@ -20,9 +20,9 @@ public class BaseStats : ScriptableObject
     [Space]
 
     [Header("Player Attack")]
-    public float projectileDamage = 1;
-    public float meleeDamage = 1;
-    public float slamDamage = 2;
+    public float projectileDamage = 15;
+    public float meleeDamage = 25;
+    public float slamDamage = 40;
     public float slamAttackRadius = 10;
 }
 

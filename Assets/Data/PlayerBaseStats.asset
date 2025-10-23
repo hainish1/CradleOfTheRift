@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 10
   moveSpeed: 18
+  jumpHeight: 10
   dashSpeed: 100
   dashDistance: 14
   dashCooldown: 1
   dashCharges: 20
-  projectileDamage: 2
-  meleeDamage: 1
-  slamDamage: 1
+  projectileDamage: 30
+  meleeDamage: 16
+  slamDamage: 50
   slamAttackRadius: 20
