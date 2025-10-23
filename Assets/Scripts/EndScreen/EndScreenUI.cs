@@ -8,27 +8,41 @@ public class EndScreenUI : MonoBehaviour
 {
     [SerializeField]
     private ExtractionZone extractionZone;
-
     [SerializeField]
     private PlayerHealth playerHealth;
     [SerializeField]
     private GameObject winScreen;
     [SerializeField]
     private GameObject loseScreen;
-
     private GameObject activeScreen;
+    private TimerUI timerUI;
+
 
     void OnEnable()
     {
-        this.extractionZone.WinScreen += OnWinScreen;
-        this.playerHealth.LoseScreen += OnLoseScreen;
+        if (this.timerUI == null)
+            this.timerUI = GetComponent<TimerUI>();
+
+        if (this.extractionZone != null)
+            this.extractionZone.WinScreen += OnWinScreen;
+
+        if (this.playerHealth != null)
+            this.playerHealth.LoseScreen += OnLoseScreen;
+
+        if (this.timerUI != null)
+            this.timerUI.DisplayEndGame += OnLoseScreen;
     }
 
     void OnDisable()
     {
-        this.extractionZone.WinScreen -= OnWinScreen;
-        this.playerHealth.LoseScreen -= OnLoseScreen;
+        if (this.extractionZone != null)
+            this.extractionZone.WinScreen -= OnWinScreen;
 
+        if (this.playerHealth != null)
+            this.playerHealth.LoseScreen -= OnLoseScreen;
+
+        if (this.timerUI != null)
+            this.timerUI.DisplayEndGame -= OnLoseScreen;
     }
 
     private void OnWinScreen()
@@ -52,5 +66,4 @@ public class EndScreenUI : MonoBehaviour
         yield return new WaitForSeconds(delay);
         SceneManager.LoadScene(sceneName);
     }
-
 }
