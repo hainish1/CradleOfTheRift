@@ -44,13 +44,13 @@ public class HomingProjectile : MonoBehaviour
         rb.linearVelocity = velocity;
         hitMask = mask;
         actualDamage = damage; // USE DAMAGE FROM STATS SYSTEM
-        this.attacker = attacker;
+        //this.attacker = attacker;
         age = 0f;
 
         trail.Clear();
         trail.time = 0.25f;
-        startPos = transform.position;
-        this.flyDistance = flyDistance + 1;
+        //startPos = transform.position;
+        //this.flyDistance = flyDistance + 1;
 
         Debug.Log($"Projectile initialized with damage: {actualDamage}");
     }
@@ -120,9 +120,9 @@ public class HomingProjectile : MonoBehaviour
 
     protected virtual void FadeTrailVisuals()
     {
-        if (Vector3.Distance(startPos, transform.position) > flyDistance - 1.5f)
-        {
-            trail.time -= 5f * Time.fixedDeltaTime;
-        }
+        // if (Vector3.Distance(startPos, transform.position) > flyDistance - 1.5f)
+        // {
+        //     trail.time -= 5f * Time.fixedDeltaTime;
+        // }
     }
 }
