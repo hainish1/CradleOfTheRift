@@ -35,6 +35,10 @@ public class PlayerGroundSlam : MonoBehaviour
     private float SlamDamage => _playerEntity.Stats.SlamDamage;
     // private float SlamRadius => _playerEntity.Stats.SlamRadius;
     // public float slamRadius = 5f;
+
+    // Sounds
+    private PlayerAudioController audioController;
+
     [SerializeField] private float previewSlamRadius = 10f;
 
     private float CurrentSlamRadius
@@ -55,6 +59,7 @@ public class PlayerGroundSlam : MonoBehaviour
         _playerEntity = GetComponent<Entity>();
         controller = GetComponent<CharacterController>();
         playerMovement = GetComponent<PlayerMovement>();
+        audioController = GetComponent<PlayerAudioController>();
     }
 
     void OnEnable()
@@ -122,6 +127,10 @@ public class PlayerGroundSlam : MonoBehaviour
 
         // any effects we have
         DoImpactEffect(); // i wanna do a camera shake here
+
+        // Play slam sound
+        audioController?.PlaySlamSound();
+
         HashSet<Enemy> uniqueEnemies = new HashSet<Enemy>();
         // now do attacks to enemy in sphere overlap
         Collider[] hits = Physics.OverlapSphere(transform.position, CurrentSlamRadius, enemyMask);
