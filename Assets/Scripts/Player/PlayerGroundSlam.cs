@@ -29,7 +29,8 @@ public class PlayerGroundSlam : MonoBehaviour
     private CharacterController controller;
     private PlayerMovement playerMovement;
     private bool isSlamming = false;
-    private bool canDoSlam => !controller.isGrounded && (controller.transform.position.y > minSlamHeight);
+    // private bool canDoSlam => !controller.isGrounded && (controller.transform.position.y > minSlamHeight);
+    private bool canDoSlam => !controller.isGrounded && HeightAboveGroundSufficient();
 
     private Entity _playerEntity;
     private float SlamDamage => _playerEntity.Stats.SlamDamage;
@@ -38,6 +39,7 @@ public class PlayerGroundSlam : MonoBehaviour
 
     // Sounds
     private PlayerAudioController audioController;
+    private PlayerGroundCheck groundCheck;
 
     [SerializeField] private float previewSlamRadius = 10f;
 
@@ -60,6 +62,7 @@ public class PlayerGroundSlam : MonoBehaviour
         controller = GetComponent<CharacterController>();
         playerMovement = GetComponent<PlayerMovement>();
         audioController = GetComponent<PlayerAudioController>();
+        groundCheck = GetComponent<PlayerGroundCheck>();
     }
 
     void OnEnable()
@@ -175,7 +178,7 @@ public class PlayerGroundSlam : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, CurrentSlamRadius);
     }
-    
+
     protected void CreateImpactFX()
     {
         if (groundImpactFX == null) return;
@@ -194,5 +197,16 @@ public class PlayerGroundSlam : MonoBehaviour
         // GameObject newImpacFX = ObjectPool.instance.GetObject(bulletImpactFX, transform);
         // ObjectPool.instance.ReturnObject(newImpacFX, 1f); // return the effect back to the pool after 1 second of delay
 
+    }
+    
+    private bool HeightAboveGroundSufficient()
+    {
+        Vector3 playerBottom = groundSlamPoint.transform.position;
+
+        int layerMask = LayerMask.GetMask("Default", "Environment", "Interactable", "Obstacles", "Enemy");
+
+        float height = PlayerGroundCheck.GetHeightAboveGround(playerBottom, layerMask, 99);
+
+        return height >= minSlamHeight;
     }
 }

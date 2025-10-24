@@ -704,6 +704,7 @@ GameObject:
   - component: {fileID: 6629040839743783903}
   - component: {fileID: 5165943945973566198}
   - component: {fileID: 5236574795022301480}
+  - component: {fileID: 7657047864172249461}
   m_Layer: 8
   m_Name: Player2
   m_TagString: Player
@@ -878,7 +879,7 @@ MonoBehaviour:
   heightOffset: 0.1
   boxWidth: 4.49
   boxHeight: 5.6
-  boxArea: 5
+  boxArea: 12.5
   cooldown: 0.35
   prep: 0.05
   activeTime: 0.02
@@ -889,7 +890,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 7232
   drawGizmos: 1
-  gizmoColor: {r: 0.015250206, g: 0, b: 1, a: 0.0627451}
+  gizmoColor: {r: 0.015250206, g: 0, b: 1, a: 0.39607844}
 --- !u!114 &7428225188146732249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1099,6 +1100,18 @@ MonoBehaviour:
   meleeSound: {fileID: 8300000, guid: 1a80d3b7bfe5f2d4b98a00c2bddd12c6, type: 3}
   slamSound: {fileID: 8300000, guid: 2067930eca039ab48adc55ae67fbf68f, type: 3}
   dashSound: {fileID: 8300000, guid: 40624ef0feb6855428d0e44bb8ed75e4, type: 3}
+--- !u!114 &7657047864172249461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3694253349153652309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10f276b0afaef2b4798483d80c7aba18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5011806327356363257
 GameObject:
   m_ObjectHideFlags: 0
