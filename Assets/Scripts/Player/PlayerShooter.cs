@@ -31,6 +31,9 @@ public class PlayerShooter : MonoBehaviour
     private bool isFiring;
     private float nextFireTime;
 
+    // Sounds
+    private PlayerAudioController audioController;
+
     // projectiles should ignore their own kind
     Collider[] selfColliders;
 
@@ -41,6 +44,8 @@ public class PlayerShooter : MonoBehaviour
         var input = new InputAction("Toggle Spawning", binding: "<Keyboard>/b");
         input.performed += _ => ToggleFullAuto();
         input.Enable();
+
+        audioController = GetComponent<PlayerAudioController>();
     }
 
     private void ToggleFullAuto()
@@ -161,6 +166,8 @@ public class PlayerShooter : MonoBehaviour
         proj?.Init(direction * projectileSpeed, shootMask, currentDamage, 100, playerEntity);
         
         // Debug.Log($"Fired projectile with {currentDamage} damage");
+        // Play firing sound
+        audioController?.PlayAttackSound();
     }
     
 
