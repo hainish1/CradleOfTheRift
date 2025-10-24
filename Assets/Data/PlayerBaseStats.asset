@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af0b452f2c11613468bfbe10a80ddeaa, type: 3}
   m_Name: PlayerBaseStats
   m_EditorClassIdentifier: 
-  health: 10
+  health: 15
   moveSpeed: 18
   dashSpeed: 100
   dashDistance: 14
   dashCooldown: 1.5
-  dashCharges: 20
-  projectileDamage: 2
-  meleeDamage: 1
-  slamDamage: 1
+  dashCharges: 50
+  projectileDamage: 1
+  meleeDamage: 2
+  slamDamage: 3
   slamAttackRadius: 20
   attackSpeed: 5
-  projectileSpread: 0.1
+  projectileSpread: 0.5
