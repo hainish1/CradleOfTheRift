@@ -24,8 +24,8 @@ public class PlayerMovement : MonoBehaviour
 
     private InputAction moveActions;
     private InputAction sprintActions;
-    private InputAction dashActions;
     private InputAction jumpActions;
+    private InputAction dashActions;
 
     [Header("Player References")] [Space]
     [SerializeField]
@@ -52,7 +52,8 @@ public class PlayerMovement : MonoBehaviour
     private float _deceleration;
     private bool _isSprinting;
     private float _currSprintMultiplier;
-    private Vector3 _lateralVelocityVector;
+    private Vector3 lateralVelocityVector;
+    private Vector3 _moveDirectionUnitVector;
 
     [Header("Hover Parameters")] [Space]
     [SerializeField]
@@ -63,8 +64,6 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("How strongly Hover Pull Strength dissipates in units per second.")] private float _hoverDampingStrength;
     [SerializeField]
     [Tooltip("Sphere casting distance below the player in units.")] private float _groundedCastLength;
-    [SerializeField]
-    [Tooltip("The maximum degree angle of valid ground surfaces.")] private float _maxGroundAngle;
     [SerializeField]
     [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private float _groundedCastJumpPauseDuration;
     private float _currHoverHeight;
@@ -94,13 +93,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     [Tooltip("The quantity of available dash charges.")] private int _dashCharges;
     private bool _isDashing;
-    private int _currDashCharges;
+    private int _currDashCharges; //this is my local pool to increment and decrement as I please
+    private int _lastMaxDashCharges;
+    private Coroutine _dashRegenRoutine;
     public event System.Action<float> DashCooldownStarted;
     private Vector3 _dashDirectionUnitVector;
 
     [Header("Jump Parameters")] [Space]
     [SerializeField]
-    [Tooltip("Vertical jump strength in units per second.")] private float _jumpForce;
+    [Tooltip("Vertical jump strength in units per second.")] private float _JumpForce;
     private bool _inputtedJumpThisFrame;
     private Vector3 _verticalVelocityVector;
 
@@ -125,13 +126,13 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Boost Parameters")] [Space]
     [SerializeField]
-    [Tooltip("Max vertical boost speed in units per second.")] private float _boostMaxSpeed;
+    [Tooltip("Max vertical boost speed in units per second.")] private float _maxBoostSpeed;
     [SerializeField]
     [Tooltip("Seconds needed to reach Max Boost Speed.")] private float _boostAccelerationSeconds;
     [SerializeField]
     [Tooltip("Amount of boost energy regeneration per second.")] private float _boostRegenerationRate;
     [SerializeField]
-    [Tooltip("Capacity value of boost energy")] private int _boostMaxEnergy;
+    [Tooltip("Capacity value of boost energy")] private int _maxBoostEnergy;
     [SerializeField]
     [Tooltip("Amount of boost energy depleted per second.")] private float _boostDepletionRate;
     [SerializeField]
@@ -143,6 +144,12 @@ public class PlayerMovement : MonoBehaviour
     private float _boostDoubleTapTimer;
 
     private bool strafe = false; // Set by AimController.
+
+    private float DashSpeed => _playerEntity.Stats.DashSpeed;
+    private float DashDistance => _playerEntity.Stats.DashDistance;
+    private float DashCooldown => _playerEntity.Stats.DashCooldown;
+    private int DashCharges => _playerEntity.Stats.DashCharges;
+
 
     void Awake()
     {
@@ -156,31 +163,31 @@ public class PlayerMovement : MonoBehaviour
     {
         moveActions = playerActions.Move;
         sprintActions = playerActions.Sprint;
-        dashActions = playerActions.Dash;
         jumpActions = playerActions.Jump;
+        dashActions = playerActions.Dash;
         
         moveActions.Enable();
         sprintActions.Enable();
-        dashActions.Enable();
         jumpActions.Enable();
+        dashActions.Enable();
         
-        sprintActions.started += SprintInputActionStarted;
-        dashActions.started += DashInputActionStarted;
         jumpActions.started += JumpInputActionStarted;
         jumpActions.canceled += JumpInputActionCanceled;
+        sprintActions.started += SprintInputActionStarted;
+        dashActions.started += DashInputActionStarted;
     }
 
     private void OnDisable()
     {
         moveActions.Disable();
         sprintActions.Disable();
-        dashActions.Disable();
         jumpActions.Disable();
+        dashActions.Disable();
 
-        sprintActions.started -= SprintInputActionStarted;
-        dashActions.started -= DashInputActionStarted;
         jumpActions.started -= JumpInputActionStarted;
         jumpActions.canceled -= JumpInputActionCanceled;
+        sprintActions.started -= SprintInputActionStarted;
+        dashActions.started -= DashInputActionStarted;
     }
 
     void Start()
@@ -210,7 +217,10 @@ public class PlayerMovement : MonoBehaviour
 
         //Dash Parameters
         _isDashing = false;
-        _currDashCharges = _dashCharges;
+        // _currDashCharges = _dashCharges;
+        _currDashCharges = DashCharges; // using new stats
+        _lastMaxDashCharges = DashCharges; // temp
+
 
         // Jump Parameters
         _inputtedJumpThisFrame = false;
@@ -227,13 +237,22 @@ public class PlayerMovement : MonoBehaviour
         // Boost Parameters
         _isBoosting = false;
         _isRegeneratingBoost = false;
-        _boostAcceleration = _boostMaxSpeed / _boostAccelerationSeconds;
-        _currBoostEnergy = _boostMaxEnergy;
+        _boostAcceleration = _maxBoostSpeed / _boostAccelerationSeconds;
+        _currBoostEnergy = _maxBoostEnergy;
         _boostDoubleTapTimer = 0;
     }
 
     void Update()
     {
+        // this is only temporary until I find a better solution
+        // react if max charges stat changed
+        if (DashCharges != _lastMaxDashCharges)
+        {
+            OnDashMaxChanged();
+        }
+
+        TryStartDashRegen();
+
         GetIsGrounded();
         GravityConditions();
         DecrementAllTimers();
@@ -257,12 +276,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-
-    public void SetPlayerIsGrounded(bool set)
-    {
-        IsGrounded = set;
-    }
-
     /// <summary>
     ///   <para>
     ///     Sets the strafe mode status for the player character.
@@ -270,27 +283,6 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     /// <param name="on"> Strafe mode status. </param>
     public void SetStrafeMode(bool on) => strafe = on;
-
-
-    public void SnapToHoverAfterSlam()
-    {
-        float targetY = _groundPoint.point.y + _hoverHeight + _playerHalfHeight;
-
-        _characterController.Move(Vector3.up * 0.02f); // tiny upward
-
-        // move vertically to exact hover height
-        float dy = targetY - transform.position.y;
-        if (Mathf.Abs(dy) > 1e-5f)
-            _characterController.Move(new Vector3(0f, dy, 0f));
-
-        // kill vertical velocity 
-        _verticalVelocityVector.y = 0f;
-
-
-        _coyoteTimer = _coyoteTimeWindow;
-        _jumpBufferTimer = 0f;
-        _groundedCastPauseTimer = 0f;
-    }
 
     /// <summary>
     ///   <para>
@@ -319,7 +311,6 @@ public class PlayerMovement : MonoBehaviour
         IsGrounded = PlayerGroundCheck.GetIsGrounded(GetPlayerCharacterBottom(),
                                                      _groundedCastLength,
                                                      _groundedCastRadius,
-                                                     _maxGroundAngle,
                                                      _groundedLayerMasks,
                                                      out RaycastHit hitInfo,
                                                      _groundedCastPauseTimer);
@@ -342,7 +333,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void GravityConditions()
     {
-        // Do not apply gravity when on the ground or boosting.
+        // Do not apply gravity whenon the ground or boosting.
         if (IsGrounded || _isBoosting) return;
         
         float aggregateGravityModifier = _gravityMultiplier * _currDriftDescentDivisor;
@@ -369,7 +360,7 @@ public class PlayerMovement : MonoBehaviour
         if (_groundedCastPauseTimer > 0) _groundedCastPauseTimer -= Time.deltaTime;
         if (IsWithinCoyoteTimeWindow() && !IsGrounded) _coyoteTimer -= Time.deltaTime;
         if (IsWithinJumpBufferWindow() && !IsGrounded) _jumpBufferTimer -= Time.deltaTime;
-        if (AreDriftRequirementsValid() && _driftDelayTimer > 0) _driftDelayTimer -= Time.deltaTime;
+        if (AreDriftRequirementsValid()) _driftDelayTimer -= Time.deltaTime;
         if (IsWithinBoostWindow()) _boostDoubleTapTimer -= Time.deltaTime;
     }
 
@@ -391,22 +382,22 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // Disable sprinting if sprint input was released.
-        if (_isSprinting && !sprintActions.IsPressed())
+        // Because move speed right before moment of knockback must be preserved for correct calculations,
+        // simply stop recording new movement values instead of completely skipping the MoveCase method.
+        _moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
+
+        // Disable sprint if not inputting forward movement.
+        if (moveActions.ReadValue<Vector2>().y != 1)
         {
             DisableSprint();
         }
 
-        // Because move speed right before moment of knockback must be preserved for correct calculations,
-        // simply stop recording new movement values instead of completely skipping the MoveCase method.
-        Vector3 moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
-
         float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
 
         // Accelerate if movement is being input and sprint has not been canceled.
-        if (moveDirectionUnitVector != Vector3.zero && _lateralVelocityVector.magnitude <= aggregateMaxSpeedValue)
+        if (_moveDirectionUnitVector != Vector3.zero && lateralVelocityVector.magnitude <= aggregateMaxSpeedValue)
         {
-            Accelerate(moveDirectionUnitVector, aggregateMaxSpeedValue);
+            Accelerate(aggregateMaxSpeedValue);
         }
         // Otherwise, decelerate.
         else
@@ -422,10 +413,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Turn the player character toward the input direction.
-        if (_kbControlsLockTimer <= 0 && !strafe && _lateralVelocityVector.sqrMagnitude > 0.0001f)
+        if (_kbControlsLockTimer <= 0 && !strafe && lateralVelocityVector.sqrMagnitude > 0.0001f)
         {
             Quaternion qa = transform.rotation;
-            Quaternion qb = Quaternion.LookRotation(_lateralVelocityVector, Vector3.up);
+            Quaternion qb = Quaternion.LookRotation(lateralVelocityVector, Vector3.up);
             float t = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, _characterRotationDamping));
             transform.rotation = Quaternion.Slerp(qa, qb, t);
         }
@@ -458,20 +449,20 @@ public class PlayerMovement : MonoBehaviour
     ///     Accelerates the player character on any frame this method is called up to the max movement speed.
     ///   </para>
     /// </summary>
-    private void Accelerate(Vector3 moveDirectionUnitVector, float aggregateMaxSpeedValue)
+    private void Accelerate(float aggregateMaxSpeedValue)
     {
-        Vector3 aggregateAccelIncrement = Time.deltaTime * _acceleration * _currSprintMultiplier * moveDirectionUnitVector;
+        Vector3 aggregateAccelIncrement = Time.deltaTime * _acceleration * _currSprintMultiplier * _moveDirectionUnitVector;
 
-        _lateralVelocityVector = _lateralVelocityVector.magnitude * moveDirectionUnitVector;
-        _lateralVelocityVector += aggregateAccelIncrement;
+        lateralVelocityVector = lateralVelocityVector.magnitude * _moveDirectionUnitVector;
+        lateralVelocityVector += aggregateAccelIncrement;
 
         // Limit lateral move speed to aggregateMaxSpeedValue.
-        if (_lateralVelocityVector.magnitude > aggregateMaxSpeedValue)
+        if (lateralVelocityVector.magnitude > aggregateMaxSpeedValue)
         {
-            _lateralVelocityVector = aggregateMaxSpeedValue * _lateralVelocityVector.normalized;
+            lateralVelocityVector = aggregateMaxSpeedValue * lateralVelocityVector.normalized;
         }
 
-        _characterController.Move(Time.deltaTime * _lateralVelocityVector);
+        _characterController.Move(Time.deltaTime * lateralVelocityVector);
     }
 
     /// <summary>
@@ -482,20 +473,20 @@ public class PlayerMovement : MonoBehaviour
     private void Decelerate()
     {
         // Skip deceleration calculations if not moving.
-        if (_lateralVelocityVector.magnitude <= 0) return;
+        if (lateralVelocityVector.magnitude <= 0) return;
 
-        Vector3 decelDecrement = Time.deltaTime * _deceleration * _lateralVelocityVector.normalized;
+        Vector3 decelDecrement = Time.deltaTime * _deceleration * lateralVelocityVector.normalized;
 
         // If deceleration decrement for the current frame exceeds zero,
         // then set current speed to exactly zero.
-        if (_lateralVelocityVector.magnitude - decelDecrement.magnitude < 0)
+        if (lateralVelocityVector.magnitude - decelDecrement.magnitude < 0)
         {
-            _lateralVelocityVector = Vector3.zero;
-            return;
+            lateralVelocityVector = Vector3.zero;
+            decelDecrement = Vector3.zero;
         }
 
-        _lateralVelocityVector -= decelDecrement;
-        _characterController.Move(Time.deltaTime * _lateralVelocityVector);
+        lateralVelocityVector -= decelDecrement;
+        _characterController.Move(Time.deltaTime * lateralVelocityVector);
     }
 
     /// <summary>
@@ -525,13 +516,20 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Enables sprinting for the player character on any frame that sprint is inputted.
+    ///     Toggles sprinting for the player character on any frame that sprint is inputted.
     ///   </para>
     /// </summary>
     /// <param name="context"> The sprint input context. </param>
     private void SprintInputActionStarted(InputAction.CallbackContext context)
     {
-        EnableSprint();
+        if (_isSprinting)
+        {
+            DisableSprint();
+        }
+        else
+        {
+            EnableSprint();
+        }
     }
 
     /// <summary>
@@ -628,12 +626,20 @@ public class PlayerMovement : MonoBehaviour
             _currDashCharges--;
 
             // Only initialize regeneration coroutine if it hasn't already.
-            if (_currDashCharges == _dashCharges - 1)
-            {
-                StartCoroutine(DashChargesRegeneration());
-            }
+            // if (_currDashCharges == _dashCharges - 1)
+            // {
+            //     StartCoroutine(DashChargesRegeneration());
+            // }
+            // if (_currDashCharges == DashCharges - 1)
+            // {
+            //     StartCoroutine(DashChargesRegeneration());
+            // }
 
-            float dashDuration = _dashDistance / _dashSpeed;
+            TryStartDashRegen();
+
+            // float dashDuration = _dashDistance / _dashSpeed;
+            float dashDuration = DashDistance / DashSpeed; // using stats dash speed
+
             StartCoroutine(InitiateDashDuration(dashDuration));
             DashCooldownStarted?.Invoke(dashDuration); // Notify listener to start the dash fade visual effect.
         }
@@ -651,7 +657,9 @@ public class PlayerMovement : MonoBehaviour
             BoostConditions();
         }
 
-        _characterController.Move(Time.deltaTime * _dashSpeed * _dashDirectionUnitVector);
+        // _characterController.Move(Time.deltaTime * _dashSpeed * _dashDirectionUnitVector);
+        _characterController.Move(Time.deltaTime * DashSpeed * _dashDirectionUnitVector);
+
     }
 
     /// <summary>
@@ -663,11 +671,29 @@ public class PlayerMovement : MonoBehaviour
     /// <returns> IEnumerator object. </returns>
     private IEnumerator DashChargesRegeneration()
     {
-        while (_currDashCharges != _dashCharges)
+        float timer = 0f;
+        while (_currDashCharges < DashCharges) // this will make sure it always updates to the new value
         {
-            yield return new WaitForSeconds(_dashCooldown);
-            _currDashCharges++;
+            float cd = Mathf.Max(0.01f, DashCooldown);
+
+            timer += Time.deltaTime;
+            if (timer >= cd)
+            {
+                timer -= cd;
+                _currDashCharges = Mathf.Min(_currDashCharges + 1, DashCharges); // also temp
+            }
+            // // yield return new WaitForSeconds(_dashCooldown);
+            // yield return new WaitForSeconds(DashCooldown); // using new stats
+            // // _currDashCharges++;
+            if (_currDashCharges >= DashCharges) break;
+
+            yield return null;
+
         }
+        _dashRegenRoutine = null;
+        
+            
+        
     }
 
     /// <summary>
@@ -701,8 +727,13 @@ public class PlayerMovement : MonoBehaviour
             _inputtedJumpThisFrame = true;
             _jumpBufferTimer = _jumpBufferWindow;
         }
-
-        if (!IsGrounded && !_isDashing)
+        
+        // Toggle drifting if in midair.
+        if (_isDrifting && !IsGrounded && !_isDashing)
+        {
+            DisableDrift();
+        }
+        else if (!_isDrifting && !IsGrounded && !_isDashing)
         {
             EnableDrift();
         }
@@ -745,7 +776,7 @@ public class PlayerMovement : MonoBehaviour
             _coyoteTimer = 0;
             _jumpBufferTimer = 0;
             _groundedCastPauseTimer = _groundedCastJumpPauseDuration;
-            _verticalVelocityVector.y = _jumpForce;
+            _verticalVelocityVector.y = _JumpForce;
 
             _characterController.Move(Time.deltaTime * _verticalVelocityVector);
         }
@@ -792,8 +823,8 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void DriftConditions()
     {
-        // Cease drifting if jump input was released or player character landed.
-        if (_isDrifting && (!jumpActions.IsPressed() || IsGrounded))
+        // Cease drifting if the player character landed.
+        if (_isDrifting && IsGrounded)
         {
             DisableDrift();
         }
@@ -858,7 +889,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void BoostConditions()
     {
-        // Cease boosting if jump input was released or boost energy is depleted.
+        // Cease drifting if jump input is no longer held or boost energy is depleted.
         if ( (_isBoosting && !jumpActions.IsPressed()) || _currBoostEnergy <= 0 )
         {
             _isBoosting = false;
@@ -882,17 +913,17 @@ public class PlayerMovement : MonoBehaviour
 
             _verticalVelocityVector.y += boostSpeedIncrement;
 
-            // Limit vertical move speed to _boostMaxSpeed.
-            if (_verticalVelocityVector.y > _boostMaxSpeed)
+            // Limit vertical move speed to _maxBoostSpeed.
+            if (_verticalVelocityVector.y > _maxBoostSpeed)
             {
-                _verticalVelocityVector.y = _boostMaxSpeed;
+                _verticalVelocityVector.y = _maxBoostSpeed;
             }
 
             _characterController.Move(Time.deltaTime * _verticalVelocityVector);
         }
 
-        // Initialize regeneration coroutine if boosted, touching the ground and not already regenerating.
-        if (IsGrounded && _currBoostEnergy < _boostMaxEnergy && !_isRegeneratingBoost)
+        // Initialize regeneration coroutine if boosted, on the ground and not already regenerating.
+        if (IsGrounded && _currBoostEnergy < _maxBoostEnergy && !_isRegeneratingBoost)
         {
             StartCoroutine(BoostRegeneration());
         }
@@ -908,7 +939,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _isRegeneratingBoost = true;
 
-        while (_currBoostEnergy < _boostMaxEnergy)
+        while (_currBoostEnergy < _maxBoostEnergy)
         {
             // Cancel boost energy regeneration if boost was inputted.
             if (_isBoosting)
@@ -920,9 +951,9 @@ public class PlayerMovement : MonoBehaviour
 
             // If boost regeneration increment for the current frame exceeds _maxBoostEnergy,
             // then set boost energy to exactly _maxBoostEnergy.
-            if (_currBoostEnergy >= _boostMaxEnergy)
+            if (_currBoostEnergy >= _maxBoostEnergy)
             {
-                _currBoostEnergy = _boostMaxEnergy;
+                _currBoostEnergy = _maxBoostEnergy;
                 break;
             }
 
@@ -942,5 +973,77 @@ public class PlayerMovement : MonoBehaviour
     private bool IsWithinBoostWindow()
     {
         return _boostDoubleTapTimer > 0;
+    }
+
+
+
+
+
+    // SOME GETTERS FOR MY USE
+    public float GetGroundPoint()
+    {
+        return _groundPoint.point.y;
+    }
+
+    public float GetHoverHeight()
+    {
+        return _hoverHeight;
+    }
+
+    public float GetHalfHeight()
+    {
+        return _playerHalfHeight;
+    }
+
+    public void SetVerticalVelocityFactor(float factor)
+    {
+        _verticalVelocityVector.y = factor;
+    }
+
+    public void SnapToHoverAfterSlam()
+    {
+        float targetY = _groundPoint.point.y + _hoverHeight + _playerHalfHeight;
+
+        _characterController.Move(Vector3.up * 0.02f); // tiny upward
+
+        // move vertically to exact hover height
+        float dy = targetY - transform.position.y;
+        if (Mathf.Abs(dy) > 1e-5f)
+            _characterController.Move(new Vector3(0f, dy, 0f));
+
+        // kill vertical velocity 
+        _verticalVelocityVector.y = 0f;
+
+
+        _coyoteTimer = _coyoteTimeWindow;
+        _jumpBufferTimer = 0f;
+        _groundedCastPauseTimer = 0f;
+    }
+
+    public void SetPlayerIsGrounded(bool set)
+    {
+        IsGrounded = set;
+    }
+
+
+    private void OnDashMaxChanged()
+    {
+        int newMax = DashCharges;
+        int oldMax = _lastMaxDashCharges;
+
+        if (newMax > oldMax)
+        {
+            _currDashCharges = newMax;
+        }
+
+        _lastMaxDashCharges = newMax;
+    }
+    
+    private void TryStartDashRegen()
+    {
+        if(_currDashCharges < DashCharges && _dashRegenRoutine == null)
+        {
+            _dashRegenRoutine = StartCoroutine(DashChargesRegeneration());
+        }
     }
 }
