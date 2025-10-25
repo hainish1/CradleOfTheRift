@@ -24,8 +24,8 @@ public class PlayerMovement : MonoBehaviour
 
     private InputAction moveActions;
     private InputAction sprintActions;
-    private InputAction jumpActions;
     private InputAction dashActions;
+    private InputAction jumpActions;
 
     [Header("Player References")] [Space]
     [SerializeField]
@@ -52,8 +52,7 @@ public class PlayerMovement : MonoBehaviour
     private float _deceleration;
     private bool _isSprinting;
     private float _currSprintMultiplier;
-    private Vector3 lateralVelocityVector;
-    private Vector3 _moveDirectionUnitVector;
+    private Vector3 _lateralVelocityVector;
 
     [Header("Hover Parameters")] [Space]
     [SerializeField]
@@ -64,6 +63,8 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("How strongly Hover Pull Strength dissipates in units per second.")] private float _hoverDampingStrength;
     [SerializeField]
     [Tooltip("Sphere casting distance below the player in units.")] private float _groundedCastLength;
+    [SerializeField]
+    [Tooltip("The maximum degree angle of valid ground surfaces.")] private float _maxGroundAngle;
     [SerializeField]
     [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private float _groundedCastJumpPauseDuration;
     private float _currHoverHeight;
@@ -99,7 +100,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Jump Parameters")] [Space]
     [SerializeField]
-    [Tooltip("Vertical jump strength in units per second.")] private float _JumpForce;
+    [Tooltip("Vertical jump strength in units per second.")] private float _jumpForce;
     private bool _inputtedJumpThisFrame;
     private Vector3 _verticalVelocityVector;
 
@@ -124,13 +125,13 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Boost Parameters")] [Space]
     [SerializeField]
-    [Tooltip("Max vertical boost speed in units per second.")] private float _maxBoostSpeed;
+    [Tooltip("Max vertical boost speed in units per second.")] private float _boostMaxSpeed;
     [SerializeField]
     [Tooltip("Seconds needed to reach Max Boost Speed.")] private float _boostAccelerationSeconds;
     [SerializeField]
     [Tooltip("Amount of boost energy regeneration per second.")] private float _boostRegenerationRate;
     [SerializeField]
-    [Tooltip("Capacity value of boost energy")] private int _maxBoostEnergy;
+    [Tooltip("Capacity value of boost energy")] private int _boostMaxEnergy;
     [SerializeField]
     [Tooltip("Amount of boost energy depleted per second.")] private float _boostDepletionRate;
     [SerializeField]
@@ -155,31 +156,31 @@ public class PlayerMovement : MonoBehaviour
     {
         moveActions = playerActions.Move;
         sprintActions = playerActions.Sprint;
-        jumpActions = playerActions.Jump;
         dashActions = playerActions.Dash;
+        jumpActions = playerActions.Jump;
         
         moveActions.Enable();
         sprintActions.Enable();
-        jumpActions.Enable();
         dashActions.Enable();
+        jumpActions.Enable();
         
-        jumpActions.started += JumpInputActionStarted;
-        jumpActions.canceled += JumpInputActionCanceled;
         sprintActions.started += SprintInputActionStarted;
         dashActions.started += DashInputActionStarted;
+        jumpActions.started += JumpInputActionStarted;
+        jumpActions.canceled += JumpInputActionCanceled;
     }
 
     private void OnDisable()
     {
         moveActions.Disable();
         sprintActions.Disable();
-        jumpActions.Disable();
         dashActions.Disable();
+        jumpActions.Disable();
 
-        jumpActions.started -= JumpInputActionStarted;
-        jumpActions.canceled -= JumpInputActionCanceled;
         sprintActions.started -= SprintInputActionStarted;
         dashActions.started -= DashInputActionStarted;
+        jumpActions.started -= JumpInputActionStarted;
+        jumpActions.canceled -= JumpInputActionCanceled;
     }
 
     void Start()
@@ -226,8 +227,8 @@ public class PlayerMovement : MonoBehaviour
         // Boost Parameters
         _isBoosting = false;
         _isRegeneratingBoost = false;
-        _boostAcceleration = _maxBoostSpeed / _boostAccelerationSeconds;
-        _currBoostEnergy = _maxBoostEnergy;
+        _boostAcceleration = _boostMaxSpeed / _boostAccelerationSeconds;
+        _currBoostEnergy = _boostMaxEnergy;
         _boostDoubleTapTimer = 0;
     }
 
@@ -318,6 +319,7 @@ public class PlayerMovement : MonoBehaviour
         IsGrounded = PlayerGroundCheck.GetIsGrounded(GetPlayerCharacterBottom(),
                                                      _groundedCastLength,
                                                      _groundedCastRadius,
+                                                     _maxGroundAngle,
                                                      _groundedLayerMasks,
                                                      out RaycastHit hitInfo,
                                                      _groundedCastPauseTimer);
@@ -340,7 +342,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void GravityConditions()
     {
-        // Do not apply gravity whenon the ground or boosting.
+        // Do not apply gravity when on the ground or boosting.
         if (IsGrounded || _isBoosting) return;
         
         float aggregateGravityModifier = _gravityMultiplier * _currDriftDescentDivisor;
@@ -367,7 +369,7 @@ public class PlayerMovement : MonoBehaviour
         if (_groundedCastPauseTimer > 0) _groundedCastPauseTimer -= Time.deltaTime;
         if (IsWithinCoyoteTimeWindow() && !IsGrounded) _coyoteTimer -= Time.deltaTime;
         if (IsWithinJumpBufferWindow() && !IsGrounded) _jumpBufferTimer -= Time.deltaTime;
-        if (AreDriftRequirementsValid()) _driftDelayTimer -= Time.deltaTime;
+        if (AreDriftRequirementsValid() && _driftDelayTimer > 0) _driftDelayTimer -= Time.deltaTime;
         if (IsWithinBoostWindow()) _boostDoubleTapTimer -= Time.deltaTime;
     }
 
@@ -397,14 +399,14 @@ public class PlayerMovement : MonoBehaviour
 
         // Because move speed right before moment of knockback must be preserved for correct calculations,
         // simply stop recording new movement values instead of completely skipping the MoveCase method.
-        _moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
+        Vector3 moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
 
         float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
 
         // Accelerate if movement is being input and sprint has not been canceled.
-        if (_moveDirectionUnitVector != Vector3.zero && lateralVelocityVector.magnitude <= aggregateMaxSpeedValue)
+        if (moveDirectionUnitVector != Vector3.zero && _lateralVelocityVector.magnitude <= aggregateMaxSpeedValue)
         {
-            Accelerate(aggregateMaxSpeedValue);
+            Accelerate(moveDirectionUnitVector, aggregateMaxSpeedValue);
         }
         // Otherwise, decelerate.
         else
@@ -420,10 +422,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Turn the player character toward the input direction.
-        if (_kbControlsLockTimer <= 0 && !strafe && lateralVelocityVector.sqrMagnitude > 0.0001f)
+        if (_kbControlsLockTimer <= 0 && !strafe && _lateralVelocityVector.sqrMagnitude > 0.0001f)
         {
             Quaternion qa = transform.rotation;
-            Quaternion qb = Quaternion.LookRotation(lateralVelocityVector, Vector3.up);
+            Quaternion qb = Quaternion.LookRotation(_lateralVelocityVector, Vector3.up);
             float t = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, _characterRotationDamping));
             transform.rotation = Quaternion.Slerp(qa, qb, t);
         }
@@ -456,20 +458,20 @@ public class PlayerMovement : MonoBehaviour
     ///     Accelerates the player character on any frame this method is called up to the max movement speed.
     ///   </para>
     /// </summary>
-    private void Accelerate(float aggregateMaxSpeedValue)
+    private void Accelerate(Vector3 moveDirectionUnitVector, float aggregateMaxSpeedValue)
     {
-        Vector3 aggregateAccelIncrement = Time.deltaTime * _acceleration * _currSprintMultiplier * _moveDirectionUnitVector;
+        Vector3 aggregateAccelIncrement = Time.deltaTime * _acceleration * _currSprintMultiplier * moveDirectionUnitVector;
 
-        lateralVelocityVector = lateralVelocityVector.magnitude * _moveDirectionUnitVector;
-        lateralVelocityVector += aggregateAccelIncrement;
+        _lateralVelocityVector = _lateralVelocityVector.magnitude * moveDirectionUnitVector;
+        _lateralVelocityVector += aggregateAccelIncrement;
 
         // Limit lateral move speed to aggregateMaxSpeedValue.
-        if (lateralVelocityVector.magnitude > aggregateMaxSpeedValue)
+        if (_lateralVelocityVector.magnitude > aggregateMaxSpeedValue)
         {
-            lateralVelocityVector = aggregateMaxSpeedValue * lateralVelocityVector.normalized;
+            _lateralVelocityVector = aggregateMaxSpeedValue * _lateralVelocityVector.normalized;
         }
 
-        _characterController.Move(Time.deltaTime * lateralVelocityVector);
+        _characterController.Move(Time.deltaTime * _lateralVelocityVector);
     }
 
     /// <summary>
@@ -480,20 +482,20 @@ public class PlayerMovement : MonoBehaviour
     private void Decelerate()
     {
         // Skip deceleration calculations if not moving.
-        if (lateralVelocityVector.magnitude <= 0) return;
+        if (_lateralVelocityVector.magnitude <= 0) return;
 
-        Vector3 decelDecrement = Time.deltaTime * _deceleration * lateralVelocityVector.normalized;
+        Vector3 decelDecrement = Time.deltaTime * _deceleration * _lateralVelocityVector.normalized;
 
         // If deceleration decrement for the current frame exceeds zero,
         // then set current speed to exactly zero.
-        if (lateralVelocityVector.magnitude - decelDecrement.magnitude < 0)
+        if (_lateralVelocityVector.magnitude - decelDecrement.magnitude < 0)
         {
-            lateralVelocityVector = Vector3.zero;
-            decelDecrement = Vector3.zero;
+            _lateralVelocityVector = Vector3.zero;
+            return;
         }
 
-        lateralVelocityVector -= decelDecrement;
-        _characterController.Move(Time.deltaTime * lateralVelocityVector);
+        _lateralVelocityVector -= decelDecrement;
+        _characterController.Move(Time.deltaTime * _lateralVelocityVector);
     }
 
     /// <summary>
@@ -743,7 +745,7 @@ public class PlayerMovement : MonoBehaviour
             _coyoteTimer = 0;
             _jumpBufferTimer = 0;
             _groundedCastPauseTimer = _groundedCastJumpPauseDuration;
-            _verticalVelocityVector.y = _JumpForce;
+            _verticalVelocityVector.y = _jumpForce;
 
             _characterController.Move(Time.deltaTime * _verticalVelocityVector);
         }
@@ -880,17 +882,17 @@ public class PlayerMovement : MonoBehaviour
 
             _verticalVelocityVector.y += boostSpeedIncrement;
 
-            // Limit vertical move speed to _maxBoostSpeed.
-            if (_verticalVelocityVector.y > _maxBoostSpeed)
+            // Limit vertical move speed to _boostMaxSpeed.
+            if (_verticalVelocityVector.y > _boostMaxSpeed)
             {
-                _verticalVelocityVector.y = _maxBoostSpeed;
+                _verticalVelocityVector.y = _boostMaxSpeed;
             }
 
             _characterController.Move(Time.deltaTime * _verticalVelocityVector);
         }
 
-        // Initialize regeneration coroutine if boosted, on the ground and not already regenerating.
-        if (IsGrounded && _currBoostEnergy < _maxBoostEnergy && !_isRegeneratingBoost)
+        // Initialize regeneration coroutine if boosted, touching the ground and not already regenerating.
+        if (IsGrounded && _currBoostEnergy < _boostMaxEnergy && !_isRegeneratingBoost)
         {
             StartCoroutine(BoostRegeneration());
         }
@@ -906,7 +908,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _isRegeneratingBoost = true;
 
-        while (_currBoostEnergy < _maxBoostEnergy)
+        while (_currBoostEnergy < _boostMaxEnergy)
         {
             // Cancel boost energy regeneration if boost was inputted.
             if (_isBoosting)
@@ -918,9 +920,9 @@ public class PlayerMovement : MonoBehaviour
 
             // If boost regeneration increment for the current frame exceeds _maxBoostEnergy,
             // then set boost energy to exactly _maxBoostEnergy.
-            if (_currBoostEnergy >= _maxBoostEnergy)
+            if (_currBoostEnergy >= _boostMaxEnergy)
             {
-                _currBoostEnergy = _maxBoostEnergy;
+                _currBoostEnergy = _boostMaxEnergy;
                 break;
             }
 
