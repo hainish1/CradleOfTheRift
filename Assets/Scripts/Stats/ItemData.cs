@@ -1,4 +1,5 @@
 using UnityEngine;
+
 [CreateAssetMenu(fileName = "New Item", menuName = "Items/Item")]
 public class ItemData : ScriptableObject
 {
@@ -22,6 +23,12 @@ public class ItemData : ScriptableObject
     public bool canStack = true;
     public int maxStacks = 99;
     public StackingType stackingType = StackingType.Linear;
+
+    [Header("Effect (non-stat)")]
+    public ItemEffectKind effectKind = ItemEffectKind.None;
+
+    [Range(0f, 1f)] public float healOnDamagePercentPerStack = 0.02f; // 2% per stack
+    public float effectDuration = -1f; // -1 = permanent
 }
 
 public enum ItemRarity
@@ -34,5 +41,11 @@ public enum ItemRarity
 
 public enum StackingType
 {
-    Linear 
+    Linear
+}
+
+public enum ItemEffectKind
+{
+    None,
+    HealOnDamage
 }

@@ -29,12 +29,18 @@ public class PlayerGroundSlam : MonoBehaviour
     private CharacterController controller;
     private PlayerMovement playerMovement;
     private bool isSlamming = false;
-    private bool canDoSlam => !controller.isGrounded && (controller.transform.position.y > minSlamHeight);
+    // private bool canDoSlam => !controller.isGrounded && (controller.transform.position.y > minSlamHeight);
+    private bool canDoSlam => !controller.isGrounded && HeightAboveGroundSufficient();
 
     private Entity _playerEntity;
     private float SlamDamage => _playerEntity.Stats.SlamDamage;
     // private float SlamRadius => _playerEntity.Stats.SlamRadius;
     // public float slamRadius = 5f;
+
+    // Sounds
+    private PlayerAudioController audioController;
+    private PlayerGroundCheck groundCheck;
+
     [SerializeField] private float previewSlamRadius = 10f;
 
     private float CurrentSlamRadius
@@ -55,6 +61,8 @@ public class PlayerGroundSlam : MonoBehaviour
         _playerEntity = GetComponent<Entity>();
         controller = GetComponent<CharacterController>();
         playerMovement = GetComponent<PlayerMovement>();
+        audioController = GetComponent<PlayerAudioController>();
+        groundCheck = GetComponent<PlayerGroundCheck>();
     }
 
     void OnEnable()
@@ -122,6 +130,10 @@ public class PlayerGroundSlam : MonoBehaviour
 
         // any effects we have
         DoImpactEffect(); // i wanna do a camera shake here
+
+        // Play slam sound
+        audioController?.PlaySlamSound();
+
         HashSet<Enemy> uniqueEnemies = new HashSet<Enemy>();
         // now do attacks to enemy in sphere overlap
         Collider[] hits = Physics.OverlapSphere(transform.position, CurrentSlamRadius, enemyMask);
@@ -166,7 +178,7 @@ public class PlayerGroundSlam : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, CurrentSlamRadius);
     }
-    
+
     protected void CreateImpactFX()
     {
         if (groundImpactFX == null) return;
@@ -185,5 +197,16 @@ public class PlayerGroundSlam : MonoBehaviour
         // GameObject newImpacFX = ObjectPool.instance.GetObject(bulletImpactFX, transform);
         // ObjectPool.instance.ReturnObject(newImpacFX, 1f); // return the effect back to the pool after 1 second of delay
 
+    }
+    
+    private bool HeightAboveGroundSufficient()
+    {
+        Vector3 playerBottom = groundSlamPoint.transform.position;
+
+        int layerMask = LayerMask.GetMask("Default", "Environment", "Interactable", "Obstacles", "Enemy");
+
+        float height = PlayerGroundCheck.GetHeightAboveGround(playerBottom, layerMask, 99);
+
+        return height >= minSlamHeight;
     }
 }

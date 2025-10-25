@@ -17,6 +17,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public bool IsGrounded { get; private set; }
+
     private InputSystem_Actions playerInput;
     private InputSystem_Actions.PlayerActions playerActions;
 
@@ -65,7 +67,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private float _groundedCastJumpPauseDuration;
     private float _currHoverHeight;
-    public bool IsGrounded { get; private set; }
     private float _groundedCastRadius;
     private float _groundedCastPauseTimer;
     private int _groundedLayerMasks;
@@ -92,7 +93,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     [Tooltip("The quantity of available dash charges.")] private int _dashCharges;
     private bool _isDashing;
-    private int _currDashCharges;
+    private int _currDashCharges; //this is my local pool to increment and decrement as I please
+    private int _lastMaxDashCharges;
+    private Coroutine _dashRegenRoutine;
     public event System.Action<float> DashCooldownStarted;
     private Vector3 _dashDirectionUnitVector;
 
@@ -141,6 +144,12 @@ public class PlayerMovement : MonoBehaviour
     private float _boostDoubleTapTimer;
 
     private bool strafe = false; // Set by AimController.
+
+    private float DashSpeed => _playerEntity.Stats.DashSpeed;
+    private float DashDistance => _playerEntity.Stats.DashDistance;
+    private float DashCooldown => _playerEntity.Stats.DashCooldown;
+    private int DashCharges => _playerEntity.Stats.DashCharges;
+
 
     void Awake()
     {
@@ -194,13 +203,13 @@ public class PlayerMovement : MonoBehaviour
         _currSprintMultiplier = 1;
 
         // Hover Parameters
-        IsGrounded = CheckIsGrounded();
         _groundedCastRadius = _playerRadius - 0.1f;
         _groundedCastPauseTimer = 0;
         _groundedLayerMasks = LayerMask.GetMask("Environment");
         _groundedLayerMasks |= LayerMask.GetMask("Interactable");
         _groundedLayerMasks |= LayerMask.GetMask("Obstacles");
         _groundedLayerMasks |= LayerMask.GetMask("Enemy");
+        GetIsGrounded();
 
         // KnockBack Parameters
         _kbControlsLockTimer = 0;
@@ -208,7 +217,10 @@ public class PlayerMovement : MonoBehaviour
 
         //Dash Parameters
         _isDashing = false;
-        _currDashCharges = _dashCharges;
+        // _currDashCharges = _dashCharges;
+        _currDashCharges = DashCharges; // using new stats
+        _lastMaxDashCharges = DashCharges; // temp
+
 
         // Jump Parameters
         _inputtedJumpThisFrame = false;
@@ -232,25 +244,33 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        IsGrounded = CheckIsGrounded();
+        // this is only temporary until I find a better solution
+        // react if max charges stat changed
+        if (DashCharges != _lastMaxDashCharges)
+        {
+            OnDashMaxChanged();
+        }
+
+        TryStartDashRegen();
+
+        GetIsGrounded();
+        GravityConditions();
         DecrementAllTimers();
 
         if (_kbControlsLockTimer > 0) return;
 
-        GravityConditions();
-
         if (_isDashing)
         {
-            IsGrounded = CheckIsGrounded();
+            GetIsGrounded();
             DashConditions();
         }
         else
         {
             MoveConditions();
-            IsGrounded = CheckIsGrounded();
+            GetIsGrounded();
             HoverConditions();
             JumpConditions();
-            IsGrounded = CheckIsGrounded();
+            GetIsGrounded();
             DriftConditions();
             BoostConditions();
         }
@@ -283,46 +303,18 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Decrements all active timers every frame.
+    ///     Updates all grounded information on the frame this method is called.
     ///   </para>
     /// </summary>
-    private void DecrementAllTimers()
+    private void GetIsGrounded()
     {
-        if (_kbControlsLockTimer > 0) _kbControlsLockTimer -= Time.deltaTime;
-        if (_kbDashLockTimer > 0) _kbDashLockTimer -= Time.deltaTime;
-        if (_groundedCastPauseTimer > 0) _groundedCastPauseTimer -= Time.deltaTime;
-        if (IsWithinCoyoteTimeWindow() && !IsGrounded) _coyoteTimer -= Time.deltaTime;
-        if (IsWithinJumpBufferWindow() && !IsGrounded) _jumpBufferTimer -= Time.deltaTime;
-        if (AreDriftRequirementsValid()) _driftDelayTimer -= Time.deltaTime;
-        if (IsWithinBoostWindow()) _boostDoubleTapTimer -= Time.deltaTime;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Checks if the player character is touching the ground on the frame this method is called.
-    ///   </para>
-    /// </summary>
-    /// <returns> True if the player character is on the ground, otherwise false. </returns>
-    private bool CheckIsGrounded()
-    {
-        if (_groundedCastPauseTimer > 0) return false;
-        
-        Vector3 SphereCastOrigin = GetPlayerCharacterBottom() + new Vector3(0, _groundedCastRadius, 0);
-
-        if (Physics.SphereCast(SphereCastOrigin,
-                               _groundedCastRadius,
-                               Vector2.down,
-                               hitInfo: out RaycastHit hitInfo,
-                               _groundedCastLength + _groundedCastRadius, // Compensate for the SphereCast starting higher.
-                               _groundedLayerMasks,
-                               QueryTriggerInteraction.Ignore)
-            && Vector3.Angle(Vector3.up, hitInfo.normal) <= 30)
-        {
-            _groundPoint = hitInfo;
-            return true;
-        }
-
-        return false;
+        IsGrounded = PlayerGroundCheck.GetIsGrounded(GetPlayerCharacterBottom(),
+                                                     _groundedCastLength,
+                                                     _groundedCastRadius,
+                                                     _groundedLayerMasks,
+                                                     out RaycastHit hitInfo,
+                                                     _groundedCastPauseTimer);
+        _groundPoint = hitInfo;
     }
 
     //private void OnDrawGizmos()
@@ -354,6 +346,22 @@ public class PlayerMovement : MonoBehaviour
         }
 
         _characterController.Move(Time.deltaTime * _verticalVelocityVector);
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Decrements all active timers every frame.
+    ///   </para>
+    /// </summary>
+    private void DecrementAllTimers()
+    {
+        if (_kbControlsLockTimer > 0) _kbControlsLockTimer -= Time.deltaTime;
+        if (_kbDashLockTimer > 0) _kbDashLockTimer -= Time.deltaTime;
+        if (_groundedCastPauseTimer > 0) _groundedCastPauseTimer -= Time.deltaTime;
+        if (IsWithinCoyoteTimeWindow() && !IsGrounded) _coyoteTimer -= Time.deltaTime;
+        if (IsWithinJumpBufferWindow() && !IsGrounded) _jumpBufferTimer -= Time.deltaTime;
+        if (AreDriftRequirementsValid()) _driftDelayTimer -= Time.deltaTime;
+        if (IsWithinBoostWindow()) _boostDoubleTapTimer -= Time.deltaTime;
     }
 
     /// <summary>
@@ -618,12 +626,20 @@ public class PlayerMovement : MonoBehaviour
             _currDashCharges--;
 
             // Only initialize regeneration coroutine if it hasn't already.
-            if (_currDashCharges == _dashCharges - 1)
-            {
-                StartCoroutine(DashChargesRegeneration());
-            }
+            // if (_currDashCharges == _dashCharges - 1)
+            // {
+            //     StartCoroutine(DashChargesRegeneration());
+            // }
+            // if (_currDashCharges == DashCharges - 1)
+            // {
+            //     StartCoroutine(DashChargesRegeneration());
+            // }
 
-            float dashDuration = _dashDistance / _dashSpeed;
+            TryStartDashRegen();
+
+            // float dashDuration = _dashDistance / _dashSpeed;
+            float dashDuration = DashDistance / DashSpeed; // using stats dash speed
+
             StartCoroutine(InitiateDashDuration(dashDuration));
             DashCooldownStarted?.Invoke(dashDuration); // Notify listener to start the dash fade visual effect.
         }
@@ -641,7 +657,9 @@ public class PlayerMovement : MonoBehaviour
             BoostConditions();
         }
 
-        _characterController.Move(Time.deltaTime * _dashSpeed * _dashDirectionUnitVector);
+        // _characterController.Move(Time.deltaTime * _dashSpeed * _dashDirectionUnitVector);
+        _characterController.Move(Time.deltaTime * DashSpeed * _dashDirectionUnitVector);
+
     }
 
     /// <summary>
@@ -653,11 +671,29 @@ public class PlayerMovement : MonoBehaviour
     /// <returns> IEnumerator object. </returns>
     private IEnumerator DashChargesRegeneration()
     {
-        while (_currDashCharges != _dashCharges)
+        float timer = 0f;
+        while (_currDashCharges < DashCharges) // this will make sure it always updates to the new value
         {
-            yield return new WaitForSeconds(_dashCooldown);
-            _currDashCharges++;
+            float cd = Mathf.Max(0.01f, DashCooldown);
+
+            timer += Time.deltaTime;
+            if (timer >= cd)
+            {
+                timer -= cd;
+                _currDashCharges = Mathf.Min(_currDashCharges + 1, DashCharges); // also temp
+            }
+            // // yield return new WaitForSeconds(_dashCooldown);
+            // yield return new WaitForSeconds(DashCooldown); // using new stats
+            // // _currDashCharges++;
+            if (_currDashCharges >= DashCharges) break;
+
+            yield return null;
+
         }
+        _dashRegenRoutine = null;
+        
+            
+        
     }
 
     /// <summary>
@@ -983,9 +1019,31 @@ public class PlayerMovement : MonoBehaviour
         _jumpBufferTimer = 0f;
         _groundedCastPauseTimer = 0f;
     }
-    
+
     public void SetPlayerIsGrounded(bool set)
     {
         IsGrounded = set;
+    }
+
+
+    private void OnDashMaxChanged()
+    {
+        int newMax = DashCharges;
+        int oldMax = _lastMaxDashCharges;
+
+        if (newMax > oldMax)
+        {
+            _currDashCharges = newMax;
+        }
+
+        _lastMaxDashCharges = newMax;
+    }
+    
+    private void TryStartDashRegen()
+    {
+        if(_currDashCharges < DashCharges && _dashRegenRoutine == null)
+        {
+            _dashRegenRoutine = StartCoroutine(DashChargesRegeneration());
+        }
     }
 }

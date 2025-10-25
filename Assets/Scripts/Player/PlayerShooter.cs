@@ -31,6 +31,9 @@ public class PlayerShooter : MonoBehaviour
     private bool isFiring;
     private float nextFireTime;
 
+    // Sounds
+    private PlayerAudioController audioController;
+
     // projectiles should ignore their own kind
     Collider[] selfColliders;
 
@@ -41,6 +44,8 @@ public class PlayerShooter : MonoBehaviour
         var input = new InputAction("Toggle Spawning", binding: "<Keyboard>/b");
         input.performed += _ => ToggleFullAuto();
         input.Enable();
+
+        audioController = GetComponent<PlayerAudioController>();
     }
 
     private void ToggleFullAuto()
@@ -86,6 +91,13 @@ public class PlayerShooter : MonoBehaviour
             muzzle.rotation = Quaternion.Slerp(muzzle.rotation, lookRot, 20f * Time.deltaTime);
         }
         if (isFiring) TryToFire();
+
+
+        // TESTING : Update fire rate with stats
+        if (playerEntity != null)
+        {
+            fireRate = playerEntity.Stats.AttackSpeed;
+        }    
     }
 
 
@@ -151,9 +163,11 @@ public class PlayerShooter : MonoBehaviour
             Debug.Log("Used Normal");
         }
         // // NOTE TO SELF : USE OBJECT POOLING LATER TO REDUCE INSTANTIATING
-        proj?.Init(direction * projectileSpeed, shootMask, currentDamage, 100);
+        proj?.Init(direction * projectileSpeed, shootMask, currentDamage, 100, playerEntity);
         
         // Debug.Log($"Fired projectile with {currentDamage} damage");
+        // Play firing sound
+        audioController?.PlayAttackSound();
     }
     
 

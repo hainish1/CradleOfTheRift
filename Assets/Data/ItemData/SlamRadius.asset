@@ -17,10 +17,13 @@ MonoBehaviour:
   icon: {fileID: 238759375, guid: 7b8f9ea28393f45719932cb70e4704bd, type: 3}
   rarity: 0
   rarityColor: {r: 1, g: 1, b: 1, a: 1}
-  statType: 9
+  statType: 10
   operatorType: 0
   value: 10
   duration: -1
   canStack: 1
   maxStacks: 99
   stackingType: 0
+  effectKind: 0
+  healOnDamagePercentPerStack: 0.02
+  effectDuration: -1

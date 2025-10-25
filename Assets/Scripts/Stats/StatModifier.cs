@@ -13,7 +13,7 @@ public abstract class StatModifier : IDisposable
 
     protected StatModifier(float duration)
     {
-        if (duration <= 0) return; // this means that this particular STAT is PERMANANT, until we remove it
+        if (duration <= 0) return; // this means that this particular STAT is PERMANENT, until we remove it
 
         timer = new CountdownTimer(duration);
 

@@ -51,9 +51,15 @@ MonoBehaviour:
   - lootItemPrefab: {fileID: 5816259779739221662, guid: fe24415391651f044baf0bfa092bed0b, type: 3}
     dropPercent: 1
   - lootItemPrefab: {fileID: 4351812632746690140, guid: db533b7dc5cbb9b47996230f9db9cb2c, type: 3}
-    dropPercent: 1
+    dropPercent: 3
   - lootItemPrefab: {fileID: 3167716483107671169, guid: ae692d0ac8d39644589b225de79b7f73, type: 3}
     dropPercent: 1
+  - lootItemPrefab: {fileID: 5816259779739221662, guid: f924ee5cc5f439b49aeac9eb3c575060, type: 3}
+    dropPercent: 1
+  - lootItemPrefab: {fileID: 5816259779739221662, guid: 7ef0d9e055cf6c246a2398106c4913ef, type: 3}
+    dropPercent: 2
+  - lootItemPrefab: {fileID: 3167716483107671169, guid: b97249f71247ba64ea1f0de7b6a926af, type: 3}
+    dropPercent: 2
   playerGold: {fileID: 0}
 --- !u!1 &4101270326290975182
 GameObject:
@@ -166,7 +172,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 2.5411072
+  MinDistance: 3.7492685
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0

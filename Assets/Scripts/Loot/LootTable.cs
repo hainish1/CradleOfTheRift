@@ -51,13 +51,14 @@ public class LootTable : MonoBehaviour
         // Instantiate(rolledItem, transform.position, Quaternion.identity);
 
         // Define how far away from the chest the item should spawn
-    float spawnRadius = 1.0f; // Adjust this value as needed
+        float spawnRadius = 1.0f; // Adjust this value as needed
 
         // Get a random direction vector on the XZ plane
         Vector3 randomDirection = Random.insideUnitCircle.normalized;
         Vector3 spawnOffset = new Vector3(randomDirection.x, 0, randomDirection.y) * spawnRadius;
 
         Vector3 spawnPosition = transform.position + spawnOffset;
+        spawnPosition.y += 2f; // a hardcode fix for now
 
         Instantiate(rolledItem, spawnPosition, Quaternion.identity);
 
