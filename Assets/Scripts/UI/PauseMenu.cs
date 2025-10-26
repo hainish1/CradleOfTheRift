@@ -23,7 +23,7 @@ public class PauseMenu : MonoBehaviour
     private void Start()
     {
         gameObject.SetActive(true);
-        Time.timeScale = 0f;
+        // Time.timeScale = 0f;
         Debug.Log("Can't Move");
     }
     // private void Awake()
