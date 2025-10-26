@@ -15,7 +15,7 @@ public class PauseMenu : MonoBehaviour
 
     public InputActionAsset InputActions;
 
-    private InputAction m_pauseAction;
+    // private InputAction m_pauseAction;
     public GameObject PauseObject;
 
     // [SerializeField] private UIDocument settingsMenu; // Future setup
@@ -26,8 +26,8 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 0f;
         Debug.Log("Can't Move");
     }
-    private void Awake()
-    {
+    // private void Awake()
+    // {
         // document = GetComponent<UIDocument>();
         // VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
@@ -38,13 +38,13 @@ public class PauseMenu : MonoBehaviour
 
         // m_pauseAction = InputActions.FindAction("Pause");
 
-    }
+    // }
 
-    void Update()
-    {
-        if (m_pauseAction.WasPressedThisFrame())
-            TogglePause();
-    }
+    // void Update()
+    // {
+    //     if (m_pauseAction.WasPressedThisFrame())
+    //         TogglePause();
+    // }
 
     private void OnEnable()
     {
@@ -54,8 +54,8 @@ public class PauseMenu : MonoBehaviour
         quitButton = document.rootVisualElement.Q("ButtonQuitGame") as Button;
 
         var action = InputActions.FindAction("Pause");
-        if (action != null)
-            action.performed += OnPausePressed;
+        // if (action != null)
+        //     action.performed += OnPausePressed;
 
         InputActions.Enable();
 
@@ -86,24 +86,24 @@ public class PauseMenu : MonoBehaviour
         if (quitButton != null)
             quitButton.UnregisterCallback<ClickEvent>(OnQuitGameClick);
 
-        var action = InputActions.FindAction("Pause");
-        if (action != null)
-            action.performed -= OnPausePressed;
+        // var action = InputActions.FindAction("Pause");
+        // if (action != null)
+        //     action.performed -= OnPausePressed;
 
         InputActions.Disable();
     }
-    private void OnPausePressed(InputAction.CallbackContext context)
-    {
-        TogglePause();
-    }
+    // private void OnPausePressed(InputAction.CallbackContext context)
+    // {
+    //     TogglePause();
+    // }
 
-        private void TogglePause()
-    {
-        bool isActive = PauseObject.activeSelf;
-        PauseObject.SetActive(!isActive);
-        Time.timeScale = !isActive ? 0f : 1f;
-        Debug.Log(!isActive ? "Game Paused" : "Game Resumed");
-    }
+    //     private void TogglePause()
+    // {
+    //     bool isActive = PauseObject.activeSelf;
+    //     PauseObject.SetActive(!isActive);
+    //     Time.timeScale = !isActive ? 0f : 1f;
+    //     Debug.Log(!isActive ? "Game Paused" : "Game Resumed");
+    // }
 
 
     private void OnStartGameClick(ClickEvent evt)

@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class PauseManager : MonoBehaviour
 {
-    // [SerializeField] private GameObject pauseMenu;
     private bool isPaused = false;
     PauseAction action;
 
@@ -23,14 +22,6 @@ public class PauseManager : MonoBehaviour
         else
             PauseGame();
     }
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            TogglePause();
-        }
-    }
-
     void OnEnable()
     {
         action.Enable();
@@ -51,12 +42,5 @@ public class PauseManager : MonoBehaviour
     {
         Time.timeScale = 1;
         isPaused = false;
-    }
-
-    public void TogglePause()
-    {
-        isPaused = !isPaused;
-        // pauseMenu.SetActive(isPaused);
-        Time.timeScale = isPaused ? 0f : 1f;
     }
 }
