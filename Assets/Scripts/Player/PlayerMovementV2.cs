@@ -8,6 +8,7 @@
 //          -Added independent character rotation functionality.
 //          -Added knockback functionality.
 //          -Added support for stat data modification.
+//          -Added slam attack movement assistance for hovering.
 //   </para>
 // </summary>
 
@@ -37,9 +38,8 @@ public class PlayerMovementV2 : MonoBehaviour
     private float _playerHalfHeight;
     private float _playerRadius;
 
+    private float MoveMaxSpeed { get; set; }
     [Header("Movement Parameters")] [Space]
-    [SerializeField]
-    [Tooltip("Max move speed in units per second.")] private float _maxSpeed;
     [SerializeField]
     [Tooltip("Seconds needed to reach Max Speed.")] private float _accelerationSeconds;
     [SerializeField]
@@ -85,17 +85,14 @@ public class PlayerMovementV2 : MonoBehaviour
     private float _kbDashLockTimer;
     private Vector3 _externalKnockbackVelocity;
 
-    [Header("Dash Parameters")] [Space]
-    [SerializeField]
-    [Tooltip("Distance that the player character dashes in units.")] private float _dashDistance;
-    [SerializeField]
-    [Tooltip("How quickly the player character travels Dash Distance in units per second.")] private float _dashSpeed;
-    [SerializeField]
-    [Tooltip("Seconds needed for dash charges to come off cooldown.")] private float _dashCooldown;
-    [SerializeField]
-    [Tooltip("The quantity of available dash charges.")] private int _dashCharges;
-    private bool _isDashing;
+    // Dash Parameters
+    private float DashDistance { get; set; }
+    private float DashSpeed { get; set; }
+    private float DashCooldown { get; set; }
+    private int DashMaxCharges { get; set; }
     private int _currDashCharges;
+    private bool _isDashing;
+    private bool _isRegeneratingDash;
     public event System.Action<float> DashCooldownStarted;
     private Vector3 _dashDirectionUnitVector;
 
@@ -166,48 +163,62 @@ public class PlayerMovementV2 : MonoBehaviour
 
     void Start()
     {
-        // Player References
-        _playerHalfHeight = GetComponent<CharacterController>().height / 2;
-        _playerRadius = GetComponent<CharacterController>().radius;
+        if (_playerEntity != null)
+        {
+            // Player References
+            _playerHalfHeight = GetComponent<CharacterController>().height / 2;
+            _playerRadius = GetComponent<CharacterController>().radius;
 
-        // Movement Parameters
-        _acceleration = _maxSpeed / _accelerationSeconds;
-        _deceleration = _maxSpeed / _decelerationSeconds;
-        _isSprinting = false;
-        _currSprintMultiplier = 1;
+            // Movement Parameters
+            MoveMaxSpeed = _playerEntity.Stats.MoveSpeed;
+            _acceleration = MoveMaxSpeed / _accelerationSeconds;
+            _deceleration = MoveMaxSpeed / _decelerationSeconds;
+            _isSprinting = false;
+            _currSprintMultiplier = 1;
 
-        // Hover Parameters
-        _groundedCastRadius = _playerRadius - 0.1f;
-        _groundedCastPauseTimer = 0;
-        _groundedLayerMasks = LayerMask.GetMask("Environment");
-        _groundedLayerMasks |= LayerMask.GetMask("Interactable");
-        _groundedLayerMasks |= LayerMask.GetMask("Obstacles");
-        _groundedLayerMasks |= LayerMask.GetMask("Enemy");
-        GetIsGrounded();
+            // Hover Parameters
+            _groundedCastRadius = _playerRadius - 0.1f;
+            _groundedCastPauseTimer = 0;
+            _groundedLayerMasks = LayerMask.GetMask("Environment");
+            _groundedLayerMasks |= LayerMask.GetMask("Interactable");
+            _groundedLayerMasks |= LayerMask.GetMask("Obstacles");
+            _groundedLayerMasks |= LayerMask.GetMask("Enemy");
+            GetIsGrounded();
 
-        // KnockBack Parameters
-        _kbControlsLockTimer = 0;
-        _kbDashLockTimer = 0;
+            // KnockBack Parameters
+            _kbControlsLockTimer = 0;
+            _kbDashLockTimer = 0;
 
-        //Dash Parameters
-        _isDashing = false;
-        _currDashCharges = _dashCharges;
+            // Dash Parameters
+            if (_playerEntity != null)
+            {
+                DashDistance = _playerEntity.Stats.DashDistance;
+                DashSpeed = _playerEntity.Stats.DashSpeed;
+                DashCooldown = _playerEntity.Stats.DashCooldown;
+                DashMaxCharges = _playerEntity.Stats.DashCharges;
+            }
+            _currDashCharges = DashMaxCharges;
+            _isDashing = false;
+            _isRegeneratingDash = false;
 
-        // Jump Parameters
-        _inputtedJumpThisFrame = false;
+            // Jump Parameters
+            _inputtedJumpThisFrame = false;
 
-        // Coyote Time Parameters
-        _coyoteTimer = _coyoteTimeWindow;
-        _jumpBufferTimer = 0;
+            // Coyote Time Parameters
+            _coyoteTimer = _coyoteTimeWindow;
+            _jumpBufferTimer = 0;
 
-        // Drift Parameters
-        _currDriftDescentDivisor = 1;
-        _driftDelayTimer = 0;
-        _isDrifting = false;
+            // Drift Parameters
+            _currDriftDescentDivisor = 1;
+            _driftDelayTimer = 0;
+            _isDrifting = false;
+        }
     }
 
     void Update()
     {
+        TryGetStatChanges();
+
         GetIsGrounded();
         GravityConditions();
         DecrementAllTimers();
@@ -284,6 +295,64 @@ public class PlayerMovementV2 : MonoBehaviour
 
     /// <summary>
     ///   <para>
+    ///     Gets all stat changes from the stats file on any frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void TryGetStatChanges()
+    {
+        if (_playerEntity != null)
+        {
+            // Check MoveSpeed.
+            if (MoveMaxSpeed != _playerEntity.Stats.MoveSpeed)
+            {
+                MoveMaxSpeed = _playerEntity.Stats.MoveSpeed;
+                RecalculateAccelDecel();
+            }
+
+            // Check DashDistance.
+            if (DashDistance != _playerEntity.Stats.DashDistance)
+            {
+                DashDistance = _playerEntity.Stats.DashDistance;
+            }
+
+            // Check DashSpeed.
+            if (DashSpeed != _playerEntity.Stats.DashSpeed)
+            {
+                DashSpeed = _playerEntity.Stats.DashSpeed;
+            }
+
+            // Check DashCooldown.
+            if (DashCooldown != _playerEntity.Stats.DashCooldown)
+            {
+                DashCooldown = _playerEntity.Stats.DashCooldown;
+            }
+
+            // Check DashCharges.
+            if (DashMaxCharges != _playerEntity.Stats.DashCharges)
+            {
+                int changeDifference = _playerEntity.Stats.DashCharges - DashMaxCharges;
+                DashMaxCharges = _playerEntity.Stats.DashCharges;
+
+                // Add positive difference to current charge count, even while regenerating.
+                if (changeDifference > 0)
+                {
+                    _currDashCharges += changeDifference;
+                }
+                // Ensure negative difference is not affected by regeneration.
+                else
+                {
+                    if (_currDashCharges >= _playerEntity.Stats.DashCharges)
+                    {
+                        _currDashCharges = _playerEntity.Stats.DashCharges;
+                        _isRegeneratingDash = false;
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    ///   <para>
     ///     Updates all grounded information on the frame this method is called.
     ///   </para>
     /// </summary>
@@ -353,16 +422,6 @@ public class PlayerMovementV2 : MonoBehaviour
     /// </summary>
     private void MoveConditions()
     {
-        // Update _maxSpeed, _acceleration and _deceleration values whenever movement stats are changed.
-        if (_playerEntity != null)
-        {
-            if (_maxSpeed != _playerEntity.Stats.MoveSpeed)
-            {
-                _maxSpeed = _playerEntity.Stats.MoveSpeed;
-                RecalculateAccelDecel();
-            }
-        }
-
         // Disable sprinting if sprint input was released.
         if (_isSprinting && !sprintActions.IsPressed())
         {
@@ -479,7 +538,7 @@ public class PlayerMovementV2 : MonoBehaviour
     /// <returns> The aggregate max speed value. </returns>
     private float CalculateAggregateMaxSpeedValue()
     {
-        return _maxSpeed * _currSprintMultiplier;
+        return MoveMaxSpeed * _currSprintMultiplier;
     }
 
     /// <summary>
@@ -587,18 +646,18 @@ public class PlayerMovementV2 : MonoBehaviour
         // Check if the player character is being knocked back.
         if (_kbDashLockTimer > 0) return;
 
-        // Dash into camera direction when midair.
-        if (IsGrounded)
-        {
-            _dashDirectionUnitVector = GetMoveInputDirection();
-        }
-        else
-        {
-            _dashDirectionUnitVector = GetCameraForwardDirection();
-        }
-
         if (_currDashCharges != 0 && !_isDashing)
         {
+            // Dash into camera direction when midair.
+            if (IsGrounded)
+            {
+                _dashDirectionUnitVector = GetMoveInputDirection();
+            }
+            else
+            {
+                _dashDirectionUnitVector = GetCameraForwardDirection();
+            }
+
             // If not moving, default dash direction is forward.
             if (_dashDirectionUnitVector.x == 0 && _dashDirectionUnitVector.z == 0)
             {
@@ -607,13 +666,13 @@ public class PlayerMovementV2 : MonoBehaviour
 
             _currDashCharges--;
 
-            // Only initialize regeneration coroutine if it hasn't already.
-            if (_currDashCharges == _dashCharges - 1)
+            // Only initialize regeneration routine if not already regenerating.
+            if (_currDashCharges < DashMaxCharges)
             {
                 StartCoroutine(DashChargesRegeneration());
             }
 
-            float dashDuration = _dashDistance / _dashSpeed;
+            float dashDuration = DashDistance / DashSpeed;
             StartCoroutine(InitiateDashDuration(dashDuration));
             DashCooldownStarted?.Invoke(dashDuration); // Notify listener to start the dash fade visual effect.
         }
@@ -639,7 +698,7 @@ public class PlayerMovementV2 : MonoBehaviour
     /// </summary>
     private void DashConditions()
     {
-        _characterController.Move(Time.deltaTime * _dashSpeed * _dashDirectionUnitVector);
+        _characterController.Move(Time.deltaTime * DashSpeed * _dashDirectionUnitVector);
     }
 
     /// <summary>
@@ -647,15 +706,31 @@ public class PlayerMovementV2 : MonoBehaviour
     ///     Coroutine for regenerating dash charges over time.
     ///   </para>
     /// </summary>
-    /// <param name="seconds"> The cooldown time for dash regeneration. </param>
     /// <returns> IEnumerator object. </returns>
     private IEnumerator DashChargesRegeneration()
     {
-        while (_currDashCharges != _dashCharges)
+        _isRegeneratingDash = true;
+
+        float timer = 0;
+
+        while (_currDashCharges < DashMaxCharges && _isRegeneratingDash)
         {
-            yield return new WaitForSeconds(_dashCooldown);
-            _currDashCharges++;
+            timer += Time.deltaTime;
+
+            if (timer >= DashCooldown)
+            {
+                timer = 0;
+                _currDashCharges++;
+            }
+
+            if (_currDashCharges >= DashMaxCharges) break;
+
+            yield return null;
         }
+
+        _currDashCharges = Mathf.Min(_currDashCharges, DashMaxCharges); // In case DashMaxCharges is decreased during routine execution.
+
+        _isRegeneratingDash = false;
     }
 
     /// <summary>

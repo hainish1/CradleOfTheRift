@@ -785,10 +785,6 @@ MonoBehaviour:
   _kbDamping: 0.125
   _kbControlsLockTime: 0.18
   _kbDashLockTime: 0.12
-  _dashDistance: 14
-  _dashSpeed: 100
-  _dashCooldown: 2
-  _dashCharges: 20
   _jumpForce: 15
   _coyoteTimeWindow: 0.15
   _jumpBufferWindow: 0.15
@@ -798,7 +794,7 @@ MonoBehaviour:
   _boostMaxSpeed: 30
   _boostAccelerationSeconds: 1.5
   _boostRegenerationRate: 30
-  _boostMaxEnergy: 0
+  _boostMaxEnergy: 100
   _boostDepletionRate: 50
   _boostDoubleTapWindow: 0.2
 --- !u!114 &5449276939068111225

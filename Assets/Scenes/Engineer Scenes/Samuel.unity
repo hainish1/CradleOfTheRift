@@ -568,6 +568,10 @@ PrefabInstance:
       propertyPath: _cameraTransform
       value: 
       objectReference: {fileID: 1469625039}
+    - target: {fileID: 728574125364219293, guid: faa5c9dc55ccfab45ae87a289358b640, type: 3}
+      propertyPath: _flightMaxEnergy
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 1201876548339226324, guid: faa5c9dc55ccfab45ae87a289358b640, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -611,6 +615,10 @@ PrefabInstance:
     - target: {fileID: 3694253349153652309, guid: faa5c9dc55ccfab45ae87a289358b640, type: 3}
       propertyPath: m_Name
       value: Player5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3694253349153652309, guid: faa5c9dc55ccfab45ae87a289358b640, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
