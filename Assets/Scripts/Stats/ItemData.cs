@@ -28,6 +28,10 @@ public class ItemData : ScriptableObject
     public ItemEffectKind effectKind = ItemEffectKind.None;
 
     [Range(0f, 1f)] public float healOnDamagePercentPerStack = 0.02f; // 2% per stack
+    public float stompDamagePerStack = 10f; // base stomp damage
+    public float stompBounceForce = 8f; // upward bounce force when stomping
+    public float fallDamageBonusPerMeter = 2f; // extra slam damage per meter fallen
+    public float fallDamageBonusPerStack = 1f; // multiplier per stack
     public float effectDuration = -1f; // -1 = permanent
 }
 
@@ -47,5 +51,7 @@ public enum StackingType
 public enum ItemEffectKind
 {
     None,
-    HealOnDamage
+    HealOnDamage,
+    StompDamage,
+    FallDamageBonus
 }

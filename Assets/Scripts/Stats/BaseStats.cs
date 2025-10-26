@@ -10,6 +10,7 @@ public class BaseStats : ScriptableObject
 
     [Header("Player Movement")]
     public float moveSpeed = 10;
+    public float jumpHeight = 10;
     [Header("Player Dash")]
     public float dashSpeed = 100;
     public float dashDistance = 14;

@@ -782,7 +782,7 @@ public class PlayerMovementV4 : MonoBehaviour
         // Debug: Check flight conditions
         if (!IsGrounded && jumpActions.IsPressed())
         {
-            Debug.Log($"Flight Check - Energy: {_currFlightEnergy}, IsGrounded: {IsGrounded}, IsDashing: {_isDashing}");
+            // Debug.Log($"Flight Check - Energy: {_currFlightEnergy}, IsGrounded: {IsGrounded}, IsDashing: {_isDashing}");
         }
         
         // Hold jump in air to fly
@@ -897,15 +897,15 @@ public class PlayerMovementV4 : MonoBehaviour
     // Debug helper method
     public void DebugFlightStatus()
     {
-        Debug.Log("=== Flight System Debug ===");
-        Debug.Log($"IsGrounded: {IsGrounded}");
-        Debug.Log($"IsDashing: {_isDashing}");
-        Debug.Log($"Jump Pressed: {jumpActions.IsPressed()}");
-        Debug.Log($"Current Flight Energy: {_currFlightEnergy} / {_maxFlightEnergy}");
-        Debug.Log($"IsFlying: {_isFlying}");
-        Debug.Log($"Max Flight Speed: {_maxFlightSpeed}");
-        Debug.Log($"Flight Acceleration: {_flightAcceleration}");
-        Debug.Log($"Vertical Velocity: {_verticalVelocityVector.y}");
+        // Debug.Log("=== Flight System Debug ===");
+        // Debug.Log($"IsGrounded: {IsGrounded}");
+        // Debug.Log($"IsDashing: {_isDashing}");
+        // Debug.Log($"Jump Pressed: {jumpActions.IsPressed()}");
+        // Debug.Log($"Current Flight Energy: {_currFlightEnergy} / {_maxFlightEnergy}");
+        // Debug.Log($"IsFlying: {_isFlying}");
+        // Debug.Log($"Max Flight Speed: {_maxFlightSpeed}");
+        // Debug.Log($"Flight Acceleration: {_flightAcceleration}");
+        // Debug.Log($"Vertical Velocity: {_verticalVelocityVector.y}");
     }
 
     public void SnapToHoverAfterSlam()

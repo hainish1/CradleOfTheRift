@@ -1,0 +1,182 @@
+using System;
+using UnityEngine;
+
+// Stomp Damage - Mario-style jump attack on enemies
+public class StompDamage : IDisposable
+{
+    private readonly Entity owner;
+    private readonly GameObject ownerGameObject;
+    private readonly float damagePerStack;
+    private readonly float bounceForce;
+    private int stacks;
+    private readonly float duration;
+    private float timer;
+    private bool disposed;
+
+    // Components
+    private PlayerMovement playerMovement;
+    private PlayerMovementV4 playerMovementV4;
+    private CharacterController characterController;
+    private SphereCollider stompDetector;
+
+    // Detection settings
+    private readonly float detectionRadius = 1.5f;
+    private readonly Vector3 detectionOffset = new Vector3(0, -1f, 0);
+    private readonly float minFallSpeed = 2f;
+    private readonly LayerMask enemyLayer;
+
+    public StompDamage(Entity owner, float damagePerStack, float bounceForce, int initialStacks, float durationSec = -1f)
+    {
+        this.owner = owner;
+        this.ownerGameObject = owner.gameObject;
+        this.damagePerStack = damagePerStack;
+        this.bounceForce = bounceForce;
+        this.stacks = Mathf.Max(1, initialStacks);
+        this.duration = durationSec;
+        this.timer = durationSec;
+
+        // Get player components
+        playerMovement = owner.GetComponent<PlayerMovement>();
+        playerMovementV4 = owner.GetComponent<PlayerMovementV4>();
+        characterController = owner.GetComponent<CharacterController>();
+
+        enemyLayer = LayerMask.GetMask("Enemy");
+        CreateStompDetector();
+    }
+
+    private void CreateStompDetector()
+    {
+        GameObject detectorObj = new GameObject("StompDetector");
+        detectorObj.transform.SetParent(ownerGameObject.transform);
+        detectorObj.transform.localPosition = detectionOffset;
+        detectorObj.transform.localRotation = Quaternion.identity;
+        
+        stompDetector = detectorObj.AddComponent<SphereCollider>();
+        stompDetector.isTrigger = true;
+        stompDetector.radius = detectionRadius;
+        stompDetector.center = Vector3.zero;
+        
+        Rigidbody rb = detectorObj.AddComponent<Rigidbody>();
+        rb.isKinematic = true;
+        rb.useGravity = false;
+
+        var handler = detectorObj.AddComponent<StompCollisionHandler>();
+        handler.Initialize(this);
+        
+        Debug.Log($"[Stomp] Detector created! Radius: {detectionRadius}, Offset: {detectionOffset}");
+    }
+
+    public void AddStack(int count = 1) => stacks += Mathf.Max(1, count);
+
+    public void Update(float dt)
+    {
+        if (duration < 0f || disposed) return;
+        timer -= dt;
+        if (timer <= 0f) Dispose();
+    }
+
+    public void OnEnemyDetected(Collider enemyCollider)
+    {
+        if (disposed || ownerGameObject == null) return;
+
+        float verticalVelocity = 0f;
+        if (characterController != null)
+        {
+            verticalVelocity = characterController.velocity.y;
+        }
+
+        if (verticalVelocity >= -minFallSpeed) return;
+        
+        Enemy enemy = enemyCollider.GetComponentInParent<Enemy>();
+        if (enemy == null) return;
+
+        float playerY = ownerGameObject.transform.position.y;
+        float enemyY = enemy.transform.position.y;
+        if (playerY <= enemyY + 0.5f) return;
+        float totalDamage = damagePerStack * stacks;
+        var damageable = enemy.GetComponent<IDamageable>();
+        if (damageable != null && !damageable.IsDead)
+        {
+            damageable.TakeDamage(totalDamage);
+            CombatEvents.ReportDamage(owner, enemy, totalDamage);
+
+            var flash = enemy.GetComponentInChildren<TargetFlash>();
+            if (flash != null) flash.Flash();
+
+            var kb = enemy.GetComponent<AgentKnockBack>();
+            if (kb != null)
+            {
+                Vector3 direction = (enemy.transform.position - ownerGameObject.transform.position).normalized;
+                direction.y = 0.3f;
+                kb.ApplyImpulse(direction * 5f);
+            }
+
+            ApplyBounce();
+
+            Debug.Log($"[Stomp] Dealt {totalDamage:F1} damage to {enemy.name} (x{stacks} stacks)");
+        }
+    }
+
+    private void ApplyBounce()
+    {
+        if (playerMovementV4 != null)
+        {
+            playerMovementV4.SetVerticalVelocityFactor(bounceForce);
+        }
+        else if (playerMovement != null)
+        {
+            playerMovement.ApplyImpulse(Vector3.up * bounceForce);
+        }
+    }
+
+    public void Dispose()
+    {
+        if (disposed) return;
+        disposed = true;
+
+        if (stompDetector != null)
+        {
+            UnityEngine.Object.Destroy(stompDetector.gameObject);
+        }
+    }
+}
+
+public class StompCollisionHandler : MonoBehaviour
+{
+    private StompDamage stompEffect;
+    private float cooldown = 0.2f;
+    private float lastStompTime = -999f;
+    private SphereCollider detectorCollider;
+
+    public void Initialize(StompDamage effect)
+    {
+        stompEffect = effect;
+        detectorCollider = GetComponent<SphereCollider>();
+    }
+    
+    private void OnDrawGizmos()
+    {
+        if (detectorCollider != null)
+        {
+            Gizmos.color = Color.yellow;
+            Vector3 worldCenter = transform.position + detectorCollider.center;
+            Gizmos.DrawWireSphere(worldCenter, detectorCollider.radius);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (stompEffect == null) return;
+        if (Time.time - lastStompTime < cooldown) return;
+        if (other.gameObject.layer != 11) return;
+
+        Enemy enemy = other.GetComponentInParent<Enemy>();
+        if (enemy != null)
+        {
+            stompEffect.OnEnemyDetected(other);
+            lastStompTime = Time.time;
+        }
+    }
+    
+}
+

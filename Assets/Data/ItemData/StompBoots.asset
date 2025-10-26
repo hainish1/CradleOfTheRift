@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
+  m_Name: StompBoots
+  m_EditorClassIdentifier: 
+  itemName: Mario
+  description: Jump on enemies to deal damage
+  icon: {fileID: 0}
+  rarity: 1
+  rarityColor: {r: 0.3, g: 0.8, b: 0.3, a: 1}
+  statType: 0
+  operatorType: 0
+  value: 0
+  duration: -1
+  canStack: 1
+  maxStacks: 10
+  stackingType: 0
+  effectKind: 2
+  healOnDamagePercentPerStack: 0.02
+  stompDamagePerStack: 15
+  stompBounceForce: 30
+  fallDamageBonusPerMeter: 2
+  fallDamageBonusPerStack: 1
+  effectDuration: -1

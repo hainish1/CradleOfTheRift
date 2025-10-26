@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class ItemEffects : MonoBehaviour
 {
-    [SerializeField] private bool activateHomingProjectiles = false;
     [SerializeField] private float homingEffectCooldown = 3f;
 
     private float timer;

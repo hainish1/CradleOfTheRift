@@ -10,6 +10,7 @@ public class PlayerInventory : MonoBehaviour
         public ItemData itemData;
         public int count;
         public List<StatModifier> activeModifiers = new List<StatModifier>();
+        public IDisposable activeEffect; // for special effects like HealOnDamage, StompDamage
 
         public ItemStack(ItemData data)
         {
@@ -18,11 +19,13 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
-    // storage part
     private Dictionary<ItemData, ItemStack> items = new Dictionary<ItemData, ItemStack>();
     private Entity playerEntity;
+    
+    private HealOnDamage healOnDamageEffect;
+    private StompDamage stompDamageEffect;
+    private FallDamageBonus fallDamageBonusEffect;
 
-    // for UI updates
     public event Action<ItemData, ItemStack> OnItemAdded;
     public event Action<ItemData, ItemStack> OnItemStackChanged;
     public event Action<ItemData> OnItemRemoved;
@@ -49,6 +52,7 @@ public class PlayerInventory : MonoBehaviour
             {
                 existingStack.count++;
                 ApplyStatModifier(itemData, existingStack);
+                ApplySpecialEffect(itemData, existingStack); // Update special effects with new stack count
                 OnItemStackChanged?.Invoke(itemData, existingStack);
 
 
@@ -66,6 +70,7 @@ public class PlayerInventory : MonoBehaviour
             ItemStack newStack = new ItemStack(itemData);
             items.Add(itemData, newStack);
             ApplyStatModifier(itemData, newStack);
+            ApplySpecialEffect(itemData, newStack); // Apply special effects
             OnItemAdded?.Invoke(itemData, newStack);
 
 
@@ -139,5 +144,87 @@ public class PlayerInventory : MonoBehaviour
     public bool HasItem(ItemData itemData)
     {
         return items.ContainsKey(itemData);
+    }
+    
+    private void ApplySpecialEffect(ItemData itemData, ItemStack stack)
+    {
+        if (playerEntity == null) return;
+        if (itemData.effectKind == ItemEffectKind.None) return;
+
+        switch (itemData.effectKind)
+        {
+            case ItemEffectKind.HealOnDamage:
+                if (healOnDamageEffect == null)
+                {
+                    healOnDamageEffect = new HealOnDamage(
+                        playerEntity,
+                        itemData.healOnDamagePercentPerStack,
+                        stack.count,
+                        itemData.effectDuration
+                    );
+                    stack.activeEffect = healOnDamageEffect;
+                    Debug.Log($"[Effect] Activated Heal On Damage ({stack.count} stacks)");
+                }
+                else
+                {
+                    healOnDamageEffect.AddStack(1);
+                    Debug.Log($"[Effect] Heal On Damage stacked ({stack.count} stacks)");
+                }
+                break;
+
+            case ItemEffectKind.StompDamage:
+                if (stompDamageEffect == null)
+                {
+                    stompDamageEffect = new StompDamage(
+                        playerEntity,
+                        itemData.stompDamagePerStack,
+                        itemData.stompBounceForce,
+                        stack.count,
+                        itemData.effectDuration
+                    );
+                    stack.activeEffect = stompDamageEffect;
+                    Debug.Log($"[Effect] Activated Stomp Damage ({stack.count} stacks) - {itemData.stompDamagePerStack} damage per stack");
+                }
+                else
+                {
+                    stompDamageEffect.AddStack(1);
+                    Debug.Log($"[Effect] Stomp Damage stacked ({stack.count} stacks)");
+                }
+                break;
+
+            case ItemEffectKind.FallDamageBonus:
+                if (fallDamageBonusEffect == null)
+                {
+                    fallDamageBonusEffect = new FallDamageBonus(
+                        playerEntity,
+                        itemData.fallDamageBonusPerMeter * itemData.fallDamageBonusPerStack,
+                        stack.count,
+                        itemData.effectDuration
+                    );
+                    stack.activeEffect = fallDamageBonusEffect;
+                    Debug.Log($"[Effect] Activated Fall Damage Bonus ({stack.count} stacks) - {itemData.fallDamageBonusPerMeter} damage per meter");
+                }
+                else
+                {
+                    fallDamageBonusEffect.AddStack(1);
+                    Debug.Log($"[Effect] Fall Damage Bonus stacked ({stack.count} stacks)");
+                }
+                break;
+        }
+    }
+    
+    void Update()
+    {
+        float dt = Time.deltaTime;
+        healOnDamageEffect?.Update(dt);
+        stompDamageEffect?.Update(dt);
+        fallDamageBonusEffect?.Update(dt);
+    }
+    
+    void OnDestroy()
+    {
+        healOnDamageEffect?.Dispose();
+        stompDamageEffect?.Dispose();
+        fallDamageBonusEffect?.Dispose();
     }
 }

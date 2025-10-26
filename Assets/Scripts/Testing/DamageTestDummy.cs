@@ -26,6 +26,13 @@ public class DamageTestDummy : Enemy, IDamageable
     [SerializeField] private float damageTextSpread = 0.5f;
     [SerializeField] private bool damageTextFadeOut = true;
     
+    [Header("Label Settings")]
+    [SerializeField] private bool showLabel = true;
+    [SerializeField] private string labelText = "Training Dummy";
+    [SerializeField] private Color labelColor = Color.yellow;
+    [SerializeField] private int labelFontSize = 40;
+    [SerializeField] private float labelHeightOffset = 3.5f;
+    
     [Header("Debug")]
     [SerializeField] private bool logDamageToConsole = true;
     
@@ -35,6 +42,7 @@ public class DamageTestDummy : Enemy, IDamageable
     private Material originalMaterial;
     private float totalDamageTaken = 0f;
     private int hitCount = 0;
+    private GameObject labelObject;
 
     // IDamageable interface implementation
     public bool IsDead => currentHealth <= 0 && !invincible;
@@ -44,13 +52,19 @@ public class DamageTestDummy : Enemy, IDamageable
         // Disable AI initialization
     }
 
-    void Start()
+    private new void Start()
     {
         currentHealth = maxHealth;
         meshRenderer = GetComponentInChildren<Renderer>();
         if (meshRenderer != null)
         {
             originalMaterial = meshRenderer.material;
+        }
+        
+        // Create label
+        if (showLabel)
+        {
+            CreateLabel();
         }
     }
 
@@ -59,6 +73,35 @@ public class DamageTestDummy : Enemy, IDamageable
         if (autoHeal && currentHealth < maxHealth && Time.time - lastDamageTime > healDelay)
         {
             currentHealth = Mathf.Min(currentHealth + Time.deltaTime * (maxHealth / 2f), maxHealth);
+        }
+        
+        // Update label rotation to face camera
+        if (labelObject != null && Camera.main != null)
+        {
+            labelObject.transform.position = transform.position + Vector3.up * labelHeightOffset;
+            labelObject.transform.rotation = Quaternion.LookRotation(labelObject.transform.position - Camera.main.transform.position);
+        }
+    }
+    
+    private void CreateLabel()
+    {
+        labelObject = new GameObject("DummyLabel");
+        labelObject.transform.position = transform.position + Vector3.up * labelHeightOffset;
+        labelObject.transform.SetParent(transform, false);
+        
+        TextMesh textMesh = labelObject.AddComponent<TextMesh>();
+        textMesh.text = labelText;
+        textMesh.fontSize = labelFontSize;
+        textMesh.color = labelColor;
+        textMesh.anchor = TextAnchor.MiddleCenter;
+        textMesh.characterSize = 0.15f;
+        textMesh.fontStyle = FontStyle.Bold;
+        
+        // Add outline for better visibility
+        MeshRenderer meshRend = labelObject.GetComponent<MeshRenderer>();
+        if (meshRend != null)
+        {
+            meshRend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         }
     }
 
@@ -196,7 +239,7 @@ public class DamageTestDummy : Enemy, IDamageable
         Debug.Log($"[Dummy] Health: {currentHealth:F1}/{maxHealth} | Hits: {hitCount} | Total Damage: {totalDamageTaken:F1}");
     }
 
-    private void OnDrawGizmosSelected()
+    private new void OnDrawGizmosSelected()
     {
         if (currentHealth > 0)
         {
