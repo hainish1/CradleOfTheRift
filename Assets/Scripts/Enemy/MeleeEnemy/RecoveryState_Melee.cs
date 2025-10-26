@@ -8,6 +8,7 @@ public class RecoveryState_Melee : EnemyState
     private EnemyMelee enemyMelee;
 
     float endTime;
+    private bool needsRetreat;
 
     public RecoveryState_Melee(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
@@ -22,6 +23,17 @@ public class RecoveryState_Melee : EnemyState
     {
         endTime = Time.time + enemyMelee.recoveryTime; // post attack pause
         if (enemy.agent != null) enemy.agent.isStopped = false;
+
+        //check if too close to the player
+        if (enemy.target != null)
+        {
+            float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.target.position);
+            needsRetreat = distanceToPlayer < enemyMelee.minAttackDistance;
+        }
+        else
+        {
+            needsRetreat = false;
+        }
     }
 
     /// <summary>
@@ -29,17 +41,49 @@ public class RecoveryState_Melee : EnemyState
     /// </summary>
     public override void Update()
     {
-        if (Time.time >= endTime)
+
+        if (enemy.target == null)
         {
-            if (PlayerInAggressionRange())
+            if (Time.time >= endTime)
             {
-                stateMachine.ChangeState(enemyMelee.GetChase());
+                stateMachine.ChangeState(enemyMelee.GetIdle());
             }
-            else
-            {
-                stateMachine.ChangeState(enemyMelee.GetIdle()); // I prolly Dont even need this since its risk of rain 2 style and its always after us
-            }
+            return;
         }
+
+        float currentDistance = Vector3.Distance(enemy.transform.position, enemy.target.position);
+        if (needsRetreat && currentDistance < enemyMelee.minAttackDistance)
+        {
+            // calc retreat position
+            Vector3 awayFromPlayer = enemy.transform.position - enemy.target.position;
+            awayFromPlayer.y = 0f;
+            if (awayFromPlayer.sqrMagnitude > 0.0001f)
+            {
+                awayFromPlayer.Normalize();
+                Vector3 retreatPosition = enemy.target.position + awayFromPlayer * enemyMelee.leapAttackRange;
+
+                if (enemy.agent != null && enemy.agent.enabled)
+                {
+                    enemy.agent.SetDestination(retreatPosition);
+                }
+            }
+
+        }
+        else
+            {
+                needsRetreat = false;
+                if (Time.time >= endTime)
+                {
+                    if (PlayerInAggressionRange())
+                    {
+                        stateMachine.ChangeState(enemyMelee.GetChase());
+                    }
+                    else
+                    {
+                        stateMachine.ChangeState(enemyMelee.GetIdle());
+                    }
+                }
+            }
     }
 
 

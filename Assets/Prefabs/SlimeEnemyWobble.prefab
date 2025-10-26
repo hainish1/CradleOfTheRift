@@ -160,9 +160,13 @@ MonoBehaviour:
   slamDamage: 1
   windupTime: 0.5
   chargeSpeed: 30
-  chargetTime: 0.18
+  chargeTime: 0.18
   hitbox: {fileID: 1248558580790740225}
   hitAppliedThisAttack: 0
+  leapAttackRange: 5
+  minAttackDistance: 3
+  leapHeight: 1
+  leapDuration: 0.5
 --- !u!114 &6554202718004137176
 MonoBehaviour:
   m_ObjectHideFlags: 0
