@@ -17,7 +17,10 @@ public class PauseMenu : MonoBehaviour
     private void Awake()
     {
         document = GetComponent<UIDocument>();
+    }
 
+    private void OnEnable()
+    {
         startButton = document.rootVisualElement.Q("ButtonStartGame") as Button;
         continueButton = document.rootVisualElement.Q("Buttoncontinue") as Button;
         helpButton = document.rootVisualElement.Q("ButtonHelp") as Button;
@@ -54,8 +57,8 @@ public class PauseMenu : MonoBehaviour
     private void OnStartGameClick(ClickEvent evt)
     {
         // Debug.Log("You Pressed the Start Button");
-        SceneManager.LoadScene("Design");// Change name to game
-
+        // SceneManager.LoadScene("Design");// Change name to game
+        gameObject.SetActive(false);
     }
 
     private void OnContinueClick(ClickEvent evt)
@@ -65,9 +68,8 @@ public class PauseMenu : MonoBehaviour
 
     private void OnQuitGameClick(ClickEvent evt)
     {
-        Debug.Log("Quitting game...");
+        // Debug.Log("Quitting game...");
         Application.Quit();
-
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
@@ -76,7 +78,7 @@ public class PauseMenu : MonoBehaviour
     
     private void OnHelpClick(ClickEvent evt)
     {
-        // Debug.Log("Opening settings menu...");
+        Debug.Log("Opening Help menu...");
         // if (helpMenu != null)
         //     helpMenu.gameObject.SetActive(true);
     }
