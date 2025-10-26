@@ -6,7 +6,9 @@ public class PauseMenu : MonoBehaviour
 {
     private UIDocument document;
     private Button startButton;
-    private Button settingsButton; // Future setup
+    private Button continueButton;
+
+    private Button helpButton; // Future setup
     private Button quitButton;
 
     [SerializeField] private UIDocument settingsMenu; // Future setup
@@ -17,7 +19,8 @@ public class PauseMenu : MonoBehaviour
         document = GetComponent<UIDocument>();
 
         startButton = document.rootVisualElement.Q("ButtonStartGame") as Button;
-        settingsButton = document.rootVisualElement.Q("ButtonSettings") as Button;
+        continueButton = document.rootVisualElement.Q("Buttoncontinue") as Button;
+        helpButton = document.rootVisualElement.Q("ButtonHelp") as Button;
         quitButton = document.rootVisualElement.Q("ButtonQuitGame") as Button;
 
 
@@ -25,8 +28,11 @@ public class PauseMenu : MonoBehaviour
         if (startButton != null)
             startButton.RegisterCallback<ClickEvent>(OnStartGameClick);
 
-        if (settingsButton != null)
-            settingsButton.RegisterCallback<ClickEvent>(OnSettingsClick);
+        if (continueButton != null)
+            quitButton.RegisterCallback<ClickEvent>(OnContinueClick);
+
+        if (helpButton != null)
+            helpButton.RegisterCallback<ClickEvent>(OnHelpClick);
 
         if (quitButton != null)
             quitButton.RegisterCallback<ClickEvent>(OnQuitGameClick);
@@ -37,8 +43,8 @@ public class PauseMenu : MonoBehaviour
         if (startButton != null)
             startButton.UnregisterCallback<ClickEvent>(OnStartGameClick);
 
-        if (settingsButton != null)
-            settingsButton.UnregisterCallback<ClickEvent>(OnSettingsClick);
+        if (helpButton != null)
+            helpButton.UnregisterCallback<ClickEvent>(OnHelpClick);
 
         if (quitButton != null)
             quitButton.UnregisterCallback<ClickEvent>(OnQuitGameClick);
@@ -52,6 +58,11 @@ public class PauseMenu : MonoBehaviour
 
     }
 
+    private void OnContinueClick(ClickEvent evt)
+    {
+        
+    }
+
     private void OnQuitGameClick(ClickEvent evt)
     {
         Debug.Log("Quitting game...");
@@ -63,11 +74,11 @@ public class PauseMenu : MonoBehaviour
     }
 
     
-    private void OnSettingsClick(ClickEvent evt)
+    private void OnHelpClick(ClickEvent evt)
     {
         // Debug.Log("Opening settings menu...");
-        // if (settingsMenu != null)
-        //     settingsMenu.gameObject.SetActive(true);
+        // if (helpMenu != null)
+        //     helpMenu.gameObject.SetActive(true);
     }
 
 }
