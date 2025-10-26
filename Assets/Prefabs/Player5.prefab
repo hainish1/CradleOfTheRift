@@ -507,7 +507,7 @@ GameObject:
   - component: {fileID: 4651147138949993724}
   - component: {fileID: 7494171734913767902}
   - component: {fileID: 1220069884552851021}
-  - component: {fileID: 6368505395288730985}
+  - component: {fileID: 728574125364219293}
   - component: {fileID: 5449276939068111225}
   - component: {fileID: 1545799363735562861}
   - component: {fileID: 7428225188146732249}
@@ -515,7 +515,7 @@ GameObject:
   - component: {fileID: 5954804187933579734}
   - component: {fileID: 6324998485058705871}
   m_Layer: 8
-  m_Name: Player3
+  m_Name: Player5
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -603,7 +603,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
---- !u!114 &6368505395288730985
+--- !u!114 &728574125364219293
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -612,15 +612,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 3694253349153652309}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38078e00da067c7428b5f1836d525cd1, type: 3}
+  m_Script: {fileID: 11500000, guid: b916d9f3e293855479c5e46530750f13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _playerCenter: {fileID: 2015244756760834766}
   _cameraTransform: {fileID: 0}
-  _maxSpeed: 11
-  _accelerationSeconds: 0.4
-  _decelerationSeconds: 0.2
-  _sprintMultiplier: 2
+  _gravityMultiplier: 3
+  _gravityAirDrag: 1
+  _moveMaxSpeed: 11
+  _moveAccelerationSeconds: 0.4
+  _moveDecelerationSeconds: 0.2
   _characterRotationDamping: 0.25
   _hoverHeight: 1
   _hoverPullStrength: 100
@@ -640,7 +641,15 @@ MonoBehaviour:
   _jumpBufferWindow: 0.15
   _driftDescentDivisor: 0.1
   _driftDelay: 0.5
-  _gravityMultiplier: 3
+  _flightMaxSpeed: 30
+  _flightAccelerationSeconds: 0.75
+  _flightDecelerationSeconds: 0.4
+  _flightCounterAccelerationMultiplier: 2
+  _flightJumpForce: 20
+  _flightRegenerationRate: 30
+  _flightMaxEnergy: 1000
+  _flightDepletionRate: 25
+  _flightDoubleTapWindow: 0.2
 --- !u!114 &5449276939068111225
 MonoBehaviour:
   m_ObjectHideFlags: 0
