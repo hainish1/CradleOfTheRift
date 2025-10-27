@@ -10,7 +10,7 @@ public class PlayerInventory : MonoBehaviour
         public ItemData itemData;
         public int count;
         public List<StatModifier> activeModifiers = new List<StatModifier>();
-
+        public IDisposable runtimeEffect;
         public ItemStack(ItemData data)
         {
             itemData = data;
@@ -20,7 +20,10 @@ public class PlayerInventory : MonoBehaviour
 
     // storage part
     private Dictionary<ItemData, ItemStack> items = new Dictionary<ItemData, ItemStack>();
+    private List<HealOnDamage> healEffects = new();
     private Entity playerEntity;
+
+
 
     // for UI updates
     public event Action<ItemData, ItemStack> OnItemAdded;
@@ -48,7 +51,8 @@ public class PlayerInventory : MonoBehaviour
             if (itemData.canStack && existingStack.count < itemData.maxStacks)
             {
                 existingStack.count++;
-                ApplyStatModifier(itemData, existingStack);
+                // ApplyStatModifier(itemData, existingStack);
+                ApplyItemEffectOrStat(itemData, existingStack, isNewStack: false);
                 OnItemStackChanged?.Invoke(itemData, existingStack);
 
 
@@ -65,13 +69,59 @@ public class PlayerInventory : MonoBehaviour
             // New item
             ItemStack newStack = new ItemStack(itemData);
             items.Add(itemData, newStack);
-            ApplyStatModifier(itemData, newStack);
+            // ApplyStatModifier(itemData, newStack);
+            ApplyItemEffectOrStat(itemData, newStack, isNewStack: true);
+
             OnItemAdded?.Invoke(itemData, newStack);
 
 
             Debug.Log($"Added new item: {itemData.itemName}");
 
         }
+    }
+
+    void Update()
+    {
+        float dt = Time.deltaTime;
+        for (int i = healEffects.Count - 1; i >= 0; --i)
+        {
+            var e = healEffects[i];
+            e.Update(dt); // and then it disposes it
+        }
+    }
+    
+
+    private void ApplyItemEffectOrStat(ItemData itemData, ItemStack stack, bool isNewStack)
+    {
+        if (playerEntity == null || playerEntity.Stats == null) return; // cant do shit ma man
+
+        if (itemData.effectKind == ItemEffectKind.HealOnDamage)
+        {
+            // make once and add new stacks
+            if (isNewStack || stack.runtimeEffect == null)
+            {
+                var hod = new HealOnDamage(
+                    owner: playerEntity,
+                    percentPerStack: Mathf.Max(0f, itemData.healOnDamagePercentPerStack),
+                    initialStacks: stack.count,
+                    durationSec: itemData.effectDuration
+                );
+                stack.runtimeEffect = hod;
+                if (itemData.effectDuration > 0f) healEffects.Add(hod);
+            }
+            else
+            {
+                (stack.runtimeEffect as HealOnDamage)?.AddStack(1); // if exis then jus add
+            }
+            Debug.Log($"added a status effect, HEALONDAMAGE : stacks={stack.count}");
+            return;
+        }
+        else
+        {
+            ApplyStatModifier(itemData, stack); // else do the usual business
+        }
+
+        
 
     }
 
