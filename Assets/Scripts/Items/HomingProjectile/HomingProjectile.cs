@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Copied from Hainish's Projectile Script
-public class HomingProjectile : MonoBehaviour
+public class HomingProjectile : MonoBehaviour, Projectile
 {
     [SerializeField] private GameObject bulletImpactFX;
     private TrailRenderer trail;
@@ -17,7 +17,7 @@ public class HomingProjectile : MonoBehaviour
     [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
 
     [Header("Homing Properties")]
-    [SerializeField] private Transform target;
+    [SerializeField] private Transform targetLocation;
     [SerializeField] private float rotationForce = 30f;
     [SerializeField] private float homingForce = 15f;
     [SerializeField] private float initialLaunchForce = 15f;
@@ -25,35 +25,42 @@ public class HomingProjectile : MonoBehaviour
     private float age = 0f;
     private bool following = false;
     private Rigidbody rb;
-
+    private Entity target;
+    private Vector3 startPos;
     private float actualDamage;
 
-    private bool hasHit = false;
+    //private bool hasHit = false;
 
-    void Awake()
+    // void Awake()
+    // {
+    //     trail = GetComponent<TrailRenderer>();
+    //     rb = GetComponent<Rigidbody>();
+    //     rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+    //     rb.interpolation = RigidbodyInterpolation.Interpolate;
+    //     StartCoroutine(WaitBeforeTracking());
+    // }
+    public override void Awake()
     {
-        trail = GetComponent<TrailRenderer>();
-        rb = GetComponent<Rigidbody>();
-        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        base.Awake();
         StartCoroutine(WaitBeforeTracking());
+        // meshRenderer = GetComponent<MeshRenderer>();
     }
 
-    public void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
-    {
-        rb.linearVelocity = velocity;
-        hitMask = mask;
-        actualDamage = damage; // USE DAMAGE FROM STATS SYSTEM
-        //this.attacker = attacker;
-        age = 0f;
+    // public void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
+    // {
+    //     rb.linearVelocity = velocity;
+    //     hitMask = mask;
+    //     actualDamage = damage; // USE DAMAGE FROM STATS SYSTEM
+    //     this.attacker = attacker;
+    //     age = 0f;
 
-        trail.Clear();
-        trail.time = 0.25f;
-        //startPos = transform.position;
-        //this.flyDistance = flyDistance + 1;
+    //     trail.Clear();
+    //     trail.time = 0.25f;
+    //     //startPos = transform.position;
+    //     //this.flyDistance = flyDistance + 1;
 
-        Debug.Log($"Projectile initialized with damage: {actualDamage}");
-    }
+    //     Debug.Log($"Projectile initialized with damage: {actualDamage}");
+    // }
 
     private void Start()
     {
@@ -61,20 +68,22 @@ public class HomingProjectile : MonoBehaviour
         StartCoroutine(WaitBeforeTracking());
     }
 
-    private void FixedUpdate()
+    private override void Update()
     {
-        // Code ripped straight from Hainish. Thank you Hainish.
-        age += Time.fixedDeltaTime;
-        if (age >= lifeTime)
-        {
-            Destroy(gameObject);
-            return;
-        }
+        // // Code ripped straight from Hainish. Thank you Hainish.
+        // age += Time.fixedDeltaTime;
+        // if (age >= lifeTime)
+        // {
+        //     Destroy(gameObject);
+        //     return;
+        // }
 
-        if (target == null) return;
+        base.Update();
+
+        if (targetLocation == null) return;
         if (!following) return;     // Start homing after a delay
 
-        Vector3 direction = target.position - transform.position;
+        Vector3 direction = targetLocation.position - transform.position;
         direction.Normalize();
 
         Vector3 rotateAmount = Vector3.Cross(transform.forward, direction);
@@ -111,10 +120,10 @@ public class HomingProjectile : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (target != null)
+        if (targetLocation != null)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(transform.position, target.position);
+            Gizmos.DrawLine(transform.position, targetLocation.position);
         }
     }
 

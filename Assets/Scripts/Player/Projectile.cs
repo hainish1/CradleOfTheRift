@@ -23,7 +23,7 @@ public class Projectile : MonoBehaviour
     private Entity attacker;
     private bool hasHit;
 
-    void Awake()
+    public virtual void Awake()
     {
         trail = GetComponent<TrailRenderer>();
         rb = GetComponent<Rigidbody>();
@@ -33,7 +33,7 @@ public class Projectile : MonoBehaviour
         // meshRenderer = GetComponent<MeshRenderer>();
     }
 
-    public void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
+    public virtual void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
     {
         rb.linearVelocity = velocity;
         hitMask = mask;
@@ -50,7 +50,7 @@ public class Projectile : MonoBehaviour
     }
 
 
-    void Update()
+    public virtual void Update()
     {
         FadeTrailVisuals();
         age += Time.deltaTime;
@@ -148,7 +148,7 @@ public class Projectile : MonoBehaviour
 
     }
     
-    private void ReturnToSource()
+    private virtual void ReturnToSource()
     {
         if (ObjectPool.instance != null)
         {
