@@ -1,24 +1,23 @@
 using System;
 using UnityEngine;
 
-/// <summary>
-/// DOT item effect - applies damage over time on hit
-/// </summary>
+// Handles DOT for items like poison, burn etc
+// Listens to player damage events and applies DOT to enemies
 public class DotOnHit : IDisposable
 {
     private readonly Entity owner;
     private readonly float dotDamagePerTick;
     private readonly float dotTickInterval;
     private readonly float dotDuration;
-    private readonly float dotDamagePerStack;
-    private int stacks;
-    private readonly float duration; // -1 = permanent
+    private readonly float dotDamagePerStack;  // extra dmg per item stack
+    private int stacks; 
+    private readonly float duration; // -1 = perm item
     private float timer;
     private bool disposed;
     private readonly bool dotCanStack;
-    private readonly string dotId;
+    private readonly string dotId;  
     private readonly int dotMaxStacks;
-    private readonly bool dotApplyImmediately;
+    private readonly bool dotApplyImmediately;  // first tick instant
 
     public DotOnHit(
         Entity owner, 
@@ -37,14 +36,15 @@ public class DotOnHit : IDisposable
         this.dotTickInterval = dotTickInterval;
         this.dotDuration = dotDuration;
         this.dotDamagePerStack = dotDamagePerStack;
-        this.stacks = Mathf.Max(1, initialStacks);
+        this.stacks = Mathf.Max(1, initialStacks);  // at least 1 stack
         this.duration = durationSec;
         this.timer = durationSec;
         this.dotCanStack = dotCanStack;
-        this.dotId = "poison";
+        this.dotId = "poison";  
         this.dotMaxStacks = dotMaxStacks;
         this.dotApplyImmediately = dotApplyImmediately;
 
+        // subscribe to damage events
         CombatEvents.DamageDealt += OnDamageDealt;
 
         string immediateText = dotApplyImmediately ? "instant" : $"delayed {dotTickInterval}s";
@@ -68,26 +68,18 @@ public class DotOnHit : IDisposable
     {
         if (disposed || attacker != owner) return;
 
-        // Prevent DOT from triggering new DOT (anti-recursion)
-        if (DotDebuff.IsProcessingDotDamage)
-        {
-            return;
-        }
+        // prevent DOT damage from triggering more DOT 
+        if (DotDebuff.IsProcessingDotDamage) return;
 
         var enemy = target as Enemy;
-        if (enemy == null)
-        {
-            enemy = target.GetComponent<Enemy>();
-        }
+        if (!enemy) return;
 
-        if (enemy == null) return;
-
+        // add or get the DOT manager on the enemy
         var dotDebuff = enemy.GetComponent<DotDebuff>();
-        if (dotDebuff == null)
-        {
+        if (!dotDebuff)
             dotDebuff = enemy.gameObject.AddComponent<DotDebuff>();
-        }
 
+        // base dmg + extra per stack 
         float totalDotDamage = dotDamagePerTick + (dotDamagePerStack * (stacks - 1));
 
         dotDebuff.AddDot(

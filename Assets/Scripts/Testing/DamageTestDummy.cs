@@ -1,110 +1,74 @@
 using UnityEngine;
 
-/// <summary>
-/// Test dummy for damage testing.
-/// Also inherits from Enemy to be compatible with player damage systems, but disables AI.
-/// </summary>
+// dummy for testing damage numbers
+// just shows damage, doesn't actually take damage or die
 [RequireComponent(typeof(Collider))]
 public class DamageTestDummy : Enemy, IDamageable
 {
-    [Header("Health Settings")]
-    [SerializeField] private float maxHealth = 100f;
-    [SerializeField] private bool invincible = false;
-    [SerializeField] private bool autoHeal = true;
-    [SerializeField] private float healDelay = 3f;
-    
-    [Header("Visual Feedback")]
-    [SerializeField] private bool showDamageNumbers = true;
+    [Header("Visuals")]
     [SerializeField] private Color damageColor = Color.red;
     [SerializeField] private Material hitFlashMaterial;
     [SerializeField] private float flashDuration = 0.1f;
-    
-    [Header("Damage Number Settings")]
-    [SerializeField] private int damageFontSize = 50;
-    [SerializeField] private float damageTextDuration = 1.5f;
-    [SerializeField] private float damageTextRiseSpeed = 1.5f;
-    [SerializeField] private float damageTextSpread = 0.5f;
-    [SerializeField] private bool damageTextFadeOut = true;
+    [SerializeField] private int fontSize = 50;
+    [SerializeField] private float textDuration = 1.5f;
+    [SerializeField] private float riseSpeed = 1.5f;
     
     [Header("Debug")]
-    [SerializeField] private bool logDamageToConsole = true;
+    [SerializeField] private bool logDamage = true;
     
-    private float currentHealth;
-    private float lastDamageTime;
     private Renderer meshRenderer;
     private Material originalMaterial;
     private float totalDamageTaken = 0f;
     private int hitCount = 0;
 
-    // IDamageable interface implementation
-    public bool IsDead => currentHealth <= 0 && !invincible;
+    // always invincible, never dies
+    public bool IsDead => false;
 
     public override void Awake()
     {
-        // Disable AI initialization
+        // dont run enemy AI
     }
 
     void Start()
     {
-        currentHealth = maxHealth;
         meshRenderer = GetComponentInChildren<Renderer>();
         if (meshRenderer != null)
-        {
             originalMaterial = meshRenderer.material;
-        }
     }
 
     public override void Update()
     {
-        if (autoHeal && currentHealth < maxHealth && Time.time - lastDamageTime > healDelay)
-        {
-            currentHealth = Mathf.Min(currentHealth + Time.deltaTime * (maxHealth / 2f), maxHealth);
-        }
+        // nothing to update
     }
 
     public void TakeDamage(float damage)
     {
-        if (invincible) return;
-
-        currentHealth -= damage;
-        lastDamageTime = Time.time;
         totalDamageTaken += damage;
         hitCount++;
 
-        if (logDamageToConsole)
-        {
-            Debug.Log($"[Dummy] Took {damage:F1} damage | Health: {currentHealth:F1}/{maxHealth} | Total Hits: {hitCount} | Total Damage: {totalDamageTaken:F1}");
-        }
+        if (logDamage)
+            Debug.Log($"[Dummy] Took {damage:F1} damage | Total Hits: {hitCount} | Total Damage: {totalDamageTaken:F1}");
 
-        if (showDamageNumbers)
-        {
-            ShowDamageNumber(damage);
-        }
-
+        ShowDamageNumber(damage);
         StartCoroutine(FlashHit());
-
-        if (currentHealth <= 0)
-        {
-            OnDeath();
-        }
     }
 
     private void ShowDamageNumber(float damage)
     {
         GameObject damageText = new GameObject("DamageText");
         
-        float randomX = Random.Range(-damageTextSpread, damageTextSpread);
-        float randomZ = Random.Range(-damageTextSpread, damageTextSpread);
+        // random spread so numbers dont overlap
+        float randomX = Random.Range(-0.5f, 0.5f);
+        float randomZ = Random.Range(-0.5f, 0.5f);
         damageText.transform.position = transform.position + Vector3.up * 2f + new Vector3(randomX, 0, randomZ);
         
+        // face camera
         if (Camera.main != null)
-        {
             damageText.transform.rotation = Quaternion.LookRotation(damageText.transform.position - Camera.main.transform.position);
-        }
         
         TextMesh textMesh = damageText.AddComponent<TextMesh>();
-        textMesh.text = damage.ToString("F0");
-        textMesh.fontSize = damageFontSize;
+        textMesh.text = damage.ToString("F1");
+        textMesh.fontSize = fontSize;
         textMesh.color = damageColor;
         textMesh.anchor = TextAnchor.MiddleCenter;
         textMesh.characterSize = 0.2f;
@@ -118,29 +82,25 @@ public class DamageTestDummy : Enemy, IDamageable
         Vector3 startPos = damageText.transform.position;
         Color startColor = textMesh.color;
         
-        float startScale = 1.5f;
-        float endScale = 1.0f;
-        
-        while (elapsed < damageTextDuration)
+        while (elapsed < textDuration)
         {
             elapsed += Time.deltaTime;
-            float progress = elapsed / damageTextDuration;
+            float t = elapsed / textDuration;
             
-            damageText.transform.position = startPos + Vector3.up * (damageTextRiseSpeed * elapsed);
+            // move up
+            damageText.transform.position = startPos + Vector3.up * (riseSpeed * elapsed);
             
-            float scale = Mathf.Lerp(startScale, endScale, Mathf.Min(progress * 3f, 1f));
+            // scale: start big, shrink to normal
+            float scale = Mathf.Lerp(1.5f, 1f, Mathf.Min(t * 3f, 1f));
             damageText.transform.localScale = Vector3.one * scale;
             
-            if (damageTextFadeOut)
-            {
-                float alpha = 1f - Mathf.Pow(progress, 2f);
-                textMesh.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
-            }
+            // fade out
+            float alpha = 1f - (t * t);  // quadratic fade looks better
+            textMesh.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
             
+            // keep facing camera
             if (Camera.main != null)
-            {
                 damageText.transform.rotation = Quaternion.LookRotation(damageText.transform.position - Camera.main.transform.position);
-            }
             
             yield return null;
         }
@@ -158,56 +118,29 @@ public class DamageTestDummy : Enemy, IDamageable
         }
     }
 
-    private void OnDeath()
-    {
-        if (logDamageToConsole)
-        {
-            Debug.Log($"[Dummy] DESTROYED | Total Hits: {hitCount} | Total Damage: {totalDamageTaken:F1}");
-        }
-        
-        currentHealth = maxHealth;
-        hitCount = 0;
-        totalDamageTaken = 0f;
-    }
-
     public override void Die()
     {
-        OnDeath();
+        // dummy never dies
     }
 
+    // testing shortcuts
     [ContextMenu("Take 10 Damage")]
-    private void TestDamage10()
+    private void TestDamage()
     {
         TakeDamage(10f);
     }
 
-    [ContextMenu("Reset Dummy")]
-    private void ResetDummy()
+    [ContextMenu("Reset Stats")]
+    private void ResetStats()
     {
-        currentHealth = maxHealth;
         hitCount = 0;
         totalDamageTaken = 0f;
-        Debug.Log("[Dummy] Reset to full health");
+        Debug.Log("[Dummy] Stats reset");
     }
 
     [ContextMenu("Print Stats")]
     private void PrintStats()
     {
-        Debug.Log($"[Dummy] Health: {currentHealth:F1}/{maxHealth} | Hits: {hitCount} | Total Damage: {totalDamageTaken:F1}");
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (currentHealth > 0)
-        {
-            Vector3 barPos = transform.position + Vector3.up * 3f;
-            float healthPercent = currentHealth / maxHealth;
-            
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(barPos, barPos + Vector3.right * healthPercent * 2f);
-            
-            Gizmos.color = Color.green;
-            Gizmos.DrawLine(barPos, barPos + Vector3.right * 2f);
-        }
+        Debug.Log($"[Dummy] Total Hits: {hitCount} | Total Damage: {totalDamageTaken:F1}");
     }
 }

@@ -1,24 +1,24 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-/// <summary>
-/// Manages DOT effects on enemies
-/// </summary>
+// Handles all active DOT effects on an enemy
+// Gets added to enemy gameobjects when they get hit with DOT items
 public class DotDebuff : MonoBehaviour
 {
-    // Prevents DOT damage from triggering new DOTs (anti-recursion)
+    // flag to prevent DOT recursion 
     public static bool IsProcessingDotDamage { get; private set; }
     
+    // tracks a single DOT instance 
     private class DotEffect
     {
         public float damagePerTick;
-        public float tickInterval;
-        public float duration;
-        public float nextTickTime;
-        public float endTime;
-        public Entity source;
+        public float tickInterval;  // how often to tick
+        public float duration;  // how long total
+        public float nextTickTime;  
+        public float endTime;  
+        public Entity source;  // who applied this (for credit)
         public bool canStack;
-        public string id;
+        public string id; 
 
         public DotEffect(float damage, float interval, float duration, Entity source, bool stack = true, string id = "", bool applyImmediately = false)
         {
@@ -54,8 +54,10 @@ public class DotDebuff : MonoBehaviour
         ProcessDots();
     }
 
+    // called when an enemy gets hit with a DOT attack
     public void AddDot(float damagePerTick, float tickInterval, float duration, Entity source, bool canStack = true, string id = "", int maxStacks = 5, bool applyImmediately = false)
     {
+        // if DOT doesnt stack, just refresh existing one
         if (!canStack && !string.IsNullOrEmpty(id))
         {
             var existing = activeDots.Find(dot => dot.id == id);
@@ -68,19 +70,20 @@ public class DotDebuff : MonoBehaviour
             }
         }
 
+        // if DOT stacks, check if we hit max
         if (canStack && !string.IsNullOrEmpty(id))
         {
             int currentStacks = activeDots.FindAll(dot => dot.id == id).Count;
             if (currentStacks >= maxStacks)
             {
                 var oldest = activeDots.Find(dot => dot.id == id);
-                if (oldest != null)
+                if (oldest != null)  // shouldnt be null but just in case
                 {
                     oldest.endTime = Time.time + duration;
                     oldest.nextTickTime = Time.time + tickInterval;
                     Debug.Log($"[DOT] Max stacks ({currentStacks}/{maxStacks}), refreshed oldest");
-                    return;
                 }
+                return;
             }
         }
 
@@ -94,17 +97,18 @@ public class DotDebuff : MonoBehaviour
     {
         if (damageable == null || damageable.IsDead)
         {
-            activeDots.Clear();
+            activeDots.Clear();  // enemy dead, clear all DOTs
             return;
         }
 
+        // iterate backwards so we can remove while looping
         for (int i = activeDots.Count - 1; i >= 0; i--)
         {
             var dot = activeDots[i];
 
             if (dot.IsExpired())
             {
-                activeDots.RemoveAt(i);
+                activeDots.RemoveAt(i);  // DOT ran out
                 continue;
             }
 
@@ -118,32 +122,27 @@ public class DotDebuff : MonoBehaviour
 
     private void ApplyDotDamage(DotEffect dot)
     {
-        if (damageable != null && !damageable.IsDead)
-        {
-            IsProcessingDotDamage = true;
-            
-            damageable.TakeDamage(dot.damagePerTick);
-            
-            var enemy = GetComponent<Enemy>();
-            if (enemy != null && dot.source != null)
-            {
-                CombatEvents.ReportDamage(dot.source, enemy, dot.damagePerTick);
-            }
+        if (damageable == null || damageable.IsDead) return;
 
-            if (showDotNumbers)
-            {
-                ShowDotNumber(dot.damagePerTick);
-            }
+        IsProcessingDotDamage = true;
+        
+        damageable.TakeDamage(dot.damagePerTick);
+        
+        var enemy = GetComponent<Enemy>();
+        if (enemy && dot.source)  // report for stats tracking
+            CombatEvents.ReportDamage(dot.source, enemy, dot.damagePerTick);
 
-            Debug.Log($"[DOT] {gameObject.name} took {dot.damagePerTick} damage");
-            
-            IsProcessingDotDamage = false;
-        }
+        if (showDotNumbers)
+            ShowDotNumber(dot.damagePerTick);
+
+        Debug.Log($"[DOT] {gameObject.name} took {dot.damagePerTick} damage");
+        
+        IsProcessingDotDamage = false;
     }
 
     private void ShowDotNumber(float damage)
     {
-        // Optional: Implement damage number visuals here
+        // we have the dummy so don't need this
         Debug.Log($"[DOT Visual] {gameObject.name} -{damage:F1}", gameObject);
     }
 
