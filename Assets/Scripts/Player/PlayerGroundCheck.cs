@@ -9,12 +9,13 @@ public class PlayerGroundCheck : MonoBehaviour
     /// </summary>
     /// <param name="playerBottom"> Bottom-most point of the player capsule. </param>
     /// <param name="castLength"> Length of the downward sphere cast. </param>
-    /// <param name="castRadius"> Radius of the downward sphere cast </param>
+    /// <param name="castRadius"> Radius of the downward sphere cast. </param>
+    /// <param name ="maxGroundAngle"> The maximum degree angle for valid ground surfaces. </param>
     /// <param name="layerMasks"> Layers that should be treated as ground. </param>
     /// <param name="hitInfo"> The info for the sphere cast hit point. </param>
     /// <param name="timer"> Skips execution if the provided timer value is greater than 0. </param>
     /// <returns> True if the sphere cast intersects the ground and the timer is inactive, otherwise false. </returns>
-    public static bool GetIsGrounded(Vector3 playerBottom, float castLength, float castRadius,
+    public static bool GetIsGrounded(Vector3 playerBottom, float castLength, float castRadius, float maxGroundAngle,
                                        int layerMasks, out RaycastHit hitInfo, float timer)
     {
         if (timer > 0)
@@ -32,7 +33,7 @@ public class PlayerGroundCheck : MonoBehaviour
                                castLength + castRadius, // Compensate for the SphereCast starting higher.
                                layerMasks,
                                QueryTriggerInteraction.Ignore)
-            && Vector3.Angle(Vector3.up, hit.normal) <= 30)
+            && Vector3.Angle(Vector3.up, hit.normal) <= maxGroundAngle)
         {
             hitInfo = hit;
             return true;

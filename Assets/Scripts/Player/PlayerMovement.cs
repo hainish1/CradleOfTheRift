@@ -8,6 +8,7 @@
 //          -Added independent character rotation functionality.
 //          -Added knockback functionality.
 //          -Added support for stat data modification.
+//          -Added slam attack movement assistance for hovering.
 //   </para>
 // </summary>
 
@@ -24,8 +25,8 @@ public class PlayerMovement : MonoBehaviour
 
     private InputAction moveActions;
     private InputAction sprintActions;
-    private InputAction jumpActions;
     private InputAction dashActions;
+    private InputAction jumpActions;
 
     [Header("Player References")] [Space]
     [SerializeField]
@@ -37,9 +38,8 @@ public class PlayerMovement : MonoBehaviour
     private float _playerHalfHeight;
     private float _playerRadius;
 
+    private float MoveMaxSpeed { get; set; }
     [Header("Movement Parameters")] [Space]
-    [SerializeField]
-    [Tooltip("Max move speed in units per second.")] private float _maxSpeed;
     [SerializeField]
     [Tooltip("Seconds needed to reach Max Speed.")] private float _accelerationSeconds;
     [SerializeField]
@@ -52,8 +52,7 @@ public class PlayerMovement : MonoBehaviour
     private float _deceleration;
     private bool _isSprinting;
     private float _currSprintMultiplier;
-    private Vector3 lateralVelocityVector;
-    private Vector3 _moveDirectionUnitVector;
+    private Vector3 _lateralVelocityVector;
 
     [Header("Hover Parameters")] [Space]
     [SerializeField]
@@ -64,6 +63,8 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("How strongly Hover Pull Strength dissipates in units per second.")] private float _hoverDampingStrength;
     [SerializeField]
     [Tooltip("Sphere casting distance below the player in units.")] private float _groundedCastLength;
+    [SerializeField]
+    [Tooltip("The maximum degree angle of valid ground surfaces.")] private float _maxGroundAngle;
     [SerializeField]
     [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private float _groundedCastJumpPauseDuration;
     private float _currHoverHeight;
@@ -83,23 +84,20 @@ public class PlayerMovement : MonoBehaviour
     private float _kbDashLockTimer;
     private Vector3 _externalKnockbackVelocity;
 
-    [Header("Dash Parameters")] [Space]
-    [SerializeField]
-    [Tooltip("Distance that the player character dashes in units.")] private float _dashDistance;
-    [SerializeField]
-    [Tooltip("How quickly the player character travels Dash Distance in units per second.")] private float _dashSpeed;
-    [SerializeField]
-    [Tooltip("Seconds needed for dash charges to come off cooldown.")] private float _dashCooldown;
-    [SerializeField]
-    [Tooltip("The quantity of available dash charges.")] private int _dashCharges;
-    private bool _isDashing;
+    // Dash Parameters
+    private float DashDistance { get; set; }
+    private float DashSpeed { get; set; }
+    private float DashCooldown { get; set; }
+    private int DashMaxCharges { get; set; }
     private int _currDashCharges;
+    private bool _isDashing;
+    private bool _isRegeneratingDash;
     public event System.Action<float> DashCooldownStarted;
     private Vector3 _dashDirectionUnitVector;
 
     [Header("Jump Parameters")] [Space]
     [SerializeField]
-    [Tooltip("Vertical jump strength in units per second.")] private float _JumpForce;
+    [Tooltip("Vertical jump strength in units per second.")] private float _jumpForce;
     private bool _inputtedJumpThisFrame;
     private Vector3 _verticalVelocityVector;
 
@@ -124,13 +122,13 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Boost Parameters")] [Space]
     [SerializeField]
-    [Tooltip("Max vertical boost speed in units per second.")] private float _maxBoostSpeed;
+    [Tooltip("Max vertical boost speed in units per second.")] private float _boostMaxSpeed;
     [SerializeField]
     [Tooltip("Seconds needed to reach Max Boost Speed.")] private float _boostAccelerationSeconds;
     [SerializeField]
     [Tooltip("Amount of boost energy regeneration per second.")] private float _boostRegenerationRate;
     [SerializeField]
-    [Tooltip("Capacity value of boost energy")] private int _maxBoostEnergy;
+    [Tooltip("Capacity value of boost energy")] private int _boostMaxEnergy;
     [SerializeField]
     [Tooltip("Amount of boost energy depleted per second.")] private float _boostDepletionRate;
     [SerializeField]
@@ -155,84 +153,95 @@ public class PlayerMovement : MonoBehaviour
     {
         moveActions = playerActions.Move;
         sprintActions = playerActions.Sprint;
-        jumpActions = playerActions.Jump;
         dashActions = playerActions.Dash;
-        
+        jumpActions = playerActions.Jump;
+
         moveActions.Enable();
         sprintActions.Enable();
-        jumpActions.Enable();
         dashActions.Enable();
-        
-        jumpActions.started += JumpInputActionStarted;
-        jumpActions.canceled += JumpInputActionCanceled;
+        jumpActions.Enable();
+
         sprintActions.started += SprintInputActionStarted;
         dashActions.started += DashInputActionStarted;
+        jumpActions.started += JumpInputActionStarted;
+        jumpActions.canceled += JumpInputActionCanceled;
     }
 
     private void OnDisable()
     {
         moveActions.Disable();
         sprintActions.Disable();
-        jumpActions.Disable();
         dashActions.Disable();
+        jumpActions.Disable();
 
-        jumpActions.started -= JumpInputActionStarted;
-        jumpActions.canceled -= JumpInputActionCanceled;
         sprintActions.started -= SprintInputActionStarted;
         dashActions.started -= DashInputActionStarted;
+        jumpActions.started -= JumpInputActionStarted;
+        jumpActions.canceled -= JumpInputActionCanceled;
     }
 
     void Start()
     {
-        // Player References
-        _playerHalfHeight = GetComponent<CharacterController>().height / 2;
-        _playerRadius = GetComponent<CharacterController>().radius;
+        if (_playerEntity != null)
+        {
+            // Player References
+            _playerHalfHeight = GetComponent<CharacterController>().height / 2;
+            _playerRadius = GetComponent<CharacterController>().radius;
 
-        // Movement Parameters
-        _acceleration = _maxSpeed / _accelerationSeconds;
-        _deceleration = _maxSpeed / _decelerationSeconds;
-        _isSprinting = false;
-        _currSprintMultiplier = 1;
+            // Movement Parameters
+            MoveMaxSpeed = _playerEntity.Stats.MoveSpeed;
+            _acceleration = MoveMaxSpeed / _accelerationSeconds;
+            _deceleration = MoveMaxSpeed / _decelerationSeconds;
+            _isSprinting = false;
+            _currSprintMultiplier = 1;
 
-        // Hover Parameters
-        _groundedCastRadius = _playerRadius - 0.1f;
-        _groundedCastPauseTimer = 0;
-        _groundedLayerMasks = LayerMask.GetMask("Environment");
-        _groundedLayerMasks |= LayerMask.GetMask("Interactable");
-        _groundedLayerMasks |= LayerMask.GetMask("Obstacles");
-        _groundedLayerMasks |= LayerMask.GetMask("Enemy");
-        GetIsGrounded();
+            // Hover Parameters
+            _groundedCastRadius = _playerRadius - 0.1f;
+            _groundedCastPauseTimer = 0;
+            _groundedLayerMasks = LayerMask.GetMask("Environment");
+            _groundedLayerMasks |= LayerMask.GetMask("Interactable");
+            _groundedLayerMasks |= LayerMask.GetMask("Obstacles");
+            _groundedLayerMasks |= LayerMask.GetMask("Enemy");
+            GetIsGrounded();
 
-        // KnockBack Parameters
-        _kbControlsLockTimer = 0;
-        _kbDashLockTimer = 0;
+            // KnockBack Parameters
+            _kbControlsLockTimer = 0;
+            _kbDashLockTimer = 0;
 
-        //Dash Parameters
-        _isDashing = false;
-        _currDashCharges = _dashCharges;
+            // Dash Parameters
+            DashDistance = _playerEntity.Stats.DashDistance;
+            DashSpeed = _playerEntity.Stats.DashSpeed;
+            DashCooldown = _playerEntity.Stats.DashCooldown;
+            DashMaxCharges = _playerEntity.Stats.DashCharges;
+            _currDashCharges = DashMaxCharges;
+            _isDashing = false;
+            _isRegeneratingDash = false;
 
-        // Jump Parameters
-        _inputtedJumpThisFrame = false;
+            // Jump Parameters
+            _inputtedJumpThisFrame = false;
 
-        // Coyote Time Parameters
-        _coyoteTimer = _coyoteTimeWindow;
-        _jumpBufferTimer = 0;
+            // Coyote Time Parameters
+            _coyoteTimer = _coyoteTimeWindow;
+            _jumpBufferTimer = 0;
 
-        // Drift Parameters
-        _currDriftDescentDivisor = 1;
-        _driftDelayTimer = 0;
-        _isDrifting = false;
+            // Drift Parameters
+            _currDriftDescentDivisor = 1;
+            _driftDelayTimer = 0;
+            _isDrifting = false;
 
-        // Boost Parameters
-        _isBoosting = false;
-        _isRegeneratingBoost = false;
-        _boostAcceleration = _maxBoostSpeed / _boostAccelerationSeconds;
-        _currBoostEnergy = _maxBoostEnergy;
-        _boostDoubleTapTimer = 0;
+            // Boost Parameters
+            _isBoosting = false;
+            _isRegeneratingBoost = false;
+            _boostAcceleration = _boostMaxSpeed / _boostAccelerationSeconds;
+            _currBoostEnergy = _boostMaxEnergy;
+            _boostDoubleTapTimer = 0;
+        }
     }
 
     void Update()
     {
+        TryGetStatChanges();
+
         GetIsGrounded();
         GravityConditions();
         DecrementAllTimers();
@@ -256,6 +265,12 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+
+    public void SetPlayerIsGrounded(bool set)
+    {
+        IsGrounded = set;
+    }
+
     /// <summary>
     ///   <para>
     ///     Sets the strafe mode status for the player character.
@@ -263,6 +278,27 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     /// <param name="on"> Strafe mode status. </param>
     public void SetStrafeMode(bool on) => strafe = on;
+
+
+    public void SnapToHoverAfterSlam()
+    {
+        float targetY = _groundPoint.point.y + _hoverHeight + _playerHalfHeight;
+
+        _characterController.Move(Vector3.up * 0.02f); // tiny upward
+
+        // move vertically to exact hover height
+        float dy = targetY - transform.position.y;
+        if (Mathf.Abs(dy) > 1e-5f)
+            _characterController.Move(new Vector3(0f, dy, 0f));
+
+        // kill vertical velocity 
+        _verticalVelocityVector.y = 0f;
+
+
+        _coyoteTimer = _coyoteTimeWindow;
+        _jumpBufferTimer = 0f;
+        _groundedCastPauseTimer = 0f;
+    }
 
     /// <summary>
     ///   <para>
@@ -283,6 +319,64 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
+    ///     Gets all stat changes from the stats file on any frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void TryGetStatChanges()
+    {
+        if (_playerEntity != null)
+        {
+            // Check MoveSpeed.
+            if (MoveMaxSpeed != _playerEntity.Stats.MoveSpeed)
+            {
+                MoveMaxSpeed = _playerEntity.Stats.MoveSpeed;
+                RecalculateAccelDecel();
+            }
+
+            // Check DashDistance.
+            if (DashDistance != _playerEntity.Stats.DashDistance)
+            {
+                DashDistance = _playerEntity.Stats.DashDistance;
+            }
+
+            // Check DashSpeed.
+            if (DashSpeed != _playerEntity.Stats.DashSpeed)
+            {
+                DashSpeed = _playerEntity.Stats.DashSpeed;
+            }
+
+            // Check DashCooldown.
+            if (DashCooldown != _playerEntity.Stats.DashCooldown)
+            {
+                DashCooldown = _playerEntity.Stats.DashCooldown;
+            }
+            
+            // Check DashCharges.
+            if (DashMaxCharges != _playerEntity.Stats.DashCharges)
+            {
+                int changeDifference = _playerEntity.Stats.DashCharges - DashMaxCharges;
+                DashMaxCharges = _playerEntity.Stats.DashCharges;
+
+                // Add positive difference to current charge count, even while regenerating.
+                if (changeDifference > 0)
+                {
+                    _currDashCharges += changeDifference;
+                }
+                // Ensure negative difference is not affected by regeneration.
+                else
+                {
+                    if (_currDashCharges >= _playerEntity.Stats.DashCharges)
+                    {
+                        _currDashCharges = _playerEntity.Stats.DashCharges;
+                        _isRegeneratingDash = false;
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    ///   <para>
     ///     Updates all grounded information on the frame this method is called.
     ///   </para>
     /// </summary>
@@ -291,6 +385,7 @@ public class PlayerMovement : MonoBehaviour
         IsGrounded = PlayerGroundCheck.GetIsGrounded(GetPlayerCharacterBottom(),
                                                      _groundedCastLength,
                                                      _groundedCastRadius,
+                                                     _maxGroundAngle,
                                                      _groundedLayerMasks,
                                                      out RaycastHit hitInfo,
                                                      _groundedCastPauseTimer);
@@ -313,7 +408,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void GravityConditions()
     {
-        // Do not apply gravity whenon the ground or boosting.
+        // Do not apply gravity when on the ground or boosting.
         if (IsGrounded || _isBoosting) return;
         
         float aggregateGravityModifier = _gravityMultiplier * _currDriftDescentDivisor;
@@ -340,7 +435,7 @@ public class PlayerMovement : MonoBehaviour
         if (_groundedCastPauseTimer > 0) _groundedCastPauseTimer -= Time.deltaTime;
         if (IsWithinCoyoteTimeWindow() && !IsGrounded) _coyoteTimer -= Time.deltaTime;
         if (IsWithinJumpBufferWindow() && !IsGrounded) _jumpBufferTimer -= Time.deltaTime;
-        if (AreDriftRequirementsValid()) _driftDelayTimer -= Time.deltaTime;
+        if (AreDriftRequirementsValid() && _driftDelayTimer > 0) _driftDelayTimer -= Time.deltaTime;
         if (IsWithinBoostWindow()) _boostDoubleTapTimer -= Time.deltaTime;
     }
 
@@ -352,32 +447,22 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void MoveConditions()
     {
-        // Update _maxSpeed, _acceleration and _deceleration values whenever movement stats are changed.
-        if (_playerEntity != null)
-        {
-            if (_maxSpeed != _playerEntity.Stats.MoveSpeed)
-            {
-                _maxSpeed = _playerEntity.Stats.MoveSpeed;
-                RecalculateAccelDecel();
-            }
-        }
-
-        // Because move speed right before moment of knockback must be preserved for correct calculations,
-        // simply stop recording new movement values instead of completely skipping the MoveCase method.
-        _moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
-
         // Disable sprint if not inputting forward movement.
         if (moveActions.ReadValue<Vector2>().y != 1)
         {
             DisableSprint();
         }
 
+        // Because move speed right before moment of knockback must be preserved for correct calculations,
+        // simply stop recording new movement values instead of completely skipping the MoveCase method.
+        Vector3 moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
+
         float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
 
         // Accelerate if movement is being input and sprint has not been canceled.
-        if (_moveDirectionUnitVector != Vector3.zero && lateralVelocityVector.magnitude <= aggregateMaxSpeedValue)
+        if (moveDirectionUnitVector != Vector3.zero && _lateralVelocityVector.magnitude <= aggregateMaxSpeedValue)
         {
-            Accelerate(aggregateMaxSpeedValue);
+            Accelerate(moveDirectionUnitVector, aggregateMaxSpeedValue);
         }
         // Otherwise, decelerate.
         else
@@ -393,10 +478,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Turn the player character toward the input direction.
-        if (_kbControlsLockTimer <= 0 && !strafe && lateralVelocityVector.sqrMagnitude > 0.0001f)
+        if (_kbControlsLockTimer <= 0 && !strafe && _lateralVelocityVector.sqrMagnitude > 0.0001f)
         {
             Quaternion qa = transform.rotation;
-            Quaternion qb = Quaternion.LookRotation(lateralVelocityVector, Vector3.up);
+            Quaternion qb = Quaternion.LookRotation(_lateralVelocityVector, Vector3.up);
             float t = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, _characterRotationDamping));
             transform.rotation = Quaternion.Slerp(qa, qb, t);
         }
@@ -429,20 +514,20 @@ public class PlayerMovement : MonoBehaviour
     ///     Accelerates the player character on any frame this method is called up to the max movement speed.
     ///   </para>
     /// </summary>
-    private void Accelerate(float aggregateMaxSpeedValue)
+    private void Accelerate(Vector3 moveDirectionUnitVector, float aggregateMaxSpeedValue)
     {
-        Vector3 aggregateAccelIncrement = Time.deltaTime * _acceleration * _currSprintMultiplier * _moveDirectionUnitVector;
+        Vector3 aggregateAccelIncrement = Time.deltaTime * _acceleration * _currSprintMultiplier * moveDirectionUnitVector;
 
-        lateralVelocityVector = lateralVelocityVector.magnitude * _moveDirectionUnitVector;
-        lateralVelocityVector += aggregateAccelIncrement;
+        _lateralVelocityVector = _lateralVelocityVector.magnitude * moveDirectionUnitVector;
+        _lateralVelocityVector += aggregateAccelIncrement;
 
         // Limit lateral move speed to aggregateMaxSpeedValue.
-        if (lateralVelocityVector.magnitude > aggregateMaxSpeedValue)
+        if (_lateralVelocityVector.magnitude > aggregateMaxSpeedValue)
         {
-            lateralVelocityVector = aggregateMaxSpeedValue * lateralVelocityVector.normalized;
+            _lateralVelocityVector = aggregateMaxSpeedValue * _lateralVelocityVector.normalized;
         }
 
-        _characterController.Move(Time.deltaTime * lateralVelocityVector);
+        _characterController.Move(Time.deltaTime * _lateralVelocityVector);
     }
 
     /// <summary>
@@ -453,20 +538,20 @@ public class PlayerMovement : MonoBehaviour
     private void Decelerate()
     {
         // Skip deceleration calculations if not moving.
-        if (lateralVelocityVector.magnitude <= 0) return;
+        if (_lateralVelocityVector.magnitude <= 0) return;
 
-        Vector3 decelDecrement = Time.deltaTime * _deceleration * lateralVelocityVector.normalized;
+        Vector3 decelDecrement = Time.deltaTime * _deceleration * _lateralVelocityVector.normalized;
 
         // If deceleration decrement for the current frame exceeds zero,
         // then set current speed to exactly zero.
-        if (lateralVelocityVector.magnitude - decelDecrement.magnitude < 0)
+        if (_lateralVelocityVector.magnitude - decelDecrement.magnitude < 0)
         {
-            lateralVelocityVector = Vector3.zero;
-            decelDecrement = Vector3.zero;
+            _lateralVelocityVector = Vector3.zero;
+            return;
         }
 
-        lateralVelocityVector -= decelDecrement;
-        _characterController.Move(Time.deltaTime * lateralVelocityVector);
+        _lateralVelocityVector -= decelDecrement;
+        _characterController.Move(Time.deltaTime * _lateralVelocityVector);
     }
 
     /// <summary>
@@ -478,7 +563,7 @@ public class PlayerMovement : MonoBehaviour
     /// <returns> The aggregate max speed value. </returns>
     private float CalculateAggregateMaxSpeedValue()
     {
-        return _maxSpeed * _currSprintMultiplier;
+        return MoveMaxSpeed * _currSprintMultiplier;
     }
 
     /// <summary>
@@ -593,10 +678,10 @@ public class PlayerMovement : MonoBehaviour
         // Check if the player character is being knocked back.
         if (_kbDashLockTimer > 0) return;
 
-        _dashDirectionUnitVector = GetMoveInputDirection();
-
         if (_currDashCharges != 0 && !_isDashing)
         {
+            _dashDirectionUnitVector = GetMoveInputDirection();
+
             // If not moving, default dash direction is forward.
             if (_dashDirectionUnitVector.x == 0 && _dashDirectionUnitVector.z == 0)
             {
@@ -605,13 +690,13 @@ public class PlayerMovement : MonoBehaviour
 
             _currDashCharges--;
 
-            // Only initialize regeneration coroutine if it hasn't already.
-            if (_currDashCharges == _dashCharges - 1)
+            // Only initialize regeneration routine if not already regenerating.
+            if (_currDashCharges < DashMaxCharges && !_isRegeneratingDash)
             {
                 StartCoroutine(DashChargesRegeneration());
             }
 
-            float dashDuration = _dashDistance / _dashSpeed;
+            float dashDuration = DashDistance / DashSpeed;
             StartCoroutine(InitiateDashDuration(dashDuration));
             DashCooldownStarted?.Invoke(dashDuration); // Notify listener to start the dash fade visual effect.
         }
@@ -629,7 +714,7 @@ public class PlayerMovement : MonoBehaviour
             BoostConditions();
         }
 
-        _characterController.Move(Time.deltaTime * _dashSpeed * _dashDirectionUnitVector);
+         _characterController.Move(Time.deltaTime * DashSpeed * _dashDirectionUnitVector);
     }
 
     /// <summary>
@@ -637,15 +722,31 @@ public class PlayerMovement : MonoBehaviour
     ///     Coroutine for regenerating dash charges over time.
     ///   </para>
     /// </summary>
-    /// <param name="seconds"> The cooldown time for dash regeneration. </param>
     /// <returns> IEnumerator object. </returns>
     private IEnumerator DashChargesRegeneration()
     {
-        while (_currDashCharges != _dashCharges)
+        _isRegeneratingDash = true;
+
+        float timer = 0;
+        
+        while (_currDashCharges < DashMaxCharges && _isRegeneratingDash)
         {
-            yield return new WaitForSeconds(_dashCooldown);
-            _currDashCharges++;
+            timer += Time.deltaTime;
+            
+            if (timer >= DashCooldown)
+            {
+                timer = 0;
+                _currDashCharges++;
+            }
+
+            if (_currDashCharges >= DashMaxCharges) break;
+
+            yield return null;
         }
+
+        _currDashCharges = Mathf.Min(_currDashCharges, DashMaxCharges); // In case DashMaxCharges is decreased during routine execution.
+
+        _isRegeneratingDash = false;
     }
 
     /// <summary>
@@ -728,7 +829,7 @@ public class PlayerMovement : MonoBehaviour
             _coyoteTimer = 0;
             _jumpBufferTimer = 0;
             _groundedCastPauseTimer = _groundedCastJumpPauseDuration;
-            _verticalVelocityVector.y = _JumpForce;
+            _verticalVelocityVector.y = _jumpForce;
 
             _characterController.Move(Time.deltaTime * _verticalVelocityVector);
         }
@@ -866,16 +967,16 @@ public class PlayerMovement : MonoBehaviour
             _verticalVelocityVector.y += boostSpeedIncrement;
 
             // Limit vertical move speed to _maxBoostSpeed.
-            if (_verticalVelocityVector.y > _maxBoostSpeed)
+            if (_verticalVelocityVector.y > _boostMaxSpeed)
             {
-                _verticalVelocityVector.y = _maxBoostSpeed;
+                _verticalVelocityVector.y = _boostMaxSpeed;
             }
 
             _characterController.Move(Time.deltaTime * _verticalVelocityVector);
         }
 
-        // Initialize regeneration coroutine if boosted, on the ground and not already regenerating.
-        if (IsGrounded && _currBoostEnergy < _maxBoostEnergy && !_isRegeneratingBoost)
+        // Only initialize regeneration routine if boosted, touching the ground and not already regenerating.
+        if (IsGrounded && _currBoostEnergy < _boostMaxEnergy && !_isRegeneratingBoost)
         {
             StartCoroutine(BoostRegeneration());
         }
@@ -891,7 +992,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _isRegeneratingBoost = true;
 
-        while (_currBoostEnergy < _maxBoostEnergy)
+        while (_currBoostEnergy < _boostMaxEnergy)
         {
             // Cancel boost energy regeneration if boost was inputted.
             if (_isBoosting)
@@ -903,9 +1004,9 @@ public class PlayerMovement : MonoBehaviour
 
             // If boost regeneration increment for the current frame exceeds _maxBoostEnergy,
             // then set boost energy to exactly _maxBoostEnergy.
-            if (_currBoostEnergy >= _maxBoostEnergy)
+            if (_currBoostEnergy >= _boostMaxEnergy)
             {
-                _currBoostEnergy = _maxBoostEnergy;
+                _currBoostEnergy = _boostMaxEnergy;
                 break;
             }
 
@@ -925,55 +1026,5 @@ public class PlayerMovement : MonoBehaviour
     private bool IsWithinBoostWindow()
     {
         return _boostDoubleTapTimer > 0;
-    }
-
-
-
-
-
-    // SOME GETTERS FOR MY USE
-    public float GetGroundPoint()
-    {
-        return _groundPoint.point.y;
-    }
-
-    public float GetHoverHeight()
-    {
-        return _hoverHeight;
-    }
-
-    public float GetHalfHeight()
-    {
-        return _playerHalfHeight;
-    }
-
-    public void SetVerticalVelocityFactor(float factor)
-    {
-        _verticalVelocityVector.y = factor;
-    }
-
-    public void SnapToHoverAfterSlam()
-    {
-        float targetY = _groundPoint.point.y + _hoverHeight + _playerHalfHeight;
-
-        _characterController.Move(Vector3.up * 0.02f); // tiny upward
-
-        // move vertically to exact hover height
-        float dy = targetY - transform.position.y;
-        if (Mathf.Abs(dy) > 1e-5f)
-            _characterController.Move(new Vector3(0f, dy, 0f));
-
-        // kill vertical velocity 
-        _verticalVelocityVector.y = 0f;
-
-
-        _coyoteTimer = _coyoteTimeWindow;
-        _jumpBufferTimer = 0f;
-        _groundedCastPauseTimer = 0f;
-    }
-    
-    public void SetPlayerIsGrounded(bool set)
-    {
-        IsGrounded = set;
     }
 }

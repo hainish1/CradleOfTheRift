@@ -11,9 +11,9 @@ public class PlayerMeleeAttack : MonoBehaviour
     [SerializeField] private float heightOffset = 0.9f;         
 
     [Header("Hit Box (where things can get hit)")]
-    [SerializeField] private float boxWidth = 1.8f;             
-    [SerializeField] private float boxHeight = 1.6f;            
-    [SerializeField] private float boxArea = 2.6f;             
+    [SerializeField] private float boxWidth = 5f;             
+    [SerializeField] private float boxHeight = 3f;            
+    [SerializeField] private float boxArea = 6f;             
     [Header("Melee Timing stuff")]
     [SerializeField] private float cooldown = 0.35f;
     [SerializeField] private float prep = 0.05f;                
@@ -52,9 +52,13 @@ public class PlayerMeleeAttack : MonoBehaviour
 
     private float MeleeDamage => _playerEntity.Stats.MeleeDamage;
 
+    // Sounds
+    private PlayerAudioController audioController;
+
     void Awake()
     {
         _playerEntity = GetComponent<Entity>();
+        audioController = GetComponent<PlayerAudioController>();
     }
 
     void OnEnable()
@@ -113,6 +117,10 @@ public class PlayerMeleeAttack : MonoBehaviour
     private void DoHit()
     {
         CreateImpactFX();
+
+        //  Play melee sound (this seems to play multiple times at once making it really loud sometimes)
+        audioController?.PlayMeleeSound();
+
         // make the box in front of the player
         var t = Forward;
         Vector3 up = t.up;

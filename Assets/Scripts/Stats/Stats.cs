@@ -4,15 +4,18 @@ using UnityEngine;
 public enum StatType
 {
     ProjectileDamage,
+    MeleeDamage,
+    AttackSpeed,
+
     Health,
     MoveSpeed,
     DashSpeed,
     DashDistance,
     DashCooldown,
     DashCharges,
-    MeleeDamage,
     SlamDamage,
-    SlamRadius
+    SlamRadius,
+    ProjectileSpread
 }
 
 public class Stats
@@ -31,6 +34,16 @@ public class Stats
             mediator.PerformQuery(this, q);
             return q.Value;
 
+        }
+    }
+
+    public float AttackSpeed
+    {
+        get
+        {
+            var q = new Query(StatType.AttackSpeed, baseStats.attackSpeed);
+            mediator.PerformQuery(this, q);
+            return q.Value;
         }
     }
 
@@ -125,6 +138,16 @@ public class Stats
         }
     }
 
+    public float ProjectileSpread
+    {
+        get
+        {
+            var q = new Query(StatType.ProjectileSpread, baseStats.projectileSpread);
+            mediator.PerformQuery(this, q);
+            return q.Value;
+        }
+    }
+
     public Stats(StatsMediator mediator, BaseStats baseStats)
     {
         this.mediator = mediator;
@@ -145,12 +168,13 @@ public class Stats
             StatType.DashDistance => baseStats.dashDistance,
             StatType.DashCooldown => baseStats.dashCooldown,
             StatType.DashCharges => baseStats.dashCharges,
+            StatType.AttackSpeed => baseStats.attackSpeed,
             _ => 0f,
         };
     }
 
     public override string ToString()
     {
-        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, Projectile Damage: {ProjectileAttack}, Melee Damage: {MeleeDamage}, Slam Damage: {SlamDamage}";
+        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, Projectile Damage: {ProjectileAttack}, Melee Damage: {MeleeDamage}, Slam Damage: {SlamDamage}, Attack Speed: {AttackSpeed}";
     }
 }

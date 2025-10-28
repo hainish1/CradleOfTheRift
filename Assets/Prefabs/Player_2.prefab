@@ -940,27 +940,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d357a0e7bf11f643ac8a4c338e181cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCenter: {fileID: 1482143122086578033}
-  cameraTransform: {fileID: 0}
-  movementMaxVelocity: 10
-  movementAcceleration: 0
-  movementDeceleration: 0
-  rotationDamping: 0.25
-  externalDamping: 8
-  kbControlsLock: 0.18
-  kbDashLock: 0.12
-  jumpForce: 25
-  groundedGravityScale: 9.81
-  midairGravityScale: 0
-  strafeScale: 0
-  dashSpeed: 150
-  dashDistance: 14
-  dashCooldown: 0.6
-  dashMaxCharges: 1
-  environmentLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  lockControls: 0
+  _playerCenter: {fileID: 0}
+  _cameraTransform: {fileID: 0}
+  _maxSpeed: 0
+  _accelerationSeconds: 0
+  _decelerationSeconds: 0
+  _sprintMultiplier: 1
+  _characterRotationDamping: 0
+  _hoverHeight: 0
+  _hoverPullStrength: 0
+  _hoverDampingStrength: 0
+  _groundedCastLength: 0
+  _groundedCastJumpPauseDuration: 0
+  _kbDamping: 0
+  _kbControlsLockTime: 0
+  _kbDashLockTime: 0
+  _dashDistance: 0
+  _dashSpeed: 0
+  _dashCooldown: 0
+  _dashCharges: 0
+  _JumpForce: 0
+  _coyoteTimeWindow: 0
+  _jumpBufferWindow: 0
+  _driftDescentDivisor: 0
+  _driftDelay: 0
+  _gravityMultiplier: 0
+  _maxBoostSpeed: 0
+  _boostAccelerationSeconds: 0
+  _boostRegenerationRate: 0
+  _maxBoostEnergy: 0
+  _boostDepletionRate: 0
+  _boostDoubleTapWindow: 0
 --- !u!114 &1385593235523640700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -996,7 +1006,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99fc382ac2383f54a96683c81a0af53b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamge: 1
   forwardSource: {fileID: 4520456902024227558}
   heightOffset: 0.1
   boxWidth: 4.49
@@ -1006,6 +1015,8 @@ MonoBehaviour:
   prep: 0.05
   activeTime: 0.02
   pushForce: 10
+  meleeImpactFX: {fileID: 0}
+  meleeFXPoint: {fileID: 0}
   hitMask:
     serializedVersion: 2
     m_Bits: 1911
@@ -1023,6 +1034,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcd7f59827f874952822de3a10d2096d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gold: 30
 --- !u!114 &737574113439449768
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -9,12 +9,13 @@ public class BaseStats : ScriptableObject
     [Space]
 
     [Header("Player Movement")]
-    public float moveSpeed = 10; // idk what this is
+    [Tooltip("Max move speed in units per second.")] public float moveSpeed = 10;
+    
     [Header("Player Dash")]
-    public float dashSpeed = 100;
-    public float dashDistance = 14;
-    public float dashCooldown = 2;
-    public int dashCharges = 2;
+    [Tooltip("Distance that the player character dashes in units.")] public float dashDistance = 14;
+    [Tooltip("How quickly the player character travels Dash Distance in units per second.")] public float dashSpeed = 100;
+    [Tooltip("Seconds needed for dash charges to come off cooldown.")] public float dashCooldown = 2;
+    [Tooltip("The quantity of available dash charges.")] public int dashCharges = 2;
 
     [Space]
 
@@ -23,5 +24,9 @@ public class BaseStats : ScriptableObject
     public float meleeDamage = 1;
     public float slamDamage = 2;
     public float slamAttackRadius = 10;
+
+    public float attackSpeed = 5.0f; // attacks per second
+
+    public float projectileSpread = 0.1f; // in radians
 }
 

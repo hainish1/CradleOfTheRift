@@ -628,6 +628,7 @@ MonoBehaviour:
   _hoverPullStrength: 100
   _hoverDampingStrength: 10
   _groundedCastLength: 1.5
+  _maxGroundAngle: 60
   _groundedCastJumpPauseDuration: 0.2
   _kbDamping: 0.125
   _kbControlsLockTime: 0.18
@@ -636,7 +637,7 @@ MonoBehaviour:
   _dashSpeed: 100
   _dashCooldown: 2
   _dashCharges: 3
-  _JumpForce: 15
+  _jumpForce: 15
   _coyoteTimeWindow: 0.15
   _jumpBufferWindow: 0.15
   _driftDescentDivisor: 0.1
@@ -677,7 +678,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99fc382ac2383f54a96683c81a0af53b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamge: 1
   forwardSource: {fileID: 8832080125063188932}
   heightOffset: 0.1
   boxWidth: 4.49
@@ -687,6 +687,8 @@ MonoBehaviour:
   prep: 0.05
   activeTime: 0.02
   pushForce: 18
+  meleeImpactFX: {fileID: 0}
+  meleeFXPoint: {fileID: 0}
   hitMask:
     serializedVersion: 2
     m_Bits: 7232
@@ -704,6 +706,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcd7f59827f874952822de3a10d2096d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gold: 30
 --- !u!114 &5233778179470458429
 MonoBehaviour:
   m_ObjectHideFlags: 0
