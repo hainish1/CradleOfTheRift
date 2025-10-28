@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
-  m_Name: StompBoots
+  m_Name: posion
   m_EditorClassIdentifier: 
-  itemName: Mario
-  description: Jump on enemies to deal damage
+  itemName: POSION
+  description: 
   icon: {fileID: 0}
   rarity: 1
-  rarityColor: {r: 0.3, g: 0.8, b: 0.3, a: 1}
+  rarityColor: {r: 0.3, g: 1, b: 0.3, a: 1}
   statType: 0
   operatorType: 0
   value: 0
@@ -24,13 +24,15 @@ MonoBehaviour:
   canStack: 1
   maxStacks: 10
   stackingType: 0
-  effectKind: 2
+  effectKind: 4
   healOnDamagePercentPerStack: 0.02
-  stompDamagePerStack: 15
-  stompBounceForce: 30
+  stompDamagePerStack: 10
+  stompBounceForce: 8
   fallDamageBonusPerMeter: 2
   fallDamageBonusPerStack: 1
   effectDuration: -1
-
-
-
+  dotDamagePerTick: 2
+  dotTickInterval: 1
+  dotDuration: 5
+  dotDamagePerStack: 1
+  dotCanStack: 1

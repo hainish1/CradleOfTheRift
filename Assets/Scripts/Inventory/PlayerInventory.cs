@@ -10,7 +10,7 @@ public class PlayerInventory : MonoBehaviour
         public ItemData itemData;
         public int count;
         public List<StatModifier> activeModifiers = new List<StatModifier>();
-        public IDisposable activeEffect; // for special effects like HealOnDamage, StompDamage
+        public IDisposable activeEffect;
 
         public ItemStack(ItemData data)
         {
@@ -25,6 +25,7 @@ public class PlayerInventory : MonoBehaviour
     private HealOnDamage healOnDamageEffect;
     private StompDamage stompDamageEffect;
     private FallDamageBonus fallDamageBonusEffect;
+    private DotOnHit dotOnHitEffect;
 
     public event Action<ItemData, ItemStack> OnItemAdded;
     public event Action<ItemData, ItemStack> OnItemStackChanged;
@@ -37,7 +38,7 @@ public class PlayerInventory : MonoBehaviour
         playerEntity = GetComponent<Entity>();
         if (playerEntity == null)
         {
-            Debug.Log("Player requires a Entity script");
+            Debug.Log("PlayerInventory requires Entity component");
         }
     }
 
@@ -70,7 +71,7 @@ public class PlayerInventory : MonoBehaviour
             ItemStack newStack = new ItemStack(itemData);
             items.Add(itemData, newStack);
             ApplyStatModifier(itemData, newStack);
-            ApplySpecialEffect(itemData, newStack); // Apply special effects
+            ApplySpecialEffect(itemData, newStack);
             OnItemAdded?.Invoke(itemData, newStack);
 
 
@@ -83,13 +84,10 @@ public class PlayerInventory : MonoBehaviour
 
     private void ApplyStatModifier(ItemData itemData, ItemStack stack)
     {
-        if (playerEntity == null || playerEntity.Stats == null) return; // cant do shit ma man
+        if (playerEntity == null || playerEntity.Stats == null) return;
 
         float baseValue = playerEntity.Stats.BaseValueForStat(itemData.statType);
-
-        // we can use this if we want to stack the items and multiple their values but number of stack counts
-        // float actualValue = CalculateStackedValue(itemData, stack.count);     < -----------
-        float incrementalValue = itemData.value; // for now we use basic add on add
+        float incrementalValue = itemData.value;
         
 
         StatModifier modifier = itemData.operatorType switch
@@ -100,7 +98,6 @@ public class PlayerInventory : MonoBehaviour
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        // Track the modifier for removal later
         stack.activeModifiers.Add(modifier);
         playerEntity.Stats.Mediator.AddModifier(modifier);
 
@@ -124,7 +121,6 @@ public class PlayerInventory : MonoBehaviour
     {
         if (items.TryGetValue(itemData, out ItemStack stack))
         {
-            // Remove all stat modifiers
             foreach (var modifier in stack.activeModifiers)
             {
                 modifier.Dispose();
@@ -210,6 +206,32 @@ public class PlayerInventory : MonoBehaviour
                     Debug.Log($"[Effect] Fall Damage Bonus stacked ({stack.count} stacks)");
                 }
                 break;
+            
+            case ItemEffectKind.DotOnHit:
+                if (dotOnHitEffect == null)
+                {
+                    dotOnHitEffect = new DotOnHit(
+                        playerEntity,
+                        itemData.dotDamagePerTick,
+                        itemData.dotTickInterval,
+                        itemData.dotDuration,
+                        itemData.dotDamagePerStack,
+                        stack.count,
+                        itemData.effectDuration,
+                        itemData.dotCanStack,
+                        itemData.dotMaxStacks,
+                        itemData.dotApplyImmediately
+                    );
+                    stack.activeEffect = dotOnHitEffect;
+                    string immediateText = itemData.dotApplyImmediately ? "instant" : "delayed";
+                    Debug.Log($"[Effect] DOT On Hit ({stack.count} stacks) - {itemData.dotDamagePerTick}dmg/tick, max {itemData.dotMaxStacks} ({immediateText})");
+                }
+                else
+                {
+                    dotOnHitEffect.AddStack(1);
+                    Debug.Log($"[Effect] DOT On Hit stacked ({stack.count})");
+                }
+                break;
         }
     }
     
@@ -219,6 +241,7 @@ public class PlayerInventory : MonoBehaviour
         healOnDamageEffect?.Update(dt);
         stompDamageEffect?.Update(dt);
         fallDamageBonusEffect?.Update(dt);
+        dotOnHitEffect?.Update(dt);
     }
     
     void OnDestroy()
@@ -226,5 +249,6 @@ public class PlayerInventory : MonoBehaviour
         healOnDamageEffect?.Dispose();
         stompDamageEffect?.Dispose();
         fallDamageBonusEffect?.Dispose();
+        dotOnHitEffect?.Dispose();
     }
 }

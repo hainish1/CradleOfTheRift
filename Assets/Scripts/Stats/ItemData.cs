@@ -33,6 +33,15 @@ public class ItemData : ScriptableObject
     public float fallDamageBonusPerMeter = 2f; // extra slam damage per meter fallen
     public float fallDamageBonusPerStack = 1f; // multiplier per stack
     public float effectDuration = -1f; // -1 = permanent
+    
+    [Header("DOT Effect Settings")]
+    public float dotDamagePerTick = 2f;
+    public float dotTickInterval = 1f;
+    public float dotDuration = 5f;
+    public float dotDamagePerStack = 1f;
+    public bool dotCanStack = true;
+    public int dotMaxStacks = 5;
+    public bool dotApplyImmediately = false;
 }
 
 public enum ItemRarity
@@ -53,5 +62,6 @@ public enum ItemEffectKind
     None,
     HealOnDamage,
     StompDamage,
-    FallDamageBonus
+    FallDamageBonus,
+    DotOnHit
 }

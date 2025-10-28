@@ -164,11 +164,13 @@ public class PlayerMeleeAttack : MonoBehaviour
                 kb.ApplyImpulse(direction * pushForce);
             }
             enemy.GetComponentInParent<TargetFlash>()?.Flash();
-            // enemy.ApplyDamage(meleeDamge);
+            
             var damageable = enemy.GetComponentInParent<IDamageable>();
             if (damageable != null && !damageable.IsDead)
             {
                 damageable.TakeDamage(MeleeDamage);
+                CombatEvents.ReportDamage(_playerEntity, enemy, MeleeDamage);
+                Debug.Log($"Melee: {MeleeDamage} damage to {enemy.name}");
             }
 
             
