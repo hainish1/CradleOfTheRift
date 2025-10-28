@@ -1,14 +1,14 @@
 using System;
 using UnityEngine;
 
-// Fall Damage Bonus - Slam damage increases with fall distance
+// higher you fall, harder you hit
 public class FallDamageBonus : IDisposable
 {
-    private readonly Entity owner;
-    private readonly GameObject ownerGameObject;
-    private readonly float damagePerMeter;
+    private Entity owner;
+    private GameObject ownerGameObject;
+    private float damagePerMeter;
     private int stacks;
-    private readonly float duration;
+    private float duration;
     private float timer;
     private bool disposed;
 
@@ -17,14 +17,14 @@ public class FallDamageBonus : IDisposable
     private float slamStartHeight;
     private bool slamHeightRecorded;
 
-    public static FallDamageBonus Instance { get; private set; }
+    public static FallDamageBonus Instance;
 
     public FallDamageBonus(Entity owner, float damagePerMeter, int initialStacks, float durationSec = -1f)
     {
         this.owner = owner;
         this.ownerGameObject = owner.gameObject;
         this.damagePerMeter = damagePerMeter;
-        this.stacks = Mathf.Max(1, initialStacks);
+        this.stacks = initialStacks < 1 ? 1 : initialStacks;
         this.duration = durationSec;
         this.timer = durationSec;
 
@@ -40,7 +40,8 @@ public class FallDamageBonus : IDisposable
 
     public void AddStack(int count = 1)
     {
-        stacks += Mathf.Max(1, count);
+        if (count < 1) count = 1;
+        stacks += count;
         Debug.Log($"[Fall Bonus] Stacked! Now {stacks} stacks");
     }
 
@@ -77,19 +78,18 @@ public class FallDamageBonus : IDisposable
         }
 
         float fallDistance = slamStartHeight - impactHeight;
-
         Debug.Log($"[Fall Bonus] Calculating: Start={slamStartHeight:F2}, Impact={impactHeight:F2}, Distance={fallDistance:F2}m");
 
-        // Only apply bonus if actually fell
+        // did we actually fall?
         if (fallDistance <= 0f)
         {
-            Debug.Log($"[Fall Bonus] No fall distance detected");
+            Debug.Log($"[Fall Bonus] No fall distance");
             slamHeightRecorded = false;
             return 0f;
         }
 
         float bonusDamage = fallDistance * damagePerMeter * stacks;
-        Debug.Log($"[Fall Bonus] {fallDistance:F2}m fall → +{bonusDamage:F1} damage (x{stacks})");
+        Debug.Log($"[Fall Bonus] {fallDistance:F2}m fall = +{bonusDamage:F1} damage (x{stacks})");
         
         slamHeightRecorded = false;
         return bonusDamage;

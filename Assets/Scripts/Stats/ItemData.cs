@@ -28,19 +28,19 @@ public class ItemData : ScriptableObject
     public ItemEffectKind effectKind = ItemEffectKind.None;
 
     [Range(0f, 1f)] public float healOnDamagePercentPerStack = 0.02f; // 2% per stack
-    public float stompDamagePerStack = 10f; // base stomp damage
-    public float stompBounceForce = 8f; //  bounce force when stomping
-    public float fallDamageBonusPerMeter = 2f; // extra slam damage per meter fallen
-    public float fallDamageBonusPerStack = 1f; // multiplier per stack
+    public float stompDamagePerStack = 10f; 
+    public float stompBounceForce = 8f; 
+    public float fallDamageBonusPerMeter = 2f; 
+    public float fallDamageBonusPerStack = 1f; 
     public float effectDuration = -1f; // -1 = permanent
     
     [Header("DOT Effect Settings")]
-    public float dotDamagePerTick = 2f;  // base dmg per tick
-    public float dotTickInterval = 1f;  // how often to tick (seconds)
-    public float dotDuration = 5f;  // how long DOT lasts total
+    public float dotDamagePerTick = 2f;  
+    public float dotTickInterval = 1f;  // how often to tick 
+    public float dotDuration = 5f; 
     public float dotDamagePerStack = 1f;  // extra dmg per item stack
     public bool dotCanStack = true;  // can this DOT stack on same enemy
-    public int dotMaxStacks = 5;  // max stacks allowed
+    public int dotMaxStacks = 5; 
     public bool dotApplyImmediately = false;  // first tick instant or delayed
 }
 

@@ -1,29 +1,28 @@
 using System;
 using UnityEngine;
 
-// Stomp Damage - Mario-style jump attack on enemies
+// mario style stomp on enemies
 public class StompDamage : IDisposable
 {
-    private readonly Entity owner;
-    private readonly GameObject ownerGameObject;
-    private readonly float damagePerStack;
-    private readonly float bounceForce;
+    private Entity owner;
+    private GameObject ownerGameObject;
+    private float damagePerStack;
+    private float bounceForce;
     private int stacks;
-    private readonly float duration;
+    private float duration;
     private float timer;
     private bool disposed;
 
-    // Components
     private PlayerMovement playerMovement;
     private PlayerMovementV4 playerMovementV4;
     private CharacterController characterController;
     private SphereCollider stompDetector;
 
-    // Detection settings
-    private readonly float detectionRadius = 1.5f;
-    private readonly Vector3 detectionOffset = new Vector3(0, -1f, 0);
-    private readonly float minFallSpeed = 2f;
-    private readonly LayerMask enemyLayer;
+    // detection stuff
+    private float detectionRadius = 1.5f;
+    private Vector3 detectionOffset = new Vector3(0, -1f, 0);
+    private float minFallSpeed = 2f;
+    private LayerMask enemyLayer;
 
     public StompDamage(Entity owner, float damagePerStack, float bounceForce, int initialStacks, float durationSec = -1f)
     {
@@ -31,11 +30,10 @@ public class StompDamage : IDisposable
         this.ownerGameObject = owner.gameObject;
         this.damagePerStack = damagePerStack;
         this.bounceForce = bounceForce;
-        this.stacks = Mathf.Max(1, initialStacks);
+        this.stacks = initialStacks < 1 ? 1 : initialStacks;
         this.duration = durationSec;
         this.timer = durationSec;
 
-        // Get player components
         playerMovement = owner.GetComponent<PlayerMovement>();
         playerMovementV4 = owner.GetComponent<PlayerMovementV4>();
         characterController = owner.GetComponent<CharacterController>();
@@ -66,7 +64,11 @@ public class StompDamage : IDisposable
         Debug.Log($"[Stomp] Detector created! Radius: {detectionRadius}, Offset: {detectionOffset}");
     }
 
-    public void AddStack(int count = 1) => stacks += Mathf.Max(1, count);
+    public void AddStack(int count = 1)
+    {
+        if (count < 1) count = 1;
+        stacks += count;
+    }
 
     public void Update(float dt)
     {
@@ -79,20 +81,21 @@ public class StompDamage : IDisposable
     {
         if (disposed || ownerGameObject == null) return;
 
+        // need to be falling fast enough
         float verticalVelocity = 0f;
         if (characterController != null)
-        {
             verticalVelocity = characterController.velocity.y;
-        }
 
         if (verticalVelocity >= -minFallSpeed) return;
         
         Enemy enemy = enemyCollider.GetComponentInParent<Enemy>();
         if (enemy == null) return;
 
+        // need to be above enemy
         float playerY = ownerGameObject.transform.position.y;
         float enemyY = enemy.transform.position.y;
         if (playerY <= enemyY + 0.5f) return;
+        
         float totalDamage = damagePerStack * stacks;
         var damageable = enemy.GetComponent<IDamageable>();
         if (damageable != null && !damageable.IsDead)
@@ -147,11 +150,13 @@ public class StompCollisionHandler : MonoBehaviour
     private float cooldown = 0.2f;
     private float lastStompTime = -999f;
     private SphereCollider detectorCollider;
+    private int enemyLayer;
 
     public void Initialize(StompDamage effect)
     {
         stompEffect = effect;
         detectorCollider = GetComponent<SphereCollider>();
+        enemyLayer = LayerMask.NameToLayer("Enemy");
     }
     
     private void OnDrawGizmos()
@@ -168,7 +173,9 @@ public class StompCollisionHandler : MonoBehaviour
     {
         if (stompEffect == null) return;
         if (Time.time - lastStompTime < cooldown) return;
-        if (other.gameObject.layer != 11) return;
+        
+        // check if its an enemy
+        if (other.gameObject.layer != enemyLayer) return;
 
         Enemy enemy = other.GetComponentInParent<Enemy>();
         if (enemy != null)
