@@ -116,6 +116,7 @@ public class PlayerInventory : MonoBehaviour
             Debug.Log($"added a status effect, HEALONDAMAGE : stacks={stack.count}");
             return;
         }
+
         else
         {
             ApplyStatModifier(itemData, stack); // else do the usual business

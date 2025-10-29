@@ -47,5 +47,6 @@ public enum StackingType
 public enum ItemEffectKind
 {
     None,
-    HealOnDamage
+    HealOnDamage,
+    BurnOnDamage
 }
