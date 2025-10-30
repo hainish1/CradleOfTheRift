@@ -502,13 +502,16 @@ public class PlayerMovementV4 : MonoBehaviour
         }
 
         // Turn the player character toward the input direction.
-        //if (_kbControlsLockTimer <= 0 && !strafe && _lateralVelocityVector.sqrMagnitude > 0.0001f)
-        //{
-        //    Quaternion qa = transform.rotation;
-        //    Quaternion qb = Quaternion.LookRotation(_lateralVelocityVector, Vector3.up);
-        //    float t = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, _characterRotationDamping));
-        //    transform.rotation = Quaternion.Slerp(qa, qb, t);
-        //}
+        // COUPLED : Aim decides where player faces.
+        // COUPLED WHEN MOVING : Aim + Input decide where player faces, but Aim has higher priority.
+        // DECOUPLED : Aim does not do anything.
+        if (_kbControlsLockTimer <= 0 && !strafe && _lateralVelocityVector.sqrMagnitude > 0.0001f)
+        {
+           Quaternion qa = transform.rotation;
+           Quaternion qb = Quaternion.LookRotation(_lateralVelocityVector, Vector3.up);
+           float t = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, _characterRotationDamping));
+           transform.rotation = Quaternion.Slerp(qa, qb, t);
+        }
     }
 
     /// <summary>

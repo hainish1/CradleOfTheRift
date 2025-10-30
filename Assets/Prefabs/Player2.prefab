@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed611d35576b2e64a86ba01bff9a1a99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movement: {fileID: 7506041293616542779}
+  movement: {fileID: 0}
   targetRenderer: {fileID: 3907876958505056836}
   readyColor: {r: 1, g: 0.7294118, b: 0.2509804, a: 1}
   cooldownColor: {r: 0.23584908, g: 0.15190281, b: 0, a: 1}
@@ -274,7 +274,7 @@ Transform:
   m_GameObject: {fileID: 2348699201413622620}
   serializedVersion: 2
   m_LocalRotation: {x: -0.000000014169801, y: 0.000000104308114, z: 1.554312e-15, w: 1}
-  m_LocalPosition: {x: -0.00000047683716, y: 3.801, z: -26.480982}
+  m_LocalPosition: {x: -0.00000047683716, y: 3.801, z: -26.481}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -630,7 +630,7 @@ MonoBehaviour:
   invertY: 0
   minPitch: -40
   maxPitch: 70
-  playerRotation: 0
+  playerRotation: 1
   recenterDamping: 0.05
   fireRecenterDamping: 0.05
   snapOnFire: 0
@@ -653,7 +653,8 @@ GameObject:
   - component: {fileID: 4651147138949993724}
   - component: {fileID: 7494171734913767902}
   - component: {fileID: 1220069884552851021}
-  - component: {fileID: 7506041293616542779}
+  - component: {fileID: 1536365195488016846}
+  - component: {fileID: 5728349505276562368}
   - component: {fileID: 5449276939068111225}
   - component: {fileID: 1545799363735562861}
   - component: {fileID: 7428225188146732249}
@@ -757,26 +758,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
---- !u!114 &7506041293616542779
+--- !u!114 &1536365195488016846
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3694253349153652309}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d357a0e7bf11f643ac8a4c338e181cf, type: 3}
+  m_Script: {fileID: 11500000, guid: b916d9f3e293855479c5e46530750f13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _playerCenter: {fileID: 2015244756760834766}
   _cameraTransform: {fileID: 0}
-  _maxSpeed: 11
-  _accelerationSeconds: 0.4
-  _decelerationSeconds: 0.2
-  _sprintMultiplier: 2
+  _gravityMultiplier: 3
+  _gravityAirDrag: 1
+  _moveAccelerationSeconds: 0.4
+  _moveDecelerationSeconds: 0.2
   _characterRotationDamping: 0.25
-  _hoverHeight: 0.6
+  _hoverHeight: 1
   _hoverPullStrength: 100
   _hoverDampingStrength: 10
   _groundedCastLength: 1.5
@@ -790,13 +791,55 @@ MonoBehaviour:
   _jumpBufferWindow: 0.15
   _driftDescentDivisor: 0.1
   _driftDelay: 0.5
+  _flightMaxSpeed: 30
+  _flightAccelerationSeconds: 0.75
+  _flightDecelerationSeconds: 0.4
+  _flightCounterAccelerationMultiplier: 2
+  _flightJumpForce: 20
+  _flightRegenerationRate: 30
+  _flightMaxEnergy: 100
+  _flightDepletionRate: 25
+--- !u!114 &5728349505276562368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3694253349153652309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d357a0e7bf11f643ac8a4c338e181cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerCenter: {fileID: 2015244756760834766}
+  _cameraTransform: {fileID: 0}
   _gravityMultiplier: 3
-  _boostMaxSpeed: 30
-  _boostAccelerationSeconds: 1.5
-  _boostRegenerationRate: 30
-  _boostMaxEnergy: 100
-  _boostDepletionRate: 50
-  _boostDoubleTapWindow: 0.2
+  _gravityAirDrag: 1
+  _moveAccelerationSeconds: 0.4
+  _moveDecelerationSeconds: 0.2
+  _characterRotationDamping: 0.25
+  _hoverHeight: 1
+  _hoverPullStrength: 100
+  _hoverDampingStrength: 10
+  _groundedCastLength: 1.5
+  _maxGroundAngle: 60
+  _groundedCastJumpPauseDuration: 0.2
+  _kbDamping: 0.125
+  _kbControlsLockTime: 0.18
+  _kbDashLockTime: 0.12
+  _jumpForce: 15
+  _coyoteTimeWindow: 0.15
+  _jumpBufferWindow: 0.15
+  _driftDescentDivisor: 1
+  _driftDelay: 0.5
+  _flightMaxSpeed: 20
+  _flightAccelerationSeconds: 0.75
+  _flightDecelerationSeconds: 0.5
+  _flightCounterAccelerationMultiplier: 1
+  _flightJumpForce: 20
+  _flightRegenerationRate: 30
+  _flightMaxEnergy: 100
+  _flightDepletionRate: 25
 --- !u!114 &5449276939068111225
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -815,7 +858,7 @@ MonoBehaviour:
   shootMask:
     serializedVersion: 2
     m_Bits: 3153
-  fireRate: 10
+  fireRate: 0.8
   fullAuto: 1
   projectilePrefab: {fileID: 3140400090891409143, guid: a6fb9f8d0097a78469656e682c859c0d, type: 3}
   projectileSpeed: 150
@@ -837,7 +880,7 @@ MonoBehaviour:
   boxWidth: 4.49
   boxHeight: 5.6
   boxArea: 12.5
-  cooldown: 0.35
+  cooldown: 0.5
   prep: 0.05
   activeTime: 0.02
   pushForce: 18
