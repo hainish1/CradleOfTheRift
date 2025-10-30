@@ -14,7 +14,7 @@ public class StompDamage : IDisposable
     private bool disposed;
 
     private PlayerMovement playerMovement;
-    private PlayerMovementV4 playerMovementV4;
+    private PlayerMovement playerMovementV4;
     private CharacterController characterController;
     private SphereCollider stompDetector;
 
@@ -35,7 +35,7 @@ public class StompDamage : IDisposable
         this.timer = durationSec;
 
         playerMovement = owner.GetComponent<PlayerMovement>();
-        playerMovementV4 = owner.GetComponent<PlayerMovementV4>();
+        playerMovementV4 = owner.GetComponent<PlayerMovement>();
         characterController = owner.GetComponent<CharacterController>();
 
         enemyLayer = LayerMask.GetMask("Enemy");

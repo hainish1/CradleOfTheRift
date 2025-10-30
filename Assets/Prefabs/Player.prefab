@@ -444,7 +444,6 @@ GameObject:
   - component: {fileID: 5837458692684639450}
   - component: {fileID: 8704286100763316472}
   - component: {fileID: 2600056389756744934}
-  - component: {fileID: 7292024828942904444}
   - component: {fileID: 8678201601994762703}
   - component: {fileID: 3932950717491979509}
   - component: {fileID: 146141417271177862}
@@ -550,47 +549,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
---- !u!114 &7292024828942904444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2377490915647840013}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b916d9f3e293855479c5e46530750f13, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _playerCenter: {fileID: 8569377081838828647}
-  _cameraTransform: {fileID: 0}
-  _gravityMultiplier: 3
-  _gravityAirDrag: 1
-  _moveAccelerationSeconds: 0.4
-  _moveDecelerationSeconds: 0.2
-  _characterRotationDamping: 0.25
-  _hoverHeight: 1
-  _hoverPullStrength: 100
-  _hoverDampingStrength: 10
-  _groundedCastLength: 1.5
-  _maxGroundAngle: 60
-  _groundedCastJumpPauseDuration: 0.2
-  _kbDamping: 0.125
-  _kbControlsLockTime: 0.18
-  _kbDashLockTime: 0.12
-  _jumpForce: 15
-  _coyoteTimeWindow: 0.15
-  _jumpBufferWindow: 0.15
-  _driftDescentDivisor: 0.1
-  _driftDelay: 0.5
-  _flightMaxSpeed: 30
-  _flightAccelerationSeconds: 0.75
-  _flightDecelerationSeconds: 0.4
-  _flightCounterAccelerationMultiplier: 2
-  _flightJumpForce: 20
-  _flightRegenerationRate: 30
-  _flightMaxEnergy: 100
-  _flightDepletionRate: 25
 --- !u!114 &8678201601994762703
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -43,7 +43,7 @@ public class PlayerAimController : MonoBehaviour
 
     private CharacterController cc; // cached
     private PlayerMovement movement;
-    private PlayerMovementV4 movementV4;
+    private PlayerMovement movementV4;
 
 
     private float yaw;
@@ -97,7 +97,7 @@ public class PlayerAimController : MonoBehaviour
             movement = playerRoot.GetComponent<PlayerMovement>();
             if (movement == null)
             {
-                movementV4 = playerRoot.GetComponent<PlayerMovementV4>();
+                movementV4 = playerRoot.GetComponent<PlayerMovement>();
             }
             lastPlayerYaw = playerRoot.eulerAngles.y;
         }

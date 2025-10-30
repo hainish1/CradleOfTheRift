@@ -7,14 +7,14 @@ public class PlayerManager : Entity
 
     private PlayerHealth playerHealth;
     private PlayerShooter playerShooter;
-    private PlayerMovementV4 playerMovement;
+    private PlayerMovement playerMovement;
 
     void Start()
     {
         // Get references to player components
         playerHealth = GetComponent<PlayerHealth>();
         playerShooter = GetComponent<PlayerShooter>();
-        playerMovement = GetComponent<PlayerMovementV4>();
+        playerMovement = GetComponent<PlayerMovement>();
 
         if (showStatsInConsole)
         {
