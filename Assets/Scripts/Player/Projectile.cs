@@ -4,7 +4,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private GameObject bulletImpactFX;
-    private TrailRenderer trail;
+    public TrailRenderer trail;
     [Header("flight")]
     [SerializeField] private float lifeTime = 6f;
     [SerializeField] private float gravity = 0f;
@@ -12,16 +12,16 @@ public class Projectile : MonoBehaviour
     [Header("hit")]
     [SerializeField] private float hitForce = 8f;
     [SerializeField] private float knockBackImpulse = 8f;
-    [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
+    [SerializeField] protected LayerMask hitMask = ~0; // what can this bullet hit
 
-    private float actualDamage; // THIS WILL STORE DAMAGE FROM STATS SYSTEM
+    protected float actualDamage; // THIS WILL STORE DAMAGE FROM STATS SYSTEM
 
-    Rigidbody rb;
-    private float age;
-    private Vector3 startPos;
-    private float flyDistance;
-    private Entity attacker;
-    private bool hasHit;
+    public Rigidbody rb;
+    protected float age;
+    protected Vector3 startPos;
+    protected float flyDistance;
+    protected Entity attacker;
+    protected bool hasHit;
 
     public virtual void Awake()
     {
@@ -148,7 +148,7 @@ public class Projectile : MonoBehaviour
 
     }
     
-    private virtual void ReturnToSource()
+    public virtual void ReturnToSource()
     {
         if (ObjectPool.instance != null)
         {
