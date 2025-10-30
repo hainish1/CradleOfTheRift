@@ -1110,12 +1110,22 @@ public class PlayerMovementV4 : MonoBehaviour
     private void DisableFlight()
     {
         _isFlying = false;
-        
+
         if (_playerEntity != null)
         {
             MoveMaxSpeed = _playerEntity.Stats.MoveSpeed;
         }
-        
+
         RecalculateMoveAccelDecel();
+    }
+    
+    public void SetVerticalVelocityFactor(float factor)
+    {
+        _verticalVelocityVector.y = factor;
+    }
+
+    public float GetCurrentFlightEnergy()
+    {
+        return _currFlightEnergy;
     }
 }
