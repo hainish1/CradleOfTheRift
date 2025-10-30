@@ -63,5 +63,6 @@ public enum ItemEffectKind
     HealOnDamage,
     StompDamage,
     FallDamageBonus,
-    DotOnHit
+    DotOnHit,
+    BurnOnDamage
 }
