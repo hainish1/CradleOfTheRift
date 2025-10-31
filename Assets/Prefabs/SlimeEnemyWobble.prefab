@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8548161352448212316}
   - component: {fileID: 7659663442249691478}
   - component: {fileID: 1248558580790740225}
+  - component: {fileID: 2295617684978446055}
   m_Layer: 11
   m_Name: HitBox
   m_TagString: Untagged
@@ -67,6 +68,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 8200006461687915286}
+--- !u!65 &2295617684978446055
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5580806425018498539}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.2, y: 1.2, z: 2.25}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6223163396465808229
 GameObject:
   m_ObjectHideFlags: 0
@@ -83,6 +105,7 @@ GameObject:
   - component: {fileID: 8032525674095066417}
   - component: {fileID: 1932630377921340712}
   - component: {fileID: 1162765825911862605}
+  - component: {fileID: 2533069923019125397}
   m_Layer: 11
   m_Name: SlimeEnemyWobble
   m_TagString: Untagged
@@ -153,16 +176,20 @@ MonoBehaviour:
   nextAttackAllowed: 0
   chaseSpeed: 15
   attackRange: 5
-  knockbackPower: 10
+  knockbackPower: 20
   dragSpeed: 6
   dragDuration: 1
   restDuration: 0.25
   slamDamage: 1
   windupTime: 0.5
   chargeSpeed: 30
-  chargetTime: 0.18
+  chargeTime: 0.18
   hitbox: {fileID: 1248558580790740225}
   hitAppliedThisAttack: 0
+  leapAttackRange: 5
+  minAttackDistance: 3
+  leapHeight: 1
+  leapDuration: 0.5
 --- !u!114 &6554202718004137176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,7 +239,7 @@ BoxCollider:
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
+  m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
@@ -256,6 +283,25 @@ MonoBehaviour:
   maxHealth: 3
   cleanupDelay: 0
   baseHealth: 3
+  damageVisuals: {fileID: 2533069923019125397}
+--- !u!114 &2533069923019125397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6223163396465808229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f7fc4705e6620c4fb521355f9e199d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageColor: {r: 1, g: 0, b: 0, a: 1}
+  hitFlashMaterial: {fileID: 2100000, guid: 679327a50d72c694bab0b63b6b2baec1, type: 2}
+  flashDuration: 0.1
+  fontSize: 50
+  textDuration: 1.5
+  riseSpeed: 1.5
 --- !u!1 &6380071158745332297
 GameObject:
   m_ObjectHideFlags: 0

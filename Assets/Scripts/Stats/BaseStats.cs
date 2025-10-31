@@ -9,6 +9,8 @@ public class BaseStats : ScriptableObject
     [Space]
 
     [Header("Player Movement")]
+    // public float moveSpeed = 10;
+    public float jumpHeight = 10;
     [Tooltip("Max move speed in units per second.")] public float moveSpeed = 10;
     
     [Header("Player Dash")]

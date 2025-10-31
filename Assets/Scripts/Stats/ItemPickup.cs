@@ -25,6 +25,7 @@ public class ItemPickup : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        // Check for PlayerMovement 
         if (!other.GetComponent<PlayerMovement>())
         {
             return;
@@ -35,7 +36,7 @@ public class ItemPickup : MonoBehaviour
             inventory.AddItem(itemData);
             if (destroyOnPickup)
             {
-                Destroy(gameObject);
+                Destroy(gameObject,0.05f);//delay destory for multiple effect
             }
         }
     }

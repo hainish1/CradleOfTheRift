@@ -9,11 +9,8 @@ public class HomingProjectile : MonoBehaviour
     private TrailRenderer trail;
     [Header("Flight Properties")]
     [SerializeField] private float lifeTime = 3f;
-    [SerializeField] private float gravity = 0f;
 
     [Header("Hit Properties")]
-    [SerializeField] private float hitForce = 8f;
-    [SerializeField] private float knockBackImpulse = 8f;
     [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
 
     [Header("Homing Properties")]
@@ -27,8 +24,6 @@ public class HomingProjectile : MonoBehaviour
     private Rigidbody rb;
 
     private float actualDamage;
-
-    private bool hasHit = false;
 
     void Awake()
     {
