@@ -12,6 +12,10 @@ public class EnemyHealth : HealthController
     public event Action<EnemyHealth> EnemyDied;
     public float baseHealth = 3;
 
+    [Header("Visuals")]
+    [SerializeField] private EnemyDamageVisuals damageVisuals;
+
+
     /// <summary>
     /// Called when any Enemy dies, Resets navmesh agent and destroys gameObject(self)
     /// and does any other required cleanup
@@ -33,6 +37,7 @@ public class EnemyHealth : HealthController
         EnemyDied?.Invoke(this);
         PlayerGold.Instance.AddGold(3); // Set it to 3 for now
 
+        damageVisuals?.SetDeadForVisuals();
         Destroy(gameObject, cleanupDelay);
     }
 
@@ -56,5 +61,15 @@ public class EnemyHealth : HealthController
     public float GetMaxHealth()
     {
         return this.maxHealth;
+    }
+
+    public override void TakeDamage(float damage)
+    {
+        base.TakeDamage(damage);
+
+        if(damageVisuals != null)
+        {
+            damageVisuals.ShowDamageVisuals(damage);
+        }
     }
 }

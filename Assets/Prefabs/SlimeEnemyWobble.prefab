@@ -105,6 +105,7 @@ GameObject:
   - component: {fileID: 8032525674095066417}
   - component: {fileID: 1932630377921340712}
   - component: {fileID: 1162765825911862605}
+  - component: {fileID: 2533069923019125397}
   m_Layer: 11
   m_Name: SlimeEnemyWobble
   m_TagString: Untagged
@@ -282,6 +283,25 @@ MonoBehaviour:
   maxHealth: 3
   cleanupDelay: 0
   baseHealth: 3
+  damageVisuals: {fileID: 2533069923019125397}
+--- !u!114 &2533069923019125397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6223163396465808229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f7fc4705e6620c4fb521355f9e199d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageColor: {r: 1, g: 0, b: 0, a: 1}
+  hitFlashMaterial: {fileID: 2100000, guid: 679327a50d72c694bab0b63b6b2baec1, type: 2}
+  flashDuration: 0.1
+  fontSize: 50
+  textDuration: 1.5
+  riseSpeed: 1.5
 --- !u!1 &6380071158745332297
 GameObject:
   m_ObjectHideFlags: 0
