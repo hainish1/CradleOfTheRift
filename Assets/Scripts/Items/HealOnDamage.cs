@@ -38,12 +38,10 @@ public class HealOnDamage : IDisposable
     private void OnDamageDealt(Entity attacker, Component target, float damage)
     {
         if (disposed || attacker != owner || ownerHealth == null) return;
-        float heal = damage * percentPerStack * stacks;
+        // float heal = damage * percentPerStack * stacks;
+        float heal = 1 * stacks; // just for testing
         if (heal > 0f) ownerHealth.Heal(heal);
     }
-
-
-
 
     public void Dispose()
     {

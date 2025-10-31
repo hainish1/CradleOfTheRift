@@ -9,6 +9,7 @@ public enum StatType
 
     Health,
     MoveSpeed,
+    JumpHeight,
     DashSpeed,
     DashDistance,
     DashCooldown,
@@ -53,6 +54,16 @@ public class Stats
         {
             // return value with modifiers appleid
             var q = new Query(StatType.Health, baseStats.health);
+            mediator.PerformQuery(this, q);
+            return q.Value;
+        }
+    }
+
+    public float JumpHeight
+    {
+        get
+        {
+            var q = new Query(StatType.JumpHeight, baseStats.jumpHeight);
             mediator.PerformQuery(this, q);
             return q.Value;
         }
@@ -161,6 +172,7 @@ public class Stats
             StatType.Health => baseStats.health,
             StatType.ProjectileDamage => baseStats.projectileDamage,
             StatType.MoveSpeed => baseStats.moveSpeed,
+            StatType.JumpHeight => baseStats.jumpHeight,
             StatType.MeleeDamage => baseStats.meleeDamage,
             StatType.SlamDamage => baseStats.slamDamage,
             StatType.SlamRadius => baseStats.slamAttackRadius,

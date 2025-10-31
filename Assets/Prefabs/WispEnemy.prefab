@@ -1023,6 +1023,7 @@ GameObject:
   - component: {fileID: 2851529993679917071}
   - component: {fileID: 3349805392606994707}
   - component: {fileID: -3325380021058808314}
+  - component: {fileID: 6516409030888228098}
   m_Layer: 11
   m_Name: WispEnemy
   m_TagString: Untagged
@@ -1179,6 +1180,7 @@ MonoBehaviour:
   maxHealth: 3
   cleanupDelay: 0
   baseHealth: 3
+  damageVisuals: {fileID: 6516409030888228098}
 --- !u!114 &-3325380021058808314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1196,6 +1198,24 @@ MonoBehaviour:
   orbitRadius: 1.5
   orbitSpeed: 80
   orbitHeight: 1.5
+--- !u!114 &6516409030888228098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8841140246284276385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f7fc4705e6620c4fb521355f9e199d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageColor: {r: 1, g: 0, b: 0, a: 1}
+  hitFlashMaterial: {fileID: 2100000, guid: 679327a50d72c694bab0b63b6b2baec1, type: 2}
+  flashDuration: 0.1
+  fontSize: 50
+  textDuration: 1.5
+  riseSpeed: 1.5
 --- !u!1 &9064912426439065413
 GameObject:
   m_ObjectHideFlags: 0
