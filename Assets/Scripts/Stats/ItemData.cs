@@ -1,47 +1,52 @@
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Item", menuName = "Items/Item")]
-public class ItemData : ScriptableObject
+[Serializable]
+public class StatModSpec
 {
-    [Header("Basic Info")]
-    public string itemName = "New Item";
-    [TextArea(3, 5)]
-    public string description = "Item Description Here";
-    public Sprite icon;
-
-    [Header("Rarity and visuals")]
-    public ItemRarity rarity = ItemRarity.Common;
-    public Color rarityColor = Color.white;
-
-    [Header("Stat effects")]
     public StatType statType = StatType.Health;
     public OperatorType operatorType = OperatorType.Add;
     public float value = 1f;
-    public int duration = -1; // perm by default
+    public int duration = -1; // -1 is perm
+}
 
-    [Header("Stacking")]
-    public bool canStack = true;
-    public int maxStacks = 99;
-    public StackingType stackingType = StackingType.Linear;
+public enum ItemEffectKind
+{
+    None,
+    HealOnDamage,
+    StompDamage,
+    FallDamageBonus,
+    DotOnHit,
+    BurnOnDamage
+}
 
-    [Header("Effect (non-stat)")]
-    public ItemEffectKind effectKind = ItemEffectKind.None;
+[Serializable]
+public class EffectSpec
+{
+    public ItemEffectKind kind = ItemEffectKind.None;
+    public float duration = -1f; // -1 : Perm
 
-    [Range(0f, 1f)] public float healOnDamagePercentPerStack = 0.02f; // 2% per stack
-    public float stompDamagePerStack = 10f; 
-    public float stompBounceForce = 8f; 
-    public float fallDamageBonusPerMeter = 2f; 
-    public float fallDamageBonusPerStack = 1f; 
-    public float effectDuration = -1f; // -1 = permanent
-    
-    [Header("DOT Effect Settings")]
-    public float dotDamagePerTick = 2f;  
-    public float dotTickInterval = 1f;  // how often to tick 
-    public float dotDuration = 5f; 
-    public float dotDamagePerStack = 1f;  // extra dmg per item stack
-    public bool dotCanStack = true;  // can this DOT stack on same enemy
-    public int dotMaxStacks = 5; 
-    public bool dotApplyImmediately = false;  // first tick instant or delayed
+    // HEAL ON DAMAGE
+    [Range(0f, 1f)] public float healOnDamagePercentPerStack = .02f;
+
+    // Stomp
+    public float stompDamagePerStack = 10f;
+    public float stompBounceForce = 8f;
+
+    // FallDamageBonus
+    public float fallDamageBonusPerMeter = 2f;
+    public float fallDamageBonusPerStack = 1f;
+
+    // DOT
+    public float dotDamagePerTick = 2f;
+    public float dotTickInterval = 1f;
+    public float dotDuration = 5f;
+    public float dotDamagePerStack = 1f;
+    public bool dotCanStack = true;
+    public int dotMaxStacks = 5;
+    public bool dotApplyImmediately = false;
 }
 
 public enum ItemRarity
@@ -57,12 +62,45 @@ public enum StackingType
     Linear
 }
 
-public enum ItemEffectKind
+// Legacy single-stat fields remain but they will be ignored when useMultipleStats is TRUE
+[CreateAssetMenu(fileName = "New Item", menuName = "Items/Item")]
+public class ItemData : ScriptableObject
 {
-    None,
-    HealOnDamage,
-    StompDamage,
-    FallDamageBonus,
-    DotOnHit,
-    BurnOnDamage
+    [Header("Basic Info")]
+    public string itemName = "New Item";
+    [TextArea(3, 5)]
+    public string description = "Item Description Here";
+    public Sprite icon;
+
+    [Header("Rarity and visuals")]
+    public ItemRarity rarity = ItemRarity.Common;
+    public Color rarityColor = Color.white;
+
+    [Header("Stacking")]
+    public bool canStack = true;
+    public int maxStacks = 99;
+    public StackingType stackingType = StackingType.Linear;
+    
+    [Space]
+
+    [Header("MULTIPLE Stat Effects")]
+    public bool useMultipleStats = true;
+    public List<StatModSpec> statMods = new List<StatModSpec>();
+
+    [Header("MULTIPLE Runtime Effects")]
+    public List<EffectSpec> effects = new List<EffectSpec>();
+
+    [Space]
+
+    // Legacy Single-Stat, I will ignore this when useMultipleStats is TRUE
+
+    [Header("Stat effects - Only if 1 Stack")]
+    public StatType statType = StatType.Health;
+    public OperatorType operatorType = OperatorType.Add;
+    public float value = 1f;
+    public int duration = -1; // perm by default
+
 }
+
+
+

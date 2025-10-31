@@ -14,16 +14,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: kryptonite
   description: superman is scared of this shit bruh
-  icon: {fileID: 238759375, guid: 7b8f9ea28393f45719932cb70e4704bd, type: 3}
+  icon: {fileID: -1091541101, guid: 7b8f9ea28393f45719932cb70e4704bd, type: 3}
   rarity: 0
   rarityColor: {r: 1, g: 1, b: 1, a: 1}
+  useMultipleStats: 1
+  statMods:
+  - statType: 1
+    operatorType: 0
+    value: 2
+    duration: -1
+  - statType: 0
+    operatorType: 0
+    value: 1
+    duration: -1
+  - statType: 10
+    operatorType: 0
+    value: 3
+    duration: -1
+  effects: []
+  canStack: 1
+  maxStacks: 99
+  stackingType: 0
   statType: 1
   operatorType: 0
   value: 1
   duration: -1
-  canStack: 1
-  maxStacks: 99
-  stackingType: 0
   effectKind: 0
   healOnDamagePercentPerStack: 0.02
+  stompDamagePerStack: 10
+  stompBounceForce: 8
+  fallDamageBonusPerMeter: 2
+  fallDamageBonusPerStack: 1
   effectDuration: -1
+  dotDamagePerTick: 2
+  dotTickInterval: 1
+  dotDuration: 5
+  dotDamagePerStack: 1
+  dotCanStack: 1
+  dotMaxStacks: 5
+  dotApplyImmediately: 0
