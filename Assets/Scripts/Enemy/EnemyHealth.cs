@@ -22,7 +22,11 @@ public class EnemyHealth : HealthController
     /// </summary>
     protected override void Die()
     {
-        Debug.Log("[Enemy Health] Enemy died");
+        // Debug.Log("[Enemy Health] Enemy died");
+        if(damageVisuals != null)
+        {
+            damageVisuals.SetDeadForVisuals();
+        }
 
         var agent = GetComponent<NavMeshAgent>();
         if (agent != null)
@@ -37,7 +41,7 @@ public class EnemyHealth : HealthController
         EnemyDied?.Invoke(this);
         PlayerGold.Instance.AddGold(3); // Set it to 3 for now
 
-        damageVisuals?.SetDeadForVisuals();
+        
         Destroy(gameObject, cleanupDelay);
     }
 
@@ -67,7 +71,7 @@ public class EnemyHealth : HealthController
     {
         base.TakeDamage(damage);
 
-        if(damageVisuals != null)
+        if(damageVisuals != null && !IsDead)
         {
             damageVisuals.ShowDamageVisuals(damage);
         }

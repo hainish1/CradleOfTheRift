@@ -13,6 +13,7 @@ public class EnemyDamageVisuals : MonoBehaviour
     private Renderer meshRenderer;
     private Material originalMaterial;
     private bool isDead = false;
+    private bool isDamageTextActive = false;
 
     private void Start()
     {
@@ -50,6 +51,7 @@ public class EnemyDamageVisuals : MonoBehaviour
         textMesh.anchor = TextAnchor.MiddleCenter;
         textMesh.characterSize = 0.2f;
 
+        isDamageTextActive = true;
         StartCoroutine(AnimateDamageText(damageText, textMesh));
     }
 
@@ -61,7 +63,11 @@ public class EnemyDamageVisuals : MonoBehaviour
 
         while (elapsed < textDuration)
         {
-            if (isDead) break;
+            if (isDead)
+            {
+                Destroy(damageText);
+                break;
+            }
             elapsed += Time.deltaTime;
             float t = elapsed / textDuration;
 
@@ -84,6 +90,7 @@ public class EnemyDamageVisuals : MonoBehaviour
         }
 
         Destroy(damageText);
+        isDamageTextActive = false;
     }
 
     private System.Collections.IEnumerator FlashHit()
@@ -95,10 +102,24 @@ public class EnemyDamageVisuals : MonoBehaviour
             meshRenderer.material = originalMaterial;
         }
     }
-    
+
     public void SetDeadForVisuals()
     {
         isDead = true;
+
+        if (isDamageTextActive)
+        {
+            StartCoroutine(WaitForDamageTextFinish());
+        }
+    }
+    
+    private System.Collections.IEnumerator WaitForDamageTextFinish()
+    {
+        
+        while (isDamageTextActive)
+        {
+            yield return null;
+        }
     }
 
 }
