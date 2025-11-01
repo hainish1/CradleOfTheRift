@@ -35,26 +35,27 @@ public class EnemyDamageVisuals : MonoBehaviour
 
     private void ShowDamageNumber(float damage)
     {
-        GameObject damageText = new GameObject("DamageText");
+        // GameObject damageText = new GameObject("DamageText");
 
         // random spread so numbers dont overlap
         float randomX = Random.Range(-0.5f, 0.5f);
         float randomZ = Random.Range(-0.5f, 0.5f);
-        damageText.transform.position = transform.position + Vector3.up * 2f + new Vector3(randomX, 0, randomZ);
+        Vector3 pos = transform.position + Vector3.up * 2f + new Vector3(randomX, 0, randomZ);
 
-        // face camera
-        if (Camera.main != null)
-            damageText.transform.rotation = Quaternion.LookRotation(damageText.transform.position - Camera.main.transform.position);
+        // // face camera
+        // if (Camera.main != null)
+        //     damageText.transform.rotation = Quaternion.LookRotation(damageText.transform.position - Camera.main.transform.position);
 
-        TextMesh textMesh = damageText.AddComponent<TextMesh>();
-        textMesh.text = damage.ToString("F1");
-        textMesh.fontSize = fontSize;
-        textMesh.color = damageColor;
-        textMesh.anchor = TextAnchor.MiddleCenter;
-        textMesh.characterSize = 0.2f;
+        // TextMesh textMesh = damageText.AddComponent<TextMesh>();
+        // textMesh.text = damage.ToString("F1");
+        // textMesh.fontSize = fontSize;
+        // textMesh.color = damageColor;
+        // textMesh.anchor = TextAnchor.MiddleCenter;
+        // textMesh.characterSize = 0.2f;
 
-        isDamageTextActive = true;
-        StartCoroutine(AnimateDamageText(damageText, textMesh));
+        // isDamageTextActive = true;
+        // StartCoroutine(AnimateDamageText(damageText, textMesh));
+        DamageNumbers.Spawn(pos, damage, damageColor, fontSize, textDuration, riseSpeed);
     }
 
     private System.Collections.IEnumerator AnimateDamageText(GameObject damageText, TextMesh textMesh)
@@ -125,10 +126,18 @@ public class EnemyDamageVisuals : MonoBehaviour
             yield return null;
         }
     }
-    
+
     public bool GetCanDestroy()
     {
         return canDestroy;
+    }
+
+    void OnDisable()
+    {
+        if(meshRenderer != null  && originalMaterial != null)
+        {
+            meshRenderer.material = originalMaterial;
+        }       
     }
 
 }

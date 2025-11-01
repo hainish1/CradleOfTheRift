@@ -8,19 +8,21 @@ public abstract class HealthController : MonoBehaviour, IDamageable
 
     public bool IsDead { get; private set; }
 
-    void Awake()
+    protected virtual void Awake()
     {
-        currentHealth = maxHealth;
+        currentHealth = Mathf.Max(1f, maxHealth);
+        IsDead = false;
     }
 
     public virtual void TakeDamage(float damage)
     {
         if (IsDead) return;
 
-        currentHealth -= damage;
+        currentHealth -= Mathf.Max(0f, damage);
         if (currentHealth <= 0)
         {
             currentHealth = 0;
+            IsDead = true;
             Die();
         }
     }
@@ -28,7 +30,7 @@ public abstract class HealthController : MonoBehaviour, IDamageable
     public virtual void Heal(float amount)
     {
         if (IsDead) return;
-        currentHealth = Mathf.Min(maxHealth, currentHealth + amount); // either this or that
+        currentHealth = Mathf.Min(maxHealth, currentHealth + Mathf.Max(0f, amount)); // either this or that
     }
 
     protected abstract void Die();
