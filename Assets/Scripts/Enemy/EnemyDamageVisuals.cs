@@ -15,6 +15,8 @@ public class EnemyDamageVisuals : MonoBehaviour
     private bool isDead = false;
     private bool isDamageTextActive = false;
 
+    private bool canDestroy = false;
+
     private void Start()
     {
         meshRenderer = GetComponentInChildren<MeshRenderer>();
@@ -61,11 +63,13 @@ public class EnemyDamageVisuals : MonoBehaviour
         Vector3 startPos = damageText.transform.position;
         Color startColor = textMesh.color;
 
+
         while (elapsed < textDuration)
         {
             if (isDead)
             {
                 Destroy(damageText);
+                canDestroy = true;
                 break;
             }
             elapsed += Time.deltaTime;
@@ -107,19 +111,24 @@ public class EnemyDamageVisuals : MonoBehaviour
     {
         isDead = true;
 
-        if (isDamageTextActive)
-        {
-            StartCoroutine(WaitForDamageTextFinish());
-        }
+        // if (isDamageTextActive)
+        // {
+        //     // StartCoroutine(WaitForDamageTextFinish());
+        // }
     }
-    
+
     private System.Collections.IEnumerator WaitForDamageTextFinish()
     {
-        
+
         while (isDamageTextActive)
         {
             yield return null;
         }
+    }
+    
+    public bool GetCanDestroy()
+    {
+        return canDestroy;
     }
 
 }

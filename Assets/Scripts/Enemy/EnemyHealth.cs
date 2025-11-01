@@ -42,7 +42,10 @@ public class EnemyHealth : HealthController
         PlayerGold.Instance.AddGold(3); // Set it to 3 for now
 
         
-        Destroy(gameObject, cleanupDelay);
+        if(damageVisuals?.GetCanDestroy() == true)
+        {
+            Destroy(gameObject, cleanupDelay);
+        }
     }
 
     /// <summary>
