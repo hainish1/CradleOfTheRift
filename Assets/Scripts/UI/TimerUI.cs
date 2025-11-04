@@ -43,6 +43,7 @@ public class TimerUI : MonoBehaviour
             this.hasDisplayedExtraction = true;
             this.DisplayExtraction?.Invoke();
             Debug.Log("Timer hit 2 minutes");
+            timerLabel.style.color = Color.red;
         }
 
         if (this.remainingTime <= 0f)
@@ -59,5 +60,22 @@ public class TimerUI : MonoBehaviour
         int seconds = Mathf.FloorToInt(this.remainingTime % 60f);
 
         timerLabel.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        UpdateColor();
+    }
+
+    private void UpdateColor()
+    {
+        float colorStartTime = 120f; 
+        float colorEndTime = 0f;   
+
+        if (remainingTime <= colorStartTime)
+        {
+            float t = Mathf.Clamp01(1f - ((remainingTime - colorEndTime) / (colorStartTime - colorEndTime)));
+            timerLabel.style.color = Color.Lerp(Color.white, Color.red, t);
+        }
+        else
+        {
+            timerLabel.style.color = Color.white;
+        }
     }
 }
