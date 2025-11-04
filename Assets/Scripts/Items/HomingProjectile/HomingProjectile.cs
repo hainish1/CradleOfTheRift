@@ -13,6 +13,7 @@ public class HomingProjectile : Projectile
     //private Vector3 startPos;
     private bool following = false;
     private Entity target;
+    private Vector3 startPos;
 
     
 
@@ -26,10 +27,10 @@ public class HomingProjectile : Projectile
         // meshRenderer = GetComponent<MeshRenderer>();
     }
 
-    public override void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
-    {
-        base.Init(velocity, mask, damage, flyDistance, attacker);
-    }
+    // public override void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
+    // {
+    //     base.Init(velocity, mask, damage, flyDistance, attacker);
+    // }
 
     public override void Update()
     {
@@ -50,14 +51,20 @@ public class HomingProjectile : Projectile
         direction.Normalize();
 
         Vector3 rotateAmount = Vector3.Cross(transform.forward, direction);
-        rb.angularVelocity = rotateAmount * rotationForce;
-        rb.linearVelocity = transform.forward * homingForce;
+        if (rb != null)
+        {
+            rb.angularVelocity = rotateAmount * rotationForce;
+            rb.linearVelocity = transform.forward * homingForce;
+        }
     }
 
     private IEnumerator WaitBeforeTracking()
     {
         //rb.AddForce(transform.forward * force, ForceMode.VelocityChange);
-        rb.AddForce(Vector3.up * initialLaunchForce, ForceMode.Impulse);
+        if (rb != null)
+        {
+            rb.AddForce(Vector3.up * initialLaunchForce, ForceMode.Impulse);
+        }
         yield return new WaitForSeconds(delayBeforeTracking);
         following = true;
     }
