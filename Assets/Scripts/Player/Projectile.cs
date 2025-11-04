@@ -26,6 +26,7 @@ public class Projectile : MonoBehaviour
     public virtual void Awake()
     {
         trail = GetComponent<TrailRenderer>();
+        
         rb = GetComponent<Rigidbody>();
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -47,8 +48,18 @@ public class Projectile : MonoBehaviour
         this.flyDistance = flyDistance + 1;
 
         Debug.Log($"Projectile initialized with damage: {actualDamage}");
+
+        Debug.Log("This belongs to the parent");
     }
 
+    public virtual void InitializeTrailVisuals()
+    {
+        trail.Clear();
+        trail.time = 0.25f;
+        startPos = transform.position;
+        this.flyDistance = flyDistance + 1;
+        Debug.Log("Set trail visuals");
+    }
 
     public virtual void Update()
     {
@@ -76,6 +87,8 @@ public class Projectile : MonoBehaviour
         {
             trail.time -= 5f * Time.deltaTime;
         }
+
+        Debug.Log("Fading trail visuals");
     }
 
     void OnCollisionEnter(Collision collision)

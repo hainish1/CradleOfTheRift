@@ -123,18 +123,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7e07bc3ef825c84e9e3d4725fd53c87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletImpactFX: {fileID: 0}
+  bulletImpactFX: {fileID: 8296457393497080562, guid: 83ff99043eb56d54099c28f25d33f0ab, type: 3}
+  trail: {fileID: 0}
   lifeTime: 6
   gravity: 0
   hitForce: 8
   knockBackImpulse: 8
   hitMask:
     serializedVersion: 2
-    m_Bits: 4294967295
-  bulletImpactFX: {fileID: 0}
-  hitMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 3153
+  rb: {fileID: 0}
   targetLocation: {fileID: 0}
   rotationForce: 30
   homingForce: 15
@@ -191,7 +189,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 197723e180f370b4bbc752e2f17592f9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -212,7 +210,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 0.3
+  m_Time: 0.8
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -221,8 +219,8 @@ TrailRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0
-        value: 0.24999902
+        time: 0.008243561
+        value: 0.7781668
         inSlope: 0
         outSlope: 0
         tangentMode: 0

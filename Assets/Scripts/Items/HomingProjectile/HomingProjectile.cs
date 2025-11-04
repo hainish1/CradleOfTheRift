@@ -10,47 +10,26 @@ public class HomingProjectile : Projectile
     [SerializeField] private float homingForce = 15f;
     [SerializeField] private float initialLaunchForce = 15f;
     [SerializeField] private float delayBeforeTracking = 0.5f;
+    //private Vector3 startPos;
     private bool following = false;
     private Entity target;
 
-    //private bool hasHit = false;
+    
 
-    // void Awake()
-    // {
-    //     trail = GetComponent<TrailRenderer>();
-    //     rb = GetComponent<Rigidbody>();
-    //     rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-    //     rb.interpolation = RigidbodyInterpolation.Interpolate;
-    //     StartCoroutine(WaitBeforeTracking());
-    // }
     public override void Awake()
     {
         base.Awake();
         StartCoroutine(WaitBeforeTracking());
+
+        // trail.Clear();
+        // trail.time = 0.25f;
         // meshRenderer = GetComponent<MeshRenderer>();
     }
 
-    // public void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
-    // {
-    //     rb.linearVelocity = velocity;
-    //     hitMask = mask;
-    //     actualDamage = damage; // USE DAMAGE FROM STATS SYSTEM
-    //     this.attacker = attacker;
-    //     age = 0f;
-
-    //     trail.Clear();
-    //     trail.time = 0.25f;
-    //     //startPos = transform.position;
-    //     //this.flyDistance = flyDistance + 1;
-
-    //     Debug.Log($"Projectile initialized with damage: {actualDamage}");
-    // }
-
-    // private void Start()
-    // {
-    //     //rb = GetComponent<Rigidbody>();
-    //     StartCoroutine(WaitBeforeTracking());
-    // }
+    public override void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
+    {
+        base.Init(velocity, mask, damage, flyDistance, attacker);
+    }
 
     public override void Update()
     {
@@ -74,25 +53,6 @@ public class HomingProjectile : Projectile
         rb.angularVelocity = rotateAmount * rotationForce;
         rb.linearVelocity = transform.forward * homingForce;
     }
-
-    // private void onTriggerEnter(Collider other)
-    // {
-    //     if (other.transform == target)
-    //     {
-    //         Destroy(gameObject);
-    //     }
-    // }
-
-    // private void onCollisionEnter(Collision collision)
-    // {
-    //     // doesnt work lol kms
-    //     Debug.Log("Collision Detected");
-    //     Destroy(gameObject);
-    //     // if (collision.transform == target)
-    //     // {
-    //     //     Destroy(gameObject);
-    //     // }
-    // }
 
     private IEnumerator WaitBeforeTracking()
     {
