@@ -60,11 +60,14 @@ unity-content {
     height: 25px;       /* health bar height */
 }
 
+
 #GoldContainer {
-    position: absolute;
-    top: 10px;      /* distance from the top of the screen */
-    left: 10px;     /* distance from the left of the screen */
-    width: auto;    /* or set a specific width if needed */
+    margin-top: 10px;   /* pushes gold down below extraction bar */
+}
+
+#GoldLabel {
+    font-size: 28px;
+    font-weight: bold;
 }
 
 #TimerContainer {
