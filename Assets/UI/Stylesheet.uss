@@ -53,8 +53,9 @@ unity-content {
 
 #HealthContainer {
     position: absolute;
-    bottom: 100px;      /* distance from bottom; adjust so it’s above inventory */
-    left: 10px;         /* align with left edge of screen */
+    bottom: 15px;      /* distance from bottom; adjust so it’s above inventory */
+    left: 50%;         /* align with left edge of screen */
+    margin-left: -150px;
     width: 300px;       /* health bar width */
     height: 25px;       /* health bar height */
 }

@@ -16,7 +16,7 @@
         <ui:VisualElement name="TimerContainer" style="flex-grow: 1; top: 18px; right: 22px; height: 78px; width: 138px;">
             <ui:Label text="Label" name="TimerLabel" />
         </ui:VisualElement>
-        <ui:VisualElement name="HealthContainer" style="flex-grow: 1; align-items: flex-start; justify-content: flex-start; bottom: 15px; left: 922px;">
+        <ui:VisualElement name="HealthContainer" style="flex-grow: 1; align-items: flex-start; justify-content: flex-start;">
             <ui:ProgressBar name="HealthBar" style="visibility: hidden;" />
         </ui:VisualElement>
     </ui:VisualElement>
