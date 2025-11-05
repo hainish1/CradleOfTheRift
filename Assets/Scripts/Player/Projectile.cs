@@ -49,7 +49,7 @@ public class Projectile : MonoBehaviour
 
         Debug.Log($"Projectile initialized with damage: {actualDamage}");
 
-        Debug.Log("This belongs to the parent");
+        //Debug.Log("This belongs to the parent");
     }
 
     public virtual void InitializeTrailVisuals()
@@ -58,7 +58,7 @@ public class Projectile : MonoBehaviour
         trail.time = 0.25f;
         startPos = transform.position;
         this.flyDistance = flyDistance + 1;
-        Debug.Log("Set trail visuals");
+        //Debug.Log("Set trail visuals");
     }
 
     public virtual void Update()
@@ -88,7 +88,7 @@ public class Projectile : MonoBehaviour
             trail.time -= 5f * Time.deltaTime;
         }
 
-        Debug.Log("Fading trail visuals");
+        //Debug.Log("Fading trail visuals");
     }
 
     void OnCollisionEnter(Collision collision)

@@ -5,62 +5,55 @@ using UnityEngine;
 public class HomingProjectile : Projectile
 {
     [Header("Homing Properties")]
-    [SerializeField] private Transform targetLocation;
+    [SerializeField] private Transform targetLocation = null;
     [SerializeField] private float rotationForce = 30f;
-    [SerializeField] private float homingForce = 15f;
-    [SerializeField] private float initialLaunchForce = 15f;
-    [SerializeField] private float delayBeforeTracking = 0.5f;
-    //private Vector3 startPos;
+    [SerializeField] private float homingForce = 20f;
+    [SerializeField] private float initialLaunchForce = 20f;
+    [SerializeField] private float delayBeforeTracking = 0.5f;  // Start homing after a delay
+
+    [Header("Targeting")]
+    [SerializeField] private float targetingRange = 50f;
+    [SerializeField] private LayerMask targetMask;
+
     private bool following = false;
     private Entity target;
-    private Vector3 startPos;
-
-    
 
     public override void Awake()
     {
         base.Awake();
         StartCoroutine(WaitBeforeTracking());
-
-        // trail.Clear();
-        // trail.time = 0.25f;
-        // meshRenderer = GetComponent<MeshRenderer>();
     }
 
-    public void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null, Entity targetEntity = null)
+    public void Init(LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
     {
-        base.Init(velocity, mask, damage, flyDistance, attacker);
-        if (targetEntity != null)
-        {
-            target = targetEntity;
-            targetLocation = targetEntity.transform;
-        }
+        base.Init(new Vector3(0, 0, 0), mask, damage, flyDistance, attacker);
+        
+        // if (target != null)
+        // {
+        //     targetLocation = targetEntity.transform;
+        // }
     }
 
     public override void Update()
     {
-        // // Code ripped straight from Hainish. Thank you Hainish.
-        // age += Time.fixedDeltaTime;
-        // if (age >= lifeTime)
-        // {
-        //     Destroy(gameObject);
-        //     return;
-        // }
-
         base.Update();
 
-        if (targetLocation == null) return;
-        if (!following) return;     // Start homing after a delay
-
-        //targetLocation = targetEntity.transform; // Idk if this is necessary here.
-        Vector3 direction = targetLocation.position - transform.position;
-        direction.Normalize();
-
-        Vector3 rotateAmount = Vector3.Cross(transform.forward, direction);
-        if (rb != null)
+        if (targetLocation != null && following)
         {
-            rb.angularVelocity = rotateAmount * rotationForce;
-            rb.linearVelocity = transform.forward * homingForce;
+            Vector3 direction = targetLocation.position - transform.position;
+            direction.Normalize();
+
+            Vector3 rotateAmount = Vector3.Cross(transform.forward, direction);
+            if (rb != null)
+            {
+                rb.angularVelocity = rotateAmount * rotationForce;
+                rb.linearVelocity = transform.forward * homingForce;
+            }
+        }
+        // Cannot find a target, so just slowly fly upwards
+        else if (targetLocation == null && following)
+        {
+            //b.AddForce(Vector3.up * 0.5f, ForceMode.Impulse);
         }
     }
 
@@ -72,15 +65,56 @@ public class HomingProjectile : Projectile
             rb.AddForce(Vector3.up * initialLaunchForce, ForceMode.Impulse);
         }
         yield return new WaitForSeconds(delayBeforeTracking);
+        
+        if (targetLocation == null)
+        {
+            FindTarget();
+        }
+
+        
         following = true;
+    }
+
+    private void FindTarget()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, targetingRange, targetMask);
+        float minDistance = Mathf.Infinity;
+        Transform closestTarget = null;
+
+        foreach (Collider collider in colliders)
+        {
+            Enemy enemy = collider.GetComponentInParent<Enemy>();
+            if (enemy != null)
+            {
+                float distance = (transform.position - enemy.transform.position).sqrMagnitude;   //Vector3.Distance(transform.position, entity.transform.position);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestTarget = enemy.transform;
+                }
+            }
+        }
+
+        if (closestTarget != null)
+        {
+            targetLocation = closestTarget.transform;
+        }
     }
 
     private void OnDrawGizmos()
     {
+        // Draw targeting line
         if (targetLocation != null)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position, targetLocation.position);
+        }
+
+        // Draw the acquisition range
+        if (!following) // Only draw acquisition range before tracking starts
+        {
+            Gizmos.color = new Color(0, 1, 1, 0.2f); // Cyan, semi-transparent
+            Gizmos.DrawSphere(transform.position, targetingRange);
         }
     }
 }

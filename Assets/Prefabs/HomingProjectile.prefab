@@ -125,19 +125,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletImpactFX: {fileID: 8296457393497080562, guid: 83ff99043eb56d54099c28f25d33f0ab, type: 3}
   trail: {fileID: 0}
-  lifeTime: 6
+  lifeTime: 2.5
   gravity: 0
   hitForce: 8
   knockBackImpulse: 8
   hitMask:
     serializedVersion: 2
-    m_Bits: 3153
+    m_Bits: 3537
   rb: {fileID: 0}
   targetLocation: {fileID: 0}
   rotationForce: 30
-  homingForce: 15
-  initialLaunchForce: 15
+  homingForce: 20
+  initialLaunchForce: 20
   delayBeforeTracking: 0.5
+  targetingRange: 60
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 3409
 --- !u!54 &2115425427290153885
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -210,7 +214,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 0.8
+  m_Time: 0.3
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -219,8 +223,8 @@ TrailRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.008243561
-        value: 0.7781668
+        time: 0
+        value: 0.29816723
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -241,8 +245,8 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 0.51332426, g: 0.3372549, b: 1, a: 1}
+      key1: {r: 1, g: 0.8, b: 1, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -266,7 +270,7 @@ TrailRenderer:
       atime6: 0
       atime7: 0
       m_Mode: 0
-      m_ColorSpace: -1
+      m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0

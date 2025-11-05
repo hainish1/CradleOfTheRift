@@ -889,7 +889,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af2080b55b1657b4b9a3805d2fc55545, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enableHomingProjectiles: 0
   homingEffectCooldown: 3
+  numberOfProjectiles: 3
+  projectileSpawnOffset: 1
+  shootMask:
+    serializedVersion: 2
+    m_Bits: 3153
+  homingProjectilePrefab: {fileID: 786387644219627909, guid: 1abe98f5a8e4b634ab46dbc4ffd399f4, type: 3}
 --- !u!1 &2808975749909750632
 GameObject:
   m_ObjectHideFlags: 0
