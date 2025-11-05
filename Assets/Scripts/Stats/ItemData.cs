@@ -19,7 +19,8 @@ public enum ItemEffectKind
     StompDamage,
     FallDamageBonus,
     DotOnHit,
-    BurnOnDamage
+    BurnOnDamage,
+    HomingProjectiles
 }
 
 [Serializable]
@@ -47,6 +48,10 @@ public class EffectSpec
     public bool dotCanStack = true;
     public int dotMaxStacks = 5;
     public bool dotApplyImmediately = false;
+
+    // Homing Projectiles
+    public int numberOfProjectiles = 3;
+    public float projectileDamageMultiplier = 1.5f;
 }
 
 public enum ItemRarity
@@ -54,7 +59,7 @@ public enum ItemRarity
     Common,
     Uncommon,
     Rare,
-    Legendary
+    Legendary   // Do we need 4 tiers?
 }
 
 public enum StackingType

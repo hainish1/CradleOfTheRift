@@ -29,6 +29,7 @@ public class PlayerInventory : MonoBehaviour
     private StompDamage stompDamageEffect;
     private FallDamageBonus fallDamageBonusEffect;
     private DotOnHit dotOnHitEffect;
+    private HomingProjectileEffect homingProjectilesEffect;
 
     // if I have time limited effects that need use of Updates, I will keep em here
     private readonly List<IDisposable> tickingEffects = new();
@@ -57,6 +58,7 @@ public class PlayerInventory : MonoBehaviour
         stompDamageEffect?.Update(dt);
         fallDamageBonusEffect?.Update(dt);
         dotOnHitEffect?.Update(dt);
+        //homingProjectilesEffect?.Update(dt);
         // more runtime effects would be updated here ig
     }
 
@@ -209,6 +211,9 @@ public class PlayerInventory : MonoBehaviour
                     break;
                 case ItemEffectKind.BurnOnDamage:
                     break; // nothing yet, prolly dont even need it
+                case ItemEffectKind.HomingProjectiles:
+                    EnsureHomingProjectiles(effect, initialStacks: stacksAdded);
+                    break;
             }
         }
 
@@ -310,6 +315,11 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+    private void EnsureHomingProjectiles(EffectSpec effect, int initialStacks)
+    {
+        // Do nothing idk
+    }
+
     private void RemoveEffectStacks(ItemEffectKind kind, int stacks)
     {
         if (stacks <= 0) return;
@@ -354,6 +364,7 @@ public class PlayerInventory : MonoBehaviour
         stompDamageEffect?.Dispose();
         fallDamageBonusEffect?.Dispose();
         dotOnHitEffect?.Dispose();
+        //homingProjectilesEffect?.Dispose();
 
         // any other dispose handle
     }

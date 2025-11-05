@@ -4,7 +4,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private GameObject bulletImpactFX;
-    private TrailRenderer trail;
+    public TrailRenderer trail;
     [Header("flight")]
     [SerializeField] private float lifeTime = 6f;
     [SerializeField] private float gravity = 0f;
@@ -12,20 +12,21 @@ public class Projectile : MonoBehaviour
     [Header("hit")]
     [SerializeField] private float hitForce = 8f;
     [SerializeField] private float knockBackImpulse = 8f;
-    [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
+    [SerializeField] protected LayerMask hitMask = ~0; // what can this bullet hit
 
-    private float actualDamage; // THIS WILL STORE DAMAGE FROM STATS SYSTEM
+    protected float actualDamage; // THIS WILL STORE DAMAGE FROM STATS SYSTEM
 
-    Rigidbody rb;
-    private float age;
-    private Vector3 startPos;
-    private float flyDistance;
-    private Entity attacker;
-    private bool hasHit;
+    public Rigidbody rb;
+    protected float age;
+    protected Vector3 startPos;
+    protected float flyDistance;
+    protected Entity attacker;
+    protected bool hasHit;
 
-    void Awake()
+    public virtual void Awake()
     {
         trail = GetComponent<TrailRenderer>();
+        
         rb = GetComponent<Rigidbody>();
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -33,7 +34,7 @@ public class Projectile : MonoBehaviour
         // meshRenderer = GetComponent<MeshRenderer>();
     }
 
-    public void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
+    public virtual void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
     {
         rb.linearVelocity = velocity;
         hitMask = mask;
@@ -47,10 +48,20 @@ public class Projectile : MonoBehaviour
         this.flyDistance = flyDistance + 1;
 
         Debug.Log($"Projectile initialized with damage: {actualDamage}");
+
+        //Debug.Log("This belongs to the parent");
     }
 
+    public virtual void InitializeTrailVisuals()
+    {
+        trail.Clear();
+        trail.time = 0.25f;
+        startPos = transform.position;
+        this.flyDistance = flyDistance + 1;
+        //Debug.Log("Set trail visuals");
+    }
 
-    void Update()
+    public virtual void Update()
     {
         FadeTrailVisuals();
         age += Time.deltaTime;
@@ -76,9 +87,11 @@ public class Projectile : MonoBehaviour
         {
             trail.time -= 5f * Time.deltaTime;
         }
+
+        //Debug.Log("Fading trail visuals");
     }
 
-    void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision collision)
     {
         if (hasHit) return;
         // alright documenting time
@@ -148,7 +161,7 @@ public class Projectile : MonoBehaviour
 
     }
     
-    private void ReturnToSource()
+    public virtual void ReturnToSource()
     {
         if (ObjectPool.instance != null)
         {

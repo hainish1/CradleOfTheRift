@@ -457,6 +457,7 @@ GameObject:
   - component: {fileID: 4056581679950275586}
   - component: {fileID: 4161314777613396455}
   - component: {fileID: 7406825927314750401}
+  - component: {fileID: 746508259113030074}
   m_Layer: 8
   m_Name: PLAYER
   m_TagString: Player
@@ -876,6 +877,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   threshold: -65
   playerSpawnPoint: {fileID: 0}
+--- !u!114 &746508259113030074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2377490915647840013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af2080b55b1657b4b9a3805d2fc55545, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableHomingProjectiles: 0
+  homingEffectCooldown: 3
+  numberOfProjectiles: 3
+  projectileSpawnOffset: 1
+  shootMask:
+    serializedVersion: 2
+    m_Bits: 3153
+  homingProjectilePrefab: {fileID: 786387644219627909, guid: 1abe98f5a8e4b634ab46dbc4ffd399f4, type: 3}
 --- !u!1 &2808975749909750632
 GameObject:
   m_ObjectHideFlags: 0
