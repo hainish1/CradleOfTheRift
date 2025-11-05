@@ -27,10 +27,15 @@ public class HomingProjectile : Projectile
         // meshRenderer = GetComponent<MeshRenderer>();
     }
 
-    // public override void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
-    // {
-    //     base.Init(velocity, mask, damage, flyDistance, attacker);
-    // }
+    public void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null, Entity targetEntity = null)
+    {
+        base.Init(velocity, mask, damage, flyDistance, attacker);
+        if (targetEntity != null)
+        {
+            target = targetEntity;
+            targetLocation = targetEntity.transform;
+        }
+    }
 
     public override void Update()
     {
@@ -47,6 +52,7 @@ public class HomingProjectile : Projectile
         if (targetLocation == null) return;
         if (!following) return;     // Start homing after a delay
 
+        //targetLocation = targetEntity.transform; // Idk if this is necessary here.
         Vector3 direction = targetLocation.position - transform.position;
         direction.Normalize();
 
