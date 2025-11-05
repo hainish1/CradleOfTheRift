@@ -65,13 +65,15 @@ public class TimerUI : MonoBehaviour
 
     private void UpdateColor()
     {
-        float colorStartTime = 120f; 
-        float colorEndTime = 0f;   
+        float colorEndTime = 0f;  
 
-        if (remainingTime <= colorStartTime)
+        Color customRed;
+        ColorUtility.TryParseHtmlString("#660000", out customRed);
+
+        if (this.remainingTime <= this.timeToDisplayExtraction)
         {
-            float t = Mathf.Clamp01(1f - ((remainingTime - colorEndTime) / (colorStartTime - colorEndTime)));
-            timerLabel.style.color = Color.Lerp(Color.white, Color.red, t);
+            float t = Mathf.Clamp01(1f - ((this.remainingTime - colorEndTime) / (this.timeToDisplayExtraction - colorEndTime)));
+            timerLabel.style.color = Color.Lerp(Color.white, customRed, t);
         }
         else
         {
