@@ -91,7 +91,7 @@ public class Projectile : MonoBehaviour
         //Debug.Log("Fading trail visuals");
     }
 
-    void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision collision)
     {
         if (hasHit) return;
         // alright documenting time

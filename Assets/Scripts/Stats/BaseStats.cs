@@ -30,5 +30,7 @@ public class BaseStats : ScriptableObject
     public float attackSpeed = 5.0f; // attacks per second
 
     public float projectileSpread = 0.1f; // in radians
+
+    public int enableHomingProjectiles = 0; // use int instead of bool
 }
 

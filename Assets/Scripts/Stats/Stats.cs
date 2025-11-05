@@ -16,7 +16,8 @@ public enum StatType
     DashCharges,
     SlamDamage,
     SlamRadius,
-    ProjectileSpread
+    ProjectileSpread,
+    HomingProjectiles
 }
 
 public class Stats
@@ -159,6 +160,16 @@ public class Stats
         }
     }
 
+    public int HomingProjectiles
+    {
+        get
+        {
+            var q = new Query(StatType.HomingProjectiles, baseStats.enableHomingProjectiles);
+            mediator.PerformQuery(this, q);
+            return Mathf.CeilToInt(q.Value);
+        }
+    }
+
     public Stats(StatsMediator mediator, BaseStats baseStats)
     {
         this.mediator = mediator;
@@ -181,6 +192,7 @@ public class Stats
             StatType.DashCooldown => baseStats.dashCooldown,
             StatType.DashCharges => baseStats.dashCharges,
             StatType.AttackSpeed => baseStats.attackSpeed,
+            StatType.HomingProjectiles => baseStats.enableHomingProjectiles,
             _ => 0f,
         };
     }

@@ -10,6 +10,8 @@ public class HomingProjectile : Projectile
     [SerializeField] private float homingForce = 20f;
     [SerializeField] private float initialLaunchForce = 20f;
     [SerializeField] private float delayBeforeTracking = 0.5f;  // Start homing after a delay
+    [SerializeField] private float launchConeAngle = 1.0f;
+
 
     [Header("Targeting")]
     [SerializeField] private float targetingRange = 50f;
@@ -62,7 +64,9 @@ public class HomingProjectile : Projectile
         //rb.AddForce(transform.forward * force, ForceMode.VelocityChange);
         if (rb != null)
         {
-            rb.AddForce(Vector3.up * initialLaunchForce, ForceMode.Impulse);
+            Vector3 randomOffset = Random.insideUnitSphere * launchConeAngle;
+            Vector3 randomLaunchDirection = (Vector3.up + randomOffset).normalized;
+            rb.AddForce(randomLaunchDirection * initialLaunchForce, ForceMode.Impulse);
         }
         yield return new WaitForSeconds(delayBeforeTracking);
         
@@ -100,6 +104,17 @@ public class HomingProjectile : Projectile
             targetLocation = closestTarget.transform;
         }
     }
+
+    // private void OnCollisionEnter(Collision collision)
+    // {
+    //     //Destroy(this.gameObject);
+    //     //base.OnCollisionEnter(collision);
+    //     // if (ObjectPool.instance != null)
+    //     // {
+    //     //     Destroy(this.gameObject);
+    //     // }
+    //     Destroy(this.gameObject);
+    // }
 
     private void OnDrawGizmos()
     {

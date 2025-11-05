@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class HomingProjectileEffect : MonoBehaviour
@@ -17,18 +16,31 @@ public class HomingProjectileEffect : MonoBehaviour
     //Vector3 spawnPosition;
 
     private float timer;
-    private PlayerShooter playerShooter;
+    //private PlayerShooter playerShooter;
 
     void Start()
     {
         playerEntity = GetComponent<Entity>();
         timer = homingEffectCooldown;
-        playerShooter = GetComponent<PlayerShooter>();
+        //playerShooter = GetComponent<PlayerShooter>();
         //homingProjectilePrefab = Resources.Load<GameObject>("HomingProjectile");
     }
 
     void FixedUpdate()
     {
+        if (playerEntity != null)
+        {
+            //Debug.Log(HomingProjectile());
+            if (HomingProjectile() > 0)
+            {
+                enableHomingProjectiles = true;
+            }
+            else
+            {
+                enableHomingProjectiles = false;
+            }
+        }
+
         if (!enableHomingProjectiles) return;
         timer -= Time.fixedDeltaTime;
 
@@ -52,32 +64,28 @@ public class HomingProjectileEffect : MonoBehaviour
 
         for (int i = 0; i < numberOfProjectiles; i++)
         {
-            // REPLACE THIS WILL OBJECT POOLING
+            playerPosition += Vector3.forward * Random.Range(-2f, 2f) * projectileSpawnOffset;
             HomingProjectile homingProjectile = null;
 
-            if (ObjectPool.instance != null)
-            {
-                GameObject pooled = ObjectPool.instance.GetObject(homingProjectilePrefab.gameObject, transform); // spawn at muzzle
-                homingProjectile = pooled.GetComponent<HomingProjectile>();
-                homingProjectile.transform.position = playerPosition;
-                homingProjectile.transform.rotation = Quaternion.identity;
-                Debug.Log("Homing Projectile Used ObjectPool");
-            }
-            else
-            {
-                homingProjectile = Instantiate(homingProjectilePrefab, playerPosition, Quaternion.identity);
+            // I'll figure this out some other century
+            // if (ObjectPool.instance != null)
+            // {
+            //     GameObject pooled = ObjectPool.instance.GetObject(homingProjectilePrefab.gameObject, transform); // spawn at muzzle
+            //     homingProjectile = pooled.GetComponent<HomingProjectile>();
+            //     homingProjectile.transform.position = playerPosition;
+            //     homingProjectile.transform.rotation = Quaternion.identity;
+            //     Debug.Log("Homing Projectile used ObjectPool");
+            // }
+            // else
+            // {
+            //     homingProjectile = Instantiate(homingProjectilePrefab, playerPosition, Quaternion.identity);
+            // }
 
-            }
+            homingProjectile = Instantiate(homingProjectilePrefab, playerPosition, Quaternion.identity);
 
             if (homingProjectile != null)
             {
-                // Here you would set the target of the homing projectile
-                // For example, you might want to find the nearest enemy
-
-                //Transform target = playerPosition;
                 homingProjectile.Init(shootMask, currentDamage, 100, playerEntity); // Example init
-
-                //homingProjectile.targetLocation = target;
             }
         }
     }
@@ -86,5 +94,11 @@ public class HomingProjectileEffect : MonoBehaviour
     {
         enableHomingProjectiles = !enableHomingProjectiles;
         Debug.Log("Homing Projectiles Effect is now " + (enableHomingProjectiles ? "enabled" : "disabled"));
+    }
+
+    private int HomingProjectile()
+    {
+        //numberOfProjectiles = numberOfProjectiles + playerEntity.Stats.HomingProjectiles - 1;
+        return playerEntity.Stats.HomingProjectiles;
     }
 }

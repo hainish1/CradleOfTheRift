@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 786387644219627909}
   - component: {fileID: 2115425427290153885}
   - component: {fileID: 1342931207619941553}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: HomingProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 0.6
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &786387644219627909
 MonoBehaviour:
@@ -138,6 +138,7 @@ MonoBehaviour:
   homingForce: 20
   initialLaunchForce: 20
   delayBeforeTracking: 0.5
+  launchConeAngle: 1
   targetingRange: 60
   targetMask:
     serializedVersion: 2

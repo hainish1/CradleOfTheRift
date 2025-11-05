@@ -20,24 +20,10 @@ MonoBehaviour:
   canStack: 1
   maxStacks: 99
   stackingType: 0
-  useMultipleStats: 1
+  useMultipleStats: 0
   statMods: []
-  effects:
-  - kind: 6
-    duration: 0
-    healOnDamagePercentPerStack: 0
-    stompDamagePerStack: 0
-    stompBounceForce: 0
-    fallDamageBonusPerMeter: 0
-    fallDamageBonusPerStack: 0
-    dotDamagePerTick: 0
-    dotTickInterval: 0
-    dotDuration: 0
-    dotDamagePerStack: 0
-    dotCanStack: 0
-    dotMaxStacks: 0
-    dotApplyImmediately: 0
-  statType: 12
+  effects: []
+  statType: 13
   operatorType: 0
-  value: 0
+  value: 1
   duration: -1
