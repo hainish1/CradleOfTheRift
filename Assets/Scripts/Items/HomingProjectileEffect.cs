@@ -17,11 +17,13 @@ public class HomingProjectileEffect : MonoBehaviour
     //Vector3 spawnPosition;
 
     private float timer;
+    private PlayerShooter playerShooter;
 
     void Start()
     {
         playerEntity = GetComponent<Entity>();
         timer = homingEffectCooldown;
+        playerShooter = GetComponent<PlayerShooter>();
         //homingProjectilePrefab = Resources.Load<GameObject>("HomingProjectile");
     }
 
@@ -52,7 +54,20 @@ public class HomingProjectileEffect : MonoBehaviour
         {
             // REPLACE THIS WILL OBJECT POOLING
             HomingProjectile homingProjectile = null;
-            homingProjectile = Instantiate(homingProjectilePrefab, playerPosition, Quaternion.identity);
+
+            if (ObjectPool.instance != null)
+            {
+                GameObject pooled = ObjectPool.instance.GetObject(homingProjectilePrefab.gameObject, transform); // spawn at muzzle
+                homingProjectile = pooled.GetComponent<HomingProjectile>();
+                homingProjectile.transform.position = playerPosition;
+                homingProjectile.transform.rotation = Quaternion.identity;
+                Debug.Log("Homing Projectile Used ObjectPool");
+            }
+            else
+            {
+                homingProjectile = Instantiate(homingProjectilePrefab, playerPosition, Quaternion.identity);
+
+            }
 
             if (homingProjectile != null)
             {
