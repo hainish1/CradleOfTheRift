@@ -67,7 +67,8 @@ public class Projectile : MonoBehaviour
         age += Time.deltaTime;
         if (age >= lifeTime)
         {
-            Destroy(gameObject);
+            // Destroy(gameObject);
+            ReturnToSource();
             return;
         }
         if (gravity != 0f)
@@ -76,9 +77,22 @@ public class Projectile : MonoBehaviour
         }
 
     }
-    void OnEnable()
+    protected virtual void OnEnable()
     {
         hasHit = false; // so it does not double do it
+        age = 0f;
+
+        if (trail != null)
+        {
+            trail.Clear();
+            trail.time = 0.25f;
+        }
+        
+        if(rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
     }
 
     protected virtual void FadeTrailVisuals()
@@ -91,7 +105,7 @@ public class Projectile : MonoBehaviour
         //Debug.Log("Fading trail visuals");
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public virtual void OnCollisionEnter(Collision collision)
     {
         if (hasHit) return;
         // alright documenting time

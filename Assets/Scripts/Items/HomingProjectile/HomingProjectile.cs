@@ -23,12 +23,26 @@ public class HomingProjectile : Projectile
     public override void Awake()
     {
         base.Awake();
+        // StartCoroutine(WaitBeforeTracking());
+    }
+
+    protected override void OnEnable()
+    {
+        base.OnEnable(); // this shit resets our gameobject for object pool so when its enabled again, we can use it in same way, it resets rb n shit
+        ResetForReuse();
+
         StartCoroutine(WaitBeforeTracking());
+    }
+    
+    private void ResetForReuse()
+    {
+        following = false;
+        targetLocation = null;
     }
 
     public void Init(LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
     {
-        base.Init(new Vector3(0, 0, 0), mask, damage, flyDistance, attacker);
+        base.Init(Vector3.zero, mask, damage, flyDistance, attacker);
         
         // if (target != null)
         // {
@@ -56,6 +70,10 @@ public class HomingProjectile : Projectile
         else if (targetLocation == null && following)
         {
             //b.AddForce(Vector3.up * 0.5f, ForceMode.Impulse);
+            if (rb != null && rb.linearVelocity.sqrMagnitude < homingForce * homingForce)
+            {
+                rb.linearVelocity = transform.forward * Mathf.Max(homingForce * 0.5f, 5f);
+            }
         }
     }
 
@@ -104,17 +122,6 @@ public class HomingProjectile : Projectile
             targetLocation = closestTarget.transform;
         }
     }
-
-    // private void OnCollisionEnter(Collision collision)
-    // {
-    //     //Destroy(this.gameObject);
-    //     //base.OnCollisionEnter(collision);
-    //     // if (ObjectPool.instance != null)
-    //     // {
-    //     //     Destroy(this.gameObject);
-    //     // }
-    //     Destroy(this.gameObject);
-    // }
 
     private void OnDrawGizmos()
     {
