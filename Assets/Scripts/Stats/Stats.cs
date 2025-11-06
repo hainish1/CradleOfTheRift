@@ -3,19 +3,43 @@ using UnityEngine;
 
 public enum StatType
 {
+    // Attack Enums
     ProjectileDamage,
     MeleeDamage,
-    AttackSpeed,
-
-    Health,
-    MoveSpeed,
-    DashSpeed,
-    DashDistance,
-    DashCooldown,
-    DashCharges,
     SlamDamage,
     SlamRadius,
-    ProjectileSpread
+    AttackSpeed,
+    ProjectileSpread,
+    HomingProjectiles,
+
+    // Health Enums
+    Health,
+
+    // Movement Enums
+    MoveSpeed,
+
+    // Knockback Enums
+    KbDamping,
+    KbControlsLockTime,
+    KbDashLockTime,
+
+    // Dash Enums
+    DashDistance,
+    DashSpeed,
+    DashCooldown,
+    DashCharges,
+
+    // Jump Enums
+    JumpForce,
+
+    // Drift Enums
+    DriftDescentDivisor,
+
+    // Flight Enums
+    FlightMaxSpeed,
+    FlightMaxEnergy,
+    FlightRegenerationRate,
+    FlightDepletionRate
 }
 
 public class Stats
@@ -25,156 +49,149 @@ public class Stats
 
     public StatsMediator Mediator => mediator;
 
-    public float ProjectileAttack
-    {
-        get
-        {
-            // return value with modifiers applied
-            var q = new Query(StatType.ProjectileDamage, baseStats.projectileDamage);
-            mediator.PerformQuery(this, q);
-            return q.Value;
+    // Attack Properties
+    
+    public float ProjectileDamage { get { return FloatStatQuery(StatType.ProjectileDamage, baseStats.projectileDamage); } }
 
-        }
-    }
+    public float MeleeDamage { get { return FloatStatQuery(StatType.MeleeDamage, baseStats.meleeDamage); } }
 
-    public float AttackSpeed
-    {
-        get
-        {
-            var q = new Query(StatType.AttackSpeed, baseStats.attackSpeed);
-            mediator.PerformQuery(this, q);
-            return q.Value;
-        }
-    }
+    public float SlamDamage { get { return FloatStatQuery(StatType.SlamDamage, baseStats.slamDamage); } }
 
-    public float Health
-    {
-        get
-        {
-            // return value with modifiers appleid
-            var q = new Query(StatType.Health, baseStats.health);
-            mediator.PerformQuery(this, q);
-            return q.Value;
-        }
-    }
+    public float SlamRadius { get { return FloatStatQuery(StatType.SlamRadius, baseStats.slamRadius); } }
 
-    public float MoveSpeed
-    {
-        get
-        {
-            var q = new Query(StatType.MoveSpeed, baseStats.moveSpeed);
-            mediator.PerformQuery(this, q);
-            return q.Value;
-        }
-    }
+    public float AttackSpeed { get { return FloatStatQuery(StatType.AttackSpeed, baseStats.attackSpeed); } }
 
-    public float DashSpeed
-    {
-        get
-        {
-            var q = new Query(StatType.DashSpeed, baseStats.dashSpeed);
-            mediator.PerformQuery(this, q);
-            return q.Value;
-        }
-    }
+    public float ProjectileSpread { get { return FloatStatQuery(StatType.ProjectileSpread, baseStats.projectileSpread); } }
 
-    public float DashDistance
-    {
-        get
-        {
-            var q = new Query(StatType.DashDistance, baseStats.dashDistance);
-            mediator.PerformQuery(this, q);
-            return q.Value;
-        }
-    }
+    public int HomingProjectiles { get { return IntStatQuery(StatType.HomingProjectiles, baseStats.enableHomingProjectiles); } }
 
-    public float DashCooldown
-    {
-        get
-        {
-            var q = new Query(StatType.DashCooldown, baseStats.dashCooldown);
-            mediator.PerformQuery(this, q);
-            return q.Value;
-        }
-    }
+    // Health Properties
 
-    public int DashCharges
-    {
-        get
-        {
-            var q = new Query(StatType.DashCharges, baseStats.dashCharges);
-            mediator.PerformQuery(this, q);
-            return Mathf.CeilToInt(q.Value);
-        }
-    }
+    public float Health { get { return FloatStatQuery(StatType.Health, baseStats.health); } }
 
-    public float MeleeDamage
-    {
-        get
-        {
-            var q = new Query(StatType.MeleeDamage, baseStats.meleeDamage);
-            mediator.PerformQuery(this, q);
-            return q.Value;
-        }
-    }
+    // Movement Properties
+    
+    public float MoveSpeed { get { return FloatStatQuery(StatType.MoveSpeed, baseStats.moveSpeed); } }
 
-    public float SlamDamage
-    {
-        get
-        {
-            var q = new Query(StatType.SlamDamage, baseStats.slamDamage);
-            mediator.PerformQuery(this, q);
-            return q.Value;
-        }
-    }
+    // Knockback Properties
 
-    public float SlamRadius
-    {
-        get
-        {
-            var q = new Query(StatType.SlamRadius, baseStats.slamAttackRadius);
-            mediator.PerformQuery(this, q);
-            return q.Value;
-        }
-    }
+    public float KbDamping { get { return FloatStatQuery(StatType.KbDamping, baseStats.kbDamping); } }
 
-    public float ProjectileSpread
-    {
-        get
-        {
-            var q = new Query(StatType.ProjectileSpread, baseStats.projectileSpread);
-            mediator.PerformQuery(this, q);
-            return q.Value;
-        }
-    }
+    public float KbControlsLockTime { get { return FloatStatQuery(StatType.KbControlsLockTime, baseStats.kbControlsLockTime); } }
 
+    public float KbDashLockTime { get { return FloatStatQuery(StatType.KbDashLockTime, baseStats.kbDashLockTime); } }
+
+    // Dash Properties
+
+    public float DashDistance { get { return FloatStatQuery(StatType.DashDistance, baseStats.dashDistance); } }
+
+    public float DashSpeed { get { return FloatStatQuery(StatType.DashSpeed, baseStats.dashSpeed); } }
+
+    public float DashCooldown { get { return FloatStatQuery(StatType.DashCooldown, baseStats.dashCooldown); } }
+
+    public int DashCharges { get { return IntStatQuery(StatType.DashCharges, baseStats.dashCharges); } }
+
+    // Jump Properties
+
+    public float JumpForce { get { return FloatStatQuery(StatType.JumpForce, baseStats.jumpForce); } }
+
+    // Drift Properties
+
+    public float DriftDescentDivisor { get { return FloatStatQuery(StatType.DriftDescentDivisor, baseStats.driftDescentDivisor); } }
+
+    // Flight Properties
+
+    public float FlightMaxSpeed { get { return FloatStatQuery(StatType.FlightMaxSpeed, baseStats.flightMaxSpeed); } }
+
+    public int FlightMaxEnergy { get { return IntStatQuery(StatType.FlightMaxEnergy, baseStats.flightMaxEnergy); } }
+
+    public float FlightRegenerationRate { get { return FloatStatQuery(StatType.FlightRegenerationRate, baseStats.flightRegenerationRate); } }
+
+    public float FlightDepletionRate { get { return FloatStatQuery(StatType.FlightDepletionRate, baseStats.flightDepletionRate); } }
+
+    /// <summary>
+    ///   <para>
+    ///     Constructs a stats object.
+    ///   </para>
+    /// </summary>
+    /// <param name="mediator"> The StatsMediator reference. </param>
+    /// <param name="baseStats"> The BaseStats reference. </param>
     public Stats(StatsMediator mediator, BaseStats baseStats)
     {
         this.mediator = mediator;
         this.baseStats = baseStats;
     }
 
+    /// <summary>
+    ///   <para>
+    ///     Gets the base value for the provided stat type.
+    ///   </para>
+    /// </summary>
+    /// <param name="type"> The stat type. </param>
+    /// <returns> The base stat value. </returns>
     public float BaseValueForStat(StatType type)
     {
         return type switch
         {
-            StatType.Health => baseStats.health,
             StatType.ProjectileDamage => baseStats.projectileDamage,
-            StatType.MoveSpeed => baseStats.moveSpeed,
             StatType.MeleeDamage => baseStats.meleeDamage,
             StatType.SlamDamage => baseStats.slamDamage,
-            StatType.SlamRadius => baseStats.slamAttackRadius,
-            StatType.DashSpeed => baseStats.dashSpeed,
+            StatType.SlamRadius => baseStats.slamRadius,
+            StatType.AttackSpeed => baseStats.attackSpeed,
+            StatType.HomingProjectiles => baseStats.enableHomingProjectiles,
+            StatType.Health => baseStats.health,
+            StatType.MoveSpeed => baseStats.moveSpeed,
+            StatType.KbDamping => baseStats.kbDamping,
+            StatType.KbControlsLockTime => baseStats.kbControlsLockTime,
+            StatType.KbDashLockTime => baseStats.kbDashLockTime,
             StatType.DashDistance => baseStats.dashDistance,
+            StatType.DashSpeed => baseStats.dashSpeed,
             StatType.DashCooldown => baseStats.dashCooldown,
             StatType.DashCharges => baseStats.dashCharges,
-            StatType.AttackSpeed => baseStats.attackSpeed,
+            StatType.JumpForce => baseStats.jumpForce,
+            StatType.DriftDescentDivisor => baseStats.driftDescentDivisor,
+            StatType.FlightMaxSpeed => baseStats.flightMaxSpeed,
+            StatType.FlightRegenerationRate => baseStats.flightRegenerationRate,
+            StatType.FlightMaxEnergy => baseStats.flightMaxEnergy,
+            StatType.FlightDepletionRate => baseStats.flightDepletionRate,
+            StatType.ProjectileSpread => baseStats.projectileSpread,
             _ => 0f,
         };
     }
 
     public override string ToString()
     {
-        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, Projectile Damage: {ProjectileAttack}, Melee Damage: {MeleeDamage}, Slam Damage: {SlamDamage}, Attack Speed: {AttackSpeed}";
+        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, Projectile Damage: {ProjectileDamage}, Melee Damage: {MeleeDamage}, Slam Damage: {SlamDamage}, Attack Speed: {AttackSpeed}";
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Queries for float stat values.
+    ///   </para>
+    /// </summary>
+    /// <param name="statType"> The stat type. </param>
+    /// <param name="value"> The current stat value. </param>
+    /// <returns> A float value. </returns>
+    private float FloatStatQuery(StatType statType, float value)
+    {
+        // return value with modifiers applied
+        var q = new Query(statType, value);
+        mediator.PerformQuery(this, q);
+        return q.Value;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Queries for int stat values.
+    ///   </para>
+    /// </summary>
+    /// <param name="statType"> The stat type. </param>
+    /// <param name="value"> The current stat value. </param>
+    /// <returns> An int value. </returns>
+    private int IntStatQuery(StatType statType, float value)
+    {
+        var q = new Query(statType, value);
+        mediator.PerformQuery(this, q);
+        return Mathf.CeilToInt(q.Value);
     }
 }

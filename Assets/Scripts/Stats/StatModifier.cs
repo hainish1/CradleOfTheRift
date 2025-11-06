@@ -28,7 +28,6 @@ public abstract class StatModifier : IDisposable
 
     public void Dispose()
     {
-        
         OnDispose.Invoke(this);
     }
 

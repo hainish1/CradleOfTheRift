@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -7,11 +8,15 @@ public class AttackState_Melee : EnemyState
 {
     private EnemyMelee enemyMelee;
 
-    private enum Phase { Windup, Charge }
+    private enum Phase { Windup, Leap, Charge }
     private Phase phase;
     private float timer;
     private Vector3 chargeDirection;
     private Quaternion lockedChargeRot;
+
+    private Vector3 leapStartPosition;
+    private Vector3 leapTargetPosition;
+    private float leapTimer;
 
     float endTime;
 
@@ -42,6 +47,7 @@ public class AttackState_Melee : EnemyState
         // small windup, basically freeze in place
         phase = Phase.Windup;
         timer = enemyMelee.windupTime;
+        leapTimer = 0f;
         // TryApplyHit();
     }
 
@@ -51,45 +57,85 @@ public class AttackState_Melee : EnemyState
     /// </summary>
     public override void Update()
     {
-
+        
         timer -= Time.deltaTime;
-        if (phase == Phase.Windup)
+
+        switch (phase)
         {
-            FaceTarget(enemy.turnSpeed); // only face during windup
+            case Phase.Windup:
+                HandleWindup();
+                break;
+            case Phase.Leap:
+                HandleLeap();
+                break;
+        }
+    }
 
+    private void HandleWindup()
+    {
+        FaceTarget(enemy.turnSpeed);
 
-            if (timer <= 0f)
+        if(timer <= 0f)
+        {
+            if (enemy.target != null)
             {
-                // lock in straight direction
-                chargeDirection = enemy.target ? (enemy.target.position - enemy.transform.position) : enemy.transform.forward;
-                chargeDirection.y = 0f;
+                leapStartPosition = enemy.transform.position;
+                leapTargetPosition = enemy.target.position;
+
+                leapTargetPosition.y += 0.2f; // THIS MIGHT NEED CHANGE
+
+                chargeDirection = leapTargetPosition - leapStartPosition;
+                chargeDirection.y = 0f; // keep horizontal for rotation
+
                 if (chargeDirection.sqrMagnitude > 0.0001f)
                 {
                     chargeDirection.Normalize();
+                    lockedChargeRot = Quaternion.LookRotation(chargeDirection, Vector3.up);
+                    enemy.transform.rotation = lockedChargeRot;
                 }
-                lockedChargeRot = Quaternion.LookRotation(chargeDirection, Vector3.up);
-                enemy.transform.rotation = lockedChargeRot;
-
-                enemyMelee.EnableHitBox(true);
-
-                phase = Phase.Charge;
-                timer = enemyMelee.chargetTime;
             }
-        }
-        else // Charge phase
-        {
-            enemy.transform.rotation = lockedChargeRot;
-            if (enemy.agent != null)
-                enemy.agent.Move(chargeDirection * enemyMelee.chargeSpeed * Time.deltaTime);
-            else
-                enemy.transform.position += chargeDirection * enemyMelee.chargeSpeed * Time.deltaTime;
 
-            // TryApplyHit(); // nbw the trigger will decide player's fate
+            phase = Phase.Leap;
+            timer = enemyMelee.leapDuration;
+            leapTimer = 0f;
 
-            if (timer <= 0f)
-                stateMachine.ChangeState(enemyMelee.GetRecovery());
         }
     }
+
+    private void HandleLeap()
+    {
+        leapTimer += Time.deltaTime;
+        float t = Mathf.Clamp01(leapTimer / enemyMelee.leapDuration);
+        Vector3 currentPos = Vector3.Lerp(leapStartPosition, leapTargetPosition, t);
+        float heightOffset = enemyMelee.leapHeight * Mathf.Sin(t * Mathf.PI);
+        currentPos.y += heightOffset;
+
+        if (enemy.agent != null)
+        {
+            enemy.agent.updatePosition = false;
+            enemy.transform.position = currentPos;
+        }
+        else
+        {
+            enemy.transform.position = currentPos;
+        }
+        enemy.transform.rotation = lockedChargeRot;
+
+
+        enemyMelee.EnableHitBox(true);
+
+        if (timer <= 0f || t >= 1f)
+        {
+            if (enemy.agent != null)
+            {
+                enemy.agent.updatePosition = true;
+                enemy.agent.Warp(enemy.transform.position);
+            }
+            enemyMelee.EnableHitBox(false);
+            stateMachine.ChangeState(enemyMelee.GetRecovery());
+        }
+    }
+
 
 
     /// <summary>

@@ -86,7 +86,11 @@ public class PlayerGroundSlam : MonoBehaviour
 
     private IEnumerator SlamRoutine()
     {
-        // short freeze before drop to check
+        if (FallDamageBonus.Instance != null)
+        {
+            FallDamageBonus.Instance.RecordSlamStartHeight(transform.position.y);
+        }
+        
         yield return new WaitForSeconds(slamStartDelay);
 
         isSlamming = true;
@@ -155,7 +159,18 @@ public class PlayerGroundSlam : MonoBehaviour
 
                 // then do damage
                 var dmg = enemy?.GetComponent<IDamageable>();
-                if (dmg != null) dmg.TakeDamage(SlamDamage);
+                if (dmg != null)
+                {
+                    float totalDamage = SlamDamage;
+                    
+                    if (FallDamageBonus.Instance != null)
+                    {
+                        float bonusDamage = FallDamageBonus.Instance.GetBonusSlamDamage(transform.position.y);
+                        totalDamage += bonusDamage;
+                    }
+                    
+                    dmg.TakeDamage(totalDamage);
+                }
             }
         }
 

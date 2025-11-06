@@ -47,12 +47,10 @@ public class StatsMediator
 
             if (node.Value.MarkedForRemoval)
             {
-
                 node.Value.Dispose();
             }
 
             node = nextNode;
-
         }
     }
 }

@@ -23,11 +23,18 @@ public class EnemyMelee : Enemy
     public float slamDamage = 1;
     public float windupTime = .15f;
     public float chargeSpeed = 12f;
-    public float chargetTime = .18f;
+    public float chargeTime = .18f;
 
     [Header("AttackHitbox")]
     [SerializeField] private EnemyMeleeHitbox hitbox;
     [HideInInspector] public bool hitAppliedThisAttack;
+
+    [Header("Leap Attack Settings")]
+    public float leapAttackRange = 5f; // distance to start leap
+    public float minAttackDistance = 3f; // min safe dist
+    public float leapHeight = 1f; // vertical arc
+    public float leapDuration = .5f; // time for leap
+
 
 
 

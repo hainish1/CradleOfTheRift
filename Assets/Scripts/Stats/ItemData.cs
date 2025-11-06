@@ -1,5 +1,73 @@
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
+[Serializable]
+public class StatModSpec
+{
+    public StatType statType = StatType.Health;
+    public OperatorType operatorType = OperatorType.Add;
+    public float value = 1f;
+    public int duration = -1; // -1 is perm
+}
+
+public enum ItemEffectKind
+{
+    None,
+    HealOnDamage,
+    StompDamage,
+    FallDamageBonus,
+    DotOnHit,
+    BurnOnDamage,
+    HomingProjectiles
+}
+
+[Serializable]
+public class EffectSpec
+{
+    public ItemEffectKind kind = ItemEffectKind.None;
+    public float duration = -1f; // -1 : Perm
+
+    // HEAL ON DAMAGE
+    [Range(0f, 1f)] public float healOnDamagePercentPerStack = .02f;
+
+    // Stomp
+    public float stompDamagePerStack = 10f;
+    public float stompBounceForce = 8f;
+
+    // FallDamageBonus
+    public float fallDamageBonusPerMeter = 2f;
+    public float fallDamageBonusPerStack = 1f;
+
+    // DOT
+    public float dotDamagePerTick = 2f;
+    public float dotTickInterval = 1f;
+    public float dotDuration = 5f;
+    public float dotDamagePerStack = 1f;
+    public bool dotCanStack = true;
+    public int dotMaxStacks = 5;
+    public bool dotApplyImmediately = false;
+
+    // Homing Projectiles
+    public int numberOfProjectiles = 3;
+    public float projectileDamageMultiplier = 1.5f;
+}
+
+public enum ItemRarity
+{
+    Common,
+    Uncommon,
+    Rare,
+    Legendary   // Do we need 4 tiers?
+}
+
+public enum StackingType
+{
+    Linear
+}
+
+// Legacy single-stat fields remain but they will be ignored when useMultipleStats is TRUE
 [CreateAssetMenu(fileName = "New Item", menuName = "Items/Item")]
 public class ItemData : ScriptableObject
 {
@@ -13,39 +81,31 @@ public class ItemData : ScriptableObject
     public ItemRarity rarity = ItemRarity.Common;
     public Color rarityColor = Color.white;
 
-    [Header("Stat effects")]
+    [Header("Stacking")]
+    public bool canStack = true;
+    public int maxStacks = 99;
+    public StackingType stackingType = StackingType.Linear;
+    
+    [Space]
+
+    [Header("MULTIPLE Stat Effects")]
+    public bool useMultipleStats = true;
+    public List<StatModSpec> statMods = new List<StatModSpec>();
+
+    [Header("MULTIPLE Runtime Effects")]
+    public List<EffectSpec> effects = new List<EffectSpec>();
+
+    [Space]
+
+    // Legacy Single-Stat, I will ignore this when useMultipleStats is TRUE
+
+    [Header("Stat effects - Only if 1 Stack")]
     public StatType statType = StatType.Health;
     public OperatorType operatorType = OperatorType.Add;
     public float value = 1f;
     public int duration = -1; // perm by default
 
-    [Header("Stacking")]
-    public bool canStack = true;
-    public int maxStacks = 99;
-    public StackingType stackingType = StackingType.Linear;
-
-    [Header("Effect (non-stat)")]
-    public ItemEffectKind effectKind = ItemEffectKind.None;
-
-    [Range(0f, 1f)] public float healOnDamagePercentPerStack = 0.02f; // 2% per stack
-    public float effectDuration = -1f; // -1 = permanent
 }
 
-public enum ItemRarity
-{
-    Common,
-    Uncommon,
-    Rare,
-    Legendary
-}
 
-public enum StackingType
-{
-    Linear
-}
 
-public enum ItemEffectKind
-{
-    None,
-    HealOnDamage
-}

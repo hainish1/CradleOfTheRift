@@ -99,7 +99,6 @@ public class InventoryUI_UITK : MonoBehaviour
         if (icon != null && itemData.icon != null)
         {
             icon.style.backgroundImage = new StyleBackground(itemData.icon);
-            icon.style.unityBackgroundScaleMode = ScaleMode.ScaleToFit;
         }
 
         if (countLabel != null)
