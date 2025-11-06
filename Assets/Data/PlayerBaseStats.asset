@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af0b452f2c11613468bfbe10a80ddeaa, type: 3}
   m_Name: PlayerBaseStats
   m_EditorClassIdentifier: 
-  projectileDamage: 1
+  projectileDamage: 2
   meleeDamage: 2
   slamDamage: 3
   slamRadius: 10
@@ -20,7 +20,7 @@ MonoBehaviour:
   projectileSpread: 0.5
   enableHomingProjectiles: 0
   health: 15
-  gravityMultiplier: 3
+  gravityMultiplier: 4
   gravityAirDrag: 1
   moveSpeed: 18
   kbDamping: 0.125
@@ -28,11 +28,11 @@ MonoBehaviour:
   kbDashLockTime: 0.12
   dashDistance: 14
   dashSpeed: 100
-  dashCooldown: 1.5
+  dashCooldown: 4
   dashCharges: 2
-  jumpForce: 17
+  jumpForce: 20
   driftDescentDivisor: 0.25
   flightMaxSpeed: 20
   flightMaxEnergy: 100
   flightRegenerationRate: 30
-  flightDepletionRate: 25
+  flightDepletionRate: 20
