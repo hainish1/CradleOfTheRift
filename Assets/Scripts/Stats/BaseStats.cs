@@ -49,15 +49,7 @@ public class BaseStats : ScriptableObject
 
     [Space]
 
-    [Header("Drift Parameters")]
-    [Range(0, 1)]
-    [Tooltip("How much gravity is divided when drifting.")] public float driftDescentDivisor;
-    
-    [Space]
+    public float projectileSpread = 0.1f; // in radians
 
-    [Header("Flight Parameters")]
-    [Tooltip("Max vertical flight speed in units per second.")] public float flightMaxSpeed;
-    [Tooltip("Capacity value of flight energy")] public int flightMaxEnergy;
-    [Tooltip("Amount of flight energy regeneration per second.")] public float flightRegenerationRate;
-    [Tooltip("Amount of flight energy depleted per second.")] public float flightDepletionRate;
+    public int enableHomingProjectiles = 0; // use int instead of bool
 }

@@ -8,37 +8,8 @@ public enum StatType
     MeleeDamage,
     SlamDamage,
     SlamRadius,
-    AttackSpeed,
     ProjectileSpread,
-
-    // Health Enums
-    Health,
-
-    // Movement Enums
-    MoveSpeed,
-
-    // Knockback Enums
-    KbDamping,
-    KbControlsLockTime,
-    KbDashLockTime,
-
-    // Dash Enums
-    DashDistance,
-    DashSpeed,
-    DashCooldown,
-    DashCharges,
-
-    // Jump Enums
-    JumpForce,
-
-    // Drift Enums
-    DriftDescentDivisor,
-
-    // Flight Enums
-    FlightMaxSpeed,
-    FlightMaxEnergy,
-    FlightRegenerationRate,
-    FlightDepletionRate
+    HomingProjectiles
 }
 
 public class Stats
@@ -82,37 +53,16 @@ public class Stats
 
     public float DashDistance { get { return FloatStatQuery(StatType.DashDistance, baseStats.dashDistance); } }
 
-    public float DashSpeed { get { return FloatStatQuery(StatType.DashSpeed, baseStats.dashSpeed); } }
+    public int HomingProjectiles
+    {
+        get
+        {
+            var q = new Query(StatType.HomingProjectiles, baseStats.enableHomingProjectiles);
+            mediator.PerformQuery(this, q);
+            return Mathf.CeilToInt(q.Value);
+        }
+    }
 
-    public float DashCooldown { get { return FloatStatQuery(StatType.DashCooldown, baseStats.dashCooldown); } }
-
-    public int DashCharges { get { return IntStatQuery(StatType.DashCharges, baseStats.dashCharges); } }
-
-    // Jump Properties
-
-    public float JumpForce { get { return FloatStatQuery(StatType.JumpForce, baseStats.jumpForce); } }
-
-    // Drift Properties
-
-    public float DriftDescentDivisor { get { return FloatStatQuery(StatType.DriftDescentDivisor, baseStats.driftDescentDivisor); } }
-
-    // Flight Properties
-
-    public float FlightMaxSpeed { get { return FloatStatQuery(StatType.FlightMaxSpeed, baseStats.flightMaxSpeed); } }
-
-    public int FlightMaxEnergy { get { return IntStatQuery(StatType.FlightMaxEnergy, baseStats.flightMaxEnergy); } }
-
-    public float FlightRegenerationRate { get { return FloatStatQuery(StatType.FlightRegenerationRate, baseStats.flightRegenerationRate); } }
-
-    public float FlightDepletionRate { get { return FloatStatQuery(StatType.FlightDepletionRate, baseStats.flightDepletionRate); } }
-
-    /// <summary>
-    ///   <para>
-    ///     Constructs a stats object.
-    ///   </para>
-    /// </summary>
-    /// <param name="mediator"> The StatsMediator reference. </param>
-    /// <param name="baseStats"> The BaseStats reference. </param>
     public Stats(StatsMediator mediator, BaseStats baseStats)
     {
         this.mediator = mediator;
@@ -144,12 +94,8 @@ public class Stats
             StatType.DashSpeed => baseStats.dashSpeed,
             StatType.DashCooldown => baseStats.dashCooldown,
             StatType.DashCharges => baseStats.dashCharges,
-            StatType.JumpForce => baseStats.jumpForce,
-            StatType.DriftDescentDivisor => baseStats.driftDescentDivisor,
-            StatType.FlightMaxSpeed => baseStats.flightMaxSpeed,
-            StatType.FlightRegenerationRate => baseStats.flightRegenerationRate,
-            StatType.FlightMaxEnergy => baseStats.flightMaxEnergy,
-            StatType.FlightDepletionRate => baseStats.flightDepletionRate,
+            StatType.AttackSpeed => baseStats.attackSpeed,
+            StatType.HomingProjectiles => baseStats.enableHomingProjectiles,
             _ => 0f,
         };
     }

@@ -21,7 +21,8 @@ public class ExtractionUI : MonoBehaviour
         this.extractionBar.lowValue = zeroValue;
         this.extractionBar.highValue = this.extractionZone.ChargeTime;
         this.extractionBar.value = zeroValue;
-        this.extractionBar.visible = false;
+        this.extractionBar.style.display = DisplayStyle.None;
+        
 
         this.extractionZone.ChargeChanged += this.OnChargeChanged;
         this.extractionZone.ExtractionInteracted += this.OnExtractionInteracted;
@@ -37,6 +38,6 @@ public class ExtractionUI : MonoBehaviour
 
     private void OnExtractionInteracted()
     {
-        this.extractionBar.visible = true;
+        this.extractionBar.style.display = DisplayStyle.Flex;
     }
 }
