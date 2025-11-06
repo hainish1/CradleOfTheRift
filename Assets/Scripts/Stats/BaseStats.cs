@@ -10,6 +10,7 @@ public class BaseStats : ScriptableObject
     public float slamRadius = 10;
     public float attackSpeed = 5.0f; // attacks per second
     public float projectileSpread = 0.1f; // in radians
+    public int enableHomingProjectiles = 0; // use int instead of bool
 
     [Space]
 
@@ -49,7 +50,15 @@ public class BaseStats : ScriptableObject
 
     [Space]
 
-    public float projectileSpread = 0.1f; // in radians
+    [Header("Drift Parameters")]
+    [Range(0, 1)]
+    [Tooltip("How much gravity is divided when drifting.")] public float driftDescentDivisor;
 
-    public int enableHomingProjectiles = 0; // use int instead of bool
+    [Space]
+
+    [Header("Flight Parameters")]
+    [Tooltip("Max vertical flight speed in units per second.")] public float flightMaxSpeed;
+    [Tooltip("Capacity value of flight energy")] public int flightMaxEnergy;
+    [Tooltip("Amount of flight energy regeneration per second.")] public float flightRegenerationRate;
+    [Tooltip("Amount of flight energy depleted per second.")] public float flightDepletionRate;
 }

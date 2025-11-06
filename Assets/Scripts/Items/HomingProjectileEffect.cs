@@ -60,7 +60,7 @@ public class HomingProjectileEffect : MonoBehaviour
         }
         Debug.Log("Spawning homing projectiles");
         Vector3 playerPosition = transform.position + (Vector3.up * projectileSpawnOffset);
-        float currentDamage = playerEntity.Stats.ProjectileAttack * 1.5f;
+        float currentDamage = playerEntity.Stats.ProjectileDamage * 1.5f;
 
         for (int i = 0; i < numberOfProjectiles; i++)
         {
