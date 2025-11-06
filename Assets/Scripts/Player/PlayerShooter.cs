@@ -145,7 +145,7 @@ public class PlayerShooter : MonoBehaviour
 
         // now stat timeeee 
 
-        float currentDamage = playerEntity.Stats.ProjectileAttack;
+        float currentDamage = playerEntity.Stats.ProjectileDamage;
 
         Projectile proj = null;
 
