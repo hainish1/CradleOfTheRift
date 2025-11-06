@@ -131,13 +131,13 @@ MonoBehaviour:
   knockBackImpulse: 8
   hitMask:
     serializedVersion: 2
-    m_Bits: 3537
+    m_Bits: 3153
   rb: {fileID: 0}
   targetLocation: {fileID: 0}
   rotationForce: 30
-  homingForce: 20
-  initialLaunchForce: 20
-  delayBeforeTracking: 0.5
+  homingForce: 40
+  initialLaunchForce: 30
+  delayBeforeTracking: 0.3
   launchConeAngle: 1
   targetingRange: 60
   targetMask:

@@ -30,7 +30,7 @@ public class HomingProjectileEffect : MonoBehaviour
     {
         if (playerEntity != null)
         {
-            //Debug.Log(HomingProjectile());
+            Debug.Log(HomingProjectile());
             if (HomingProjectile() > 0)
             {
                 enableHomingProjectiles = true;
