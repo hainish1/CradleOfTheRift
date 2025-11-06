@@ -493,6 +493,7 @@ public class PlayerMovement : MonoBehaviour
         // Because move speed right before moment of knockback must be preserved for correct calculations,
         // simply stop recording new movement values instead of completely skipping the MoveCase method.
         Vector3 moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
+        //Vector3.ProjectOnPlane(GetMoveInputDirection(), _groundPoint.normal).normalized;
 
         float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
 
