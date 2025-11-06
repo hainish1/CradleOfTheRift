@@ -53,17 +53,21 @@ unity-content {
 
 #HealthContainer {
     position: absolute;
-    bottom: 100px;      /* distance from bottom; adjust so it’s above inventory */
-    left: 10px;         /* align with left edge of screen */
+    bottom: 15px;      /* distance from bottom; adjust so it’s above inventory */
+    left: 50%;         /* align with left edge of screen */
+    margin-left: -150px;
     width: 300px;       /* health bar width */
     height: 25px;       /* health bar height */
 }
 
+
 #GoldContainer {
-    position: absolute;
-    top: 10px;      /* distance from the top of the screen */
-    left: 10px;     /* distance from the left of the screen */
-    width: auto;    /* or set a specific width if needed */
+    margin-top: 10px;   /* pushes gold down below extraction bar */
+}
+
+#GoldLabel {
+    font-size: 28px;
+    font-weight: bold;
 }
 
 #TimerContainer {
@@ -75,7 +79,7 @@ unity-content {
 
 #TimerContainer > Label {
     color: white;     /* make text visible */
-    font-size: 24px;  /* adjust as needed */
+    font-size: 40px;  /* adjust as needed */
 }
 
 

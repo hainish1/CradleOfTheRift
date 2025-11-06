@@ -128,6 +128,10 @@ public class PlayerShooter : MonoBehaviour
         isFiring = false;
     }
 
+    public Transform GetMuzzleTransform()
+    {
+        return muzzle;
+    }
     private void TryToFire(bool force = false)
     {
         if (!aim || !muzzle || !projectilePrefab) return;
@@ -145,7 +149,7 @@ public class PlayerShooter : MonoBehaviour
 
         // now stat timeeee 
 
-        float currentDamage = playerEntity.Stats.ProjectileAttack;
+        float currentDamage = playerEntity.Stats.ProjectileDamage;
 
         Projectile proj = null;
 
@@ -164,7 +168,7 @@ public class PlayerShooter : MonoBehaviour
         }
         // // NOTE TO SELF : USE OBJECT POOLING LATER TO REDUCE INSTANTIATING
         proj?.Init(direction * projectileSpeed, shootMask, currentDamage, 100, playerEntity);
-        
+
         // Debug.Log($"Fired projectile with {currentDamage} damage");
         // Play firing sound
         audioController?.PlayAttackSound();

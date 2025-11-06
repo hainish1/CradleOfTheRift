@@ -29,7 +29,9 @@ public class PlayerMovement : MonoBehaviour
     private InputAction flightActions;
     private InputAction sprintActions;
 
-    [Header("Player References")] [Space]
+    // Player Parameters
+
+    [Header("Player Parameters")] [Space]
     [SerializeField]
     [Tooltip("An empty object positioned at the exact center of the player character object.")] private Transform _playerCenter;
     [SerializeField]
@@ -39,11 +41,15 @@ public class PlayerMovement : MonoBehaviour
     private float _playerHalfHeight;
     private float _playerRadius;
 
-    [Header("Gravity Parameters")]
+    // Gravity Parameters
+
+    [Header("Gravity Parameters")] [Space]
     [SerializeField]
     [Tooltip("How much gravity is multiplied in units per second (base gravity value is -9.81).")] public float _gravityMultiplier;
     [SerializeField]
     [Tooltip("How quickly the player character decelerates to the aggregate gravity descent speed if it is exceeded in units per second.")] private float _gravityAirDrag;
+
+    // Movement Parameters
 
     private float MoveMaxSpeed { get; set; }
     [Header("Movement Parameters")] [Space]
@@ -56,6 +62,8 @@ public class PlayerMovement : MonoBehaviour
     private float _moveAcceleration;
     private float _moveDeceleration;
     private Vector3 _lateralVelocityVector;
+
+    // Hover Parameters
 
     [Header("Hover Parameters")] [Space]
     [SerializeField]
@@ -76,18 +84,17 @@ public class PlayerMovement : MonoBehaviour
     private int _groundedLayerMasks;
     private RaycastHit _groundPoint;
 
-    [Header("KnockBack Parameters")] [Space]
-    [SerializeField]
-    [Tooltip("Seconds needed for a knockback impulse to dissipate.")] private float _kbDamping;
-    [SerializeField]
-    [Tooltip("Seconds that controls are locked after a knockback impulse.")] private float _kbControlsLockTime;
-    [SerializeField]
-    [Tooltip("Seconds that dashing is locked after a knockback impulse.")] private float _kbDashLockTime;
+    // Knockback Parameters
+    
+    private float _kbDamping;
+    private float _kbControlsLockTime;
+    private float _kbDashLockTime;
     private float _kbControlsLockTimer;
     private float _kbDashLockTimer;
     private Vector3 _externalKnockbackVelocity;
 
     // Dash Parameters
+    
     private float DashDistance { get; set; }
     private float DashSpeed { get; set; }
     private float DashCooldown { get; set; }
@@ -98,33 +105,36 @@ public class PlayerMovement : MonoBehaviour
     public event System.Action<float> DashCooldownStarted;
     private Vector3 _dashDirectionUnitVector;
 
-    [Header("Jump Parameters")] [Space]
-    [SerializeField]
-    [Tooltip("Vertical jump strength in units per second.")] private float _jumpForce;
-    private bool _inputtedJumpThisFrame;
-    private Vector3 _verticalVelocityVector;
+    // Jump Parameters
 
-    [Header("Coyote Time Parameters")] [Space]
+    private float _jumpForce;
+    [Header("Jump Parameters")] [Space]
     [SerializeField]
     [Tooltip("Seconds that jump can still be registered after walking off an edge.")] private float _coyoteTimeWindow;
     [SerializeField]
     [Tooltip("Seconds that jump can still be registered before touching the ground.")] private float _jumpBufferWindow;
+    private bool _inputtedJumpThisFrame;
     private float _coyoteTimer;
     private float _jumpBufferTimer;
+    private Vector3 _verticalVelocityVector;
 
+    // Drift Parameters
+
+    private float _driftDescentDivisor;
     [Header("Drift Parameters")] [Space]
-    [SerializeField]
-    [Range(0, 1)]
-    [Tooltip("How much gravity is divided when drifting.")] private float _driftDescentDivisor;
     [SerializeField]
     [Tooltip("Seconds before Drift Descent Divisor gradually reaches full effect.")] private float _driftDelay;
     private bool _isDrifting;
     private float _currDriftDescentDivisor;
     private float _driftDelayTimer;
 
+    // Flight Parameters
+
+    private float _flightMaxSpeed;
+    private int _flightMaxEnergy;
+    private float _flightRegenerationRate;
+    private float _flightDepletionRate;
     [Header("Flight Parameters")] [Space]
-    [SerializeField]
-    [Tooltip("Max vertical flight speed in units per second.")] private float _flightMaxSpeed;
     [SerializeField]
     [Tooltip("Seconds needed to reach Max Flight Speed.")] private float _flightAccelerationSeconds;
     [SerializeField]
@@ -134,12 +144,6 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("The multiplier strength of flight counter-acceleration in units per second.")] private float _flightCounterAccelerationMultiplier;
     [SerializeField]
     [Tooltip("Vertical strength of the jump right before flight in units per second.")] private float _flightJumpForce;
-    [SerializeField]
-    [Tooltip("Amount of flight energy regeneration per second.")] private float _flightRegenerationRate;
-    [SerializeField]
-    [Tooltip("Capacity value of flight energy")] private int _flightMaxEnergy;
-    [SerializeField]
-    [Tooltip("Amount of flight energy depleted per second.")] private float _flightDepletionRate;
     private bool _isFlying;
     private bool _isRegeneratingFlight;
     private float _currFlightEnergy;
@@ -192,7 +196,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_playerEntity != null)
         {
-            // Player References
+            // Player Parameters
             _playerHalfHeight = GetComponent<CharacterController>().height / 2;
             _playerRadius = GetComponent<CharacterController>().radius;
 
@@ -214,6 +218,9 @@ public class PlayerMovement : MonoBehaviour
             GetIsGrounded();
 
             // KnockBack Parameters
+            _kbDamping = _playerEntity.Stats.KbDamping;
+            _kbControlsLockTime = _playerEntity.Stats.KbControlsLockTime;
+            _kbDashLockTime = _playerEntity.Stats.KbDashLockTime;
             _kbControlsLockTimer = 0;
             _kbDashLockTimer = 0;
 
@@ -230,6 +237,7 @@ public class PlayerMovement : MonoBehaviour
             _isRegeneratingDash = false;
 
             // Jump Parameters
+            _jumpForce = _playerEntity.Stats.JumpForce;
             _inputtedJumpThisFrame = false;
 
             // Coyote Time Parameters
@@ -237,11 +245,16 @@ public class PlayerMovement : MonoBehaviour
             _jumpBufferTimer = 0;
 
             // Drift Parameters
+            _driftDescentDivisor = _playerEntity.Stats.DriftDescentDivisor;
             _currDriftDescentDivisor = 1;
             _driftDelayTimer = 0;
             _isDrifting = false;
 
             // Flight Parameters
+            _flightMaxSpeed = _playerEntity.Stats.FlightMaxSpeed;
+            _flightMaxEnergy = _playerEntity.Stats.FlightMaxEnergy;
+            _flightRegenerationRate = _playerEntity.Stats.FlightRegenerationRate;
+            _flightDepletionRate = _playerEntity.Stats.FlightDepletionRate;
             _isFlying = false;
             _isRegeneratingFlight = false;
             _flightAcceleration = _flightMaxSpeed / _flightAccelerationSeconds;
@@ -480,6 +493,7 @@ public class PlayerMovement : MonoBehaviour
         // Because move speed right before moment of knockback must be preserved for correct calculations,
         // simply stop recording new movement values instead of completely skipping the MoveCase method.
         Vector3 moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
+        //Vector3.ProjectOnPlane(GetMoveInputDirection(), _groundPoint.normal).normalized;
 
         float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
 

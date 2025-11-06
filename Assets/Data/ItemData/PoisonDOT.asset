@@ -13,30 +13,16 @@ MonoBehaviour:
   m_Name: PoisonDOT
   m_EditorClassIdentifier: 
   itemName: POSION
-  description: 
-  icon: {fileID: 21300090, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  description: who tf spelled this "posion" bruh
+  icon: {fileID: 0}
   rarity: 1
-  rarityColor: {r: 0.3, g: 1, b: 0.3, a: 1}
+  rarityColor: {r: 0.3, g: 0.8, b: 0.3, a: 1}
   canStack: 1
   maxStacks: 10
   stackingType: 0
   useMultipleStats: 1
   statMods: []
-  effects:
-  - kind: 4
-    duration: -1
-    healOnDamagePercentPerStack: 0
-    stompDamagePerStack: 0
-    stompBounceForce: 0
-    fallDamageBonusPerMeter: 0
-    fallDamageBonusPerStack: 0
-    dotDamagePerTick: 2
-    dotTickInterval: 1
-    dotDuration: 4
-    dotDamagePerStack: 1
-    dotCanStack: 1
-    dotMaxStacks: 6
-    dotApplyImmediately: 1
+  effects: []
   statType: 0
   operatorType: 0
   value: 0

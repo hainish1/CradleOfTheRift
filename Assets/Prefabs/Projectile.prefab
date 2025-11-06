@@ -124,13 +124,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletImpactFX: {fileID: 8296457393497080562, guid: 83ff99043eb56d54099c28f25d33f0ab, type: 3}
+  trail: {fileID: 0}
   lifeTime: 5
   gravity: 0
   hitForce: 5
   knockBackImpulse: 8
   hitMask:
     serializedVersion: 2
-    m_Bits: 3153
+    m_Bits: 3537
+  rb: {fileID: 0}
 --- !u!54 &729833330588080243
 Rigidbody:
   m_ObjectHideFlags: 0

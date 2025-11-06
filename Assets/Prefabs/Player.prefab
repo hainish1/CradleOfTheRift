@@ -457,8 +457,9 @@ GameObject:
   - component: {fileID: 4056581679950275586}
   - component: {fileID: 4161314777613396455}
   - component: {fileID: 7406825927314750401}
+  - component: {fileID: 746508259113030074}
   m_Layer: 8
-  m_Name: PLAYER
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -574,22 +575,13 @@ MonoBehaviour:
   _groundedCastLength: 1.5
   _maxGroundAngle: 60
   _groundedCastJumpPauseDuration: 0.2
-  _kbDamping: 0.125
-  _kbControlsLockTime: 0.18
-  _kbDashLockTime: 0.12
-  _jumpForce: 15
   _coyoteTimeWindow: 0.15
   _jumpBufferWindow: 0.15
-  _driftDescentDivisor: 0.1
-  _driftDelay: 0.5
-  _flightMaxSpeed: 20
+  _driftDelay: 0.2
   _flightAccelerationSeconds: 0.75
   _flightDecelerationSeconds: 0.5
   _flightCounterAccelerationMultiplier: 2
   _flightJumpForce: 20
-  _flightRegenerationRate: 30
-  _flightMaxEnergy: 100
-  _flightDepletionRate: 25
 --- !u!114 &3932950717491979509
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -876,6 +868,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   threshold: -65
   playerSpawnPoint: {fileID: 0}
+--- !u!114 &746508259113030074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2377490915647840013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af2080b55b1657b4b9a3805d2fc55545, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableHomingProjectiles: 0
+  homingEffectCooldown: 3
+  numberOfProjectiles: 3
+  projectileSpawnOffset: 1
+  shootMask:
+    serializedVersion: 2
+    m_Bits: 3153
+  homingProjectilePrefab: {fileID: 786387644219627909, guid: 1abe98f5a8e4b634ab46dbc4ffd399f4, type: 3}
 --- !u!1 &2808975749909750632
 GameObject:
   m_ObjectHideFlags: 0
