@@ -1,6 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <ui:Template name="InventoryUI" src="project://database/Assets/UI/InventoryUI.uxml?fileID=9197481963319205126&amp;guid=9836c162555c40640a3ee2f70b6ac4d6&amp;type=3#InventoryUI" />
-    <ui:Template name="AbilitySlot" src="project://database/Assets/UI/AbilitySlot.uxml?fileID=9197481963319205126&amp;guid=a8e77727db11c7e40809d6ff565c7ddc&amp;type=3#AbilitySlot" />
     <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=340cd68f9068b8147b6cb9f90ab8e93c&amp;type=3#Stylesheet" />
     <ui:VisualElement name="HUD" style="flex-grow: 1;">
         <ui:VisualElement name="InventoryGroup" style="flex-grow: 1; top: -34px; left: 1px;">
@@ -20,9 +19,7 @@
         <ui:VisualElement name="HealthContainer" style="flex-grow: 1; align-items: flex-start; justify-content: flex-start;">
             <ui:ProgressBar name="HealthBar" style="visibility: hidden;" />
         </ui:VisualElement>
-        <ui:VisualElement name="AbilityBar" style="flex-grow: 1;">
-            <ui:Instance template="AbilitySlot" />
-        </ui:VisualElement>
+        <ui:VisualElement name="AbilityBar" style="flex-grow: 1;" />
     </ui:VisualElement>
     <ui:VisualElement name="SpawnerDev">
         <ui:Label name="CurrentEnemyCount" text="Current Enemy Count: 0" />
