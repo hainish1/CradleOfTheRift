@@ -12,9 +12,11 @@ public class AbilityUIController : MonoBehaviour
     {
         public string abilityName;
         public string key;
-        public Texture2D icon; // Assign directly in Inspector
+        public Texture2D icon;
         public int maxCharges;
-        [HideInInspector] public int currentCharges; // track at runtime
+        [HideInInspector] public int currentCharges;
+        [HideInInspector] public int pendingCooldowns = 0; // how many cooldowns are waiting
+        [HideInInspector] public bool isCooldownRunning = false; // is overlay animating
     }
 
 
@@ -23,7 +25,7 @@ public class AbilityUIController : MonoBehaviour
     {
         public VisualElement slotElement;
         public Label chargeLabel;
-        public VisualElement cooldownOverlay;
+        public List<VisualElement> cooldownOverlays = new List<VisualElement>();
     }
 
     private List<AbilitySlot> abilitySlots = new List<AbilitySlot>();
@@ -49,13 +51,13 @@ public class AbilityUIController : MonoBehaviour
     {
         var slot = abilitySlotAsset.Instantiate();
         var chargeLabel = slot.Q<Label>("ChargeLabel");
-        var overlay = slot.Q<VisualElement>("CooldownOverlay");
 
-        // Initialize
+        // Initialize ability
         ability.currentCharges = ability.maxCharges;
         chargeLabel.text = ability.currentCharges.ToString();
         slot.Q<Label>("KeyLabel").text = ability.key;
 
+        // Initialize icon
         var iconElement = slot.Q<VisualElement>("AbilityIcon");
         iconElement.style.backgroundImage = new StyleBackground(ability.icon);
         iconElement.style.backgroundSize = new BackgroundSize(BackgroundSizeType.Cover);
@@ -63,42 +65,62 @@ public class AbilityUIController : MonoBehaviour
         iconElement.style.backgroundPositionY = new BackgroundPosition(BackgroundPositionKeyword.Center);
         iconElement.style.backgroundRepeat = new BackgroundRepeat(Repeat.NoRepeat, Repeat.NoRepeat);
 
-        overlay.style.opacity = 0;
+        // Prepare overlays
+        var overlayContainer = slot.Q<VisualElement>("AbilityIconContainer");
+        List<VisualElement> overlays = new List<VisualElement>();
 
+        for (int i = 0; i < ability.maxCharges; i++)
+        {
+            VisualElement overlayInstance = new VisualElement();
+            overlayInstance.name = "CooldownOverlay" + i;
+
+            // Match the styling of your original overlay
+            overlayInstance.style.position = Position.Absolute;
+            overlayInstance.style.top = 0;
+            overlayInstance.style.left = 0;
+            overlayInstance.style.width = Length.Percent(100);
+            overlayInstance.style.height = Length.Percent(100);
+            overlayInstance.style.backgroundColor = new Color(0, 0, 0, 0.5f); // semi-transparent black
+            overlayInstance.style.opacity = 0;
+
+            overlayContainer.Add(overlayInstance);
+            overlays.Add(overlayInstance);
+        }
+
+        // Add the slot to the ability bar
         abilityBar.Add(slot);
 
-        // Track slot
+        // Track the slot
         abilitySlots.Add(new AbilitySlot
         {
             slotElement = slot,
             chargeLabel = chargeLabel,
-            cooldownOverlay = overlay
+            cooldownOverlays = overlays
         });
     }
+
 
     public IEnumerator StartCooldown(VisualElement overlay, AbilityInfo ability, Label chargeLabel, float cooldownTime)
     {
         overlay.style.opacity = 1;
-        overlay.style.height = Length.Percent(100); // full cover
+        overlay.style.height = Length.Percent(100);
 
         float elapsed = 0f;
         while (elapsed < cooldownTime)
         {
             elapsed += Time.deltaTime;
-            float fill = Mathf.Lerp(100, 0, elapsed / cooldownTime);
-            overlay.style.height = Length.Percent(fill); // shrink from top to bottom
+            overlay.style.height = Length.Percent(Mathf.Lerp(100, 0, elapsed / cooldownTime));
             yield return null;
         }
 
         overlay.style.opacity = 0;
 
-        // Refill one charge
-        if (ability.currentCharges < ability.maxCharges)
-        {
-            ability.currentCharges++;
-            chargeLabel.text = ability.currentCharges.ToString();
-        }
+        // Refill a charge
+        ability.currentCharges++;
+        chargeLabel.text = ability.currentCharges.ToString();
     }
+
+
 
 
     public void OnAbilityPressed(int abilityIndex)
@@ -107,20 +129,17 @@ public class AbilityUIController : MonoBehaviour
         var slot = abilitySlots[abilityIndex];
 
         if (ability.currentCharges <= 0)
-        {
-            Debug.Log($"{ability.abilityName} has no charges left!");
-            return; // cannot use ability
-        }
+            return;
 
-        // Reduce charges
         ability.currentCharges--;
         slot.chargeLabel.text = ability.currentCharges.ToString();
 
-        // Start cooldown overlay
-        float cooldownDuration = 5f; // Example cooldown duration
-        StartCoroutine(StartCooldown(slot.cooldownOverlay, ability, slot.chargeLabel, cooldownDuration));
-        Debug.Log($"Ability {ability.abilityName} pressed. Charges left: {ability.currentCharges}");
+        // Find the first inactive overlay
+        var overlay = slot.cooldownOverlays.Find(o => o.style.opacity.value == 0);
+        if (overlay != null)
+            StartCoroutine(StartCooldown(overlay, ability, slot.chargeLabel, 5f));
     }
+
 
     void Update()
     {
