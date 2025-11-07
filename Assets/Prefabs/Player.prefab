@@ -549,7 +549,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a7ed60354613b458e535d5088edaa0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 5
+  maxHealth: 15
 --- !u!114 &8678201601994762703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -600,8 +600,8 @@ MonoBehaviour:
   shootMask:
     serializedVersion: 2
     m_Bits: 3153
-  fireRate: 0.8
-  fullAuto: 1
+  fireRate: 0.1
+  fullAuto: 0
   projectilePrefab: {fileID: 3140400090891409143, guid: a6fb9f8d0097a78469656e682c859c0d, type: 3}
   projectileSpeed: 150
   spawnOffset: 0.1
@@ -726,7 +726,7 @@ MonoBehaviour:
   interactRange: 3
   interactablesLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 192
   interactionPromptUI: {fileID: 401318489460734634}
   numCollidersFound: 0
 --- !u!82 &627228884536398151
