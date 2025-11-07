@@ -17,7 +17,7 @@ public class ExplodeState_ExplodingEnemy : EnemyState
         base.Enter();
 
         exploded = false;
-        if (enemyExploding.agent != null)
+        if (enemyExploding.agent != null && enemyExploding.agent.isOnNavMesh)
         {
             enemyExploding.agent.isStopped = true;
             enemyExploding.agent.velocity = Vector3.zero;

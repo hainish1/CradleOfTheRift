@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class SpawnBombState_Boss : EnemyState
 {
@@ -14,6 +15,7 @@ public class SpawnBombState_Boss : EnemyState
     public override void Enter()
     {
         base.Enter();
+        
         if(boss.firePoint != null)
         {
             Vector3 direction = (boss.target ? (boss.target.position + Vector3.up * .5f) - boss.firePoint.position : boss.transform.forward).normalized;
@@ -22,6 +24,23 @@ public class SpawnBombState_Boss : EnemyState
             Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
 
             GameObject slimeObj = GameObject.Instantiate(boss.expEnemyPrefab, spawnPoint, rotation);
+
+            var arcScript = slimeObj.GetComponent<EnemyExploding>();
+            if(arcScript != null)
+            {
+                Vector3 targetPos = boss.firePoint.position + direction * boss.slimeArcDistance;
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(targetPos, out hit, 5.0f, NavMesh.AllAreas))
+                {
+                    targetPos = hit.position;
+                }
+                else
+                {
+                    targetPos.y = boss.firePoint.position.y;
+                    Debug.LogWarning("No valid NavMesh below arc end point");
+                }
+                arcScript.LaunchAsArc(targetPos, boss.slimeArcDuration, boss.slimeArcHeight, boss.slimeArcSpeed);
+            }
         }
         timer = boss.bombSpawnInterval;
     }

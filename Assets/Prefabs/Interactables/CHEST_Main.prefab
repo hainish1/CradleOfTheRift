@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4181498746867660095}
   - component: {fileID: 8095773939667435176}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: CHEST_Main
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -79,7 +79,7 @@ GameObject:
   - component: {fileID: 898609795376024437}
   - component: {fileID: 6468215135300218457}
   - component: {fileID: 8568624971691338248}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: Chest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -284,8 +284,8 @@ BoxCollider:
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
+  m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 200, y: 104.07787, z: 116.2808}
+  m_Size: {x: 240, y: 140, z: 130}
   m_Center: {x: 2.1684043e-19, y: -0.0000038146973, z: -0.0000038146973}

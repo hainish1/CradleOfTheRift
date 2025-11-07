@@ -47,7 +47,14 @@ public class EnemyJumpArc : MonoBehaviour
             isArcing = false;
             if (agent)
             {
+                transform.position = arcEnd;
                 agent.enabled = true;
+
+                if (agent.isOnNavMesh)
+                {
+                    agent.Warp(transform.position);
+                    agent.isStopped = false;
+                }
             }
         }
     }

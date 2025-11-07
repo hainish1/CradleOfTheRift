@@ -15,7 +15,7 @@ public class ChaseState_ExplodingEnemy : EnemyState
     {
         base.Enter();
         timer = enemyExploding.explosionTimer;
-        if (enemyExploding.agent != null)
+        if (enemyExploding.agent != null && enemyExploding.agent.isOnNavMesh)
         {
             enemyExploding.agent.isStopped = false; // enab it
         }

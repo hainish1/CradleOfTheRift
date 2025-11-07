@@ -12,12 +12,60 @@ public class EnemyExploding : Enemy
     private ChaseState_ExplodingEnemy chase;
     private ExplodeState_ExplodingEnemy explode;
 
+
+    private Vector3 arcStart, arcEnd;
+    private float arcHeight;
+    private float arcDuration;
+    private float arcSpeed;
+    private float arcTimer = 0;
+    private bool isArcing = false;
+
     public override void Start()
     {
         base.Start();
         chase = new ChaseState_ExplodingEnemy(this, stateMachine);
         explode = new ExplodeState_ExplodingEnemy(this, stateMachine);
         stateMachine.Initialize(chase);
+    }
+
+    public override void Update()
+    {
+        base.Update();
+
+        if (isArcing)
+        {
+            arcTimer += Time.deltaTime;
+            float t = Mathf.Clamp01(arcTimer / (arcDuration / arcSpeed));
+            Vector3 pos = Vector3.Lerp(arcStart, arcEnd, t);
+            pos.y += Mathf.Sin(Mathf.PI *t) * arcHeight;
+            transform.position = pos;
+
+            // face direction of movement
+            Vector3 look = arcEnd - arcStart; look.y = 0;
+            if (look.sqrMagnitude > 0.01f)
+            {
+                transform.rotation = Quaternion.LookRotation(look);
+            }
+            
+
+            if(t >= 1f)
+            {
+                isArcing = false;
+                if (agent)
+                {
+                    transform.position = arcEnd;
+                    agent.enabled = true;
+
+                    if (agent.isOnNavMesh)
+                    {
+                        agent.Warp(transform.position);
+                        stateMachine.ChangeState(chase);
+                    }
+                }
+            }
+        }
+
+        
     }
 
     public void BeginExplosion()
@@ -29,6 +77,7 @@ public class EnemyExploding : Enemy
 
     public override void Die()
     {
+        ForceExplode();
         base.Die();
     }
 
@@ -46,5 +95,19 @@ public class EnemyExploding : Enemy
         newFx.transform.rotation = Quaternion.identity;
 
         Destroy(newFx, 1); // destroy after one second
+    }
+
+    public void LaunchAsArc(Vector3 end, float height, float duration, float speed)
+    {
+        if (agent) agent.enabled = false;
+
+        arcStart = transform.position;
+        arcEnd = end;
+        arcHeight = height;
+        arcDuration = duration;
+        arcSpeed = speed;
+        arcTimer = 0;
+        isArcing = true;
+
     }
 }

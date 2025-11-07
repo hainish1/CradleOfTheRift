@@ -8,6 +8,12 @@ public class EnemyBoss_SS : Enemy
     public float bombSpawnInterval = 4f;
     public float idleTime = 1f;
     public Transform firePoint;
+    public float slimeArcDistance;
+    public float slimeArcDuration;
+    public float slimeArcSpeed = 100;
+    public float slimeArcHeight;
+
+
 
     private IdleState_Boss idle;
     private SpawnBombState_Boss bombState;
@@ -20,6 +26,11 @@ public class EnemyBoss_SS : Enemy
         bombState = new SpawnBombState_Boss(this, stateMachine);
         recovery = new RecoveryState_Boss(this, stateMachine);
         stateMachine.Initialize(idle);
+    }
+
+    public override void Die()
+    {
+        base.Die();
     }
 
     public EnemyState GetIdle() => idle;
