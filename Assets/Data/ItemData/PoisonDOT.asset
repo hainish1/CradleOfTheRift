@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
   m_Name: PoisonDOT
   m_EditorClassIdentifier: 
-  itemName: POSION
+  itemName: POISON
   description: who tf spelled this "posion" bruh
   icon: {fileID: 0}
   rarity: 1
@@ -22,7 +22,23 @@ MonoBehaviour:
   stackingType: 0
   useMultipleStats: 1
   statMods: []
-  effects: []
+  effects:
+  - kind: 4
+    duration: -1
+    healOnDamagePercentPerStack: 0
+    stompDamagePerStack: 0
+    stompBounceForce: 0
+    fallDamageBonusPerMeter: 0
+    fallDamageBonusPerStack: 0
+    dotDamagePerTick: 2
+    dotTickInterval: 1
+    dotDuration: 4
+    dotDamagePerStack: 2
+    dotCanStack: 1
+    dotMaxStacks: 10
+    dotApplyImmediately: 1
+    numberOfProjectiles: 0
+    projectileDamageMultiplier: 0
   statType: 0
   operatorType: 0
   value: 0

@@ -42,60 +42,7 @@ public class EnemyDamageVisuals : MonoBehaviour
         float randomZ = Random.Range(-0.5f, 0.5f);
         Vector3 pos = transform.position + Vector3.up * 2f + new Vector3(randomX, 0, randomZ);
 
-        // // face camera
-        // if (Camera.main != null)
-        //     damageText.transform.rotation = Quaternion.LookRotation(damageText.transform.position - Camera.main.transform.position);
-
-        // TextMesh textMesh = damageText.AddComponent<TextMesh>();
-        // textMesh.text = damage.ToString("F1");
-        // textMesh.fontSize = fontSize;
-        // textMesh.color = damageColor;
-        // textMesh.anchor = TextAnchor.MiddleCenter;
-        // textMesh.characterSize = 0.2f;
-
-        // isDamageTextActive = true;
-        // StartCoroutine(AnimateDamageText(damageText, textMesh));
-        DamageNumbers.Spawn(pos, damage, damageColor, fontSize, textDuration, riseSpeed);
-    }
-
-    private System.Collections.IEnumerator AnimateDamageText(GameObject damageText, TextMesh textMesh)
-    {
-        float elapsed = 0f;
-        Vector3 startPos = damageText.transform.position;
-        Color startColor = textMesh.color;
-
-
-        while (elapsed < textDuration)
-        {
-            if (isDead)
-            {
-                Destroy(damageText);
-                canDestroy = true;
-                break;
-            }
-            elapsed += Time.deltaTime;
-            float t = elapsed / textDuration;
-
-            // move up
-            damageText.transform.position = startPos + Vector3.up * (riseSpeed * elapsed);
-
-            // scale: start big, shrink to normal
-            float scale = Mathf.Lerp(1.5f, 1f, Mathf.Min(t * 3f, 1f));
-            damageText.transform.localScale = Vector3.one * scale;
-
-            // fade out
-            float alpha = 1f - (t * t);  // quadratic fade looks better
-            textMesh.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
-
-            // keep facing camera
-            if (Camera.main != null)
-                damageText.transform.rotation = Quaternion.LookRotation(damageText.transform.position - Camera.main.transform.position);
-
-            yield return null;
-        }
-
-        Destroy(damageText);
-        isDamageTextActive = false;
+        DamageNumbers.Spawn(transform, pos, damage, damageColor, fontSize, textDuration, riseSpeed);
     }
 
     private System.Collections.IEnumerator FlashHit()
@@ -111,11 +58,6 @@ public class EnemyDamageVisuals : MonoBehaviour
     public void SetDeadForVisuals()
     {
         isDead = true;
-
-        // if (isDamageTextActive)
-        // {
-        //     // StartCoroutine(WaitForDamageTextFinish());
-        // }
     }
 
     private System.Collections.IEnumerator WaitForDamageTextFinish()
@@ -125,11 +67,6 @@ public class EnemyDamageVisuals : MonoBehaviour
         {
             yield return null;
         }
-    }
-
-    public bool GetCanDestroy()
-    {
-        return canDestroy;
     }
 
     void OnDisable()

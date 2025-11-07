@@ -9,11 +9,15 @@ public class DamageNumbers : MonoBehaviour
     private Vector3 startPos;
     private Color startColor;
 
-    public static void Spawn(Vector3 worldPos, float value, Color color, int fontSize, float duration, float riseSpeed)
+    public static void Spawn(Transform parent, Vector3 worldPos, float value, Color color, int fontSize, float duration, float riseSpeed)
     {
         var go = new GameObject("DamageText");
         go.transform.position = worldPos;
-
+        if(parent != null)
+        {
+            go.transform.SetParent(parent);
+        }
+        
         var dn = go.AddComponent<DamageNumbers>();
         dn.Setup(value, color, fontSize, duration, riseSpeed);
     }
