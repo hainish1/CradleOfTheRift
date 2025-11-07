@@ -1074,7 +1074,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 129042964921982419, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
   m_PrefabInstance: {fileID: 1292558185}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 976377046}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7ceb5f08e15847598e5eedc53059062, type: 3}
@@ -1140,6 +1140,29 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 00e485ce89d075b4dae66eca27c79698, type: 3}
+--- !u!1 &976377046 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6171083751830730270, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
+  m_PrefabInstance: {fileID: 1292558185}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &976377047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 976377046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26949e5b0cd0e5645ad534414d7aec1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  abilitySlotAsset: {fileID: 9197481963319205126, guid: a8e77727db11c7e40809d6ff565c7ddc, type: 3}
+  abilities:
+  - abilityName: Dash
+    key: Shift
+    icon: {fileID: 2800000, guid: 237976d261bae2d44ad890c021f108e6, type: 3}
+    maxCharges: 2
 --- !u!1001 &986023468
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1501,7 +1524,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6171083751830730270, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 976377047}
   m_SourcePrefab: {fileID: 100100000, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
 --- !u!1 &1312125142
 GameObject:
