@@ -1,3 +1,164 @@
+// using System.Collections;
+// using System.Collections.Generic;
+// using UnityEngine;
+
+// public class HomingProjectile : Projectile
+// {
+//     [Header("Homing Properties")]
+//     [SerializeField] private Transform targetLocation = null;
+//     [SerializeField] private float rotationForce = 30f;
+//     [SerializeField] private float homingForce = 20f;
+//     [SerializeField] private float initialLaunchForce = 20f;
+//     [SerializeField] private float delayBeforeTracking = 0.5f;  // Start homing after a delay
+//     [SerializeField] private float launchConeAngle = 1.0f;
+
+
+//     [Header("Targeting")]
+//     [SerializeField] private float targetingRange = 50f;
+//     [SerializeField] private LayerMask targetMask;
+
+//     private bool following = false;
+//     private Entity target;
+//     private IDamageable targetDamageable;
+
+//     public override void Awake()
+//     {
+//         base.Awake();
+//         // StartCoroutine(WaitBeforeTracking());
+//     }
+
+//     protected override void OnEnable()
+//     {
+//         base.OnEnable(); // this shit resets our gameobject for object pool so when its enabled again, we can use it in same way, it resets rb n shit
+//         ResetForReuse();
+
+//         StartCoroutine(WaitBeforeTracking());
+//     }
+    
+//     private void ResetForReuse()
+//     {
+//         following = false;
+//         targetLocation = null;
+//     }
+
+//     public void Init(LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
+//     {
+//         base.Init(Vector3.zero, mask, damage, flyDistance, attacker);
+        
+//         // if (target != null)
+//         // {
+//         //     targetLocation = targetEntity.transform;
+//         // }
+//     }
+
+//     public override void Update()
+//     {
+//         base.Update();
+
+//         if (targetLocation != null && targetDamageable != null && following)
+//         {
+//             targetLocation = null;
+//             targetDamageable = null;
+//             FindTarget();
+//         }
+
+//         if (targetLocation != null && following)
+//         {
+//             Vector3 direction = targetLocation.position - transform.position;
+//             direction.Normalize();
+
+//             Vector3 rotateAmount = Vector3.Cross(transform.forward, direction);
+//             if (rb != null)
+//             {
+//                 rb.angularVelocity = rotateAmount * rotationForce;
+//                 rb.linearVelocity = transform.forward * homingForce;
+//             }
+//         }
+//         // Cannot find a target, so just slowly fly upwards
+//         else if (targetLocation == null && following)
+//         {
+//             //b.AddForce(Vector3.up * 0.5f, ForceMode.Impulse);
+//             if (rb != null && rb.linearVelocity.sqrMagnitude < homingForce * homingForce)
+//             {
+//                 rb.linearVelocity = transform.forward * Mathf.Max(homingForce * 0.5f, 5f);
+//             }
+//         }
+//     }
+
+//     private IEnumerator WaitBeforeTracking()
+//     {
+//         //rb.AddForce(transform.forward * force, ForceMode.VelocityChange);
+//         if (rb != null)
+//         {
+//             Vector3 randomOffset = Random.insideUnitSphere * launchConeAngle;
+//             Vector3 randomLaunchDirection = (Vector3.up + randomOffset).normalized;
+//             rb.AddForce(randomLaunchDirection * initialLaunchForce, ForceMode.Impulse);
+//         }
+//         yield return new WaitForSeconds(delayBeforeTracking);
+        
+//         if (targetLocation == null)
+//         {
+//             FindTarget();
+//         }
+
+        
+//         following = true;
+//     }
+
+//     private void FindTarget()
+//     {
+//         Collider[] colliders = Physics.OverlapSphere(transform.position, targetingRange, targetMask);
+//         float minDistance = Mathf.Infinity;
+//         Transform closestTransform = null;
+//         IDamageable closestDamageable = null;
+
+//         foreach (Collider collider in colliders)
+//         {
+//             Enemy enemy = collider.GetComponentInParent<Enemy>();
+//             if (enemy != null)
+//             {
+//                 IDamageable damageable = enemy.GetComponent<IDamageable>();
+
+//                 if (damageable != null && !damageable.IsDead)
+//                 {
+//                     continue;
+//                 }
+
+//                 float distance = (transform.position - enemy.transform.position).sqrMagnitude;   //Vector3.Distance(transform.position, entity.transform.position);
+//                 if (distance < minDistance)
+//                 {
+//                     minDistance = distance;
+//                     closestTransform = enemy.transform;
+//                     closestDamageable = damageable;
+//                 }
+//             }
+//         }
+
+//         if (closestTransform != null)
+//         {
+//             targetLocation = closestTransform;
+//             targetDamageable = closestDamageable;
+//         }
+//     }
+
+//     private void OnDrawGizmos()
+//     {
+//         // Draw targeting line
+//         if (targetLocation != null)
+//         {
+//             Gizmos.color = Color.red;
+//             Gizmos.DrawLine(transform.position, targetLocation.position);
+//         }
+
+//         // Draw the acquisition range
+//         if (!following) // Only draw acquisition range before tracking starts
+//         {
+//             Gizmos.color = new Color(0, 1, 1, 0.2f); // Cyan, semi-transparent
+//             Gizmos.DrawSphere(transform.position, targetingRange);
+//         }
+//     }
+// }
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,53 +170,51 @@ public class HomingProjectile : Projectile
     [SerializeField] private float rotationForce = 30f;
     [SerializeField] private float homingForce = 20f;
     [SerializeField] private float initialLaunchForce = 20f;
-    [SerializeField] private float delayBeforeTracking = 0.5f;  // Start homing after a delay
+    [SerializeField] private float delayBeforeTracking = 0.5f;
     [SerializeField] private float launchConeAngle = 1.0f;
-
 
     [Header("Targeting")]
     [SerializeField] private float targetingRange = 50f;
     [SerializeField] private LayerMask targetMask;
+    [SerializeField] private float reTargetRate = 0.25f; // How often to scan for a target if we don't have one
 
     private bool following = false;
     private Entity target;
+    private IDamageable targetDamageable; 
 
     public override void Awake()
     {
         base.Awake();
-        // StartCoroutine(WaitBeforeTracking());
     }
 
     protected override void OnEnable()
     {
-        base.OnEnable(); // this shit resets our gameobject for object pool so when its enabled again, we can use it in same way, it resets rb n shit
+        base.OnEnable(); 
         ResetForReuse();
-
-        StartCoroutine(WaitBeforeTracking());
+        StartCoroutine(HomingCoroutine()); // Start the new coroutine
     }
     
     private void ResetForReuse()
     {
+        StopAllCoroutines(); // Critical for object pooling
         following = false;
         targetLocation = null;
+        targetDamageable = null;
     }
 
     public void Init(LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
     {
         base.Init(Vector3.zero, mask, damage, flyDistance, attacker);
-        
-        // if (target != null)
-        // {
-        //     targetLocation = targetEntity.transform;
-        // }
     }
 
     public override void Update()
     {
         base.Update();
 
+        // Update() is now only for movement logic
         if (targetLocation != null && following)
         {
+            // We have a target, home in on it
             Vector3 direction = targetLocation.position - transform.position;
             direction.Normalize();
 
@@ -66,35 +225,42 @@ public class HomingProjectile : Projectile
                 rb.linearVelocity = transform.forward * homingForce;
             }
         }
-        // Cannot find a target, so just slowly fly upwards
         else if (targetLocation == null && following)
         {
-            //b.AddForce(Vector3.up * 0.5f, ForceMode.Impulse);
+            // We don't have a target, just fly upwards
             if (rb != null && rb.linearVelocity.sqrMagnitude < homingForce * homingForce)
             {
-                rb.linearVelocity = transform.forward * Mathf.Max(homingForce * 0.5f, 5f);
+                rb.linearVelocity = transform.up * Mathf.Max(homingForce * 0.25f, 5f);
             }
         }
     }
 
-    private IEnumerator WaitBeforeTracking()
+    private IEnumerator HomingCoroutine()
     {
-        //rb.AddForce(transform.forward * force, ForceMode.VelocityChange);
+        // Initial launch
         if (rb != null)
         {
             Vector3 randomOffset = Random.insideUnitSphere * launchConeAngle;
             Vector3 randomLaunchDirection = (Vector3.up + randomOffset).normalized;
             rb.AddForce(randomLaunchDirection * initialLaunchForce, ForceMode.Impulse);
         }
-        yield return new WaitForSeconds(delayBeforeTracking);
-        
-        if (targetLocation == null)
-        {
-            FindTarget();
-        }
 
-        
+        // Wait for the initial delay
+        yield return new WaitForSeconds(delayBeforeTracking);
         following = true;
+
+        // Start the persistent targeting loop
+        while (true)
+        {
+            // Check if we need a new target
+            if (targetLocation == null || (targetDamageable != null && targetDamageable.IsDead))
+            {
+                FindTarget();
+            }
+            
+            // Wait before checking again
+            yield return new WaitForSeconds(reTargetRate);
+        }
     }
 
     private void FindTarget()
@@ -102,17 +268,26 @@ public class HomingProjectile : Projectile
         Collider[] colliders = Physics.OverlapSphere(transform.position, targetingRange, targetMask);
         float minDistance = Mathf.Infinity;
         Transform closestTarget = null;
+        IDamageable closestDamageable = null;
 
         foreach (Collider collider in colliders)
         {
             Enemy enemy = collider.GetComponentInParent<Enemy>();
             if (enemy != null)
             {
-                float distance = (transform.position - enemy.transform.position).sqrMagnitude;   //Vector3.Distance(transform.position, entity.transform.position);
+                // Check if target is valid and alive
+                IDamageable damageable = enemy.GetComponent<IDamageable>();
+                if (damageable != null && damageable.IsDead)
+                {
+                    continue; // Skip, this one is already dead
+                }
+                
+                float distance = (transform.position - enemy.transform.position).sqrMagnitude;
                 if (distance < minDistance)
                 {
                     minDistance = distance;
                     closestTarget = enemy.transform;
+                    closestDamageable = damageable;
                 }
             }
         }
@@ -120,23 +295,24 @@ public class HomingProjectile : Projectile
         if (closestTarget != null)
         {
             targetLocation = closestTarget.transform;
+            targetDamageable = closestDamageable;
+        }
+        else
+        {
+            targetLocation = null;
+            targetDamageable = null;
         }
     }
 
     private void OnDrawGizmos()
     {
-        // Draw targeting line
         if (targetLocation != null)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position, targetLocation.position);
         }
-
-        // Draw the acquisition range
-        if (!following) // Only draw acquisition range before tracking starts
-        {
-            Gizmos.color = new Color(0, 1, 1, 0.2f); // Cyan, semi-transparent
-            Gizmos.DrawSphere(transform.position, targetingRange);
-        }
+        
+        Gizmos.color = new Color(0, 1, 1, 0.2f); // Cyan, semi-transparent
+        Gizmos.DrawSphere(transform.position, targetingRange);
     }
 }
