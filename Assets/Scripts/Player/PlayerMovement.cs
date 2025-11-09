@@ -388,9 +388,9 @@ public class PlayerMovement : MonoBehaviour
                 // Ensure negative difference is not affected by regeneration.
                 else
                 {
-                    if (_currDashCharges >= _playerEntity.Stats.DashCharges)
+                    if (_currDashCharges >= DashMaxCharges)
                     {
-                        _currDashCharges = _playerEntity.Stats.DashCharges;
+                        _currDashCharges = DashMaxCharges;
                         _isRegeneratingDash = false;
                     }
                 }
@@ -493,8 +493,23 @@ public class PlayerMovement : MonoBehaviour
         // Because move speed right before moment of knockback must be preserved for correct calculations,
         // simply stop recording new movement values instead of completely skipping the MoveCase method.
         Vector3 moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
-        //Vector3.ProjectOnPlane(GetMoveInputDirection(), _groundPoint.normal).normalized;
 
+        //if (IsGrounded)
+        //{
+        //    Vector3 groundPlaneMoveUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundPoint.normal).normalized;
+        //    float maxDegreesDelta = Time.deltaTime * 60;
+        //    moveDirectionUnitVector.y = _lateralVelocityVector.normalized.y;
+        //    moveDirectionUnitVector = moveDirectionUnitVector.normalized;
+        //    moveDirectionUnitVector = Vector3.RotateTowards(moveDirectionUnitVector, groundPlaneMoveUnitVector, maxDegreesDelta, 0);
+
+        //    Debug.DrawRay(_playerCenter.position, _lateralVelocityVector, Color.green);
+        //    Debug.DrawRay(_playerCenter.position, groundPlaneMoveUnitVector * 10, Color.red);
+        //}
+        //else
+        //{
+        //    _lateralVelocityVector = _lateralVelocityVector.magnitude * Vector3.ProjectOnPlane(_lateralVelocityVector, Vector3.up).normalized;
+        //}
+        
         float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
 
         // Accelerate if movement is being inputted and sprint has not been canceled.
@@ -703,7 +718,7 @@ public class PlayerMovement : MonoBehaviour
             _currDashCharges--;
 
             // Only initialize regeneration routine if not already regenerating.
-            if (_currDashCharges < DashMaxCharges)
+            if (_currDashCharges == DashMaxCharges - 1)
             {
                 StartCoroutine(DashChargesRegeneration());
             }
