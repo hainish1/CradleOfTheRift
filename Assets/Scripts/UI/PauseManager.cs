@@ -4,6 +4,9 @@ public class PauseManager : MonoBehaviour
 {
     private bool isPaused = false;
     PauseAction action;
+    [SerializeField] 
+    private GameObject pauseMenuUI;
+
 
     void Awake()
     {
@@ -34,13 +37,25 @@ public class PauseManager : MonoBehaviour
 
     public void PauseGame()
     {
-        Time.timeScale = 0;
         isPaused = true;
+        // Unlock and show cursor for menu interaction
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
+        Debug.Log("Game Paused: Cursor unlocked and visible");
+        pauseMenuUI.SetActive(true);
+        Time.timeScale = 0;
     }
 
     public void ResumeGame()
     {
         Time.timeScale = 1;
         isPaused = false;
+        pauseMenuUI.SetActive(true);
+        // Lock and hide cursor for gameplay
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        UnityEngine.Cursor.visible = false;
+
+        Debug.Log("Game Resumed: Cursor locked and hidden");
+       
     }
 }

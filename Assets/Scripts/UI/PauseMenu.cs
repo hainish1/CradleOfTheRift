@@ -26,19 +26,19 @@ public class PauseMenu : MonoBehaviour
         // Time.timeScale = 0f;
         Debug.Log("Can't Move");
     }
-    // private void Awake()
-    // {
-        // document = GetComponent<UIDocument>();
-        // VisualElement root = GetComponent<UIDocument>().rootVisualElement;
+    private void Awake()
+    {
+        document = GetComponent<UIDocument>();
+        VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
-        // startButton = root.Q<Button>("ButtonStartGame");
-        // continueButton = root.Q<Button>("ButtonContinue");
-        // helpButton = root.Q<Button>("ButtonHelp");
-        // quitButton = root.Q<Button>("ButtonQuitGame");
+        startButton = root.Q<Button>("ButtonStartGame");
+        continueButton = root.Q<Button>("ButtonContinue");
+        helpButton = root.Q<Button>("ButtonHelp");
+        quitButton = root.Q<Button>("ButtonQuitGame");
 
         // m_pauseAction = InputActions.FindAction("Pause");
 
-    // }
+    }
 
     // void Update()
     // {
@@ -48,6 +48,14 @@ public class PauseMenu : MonoBehaviour
 
     private void OnEnable()
     {
+        document = GetComponent<UIDocument>();
+        if (document == null)
+        {
+            Debug.LogError("PauseMenu: No UIDocument found on this GameObject!");
+            return;
+        }
+
+
         startButton = document.rootVisualElement.Q("ButtonStartGame") as Button;
         continueButton = document.rootVisualElement.Q("ButtonContinue") as Button;
         helpButton = document.rootVisualElement.Q("ButtonHelp") as Button;
@@ -74,6 +82,9 @@ public class PauseMenu : MonoBehaviour
 
     private void OnDisable()
     {
+        if (document == null)
+            return;
+
         if (startButton != null)
             startButton.UnregisterCallback<ClickEvent>(OnStartGameClick);
 
