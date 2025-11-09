@@ -56,7 +56,7 @@ MonoBehaviour:
     isFlying: 1
   playerLocation: {fileID: 0}
   difficultyScaler: {fileID: 0}
-  timeBetweenWaves: 12
+  timeBetweenWaves: 20
   difficultyScale: 1.03
   spawnRadius: 15
   minSpawnDist: 30
@@ -68,5 +68,10 @@ MonoBehaviour:
   globalMaxEnemies: 200
   extractionCreditMultiplier: 2
   extractionEnemyCapMultiplier: 1.5
-  healthGrowth: 1.5
-  damageGrowth: 1.5
+  healthGrowth: 1.2
+  damageGrowth: 1.2
+  downRaylength: 40
+  isDevModeEnabled: 0
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0

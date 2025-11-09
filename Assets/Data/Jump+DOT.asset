@@ -17,6 +17,9 @@ MonoBehaviour:
   icon: {fileID: 21300096, guid: 09e4c6a7d75923945afe43953ef58ad2, type: 3}
   rarity: 0
   rarityColor: {r: 1, g: 1, b: 1, a: 1}
+  canStack: 1
+  maxStacks: 99
+  stackingType: 0
   useMultipleStats: 1
   statMods: []
   effects:
@@ -24,7 +27,7 @@ MonoBehaviour:
     duration: -1
     healOnDamagePercentPerStack: 0
     stompDamagePerStack: 2
-    stompBounceForce: 1
+    stompBounceForce: 10
     fallDamageBonusPerMeter: 0
     fallDamageBonusPerStack: 0
     dotDamagePerTick: 0
@@ -48,9 +51,6 @@ MonoBehaviour:
     dotCanStack: 1
     dotMaxStacks: 99
     dotApplyImmediately: 0
-  canStack: 1
-  maxStacks: 99
-  stackingType: 0
   statType: 1
   operatorType: 0
   value: 100

@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af0b452f2c11613468bfbe10a80ddeaa, type: 3}
   m_Name: PlayerBaseStats
   m_EditorClassIdentifier: 
-  projectileDamage: 2
+  projectileDamage: 1
   meleeDamage: 2
   slamDamage: 3
   slamRadius: 10
-  attackSpeed: 5
+  attackSpeed: 1
   projectileSpread: 0.5
   enableHomingProjectiles: 0
   health: 15

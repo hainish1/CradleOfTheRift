@@ -15,8 +15,9 @@ public class PlayerHealth : HealthController
     private bool canTakeDamage = true;
 
     public static PlayerHealth instance;
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         instance = this;
     }
 
@@ -27,7 +28,7 @@ public class PlayerHealth : HealthController
         if (playerEntity != null)
         {
             // maxHealth = Mathf.RoundToInt(playerEntity.Stats.Health);
-            maxHealth = playerEntity.Stats.Health;
+            maxHealth = Mathf.Max(1f, playerEntity.Stats.Health);
 
             currentHealth = maxHealth;
 
@@ -38,22 +39,23 @@ public class PlayerHealth : HealthController
 
     void Update()
     {
-        if (playerEntity != null)
+        if (playerEntity == null || playerEntity.Stats == null)
         {
-            // int newMaxHealth = Mathf.RoundToInt(playerEntity.Stats.Health);
-            float newMaxHealth = playerEntity.Stats.Health;
+            return;
+        }
+        // int newMaxHealth = Mathf.RoundToInt(playerEntity.Stats.Health);
+        float newMaxHealth = playerEntity.Stats.Health;
 
-            // If max health changed (due to item pickup), adjust current health proportionally
-            if (newMaxHealth != maxHealth)
-            {
-                float healthRatio = (float)currentHealth / maxHealth;
-                maxHealth = newMaxHealth;
-                // currentHealth = Mathf.RoundToInt(healthRatio * maxHealth);
-                currentHealth = maxHealth;
+        // If max health changed (due to item pickup), adjust current health proportionally
+        if (newMaxHealth != maxHealth)
+        {
+            float healthRatio = (float)currentHealth / maxHealth;
+            maxHealth = newMaxHealth;
+            // currentHealth = Mathf.RoundToInt(healthRatio * maxHealth);
+            currentHealth = maxHealth;
 
-                Debug.Log($"Max health updated to: {maxHealth}, Current: {currentHealth}");
-                healthChanged?.Invoke(currentHealth, maxHealth);
-            }
+            Debug.Log($"Max health updated to: {maxHealth}, Current: {currentHealth}");
+            healthChanged?.Invoke(currentHealth, maxHealth);
         }
     }
 
@@ -77,7 +79,7 @@ public class PlayerHealth : HealthController
 
     public override void TakeDamage(float damage)
     {
-        if (canTakeDamage == false) return;
+        if (canTakeDamage == false || IsDead) return;
         base.TakeDamage(damage);
         healthChanged?.Invoke(currentHealth, maxHealth);
         Debug.Log($"[PLAYER HEALTH] Player took {damage} damage, current health: {currentHealth}/{maxHealth}");
