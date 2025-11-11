@@ -225,7 +225,7 @@ public class PlayerShooter : MonoBehaviour
         {
             timer += Time.deltaTime;
 
-            if (timer > fireChargeCooldown)
+            if (timer >= fireChargeCooldown)
             {
                 timer = 0;
                 currFireCharges++;
