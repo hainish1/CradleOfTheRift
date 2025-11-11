@@ -143,7 +143,7 @@ public class AbilityUIController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.LeftShift))
             OnAbilityPressed(0);
     }
 }
