@@ -41,8 +41,10 @@ public class EnemyHealth : HealthController
         EnemyDied?.Invoke(this);
         PlayerGold.Instance.AddGold(3); // Set it to 3 for now
 
-        
+
+
         Destroy(gameObject, cleanupDelay);
+
     }
 
     /// <summary>

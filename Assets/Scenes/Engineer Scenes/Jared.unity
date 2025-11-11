@@ -158,7 +158,8 @@ MonoBehaviour:
     prefab: {fileID: 0}
     cost: 2
     isFlying: 1
-  playerLocation: {fileID: 925894595}
+  playerLocation: {fileID: 0}
+  difficultyScaler: {fileID: 0}
   timeBetweenWaves: 8
   difficultyScale: 1.05
   spawnRadius: 10
@@ -171,6 +172,13 @@ MonoBehaviour:
   globalMaxEnemies: 200
   extractionCreditMultiplier: 2
   extractionEnemyCapMultiplier: 1.5
+  healthGrowth: 0.07
+  damageGrowth: 0.05
+  downRaylength: 40
+  isDevModeEnabled: 0
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!4 &255809896
 Transform:
   m_ObjectHideFlags: 0
@@ -217,6 +225,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chargeTime: 10
+  timerUI: {fileID: 0}
+  extractionBeam: {fileID: 0}
+  beamHeight: 10
+  beamWidth: 0.5
+  beamDuration: 1
 --- !u!135 &591414169
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -288,6 +301,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   extractionZone: {fileID: 591414168}
+  playerHealth: {fileID: 0}
+  winScreen: {fileID: 0}
+  loseScreen: {fileID: 0}
 --- !u!114 &621881424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,7 +316,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feb58a4dcecf24659811159e560f0c5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: {fileID: 925894596}
+  health: {fileID: 0}
 --- !u!114 &621881425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -326,7 +342,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 359a28de1e37d4b93a122ce882913cc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerGold: {fileID: 925894597}
+  playerGold: {fileID: 0}
 --- !u!114 &621881427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -425,6 +441,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87326cd9745b14be5b2dc1d01ef64ac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  settingsMenu: {fileID: 0}
 --- !u!1 &875229456
 GameObject:
   m_ObjectHideFlags: 0
@@ -534,109 +551,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &925894593
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1791293462135853411, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-      propertyPath: m_Name
-      value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 1791293462135853411, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3660251539360687449, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3660251539360687449, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3660251539360687449, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3660251539360687449, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3660251539360687449, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3660251539360687449, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3660251539360687449, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3660251539360687449, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3660251539360687449, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3660251539360687449, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1791293462135853411, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 925894597}
-    - targetCorrespondingSourceObject: {fileID: 1791293462135853411, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 925894596}
-  m_SourcePrefab: {fileID: 100100000, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
---- !u!1 &925894594 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1791293462135853411, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-  m_PrefabInstance: {fileID: 925894593}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &925894595 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3660251539360687449, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
-  m_PrefabInstance: {fileID: 925894593}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &925894596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 925894594}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2dd1f240a43d34c73a19827d6f6d380d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
---- !u!114 &925894597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 925894594}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fcd7f59827f874952822de3a10d2096d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gold: 30
 --- !u!1 &939937704
 GameObject:
   m_ObjectHideFlags: 0
@@ -1126,7 +1040,6 @@ SceneRoots:
   - {fileID: 591414170}
   - {fileID: 255809896}
   - {fileID: 939937706}
-  - {fileID: 925894593}
   - {fileID: 2073875267}
   - {fileID: 621881428}
   - {fileID: 1388551280}

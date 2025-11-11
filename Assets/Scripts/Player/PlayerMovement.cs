@@ -12,6 +12,7 @@
 //   </para>
 // </summary>
 
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -62,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
     private float _moveAcceleration;
     private float _moveDeceleration;
     private Vector3 _lateralVelocityVector;
+    private Vector2 _moveInputTemp;
 
     // Hover Parameters
 
@@ -207,6 +209,7 @@ public class PlayerMovement : MonoBehaviour
             MoveMaxSpeed = _playerEntity.Stats.MoveSpeed;
             _moveAcceleration = MoveMaxSpeed / _moveAccelerationSeconds;
             _moveDeceleration = MoveMaxSpeed / _moveDecelerationSeconds;
+            _moveInputTemp = moveActions.ReadValue<Vector2>();
 
             // Hover Parameters
             _groundedCastRadius = _playerRadius - 0.1f;
@@ -388,9 +391,9 @@ public class PlayerMovement : MonoBehaviour
                 // Ensure negative difference is not affected by regeneration.
                 else
                 {
-                    if (_currDashCharges >= _playerEntity.Stats.DashCharges)
+                    if (_currDashCharges >= DashMaxCharges)
                     {
-                        _currDashCharges = _playerEntity.Stats.DashCharges;
+                        _currDashCharges = DashMaxCharges;
                         _isRegeneratingDash = false;
                     }
                 }
@@ -413,16 +416,9 @@ public class PlayerMovement : MonoBehaviour
                                                      out RaycastHit hitInfo,
                                                      _groundedCastPauseTimer);
         _groundPoint = hitInfo;
+
+        //Debug.DrawRay(GetPlayerCharacterBottom(), _groundedCastLength * Vector3.down, Color.red);
     }
-
-    //private void OnDrawGizmos()
-    //{
-    //    if (_groundedCastPauseTimer > 0) return;
-
-    //    Gizmos.color = Color.red;
-    //    Vector3 SphereCastOrigin = GetPlayerCharacterBottom() - new Vector3(0, _groundedCastLength, 0);
-    //    Gizmos.DrawSphere(SphereCastOrigin, _groundedCastRadius);
-    //}
 
     /// <summary>
     ///   <para>
@@ -493,7 +489,34 @@ public class PlayerMovement : MonoBehaviour
         // Because move speed right before moment of knockback must be preserved for correct calculations,
         // simply stop recording new movement values instead of completely skipping the MoveCase method.
         Vector3 moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
-        //Vector3.ProjectOnPlane(GetMoveInputDirection(), _groundPoint.normal).normalized;
+
+        // Move the player character parallel to the angle of the current ground plane.
+        if (moveDirectionUnitVector != Vector3.zero)
+        {
+            // Reset _lateralVelocityVector pitch if new move input is registered to ground clamp in a new direction faster.
+            if (IsGrounded && moveActions.ReadValue<Vector2>() == _moveInputTemp)
+            {
+                // Get unit vector parallel to ground plane.
+                Vector3 groundPlaneMoveUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundPoint.normal).normalized;
+
+                // Set pitch of moveDirectionUnitVector to that of _lateralVelocityVector.
+                moveDirectionUnitVector = MatchPitchAngle(moveDirectionUnitVector, _lateralVelocityVector);
+
+                // Rotate pitch of moveDirectionUnitVector towards that of groundPlaneMoveUnitVector by a deltaTime degree.
+                float degreesPerSecond = Time.deltaTime * 360;
+                moveDirectionUnitVector = GetRotationTowards(moveDirectionUnitVector, groundPlaneMoveUnitVector, degreesPerSecond);
+
+                //Vector3 bottom = GetPlayerCharacterBottom();
+                //Debug.DrawRay(bottom, _lateralVelocityVector, Color.green);
+                //Debug.DrawRay(bottom, groundPlaneMoveUnitVector * 10, Color.red);
+            }
+            else
+            {
+                _lateralVelocityVector = _lateralVelocityVector.magnitude * moveDirectionUnitVector;
+            }
+        }
+
+        _moveInputTemp = moveActions.ReadValue<Vector2>();
 
         float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
 
@@ -552,6 +575,110 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
+    ///     Matches a vector's vertical pitch to that of a target vector while preserving its horizontal yaw. 
+    ///   </para>
+    /// </summary>
+    /// <param name="currVector"> Vector with yaw to be preserved. </param>
+    /// <param name="targetVector"> Vector with pitch to be matched. </param>
+    /// <returns> A vector with modified yaw and preserved pitch. </returns>
+    private Vector3 MatchPitchAngle(Vector3 currVector, Vector3 targetVector)
+    {
+        const float Epsilon = 1e-9f;
+
+        Vector3 currHorizontal = new Vector3(currVector.x, 0, currVector.z);
+        Vector3 targetHorizontal = new Vector3(targetVector.x, 0, targetVector.z);
+
+        // return targetVector if it and currVector are both extremely close to being fully vertical.
+        if (currHorizontal.sqrMagnitude < Epsilon && targetHorizontal.sqrMagnitude < Epsilon)
+        {
+            return targetVector.normalized;
+        }
+
+        // Use horizontal of the target vector for yaw if the current vector is too short.
+        if (currHorizontal.sqrMagnitude < Epsilon)
+        {
+            currHorizontal = targetHorizontal;
+        }
+
+        float yaw = Mathf.Atan2(currHorizontal.x, currHorizontal.z);
+        float targetHorizontalLength = new Vector2(targetVector.x, targetVector.z).magnitude;
+        float pitch = Mathf.Atan2(targetVector.y, targetHorizontalLength);
+        float cosPitch = Mathf.Cos(pitch);
+        
+        float resultX = Mathf.Sin(yaw) * cosPitch;
+        float resultY = Mathf.Sin(pitch);
+        float resultZ = Mathf.Cos(yaw) * cosPitch;
+        Vector3 result = new Vector3(Mathf.Sin(yaw) * cosPitch, Mathf.Sin(pitch), Mathf.Cos(yaw) * cosPitch);
+
+        return result.normalized;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Rotates a vector's direction towards that of a target vector by a given amount of degrees per second.
+    ///   </para>
+    /// </summary>
+    /// <returns> The vector rotation this frame. </returns>
+    private Vector3 GetRotationTowards(Vector3 currVector, Vector3 targetVector, float maxDegreesDelta)
+    {
+        const float Epsilon = 1e-9f;
+        
+        // Do nothing if current vector or target vector is too short.
+        if (currVector.magnitude < Epsilon || targetVector.magnitude < Epsilon)
+        {
+            return currVector;
+        }
+
+        Vector3 currUnitVector = currVector.normalized;
+        Vector3 targetUnitVector = targetVector.normalized;
+        float currMagnitude = currVector.magnitude;
+        float targetMagnitude = targetVector.magnitude;
+        float dot = Mathf.Clamp(Vector3.Dot(currUnitVector, targetUnitVector), -1, 1);
+        float angleRadians = Mathf.Acos(dot);
+        float maxRadiansDelta = Mathf.Max(0, maxDegreesDelta) * Mathf.Deg2Rad;
+
+        // Return target vector's direction if the maximum rotation this frame meets or exceeds it,
+        // or if current vector's alignment is extremely close.
+        if (angleRadians < Epsilon || maxRadiansDelta >= angleRadians)
+        {
+            return currMagnitude * targetUnitVector;
+        }
+
+        Vector3 axis = Vector3.Cross(currUnitVector, targetUnitVector);
+        float axisMagnitude = axis.magnitude;
+
+        // Normalize the axis vector.
+        if (axis.magnitude < Epsilon)
+        {
+            axis = Vector3.Cross(currUnitVector, Vector3.right);
+            if (axis.sqrMagnitude < Epsilon)
+            {
+                axis = Vector3.Cross(currUnitVector, Vector3.up);
+            }
+
+            axis.Normalize();
+        }
+        else
+        {
+            axis.Normalize();
+        }
+
+        // Rodrigues' Vector Rotation Formula: v * cos(theta) + (k × v) * sin(theta) + k * (k · v) * (1 - cos(theta))
+        Vector3 currV = currUnitVector;
+        Vector3 axisK = axis;
+        float maxTheta = maxRadiansDelta;
+        float cos = Mathf.Cos(maxTheta);
+        float sin = Mathf.Sin(maxTheta);
+
+        Vector3 term1 = currV * cos;
+        Vector3 term2 = Vector3.Cross(axisK, currV) * sin;
+        Vector3 term3 = axisK * Vector3.Dot(axisK, currV) * (1 - cos);
+
+        return term1 + term2 + term3;
+    }
+
+    /// <summary>
+    ///   <para>
     ///     Moves the player character using a current lateral or vertical speed vector
     ///     and an incremental speed vector on any frame this method is called.
     ///   </para>
@@ -573,15 +700,15 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="aggregateMaxSpeedValue"> The aggregate speed value. </param>
     private void MoveAccelerate(Vector3 moveDirectionUnitVector, float aggregateMaxSpeedValue)
     {
-        Vector3 aggregateAccelIncrement = Time.deltaTime * _moveAcceleration * moveDirectionUnitVector;
-
-        _lateralVelocityVector = _lateralVelocityVector.magnitude * moveDirectionUnitVector;
-        _lateralVelocityVector += aggregateAccelIncrement;
-
-        // Limit lateral move speed to aggregateMaxSpeedValue.
-        if (_lateralVelocityVector.magnitude > aggregateMaxSpeedValue)
+        if (_lateralVelocityVector.magnitude < aggregateMaxSpeedValue)
         {
-            _lateralVelocityVector = aggregateMaxSpeedValue * _lateralVelocityVector.normalized;
+            float aggregateAccelIncrement = Time.deltaTime * _moveAcceleration;
+            float newVelocityMagnitude = Mathf.Clamp(_lateralVelocityVector.magnitude + aggregateAccelIncrement, 0, aggregateMaxSpeedValue);
+            _lateralVelocityVector = newVelocityMagnitude * moveDirectionUnitVector;
+        }
+        else
+        {
+            _lateralVelocityVector = aggregateMaxSpeedValue * moveDirectionUnitVector;
         }
 
         _characterController.Move(Time.deltaTime * _lateralVelocityVector);
@@ -597,17 +724,11 @@ public class PlayerMovement : MonoBehaviour
         // Skip deceleration calculations if not moving.
         if (_lateralVelocityVector.magnitude <= 0) return;
 
-        Vector3 decelDecrement = Time.deltaTime * _moveDeceleration * _lateralVelocityVector.normalized;
+        float decelDecrement = Time.deltaTime * _moveDeceleration;
+        float newVelocityMagnitude = Mathf.Clamp(_lateralVelocityVector.magnitude - decelDecrement, 0, float.MaxValue);
+        _lateralVelocityVector = newVelocityMagnitude * _lateralVelocityVector.normalized;
 
-        // If deceleration decrement for the current frame exceeds zero,
-        // then set current speed to exactly zero.
-        if (_lateralVelocityVector.magnitude - decelDecrement.magnitude < 0)
-        {
-            _lateralVelocityVector = Vector3.zero;
-            return;
-        }
-
-        MoveIncrementCharacter(ref _lateralVelocityVector, -decelDecrement);
+        _characterController.Move(Time.deltaTime * _lateralVelocityVector);
     }
 
     /// <summary>
@@ -703,7 +824,7 @@ public class PlayerMovement : MonoBehaviour
             _currDashCharges--;
 
             // Only initialize regeneration routine if not already regenerating.
-            if (_currDashCharges < DashMaxCharges)
+            if (_currDashCharges == DashMaxCharges - 1)
             {
                 StartCoroutine(DashChargesRegeneration());
             }
