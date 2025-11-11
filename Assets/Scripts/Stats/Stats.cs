@@ -3,14 +3,20 @@ using UnityEngine;
 
 public enum StatType
 {
-    // Attack Enums
-    ProjectileDamage,
+    // Melee Attack Enums
     MeleeDamage,
-    SlamDamage,
-    SlamRadius,
+
+    // Ranged Attack Enums
+    ProjectileDamage,
     AttackSpeed,
+    FireCharges,
+    FireChargeCooldown,
     ProjectileSpread,
     HomingProjectiles,
+
+    // Shockwave Enums
+    SlamDamage,
+    SlamRadius,
 
     // Health Enums
     Health,
@@ -49,21 +55,28 @@ public class Stats
 
     public StatsMediator Mediator => mediator;
 
-    // Attack Properties
+    // Melee Attack Properties
     
-    public float ProjectileDamage { get { return FloatStatQuery(StatType.ProjectileDamage, baseStats.projectileDamage); } }
-
     public float MeleeDamage { get { return FloatStatQuery(StatType.MeleeDamage, baseStats.meleeDamage); } }
 
-    public float SlamDamage { get { return FloatStatQuery(StatType.SlamDamage, baseStats.slamDamage); } }
-
-    public float SlamRadius { get { return FloatStatQuery(StatType.SlamRadius, baseStats.slamRadius); } }
-
+    // Ranged Attack Properties
+    
+    public float ProjectileDamage { get { return FloatStatQuery(StatType.ProjectileDamage, baseStats.projectileDamage); } }
+    
     public float AttackSpeed { get { return FloatStatQuery(StatType.AttackSpeed, baseStats.attackSpeed); } }
+
+    public int FireCharges { get { return IntStatQuery(StatType.FireCharges, baseStats.fireCharges); } }
+
+    public float FireChargeCooldown { get { return FloatStatQuery(StatType.FireChargeCooldown, baseStats.fireChargeCooldown); } }
 
     public float ProjectileSpread { get { return FloatStatQuery(StatType.ProjectileSpread, baseStats.projectileSpread); } }
 
     public int HomingProjectiles { get { return IntStatQuery(StatType.HomingProjectiles, baseStats.enableHomingProjectiles); } }
+
+    // Shockwave Properties
+    public float SlamDamage { get { return FloatStatQuery(StatType.SlamDamage, baseStats.slamDamage); } }
+
+    public float SlamRadius { get { return FloatStatQuery(StatType.SlamRadius, baseStats.slamRadius); } }
 
     // Health Properties
 
@@ -133,12 +146,15 @@ public class Stats
     {
         return type switch
         {
-            StatType.ProjectileDamage => baseStats.projectileDamage,
             StatType.MeleeDamage => baseStats.meleeDamage,
+            StatType.ProjectileDamage => baseStats.projectileDamage,
+            StatType.AttackSpeed => baseStats.attackSpeed,
+            StatType.FireCharges => baseStats.fireCharges,
+            StatType.FireChargeCooldown => baseStats.fireChargeCooldown,
+            StatType.ProjectileSpread => baseStats.projectileSpread,
+            StatType.HomingProjectiles => baseStats.enableHomingProjectiles,
             StatType.SlamDamage => baseStats.slamDamage,
             StatType.SlamRadius => baseStats.slamRadius,
-            StatType.AttackSpeed => baseStats.attackSpeed,
-            StatType.HomingProjectiles => baseStats.enableHomingProjectiles,
             StatType.Health => baseStats.health,
             StatType.MoveSpeed => baseStats.moveSpeed,
             StatType.KbDamping => baseStats.kbDamping,
@@ -154,7 +170,6 @@ public class Stats
             StatType.FlightRegenerationRate => baseStats.flightRegenerationRate,
             StatType.FlightMaxEnergy => baseStats.flightMaxEnergy,
             StatType.FlightDepletionRate => baseStats.flightDepletionRate,
-            StatType.ProjectileSpread => baseStats.projectileSpread,
             _ => 0f,
         };
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.Cinemachine.Samples;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,10 +13,13 @@ public class PlayerShooter : MonoBehaviour
     [SerializeField] private AimTargetManager aimTargetManager;
     [SerializeField] private LayerMask shootMask = ~0;
 
-
     [Header("Fire info")]
     [SerializeField] private float fireRate = 0.5f;
     [SerializeField] private bool fullAuto = true;
+    private int fireMaxCharges;
+    private float fireChargeCooldown;
+    private float currFireCharges;
+    private bool isRegeneratingFireCharges;
 
     [Header("Projectiles")]
     [SerializeField] private Projectile projectilePrefab;
@@ -46,6 +50,11 @@ public class PlayerShooter : MonoBehaviour
         input.Enable();
 
         audioController = GetComponent<PlayerAudioController>();
+
+        fireMaxCharges = playerEntity.Stats.FireCharges;
+        fireChargeCooldown = playerEntity.Stats.FireChargeCooldown;
+        currFireCharges = fireMaxCharges;
+        isRegeneratingFireCharges = false;
     }
 
     private void ToggleFullAuto()
@@ -97,6 +106,29 @@ public class PlayerShooter : MonoBehaviour
         if (playerEntity != null)
         {
             fireRate = playerEntity.Stats.AttackSpeed;
+            
+            if (fireMaxCharges != playerEntity.Stats.FireCharges)
+            {
+                int changeDifference = playerEntity.Stats.FireCharges - fireMaxCharges;
+                fireMaxCharges = playerEntity.Stats.FireCharges;
+
+                // Add positive difference to current charge count, even while regenerating.
+                if (changeDifference > 0)
+                {
+                    currFireCharges += changeDifference;
+                }
+                // Ensure negative difference is not affected by regeneration.
+                else
+                {
+                    if (currFireCharges >= fireMaxCharges)
+                    {
+                        currFireCharges = fireMaxCharges;
+                        isRegeneratingFireCharges = false;
+                    }
+                }
+            }
+
+            fireChargeCooldown = playerEntity.Stats.FireChargeCooldown;
         }    
     }
 
@@ -132,9 +164,10 @@ public class PlayerShooter : MonoBehaviour
     {
         return muzzle;
     }
+
     private void TryToFire(bool force = false)
     {
-        if (!aim || !muzzle || !projectilePrefab) return;
+        if (!aim || !muzzle || !projectilePrefab || currFireCharges <= 0) return;
         // if (!force && Time.time > nextFireTime) return;
         if (!force && Time.time < nextFireTime) return;
 
@@ -172,7 +205,39 @@ public class PlayerShooter : MonoBehaviour
         // Debug.Log($"Fired projectile with {currentDamage} damage");
         // Play firing sound
         audioController?.PlayAttackSound();
-    }
-    
 
+        currFireCharges--;
+
+        // Only initialize regeneration routine if not already regenerating.
+        if (currFireCharges == fireMaxCharges - 1)
+        {
+            StartCoroutine(FireChargeRegeneration());
+        }
+    }
+
+    private IEnumerator FireChargeRegeneration()
+    {
+        isRegeneratingFireCharges = true;
+
+        float timer = 0;
+
+        while (currFireCharges < fireMaxCharges && isRegeneratingFireCharges)
+        {
+            timer += Time.deltaTime;
+
+            if (timer >= fireChargeCooldown)
+            {
+                timer = 0;
+                currFireCharges++;
+            }
+
+            if (currFireCharges >= fireMaxCharges) break;
+
+            yield return null;
+        }
+
+        currFireCharges = Mathf.Min(currFireCharges, fireMaxCharges);  // In case fireMaxCharges is decreased during routine execution.
+
+        isRegeneratingFireCharges = false;
+    }
 }
