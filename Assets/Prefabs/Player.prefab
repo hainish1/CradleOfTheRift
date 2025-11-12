@@ -74,8 +74,8 @@ GameObject:
   - component: {fileID: 1556135410901850779}
   - component: {fileID: 3696487826920754126}
   - component: {fileID: 5901013943633294991}
-  - component: {fileID: 4624131168979302280}
   - component: {fileID: 7167545171542470465}
+  - component: {fileID: 4624131168979302280}
   - component: {fileID: 5434371461180033734}
   m_Layer: 8
   m_Name: Free Camera
@@ -92,8 +92,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 812061669707472423}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.000000013635801, y: -0.00000015867114, z: 2.163608e-15, w: 1}
-  m_LocalPosition: {x: 0, y: 3.801, z: -26.481}
+  m_LocalRotation: {x: -0.000000014169801, y: 0.000000104308114, z: 1.554312e-15, w: 1}
+  m_LocalPosition: {x: -0.00000047683716, y: 3.801, z: -26.481}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -186,6 +186,36 @@ MonoBehaviour:
   IgnoreTag: Player
   AimDistance: 500
   NoiseCancellation: 1
+--- !u!114 &7167545171542470465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812061669707472423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca7de3aefa901374ba29464584a3109a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CameraRadius: 0.4
+  Decollision:
+    Enabled: 1
+    ObstacleLayers:
+      serializedVersion: 2
+      m_Bits: 2064
+    UseFollowTarget:
+      Enabled: 1
+      YOffset: 10
+    Damping: 0.5
+    SmoothingTime: 0.053
+  TerrainResolution:
+    Enabled: 0
+    TerrainLayers:
+      serializedVersion: 2
+      m_Bits: 65
+    MaximumRaycast: 10
+    Damping: 0.5
 --- !u!114 &4624131168979302280
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,36 +269,6 @@ MonoBehaviour:
     DissipationDistance: 100
     PropagationSpeed: 343
   DefaultVelocity: {x: 0, y: -1, z: 0}
---- !u!114 &7167545171542470465
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 812061669707472423}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca7de3aefa901374ba29464584a3109a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CameraRadius: 0.4
-  Decollision:
-    Enabled: 1
-    ObstacleLayers:
-      serializedVersion: 2
-      m_Bits: 2064
-    UseFollowTarget:
-      Enabled: 1
-      YOffset: 10
-    Damping: 0.5
-    SmoothingTime: 0.053
-  TerrainResolution:
-    Enabled: 0
-    TerrainLayers:
-      serializedVersion: 2
-      m_Bits: 65
-    MaximumRaycast: 10
-    Damping: 0.5
 --- !u!114 &5434371461180033734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -602,6 +602,8 @@ MonoBehaviour:
     m_Bits: 3153
   fireRate: 0.1
   fullAuto: 0
+  fireMaxCharges: 5
+  fireChargeCooldown: 0.7
   projectilePrefab: {fileID: 3140400090891409143, guid: a6fb9f8d0097a78469656e682c859c0d, type: 3}
   projectileSpeed: 150
   spawnOffset: 0.1
@@ -1229,7 +1231,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1193675887583349509
 RectTransform:
   m_ObjectHideFlags: 0
