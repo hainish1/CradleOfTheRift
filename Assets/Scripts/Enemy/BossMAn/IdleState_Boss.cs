@@ -28,7 +28,8 @@ public class IdleState_Boss : EnemyState
 
         if(idleTimer >= idleDuration)
         {
-            stateMachine.ChangeState(boss.GetBombState());
+            // stateMachine.ChangeState(boss.GetBombState());
+            stateMachine.ChangeState(boss.GetExploisionState());
             return;
         }
     }

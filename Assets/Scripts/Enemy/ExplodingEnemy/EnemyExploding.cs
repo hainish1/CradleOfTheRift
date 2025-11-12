@@ -19,6 +19,7 @@ public class EnemyExploding : Enemy
     private Vector3 arcEnd;
     private Rigidbody rb;
     private bool arcing = false;
+    private bool canDie = false;
 
     public override void Start()
     {
@@ -52,14 +53,9 @@ public class EnemyExploding : Enemy
     public override void Die()
     {
         ForceExplode();
-        base.Die();
+        if(canDie) base.Die();
     }
 
-    void OnDrawGizmos()
-    {
-        Gizmos.color = aggressionColor;
-        Gizmos.DrawWireSphere(transform.position, explosionRadius);
-    }
 
     public void CreateExplosionVFX()
     {
@@ -156,6 +152,14 @@ public class EnemyExploding : Enemy
             agent.isStopped = false;
             stateMachine.ChangeState(chase);
         }
-        
+
+    }
+
+    public void SetCanDie(bool set) => canDie = set;
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = aggressionColor;
+        Gizmos.DrawWireSphere(transform.position, explosionRadius);
     }
 }

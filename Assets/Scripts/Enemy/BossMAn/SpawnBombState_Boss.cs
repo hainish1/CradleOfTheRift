@@ -40,6 +40,7 @@ public class SpawnBombState_Boss : EnemyState
                     Debug.LogWarning("No valid NavMesh below arc end point");
                 }
                 // arcScript.LaunchAsArc(targetPos, boss.slimeArcDuration, boss.slimeArcHeight, boss.slimeArcSpeed);
+                boss.CreatePoofVFX(spawnPoint);
                 arcScript.LaunchWithRigidbody(targetPos, boss.slimeArcDuration);
             }
         }

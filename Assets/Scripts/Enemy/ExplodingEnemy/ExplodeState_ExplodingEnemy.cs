@@ -33,6 +33,7 @@ public class ExplodeState_ExplodingEnemy : EnemyState
         DamageNearby();
         exploded = true;
         yield return new WaitForSeconds(0.1f);
+        enemyExploding.SetCanDie(true);
         enemyExploding.Die(); // dont need this baby boy anymore
 
     }
