@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ExplodeState_ExplodingEnemy : EnemyState
@@ -42,12 +43,15 @@ public class ExplodeState_ExplodingEnemy : EnemyState
 
         Collider[] hits = Physics.OverlapSphere(enemyExploding.transform.position, enemyExploding.explosionRadius, enemyExploding.playerMask);
 
+        HashSet<IDamageable> alreadyDamaged = new HashSet<IDamageable>();
+
         foreach (var col in hits)
         {
             var dmg = col.GetComponentInParent<IDamageable>();
-            if (dmg != null && dmg.IsDead != true)
+            if (dmg != null && dmg.IsDead != true && !alreadyDamaged.Contains(dmg))
             {
                 dmg.TakeDamage(enemyExploding.explosionDamage);
+                alreadyDamaged.Add(dmg);
             }
         }
     }

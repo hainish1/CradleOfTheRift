@@ -10,8 +10,6 @@ public class EnemyBoss_SS : Enemy
     public Transform firePoint;
     public float slimeArcDistance;
     public float slimeArcDuration;
-    public float slimeArcSpeed = 100;
-    public float slimeArcHeight;
 
 
 

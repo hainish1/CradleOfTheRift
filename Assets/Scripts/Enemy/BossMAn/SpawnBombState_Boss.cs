@@ -28,7 +28,7 @@ public class SpawnBombState_Boss : EnemyState
             var arcScript = slimeObj.GetComponent<EnemyExploding>();
             if(arcScript != null)
             {
-                Vector3 targetPos = boss.firePoint.position + direction * boss.slimeArcDistance;
+                Vector3 targetPos = boss.firePoint.position + direction * boss.slimeArcDistance - Vector3.up;
                 NavMeshHit hit;
                 if (NavMesh.SamplePosition(targetPos, out hit, 5.0f, NavMesh.AllAreas))
                 {
@@ -39,9 +39,11 @@ public class SpawnBombState_Boss : EnemyState
                     targetPos.y = boss.firePoint.position.y;
                     Debug.LogWarning("No valid NavMesh below arc end point");
                 }
-                arcScript.LaunchAsArc(targetPos, boss.slimeArcDuration, boss.slimeArcHeight, boss.slimeArcSpeed);
+                // arcScript.LaunchAsArc(targetPos, boss.slimeArcDuration, boss.slimeArcHeight, boss.slimeArcSpeed);
+                arcScript.LaunchWithRigidbody(targetPos, boss.slimeArcDuration);
             }
         }
+
         timer = boss.bombSpawnInterval;
     }
 

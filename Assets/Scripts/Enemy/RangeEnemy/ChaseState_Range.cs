@@ -35,7 +35,7 @@ public class ChaseState_Range : EnemyState
         if (enemy.target == null) return;
 
         float distance = Vector3.Distance(enemy.transform.position, enemy.target.position); // go but keep distance
-        if (distance > enemyRange.stopDistance * .9f)
+        if (distance > enemyRange.stopDistance * .8f)
         {
             if (enemy != null) SetAgentDestination(enemy.target.position);
         }

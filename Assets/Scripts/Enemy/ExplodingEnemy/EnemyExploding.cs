@@ -1,4 +1,8 @@
+using System;
+using System.Collections;
+using UnityEditor.Callbacks;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyExploding : Enemy
 {
@@ -12,17 +16,14 @@ public class EnemyExploding : Enemy
     private ChaseState_ExplodingEnemy chase;
     private ExplodeState_ExplodingEnemy explode;
 
-
-    private Vector3 arcStart, arcEnd;
-    private float arcHeight;
-    private float arcDuration;
-    private float arcSpeed;
-    private float arcTimer = 0;
-    private bool isArcing = false;
+    private Vector3 arcEnd;
+    private Rigidbody rb;
+    private bool arcing = false;
 
     public override void Start()
     {
         base.Start();
+        rb = GetComponent<Rigidbody>();
         chase = new ChaseState_ExplodingEnemy(this, stateMachine);
         explode = new ExplodeState_ExplodingEnemy(this, stateMachine);
         stateMachine.Initialize(chase);
@@ -32,40 +33,13 @@ public class EnemyExploding : Enemy
     {
         base.Update();
 
-        if (isArcing)
+        float playerDistance = Vector3.Distance(transform.position, target.position);
+
+        if(playerDistance <= explosionRadius)
         {
-            arcTimer += Time.deltaTime;
-            float t = Mathf.Clamp01(arcTimer / (arcDuration / arcSpeed));
-            Vector3 pos = Vector3.Lerp(arcStart, arcEnd, t);
-            pos.y += Mathf.Sin(Mathf.PI *t) * arcHeight;
-            transform.position = pos;
-
-            // face direction of movement
-            Vector3 look = arcEnd - arcStart; look.y = 0;
-            if (look.sqrMagnitude > 0.01f)
-            {
-                transform.rotation = Quaternion.LookRotation(look);
-            }
-            
-
-            if(t >= 1f)
-            {
-                isArcing = false;
-                if (agent)
-                {
-                    transform.position = arcEnd;
-                    agent.enabled = true;
-
-                    if (agent.isOnNavMesh)
-                    {
-                        agent.Warp(transform.position);
-                        stateMachine.ChangeState(chase);
-                    }
-                }
-            }
+            BeginExplosion();
         }
-
-        
+       
     }
 
     public void BeginExplosion()
@@ -97,17 +71,91 @@ public class EnemyExploding : Enemy
         Destroy(newFx, 1); // destroy after one second
     }
 
-    public void LaunchAsArc(Vector3 end, float height, float duration, float speed)
+
+    public void LaunchWithRigidbody(Vector3 end, float flightTime = 0.7f)
     {
-        if (agent) agent.enabled = false;
-
-        arcStart = transform.position;
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody>();
+            if (rb == null)
+            {
+                Debug.LogError("EnemyExploding missing rigidbody");
+                return; 
+            }
+        }
         arcEnd = end;
-        arcHeight = height;
-        arcDuration = duration;
-        arcSpeed = speed;
-        arcTimer = 0;
-        isArcing = true;
+        if(agent != null)
+        {
+            agent.enabled = false;
+            agent.updatePosition = false;
+            agent.updateRotation = false;
+        }
 
+        rb.isKinematic = false;
+        rb.linearVelocity = Vector3.zero;
+        rb.useGravity = true;
+
+        Vector3 velocity = CalculateLaunchVelocity(transform.position, arcEnd, flightTime, Physics.gravity.y);
+        rb.linearVelocity = velocity;
+
+        arcing = true;
+        StartCoroutine(DetectLanding());
+
+
+    }
+
+
+    public static Vector3 CalculateLaunchVelocity(Vector3 start, Vector3 end, float flightTime, float gravity = -9.8f)
+    {
+        Vector3 distance = end - start;
+        Vector3 distanceFlat = new Vector3(distance.x, 0f, distance.z);
+
+        float distanceY = distance.y;
+        float distanceNor = distanceFlat.magnitude;
+        float t = Mathf.Max(0.01f, flightTime);
+        
+        float yVelocity = (distanceY - 0.5f * gravity * t * t) / t;
+        float straightVelocity = distanceNor / t;
+        Vector3 result = distanceFlat.normalized * straightVelocity;
+        result.y = yVelocity;
+        return result;
+    }
+
+
+    private IEnumerator DetectLanding()
+    {
+        while (arcing)
+        {
+            if (Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(arcEnd.x, 0, arcEnd.z)) < 0.2f ||
+                Physics.Raycast(transform.position, Vector3.down, 0.9f, NavMesh.AllAreas))
+            {
+                arcing = false;
+                break;
+            }
+            yield return null;
+        }
+        ResumeAgentFromRB();
+    }
+
+    private void ResumeAgentFromRB()
+    {
+        rb.linearVelocity = Vector3.zero;
+        rb.isKinematic = true; // take control from the rigidbody
+        if (agent != null)
+        {
+            agent.enabled = true;
+            agent.updatePosition = true;
+            agent.updateRotation = true;
+
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(transform.position, out hit, 1f, NavMesh.AllAreas))
+            {
+                transform.position = hit.position;
+                agent.Warp(hit.position);
+            }
+            agent.isStopped = false;
+            stateMachine.ChangeState(chase);
+        }
+        
     }
 }
