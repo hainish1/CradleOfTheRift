@@ -2,8 +2,9 @@ using UnityEngine;
 
 
 /// <summary>
-/// Class - Represents a Range Enemy, inherits from Base Enemy class 
-/// ,also defines functionality of its own
+/// Class - Represents a Revenant enemy boss, inherits from Base Enemy class 
+/// ,also defines functionality of its own.
+/// Code copied straight from RangeEnemy.
 /// </summary>
 public class RevenantBossRange : Enemy
 {
@@ -36,10 +37,10 @@ public class RevenantBossRange : Enemy
     [Tooltip("After all orbs are finished, how much time to start again, basically reload time")]
     public float recoveryTime = 0.4f;
 
-    IdleState_Range idle;
-    ChaseState_Range chase;
-    AttackState_Range attack;
-    RecoveryState_Range recovery;
+    IdleStateRevenant idle;
+    ChaseStateRevenant chase;
+    AttackStateRevenant_Barrage barrage_attack;
+    RecoveryStateRevenant recovery;
 
     float bobPhase;
     public EnemyRangeOrbitVisuals orbitVisuals;
@@ -59,13 +60,13 @@ public class RevenantBossRange : Enemy
             agent.stoppingDistance = stopDistance * 0.8f;
         }
 
-        idle = new IdleState_Range(this, stateMachine);
-        chase = new ChaseState_Range(this, stateMachine);
-        attack = new AttackState_Range(this, stateMachine);
-        recovery = new RecoveryState_Range(this, stateMachine);
+        idle = new IdleStateRevenant(this, stateMachine);
+        chase = new ChaseStateRevenant(this, stateMachine);
+        barrage_attack = new AttackStateRevenant_Barrage(this, stateMachine);
+        recovery = new RecoveryStateRevenant(this, stateMachine);
 
         stateMachine.Initialize(idle); // enter idle first
-
+        Debug.Log("test");
     }
 
     public override void Update()
@@ -89,7 +90,7 @@ public class RevenantBossRange : Enemy
 
     public EnemyState GetIdle() => idle;
     public EnemyState GetChase() => chase;
-    public EnemyState GetAttack() => attack;
+    public EnemyState GetAttack() => barrage_attack;
     public EnemyState GetRecovery() => recovery;
 
     /// <summary>

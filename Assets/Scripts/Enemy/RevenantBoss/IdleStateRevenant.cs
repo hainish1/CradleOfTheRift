@@ -3,12 +3,12 @@ using UnityEngine;
 /// <summary>
 /// Class - Represents the Idle State for Revenant enemy boss, enemy will enter this state when initialized
 /// </summary>
-public class IdleState_Range : EnemyState
+public class IdleStateRevenant : EnemyState
 {
-    EnemyRange enemyRange;
-    public IdleState_Range(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
+    RevenantBossRange bossRange;
+    public IdleStateRevenant(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
-        enemyRange = enemy as EnemyRange;
+        bossRange = enemy as RevenantBossRange;
     }
 
     /// <summary>
@@ -18,7 +18,7 @@ public class IdleState_Range : EnemyState
     {
         if (PlayerInAggressionRange())
         {
-            stateMachine.ChangeState(enemyRange.GetChase());
+            stateMachine.ChangeState(bossRange.GetChase());
         }
     }
 }
