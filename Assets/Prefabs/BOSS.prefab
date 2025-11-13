@@ -305,7 +305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b7684082c124f45893380d545b25c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  original: {fileID: 2100000, guid: 27ad48d922d53ff41b20de5c34569594, type: 2}
+  original: {fileID: 2100000, guid: 149c4767580d299408d0d0afa36a7497, type: 2}
   flash: {fileID: 2100000, guid: a4b62a69d54e80347bd546999c6d4b9e, type: 2}
   flashDuration: 0.1
 --- !u!114 &2190310424032612533
@@ -430,7 +430,7 @@ MonoBehaviour:
   nextAttackAllowed: 1
   expEnemyPrefab: {fileID: 5621828695960796660, guid: 01ca7b173ad714449ae5062cfcbffe9a, type: 3}
   spawnPoints: []
-  bombSpawnInterval: 1
+  bombSpawnInterval: 0.3
   idleTime: 0.2
   firePoint: {fileID: 1506330798211209176}
   slimeArcDistance: 20
@@ -445,6 +445,7 @@ MonoBehaviour:
   hitAppliedThisAttack: 0
   slamDamage: 2
   minRequiredPlayerDistance: 90
+  playerTooClose: 15
   knockbackPower: 100
   windupTime: 0.25
   leapDuration: 0.6
@@ -515,7 +516,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 27ad48d922d53ff41b20de5c34569594, type: 2}
+  - {fileID: 2100000, guid: 149c4767580d299408d0d0afa36a7497, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

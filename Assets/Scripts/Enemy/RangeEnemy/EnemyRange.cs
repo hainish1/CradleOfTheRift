@@ -19,7 +19,7 @@ public class EnemyRange : Enemy
     public float turnSpeedWhileAiming = 12f;
     public float agentAngularSpeed = 720f;
     public float agentAcceleration = 100f;
-    
+
     [Space]
 
     [Header("Shooting")]
@@ -138,6 +138,14 @@ public class EnemyRange : Enemy
     /// <returns></returns>
     public float GetBaseDamage() => projectileDamage;
 
+    void OnDrawGizmos()
+    {
+        Gizmos.color = aggressionColor;
+        Gizmos.DrawWireSphere(transform.position, stopDistance);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
 
 
 }
