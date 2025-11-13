@@ -5873,6 +5873,7 @@ GameObject:
   - component: {fileID: 6702234162762134893}
   - component: {fileID: 2155517362727479217}
   - component: {fileID: 4412303297756605295}
+  - component: {fileID: 8226623813857041248}
   - component: {fileID: 204557455612082024}
   - component: {fileID: 2851529993679917071}
   - component: {fileID: 3349805392606994707}
@@ -5953,7 +5954,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8841140246284276385}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3773936ee198de143b18692d451e3058, type: 3}
   m_Name: 
@@ -5986,6 +5987,49 @@ MonoBehaviour:
   projectileMask:
     serializedVersion: 2
     m_Bits: 1361
+  spawnOffset: 0.1
+  recoveryTime: 3
+  orbitVisuals: {fileID: -3325380021058808314}
+--- !u!114 &8226623813857041248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8841140246284276385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bf9cb02cbc1d82449c792f743bedb09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  aggressionRange: 500
+  playerOutOfRange: 500
+  turnSpeed: 10
+  attackCooldown: 4
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 256
+  gizosOn: 1
+  aggressionColor: {r: 1, g: 0, b: 0, a: 1}
+  nextAttackAllowed: 2
+  projectileDamage: 1
+  hoverHeight: 2
+  hoverBobAmplitude: 0.25
+  hoverBobSpeed: 2
+  chaseSpeed: 7.5
+  stopDistance: 12
+  attackRange: 18
+  turnSpeedWhileAiming: 12
+  agentAngularSpeed: 720
+  agentAcceleration: 100
+  projectileSpeed: 50
+  fireCooldown: 2
+  firePoint: {fileID: 7588448968403286001}
+  projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
+  projectileMask:
+    serializedVersion: 2
+    m_Bits: 9553
   spawnOffset: 0.1
   recoveryTime: 3
   orbitVisuals: {fileID: -3325380021058808314}
@@ -6034,9 +6078,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 3
+  maxHealth: 40
   cleanupDelay: 0
-  baseHealth: 3
+  baseHealth: 40
   damageVisuals: {fileID: 6516409030888228098}
 --- !u!114 &-3325380021058808314
 MonoBehaviour:
@@ -6051,7 +6095,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   orbitVisual: {fileID: 3232334194741932682, guid: 0156dea7ff4bdad4b9da5517c213d2f4, type: 3}
-  numOfOrbs: 4
+  numOfOrbs: 6
   orbitRadius: 1.5
   orbitSpeed: 80
   orbitHeight: 1.5
