@@ -200,7 +200,7 @@ MonoBehaviour:
   nextAttackAllowed: 1
   explosionTimer: 3
   explosionRadius: 5
-  explosionDamage: 10
+  explosionDamage: 3
   explosionVFX: {fileID: 358637981425055526, guid: 8eb503696b886e04faff8fc0f480d473, type: 3}
 --- !u!54 &-8490784062990474667
 Rigidbody:
@@ -297,6 +297,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 0}
+  owner2: {fileID: 0}
 --- !u!65 &3767035979655733029
 BoxCollider:
   m_ObjectHideFlags: 0

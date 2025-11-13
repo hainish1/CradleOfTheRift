@@ -20,10 +20,26 @@ public class EnemyBoss_SS : Enemy
 
     public GameObject explosionVFXPrefab;
 
+    [Space]
+
+    [Header("Leap Attack")]
+    [SerializeField] private EnemyMeleeHitbox hitbox;
+    [HideInInspector] public bool hitAppliedThisAttack;
+    public float slamDamage = 3f;
+    public float minRequiredPlayerDistance = 90f; // to ensure our boss does not leap like very far
+    public float playerTooClose = 10f; // to ensure our boss does not leap when its too close
+
+    public float knockbackPower = 3f;
+    public float windupTime = 0.25f;
+    public float leapDuration = 0.6f;
+    public float leapHeight = 3f; 
+
     private IdleState_Boss idle;
     private SpawnBombState_Boss bombState;
     private RecoveryState_Boss recovery;
     private RingAttackState_Boss ringAttack;
+    private LeapAttackState_Boss leapAttack;
+
 
     public override void Start()
     {
@@ -32,7 +48,7 @@ public class EnemyBoss_SS : Enemy
         bombState = new SpawnBombState_Boss(this, stateMachine);
         recovery = new RecoveryState_Boss(this, stateMachine);
         ringAttack = new RingAttackState_Boss(this, stateMachine, maxRadius, duration, explosionDamage, playerMask);
-
+        leapAttack = new LeapAttackState_Boss(this, stateMachine);
         stateMachine.Initialize(idle);
     }
 
@@ -45,6 +61,7 @@ public class EnemyBoss_SS : Enemy
     public EnemyState GetBombState() => bombState;
     public EnemyState GetRecoveryState() => recovery;
     public EnemyState GetExploisionState() => ringAttack;
+    public EnemyState GetLeapAttackState() => leapAttack;
 
     public void CreatePoofVFX(Vector3 spawnPosition)
     {
@@ -56,10 +73,66 @@ public class EnemyBoss_SS : Enemy
         Destroy(newFx, 1); // destroy after one second
     }
 
+
+    public void EnableHitBox(bool enable)
+    {
+        if (hitbox != null && hitbox.gameObject.activeSelf != enable)
+        {
+            hitbox.gameObject.SetActive(enable);
+        }
+    }
+
+
+        /// <summary>
+    /// Try to apply damage and impulse to the player GameObject caught in colliders 
+    /// </summary>
+    /// <param name="playerCol"></param>
+    public void TryApplyHit(Collider playerCol)
+    {
+        if (hitAppliedThisAttack) return;
+        if (Time.time < nextAttackAllowed) return;
+
+        Vector3 toPlayer = playerCol.transform.position - transform.position;
+        toPlayer.y = 0f;
+        if (toPlayer.sqrMagnitude < 0.0001f) return;
+
+        toPlayer.Normalize();
+
+        var pm = playerCol.GetComponentInParent<PlayerMovement>();
+        if (pm != null)
+        {
+            pm.ApplyImpulse(toPlayer * knockbackPower);
+
+            var damageable = pm.GetComponentInParent<IDamageable>();
+            if (damageable != null && !damageable.IsDead)
+            {
+                damageable.TakeDamage(slamDamage);
+            }
+        }
+        hitAppliedThisAttack = true;
+        nextAttackAllowed = Time.time + attackCooldown;
+        EnableHitBox(false);
+    }
+
+
+
+    public bool IsPlayerTooFar()
+    {
+        return Vector3.Distance(transform.position, target.position) > minRequiredPlayerDistance;
+    }
+
+    public bool IsPlayerTooClose()
+    {
+        return Vector3.Distance(transform.position, target.position) <= playerTooClose;
+    }
+
     void OnDrawGizmos()
     {
         Gizmos.color = aggressionColor;
         Gizmos.DrawWireSphere(transform.position, maxRadius);
-    }
 
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, playerTooClose);
+
+    }
 }
