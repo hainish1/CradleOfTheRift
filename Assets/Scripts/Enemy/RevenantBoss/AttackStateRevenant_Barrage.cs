@@ -55,7 +55,7 @@ public class AttackStateRevenant_Barrage : EnemyState
         // now fire
         if (Time.time >= nextShootTime)
         {
-            bossRange.FireOnce();
+            bossRange.FireBarrage();
             nextShootTime = Time.time + bossRange.fireCooldown;
             bossRange.nextAttackAllowed = Time.time + bossRange.fireCooldown * 0.75f; // for re-entry
         }

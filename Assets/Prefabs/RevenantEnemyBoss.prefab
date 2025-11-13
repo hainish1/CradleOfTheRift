@@ -5186,7 +5186,7 @@ Transform:
   m_GameObject: {fileID: 3427365701670154210}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.39, z: 0.587}
+  m_LocalPosition: {x: 0.25, y: 1.4, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5796,6 +5796,37 @@ Transform:
   - {fileID: 1938243893998542178}
   m_Father: {fileID: 6855515103189422601}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7562453641310194475
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6025983858397343963}
+  m_Layer: 11
+  m_Name: firePoint2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6025983858397343963
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7562453641310194475}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.25, y: 1.4, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9083025586867818779}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7890896758145879111
 GameObject:
   m_ObjectHideFlags: 0
@@ -5872,13 +5903,14 @@ GameObject:
   - component: {fileID: 9083025586867818779}
   - component: {fileID: 6702234162762134893}
   - component: {fileID: 2155517362727479217}
-  - component: {fileID: 4412303297756605295}
   - component: {fileID: 8226623813857041248}
   - component: {fileID: 204557455612082024}
   - component: {fileID: 2851529993679917071}
   - component: {fileID: 3349805392606994707}
-  - component: {fileID: -3325380021058808314}
+  - component: {fileID: 1065634495979649153}
   - component: {fileID: 6516409030888228098}
+  - component: {fileID: 4412303297756605295}
+  - component: {fileID: -3325380021058808314}
   m_Layer: 11
   m_Name: RevenantEnemyBoss
   m_TagString: Untagged
@@ -5901,6 +5933,7 @@ Transform:
   m_Children:
   - {fileID: 265669369783172808}
   - {fileID: 7588448968403286001}
+  - {fileID: 6025983858397343963}
   - {fileID: 5164896839454679108}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
@@ -5947,49 +5980,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &4412303297756605295
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8841140246284276385}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3773936ee198de143b18692d451e3058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  aggressionRange: 500
-  playerOutOfRange: 500
-  turnSpeed: 5
-  attackCooldown: 2
-  playerMask:
-    serializedVersion: 2
-    m_Bits: 256
-  gizosOn: 1
-  aggressionColor: {r: 1, g: 0, b: 0, a: 1}
-  nextAttackAllowed: 2
-  projectileDamage: 1
-  hoverHeight: 2
-  hoverBobAmplitude: 0.25
-  hoverBobSpeed: 2
-  chaseSpeed: 10
-  stopDistance: 9
-  attackRange: 12
-  turnSpeedWhileAiming: 12
-  agentAngularSpeed: 720
-  agentAcceleration: 100
-  projectileSpeed: 50
-  fireCooldown: 0.9
-  firePoint: {fileID: 7588448968403286001}
-  projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
-  projectileMask:
-    serializedVersion: 2
-    m_Bits: 1361
-  spawnOffset: 0.1
-  recoveryTime: 3
-  orbitVisuals: {fileID: -3325380021058808314}
 --- !u!114 &8226623813857041248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6006,7 +5996,7 @@ MonoBehaviour:
   aggressionRange: 500
   playerOutOfRange: 500
   turnSpeed: 10
-  attackCooldown: 4
+  attackCooldown: 1
   playerMask:
     serializedVersion: 2
     m_Bits: 256
@@ -6019,20 +6009,23 @@ MonoBehaviour:
   hoverBobSpeed: 2
   chaseSpeed: 7.5
   stopDistance: 12
-  attackRange: 18
-  turnSpeedWhileAiming: 12
+  attackRange: 30
+  turnSpeedWhileAiming: 10
   agentAngularSpeed: 720
   agentAcceleration: 100
   projectileSpeed: 50
   fireCooldown: 2
   firePoint: {fileID: 7588448968403286001}
+  firePoint2: {fileID: 6025983858397343963}
   projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
   projectileMask:
     serializedVersion: 2
     m_Bits: 9553
   spawnOffset: 0.1
+  barrageProjectileCount: 10
+  barrageInterval: 0.05
   recoveryTime: 3
-  orbitVisuals: {fileID: -3325380021058808314}
+  orbitVisuals: {fileID: 0}
 --- !u!114 &204557455612082024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6082,7 +6075,7 @@ MonoBehaviour:
   cleanupDelay: 0
   baseHealth: 40
   damageVisuals: {fileID: 6516409030888228098}
---- !u!114 &-3325380021058808314
+--- !u!114 &1065634495979649153
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6091,13 +6084,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8841140246284276385}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a97a663fb4b4bc4d81e0cb125669fe4, type: 3}
+  m_Script: {fileID: 11500000, guid: 149430ac779e6d54782c94ec378be867, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   orbitVisual: {fileID: 3232334194741932682, guid: 0156dea7ff4bdad4b9da5517c213d2f4, type: 3}
-  numOfOrbs: 6
+  numOfOrbs: 8
   orbitRadius: 1.5
-  orbitSpeed: 80
+  orbitSpeed: 100
   orbitHeight: 1.5
 --- !u!114 &6516409030888228098
 MonoBehaviour:
@@ -6117,6 +6110,66 @@ MonoBehaviour:
   fontSize: 50
   textDuration: 1.5
   riseSpeed: 1.5
+--- !u!114 &4412303297756605295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8841140246284276385}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3773936ee198de143b18692d451e3058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  aggressionRange: 500
+  playerOutOfRange: 500
+  turnSpeed: 5
+  attackCooldown: 2
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 256
+  gizosOn: 1
+  aggressionColor: {r: 1, g: 0, b: 0, a: 1}
+  nextAttackAllowed: 2
+  projectileDamage: 1
+  hoverHeight: 2
+  hoverBobAmplitude: 0.25
+  hoverBobSpeed: 2
+  chaseSpeed: 10
+  stopDistance: 9
+  attackRange: 12
+  turnSpeedWhileAiming: 12
+  agentAngularSpeed: 720
+  agentAcceleration: 100
+  projectileSpeed: 50
+  fireCooldown: 0.9
+  firePoint: {fileID: 7588448968403286001}
+  projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
+  projectileMask:
+    serializedVersion: 2
+    m_Bits: 1361
+  spawnOffset: 0.1
+  recoveryTime: 3
+  orbitVisuals: {fileID: -3325380021058808314}
+--- !u!114 &-3325380021058808314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8841140246284276385}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a97a663fb4b4bc4d81e0cb125669fe4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orbitVisual: {fileID: 3232334194741932682, guid: 0156dea7ff4bdad4b9da5517c213d2f4, type: 3}
+  numOfOrbs: 6
+  orbitRadius: 1.5
+  orbitSpeed: 80
+  orbitHeight: 1.5
 --- !u!1 &9064912426439065413
 GameObject:
   m_ObjectHideFlags: 0
@@ -6279,6 +6332,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3916859645064351834, guid: ae87488a8bdfccd44accf997cc91a540, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 1373c8e676b16624eb5f1964e56795a6, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:

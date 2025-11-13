@@ -27,12 +27,14 @@ public class RevenantBossRange : Enemy
     [Header("Shooting")]
     public float projectileSpeed = 50f;
     public float fireCooldown = .6f;
-    public Transform firePoint; // where bullet come from
+    public Transform firePoint; // first barrage point
+    public Transform firePoint2; // second barrage point
     public EnemyProjectile projectilePrefab;
     public LayerMask projectileMask = ~0;
     public float spawnOffset = 0.1f; // a little away fro fire point, safety
 
     public int barrageProjectileCount = 10; // how many projectiles in one barrage
+    public float barrageInterval = 0.05f; // time between projectiles in barrage
 
     [Space]
 
@@ -46,14 +48,14 @@ public class RevenantBossRange : Enemy
     RecoveryStateRevenant recovery;
 
     float bobPhase;
-    public EnemyRangeOrbitVisuals orbitVisuals;
+    public RevOrbitVisuals orbitVisuals;
 
 
     public override void Start()
     {
         base.Start();
 
-        orbitVisuals = GetComponent<EnemyRangeOrbitVisuals>();
+        orbitVisuals = GetComponent<RevOrbitVisuals>();
         if (agent != null)
         {
             agent.speed = chaseSpeed;
@@ -69,7 +71,6 @@ public class RevenantBossRange : Enemy
         recovery = new RecoveryStateRevenant(this, stateMachine);
 
         stateMachine.Initialize(idle); // enter idle first
-        Debug.Log("test");
     }
 
     public override void Update()
@@ -101,36 +102,48 @@ public class RevenantBossRange : Enemy
     /// </summary>
     public void FireOnce()
     {
-        if (!firePoint || !projectilePrefab) return;
 
-        Vector3 direction = (target ? (target.position + Vector3.up * .5f) - firePoint.position : transform.forward).normalized;
+        if (!firePoint || !firePoint2 || !projectilePrefab) return;
 
-        Vector3 spawnPoint = firePoint.position + direction * spawnOffset;
-        Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
+        Vector3 direction1 = (target ? target.position + Vector3.up * .5f - firePoint.position : transform.forward).normalized;
+        Vector3 spawnPoint1 = firePoint.position + direction1 * spawnOffset;
+        Quaternion rotation1 = Quaternion.LookRotation(direction1, Vector3.up);
 
-        EnemyProjectile projectile = Instantiate(projectilePrefab, spawnPoint, rotation);
-        projectile.Init(direction * projectileSpeed, projectileMask, this.projectileDamage);
+        Vector3 direction2 = (target ? target.position + Vector3.up * .5f - firePoint2.position : transform.forward).normalized;
+        Vector3 spawnPoint2 = firePoint2.position + direction2 * spawnOffset;
+        Quaternion rotation2 = Quaternion.LookRotation(direction2, Vector3.up);
 
-        if (orbitVisuals != null)
-        {
-            int orbIndex = orbitVisuals.GetNextVisibleOrbIndex();
-            if (orbIndex >= 0)
-            {
-                orbitVisuals.HideOrb(orbIndex);
-            }
-            else
-            {
-                // no orbs left,maybe i can go to recovery
-            }
-        }
+        EnemyProjectile projectile1 = Instantiate(projectilePrefab, spawnPoint1, rotation1);
+        projectile1.Init(direction1 * projectileSpeed, projectileMask, this.projectileDamage);
+
+        EnemyProjectile projectile2 = Instantiate(projectilePrefab, spawnPoint2, rotation2);
+        projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
+
+        // if (orbitVisuals != null)
+        // {
+        //     int orbIndex = orbitVisuals.GetNextVisibleOrbIndex();
+        //     if (orbIndex >= 0)
+        //     {
+        //         orbitVisuals.HideOrb(orbIndex);
+        //     }
+        //     else
+        //     {
+        //         // no orbs left,maybe i can go to recovery
+        //     }
+        // }
     }
 
-    private IEnumerator FireBarrageCoroutine()
+    public void FireBarrage()
+    {
+        StartCoroutine(FireBarrageCoroutine());
+    }
+
+    public IEnumerator FireBarrageCoroutine()
     {
         for (int i = 0; i < barrageProjectileCount; i++)
         {
             FireOnce();
-            yield return new WaitForSeconds(0.1f); // small delay between shots
+            yield return new WaitForSeconds(barrageInterval); // small delay between shots
         }
     }
 
