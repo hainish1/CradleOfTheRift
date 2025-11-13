@@ -5922,7 +5922,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.5, y: 2.5, z: 2.5}
+  m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!195 &2155517362727479217
 NavMeshAgent:
@@ -5969,6 +5969,7 @@ MonoBehaviour:
   gizosOn: 1
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
   nextAttackAllowed: 2
+  projectileDamage: 1
   hoverHeight: 2
   hoverBobAmplitude: 0.25
   hoverBobSpeed: 2
@@ -5976,16 +5977,17 @@ MonoBehaviour:
   stopDistance: 9
   attackRange: 12
   turnSpeedWhileAiming: 12
-  firePoint: {fileID: 7588448968403286001}
-  projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
+  agentAngularSpeed: 720
+  agentAcceleration: 100
   projectileSpeed: 50
   fireCooldown: 0.9
+  firePoint: {fileID: 7588448968403286001}
+  projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
   projectileMask:
     serializedVersion: 2
     m_Bits: 1361
   spawnOffset: 0.1
   recoveryTime: 3
-  projectileDamage: 1
   orbitVisuals: {fileID: -3325380021058808314}
 --- !u!114 &204557455612082024
 MonoBehaviour:
