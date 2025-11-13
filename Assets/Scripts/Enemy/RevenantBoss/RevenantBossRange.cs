@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 
@@ -30,6 +31,8 @@ public class RevenantBossRange : Enemy
     public EnemyProjectile projectilePrefab;
     public LayerMask projectileMask = ~0;
     public float spawnOffset = 0.1f; // a little away fro fire point, safety
+
+    public int barrageProjectileCount = 10; // how many projectiles in one barrage
 
     [Space]
 
@@ -119,6 +122,15 @@ public class RevenantBossRange : Enemy
             {
                 // no orbs left,maybe i can go to recovery
             }
+        }
+    }
+
+    private IEnumerator FireBarrageCoroutine()
+    {
+        for (int i = 0; i < barrageProjectileCount; i++)
+        {
+            FireOnce();
+            yield return new WaitForSeconds(0.1f); // small delay between shots
         }
     }
 
