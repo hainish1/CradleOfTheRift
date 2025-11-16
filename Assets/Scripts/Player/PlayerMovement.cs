@@ -431,13 +431,10 @@ public class PlayerMovement : MonoBehaviour
         if (IsGrounded || _isFlying) return;
 
         float aggregateGravityValue = Physics.gravity.y * _gravityMultiplier * _currDriftDescentDivisor;
-        _verticalVelocityVector.y += Time.deltaTime * aggregateGravityValue;
+        float accelIncrement = Time.deltaTime * aggregateGravityValue;
+        _verticalVelocityVector.y = Mathf.Clamp(_verticalVelocityVector.y + accelIncrement, aggregateGravityValue, 0);
 
-        // Limit descent speed to the strength of gravity.
-        if (_verticalVelocityVector.y < aggregateGravityValue)
-        {
-            ApplyAirDrag(aggregateGravityValue);
-        }
+        ApplyAirDrag(aggregateGravityValue); // Slow descent speed to the strength of gravity.
 
         _characterController.Move(Time.deltaTime * _verticalVelocityVector);
     }
@@ -451,15 +448,10 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="aggregateGravityValue"> The aggregrate gravity value. </param>
     private void ApplyAirDrag(float aggregateGravityValue)
     {
-        float dragIncrement = Time.deltaTime * _gravityAirDrag;
-
-        _verticalVelocityVector.y += dragIncrement;
-
-        // If drag increment for the current frame exceeds aggregateGravityValue,
-        // then set current speed to exactly aggregateGravityValue.
-        if (_verticalVelocityVector.y > aggregateGravityValue)
+        if (_verticalVelocityVector.y < aggregateGravityValue)
         {
-            _verticalVelocityVector.y = aggregateGravityValue;
+            float dragIncrement = Time.deltaTime * _gravityAirDrag;
+            _verticalVelocityVector.y = Mathf.Clamp(_verticalVelocityVector.y + dragIncrement, 0, aggregateGravityValue);
         }
     }
     
@@ -506,9 +498,9 @@ public class PlayerMovement : MonoBehaviour
                 float degreesPerSecond = Time.deltaTime * 360;
                 moveDirectionUnitVector = GetRotationTowards(moveDirectionUnitVector, groundPlaneMoveUnitVector, degreesPerSecond);
 
-                //Vector3 bottom = GetPlayerCharacterBottom();
-                //Debug.DrawRay(bottom, _lateralVelocityVector, Color.green);
-                //Debug.DrawRay(bottom, groundPlaneMoveUnitVector * 10, Color.red);
+                Vector3 bottom = GetPlayerCharacterBottom();
+                Debug.DrawRay(bottom, _lateralVelocityVector, Color.green);
+                Debug.DrawRay(bottom, groundPlaneMoveUnitVector * 10, Color.red);
             }
             else
             {
@@ -518,12 +510,10 @@ public class PlayerMovement : MonoBehaviour
 
         _moveInputTemp = moveActions.ReadValue<Vector2>();
 
-        float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
-
         // Accelerate if movement is being inputted and sprint has not been canceled.
-        if (moveDirectionUnitVector != Vector3.zero && _lateralVelocityVector.magnitude <= aggregateMaxSpeedValue)
+        if (moveDirectionUnitVector != Vector3.zero && _lateralVelocityVector.magnitude <= MoveMaxSpeed)
         {
-            MoveAccelerate(moveDirectionUnitVector, aggregateMaxSpeedValue);
+            MoveAccelerate(moveDirectionUnitVector);
         }
         // Otherwise, decelerate.
         else
@@ -639,7 +629,7 @@ public class PlayerMovement : MonoBehaviour
 
         // Return target vector's direction if the maximum rotation this frame meets or exceeds it,
         // or if current vector's alignment is extremely close.
-        if (angleRadians < Epsilon || maxRadiansDelta >= angleRadians)
+        if (maxRadiansDelta >= angleRadians || angleRadians < Epsilon)
         {
             return currMagnitude * targetUnitVector;
         }
@@ -679,36 +669,22 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Moves the player character using a current lateral or vertical speed vector
-    ///     and an incremental speed vector on any frame this method is called.
-    ///   </para>
-    /// </summary>
-    /// <param name="currSpeedVector"> The current speed vector. </param>
-    /// <param name="incrementSpeedVector"> The incremental speed vector </param>
-    private void MoveIncrementCharacter(ref Vector3 currSpeedVector, Vector3 incrementSpeedVector)
-    {
-        currSpeedVector += incrementSpeedVector;
-        _characterController.Move(Time.deltaTime * currSpeedVector);
-    }
-
-    /// <summary>
-    ///   <para>
     ///     Accelerates the player character laterally on any frame this method is called up to the max movement speed.
     ///   </para>
     /// </summary>
     /// <param name="moveDirectionUnitVector"> The world direction of the most recent move input. </param>
     /// <param name="aggregateMaxSpeedValue"> The aggregate speed value. </param>
-    private void MoveAccelerate(Vector3 moveDirectionUnitVector, float aggregateMaxSpeedValue)
+    private void MoveAccelerate(Vector3 moveDirectionUnitVector)
     {
-        if (_lateralVelocityVector.magnitude < aggregateMaxSpeedValue)
+        if (_lateralVelocityVector.magnitude < MoveMaxSpeed)
         {
             float aggregateAccelIncrement = Time.deltaTime * _moveAcceleration;
-            float newVelocityMagnitude = Mathf.Clamp(_lateralVelocityVector.magnitude + aggregateAccelIncrement, 0, aggregateMaxSpeedValue);
+            float newVelocityMagnitude = Mathf.Clamp(_lateralVelocityVector.magnitude + aggregateAccelIncrement, 0, MoveMaxSpeed);
             _lateralVelocityVector = newVelocityMagnitude * moveDirectionUnitVector;
         }
         else
         {
-            _lateralVelocityVector = aggregateMaxSpeedValue * moveDirectionUnitVector;
+            _lateralVelocityVector = MoveMaxSpeed * moveDirectionUnitVector;
         }
 
         _characterController.Move(Time.deltaTime * _lateralVelocityVector);
@@ -722,7 +698,7 @@ public class PlayerMovement : MonoBehaviour
     private void MoveDecelerate()
     {
         // Skip deceleration calculations if not moving.
-        if (_lateralVelocityVector.magnitude <= 0) return;
+        if (_lateralVelocityVector.magnitude == 0) return;
 
         float decelDecrement = Time.deltaTime * _moveDeceleration;
         float newVelocityMagnitude = Mathf.Clamp(_lateralVelocityVector.magnitude - decelDecrement, 0, float.MaxValue);
@@ -733,27 +709,14 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Gets the combined max speed value considering all current speed parameters on any frame this
-    ///     method is called.
-    ///   </para>
-    /// </summary>
-    /// <returns> The aggregate max speed value. </returns>
-    private float CalculateAggregateMaxSpeedValue()
-    {
-        return MoveMaxSpeed;
-    }
-
-    /// <summary>
-    ///   <para>
     ///     Recalculates the acceleration and deceleration rates for the aggregate max speed value on any
     ///     frame this method is called.
     ///   </para>
     /// </summary>
     private void RecalculateMoveAccelDecel()
     {
-        float aggregateMaxSpeedValue = CalculateAggregateMaxSpeedValue();
-        _moveAcceleration = aggregateMaxSpeedValue / _moveAccelerationSeconds;
-        _moveDeceleration = aggregateMaxSpeedValue / _moveDecelerationSeconds;
+        _moveAcceleration = MoveMaxSpeed / _moveAccelerationSeconds;
+        _moveDeceleration = MoveMaxSpeed / _moveDecelerationSeconds;
     }
 
     /// <summary>
@@ -769,23 +732,23 @@ public class PlayerMovement : MonoBehaviour
 
         _currHoverHeight = _groundPoint.point.y + _hoverHeight;
         float playerCharacterBottomHeight = GetPlayerCharacterBottom().y;
-        float hoverHeightDisplacement = _currHoverHeight - playerCharacterBottomHeight;
+        float heightDisplacement = _currHoverHeight - playerCharacterBottomHeight;
 
         // Skip pull and damping calculations and set position of the bottom of the player character exactly to current
         // hover height if it is very close to it.
-        if (Mathf.Abs(hoverHeightDisplacement) < 1e-2f && Mathf.Abs(_verticalVelocityVector.y) < 0.1f)
+        if (Mathf.Abs(heightDisplacement) < 1e-2f && Mathf.Abs(_verticalVelocityVector.y) < 0.1f)
         {
             transform.position = new Vector3(_playerCenter.position.x, _currHoverHeight + _playerHalfHeight, _playerCenter.position.z);
-            hoverHeightDisplacement = 0;
+            heightDisplacement = 0;
             _verticalVelocityVector.y = 0;
             return;
         }
 
-        float hoverPullForce = _hoverPullStrength * hoverHeightDisplacement; // Pull player character into the direction of current hover height.
-        float hoverDampingForce = _hoverDampingStrength * -_verticalVelocityVector.y; // Apply force in the opposite direction to dampen.
-        float hoverTotalPullForce = hoverPullForce + hoverDampingForce; // Combine pull and dampen forces.
+        float pullForce = _hoverPullStrength * heightDisplacement; // Pull player character into the direction of current hover height.
+        float dampingForce = _hoverDampingStrength * -_verticalVelocityVector.y; // Apply force in the opposite direction to dampen.
+        float totalPullForce = pullForce + dampingForce; // Combine pull and dampen forces.
 
-        _verticalVelocityVector.y += Time.deltaTime * hoverTotalPullForce;
+        _verticalVelocityVector.y += Time.deltaTime * totalPullForce;
         _characterController.Move(Time.deltaTime * _verticalVelocityVector);
     }
 
@@ -931,7 +894,7 @@ public class PlayerMovement : MonoBehaviour
         // If on the ground and jump was inputted and jump buffer window is valid, or if walked off an edge and coyote time window is valid, then jump.
         if ((IsGrounded && IsWithinJumpBufferWindow()) || (_inputtedJumpThisFrame && !IsGrounded && IsWithinCoyoteTimeWindow()))
         {
-            Jump(_jumpForce);
+            PerformJump(_jumpForce);
         }
         // Otherwise, reset coyote time and jump buffer time to original states
         // because player charater is on the ground.
@@ -950,7 +913,7 @@ public class PlayerMovement : MonoBehaviour
     ///   </para>
     /// </summary>
     /// <param name="jumpForce"> The vertical jump force exerted. </param>
-    private void Jump(float jumpForce)
+    private void PerformJump(float jumpForce)
     {
         _coyoteTimer = 0;
         _jumpBufferTimer = 0;
@@ -1073,7 +1036,7 @@ public class PlayerMovement : MonoBehaviour
                 // ground to prevent flight from exiting early.
                 if (IsGrounded)
                 {
-                    Jump(_flightJumpForce);
+                    PerformJump(_flightJumpForce);
                 }
             }
         }
@@ -1087,14 +1050,8 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void FlightConditions()
     {
-        // Cease drifting if jump input is no longer held or flight energy is depleted.
-        //if ((_isflying && !jumpActions.IsPressed()) || _currFlightEnergy <= 0)
-        //{
-        //    _isFlying = false;
-        //}
-
         // Only initialize regeneration routine if flew, touching the ground and not already regenerating.
-        if (_currFlightEnergy < _flightMaxEnergy && !_isRegeneratingFlight && IsGrounded)
+        if (_currFlightEnergy < _flightMaxEnergy && IsGrounded && !_isRegeneratingFlight)
         {
             StartCoroutine(FlightRegeneration());
         }
@@ -1102,27 +1059,26 @@ public class PlayerMovement : MonoBehaviour
         // Skip calculations if not flying.
         if (!_isFlying) return;
 
-        float flightDepletionDecrement = Time.deltaTime * _flightDepletionRate;
+        float depletionDecrement = Time.deltaTime * _flightDepletionRate;
 
-        _currFlightEnergy -= flightDepletionDecrement;
+        _currFlightEnergy = Mathf.Clamp(_currFlightEnergy - depletionDecrement, 0, _flightMaxEnergy);
 
-        // If flight energy decrement for the current frame exceeds zero, then set current
-        // flight energy to exactly zero, stop flying and immediately begin drifting.
-        if (_currFlightEnergy <= 0)
+        // If flight energy decrement for the current frame reaches zero, then
+        // stop flying and immediately begin drifting.
+        if (_currFlightEnergy == 0)
         {
-            _currFlightEnergy = 0;
             DisableFlight();
             EnableDrift();
             return;
         }
-        // Just disable flight if touching the ground.
+        // Just disable flight if on the ground.
         if (IsGrounded)
         {
             DisableFlight();
             return;
         }
 
-        float flightInputValue = 0;
+        int flightInputValue = 0;
         if (jumpActions.IsPressed()) flightInputValue += 1;
         if (sprintActions.IsPressed()) flightInputValue -= 1;
 
@@ -1148,24 +1104,21 @@ public class PlayerMovement : MonoBehaviour
     ///   </para>
     /// </summary>
     /// <param name="flightInputValue"> Whether jump or descend was inputted. </param>
-    private void FlightAccelerate(float flightInputValue)
+    private void FlightAccelerate(int flightInputValue)
     {
-        Vector3 flightAccelIncrement = Time.deltaTime * _flightAcceleration * new Vector3(0, flightInputValue, 0);
-
+        float accelIncrement = Time.deltaTime * _flightAcceleration;
+        
         // If flightAccelIncrement is pushing against the direction of _verticalVelocityVector,
-        // then increment twice as fast for snappier counter-acceleration.
-        if (_verticalVelocityVector.y * flightAccelIncrement.y < 0)
+        // then accelerate faster than normal for snappier counter-acceleration.
+        if (_verticalVelocityVector.y * accelIncrement < 0)
         {
-            flightAccelIncrement *= _flightCounterAccelerationMultiplier;
+            accelIncrement *= _flightCounterAccelerationMultiplier;
         }
 
-        // Limit vertical move speed to _flightMaxSpeed.
-        if (_verticalVelocityVector.magnitude + flightAccelIncrement.magnitude > _flightMaxSpeed)
-        {
-            flightAccelIncrement.y = Mathf.Sign(flightAccelIncrement.y) * (_flightMaxSpeed - _verticalVelocityVector.magnitude);
-        }
+        float newVelocityMagnitude = Mathf.Clamp(_verticalVelocityVector.magnitude + accelIncrement, 0, _flightMaxSpeed);
+        _verticalVelocityVector = newVelocityMagnitude * new Vector3(0, flightInputValue, 0);
 
-        MoveIncrementCharacter(ref _verticalVelocityVector, flightAccelIncrement);
+        _characterController.Move(Time.deltaTime * _verticalVelocityVector);
     }
 
     /// <summary>
@@ -1178,17 +1131,11 @@ public class PlayerMovement : MonoBehaviour
         // Skip deceleration calculations if not moving.
         if (_verticalVelocityVector.magnitude == 0) return;
 
-        Vector3 decelDecrement = Time.deltaTime * _flightDeceleration * _verticalVelocityVector.normalized;
+        float decelDecrement = Time.deltaTime * _flightDeceleration;
+        float newVelocityMagnitude = Mathf.Clamp(_verticalVelocityVector.magnitude - decelDecrement, 0, float.MaxValue);
+        _verticalVelocityVector = newVelocityMagnitude * _verticalVelocityVector.normalized;
 
-        // If deceleration decrement for the current frame exceeds zero,
-        // then set current speed to exactly zero.
-        if (_verticalVelocityVector.magnitude - decelDecrement.magnitude < 0)
-        {
-            _verticalVelocityVector = Vector3.zero;
-            return;
-        }
-
-        MoveIncrementCharacter(ref _verticalVelocityVector, -decelDecrement);
+        _characterController.Move(Time.deltaTime * _verticalVelocityVector);
     }
 
     /// <summary>
@@ -1204,20 +1151,12 @@ public class PlayerMovement : MonoBehaviour
         while (_currFlightEnergy < _flightMaxEnergy)
         {
             // Cancel flight energy regeneration if flight was inputted.
-            if (_isFlying)
-            {
-                break;
-            }
+            if (_isFlying) break;
 
-            _currFlightEnergy += Time.deltaTime * _flightRegenerationRate;
+            float regenIncrement = Time.deltaTime * _flightRegenerationRate;
+            _currFlightEnergy = Mathf.Clamp(_currFlightEnergy + regenIncrement, 0, _flightMaxEnergy);
 
-            // If the flight regeneration increment for the current frame exceeds
-            // _maxFlightEnergy, then set flight energy to exactly _maxFlightEnergy.
-            if (_currFlightEnergy >= _flightMaxEnergy)
-            {
-                _currFlightEnergy = _flightMaxEnergy;
-                break;
-            }
+            if (_currFlightEnergy == _flightMaxEnergy) break;
 
             yield return null;
         }
@@ -1257,10 +1196,12 @@ public class PlayerMovement : MonoBehaviour
         RecalculateMoveAccelDecel();
     }
     
+
     public void SetVerticalVelocityFactor(float factor)
     {
         _verticalVelocityVector.y = factor;
     }
+
 
     public float GetCurrentFlightEnergy()
     {
