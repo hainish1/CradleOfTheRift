@@ -5909,8 +5909,6 @@ GameObject:
   - component: {fileID: 3349805392606994707}
   - component: {fileID: 1065634495979649153}
   - component: {fileID: 6516409030888228098}
-  - component: {fileID: 4412303297756605295}
-  - component: {fileID: -3325380021058808314}
   m_Layer: 11
   m_Name: RevenantEnemyBoss
   m_TagString: Untagged
@@ -6018,6 +6016,7 @@ MonoBehaviour:
   firePoint: {fileID: 7588448968403286001}
   firePoint2: {fileID: 6025983858397343963}
   projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
+  AOEProjectilePrefab: {fileID: 4739267247699924317, guid: 1dff6ae550385f244b0694002d4424df, type: 3}
   projectileMask:
     serializedVersion: 2
     m_Bits: 9553
@@ -6110,66 +6109,6 @@ MonoBehaviour:
   fontSize: 50
   textDuration: 1.5
   riseSpeed: 1.5
---- !u!114 &4412303297756605295
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8841140246284276385}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3773936ee198de143b18692d451e3058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  aggressionRange: 500
-  playerOutOfRange: 500
-  turnSpeed: 5
-  attackCooldown: 2
-  playerMask:
-    serializedVersion: 2
-    m_Bits: 256
-  gizosOn: 1
-  aggressionColor: {r: 1, g: 0, b: 0, a: 1}
-  nextAttackAllowed: 2
-  projectileDamage: 1
-  hoverHeight: 2
-  hoverBobAmplitude: 0.25
-  hoverBobSpeed: 2
-  chaseSpeed: 10
-  stopDistance: 9
-  attackRange: 12
-  turnSpeedWhileAiming: 12
-  agentAngularSpeed: 720
-  agentAcceleration: 100
-  projectileSpeed: 50
-  fireCooldown: 0.9
-  firePoint: {fileID: 7588448968403286001}
-  projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
-  projectileMask:
-    serializedVersion: 2
-    m_Bits: 1361
-  spawnOffset: 0.1
-  recoveryTime: 3
-  orbitVisuals: {fileID: -3325380021058808314}
---- !u!114 &-3325380021058808314
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8841140246284276385}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a97a663fb4b4bc4d81e0cb125669fe4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  orbitVisual: {fileID: 3232334194741932682, guid: 0156dea7ff4bdad4b9da5517c213d2f4, type: 3}
-  numOfOrbs: 6
-  orbitRadius: 1.5
-  orbitSpeed: 80
-  orbitHeight: 1.5
 --- !u!1 &9064912426439065413
 GameObject:
   m_ObjectHideFlags: 0

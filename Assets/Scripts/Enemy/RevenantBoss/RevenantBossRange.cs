@@ -30,6 +30,7 @@ public class RevenantBossRange : Enemy
     public Transform firePoint; // first barrage point
     public Transform firePoint2; // second barrage point
     public EnemyProjectile projectilePrefab;
+    public EnemyAOEProjectile AOEProjectilePrefab;
     public LayerMask projectileMask = ~0;
     public float spawnOffset = 0.1f; // a little away fro fire point, safety
 
@@ -103,7 +104,7 @@ public class RevenantBossRange : Enemy
     public void FireOnce()
     {
 
-        if (!firePoint || !firePoint2 || !projectilePrefab) return;
+        if (!firePoint || !firePoint2 || !projectilePrefab || !AOEProjectilePrefab) return;
 
         Vector3 direction1 = (target ? target.position + Vector3.up * .5f - firePoint.position : transform.forward).normalized;
         Vector3 spawnPoint1 = firePoint.position + direction1 * spawnOffset;
@@ -119,6 +120,7 @@ public class RevenantBossRange : Enemy
         EnemyProjectile projectile2 = Instantiate(projectilePrefab, spawnPoint2, rotation2);
         projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
 
+        // TODO: Rework orbit visuals
         // if (orbitVisuals != null)
         // {
         //     int orbIndex = orbitVisuals.GetNextVisibleOrbIndex();
