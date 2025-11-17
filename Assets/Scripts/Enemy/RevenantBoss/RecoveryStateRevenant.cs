@@ -33,6 +33,9 @@ public class RecoveryStateRevenant : EnemyState
             if (PlayerInAggressionRange()) // if the player is still in aggression range
             {
                 stateMachine.ChangeState(bossRange.GetChase());
+
+                // hacky shit to force the AOE attack directly after the barrage attack.
+                //stateMachine.ChangeState(bossRange.GetAOEAttack());
             }
             else
             {

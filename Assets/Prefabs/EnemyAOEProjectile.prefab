@@ -153,8 +153,9 @@ MonoBehaviour:
   hitMask:
     serializedVersion: 2
     m_Bits: 1361
-  aoeRadius: 10
-  aoeDamage: 1
+  aoeRadius: 8
+  aoeDamage: 8
+  explosionVFX: {fileID: 358637981425055526, guid: 8eb503696b886e04faff8fc0f480d473, type: 3}
 --- !u!54 &7752331890889885175
 Rigidbody:
   m_ObjectHideFlags: 0

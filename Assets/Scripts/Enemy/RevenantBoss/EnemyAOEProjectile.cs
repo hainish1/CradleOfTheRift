@@ -22,6 +22,8 @@ public class EnemyAOEProjectile : MonoBehaviour
     [SerializeField] private float aoeRadius = 5f;
     [SerializeField] private float aoeDamage = 1f;
 
+    public GameObject explosionVFX;
+
     Rigidbody rb;
     private float age;
 
@@ -77,6 +79,7 @@ public class EnemyAOEProjectile : MonoBehaviour
 
         // spawn AOE effect on collision
         SpawnAOEEffect();
+        CreateExplosionVFX();
 
         // check if collided with enemy and if yes then damage it
         var pm = collision.collider.GetComponentInParent<PlayerMovement>();
@@ -133,5 +136,19 @@ public class EnemyAOEProjectile : MonoBehaviour
         }
     }
 
+    public void CreateExplosionVFX()
+    {
+        if (explosionVFX == null) return;
+        GameObject newFx = Instantiate(explosionVFX);
+        newFx.transform.position = transform.position;
+        newFx.transform.rotation = Quaternion.identity;
 
+        Destroy(newFx, 1); // destroy after one second
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, aoeRadius);
+    }
 }

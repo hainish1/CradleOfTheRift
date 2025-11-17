@@ -65,6 +65,8 @@ public class AttackStateRevenant_Barrage : EnemyState
         if (distance >= bossRange.attackRange * 1.2f || Time.time >= endTime)
         {
             stateMachine.ChangeState(bossRange.GetRecovery());
+            Debug.Log("Revenant: Switching to Recovery State from Attack State");
+            //stateMachine.ChangeState(bossRange.GetAOEAttack());
         }
     }
 }

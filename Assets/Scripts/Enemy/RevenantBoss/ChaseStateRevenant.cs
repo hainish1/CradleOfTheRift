@@ -51,7 +51,20 @@ public class ChaseStateRevenant : EnemyState
 
         if (distance <= bossRange.attackRange && Time.time >= enemy.nextAttackAllowed)
         {
-            stateMachine.ChangeState(bossRange.GetAttack());
+            // Can randomize between different attacks here
+            float random = Random.value;
+            if (random < 0.6f) // barrage attack has a higher chance to be chosen (idk if this is a good idea)
+            {
+                stateMachine.ChangeState(bossRange.GetAttack());
+                //Debug.Log("Revenant: Switching to Attack State from Chase State");
+            }
+            else
+            {
+                stateMachine.ChangeState(bossRange.GetAOEAttack());
+                //Debug.Log("Revenant: Switching to AOE Attack State from Chase State");
+            }
+            //stateMachine.ChangeState(bossRange.GetAttack());
+            //Debug.Log("Revenant: Switching to Attack State from Chase State");
         }
 
     }
