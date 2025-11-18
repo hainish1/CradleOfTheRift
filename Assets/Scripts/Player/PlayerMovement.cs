@@ -63,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
     private float _moveAcceleration;
     private float _moveDeceleration;
     private Vector3 _lateralVelocityVector;
+    private Vector3 _groundPlaneMoveVectorTemp;
     private Vector2 _moveInputTemp;
 
     // Hover Parameters
@@ -114,7 +115,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     [Tooltip("Seconds that jump can still be registered after walking off an edge.")] private float _coyoteTimeWindow;
     [SerializeField]
-    [Tooltip("Seconds that jump can still be registered before touching the ground.")] private float _jumpBufferWindow;
+    [Tooltip("Seconds that jump can still be registered before reaching the ground.")] private float _jumpBufferWindow;
     private bool _inputtedJumpThisFrame;
     private float _coyoteTimer;
     private float _jumpBufferTimer;
@@ -196,74 +197,70 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        if (_playerEntity != null)
-        {
-            // Player Parameters
-            _playerHalfHeight = GetComponent<CharacterController>().height / 2;
-            _playerRadius = GetComponent<CharacterController>().radius;
+        if (_playerEntity == null) return;
 
-            // Gravity Parameters
-            _gravityAirDrag += Mathf.Abs(Physics.gravity.y) * _gravityMultiplier;
+        // Player Parameters
+        _playerHalfHeight = GetComponent<CharacterController>().height / 2;
+        _playerRadius = GetComponent<CharacterController>().radius;
 
-            // Movement Parameters
-            MoveMaxSpeed = _playerEntity.Stats.MoveSpeed;
-            _moveAcceleration = MoveMaxSpeed / _moveAccelerationSeconds;
-            _moveDeceleration = MoveMaxSpeed / _moveDecelerationSeconds;
-            _moveInputTemp = moveActions.ReadValue<Vector2>();
+        // Gravity Parameters
+        _gravityAirDrag += Mathf.Abs(Physics.gravity.y) * _gravityMultiplier;
 
-            // Hover Parameters
-            _groundedCastRadius = _playerRadius - 0.1f;
-            _groundedCastPauseTimer = 0;
-            _groundedLayerMasks = LayerMask.GetMask("Environment");
-            _groundedLayerMasks |= LayerMask.GetMask("Interactable");
-            _groundedLayerMasks |= LayerMask.GetMask("Obstacles");
-            _groundedLayerMasks |= LayerMask.GetMask("Enemy");
-            GetIsGrounded();
+        // Movement Parameters
+        MoveMaxSpeed = _playerEntity.Stats.MoveSpeed;
+        _moveAcceleration = MoveMaxSpeed / _moveAccelerationSeconds;
+        _moveDeceleration = MoveMaxSpeed / _moveDecelerationSeconds;
+        _moveInputTemp = Vector2.zero;
 
-            // KnockBack Parameters
-            _kbDamping = _playerEntity.Stats.KbDamping;
-            _kbControlsLockTime = _playerEntity.Stats.KbControlsLockTime;
-            _kbDashLockTime = _playerEntity.Stats.KbDashLockTime;
-            _kbControlsLockTimer = 0;
-            _kbDashLockTimer = 0;
+        // Hover Parameters
+        _groundedCastRadius = _playerRadius - 0.1f;
+        _groundedCastPauseTimer = 0;
+        _groundedLayerMasks = LayerMask.GetMask("Environment");
+        _groundedLayerMasks |= LayerMask.GetMask("Interactable");
+        _groundedLayerMasks |= LayerMask.GetMask("Obstacles");
+        _groundedLayerMasks |= LayerMask.GetMask("Enemy");
+        GetIsGrounded();
 
-            // Dash Parameters
-            if (_playerEntity != null)
-            {
-                DashDistance = _playerEntity.Stats.DashDistance;
-                DashSpeed = _playerEntity.Stats.DashSpeed;
-                DashCooldown = _playerEntity.Stats.DashCooldown;
-                DashMaxCharges = _playerEntity.Stats.DashCharges;
-            }
-            _currDashCharges = DashMaxCharges;
-            _isDashing = false;
-            _isRegeneratingDash = false;
+        // KnockBack Parameters
+        _kbDamping = _playerEntity.Stats.KbDamping;
+        _kbControlsLockTime = _playerEntity.Stats.KbControlsLockTime;
+        _kbDashLockTime = _playerEntity.Stats.KbDashLockTime;
+        _kbControlsLockTimer = 0;
+        _kbDashLockTimer = 0;
 
-            // Jump Parameters
-            _jumpForce = _playerEntity.Stats.JumpForce;
-            _inputtedJumpThisFrame = false;
+        // Dash Parameters
+        DashDistance = _playerEntity.Stats.DashDistance;
+        DashSpeed = _playerEntity.Stats.DashSpeed;
+        DashCooldown = _playerEntity.Stats.DashCooldown;
+        DashMaxCharges = _playerEntity.Stats.DashCharges;
+        _currDashCharges = DashMaxCharges;
+        _isDashing = false;
+        _isRegeneratingDash = false;
 
-            // Coyote Time Parameters
-            _coyoteTimer = _coyoteTimeWindow;
-            _jumpBufferTimer = 0;
+        // Jump Parameters
+        _jumpForce = _playerEntity.Stats.JumpForce;
+        _inputtedJumpThisFrame = false;
 
-            // Drift Parameters
-            _driftDescentDivisor = _playerEntity.Stats.DriftDescentDivisor;
-            _currDriftDescentDivisor = 1;
-            _driftDelayTimer = 0;
-            _isDrifting = false;
+        // Coyote Time Parameters
+        _coyoteTimer = _coyoteTimeWindow;
+        _jumpBufferTimer = 0;
 
-            // Flight Parameters
-            _flightMaxSpeed = _playerEntity.Stats.FlightMaxSpeed;
-            _flightMaxEnergy = _playerEntity.Stats.FlightMaxEnergy;
-            _flightRegenerationRate = _playerEntity.Stats.FlightRegenerationRate;
-            _flightDepletionRate = _playerEntity.Stats.FlightDepletionRate;
-            _isFlying = false;
-            _isRegeneratingFlight = false;
-            _flightAcceleration = _flightMaxSpeed / _flightAccelerationSeconds;
-            _flightDeceleration = _flightMaxSpeed / _flightDecelerationSeconds;
-            _currFlightEnergy = _flightMaxEnergy;
-        }
+        // Drift Parameters
+        _driftDescentDivisor = _playerEntity.Stats.DriftDescentDivisor;
+        _currDriftDescentDivisor = 1;
+        _driftDelayTimer = 0;
+        _isDrifting = false;
+
+        // Flight Parameters
+        _flightMaxSpeed = _playerEntity.Stats.FlightMaxSpeed;
+        _flightMaxEnergy = _playerEntity.Stats.FlightMaxEnergy;
+        _flightRegenerationRate = _playerEntity.Stats.FlightRegenerationRate;
+        _flightDepletionRate = _playerEntity.Stats.FlightDepletionRate;
+        _isFlying = false;
+        _isRegeneratingFlight = false;
+        _flightAcceleration = _flightMaxSpeed / _flightAccelerationSeconds;
+        _flightDeceleration = _flightMaxSpeed / _flightDecelerationSeconds;
+        _currFlightEnergy = _flightMaxEnergy;
     }
 
     void Update()
@@ -432,7 +429,7 @@ public class PlayerMovement : MonoBehaviour
 
         float aggregateGravityValue = Physics.gravity.y * _gravityMultiplier * _currDriftDescentDivisor;
         float accelIncrement = Time.deltaTime * aggregateGravityValue;
-        _verticalVelocityVector.y = Mathf.Clamp(_verticalVelocityVector.y + accelIncrement, aggregateGravityValue, 0);
+        _verticalVelocityVector.y = Mathf.Clamp(_verticalVelocityVector.y + accelIncrement, aggregateGravityValue, float.MaxValue);
 
         ApplyAirDrag(aggregateGravityValue); // Slow descent speed to the strength of gravity.
 
@@ -482,33 +479,7 @@ public class PlayerMovement : MonoBehaviour
         // simply stop recording new movement values instead of completely skipping the MoveCase method.
         Vector3 moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
 
-        // Move the player character parallel to the angle of the current ground plane.
-        if (moveDirectionUnitVector != Vector3.zero)
-        {
-            // Reset _lateralVelocityVector pitch if new move input is registered to ground clamp in a new direction faster.
-            if (IsGrounded && moveActions.ReadValue<Vector2>() == _moveInputTemp)
-            {
-                // Get unit vector parallel to ground plane.
-                Vector3 groundPlaneMoveUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundPoint.normal).normalized;
-
-                // Set pitch of moveDirectionUnitVector to that of _lateralVelocityVector.
-                moveDirectionUnitVector = MatchPitchAngle(moveDirectionUnitVector, _lateralVelocityVector);
-
-                // Rotate pitch of moveDirectionUnitVector towards that of groundPlaneMoveUnitVector by a deltaTime degree.
-                float degreesPerSecond = Time.deltaTime * 360;
-                moveDirectionUnitVector = GetRotationTowards(moveDirectionUnitVector, groundPlaneMoveUnitVector, degreesPerSecond);
-
-                Vector3 bottom = GetPlayerCharacterBottom();
-                Debug.DrawRay(bottom, _lateralVelocityVector, Color.green);
-                Debug.DrawRay(bottom, groundPlaneMoveUnitVector * 10, Color.red);
-            }
-            else
-            {
-                _lateralVelocityVector = _lateralVelocityVector.magnitude * moveDirectionUnitVector;
-            }
-        }
-
-        _moveInputTemp = moveActions.ReadValue<Vector2>();
+        ParallelizeMoveDirectionToGround(moveDirectionUnitVector);
 
         // Accelerate if movement is being inputted and sprint has not been canceled.
         if (moveDirectionUnitVector != Vector3.zero && _lateralVelocityVector.magnitude <= MoveMaxSpeed)
@@ -520,6 +491,8 @@ public class PlayerMovement : MonoBehaviour
         {
             MoveDecelerate();
         }
+
+        _characterController.Move(Time.deltaTime * _lateralVelocityVector);
 
         // Apply knockback until it has dissipated.
         if (_externalKnockbackVelocity.sqrMagnitude > 1e-6f)
@@ -561,6 +534,56 @@ public class PlayerMovement : MonoBehaviour
                                  + (cameraPerspectiveForward.normalized * inputDirection.z);
 
         return moveDirection.normalized;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Interpolates the move direction of the player character to be parallel with the
+    ///   </para>
+    /// </summary>
+    /// <param name="moveDirectionUnitVector">  </param>
+    private void ParallelizeMoveDirectionToGround(Vector3 moveDirectionUnitVector)
+    {
+        // Move the player character parallel to the angle of the current ground plane.
+        if (moveDirectionUnitVector != Vector3.zero)
+        {
+            // Get unit vector parallel to ground plane.
+            Vector3 groundPlaneMoveUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundPoint.normal).normalized;
+
+            Debug.Log($"{IsGrounded} | {_lateralVelocityVector.magnitude >= MoveMaxSpeed - 5f} | {Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) >= (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1} | {moveActions.ReadValue<Vector2>() != _moveInputTemp}.");
+
+            // Reset _lateralVelocityVector pitch if new move input is registered to ground clamp in a new direction faster.
+            if (IsGrounded && Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) < (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1 && moveActions.ReadValue<Vector2>() == _moveInputTemp)
+            {
+                Debug.Log("Reached normal case.");
+                // Set pitch of moveDirectionUnitVector to that of _lateralVelocityVector.
+                moveDirectionUnitVector = MatchPitchAngle(moveDirectionUnitVector, _lateralVelocityVector);
+
+                // Rotate pitch of moveDirectionUnitVector towards that of groundPlaneMoveUnitVector by a deltaTime degree.
+                float degreesPerSecond = Time.deltaTime * 360;
+                moveDirectionUnitVector = GetRotationTowards(moveDirectionUnitVector, groundPlaneMoveUnitVector, degreesPerSecond);
+            }
+            else if (IsGrounded
+                     && _lateralVelocityVector.magnitude >= MoveMaxSpeed - 5f
+                     && Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) >= (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1
+                     && moveActions.ReadValue<Vector2>() != _moveInputTemp)
+            {
+                Debug.Log("Reached fullspeed case.");
+                _lateralVelocityVector = _lateralVelocityVector.magnitude * groundPlaneMoveUnitVector;
+            }
+            else if (!IsGrounded)
+            {
+                _lateralVelocityVector = _lateralVelocityVector.magnitude * moveDirectionUnitVector;
+            }
+
+            _groundPlaneMoveVectorTemp = groundPlaneMoveUnitVector;
+
+            Vector3 bottom = GetPlayerCharacterBottom();
+            Debug.DrawRay(bottom, _lateralVelocityVector, Color.green);
+            Debug.DrawRay(bottom, groundPlaneMoveUnitVector * 10, Color.red);
+        }
+
+        _moveInputTemp = moveActions.ReadValue<Vector2>();
     }
 
     /// <summary>
@@ -686,8 +709,6 @@ public class PlayerMovement : MonoBehaviour
         {
             _lateralVelocityVector = MoveMaxSpeed * moveDirectionUnitVector;
         }
-
-        _characterController.Move(Time.deltaTime * _lateralVelocityVector);
     }
 
     /// <summary>
@@ -703,8 +724,6 @@ public class PlayerMovement : MonoBehaviour
         float decelDecrement = Time.deltaTime * _moveDeceleration;
         float newVelocityMagnitude = Mathf.Clamp(_lateralVelocityVector.magnitude - decelDecrement, 0, float.MaxValue);
         _lateralVelocityVector = newVelocityMagnitude * _lateralVelocityVector.normalized;
-
-        _characterController.Move(Time.deltaTime * _lateralVelocityVector);
     }
 
     /// <summary>
@@ -1050,7 +1069,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void FlightConditions()
     {
-        // Only initialize regeneration routine if flew, touching the ground and not already regenerating.
+        // Only initialize regeneration routine if flew, on the ground and not already regenerating.
         if (_currFlightEnergy < _flightMaxEnergy && IsGrounded && !_isRegeneratingFlight)
         {
             StartCoroutine(FlightRegeneration());
@@ -1082,8 +1101,8 @@ public class PlayerMovement : MonoBehaviour
         if (jumpActions.IsPressed()) flightInputValue += 1;
         if (sprintActions.IsPressed()) flightInputValue -= 1;
 
-        // If in midair, flight was inputted and flight energy is not depleted, then fly.
-        if (_isFlying && _currFlightEnergy > 0 && !IsGrounded)
+        // If in midair and flight energy is not depleted, then fly.
+        if (!IsGrounded && _currFlightEnergy > 0)
         {
             // Accelerate if jump or descend are being inputted.
             if (flightInputValue != 0 && _verticalVelocityVector.magnitude <= _flightMaxSpeed)
@@ -1095,6 +1114,8 @@ public class PlayerMovement : MonoBehaviour
             {
                 FlightDecelerate();
             }
+
+            _characterController.Move(Time.deltaTime * _verticalVelocityVector);
         }
     }
 
@@ -1117,8 +1138,6 @@ public class PlayerMovement : MonoBehaviour
 
         float newVelocityMagnitude = Mathf.Clamp(_verticalVelocityVector.magnitude + accelIncrement, 0, _flightMaxSpeed);
         _verticalVelocityVector = newVelocityMagnitude * new Vector3(0, flightInputValue, 0);
-
-        _characterController.Move(Time.deltaTime * _verticalVelocityVector);
     }
 
     /// <summary>
@@ -1134,8 +1153,6 @@ public class PlayerMovement : MonoBehaviour
         float decelDecrement = Time.deltaTime * _flightDeceleration;
         float newVelocityMagnitude = Mathf.Clamp(_verticalVelocityVector.magnitude - decelDecrement, 0, float.MaxValue);
         _verticalVelocityVector = newVelocityMagnitude * _verticalVelocityVector.normalized;
-
-        _characterController.Move(Time.deltaTime * _verticalVelocityVector);
     }
 
     /// <summary>
