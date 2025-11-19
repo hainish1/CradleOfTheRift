@@ -50,6 +50,9 @@ public class RevenantBossRange : Enemy
     public float recoveryTime = 0.5f;
     public float longRecoveryTime = 5f;     // hacky shit i made bc i aint deviating from whats already written. used specifically after the aoe attack.
 
+    [Header("Visuals")]
+    public GameObject attackIndicator;
+
     IdleStateRevenant idle;
     ChaseStateRevenant chase;
     AttackStateRevenant_Barrage barrage_attack;
@@ -58,14 +61,14 @@ public class RevenantBossRange : Enemy
     LongRecoveryStateRevenant longRecovery;
 
     float bobPhase;
-    public RevOrbitVisuals orbitVisuals;
+    //public RevOrbitVisuals orbitVisuals; // I promise i will actually implement this later but for now just get rid of it.
 
 
     public override void Start()
     {
         base.Start();
 
-        orbitVisuals = GetComponent<RevOrbitVisuals>();
+        //orbitVisuals = GetComponent<RevOrbitVisuals>();
         if (agent != null)
         {
             agent.speed = chaseSpeed;
@@ -165,6 +168,7 @@ public class RevenantBossRange : Enemy
     public IEnumerator FireBarrageCoroutine()
     {
         // Insert firing indicator vfx/sfx here
+        playAttackIndicator();
 
         yield return new WaitForSeconds(barrageAttackDelay); // initial delay before starting barrage
         for (int i = 0; i < barrageProjectileCount; i++)
@@ -183,6 +187,7 @@ public class RevenantBossRange : Enemy
     public IEnumerator FireAOECoroutine()
     {
         // Insert firing indicator vfx/sfx here
+        playAttackIndicator();
 
         yield return new WaitForSeconds(AOEAttackDelay); // initial delay before firing AOE
         Vector3 direction1 = (target ? target.position + Vector3.up * .5f - AOEPoint.position : transform.forward).normalized;
@@ -199,6 +204,19 @@ public class RevenantBossRange : Enemy
         EnemyAOEProjectile projectile2 = Instantiate(AOEProjectilePrefab, spawnPoint2, rotation2);
         projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
     }   
+
+    void playAttackIndicator()
+    {
+        if (attackIndicator != null)
+        {
+            GameObject newFx = Instantiate(attackIndicator);
+            newFx.transform.position = transform.position + Vector3.up * 8f;
+            newFx.transform.rotation = Quaternion.identity;
+            newFx.transform.localScale = Vector3.one * 6f;
+
+            Destroy(newFx, 0.25f); // destroy after a short time
+        }
+    }
 
     /// <summary>
     /// Used to initialize damage done by this Range enemy when it is initialized. New Damage value can be initialized using this.

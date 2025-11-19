@@ -142,6 +142,7 @@ public class EnemyAOEProjectile : MonoBehaviour
         GameObject newFx = Instantiate(explosionVFX);
         newFx.transform.position = transform.position;
         newFx.transform.rotation = Quaternion.identity;
+        newFx.transform.localScale = Vector3.one * aoeRadius;
 
         Destroy(newFx, 1); // destroy after one second
     }
