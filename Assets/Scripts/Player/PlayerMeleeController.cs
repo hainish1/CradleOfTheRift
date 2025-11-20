@@ -15,11 +15,12 @@ public class PlayerMeleeController : MonoBehaviour
 
     [SerializeField] private Transform _hitSweepStartPoint;
     [SerializeField] private Transform _hitSweepEndPoint;
-    [SerializeField] private Transform _hitSweepPointTemp;
     [SerializeField] private int _hitSweepCasts;
     private float _hitSweepBreadth;
-    private Vector3[] _prevHitSweepPointsTemp;
     private Vector3 _hitSweepStepVector;
+    private Vector3 _hitSweepPointTemp;
+    private Vector3[] _prevHitSweepPointsTemp;
+    private bool _tempArrayInitialized;
 
     private float _attackCooldown;
 
@@ -52,8 +53,9 @@ public class PlayerMeleeController : MonoBehaviour
         weaponAnim = weaponObject.GetComponent<Animator>();
         _inputtedAttackThisFrame = false;
         _hitSweepBreadth = (_hitSweepEndPoint.position - _hitSweepStartPoint.position).magnitude;
-        _hitSweepStepVector = (_hitSweepBreadth / _hitSweepCasts) * (_hitSweepEndPoint.position - _hitSweepStartPoint.position).normalized;
+        _hitSweepStepVector = (_hitSweepBreadth / _hitSweepCasts) * PointVectorTo(_hitSweepStartPoint.position, _hitSweepEndPoint.position);
         _prevHitSweepPointsTemp = new Vector3[_hitSweepCasts];
+        _tempArrayInitialized = false;
         _attackCooldown = _playerEntity.Stats.AttackSpeed; // TODO: Make melee attack speed property and change this to it.
         CanAttack = true;
     }
@@ -64,21 +66,21 @@ public class PlayerMeleeController : MonoBehaviour
         {
             PerformAttack();
         }
-        else if (_inputtedAttackThisFrame)
-        {
-            _inputtedAttackThisFrame = false;
-        }
-
+        
         if (weaponAnim.GetCurrentAnimatorStateInfo(0).IsName("Spear-Swing"))
         {
-            Debug.Log("Reached.");
             ExecuteHitRegistration();
+        }
+        else
+        {
+            _tempArrayInitialized = false;
         }
     }
 
 
     private void PerformAttack()
     {
+        _inputtedAttackThisFrame = false;
         CanAttack = false;
         weaponAnim.SetTrigger("Swing");
         StartCoroutine(AttackCooldown());
@@ -94,43 +96,54 @@ public class PlayerMeleeController : MonoBehaviour
 
     private void ExecuteHitRegistration()
     {
-        if (_inputtedAttackThisFrame)
+        if (!_tempArrayInitialized)
         {
-            _inputtedAttackThisFrame = false;
-            _prevHitSweepPointsTemp = new Vector3[_hitSweepCasts];
+            Debug.Log("Uninitialized.");
+            _tempArrayInitialized = true;
             InitializeHitSweepPointsTempArray();
             return;
         }
 
+        Debug.Log("Initialized.");
         ExecuteHitSweepCasts();
     }
 
 
     private void InitializeHitSweepPointsTempArray()
     {
-        _hitSweepStepVector = _hitSweepStepVector.magnitude * (_hitSweepEndPoint.position - _hitSweepStartPoint.position).normalized;
-        _hitSweepPointTemp.position = _hitSweepStartPoint.position - _hitSweepStepVector;
-
+        AlignHitSweepStepVector();
         for (int i = 0; i < _hitSweepCasts; i++)
         {
-            _hitSweepPointTemp.position += _hitSweepStepVector;
-            _prevHitSweepPointsTemp[i] = _hitSweepPointTemp.position;
+            _hitSweepPointTemp += _hitSweepStepVector;
+            _prevHitSweepPointsTemp[i] = _hitSweepPointTemp;
         }
     }
 
 
     private void ExecuteHitSweepCasts()
     {
-        _hitSweepStepVector = _hitSweepStepVector.magnitude * (_hitSweepEndPoint.position - _hitSweepStartPoint.position).normalized;
-        _hitSweepPointTemp.position = _hitSweepStartPoint.position - _hitSweepStepVector;
-
+        AlignHitSweepStepVector();
         for (int i = 0; i < _hitSweepCasts; i++)
         {
-            Physics.Linecast(_prevHitSweepPointsTemp[i], _hitSweepPointTemp.position);
-            Debug.DrawLine(_prevHitSweepPointsTemp[i], _hitSweepPointTemp.position, Color.blue, 2);
-            _hitSweepPointTemp.position += _hitSweepStepVector;
-            _prevHitSweepPointsTemp[i] = _hitSweepPointTemp.position;
+            Physics.Linecast(_prevHitSweepPointsTemp[i], _hitSweepPointTemp);
+            Debug.DrawLine(_prevHitSweepPointsTemp[i], _hitSweepPointTemp, Color.blue, 2);
+            _hitSweepPointTemp += _hitSweepStepVector;
+            _prevHitSweepPointsTemp[i] = _hitSweepPointTemp;
         }
+    }
+
+
+    private Vector3 PointVectorTo(Vector3 fromVector, Vector3 toVector)
+    {
+        return (toVector - fromVector).normalized;
+    }
+
+
+    private void AlignHitSweepStepVector()
+    {
+        _hitSweepStepVector = _hitSweepStepVector.magnitude * PointVectorTo(_hitSweepStartPoint.position,
+                                                                            _hitSweepEndPoint.position);
+        _hitSweepPointTemp = _hitSweepStartPoint.position - _hitSweepStepVector;
     }
 
 
