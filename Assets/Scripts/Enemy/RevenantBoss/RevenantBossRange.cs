@@ -60,6 +60,8 @@ public class RevenantBossRange : Enemy
     RecoveryStateRevenant recovery;
     LongRecoveryStateRevenant longRecovery;
 
+    private RevenantAudioController audioController;
+
     float bobPhase;
     //public RevOrbitVisuals orbitVisuals; // I promise i will actually implement this later but for now just get rid of it.
 
@@ -67,7 +69,7 @@ public class RevenantBossRange : Enemy
     public override void Start()
     {
         base.Start();
-
+        audioController = GetComponent<RevenantAudioController>();
         //orbitVisuals = GetComponent<RevOrbitVisuals>();
         if (agent != null)
         {
@@ -203,6 +205,8 @@ public class RevenantBossRange : Enemy
 
         EnemyAOEProjectile projectile2 = Instantiate(AOEProjectilePrefab, spawnPoint2, rotation2);
         projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
+
+        audioController?.PlayFireAOEProjectileSound();
     }   
 
     void playAttackIndicator()
@@ -213,6 +217,8 @@ public class RevenantBossRange : Enemy
             newFx.transform.position = transform.position + Vector3.up * 8f;
             newFx.transform.rotation = Quaternion.identity;
             newFx.transform.localScale = Vector3.one * 6f;
+
+            audioController?.PlayAttackIndicatorSound();
 
             Destroy(newFx, 0.25f); // destroy after a short time
         }
@@ -235,6 +241,10 @@ public class RevenantBossRange : Enemy
     /// <returns></returns>
     public float GetBaseDamage() => projectileDamage;
 
-
+    public override void Die()
+    {
+        base.Die();
+        audioController?.PlayDeathSound();
+    }
 
 }
