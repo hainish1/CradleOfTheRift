@@ -6,6 +6,7 @@ public class PauseManager : MonoBehaviour
     PauseAction action;
     [SerializeField] private GameObject pauseMenuUI;
     [SerializeField] private PlayerAimController playerAim;
+    [SerializeField] private GameObject inventoryUI;
 
 
     void Awake()
@@ -41,8 +42,8 @@ public class PauseManager : MonoBehaviour
         isPaused = true;
         Time.timeScale = 0f;
 
-        playerAim.SetLookEnabled(false);
         playerAim.IsPaused = true;
+        playerAim.SetLookEnabled(false);
 
         pauseMenuUI.SetActive(true);
     }
@@ -52,9 +53,25 @@ public class PauseManager : MonoBehaviour
         isPaused = false;
         Time.timeScale = 1f;
 
-        playerAim.SetLookEnabled(true);
         playerAim.IsPaused = false;
+        playerAim.SetLookEnabled(true);
 
-        pauseMenuUI.SetActive(false);       
+        pauseMenuUI.SetActive(false);
+        //inventoryUI?.SetActive(false);
     }
+    public void OpenInventory()
+    {
+        // pauseMenuUI.SetActive(false);
+        // inventoryUI.SetActive(true);
+    }
+
+    public void QuitGame()
+    {
+        Debug.Log("Quitting game...");
+        Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
+
 }

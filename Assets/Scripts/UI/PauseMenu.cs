@@ -13,21 +13,15 @@ public class PauseMenu : MonoBehaviour
     private Button inventoryButton; // Future setup
     private Button quitButton;
 
-    [SerializeField] 
-    private GameObject inventoryObject;
+    public GameObject inventoryObject;
 
     public InputActionAsset InputActions;
-
+    public PauseManager pauseManager;
     // private InputAction m_pauseAction;
-    public GameObject PauseObject;
+    //public GameObject PauseObject;
 
     // [SerializeField] private UIDocument settingsMenu; // Future setup
 
-    private void Start()
-    {
-        gameObject.SetActive(false);
-        Time.timeScale = 1f;
-    }
     private void Awake()
     {
         document = GetComponent<UIDocument>();
@@ -115,35 +109,22 @@ public class PauseMenu : MonoBehaviour
 
     private void OnContinueClick(ClickEvent evt)
     {
-        PauseObject.SetActive(!PauseObject.activeSelf);
-        Time.timeScale = PauseObject.activeSelf ? 0f : 1f;
+        //PauseObject.SetActive(!PauseObject.activeSelf);
+        //Time.timeScale = PauseObject.activeSelf ? 0f : 1f;
+        pauseManager.ResumeGame();
         Debug.Log("Continue Button Clicked, should continue.");
 
     }
 
-    private void OnQuitGameClick(ClickEvent evt)
-    {
-        Debug.Log("Quitting game...");
-        Application.Quit();
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
-    }
-    
     private void OnInventoryClick(ClickEvent evt)
     {
-        Debug.Log("Opening Inventory...");
-        if (inventoryObject != null)
-        {
-            // Hide pause menu
-            PauseObject.SetActive(false);
-            // Show inventory
-            inventoryObject.SetActive(true);
-        }
-        else
-        {
-            Debug.LogWarning("PauseMenu: Inventory object not assigned!");
-        }
+        Debug.Log("Opening inventory...");
+        pauseManager.OpenInventory();
+    }
+
+    private void OnQuitGameClick(ClickEvent evt)
+    {
+        pauseManager.QuitGame();
     }
 
 }
