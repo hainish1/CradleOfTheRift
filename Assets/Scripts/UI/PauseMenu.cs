@@ -10,8 +10,11 @@ public class PauseMenu : MonoBehaviour
     private Button startButton;
     private Button continueButton;
 
-    private Button helpButton; // Future setup
+    private Button inventoryButton; // Future setup
     private Button quitButton;
+
+    [SerializeField] 
+    private GameObject inventoryObject;
 
     public InputActionAsset InputActions;
 
@@ -22,9 +25,8 @@ public class PauseMenu : MonoBehaviour
 
     private void Start()
     {
-        gameObject.SetActive(true);
-        // Time.timeScale = 0f;
-        Debug.Log("Can't Move");
+        gameObject.SetActive(false);
+        Time.timeScale = 1f;
     }
     private void Awake()
     {
@@ -33,7 +35,7 @@ public class PauseMenu : MonoBehaviour
 
         startButton = root.Q<Button>("ButtonStartGame");
         continueButton = root.Q<Button>("ButtonContinue");
-        helpButton = root.Q<Button>("ButtonHelp");
+        inventoryButton = root.Q<Button>("ButtonInventory");
         quitButton = root.Q<Button>("ButtonQuitGame");
 
         // m_pauseAction = InputActions.FindAction("Pause");
@@ -58,7 +60,7 @@ public class PauseMenu : MonoBehaviour
 
         startButton = document.rootVisualElement.Q("ButtonStartGame") as Button;
         continueButton = document.rootVisualElement.Q("ButtonContinue") as Button;
-        helpButton = document.rootVisualElement.Q("ButtonHelp") as Button;
+        inventoryButton = document.rootVisualElement.Q("ButtonInventory") as Button;
         quitButton = document.rootVisualElement.Q("ButtonQuitGame") as Button;
 
         var action = InputActions.FindAction("Pause");
@@ -73,8 +75,8 @@ public class PauseMenu : MonoBehaviour
         if (continueButton != null)
             continueButton.RegisterCallback<ClickEvent>(OnContinueClick);
 
-        if (helpButton != null)
-            helpButton.RegisterCallback<ClickEvent>(OnHelpClick);
+        if (inventoryButton != null)
+            inventoryButton.RegisterCallback<ClickEvent>(OnInventoryClick);
 
         if (quitButton != null)
             quitButton.RegisterCallback<ClickEvent>(OnQuitGameClick);
@@ -88,11 +90,11 @@ public class PauseMenu : MonoBehaviour
         if (startButton != null)
             startButton.UnregisterCallback<ClickEvent>(OnStartGameClick);
 
-        if (helpButton != null)
+        if (inventoryButton != null)
             continueButton.UnregisterCallback<ClickEvent>(OnContinueClick);
 
-        if (helpButton != null)
-            helpButton.UnregisterCallback<ClickEvent>(OnHelpClick);
+        if (inventoryButton != null)
+            inventoryButton.UnregisterCallback<ClickEvent>(OnInventoryClick);
 
         if (quitButton != null)
             quitButton.UnregisterCallback<ClickEvent>(OnQuitGameClick);
@@ -103,19 +105,6 @@ public class PauseMenu : MonoBehaviour
 
         InputActions.Disable();
     }
-    // private void OnPausePressed(InputAction.CallbackContext context)
-    // {
-    //     TogglePause();
-    // }
-
-    //     private void TogglePause()
-    // {
-    //     bool isActive = PauseObject.activeSelf;
-    //     PauseObject.SetActive(!isActive);
-    //     Time.timeScale = !isActive ? 0f : 1f;
-    //     Debug.Log(!isActive ? "Game Paused" : "Game Resumed");
-    // }
-
 
     private void OnStartGameClick(ClickEvent evt)
     {
@@ -128,6 +117,7 @@ public class PauseMenu : MonoBehaviour
     {
         PauseObject.SetActive(!PauseObject.activeSelf);
         Time.timeScale = PauseObject.activeSelf ? 0f : 1f;
+        Debug.Log("Continue Button Clicked, should continue.");
 
     }
 
@@ -139,13 +129,21 @@ public class PauseMenu : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
     }
-
     
-    private void OnHelpClick(ClickEvent evt)
+    private void OnInventoryClick(ClickEvent evt)
     {
-        Debug.Log("Opening Help menu...");
-        // if (helpMenu != null)
-        //     helpMenu.gameObject.SetActive(true);
+        Debug.Log("Opening Inventory...");
+        if (inventoryObject != null)
+        {
+            // Hide pause menu
+            PauseObject.SetActive(false);
+            // Show inventory
+            inventoryObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogWarning("PauseMenu: Inventory object not assigned!");
+        }
     }
 
 }

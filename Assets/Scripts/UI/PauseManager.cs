@@ -4,8 +4,8 @@ public class PauseManager : MonoBehaviour
 {
     private bool isPaused = false;
     PauseAction action;
-    [SerializeField] 
-    private GameObject pauseMenuUI;
+    [SerializeField] private GameObject pauseMenuUI;
+    [SerializeField] private PlayerAimController playerAim;
 
 
     void Awake()
@@ -17,6 +17,7 @@ public class PauseManager : MonoBehaviour
     {
         action.Pause.PauseGame.performed += _ => DeterminedPause();
     }
+
 
     private void DeterminedPause()
     {
@@ -38,24 +39,22 @@ public class PauseManager : MonoBehaviour
     public void PauseGame()
     {
         isPaused = true;
-        // Unlock and show cursor for menu interaction
-        UnityEngine.Cursor.lockState = CursorLockMode.None;
-        UnityEngine.Cursor.visible = true;
-        Debug.Log("Game Paused: Cursor unlocked and visible");
+        Time.timeScale = 0f;
+
+        playerAim.SetLookEnabled(false);
+        playerAim.IsPaused = true;
+
         pauseMenuUI.SetActive(true);
-        Time.timeScale = 0;
     }
 
     public void ResumeGame()
     {
-        Time.timeScale = 1;
         isPaused = false;
-        pauseMenuUI.SetActive(true);
-        // Lock and hide cursor for gameplay
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        UnityEngine.Cursor.visible = false;
+        Time.timeScale = 1f;
 
-        Debug.Log("Game Resumed: Cursor locked and hidden");
-       
+        playerAim.SetLookEnabled(true);
+        playerAim.IsPaused = false;
+
+        pauseMenuUI.SetActive(false);       
     }
 }

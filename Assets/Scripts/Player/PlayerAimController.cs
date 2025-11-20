@@ -6,6 +6,7 @@ using Unity.Cinemachine.Samples;
 public class PlayerAimController : MonoBehaviour
 {
     public enum CouplingMode { Coupled, CoupledWhenMoving, Decoupled}
+    public bool IsPaused { get; set; }
 
 
     // input things
@@ -121,6 +122,8 @@ public class PlayerAimController : MonoBehaviour
 
     void Update()
     {
+        if (IsPaused) return;   // <--- NEW
+
         if (forceCoupleTimer > 0f) forceCoupleTimer -= Time.unscaledDeltaTime;
 
         lookChangedThisFrame = ReadLook(); // did my mouse move
@@ -269,12 +272,28 @@ public class PlayerAimController : MonoBehaviour
 
 
     private float ClampPitch(float p) => Mathf.Clamp(p, minPitch, maxPitch);
-   
+
     private static float Normalize180(float a)
     {
         while (a > 180f) a -= 360f;
         while (a < -180f) a += 360f;
         return a;
+    }
+    // Called by PauseManager to freeze all camera look input.
+    public void SetLookEnabled(bool enabled)
+    {
+        if (enabled)
+        {
+            lookAction?.Enable();
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            lookAction?.Disable();
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
     }
 
 }
