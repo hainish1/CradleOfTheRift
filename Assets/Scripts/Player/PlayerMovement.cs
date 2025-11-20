@@ -81,10 +81,11 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("The maximum degree angle of valid ground surfaces.")] private float _maxGroundAngle;
     [SerializeField]
     [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private float _groundedCastJumpPauseDuration;
+    [SerializeField]
+    [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private LayerMask _groundedLayerMasks;
     private float _currHoverHeight;
     private float _groundedCastRadius;
     private float _groundedCastPauseTimer;
-    private int _groundedLayerMasks;
     private RaycastHit _groundPoint;
 
     // Knockback Parameters
@@ -215,10 +216,6 @@ public class PlayerMovement : MonoBehaviour
         // Hover Parameters
         _groundedCastRadius = _playerRadius - 0.1f;
         _groundedCastPauseTimer = 0;
-        _groundedLayerMasks = LayerMask.GetMask("Environment");
-        _groundedLayerMasks |= LayerMask.GetMask("Interactable");
-        _groundedLayerMasks |= LayerMask.GetMask("Obstacles");
-        _groundedLayerMasks |= LayerMask.GetMask("Enemy");
         GetIsGrounded();
 
         // KnockBack Parameters

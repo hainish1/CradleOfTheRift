@@ -1,34 +1,47 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerMeleeController : MonoBehaviour
 {
-    [SerializeField] private GameObject weaponObject;
-    private Animator weaponAnim;
+    private Animator _weaponAnim;
     private Entity _playerEntity;
+    private PlayerAudioController _audioController;
+
+    // Input Parameters
 
     private InputSystem_Actions playerInput;
     private InputSystem_Actions.PlayerActions playerActions;
     private InputAction attackActions;
+
+    // Attack Parameters
+
+    private float MeleeDamage => _playerEntity.Stats.MeleeDamage;
+    [SerializeField] private float knockbackForce;
+    private float _attackCooldown;
     private bool _inputtedAttackThisFrame;
+    public bool CanAttack { get; set; }
+
+    // Hit Sweep Parameters
 
     [SerializeField] private Transform _hitSweepStartPoint;
     [SerializeField] private Transform _hitSweepEndPoint;
     [SerializeField] private int _hitSweepCasts;
+    [SerializeField] private LayerMask _hitLayerMasks;
+    private HashSet<Object> _objectsHitThisAttack;
+    private RaycastHit[] _objectsHitThisSweep;
     private float _hitSweepBreadth;
     private Vector3 _hitSweepStepVector;
     private Vector3 _hitSweepPointTemp;
     private Vector3[] _prevHitSweepPointsTemp;
-    private bool _tempArrayInitialized;
-
-    private float _attackCooldown;
-
-    public bool CanAttack {get; set;}
+    private bool _tempHitSweepArrayInitialized;
 
     void Awake()
     {
         _playerEntity = GetComponentInParent<Entity>();
+        _audioController = GetComponentInParent<PlayerAudioController>();
         playerInput = new InputSystem_Actions();
         playerActions = playerInput.Player;
     }
@@ -50,14 +63,16 @@ public class PlayerMeleeController : MonoBehaviour
     {
         if (_playerEntity == null) return;
 
-        weaponAnim = weaponObject.GetComponent<Animator>();
+        _weaponAnim = GetComponent<Animator>();
         _inputtedAttackThisFrame = false;
         _hitSweepBreadth = (_hitSweepEndPoint.position - _hitSweepStartPoint.position).magnitude;
         _hitSweepStepVector = (_hitSweepBreadth / _hitSweepCasts) * PointVectorTo(_hitSweepStartPoint.position, _hitSweepEndPoint.position);
         _prevHitSweepPointsTemp = new Vector3[_hitSweepCasts];
-        _tempArrayInitialized = false;
+        _tempHitSweepArrayInitialized = false;
         _attackCooldown = _playerEntity.Stats.AttackSpeed; // TODO: Make melee attack speed property and change this to it.
         CanAttack = true;
+        _objectsHitThisAttack = new HashSet<Object>();
+        _objectsHitThisSweep = new RaycastHit[32];
     }
 
     void Update()
@@ -67,13 +82,14 @@ public class PlayerMeleeController : MonoBehaviour
             PerformAttack();
         }
 
-        if (weaponAnim.GetCurrentAnimatorStateInfo(0).IsName("Spear-Swing-Chamber"))
+        if (_weaponAnim.GetCurrentAnimatorStateInfo(0).IsName("Spear-Swing-Chamber"))
         {
             ExecuteHitRegistration();
         }
         else
         {
-            _tempArrayInitialized = false;
+            _tempHitSweepArrayInitialized = false;
+            _objectsHitThisSweep = new RaycastHit[32];
         }
     }
 
@@ -82,7 +98,8 @@ public class PlayerMeleeController : MonoBehaviour
     {
         _inputtedAttackThisFrame = false;
         CanAttack = false;
-        weaponAnim.SetTrigger("Swing");
+        _weaponAnim.SetTrigger("Swing");
+        _audioController.PlayMeleeSound();
         StartCoroutine(AttackCooldown());
     }
 
@@ -96,10 +113,10 @@ public class PlayerMeleeController : MonoBehaviour
 
     private void ExecuteHitRegistration()
     {
-        if (!_tempArrayInitialized)
+        if (!_tempHitSweepArrayInitialized)
         {
             Debug.Log("Uninitialized.");
-            _tempArrayInitialized = true;
+            _tempHitSweepArrayInitialized = true;
             InitializeHitSweepPointsTempArray();
             return;
         }
@@ -123,10 +140,61 @@ public class PlayerMeleeController : MonoBehaviour
     private void ExecuteHitSweepCasts()
     {
         AlignHitSweepStepVector();
+
+        Vector3 startPoint;
+        Vector3 endPoint;
         for (int i = 0; i < _hitSweepCasts; i++)
         {
-            Physics.Linecast(_prevHitSweepPointsTemp[i], _hitSweepPointTemp);
-            Debug.DrawLine(_prevHitSweepPointsTemp[i], _hitSweepPointTemp, Color.blue, 2);
+            startPoint = _prevHitSweepPointsTemp[i];
+            endPoint = _hitSweepPointTemp;
+            _objectsHitThisSweep = Physics.RaycastAll(startPoint,
+                                                       endPoint - startPoint,
+                                                       (endPoint - startPoint).magnitude,
+                                                       _hitLayerMasks,
+                                                       QueryTriggerInteraction.Ignore);
+            Debug.DrawLine(startPoint, endPoint, Color.blue, 2);
+
+
+            for (int j = 0; j < _objectsHitThisSweep.Length; j++)
+            {
+                var currObject = _objectsHitThisSweep[j].collider.gameObject;
+
+                if (_objectsHitThisAttack.Contains(currObject))
+                {
+                    continue;
+                }
+                else
+                {
+                    _objectsHitThisAttack.Add(currObject);
+                }
+
+                try
+                {
+                    var enemyScript = currObject.GetComponent<Enemy>();
+                    if (enemyScript == null) continue;
+
+                    var enemyKbScript = currObject.GetComponent<AgentKnockBack>();
+                    if (enemyKbScript != null)
+                    {
+                        Vector3 impulseDirection = (enemyScript.transform.position - transform.position).normalized;
+                        enemyKbScript.ApplyImpulse(knockbackForce * impulseDirection);
+                    }
+                    enemyScript.GetComponentInParent<TargetFlash>().Flash();
+
+                    var damageable = enemyScript.GetComponent<IDamageable>();
+                    if (damageable != null)
+                    {
+
+                    }
+
+                }
+                catch (System.Exception)
+                {
+
+                    throw;
+                }
+            }
+
             _hitSweepPointTemp += _hitSweepStepVector;
             _prevHitSweepPointsTemp[i] = _hitSweepPointTemp;
         }
