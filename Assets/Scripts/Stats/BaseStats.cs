@@ -3,14 +3,24 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PlayerBaseStats", menuName = "Stats/BaseStats")]
 public class BaseStats : ScriptableObject
 {
-    [Header("Attack Parameters")]
-    public float projectileDamage = 1;
+    [Header("Melee Attack Parameters")]
     public float meleeDamage = 1;
-    public float slamDamage = 2;
-    public float slamRadius = 10;
+
+    [Space]
+
+    [Header("Ranged Attack Parameters")]
+    public float projectileDamage = 1;
     public float attackSpeed = 5.0f; // attacks per second
+    public int fireCharges;
+    public float fireChargeCooldown;
     public float projectileSpread = 0.1f; // in radians
     public int enableHomingProjectiles = 0; // use int instead of bool
+
+    [Space]
+
+    [Header("Shockwave Parameters")]
+    public float slamDamage = 2;
+    public float slamRadius = 10;
 
     [Space]
 
