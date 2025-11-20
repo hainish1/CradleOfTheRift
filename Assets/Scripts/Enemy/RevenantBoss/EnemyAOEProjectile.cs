@@ -26,12 +26,15 @@ public class EnemyAOEProjectile : MonoBehaviour
 
     Rigidbody rb;
     private float age;
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip explosionSound;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+        audioSource = GetComponent<AudioSource>();
     }
 
     /// <summary>
@@ -80,6 +83,7 @@ public class EnemyAOEProjectile : MonoBehaviour
         // spawn AOE effect on collision
         SpawnAOEEffect();
         CreateExplosionVFX();
+        PlayExplosionSound();
 
         // check if collided with enemy and if yes then damage it
         var pm = collision.collider.GetComponentInParent<PlayerMovement>();
@@ -145,6 +149,15 @@ public class EnemyAOEProjectile : MonoBehaviour
         newFx.transform.localScale = Vector3.one * aoeRadius;
 
         Destroy(newFx, 1); // destroy after one second
+    }
+
+    public void PlayExplosionSound()
+    {
+        if (audioSource != null && explosionSound != null)
+        {
+            audioSource.Stop();
+            audioSource.PlayOneShot(explosionSound);
+        }
     }
 
     void OnDrawGizmos()

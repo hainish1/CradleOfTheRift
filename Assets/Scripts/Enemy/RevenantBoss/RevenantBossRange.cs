@@ -147,6 +147,7 @@ public class RevenantBossRange : Enemy
         //EnemyAOEProjectile projectile2 = Instantiate(AOEProjectilePrefab, spawnPoint2, rotation2); // For testing AOE
         projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
 
+        audioController?.PlayFireProjectileSound();
         // TODO: Rework orbit visuals
         // if (orbitVisuals != null)
         // {
@@ -243,8 +244,10 @@ public class RevenantBossRange : Enemy
 
     public override void Die()
     {
-        base.Die();
+        // DOESNT WORRRK!!!!!! FFUUUUUUUCKKK
+        Debug.Log("Revenant Boss Died");
         audioController?.PlayDeathSound();
+        base.Die();
     }
 
 }

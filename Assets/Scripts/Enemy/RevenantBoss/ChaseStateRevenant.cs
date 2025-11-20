@@ -53,7 +53,7 @@ public class ChaseStateRevenant : EnemyState
         {
             // Can randomize between different attacks here
             float random = Random.value;
-            if (random < 0.6f) // barrage attack has a higher chance to be chosen (idk if this is a good idea)
+            if (random < 0.4f) // barrage attack has a lower chance to be chosen (idk if this is a good idea)
             {
                 stateMachine.ChangeState(bossRange.GetAttack());
                 //Debug.Log("Revenant: Switching to Attack State from Chase State");
