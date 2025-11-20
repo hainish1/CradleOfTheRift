@@ -67,7 +67,7 @@ public class PlayerMeleeController : MonoBehaviour
             PerformAttack();
         }
 
-        if (weaponAnim.GetCurrentAnimatorStateInfo(0).IsTag("Spear-Swing"))
+        if (weaponAnim.GetCurrentAnimatorStateInfo(0).IsName("Spear-Swing-Chamber"))
         {
             ExecuteHitRegistration();
         }
