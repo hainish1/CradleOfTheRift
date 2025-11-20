@@ -5959,33 +5959,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  aggressionRange: 500
-  playerOutOfRange: 500
-  turnSpeed: 5
-  attackCooldown: 2
+  aggressionRange: 800
+  playerOutOfRange: 800
+  turnSpeed: 20
+  attackCooldown: 1
   playerMask:
     serializedVersion: 2
     m_Bits: 256
   gizosOn: 1
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
-  nextAttackAllowed: 2
+  nextAttackAllowed: 1
+  projectileDamage: 20
   hoverHeight: 2
-  hoverBobAmplitude: 0.25
-  hoverBobSpeed: 2
+  hoverBobAmplitude: 0.7
+  hoverBobSpeed: 4
   chaseSpeed: 10
   stopDistance: 9
   attackRange: 12
-  turnSpeedWhileAiming: 12
+  turnSpeedWhileAiming: 20
+  agentAngularSpeed: 720
+  agentAcceleration: 100
+  projectileSpeed: 30
+  fireCooldown: 0.9
   firePoint: {fileID: 7588448968403286001}
   projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
-  projectileSpeed: 50
-  fireCooldown: 0.9
   projectileMask:
     serializedVersion: 2
     m_Bits: 1361
   spawnOffset: 0.1
-  recoveryTime: 3
-  projectileDamage: 1
+  recoveryTime: 1
   orbitVisuals: {fileID: -3325380021058808314}
 --- !u!114 &204557455612082024
 MonoBehaviour:
@@ -6032,9 +6034,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 3
+  maxHealth: 20
   cleanupDelay: 0
-  baseHealth: 3
+  baseHealth: 20
   damageVisuals: {fileID: 6516409030888228098}
 --- !u!114 &-3325380021058808314
 MonoBehaviour:
