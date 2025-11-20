@@ -15778,7 +15778,8 @@ MonoBehaviour:
   gizosOn: 1
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
   nextAttackAllowed: 2
-  projectileDamage: 1
+  projectileDamage: 4
+  AOEProjectileDamage: 2
   hoverHeight: 1.5
   hoverBobAmplitude: 0.25
   hoverBobSpeed: 2
@@ -15853,9 +15854,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 40
+  maxHealth: 400
   cleanupDelay: 0
-  baseHealth: 40
+  baseHealth: 400
   damageVisuals: {fileID: 6516409030888228098}
 --- !u!114 &1065634495979649153
 MonoBehaviour:
