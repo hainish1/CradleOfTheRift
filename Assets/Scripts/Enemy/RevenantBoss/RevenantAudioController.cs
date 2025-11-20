@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class RevenantAudioController : MonoBehaviour
 {
-    [SerializeField] private AudioClip fireProjectileSound;     // No sound for this yet
+    [SerializeField] private AudioClip fireProjectileSound;
     [SerializeField] private AudioClip fireAOEProjectileSound;
     [SerializeField] private AudioClip attackIndicatorSound;
     [SerializeField] private AudioClip deathSound;
