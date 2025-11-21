@@ -9,7 +9,9 @@ using UnityEngine;
 /// </summary>
 public class RevenantBossRange : Enemy
 {
-    public float projectileDamage = 1;
+    [Header("Damage")]
+    public float projectileDamage = 4;
+    public float AOEProjectileDamage = 8;
 
     [Header("Hover and movement")]
     public float hoverHeight = 2f; // height above ground
@@ -147,6 +149,7 @@ public class RevenantBossRange : Enemy
         //EnemyAOEProjectile projectile2 = Instantiate(AOEProjectilePrefab, spawnPoint2, rotation2); // For testing AOE
         projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
 
+        audioController?.PlayFireProjectileSound();
         // TODO: Rework orbit visuals
         // if (orbitVisuals != null)
         // {
@@ -201,10 +204,10 @@ public class RevenantBossRange : Enemy
         Quaternion rotation2 = Quaternion.LookRotation(direction2, Vector3.up);
 
         EnemyAOEProjectile projectile1 = Instantiate(AOEProjectilePrefab, spawnPoint1, rotation1);
-        projectile1.Init(direction1 * projectileSpeed, projectileMask, this.projectileDamage);
+        projectile1.Init(direction1 * projectileSpeed, projectileMask, this.AOEProjectileDamage);
 
         EnemyAOEProjectile projectile2 = Instantiate(AOEProjectilePrefab, spawnPoint2, rotation2);
-        projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
+        projectile2.Init(direction2 * projectileSpeed, projectileMask, this.AOEProjectileDamage);
 
         audioController?.PlayFireAOEProjectileSound();
     }   
@@ -243,8 +246,10 @@ public class RevenantBossRange : Enemy
 
     public override void Die()
     {
-        base.Die();
+        // DOESNT WORRRK!!!!!! FFUUUUUUUCKKK
+        Debug.Log("Revenant Boss Died");
         audioController?.PlayDeathSound();
+        base.Die();
     }
 
 }
