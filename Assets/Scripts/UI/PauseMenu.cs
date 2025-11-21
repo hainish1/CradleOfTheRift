@@ -102,7 +102,9 @@ public class PauseMenu : MonoBehaviour
 
     private void OnStartGameClick(ClickEvent evt)
     {
-        Debug.Log("You Pressed the Start Button");
+        // Debug.Log("You Pressed the Start Button");
+        PauseManager.GameIsPaused = false;
+        PlayerHealth.GameIsOver = false;
         SceneManager.LoadScene("Design");// Change name to game
         // gameObject.SetActive(false);
     }
@@ -111,14 +113,16 @@ public class PauseMenu : MonoBehaviour
     {
         //PauseObject.SetActive(!PauseObject.activeSelf);
         //Time.timeScale = PauseObject.activeSelf ? 0f : 1f;
+        if (PlayerHealth.GameIsOver) return;
+
         pauseManager.ResumeGame();
-        Debug.Log("Continue Button Clicked, should continue.");
+        // Debug.Log("Continue Button Clicked, should continue.");
 
     }
 
     private void OnInventoryClick(ClickEvent evt)
     {
-        Debug.Log("Opening inventory...");
+        // Debug.Log("Opening inventory...");
         pauseManager.OpenInventory();
     }
 
