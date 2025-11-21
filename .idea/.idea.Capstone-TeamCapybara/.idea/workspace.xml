@@ -128,6 +128,7 @@
       <change beforePath="$PROJECT_DIR$/Assets/Art Assets/instr.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art Assets/instr.png.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Art Assets/instru 1.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art Assets/instru 1.png.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Art Assets/instru.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art Assets/instru.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Audio/Scripts/AUDIO_AmbienceFollower.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Audio/Scripts/AUDIO_AmbienceFollower.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Audio/Scripts/AUDIO_PostEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Audio/Scripts/AUDIO_PostEvent.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Audio/Scripts/AUDIO_ThirdPersonListener.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Audio/Scripts/AUDIO_ThirdPersonListener.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Data.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Data.meta" afterDir="false" />
@@ -1493,7 +1494,6 @@
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Design Scenes/Gym.unity.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Design Scenes/Gym.unity.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Design Scenes/Level001.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Design Scenes/Level001.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Design Scenes/Level001/Design.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Design Scenes/Level001/Design.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Design Scenes/Level001/Design.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Design Scenes/Level001/Design.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Design Scenes/Level001/Design.unity.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Design Scenes/Level001/Design.unity.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Design Scenes/Level001/Design/NavMesh-Plane.asset.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Design Scenes/Level001/Design/NavMesh-Plane.asset.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Design Scenes/Level001/Design_Profiles.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Design Scenes/Level001/Design_Profiles.meta" afterDir="false" />
@@ -2159,7 +2159,6 @@
       <change beforePath="$PROJECT_DIR$/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseTrigger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseTrigger.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseTypeMigration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Wwise/API/Runtime/WwiseTypes/WwiseTypes/AkWwiseTypeMigration.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Wwise/API/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Wwise/API/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Wwise/Editor/ProjectData/AkWwiseProjectData.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Wwise/Editor/ProjectData/AkWwiseProjectData.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Wwise/MonoBehaviour/Editor/AK.Wwise.Unity.MonoBehaviour.Editor.asmdef" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Wwise/MonoBehaviour/Editor/AK.Wwise.Unity.MonoBehaviour.Editor.asmdef" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Wwise/MonoBehaviour/Editor/AkAmbientInspector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Wwise/MonoBehaviour/Editor/AkAmbientInspector.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Wwise/MonoBehaviour/Editor/AkAudioListenerInspector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Wwise/MonoBehaviour/Editor/AkAudioListenerInspector.cs" afterDir="false" />
@@ -2290,21 +2289,14 @@
       <change beforePath="$PROJECT_DIR$/Assets/WwiseSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/WwiseSettings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/.p4ignore" beforeDir="false" afterPath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/.p4ignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/Actor-Mixer Hierarchy/Default Work Unit.wwu" beforeDir="false" afterPath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/Actor-Mixer Hierarchy/Default Work Unit.wwu" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/Attenuations/Default Work Unit.wwu" beforeDir="false" afterPath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/Attenuations/Default Work Unit.wwu" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/Conversion Settings/Factory Conversion Settings.wwu" beforeDir="false" afterPath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/Conversion Settings/Factory Conversion Settings.wwu" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/Effects/Factory Effects.wwu" beforeDir="false" afterPath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/Effects/Factory Effects.wwu" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/GeneratedSoundBanks/Mac/Event/Play_RiverAmbient.bnk" beforeDir="false" afterPath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/GeneratedSoundBanks/Mac/Event/Play_RiverAmbient.bnk" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/GeneratedSoundBanks/Mac/Event/Play_RiverAmbient.json" beforeDir="false" afterPath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/GeneratedSoundBanks/Mac/Event/Play_RiverAmbient.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/GeneratedSoundBanks/Windows/Event/Play_RiverAmbient.bnk" beforeDir="false" afterPath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/GeneratedSoundBanks/Windows/Event/Play_RiverAmbient.bnk" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/GeneratedSoundBanks/Windows/Event/Play_RiverAmbient.json" beforeDir="false" afterPath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/GeneratedSoundBanks/Windows/Event/Play_RiverAmbient.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/Presets/Factory Spatial Audio.wwu" beforeDir="false" afterPath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/Presets/Factory Spatial Audio.wwu" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/Queries/Factory Queries.wwu" beforeDir="false" afterPath="$PROJECT_DIR$/Capstone-TeamCapybara_WwiseProject/Queries/Factory Queries.wwu" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectSettings/ClusterInputManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ClusterInputManager.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectSettings/DynamicsManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/DynamicsManager.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/EditorSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/EditorSettings.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectSettings/GraphicsSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/GraphicsSettings.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectSettings/InputManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/InputManager.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectSettings/MemorySettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/MemorySettings.asset" afterDir="false" />
@@ -2418,7 +2410,7 @@
       <workItem from="1757996555447" duration="227000" />
       <workItem from="1758873507638" duration="934000" />
       <workItem from="1763450917263" duration="1864000" />
-      <workItem from="1763628357100" duration="1268000" />
+      <workItem from="1763628357100" duration="1865000" />
     </task>
     <servers />
   </component>
