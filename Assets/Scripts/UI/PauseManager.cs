@@ -14,16 +14,25 @@ public class PauseManager : MonoBehaviour
     void Awake()
     {
         action = new PauseAction();
+        GameIsPaused = false; // Reset static flag on scene start
+        isPaused = false;     // Reset instance flag
+
     }
 
     void Start()
     {
+        pauseMenuUI.SetActive(false);
+        Time.timeScale = 1f;
+        GameIsPaused = false;
+
         action.Pause.PauseGame.performed += _ => DeterminedPause();
     }
 
 
     private void DeterminedPause()
     {
+        if (PlayerHealth.GameIsOver) return; // cannot pause if game ended
+
         if (isPaused)
             ResumeGame();
         else
@@ -42,24 +51,35 @@ public class PauseManager : MonoBehaviour
     public void PauseGame()
     {
         isPaused = true;
+        GameIsPaused = true;
+
         Time.timeScale = 0f;
 
-        playerAim.IsPaused = true;
-        playerAim.SetLookEnabled(false);
+        if (playerAim != null)
+        {
+            playerAim.SetLookEnabled(false);
+            playerAim.IsPaused = true;
+        }
 
-        pauseMenuUI.SetActive(true);
+        if (pauseMenuUI != null)
+            pauseMenuUI.SetActive(true);
     }
 
     public void ResumeGame()
     {
         isPaused = false;
+        GameIsPaused = false;
+
         Time.timeScale = 1f;
 
-        playerAim.IsPaused = false;
-        playerAim.SetLookEnabled(true);
+        if (playerAim != null)
+        {
+            playerAim.SetLookEnabled(true);
+            playerAim.IsPaused = false;
+        }
 
-        pauseMenuUI.SetActive(false);
-        //inventoryUI?.SetActive(false);
+        if (pauseMenuUI != null)
+            pauseMenuUI.SetActive(false);
     }
     public void OpenInventory()
     {

@@ -122,8 +122,8 @@ public class PlayerAimController : MonoBehaviour
 
     void Update()
     {
-        if (IsPaused) return;   // <--- NEW
-
+        if (IsPaused) return;
+        if (PlayerHealth.GameIsOver) return;
         if (forceCoupleTimer > 0f) forceCoupleTimer -= Time.unscaledDeltaTime;
 
         lookChangedThisFrame = ReadLook(); // did my mouse move
