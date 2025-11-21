@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &39252218 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 812061669707472423, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+  m_PrefabInstance: {fileID: 73419223}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &73419223
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -127,6 +132,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 146141417271177862, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2377490915647840013, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
       propertyPath: m_Name
       value: Player
@@ -171,6 +180,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3132668402224164764, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3132668402224164764, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6515147321210492741, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 8678201601994762703, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
       propertyPath: _cameraTransform
       value: 
@@ -180,7 +201,23 @@ PrefabInstance:
       value: 3264
       objectReference: {fileID: 0}
     - target: {fileID: 9074830764197501354, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+      propertyPath: _playerCamera
+      value: 
+      objectReference: {fileID: 39252218}
+    - target: {fileID: 9074830764197501354, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+      propertyPath: _hitSweepCasts
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074830764197501354, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
       propertyPath: hitMask.m_Bits
+      value: 7232
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074830764197501354, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+      propertyPath: knockbackForce
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074830764197501354, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+      propertyPath: _hitLayerMasks.m_Bits
       value: 7232
       objectReference: {fileID: 0}
     m_RemovedComponents: []

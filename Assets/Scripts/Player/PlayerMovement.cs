@@ -19,8 +19,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public bool IsGrounded { get; private set; }
-
     private InputSystem_Actions playerInput;
     private InputSystem_Actions.PlayerActions playerActions;
 
@@ -84,6 +82,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private LayerMask _groundedLayerMasks;
     private float _currHoverHeight;
+    public bool IsGrounded { get; private set; }
     private float _groundedCastRadius;
     private float _groundedCastPauseTimer;
     private RaycastHit _groundPoint;
@@ -547,12 +546,12 @@ public class PlayerMovement : MonoBehaviour
             // Get unit vector parallel to ground plane.
             Vector3 groundPlaneMoveUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundPoint.normal).normalized;
 
-            Debug.Log($"{IsGrounded} | {_lateralVelocityVector.magnitude >= MoveMaxSpeed - 5f} | {Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) >= (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1} | {moveActions.ReadValue<Vector2>() != _moveInputTemp}.");
+            //Debug.Log($"{IsGrounded} | {_lateralVelocityVector.magnitude >= MoveMaxSpeed - 5f} | {Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) >= (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1} | {moveActions.ReadValue<Vector2>() != _moveInputTemp}.");
 
             // Reset _lateralVelocityVector pitch if new move input is registered to ground clamp in a new direction faster.
             if (IsGrounded && Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) < (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1 && moveActions.ReadValue<Vector2>() == _moveInputTemp)
             {
-                Debug.Log("Reached normal case.");
+                //Debug.Log("Reached normal case.");
                 // Set pitch of moveDirectionUnitVector to that of _lateralVelocityVector.
                 moveDirectionUnitVector = MatchPitchAngle(moveDirectionUnitVector, _lateralVelocityVector);
 
@@ -565,7 +564,7 @@ public class PlayerMovement : MonoBehaviour
                      && Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) >= (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1
                      && moveActions.ReadValue<Vector2>() != _moveInputTemp)
             {
-                Debug.Log("Reached fullspeed case.");
+                //Debug.Log("Reached fullspeed case.");
                 _lateralVelocityVector = _lateralVelocityVector.magnitude * groundPlaneMoveUnitVector;
             }
             else if (!IsGrounded)
