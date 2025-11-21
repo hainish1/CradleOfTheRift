@@ -53,7 +53,7 @@ public class AbilityUIController : MonoBehaviour
         {
             abilityName = "Dash",
             key = KeyCode.LeftShift,
-            icon = this.images[0], // assign your icon,
+            icon = this.images[0], 
             maxCharges = playerStats.DashCharges,
             currentCharges = playerStats.DashCharges,
             getCooldown = () => playerStats.DashCooldown
@@ -163,8 +163,6 @@ public class AbilityUIController : MonoBehaviour
     }
 }
 
-
-
 [System.Serializable]
 public class AbilityInfo
 {
@@ -174,9 +172,7 @@ public class AbilityInfo
     public int maxCharges;
     public int currentCharges;
     public Func<float> getCooldown;
-
-    // public int CurrentCharges => getCharges != null ? getCharges() : 0;
-    public float CooldownRemaining => getCooldown != null ? getCooldown() : 0f;
+    public float CooldownRemaining => getCooldown();
 
 
     [HideInInspector] public int pendingCooldowns = 0; // how many cooldowns are waiting
