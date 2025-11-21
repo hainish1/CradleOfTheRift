@@ -5,11 +5,12 @@ public class HomingProjectileEffect : MonoBehaviour
     [SerializeField] private bool enableHomingProjectiles = false;
     [SerializeField] private float homingEffectCooldown = 3f;
     [SerializeField] private int numberOfProjectiles = 3;
+    private int projectileCount;
     //[SerializeField] private float spreadAngle = 15f;
     [SerializeField] private float projectileSpawnOffset = 1.0f;
 
     [Header("Homing Projectile Stats")]
-    private float projectileSpeed = 15f; // This doesn't do anything but its how the base projectile 
+    //private float projectileSpeed = 15f; // This doesn't do anything but its how the base projectile 
     [SerializeField] private LayerMask shootMask = ~0;
     [SerializeField] private HomingProjectile homingProjectilePrefab;
     private Entity playerEntity;
@@ -30,7 +31,8 @@ public class HomingProjectileEffect : MonoBehaviour
     {
         if (playerEntity != null)
         {
-            Debug.Log(HomingProjectile());
+            //Debug.Log(HomingProjectile());
+            projectileCount = HomingProjectile() + numberOfProjectiles - 1;
             if (HomingProjectile() > 0)
             {
                 enableHomingProjectiles = true;
@@ -64,7 +66,7 @@ public class HomingProjectileEffect : MonoBehaviour
         Vector3 basePos = transform.position + Vector3.up * projectileSpawnOffset;
         float currentDamage = playerEntity.Stats.ProjectileDamage * 1.5f;
         
-        for (int i = 0; i < numberOfProjectiles; i++)
+        for (int i = 0; i < projectileCount; i++)
         {
             // playerPosition += Vector3.forward * Random.Range(-2f, 2f) * projectileSpawnOffset;
             Vector3 spawnPos = basePos + transform.right * Random.Range(-2, 2f) * 0.25f
@@ -92,6 +94,7 @@ public class HomingProjectileEffect : MonoBehaviour
             {
                 homingProjectile.Init(shootMask, currentDamage, 100, playerEntity); // Example init
             }
+            
         }
     }
 
