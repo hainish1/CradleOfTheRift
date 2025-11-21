@@ -115,52 +115,71 @@ public class AbilityUIController : MonoBehaviour
         });
     }
 
-
-    public IEnumerator StartCooldown(VisualElement overlay, AbilityInfo ability, Label chargeLabel, float cooldownTime)
-    {
-        overlay.style.opacity = 1;
-        overlay.style.height = Length.Percent(100);
-
-        float elapsed = 0f;
-        while (elapsed < cooldownTime)
-        {
-            elapsed += Time.deltaTime;
-            overlay.style.height = Length.Percent(Mathf.Lerp(100, 0, elapsed / cooldownTime));
-            yield return null;
-        }
-
-        overlay.style.opacity = 0;
-
-        // Refill a charge
-        ability.currentCharges++;
-        chargeLabel.text = ability.currentCharges.ToString();
-    }
-
-
-
-
-    public void OnAbilityPressed(int abilityIndex)
-    {
-        var ability = abilities[abilityIndex];
-        var slot = abilitySlots[abilityIndex];
-
-        if (ability.currentCharges <= 0)
-            return;
-        ability.currentCharges--;
-        slot.chargeLabel.text = ability.currentCharges.ToString();
-
-        // Find the first inactive overlay
-        var overlay = slot.cooldownOverlays.Find(o => o.style.opacity.value == 0);
-        if (overlay != null)
-            StartCoroutine(StartCooldown(overlay, ability, slot.chargeLabel, ability.getCooldown()));
-    }
-
-
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.LeftShift))
             OnAbilityPressed(0);
     }
+
+    public void OnAbilityPressed(int abilityIndex)
+{
+    var ability = abilities[abilityIndex];
+    var slot = abilitySlots[abilityIndex];
+
+    if (ability.currentCharges <= 0)
+        return;
+
+    // Spend a charge
+    ability.currentCharges--;
+    slot.chargeLabel.text = ability.currentCharges.ToString();
+
+    // Queue a cooldown
+    ability.pendingCooldowns++;
+
+    // If no cooldown is currently running, start it
+    if (!ability.isCooldownRunning)
+        StartCoroutine(ProcessCooldownQueue(ability, slot));
+}
+
+private IEnumerator ProcessCooldownQueue(AbilityInfo ability, AbilitySlot slot)
+{
+    ability.isCooldownRunning = true;
+
+    while (ability.pendingCooldowns > 0)
+    {
+        // Find the first inactive overlay
+        var overlay = slot.cooldownOverlays.Find(o => o.style.opacity.value == 0);
+        if (overlay != null)
+        {
+            yield return StartCoroutine(StartCooldown(overlay, ability, slot.chargeLabel, ability.getCooldown()));
+        }
+
+        ability.pendingCooldowns--;
+    }
+
+    ability.isCooldownRunning = false;
+}
+
+public IEnumerator StartCooldown(VisualElement overlay, AbilityInfo ability, Label chargeLabel, float cooldownTime)
+{
+    overlay.style.opacity = 1;
+    overlay.style.height = Length.Percent(100);
+
+    float elapsed = 0f;
+    while (elapsed < cooldownTime)
+    {
+        elapsed += Time.deltaTime;
+        overlay.style.height = Length.Percent(Mathf.Lerp(100, 0, elapsed / cooldownTime));
+        yield return null;
+    }
+
+    overlay.style.opacity = 0;
+
+    // Refill a charge
+    ability.currentCharges++;
+    chargeLabel.text = ability.currentCharges.ToString();
+}
+
 }
 
 [System.Serializable]
