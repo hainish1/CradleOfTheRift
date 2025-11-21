@@ -19,7 +19,7 @@ public class RecoveryState_Range : EnemyState
     /// </summary>
     public override void Enter()
     {
-        endTime = Time.time + enemyRange.recoveryTime; // set
+        endTime = Time.time + enemyRange.reloadTime; // set
         if (enemy.agent != null) enemy.agent.isStopped = false;
     }
 

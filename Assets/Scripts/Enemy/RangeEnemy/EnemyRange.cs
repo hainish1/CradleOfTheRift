@@ -23,6 +23,7 @@ public class EnemyRange : Enemy
     [Space]
 
     [Header("Shooting")]
+    public int numberOfOrbs = 4;
     public float projectileSpeed = 50f;
     public float fireCooldown = .6f;
     public Transform firePoint; // where bullet come from
@@ -34,7 +35,7 @@ public class EnemyRange : Enemy
 
     [Header("Reccovery")]
     [Tooltip("After all orbs are finished, how much time to start again, basically reload time")]
-    public float recoveryTime = 0.4f;
+    public float reloadTime = 1f;
 
     IdleState_Range idle;
     ChaseState_Range chase;

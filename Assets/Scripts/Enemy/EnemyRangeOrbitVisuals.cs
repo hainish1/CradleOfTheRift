@@ -15,11 +15,14 @@ public class EnemyRangeOrbitVisuals : MonoBehaviour
     [SerializeField] private float orbitHeight = 1.5f;
 
     private int hiddenOrbs = 0;
+    private EnemyRange enemyRange;
 
     private Transform[] transforms;
 
     void Start()
     {
+        enemyRange = GetComponentInParent<EnemyRange>();
+        numOfOrbs = enemyRange.numberOfOrbs;
         transforms = new Transform[numOfOrbs];
         for (int i = 0; i < numOfOrbs; i++)
         {

@@ -10,7 +10,8 @@ public class AttackState_Range : EnemyState
 
 
     private float nextShootTime;
-    private float endTime;
+    // private float endTime;
+    private int ammoLeft; // no of shots left
 
     public AttackState_Range(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
@@ -28,7 +29,8 @@ public class AttackState_Range : EnemyState
             enemy.agent.velocity = Vector3.zero;
         }
 
-        endTime = Time.time + Mathf.Max(enemyRange.fireCooldown * 1.5f, 0.3f);
+        // endTime = Time.time + Mathf.Max(enemyRange.fireCooldown * 1.5f, 0.3f);
+        ammoLeft = enemyRange.numberOfOrbs; // initialize it
         nextShootTime = Time.time; // first shoot immedietly
     }
 
@@ -53,16 +55,24 @@ public class AttackState_Range : EnemyState
         }
 
         // now fire
-        if (Time.time >= nextShootTime)
+        if (ammoLeft > 0 && Time.time >= nextShootTime)
         {
             enemyRange.FireOnce();
+            ammoLeft--;
             nextShootTime = Time.time + enemyRange.fireCooldown;
-            enemyRange.nextAttackAllowed = Time.time + enemyRange.fireCooldown * 0.1f; // for re-entry
+            // enemyRange.nextAttackAllowed = Time.time + enemyRange.fireCooldown * 0.1f; // for re-entry
+
+        }
+
+        if(ammoLeft == 0)
+        {
+            stateMachine.ChangeState(enemyRange.GetRecovery());
+            return;
         }
 
 
         float distance = Vector3.Distance(enemy.transform.position, enemy.target.position);
-        if (distance >= enemyRange.attackRange * 1.2f || Time.time >= endTime)
+        if (distance >= enemyRange.attackRange * 1.2f)
         {
             stateMachine.ChangeState(enemyRange.GetRecovery());
         }
