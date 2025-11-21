@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class PauseManager : MonoBehaviour
 {
+    public static bool GameIsPaused; // Global Pause Var
+
     private bool isPaused = false;
     PauseAction action;
     [SerializeField] private GameObject pauseMenuUI;
