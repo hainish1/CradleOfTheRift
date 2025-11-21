@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,18 +7,11 @@ using UnityEngine.UIElements;
 public class AbilityUIController : MonoBehaviour
 {
     [SerializeField] private VisualTreeAsset abilitySlotAsset;
+    [SerializeField] private PlayerManager playerManager;
+    private Stats playerStats;
 
-    [System.Serializable]
-    public class AbilityInfo
-    {
-        public string abilityName;
-        public string key;
-        public Texture2D icon;
-        public int maxCharges;
-        [HideInInspector] public int currentCharges;
-        [HideInInspector] public int pendingCooldowns = 0; // how many cooldowns are waiting
-        [HideInInspector] public bool isCooldownRunning = false; // is overlay animating
-    }
+    [SerializeField]
+    private List<Texture2D> images;
 
 
     [System.Serializable]
@@ -30,32 +24,54 @@ public class AbilityUIController : MonoBehaviour
 
     private List<AbilitySlot> abilitySlots = new List<AbilitySlot>();
 
-
-
-    [SerializeField] private AbilityInfo[] abilities;
-
+    private List<AbilityInfo> abilities = new();
     private VisualElement abilityBar;
 
-    void OnEnable()
+
+    private void Start()
     {
         var root = GetComponent<UIDocument>().rootVisualElement;
         abilityBar = root.Q<VisualElement>("AbilityBar");
 
-        foreach (var ability in abilities)
+        playerManager = FindObjectOfType<PlayerManager>();
+        if (playerManager == null)
         {
-            CreateAbility(ability);
+            Debug.LogError("PlayerManager not found!");
+            return;
         }
-    }
 
+        playerStats = playerManager.Stats;
+        if (playerStats == null)
+        {
+            Debug.LogError("PlayerManager.Stats is null!");
+            return;
+        }
+
+        playerStats = playerManager.Stats;
+
+        AbilityInfo dashAbility = new AbilityInfo
+        {
+            abilityName = "Dash",
+            key = KeyCode.LeftShift,
+            icon = this.images[0], // assign your icon,
+            maxCharges = playerStats.DashCharges,
+            currentCharges = playerStats.DashCharges,
+            getCooldown = () => playerStats.DashCooldown
+        };
+
+        this.abilities.Add(dashAbility);
+        CreateAbility(dashAbility);
+
+    }
+    
     void CreateAbility(AbilityInfo ability)
     {
         var slot = abilitySlotAsset.Instantiate();
         var chargeLabel = slot.Q<Label>("ChargeLabel");
 
         // Initialize ability
-        ability.currentCharges = ability.maxCharges;
         chargeLabel.text = ability.currentCharges.ToString();
-        slot.Q<Label>("KeyLabel").text = ability.key;
+        slot.Q<Label>("KeyLabel").text = ability.key.ToString();
 
         // Initialize icon
         var iconElement = slot.Q<VisualElement>("AbilityIcon");
@@ -130,14 +146,13 @@ public class AbilityUIController : MonoBehaviour
 
         if (ability.currentCharges <= 0)
             return;
-
         ability.currentCharges--;
         slot.chargeLabel.text = ability.currentCharges.ToString();
 
         // Find the first inactive overlay
         var overlay = slot.cooldownOverlays.Find(o => o.style.opacity.value == 0);
         if (overlay != null)
-            StartCoroutine(StartCooldown(overlay, ability, slot.chargeLabel, 5f));
+            StartCoroutine(StartCooldown(overlay, ability, slot.chargeLabel, ability.getCooldown()));
     }
 
 
@@ -146,4 +161,24 @@ public class AbilityUIController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift))
             OnAbilityPressed(0);
     }
+}
+
+
+
+[System.Serializable]
+public class AbilityInfo
+{
+    public string abilityName;
+    public KeyCode key;
+    public Texture2D icon;
+    public int maxCharges;
+    public int currentCharges;
+    public Func<float> getCooldown;
+
+    // public int CurrentCharges => getCharges != null ? getCharges() : 0;
+    public float CooldownRemaining => getCooldown != null ? getCooldown() : 0f;
+
+
+    [HideInInspector] public int pendingCooldowns = 0; // how many cooldowns are waiting
+    [HideInInspector] public bool isCooldownRunning = false; // is overlay animating
 }
