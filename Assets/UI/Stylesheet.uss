@@ -107,3 +107,14 @@ unity-content {
     flex-direction: column;
     gap: 5px;          /* spacing between inventory and extraction bar */
 }
+
+#AbilityBar {
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 10px;
+    width: 100%;
+    height: auto;
+    position: absolute;
+}
