@@ -19,6 +19,7 @@ public class EnemyBoss_SS : Enemy
     public GameObject poofVFX;
 
     public GameObject explosionVFXPrefab;
+    public GameObject shockwaveVFXPrefab;
 
     [Space]
 
@@ -33,6 +34,7 @@ public class EnemyBoss_SS : Enemy
     public float windupTime = 0.25f;
     public float leapDuration = 0.6f;
     public float leapHeight = 3f; 
+    public GameObject flashVFX;
 
     private IdleState_Boss idle;
     private SpawnBombState_Boss bombState;
@@ -71,6 +73,15 @@ public class EnemyBoss_SS : Enemy
         newFx.transform.rotation = Quaternion.identity;
 
         Destroy(newFx, 1); // destroy after one second
+    }
+
+    public void CreateVFX(GameObject vfxPrefab,  Vector3 spawnPosition, float destroyAfter)
+    {
+        if (vfxPrefab == null) return;
+        GameObject newFx = Instantiate(vfxPrefab);
+        newFx.transform.position = spawnPosition;
+        newFx.transform.rotation = Quaternion.identity;
+        Destroy(newFx, destroyAfter); // destroy after one second
     }
 
 

@@ -12,6 +12,7 @@ public class RingAttackState_Boss : EnemyState
     private HashSet<IDamageable> alreadyDamaged = new HashSet<IDamageable>();
     private GameObject explosionVFXObj;
     private BossRingVFX bossRingVFX;
+    private GameObject shockwaveVFX;
 
     public RingAttackState_Boss(Enemy enemy, EnemyStateMachine stateMachine, float maxRadius, float duration, float damage, LayerMask mask) : base(enemy, stateMachine)
     {
@@ -54,6 +55,7 @@ public class RingAttackState_Boss : EnemyState
 
         if (elapsed >= duration)
         {
+            
             Collider[] hits = Physics.OverlapSphere(boss.transform.position, radius, playerMask);
             foreach (var col in hits)
             {
@@ -72,6 +74,14 @@ public class RingAttackState_Boss : EnemyState
 
 
             if (explosionVFXObj != null) GameObject.Destroy(explosionVFXObj);
+            if(boss.shockwaveVFXPrefab != null)
+            {
+                shockwaveVFX = GameObject.Instantiate(boss.shockwaveVFXPrefab);
+                shockwaveVFX.transform.position = boss.transform.position - new Vector3(0, 0, 0);
+                shockwaveVFX.transform.rotation = Quaternion.identity;
+            }
+
+            if(shockwaveVFX != null) GameObject.Destroy(shockwaveVFX, 2);
             stateMachine.ChangeState(boss.GetRecoveryState());
         }
     }

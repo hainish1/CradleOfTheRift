@@ -441,6 +441,7 @@ MonoBehaviour:
   explosionCameraShakeForce: 5
   poofVFX: {fileID: 141433446842962269, guid: 9fe8f8b3288e45a44af36ff8aa04486e, type: 3}
   explosionVFXPrefab: {fileID: 8276740080782940022, guid: 3433ebff6fe285c4c8d37faae3424147, type: 3}
+  shockwaveVFXPrefab: {fileID: 9080140021571130472, guid: 82066d902ed0dd6488ddfd32eb994801, type: 3}
   hitbox: {fileID: 6458449840784157983}
   hitAppliedThisAttack: 0
   slamDamage: 2
@@ -450,6 +451,7 @@ MonoBehaviour:
   windupTime: 0.25
   leapDuration: 0.6
   leapHeight: 1.5
+  flashVFX: {fileID: 3077343761403282166, guid: f78aaaec3b393e24ca74cd6de8194347, type: 3}
 --- !u!1 &6286784482263930251
 GameObject:
   m_ObjectHideFlags: 0
