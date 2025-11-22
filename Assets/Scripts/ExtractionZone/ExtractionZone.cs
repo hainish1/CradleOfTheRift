@@ -94,6 +94,8 @@ public class ExtractionZone : MonoBehaviour
                 PlayerHealth.instance.SetCanTakeDamage(false);
                 this.WinScreen?.Invoke();
                 this.ExtractionFinished?.Invoke();
+                PlayerHealth.GameIsOver = true;
+
             }
         }
         else

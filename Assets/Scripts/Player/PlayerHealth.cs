@@ -7,7 +7,7 @@ public class PlayerHealth : HealthController
     // note to self - THIS is player MANAGER that INHERITS from entity
     private Entity playerEntity;
     public event Action LoseScreen;
-
+    public static bool GameIsOver = false; // true when win/lose screen is up
     public event Action<float, float> healthChanged;
     public float CurrentHealth => currentHealth;
     public float MaxHealth => maxHealth;
@@ -19,12 +19,14 @@ public class PlayerHealth : HealthController
     {
         base.Awake();
         instance = this;
+        GameIsOver = false;
+
     }
 
     void Start()
     {
         playerEntity = GetComponent<Entity>();
-
+        GameIsOver = false;
         if (playerEntity != null)
         {
             // maxHealth = Mathf.RoundToInt(playerEntity.Stats.Health);
@@ -65,6 +67,7 @@ public class PlayerHealth : HealthController
     {
         Debug.Log("[PLAYER HEALTH] Player is DEADDD lmao");
         this.LoseScreen?.Invoke();
+        GameIsOver = true;
 
 
         // SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);

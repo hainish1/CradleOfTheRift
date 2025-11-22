@@ -79,6 +79,7 @@ public class PlayerMeleeAttack : MonoBehaviour
 
     void Update()
     {
+        if (PauseManager.GameIsPaused) return;
         // Start 
         if (meleeAction != null && meleeAction.WasPressedThisFrame())
             TryStartMelee();

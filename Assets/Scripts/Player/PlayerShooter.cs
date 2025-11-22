@@ -92,6 +92,8 @@ public class PlayerShooter : MonoBehaviour
 
     void Update()
     {
+        if (PauseManager.GameIsPaused) return;
+
         if (!aim || !muzzle) return;
         Vector3 direction = aim.GetAimDirection(muzzle.position, muzzle.forward);
         if (direction.sqrMagnitude > 0.0001f)
