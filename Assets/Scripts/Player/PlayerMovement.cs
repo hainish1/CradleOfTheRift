@@ -663,7 +663,7 @@ public class PlayerMovement : MonoBehaviour
             axis.Normalize();
         }
 
-        // Rodrigues' Vector Rotation Formula: v * cos(theta) + (k × v) * sin(theta) + k * (k · v) * (1 - cos(theta))
+        // Rodrigues' Vector Rotation Formula: v * cos(theta) + (k ï¿½ v) * sin(theta) + k * (k ï¿½ v) * (1 - cos(theta))
         Vector3 currV = currUnitVector;
         Vector3 axisK = axis;
         float maxTheta = maxRadiansDelta;

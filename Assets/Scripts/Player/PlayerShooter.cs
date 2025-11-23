@@ -23,8 +23,9 @@ public class PlayerShooter : MonoBehaviour
 
     [Header("Projectiles")]
     [SerializeField] private Projectile projectilePrefab;
+    [SerializeField] private ExplosiveProjectile explosiveProjectilePrefab;
     [SerializeField] private float projectileSpeed = 50f;
-    [SerializeField] private float spawnOffset = 0.1f; // out of the muzzle alr 
+    [SerializeField] private float spawnOffset = 0.1f; 
 
     private InputSystem_Actions input;
     private InputSystem_Actions.PlayerActions actions;
@@ -186,21 +187,104 @@ public class PlayerShooter : MonoBehaviour
 
         Projectile proj = null;
 
-        if (ObjectPool.instance != null) // if there is object pooling, use that
+        if (ObjectPool.instance != null)
         {
-            GameObject pooled = ObjectPool.instance.GetObject(projectilePrefab.gameObject, muzzle); // spawn at muzzle
-            proj = pooled.GetComponent<Projectile>();
+            GameObject pooled = ObjectPool.instance.GetObject(projectilePrefab.gameObject, muzzle);
+            
+            if (ExplosiveProjectiles.IsEnabled)
+            {
+                proj = pooled.GetComponent<ExplosiveProjectile>();
+                if (proj == null)
+                {
+                    var oldProj = pooled.GetComponent<Projectile>();
+                    if (oldProj != null)
+                    {
+                        var bulletFX = oldProj.BulletImpactFX;
+                        var trail = oldProj.trail;
+                        Destroy(oldProj);
+                        proj = pooled.AddComponent<ExplosiveProjectile>();
+                        proj.BulletImpactFX = bulletFX;
+                        proj.trail = trail;
+                    }
+                    else
+                    {
+                        proj = pooled.AddComponent<ExplosiveProjectile>();
+                    }
+                }
+            }
+            else
+            {
+                proj = pooled.GetComponent<Projectile>();
+                if (proj == null)
+                {
+                    var oldProj = pooled.GetComponent<ExplosiveProjectile>();
+                    if (oldProj != null)
+                    {
+                        var bulletFX = oldProj.BulletImpactFX;
+                        var trail = oldProj.trail;
+                        Destroy(oldProj);
+                        proj = pooled.AddComponent<Projectile>();
+                        proj.BulletImpactFX = bulletFX;
+                        proj.trail = trail;
+                    }
+                    else
+                    {
+                        proj = pooled.AddComponent<Projectile>();
+                    }
+                }
+            }
+            
             proj.transform.position = spawnPos;
             proj.transform.rotation = spawnRot;
-            Debug.Log("Used ObjectPool");
         }
-        else // use normal instantiating way
+        else
         {
-            proj = Instantiate(projectilePrefab, spawnPos, spawnRot);
-            Debug.Log("Used Normal");
+            GameObject go = Instantiate(projectilePrefab.gameObject, spawnPos, spawnRot);
+            
+            if (ExplosiveProjectiles.IsEnabled)
+            {
+                var oldProj = go.GetComponent<Projectile>();
+                if (oldProj != null)
+                {
+                    var bulletFX = oldProj.BulletImpactFX;
+                    var trail = oldProj.trail;
+                    Destroy(oldProj);
+                    proj = go.AddComponent<ExplosiveProjectile>();
+                    proj.BulletImpactFX = bulletFX;
+                    proj.trail = trail;
+                }
+                else
+                {
+                    proj = go.GetComponent<ExplosiveProjectile>();
+                    if (proj == null) proj = go.AddComponent<ExplosiveProjectile>();
+                }
+            }
+            else
+            {
+                var oldProj = go.GetComponent<ExplosiveProjectile>();
+                if (oldProj != null)
+                {
+                    var bulletFX = oldProj.BulletImpactFX;
+                    var trail = oldProj.trail;
+                    Destroy(oldProj);
+                    proj = go.AddComponent<Projectile>();
+                    proj.BulletImpactFX = bulletFX;
+                    proj.trail = trail;
+                }
+                else
+                {
+                    proj = go.GetComponent<Projectile>();
+                    if (proj == null) proj = go.AddComponent<Projectile>();
+                }
+            }
         }
-        // // NOTE TO SELF : USE OBJECT POOLING LATER TO REDUCE INSTANTIATING
-        proj?.Init(direction * projectileSpeed, shootMask, currentDamage, 100, playerEntity);
+
+        float speed = projectileSpeed;
+        if (ExplosiveProjectiles.IsEnabled && proj is ExplosiveProjectile)
+        {
+            speed *= 0.4f;
+        }
+        proj?.Init(direction * speed, shootMask, currentDamage, 100, playerEntity);
 
         // Debug.Log($"Fired projectile with {currentDamage} damage");
         // Play firing sound
