@@ -5,12 +5,13 @@ using UnityEngine.InputSystem;
 
 public class PlayerMeleeController : MonoBehaviour
 {
-    private InputSystem_Actions playerInput;
-    private InputSystem_Actions.PlayerActions playerActions;
-    private InputAction attackActions;
+    private InputSystem_Actions _playerInput;
+    private InputSystem_Actions.PlayerActions _playerActions;
+    private InputAction _attackActions;
 
     // Weapon Parameters
 
+    [SerializeField] private Transform _playerCamera;
     private Animator _weaponAnim;
     private Entity _playerEntity;
     private PlayerAudioController _audioController;
@@ -21,7 +22,7 @@ public class PlayerMeleeController : MonoBehaviour
     [SerializeField] private Transform _hitSweepEndPoint;
     [SerializeField] private int _hitSweepCasts;
     [SerializeField] private LayerMask _hitLayerMasks;
-    private float _hitSweepBreadth;
+    private float _hitSweepLength;
     private Vector3 _hitSweepStepVector;
     private Vector3 _hitSweepPointTemp;
     private Vector3[] _prevHitSweepPointsTemp;
@@ -34,29 +35,26 @@ public class PlayerMeleeController : MonoBehaviour
     private float MeleeDamage => _playerEntity.Stats.MeleeDamage;
     [SerializeField] private float knockbackForce;
     private float _attackCooldown;
-    private bool _inputtedAttackThisFrame;
     public bool CanAttack { get; set; }
 
     void Awake()
     {
         _playerEntity = GetComponentInParent<Entity>();
-        _weaponAnim = GetComponent<Animator>();
+        _weaponAnim = GetComponentInChildren<Animator>();
         _audioController = GetComponentInParent<PlayerAudioController>();
-        playerInput = new InputSystem_Actions();
-        playerActions = playerInput.Player;
+        _playerInput = new InputSystem_Actions();
+        _playerActions = _playerInput.Player;
     }
 
     private void OnEnable()
     {
-        attackActions = playerActions.Attack;
-        attackActions.Enable();
-        attackActions.started += AttackInputActionStarted;
+        _attackActions = _playerActions.Attack;
+        _attackActions.Enable();
     }
 
     private void OnDisable()
     {
-        attackActions.Disable();
-        attackActions.started -= AttackInputActionStarted;
+        _attackActions.Disable();
     }
 
     void Start()
@@ -64,8 +62,7 @@ public class PlayerMeleeController : MonoBehaviour
         if (_playerEntity == null) return;
 
         // Hit Sweep Parameters
-        _hitSweepBreadth = (_hitSweepEndPoint.position - _hitSweepStartPoint.position).magnitude;
-        _hitSweepStepVector = (_hitSweepBreadth / _hitSweepCasts) * PointVectorTo(_hitSweepStartPoint.position, _hitSweepEndPoint.position);
+        AlignHitSweep();
         _prevHitSweepPointsTemp = new Vector3[_hitSweepCasts];
         _tempHitSweepArrayInitialized = false;
         _objectsHitThisAttack = new HashSet<Object>();
@@ -73,22 +70,22 @@ public class PlayerMeleeController : MonoBehaviour
 
         // Attack Parameters
         _attackCooldown = _playerEntity.Stats.AttackSpeed; // TODO: Make melee attack speed property and change this to it.
-        _inputtedAttackThisFrame = false;
         CanAttack = true;
     }
 
     void Update()
     {
-        if (_inputtedAttackThisFrame && CanAttack)
+        // Align weapon with camera direction.
+        transform.rotation = Quaternion.Euler(_playerCamera.rotation.eulerAngles.x, _playerCamera.rotation.eulerAngles.y, 0);
+
+        if (_attackActions.WasPressedThisFrame() && CanAttack)
         {
             PerformAttack();
         }
-        else
-        {
-            _inputtedAttackThisFrame = false;
-        }
 
-        if (_weaponAnim.GetCurrentAnimatorStateInfo(0).IsName("Spear-Swing-Chamber"))
+        // Only perform hit sweeps while attack is active.
+        if (_weaponAnim.GetCurrentAnimatorStateInfo(0).IsName("Spear-Swing-Chamber")) // Problem with animator necessitates looking for the
+                                                                                      // previous animation instead of the current one.
         {
             ExecuteHitRegistration();
         }
@@ -99,24 +96,36 @@ public class PlayerMeleeController : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    ///   <para>
+    ///     Makes the player character perform an attack on any frame this method is called.
+    ///   </para>
+    /// </summary>
     private void PerformAttack()
     {
-        _inputtedAttackThisFrame = false;
         CanAttack = false;
         _weaponAnim.SetTrigger("Swing");
         _audioController.PlayMeleeSound();
         StartCoroutine(AttackCooldown());
     }
 
-
+    /// <summary>
+    ///   <para>
+    ///     Coroutine for putting melee attack on cooldown.
+    ///   </para>
+    /// </summary>
+    /// <returns> IEnumerator object. </returns>
     private IEnumerator AttackCooldown()
     {
         yield return new WaitForSeconds(_attackCooldown);
         CanAttack = true;
     }
 
-
+    /// <summary>
+    ///   <para>
+    ///     Executes a hit registration sequence on any frame this method is called.
+    ///   </para>
+    /// </summary>
     private void ExecuteHitRegistration()
     {
         if (!_tempHitSweepArrayInitialized)
@@ -129,26 +138,37 @@ public class PlayerMeleeController : MonoBehaviour
         ExecuteHitSweep();
     }
 
-
+    /// <summary>
+    ///   <para>
+    ///     Prepares the temp points array for a hit sweep on any frame this method is called.
+    ///   </para>
+    /// </summary>
     private void InitializeHitSweepPointsTempArray()
     {
-        AlignHitSweepStepVector();
+        AlignHitSweep();
+
         for (int i = 0; i < _hitSweepCasts; i++)
         {
-            _hitSweepPointTemp += _hitSweepStepVector;
-            _prevHitSweepPointsTemp[i] = _hitSweepPointTemp;
+            IncrementHitSweepTemp(i);
         }
     }
 
-
+    /// <summary>
+    ///   <para>
+    ///     Executes a full hit sweep sequence on any frame this method is called.
+    ///   </para>
+    /// </summary>
     private void ExecuteHitSweep()
     {
-        AlignHitSweepStepVector();
+        AlignHitSweep();
 
+        // Cast rays from previous hit sweep points to current ones all the way down the weapon length.
         for (int i = 0; i < _hitSweepCasts; i++)
         {
             Vector3 startPoint = _prevHitSweepPointsTemp[i];
             Vector3 endPoint = _hitSweepPointTemp;
+
+            // Record all valid objects that were hit.
             _objectsHitThisSweep = Physics.RaycastAll(startPoint,
                                                       (endPoint - startPoint).normalized,
                                                       (endPoint - startPoint).magnitude,
@@ -156,14 +176,16 @@ public class PlayerMeleeController : MonoBehaviour
                                                       QueryTriggerInteraction.Ignore);
             //Debug.DrawRay(startPoint, endPoint - startPoint, Color.blue, 2);
 
+            // For all valid objects that were hit, check if damage has already been applied to them.
             for (int j = 0; j < _objectsHitThisSweep.Length; j++)
             {
                 var currObject = _objectsHitThisSweep[j].collider.gameObject;
-                if (_objectsHitThisAttack.Contains(currObject)) continue;
+                if (_objectsHitThisAttack.Contains(currObject)) continue; // Skip this object if damage was already applied.
 
                 var enemyScript = currObject.GetComponent<Enemy>();
                 if (enemyScript == null) continue; // <------------------------------ TODO: Make it so non-enemy objects can be damaged.
 
+                // Apply knockback.
                 var enemyKbScript = currObject.GetComponent<AgentKnockBack>();
                 if (enemyKbScript != null)
                 {
@@ -172,6 +194,7 @@ public class PlayerMeleeController : MonoBehaviour
                 }
                 enemyScript.GetComponentInParent<TargetFlash>().Flash();
 
+                // Apply damage.
                 var damageable = enemyScript.GetComponentInParent<IDamageable>();
                 if (damageable != null && !damageable.IsDead)
                 {
@@ -183,28 +206,46 @@ public class PlayerMeleeController : MonoBehaviour
                 _objectsHitThisAttack.Add(currObject);
             }
 
-            _hitSweepPointTemp += _hitSweepStepVector;
-            _prevHitSweepPointsTemp[i] = _hitSweepPointTemp;
+            IncrementHitSweepTemp(i);
         }
     }
 
-
+    /// <summary>
+    ///   <para>
+    ///     Gets a normalized vector pointing from a "from" vector to a "to" vector.
+    ///   </para>
+    /// </summary>
+    /// <param name="fromVector"> The "from" vector. </param>
+    /// <param name="toVector"> The "to" vector. </param>
+    /// <returns> A normalized vector pointing from one vector to another. </returns>
     private Vector3 PointVectorTo(Vector3 fromVector, Vector3 toVector)
     {
         return (toVector - fromVector).normalized;
     }
-
-
-    private void AlignHitSweepStepVector()
+    
+    /// <summary>
+    ///   <para>
+    ///     Gets the hit sweep length and step vector alignment on any frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void AlignHitSweep()
     {
-        _hitSweepStepVector = _hitSweepStepVector.magnitude * PointVectorTo(_hitSweepStartPoint.position,
-                                                                            _hitSweepEndPoint.position);
-        _hitSweepPointTemp = _hitSweepStartPoint.position - _hitSweepStepVector;
+        _hitSweepLength = (_hitSweepEndPoint.position - _hitSweepStartPoint.position).magnitude;
+        _hitSweepStepVector = (_hitSweepLength / _hitSweepCasts) * PointVectorTo(_hitSweepStartPoint.position,
+                                                                                  _hitSweepEndPoint.position);
+        _hitSweepPointTemp = _hitSweepStartPoint.position;
     }
 
-
-    private void AttackInputActionStarted(InputAction.CallbackContext context)
+    /// <summary>
+    ///   <para>
+    ///     Increments the hit sweep temp point to the next step down the weapon length on any frame
+    ///     this method is called.
+    ///   </para>
+    /// </summary>
+    /// <param name="index"> Index of the temp point. </param>
+    private void IncrementHitSweepTemp(int index)
     {
-        _inputtedAttackThisFrame = true;
+        _prevHitSweepPointsTemp[index] = _hitSweepPointTemp;
+        _hitSweepPointTemp += _hitSweepStepVector;
     }
 }

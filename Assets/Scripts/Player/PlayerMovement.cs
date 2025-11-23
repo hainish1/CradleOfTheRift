@@ -19,14 +19,14 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private InputSystem_Actions playerInput;
-    private InputSystem_Actions.PlayerActions playerActions;
+    private InputSystem_Actions _playerInput;
+    private InputSystem_Actions.PlayerActions _playerActions;
 
-    private InputAction moveActions;
-    private InputAction dashActions;
-    private InputAction jumpActions;
-    private InputAction flightActions;
-    private InputAction sprintActions;
+    private InputAction _moveActions;
+    private InputAction _dashActions;
+    private InputAction _jumpActions;
+    private InputAction _flightActions;
+    private InputAction _sprintActions;
 
     // Player Parameters
 
@@ -116,7 +116,6 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("Seconds that jump can still be registered after walking off an edge.")] private float _coyoteTimeWindow;
     [SerializeField]
     [Tooltip("Seconds that jump can still be registered before reaching the ground.")] private float _jumpBufferWindow;
-    private bool _inputtedJumpThisFrame;
     private float _coyoteTimer;
     private float _jumpBufferTimer;
     private Vector3 _verticalVelocityVector;
@@ -159,40 +158,40 @@ public class PlayerMovement : MonoBehaviour
     {
         _playerEntity = GetComponent<Entity>();
         _characterController = GetComponent<CharacterController>();
-        playerInput = new InputSystem_Actions();
-        playerActions = playerInput.Player;
+        _playerInput = new InputSystem_Actions();
+        _playerActions = _playerInput.Player;
     }
 
     private void OnEnable()
     {
-        moveActions = playerActions.Move;
-        dashActions = playerActions.Dash;
-        jumpActions = playerActions.Jump;
-        flightActions = playerActions.Flight;
-        sprintActions = playerActions.Sprint;
+        _moveActions = _playerActions.Move;
+        _dashActions = _playerActions.Dash;
+        _jumpActions = _playerActions.Jump;
+        _flightActions = _playerActions.Flight;
+        _sprintActions = _playerActions.Sprint;
 
-        moveActions.Enable();
-        dashActions.Enable();
-        jumpActions.Enable();
-        flightActions.Enable();
-        sprintActions.Enable();
+        _moveActions.Enable();
+        _dashActions.Enable();
+        _jumpActions.Enable();
+        _flightActions.Enable();
+        _sprintActions.Enable();
 
-        dashActions.started += DashInputActionStarted;
-        jumpActions.started += JumpInputActionStarted;
-        flightActions.started += FlightInputActionStarted;
+        _dashActions.started += DashInputActionStarted;
+        _jumpActions.started += JumpInputActionStarted;
+        _flightActions.started += FlightInputActionStarted;
     }
 
     private void OnDisable()
     {
-        moveActions.Disable();
-        dashActions.Disable();
-        jumpActions.Disable();
-        flightActions .Disable();
-        sprintActions.Disable();
+        _moveActions.Disable();
+        _dashActions.Disable();
+        _jumpActions.Disable();
+        _flightActions .Disable();
+        _sprintActions.Disable();
 
-        dashActions.started -= DashInputActionStarted;
-        jumpActions.started -= JumpInputActionStarted;
-        flightActions.started -= FlightInputActionStarted;
+        _dashActions.started -= DashInputActionStarted;
+        _jumpActions.started -= JumpInputActionStarted;
+        _flightActions.started -= FlightInputActionStarted;
     }
 
     void Start()
@@ -235,7 +234,6 @@ public class PlayerMovement : MonoBehaviour
 
         // Jump Parameters
         _jumpForce = _playerEntity.Stats.JumpForce;
-        _inputtedJumpThisFrame = false;
 
         // Coyote Time Parameters
         _coyoteTimer = _coyoteTimeWindow;
@@ -518,7 +516,7 @@ public class PlayerMovement : MonoBehaviour
     /// <returns> A normalized vector parallel with the xz-plane. </returns>
     private Vector3 GetMoveInputDirection()
     {
-        Vector2 moveInput = moveActions.ReadValue<Vector2>();
+        Vector2 moveInput = _moveActions.ReadValue<Vector2>();
 
         Vector3 cameraPerspectiveForward = _cameraTransform ? _cameraTransform.forward : Vector3.forward;
         Vector3 cameraPerspectiveRight = _cameraTransform ? _cameraTransform.right : Vector3.right;
@@ -549,7 +547,7 @@ public class PlayerMovement : MonoBehaviour
             //Debug.Log($"{IsGrounded} | {_lateralVelocityVector.magnitude >= MoveMaxSpeed - 5f} | {Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) >= (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1} | {moveActions.ReadValue<Vector2>() != _moveInputTemp}.");
 
             // Reset _lateralVelocityVector pitch if new move input is registered to ground clamp in a new direction faster.
-            if (IsGrounded && Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) < (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1 && moveActions.ReadValue<Vector2>() == _moveInputTemp)
+            if (IsGrounded && Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) < (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1 && _moveActions.ReadValue<Vector2>() == _moveInputTemp)
             {
                 //Debug.Log("Reached normal case.");
                 // Set pitch of moveDirectionUnitVector to that of _lateralVelocityVector.
@@ -562,7 +560,7 @@ public class PlayerMovement : MonoBehaviour
             else if (IsGrounded
                      && _lateralVelocityVector.magnitude >= MoveMaxSpeed - 5f
                      && Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) >= (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1
-                     && moveActions.ReadValue<Vector2>() != _moveInputTemp)
+                     && _moveActions.ReadValue<Vector2>() != _moveInputTemp)
             {
                 //Debug.Log("Reached fullspeed case.");
                 _lateralVelocityVector = _lateralVelocityVector.magnitude * groundPlaneMoveUnitVector;
@@ -579,7 +577,7 @@ public class PlayerMovement : MonoBehaviour
             Debug.DrawRay(bottom, groundPlaneMoveUnitVector * 10, Color.red);
         }
 
-        _moveInputTemp = moveActions.ReadValue<Vector2>();
+        _moveInputTemp = _moveActions.ReadValue<Vector2>();
     }
 
     /// <summary>
@@ -888,7 +886,6 @@ public class PlayerMovement : MonoBehaviour
 
         if (!_isDashing)
         {
-            _inputtedJumpThisFrame = true;
             _jumpBufferTimer = _jumpBufferWindow;
         }
 
@@ -907,7 +904,7 @@ public class PlayerMovement : MonoBehaviour
     private void JumpConditions()
     {
         // If on the ground and jump was inputted and jump buffer window is valid, or if walked off an edge and coyote time window is valid, then jump.
-        if ((IsGrounded && IsWithinJumpBufferWindow()) || (_inputtedJumpThisFrame && !IsGrounded && IsWithinCoyoteTimeWindow()))
+        if ((IsGrounded && IsWithinJumpBufferWindow()) || (_jumpActions.WasPressedThisFrame() && !IsGrounded && IsWithinCoyoteTimeWindow()))
         {
             PerformJump(_jumpForce);
         }
@@ -918,8 +915,6 @@ public class PlayerMovement : MonoBehaviour
             _coyoteTimer = _coyoteTimeWindow;
             _jumpBufferTimer = 0;
         }
-
-        _inputtedJumpThisFrame = false;
     }
 
     /// <summary>
@@ -971,7 +966,7 @@ public class PlayerMovement : MonoBehaviour
     private void DriftConditions()
     {
         // Cease drifting if the player character landed.
-        if ((_isDrifting && (!jumpActions.IsPressed() || IsGrounded)) || _isFlying)
+        if ((_isDrifting && (!_jumpActions.IsPressed() || IsGrounded)) || _isFlying)
         {
             DisableDrift();
         }
@@ -1094,8 +1089,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
         int flightInputValue = 0;
-        if (jumpActions.IsPressed()) flightInputValue += 1;
-        if (sprintActions.IsPressed()) flightInputValue -= 1;
+        if (_jumpActions.IsPressed()) flightInputValue += 1;
+        if (_sprintActions.IsPressed()) flightInputValue -= 1;
 
         // If in midair and flight energy is not depleted, then fly.
         if (!IsGrounded && _currFlightEnergy > 0)
