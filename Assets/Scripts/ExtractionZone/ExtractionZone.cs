@@ -27,21 +27,9 @@ public class ExtractionZone : MonoBehaviour
     [SerializeField] private float beamWidth = 0.5f;
     [SerializeField] private float beamDuration = 1f;
 
-    private bool hasSpawnedBoss = false;
-    public event Action BossSpawnRequested;
-    private Transform spawnPoint;
-    public Transform GetSpawnPoint => this.spawnPoint;
-
 
 
     private Coroutine beamGrowRoutine;
-    private void Awake()
-    {
-        spawnPoint = transform.Find("BossSpawnPoint");
-        if (spawnPoint == null)
-            Debug.LogError("SpawnPoint not found!");
-    }
-
 
 
     // Update is called once per frame
@@ -63,12 +51,6 @@ public class ExtractionZone : MonoBehaviour
             {
                 this.isInteracted = true;
                 this.ExtractionInteracted?.Invoke();
-            }
-
-            if (!this.hasSpawnedBoss)
-            {
-                hasSpawnedBoss = true;
-                BossSpawnRequested?.Invoke();
             }
         }
     }

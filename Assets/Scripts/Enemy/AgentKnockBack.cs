@@ -64,7 +64,6 @@ public class AgentKnockBack : MonoBehaviour
             // pause steering 
             if (agent != null)
             {
-                if (agent.isOnNavMesh == false) return;
                 agent.isStopped = true;
                 agent.updatePosition = false;
             }
@@ -87,7 +86,7 @@ public class AgentKnockBack : MonoBehaviour
         active = false;
         externalVelocity = Vector3.zero;
 
-        if (agent != null && agent.isOnNavMesh)
+        if (agent != null)
         {
             agent.Warp(transform.position);
             agent.updatePosition = true;

@@ -7,7 +7,6 @@ using UnityEngine;
 public class EnemyMeleeHitbox : MonoBehaviour
 {
     public EnemyMelee owner;
-    public EnemyBoss_SS owner2;
 
     /// <summary>
     /// Checks if it collides with the Player Object, and applies a hit
@@ -17,16 +16,7 @@ public class EnemyMeleeHitbox : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // owner?.TryApplyHit(other);
-            if (owner != null)
-            {
-                owner?.TryApplyHit(other);
-            }
-            else if(owner2 != null)
-            {
-                owner2?.TryApplyHit(other);
-            }
-
+            owner?.TryApplyHit(other);
         }
     }
 

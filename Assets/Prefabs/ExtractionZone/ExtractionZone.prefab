@@ -207,7 +207,6 @@ GameObject:
   - component: {fileID: 5285805516819669692}
   - component: {fileID: 8351607049777631998}
   - component: {fileID: 8052474352153079364}
-  - component: {fileID: 4656966080095277275}
   m_Layer: 10
   m_Name: ExtractionZone
   m_TagString: Untagged
@@ -231,7 +230,6 @@ Transform:
   - {fileID: 1660392947867029309}
   - {fileID: 4564698919316034889}
   - {fileID: 1350458808012623438}
-  - {fileID: 2793194150582309276}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!135 &8351607049777631998
@@ -273,23 +271,6 @@ MonoBehaviour:
   beamHeight: 50
   beamWidth: 0.5
   beamDuration: 1
---- !u!114 &4656966080095277275
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7463639161683059228}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc029a5ea6fab4b34ad3b5a986129908, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bosses:
-  - prefab: {fileID: 8841140246284276385, guid: 15a8a068ce872ef498ea76b3b627fd7c, type: 3}
-    isFlying: 1
-  - prefab: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-    isFlying: 0
 --- !u!1 &7863322857822642270
 GameObject:
   m_ObjectHideFlags: 0
@@ -398,34 +379,3 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1 &8442113549056958162
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2793194150582309276}
-  m_Layer: 0
-  m_Name: BossSpawnPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2793194150582309276
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8442113549056958162}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5285805516819669692}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

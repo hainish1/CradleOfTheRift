@@ -57,7 +57,7 @@ public class AttackState_Range : EnemyState
         {
             enemyRange.FireOnce();
             nextShootTime = Time.time + enemyRange.fireCooldown;
-            enemyRange.nextAttackAllowed = Time.time + enemyRange.fireCooldown * 0.1f; // for re-entry
+            enemyRange.nextAttackAllowed = Time.time + enemyRange.fireCooldown * 0.75f; // for re-entry
         }
 
 

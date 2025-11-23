@@ -126,15 +126,4 @@ public class EnemyMelee : Enemy
     /// <returns></returns>
     public float GetBaseDamage() => slamDamage;
 
-
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = aggressionColor;
-        Gizmos.DrawWireSphere(transform.position, minAttackDistance);
-
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
-    }
-
 }

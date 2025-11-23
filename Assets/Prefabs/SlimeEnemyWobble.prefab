@@ -68,7 +68,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 8200006461687915286}
-  owner2: {fileID: 0}
 --- !u!65 &2295617684978446055
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -165,32 +164,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  aggressionRange: 800
-  playerOutOfRange: 800
-  turnSpeed: 20
-  attackCooldown: 1.5
+  aggressionRange: 500
+  playerOutOfRange: 500
+  turnSpeed: 10
+  attackCooldown: 3
   playerMask:
     serializedVersion: 2
     m_Bits: 256
   gizosOn: 1
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
   nextAttackAllowed: 0
-  chaseSpeed: 30
+  chaseSpeed: 15
   attackRange: 5
   knockbackPower: 20
-  dragSpeed: 19
-  dragDuration: 0.85
-  restDuration: 0.18
-  slamDamage: 15
+  dragSpeed: 6
+  dragDuration: 1
+  restDuration: 0.25
+  slamDamage: 2
   windupTime: 0.5
   chargeSpeed: 30
   chargeTime: 0.18
   hitbox: {fileID: 1248558580790740225}
   hitAppliedThisAttack: 0
-  leapAttackRange: 10
-  minAttackDistance: 4.5
+  leapAttackRange: 5
+  minAttackDistance: 3
   leapHeight: 1
-  leapDuration: 0.55
+  leapDuration: 0.5
 --- !u!114 &6554202718004137176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281,9 +280,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 30
+  maxHealth: 3
   cleanupDelay: 0
-  baseHealth: 30
+  baseHealth: 3
   damageVisuals: {fileID: 2533069923019125397}
 --- !u!114 &2533069923019125397
 MonoBehaviour:

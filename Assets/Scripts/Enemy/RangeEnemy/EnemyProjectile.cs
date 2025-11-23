@@ -13,7 +13,7 @@ public class EnemyProjectile : MonoBehaviour
     [SerializeField] private float gravity = 0f;
 
     [Header("hit")]
-    [SerializeField] private float damage = 1; // probably gonna hide this soon
+    [SerializeField] private float damage = 1;
     [SerializeField] private float hitForce = 8f;
     [SerializeField] private float knockBackImpulse = 8f;
     [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit

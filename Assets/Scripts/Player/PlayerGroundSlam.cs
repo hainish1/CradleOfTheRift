@@ -180,16 +180,11 @@ public class PlayerGroundSlam : MonoBehaviour
     void DoImpactEffect()
     {
         // camera shake here
-        CreateCameraShake(shakeForce);
-        CreateImpactFX();
-    }
-
-    public void CreateCameraShake(float shakeForce)
-    {
-        if(slamImpulseSource != null)
+        if (slamImpulseSource != null)
         {
             slamImpulseSource.GenerateImpulse(shakeForce);
         }
+        CreateImpactFX();
     }
 
     void OnDrawGizmosSelected()
