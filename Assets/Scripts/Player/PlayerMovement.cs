@@ -535,7 +535,7 @@ public class PlayerMovement : MonoBehaviour
     ///     Interpolates the move direction of the player character to be parallel with the
     ///   </para>
     /// </summary>
-    /// <param name="moveDirectionUnitVector">  </param>
+    /// <param name="moveDirectionUnitVector"> World direction the player is moving. </param>
     private void ParallelizeMoveDirectionToGround(Vector3 moveDirectionUnitVector)
     {
         // Move the player character parallel to the angle of the current ground plane.
