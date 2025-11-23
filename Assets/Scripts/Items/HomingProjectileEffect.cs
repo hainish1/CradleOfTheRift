@@ -10,7 +10,7 @@ public class HomingProjectileEffect : MonoBehaviour
     [SerializeField] private float projectileSpawnOffset = 1.0f;
 
     [Header("Homing Projectile Stats")]
-    private float projectileSpeed = 15f; // This doesn't do anything but its how the base projectile 
+    //private float projectileSpeed = 15f; // This doesn't do anything but its how the base projectile 
     [SerializeField] private LayerMask shootMask = ~0;
     [SerializeField] private HomingProjectile homingProjectilePrefab;
     private Entity playerEntity;

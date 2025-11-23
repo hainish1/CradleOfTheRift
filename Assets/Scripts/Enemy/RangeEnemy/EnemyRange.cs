@@ -7,6 +7,8 @@ using UnityEngine;
 /// </summary>
 public class EnemyRange : Enemy
 {
+    public float projectileDamage = 1;
+
     [Header("Hover and movement")]
     public float hoverHeight = 2f; // height above ground
     public float hoverBobAmplitude = 0.25f; // up n down
@@ -15,16 +17,23 @@ public class EnemyRange : Enemy
     public float stopDistance = 7f; // how far away from player should it stop 
     public float attackRange = 12f;
     public float turnSpeedWhileAiming = 12f;
+    public float agentAngularSpeed = 720f;
+    public float agentAcceleration = 100f;
+
+    [Space]
 
     [Header("Shooting")]
-    public Transform firePoint; // where bullet come from
-    public EnemyProjectile projectilePrefab;
     public float projectileSpeed = 50f;
     public float fireCooldown = .6f;
+    public Transform firePoint; // where bullet come from
+    public EnemyProjectile projectilePrefab;
     public LayerMask projectileMask = ~0;
     public float spawnOffset = 0.1f; // a little away fro fire point, safety
 
+    [Space]
+
     [Header("Reccovery")]
+    [Tooltip("After all orbs are finished, how much time to start again, basically reload time")]
     public float recoveryTime = 0.4f;
 
     IdleState_Range idle;
@@ -33,8 +42,6 @@ public class EnemyRange : Enemy
     RecoveryState_Range recovery;
 
     float bobPhase;
-
-    public float projectileDamage = 1;
     public EnemyRangeOrbitVisuals orbitVisuals;
 
 
@@ -46,8 +53,8 @@ public class EnemyRange : Enemy
         if (agent != null)
         {
             agent.speed = chaseSpeed;
-            agent.angularSpeed = 720f;
-            agent.acceleration = 100f;
+            agent.angularSpeed = agentAngularSpeed;
+            agent.acceleration = agentAcceleration;
             agent.autoBraking = true;
             agent.stoppingDistance = stopDistance * 0.8f;
         }
@@ -131,6 +138,14 @@ public class EnemyRange : Enemy
     /// <returns></returns>
     public float GetBaseDamage() => projectileDamage;
 
+    void OnDrawGizmos()
+    {
+        Gizmos.color = aggressionColor;
+        Gizmos.DrawWireSphere(transform.position, stopDistance);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
 
 
 }

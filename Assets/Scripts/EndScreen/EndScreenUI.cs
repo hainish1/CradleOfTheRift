@@ -48,18 +48,72 @@ public class EndScreenUI : MonoBehaviour
     private void OnWinScreen()
     {
         this.activeScreen = Instantiate(winScreen);
+        HookEndScreenButtons(activeScreen);
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
+        Time.timeScale = 0f; // pause gameplay
+
 
         // go back to Start scene
-        StartCoroutine(LoadSceneAfterDelay("Jared", 5f)); // 5 second delay
+        // StartCoroutine(LoadSceneAfterDelay("Jared", 5f)); // 5 second delay
     }
 
     private void OnLoseScreen()
     {
         this.activeScreen = Instantiate(loseScreen);
+        HookEndScreenButtons(activeScreen);
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
+        Time.timeScale = 0f; // pause gameplay
 
         // go back to Start scene
-        StartCoroutine(LoadSceneAfterDelay("Jared", 5f)); // 5 second delay
+        // StartCoroutine(LoadSceneAfterDelay("Jared", 5f)); // 5 second delay
     }
+    
+        private void HookEndScreenButtons(GameObject screen)
+    {
+        // get UI Document on the end screen object
+        var document = screen.GetComponent<UIDocument>();
+        if (document == null)
+        {
+            Debug.LogWarning("No UIDocument found on end screen prefab!");
+            return;
+        }
+
+        var root = document.rootVisualElement;
+        var playAgainButton = root.Q<Button>("playAgainButton");
+        var quitButton = root.Q<Button>("quitButton");
+
+        // Play Again → restart current level
+        if (playAgainButton != null)
+        {
+            playAgainButton.RegisterCallback<ClickEvent>(evt =>
+            {
+                Debug.Log("Play Again clicked!");
+                Time.timeScale = 1f; // unpause
+                UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+                UnityEngine.Cursor.visible = false;
+
+                SceneManager.LoadScene("Design"); // or your current game scene name
+            });
+        }
+
+        // Quit → exit to desktop
+        if (quitButton != null)
+        {
+            quitButton.RegisterCallback<ClickEvent>(evt =>
+            {
+                Debug.Log("Quit clicked!");
+                Application.Quit();
+
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#endif
+            });
+        }
+    }
+
+
     
     private IEnumerator LoadSceneAfterDelay(string sceneName, float delay)
     {

@@ -19,8 +19,9 @@
         <ui:VisualElement name="HealthContainer" style="flex-grow: 1; align-items: flex-start; justify-content: flex-start;">
             <ui:ProgressBar name="HealthBar" style="visibility: hidden;" />
         </ui:VisualElement>
+        <ui:VisualElement name="AbilityBar" style="flex-grow: 1; bottom: 76px; right: 333px;" />
     </ui:VisualElement>
-    <ui:VisualElement name="SpawnerDev">
+    <ui:VisualElement name="SpawnerDev" style="width: 291px;">
         <ui:Label name="CurrentEnemyCount" text="Current Enemy Count: 0" />
         <ui:Label name="CurrentCredits" text="Current Credits: N/A" />
         <ui:Label name="CurrentMaxEnemyCap" text="Current Max Enemy Cap: N/A" />

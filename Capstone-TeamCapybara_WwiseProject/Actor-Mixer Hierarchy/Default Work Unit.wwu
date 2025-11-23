@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{0D0725AF-5E67-408A-BF55-128E8B705344}" SchemaVersion="123">
+	<AudioObjects>
+		<WorkUnit Name="Default Work Unit" ID="{0D0725AF-5E67-408A-BF55-128E8B705344}" PersistMode="Standalone">
+			<ChildrenList>
+				<Sound Name="RiverAmbient" ID="{26986D4C-81EF-489F-BE2D-664B3687C478}" ShortID="535613070">
+					<PropertyList>
+						<Property Name="3DSpatialization" Type="int16" Value="2"/>
+						<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+					</PropertyList>
+					<ReferenceList>
+						<Reference Name="Attenuation">
+							<ObjectRef Name="Environment_Attenuation" ID="{1207CC82-77D9-490D-B430-80494BBBC230}" WorkUnitID="{8457399B-085D-4714-91E1-24BF18187114}"/>
+						</Reference>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{950DF10C-7CFF-4DE4-A68A-8EE90D4CB0EB}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{769FB0CF-2C7F-4013-A0C3-793C5690174C}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="WATRFlow_Babbling Brook, Snow Melt, Calm, Constant, Bubbling_BOLT_Immersive Creek_RODE NTSF1 XY" ID="{8E5D86CB-B403-4373-98F0-D6C515A3B62C}">
+							<PropertyList>
+								<Property Name="LoopBegin" Type="Real64" Value="48.4782304470856"/>
+								<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+								<Property Name="TrimBegin" Type="Real64" Value="46.6450200520277"/>
+								<Property Name="TrimEnd" Type="Real64" Value="61.1070166679444"/>
+							</PropertyList>
+							<Language>SFX</Language>
+							<AudioFile>WATRFlow_Babbling Brook, Snow Melt, Calm, Constant, Bubbling_BOLT_Immersive Creek_RODE NTSF1 XY.wav</AudioFile>
+							<MediaIDList>
+								<MediaID ID="374585784"/>
+							</MediaIDList>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="WATRFlow_Babbling Brook, Snow Melt, Calm, Constant, Bubbling_BOLT_Immersive Creek_RODE NTSF1 XY" ID="{8E5D86CB-B403-4373-98F0-D6C515A3B62C}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
+			</ChildrenList>
+		</WorkUnit>
+	</AudioObjects>
+</WwiseDocument>
