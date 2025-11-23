@@ -79,11 +79,9 @@ public class DotOnHit : IDisposable
         if (!dotDebuff)
             dotDebuff = enemy.gameObject.AddComponent<DotDebuff>();
 
-        // base dmg + extra per stack 
-        float totalDotDamage = dotDamagePerTick + (dotDamagePerStack * (stacks - 1));
-
         dotDebuff.AddDot(
-            damagePerTick: totalDotDamage,
+            baseDamagePerTick: dotDamagePerTick,
+            damagePerStack: dotDamagePerStack,
             tickInterval: dotTickInterval,
             duration: dotDuration,
             source: owner,
@@ -94,7 +92,7 @@ public class DotOnHit : IDisposable
         );
 
         string immediateText = dotApplyImmediately ? "instant" : "delayed";
-        Debug.Log($"[DotOnHit] Applied to {enemy.name}: {totalDotDamage}dmg/tick for {dotDuration}s ({immediateText}, item stacks: {stacks})");
+        Debug.Log($"[DotOnHit] Applied to {enemy.name}: {dotDamagePerTick}dmg/tick + {dotDamagePerStack} per stack for {dotDuration}s ({immediateText}, item stacks: {stacks})");
     }
 
     public void Dispose()

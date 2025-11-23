@@ -3,15 +3,21 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] private GameObject bulletImpactFX;
+    [SerializeField] protected GameObject bulletImpactFX;
     public TrailRenderer trail;
+    
+    public GameObject BulletImpactFX
+    {
+        get { return bulletImpactFX; }
+        set { bulletImpactFX = value; }
+    }
     [Header("flight")]
-    [SerializeField] private float lifeTime = 6f;
-    [SerializeField] private float gravity = 0f;
+    [SerializeField] protected float lifeTime = 6f;
+    [SerializeField] protected float gravity = 0f;
 
     [Header("hit")]
-    [SerializeField] private float hitForce = 8f;
-    [SerializeField] private float knockBackImpulse = 8f;
+    [SerializeField] protected float hitForce = 8f;
+    [SerializeField] protected float knockBackImpulse = 8f;
     [SerializeField] protected LayerMask hitMask = ~0; // what can this bullet hit
 
     protected float actualDamage; // THIS WILL STORE DAMAGE FROM STATS SYSTEM
@@ -165,6 +171,8 @@ public class Projectile : MonoBehaviour
 
     protected void CreateImpactFX()
     {
+        if (bulletImpactFX == null) return;
+        
         GameObject newFX = Instantiate(bulletImpactFX);
         newFX.transform.position = transform.position;
 

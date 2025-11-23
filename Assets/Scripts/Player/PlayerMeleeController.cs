@@ -192,7 +192,12 @@ public class PlayerMeleeController : MonoBehaviour
                     Vector3 impulseDirection = (enemyScript.transform.position - transform.position).normalized;
                     enemyKbScript.ApplyImpulse(knockbackForce * impulseDirection);
                 }
-                enemyScript.GetComponentInParent<TargetFlash>().Flash();
+                
+                var targetFlash = enemyScript.GetComponentInParent<TargetFlash>();
+                if (targetFlash != null)
+                {
+                    targetFlash.Flash();
+                }
 
                 // Apply damage.
                 var damageable = enemyScript.GetComponentInParent<IDamageable>();

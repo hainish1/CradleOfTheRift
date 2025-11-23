@@ -45,7 +45,10 @@ public enum StatType
     FlightMaxSpeed,
     FlightMaxEnergy,
     FlightRegenerationRate,
-    FlightDepletionRate
+    FlightDepletionRate,
+
+    // Character Enums
+    CharacterSize
 }
 
 public class Stats
@@ -122,6 +125,8 @@ public class Stats
 
     public float FlightDepletionRate { get { return FloatStatQuery(StatType.FlightDepletionRate, baseStats.flightDepletionRate); } }
 
+    public float CharacterSize { get { return FloatStatQuery(StatType.CharacterSize, baseStats.characterSize); } }
+
     /// <summary>
     ///   <para>
     ///     Constructs a stats object.
@@ -170,6 +175,7 @@ public class Stats
             StatType.FlightRegenerationRate => baseStats.flightRegenerationRate,
             StatType.FlightMaxEnergy => baseStats.flightMaxEnergy,
             StatType.FlightDepletionRate => baseStats.flightDepletionRate,
+            StatType.CharacterSize => baseStats.characterSize,
             _ => 0f,
         };
     }

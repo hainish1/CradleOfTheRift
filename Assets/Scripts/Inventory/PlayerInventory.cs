@@ -30,6 +30,8 @@ public class PlayerInventory : MonoBehaviour
     private FallDamageBonus fallDamageBonusEffect;
     private DotOnHit dotOnHitEffect;
     private HomingProjectileEffect homingProjectilesEffect;
+    private ExplosiveProjectiles explosiveProjectilesEffect;
+    private ChainLightning chainLightningEffect;
 
     // if I have time limited effects that need use of Updates, I will keep em here
     private readonly List<IDisposable> tickingEffects = new();
@@ -58,6 +60,8 @@ public class PlayerInventory : MonoBehaviour
         stompDamageEffect?.Update(dt);
         fallDamageBonusEffect?.Update(dt);
         dotOnHitEffect?.Update(dt);
+        explosiveProjectilesEffect?.Update(dt);
+        chainLightningEffect?.Update(dt);
         //homingProjectilesEffect?.Update(dt);
         // more runtime effects would be updated here ig
     }
@@ -69,7 +73,6 @@ public class PlayerInventory : MonoBehaviour
 
         if (!items.TryGetValue(itemData, out ItemStack stack))
         {
-            // then this is new item
             stack = new ItemStack(itemData);
             items.Add(itemData, stack);
 
@@ -214,6 +217,12 @@ public class PlayerInventory : MonoBehaviour
                 case ItemEffectKind.HomingProjectiles:
                     EnsureHomingProjectiles(effect, initialStacks: stacksAdded);
                     break;
+                case ItemEffectKind.ExplosiveProjectiles:
+                    EnsureExplosiveProjectiles(effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.ChainLightning:
+                    EnsureChainLightning(effect, initialStacks: stacksAdded);
+                    break;
             }
         }
 
@@ -320,6 +329,58 @@ public class PlayerInventory : MonoBehaviour
         // Do nothing idk
     }
 
+    private void EnsureExplosiveProjectiles(EffectSpec effect, int initialStacks)
+    {
+        if (explosiveProjectilesEffect == null)
+        {
+            explosiveProjectilesEffect = new ExplosiveProjectiles(
+                playerEntity,
+                effect.explosiveAoeRadius,
+                effect.explosiveAoeDamageMultiplier,
+                effect.explosiveMaxRange,
+                initialStacks,
+                effect.duration,
+                effect.explosiveVFX
+            );
+            if (effect.duration > 0f) tickingEffects.Add(explosiveProjectilesEffect);
+            Debug.Log($"[Effect] Explosive Projectiles created : Stacks{initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                explosiveProjectilesEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Explosive Projectiles : Stacks {initialStacks}");
+        }
+    }
+
+    private void EnsureChainLightning(EffectSpec effect, int initialStacks)
+    {
+        if (chainLightningEffect == null)
+        {
+            chainLightningEffect = new ChainLightning(
+                owner: playerEntity,
+                chainDamagePercent: effect.chainDamagePercent,
+                maxChainCount: effect.maxChainCount,
+                chainRange: effect.chainRange,
+                initialStacks: initialStacks,
+                durationSec: effect.duration,
+                lightningVFX: effect.chainLightningVFX
+            );
+            if (effect.duration > 0f) tickingEffects.Add(chainLightningEffect);
+            Debug.Log($"[Effect] Chain Lightning created : Stacks{initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                chainLightningEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Chain Lightning : Stacks {initialStacks}");
+        }
+    }
+
     private void RemoveEffectStacks(ItemEffectKind kind, int stacks)
     {
         if (stacks <= 0) return;
@@ -354,6 +415,19 @@ public class PlayerInventory : MonoBehaviour
                     // if it reaches 0 it'll dispose itself
                 }
                 break;
+            case ItemEffectKind.ExplosiveProjectiles:
+                if (explosiveProjectilesEffect != null)
+                {
+                    explosiveProjectilesEffect.AddStack(-stacks);
+                    // if it reaches 0 it'll dispose itself
+                }
+                break;
+            case ItemEffectKind.ChainLightning:
+                if (chainLightningEffect != null)
+                {
+                    chainLightningEffect.AddStack(-stacks);
+                }
+                break;
 
         }
     }
@@ -364,6 +438,8 @@ public class PlayerInventory : MonoBehaviour
         stompDamageEffect?.Dispose();
         fallDamageBonusEffect?.Dispose();
         dotOnHitEffect?.Dispose();
+        explosiveProjectilesEffect?.Dispose();
+        chainLightningEffect?.Dispose();
         //homingProjectilesEffect?.Dispose();
 
         // any other dispose handle
