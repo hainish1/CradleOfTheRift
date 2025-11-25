@@ -96,9 +96,9 @@ MonoBehaviour:
         ObjectType: 3
         guid: 0ba272e4eb11f84db1f20c1b4290d3a7
       Path: Events\Default Work Unit\Play_RiverAmbient
-      maxAttenuation: 0
-      maxDuration: -1
-      minDuration: -1
+      maxAttenuation: 100
+      maxDuration: 0
+      minDuration: 0
   RtpcWwu:
   - PhysicalPath: Game Parameters\Default Work Unit.wwu
     PathAndIcons:
