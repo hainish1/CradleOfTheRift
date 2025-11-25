@@ -8,6 +8,8 @@ public class LongRecoveryStateRevenant : EnemyState
 {
     RevenantBossRange bossRange;
     private float endTime;
+    private int projectileCount = 8;
+    private float firingInterval = 0.5f;
 
     public LongRecoveryStateRevenant(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
@@ -28,6 +30,10 @@ public class LongRecoveryStateRevenant : EnemyState
     /// </summary>
     public override void Update()
     {
+        // Randomly shoot out arcing projectiles that leave behind delayed AOE explosions in a 360 degree pattern
+
+
+
         if (Time.time >= endTime)
         {
             if (PlayerInAggressionRange()) // if the player is still in aggression range

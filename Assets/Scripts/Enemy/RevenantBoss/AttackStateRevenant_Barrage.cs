@@ -64,9 +64,20 @@ public class AttackStateRevenant_Barrage : EnemyState
         float distance = Vector3.Distance(enemy.transform.position, enemy.target.position);
         if (distance >= bossRange.attackRange * 1.2f || Time.time >= endTime)
         {
-            stateMachine.ChangeState(bossRange.GetRecovery());
-            Debug.Log("Revenant: Switching to Recovery State from Attack State");
-            //stateMachine.ChangeState(bossRange.GetAOEAttack());
+            // // Add chance to chain to AOE attack state
+            // if (Random.value <= 0.2f)
+            // {
+            //     stateMachine.ChangeState(bossRange.GetAOEAttack());
+            //     Debug.Log("Revenant: Switching to AOE Attack State from Attack State");
+            //     return;
+            // }
+
+            // stateMachine.ChangeState(bossRange.GetRecovery());
+            // Debug.Log("Revenant: Switching to Recovery State from Attack State");
+            // //stateMachine.ChangeState(bossRange.GetAOEAttack());
+
+            // Directly switch to AOE attack after barrage
+            stateMachine.ChangeState(bossRange.GetAOEAttack());
         }
     }
 }

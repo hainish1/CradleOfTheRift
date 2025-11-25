@@ -60,7 +60,12 @@ public class AttackStateRevenant_ShootAOE : EnemyState
         float distance = Vector3.Distance(enemy.transform.position, enemy.target.position);
         if (distance >= bossRange.attackRange * 1.2f || Time.time >= endTime)
         {
-            stateMachine.ChangeState(bossRange.GetLongRecovery());
+            // Add chance to switch to special recovery state
+            if (Random.value <= 0.4f)
+            {
+                stateMachine.ChangeState(bossRange.GetLongRecovery());
+            }
+            else stateMachine.ChangeState(bossRange.GetRecovery());
         }
     }
 }

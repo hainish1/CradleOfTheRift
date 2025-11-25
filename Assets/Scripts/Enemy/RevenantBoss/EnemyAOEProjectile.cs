@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -124,16 +125,18 @@ public class EnemyAOEProjectile : MonoBehaviour
     void SpawnAOEEffect()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, aoeRadius, hitMask);
+        HashSet<IDamageable> damagedTargets = new HashSet<IDamageable>();
         foreach (var col in hits)
         {
             var dmg = col.GetComponentInParent<IDamageable>();
-            if (dmg != null && !dmg.IsDead)
+            if (dmg != null && !dmg.IsDead && !damagedTargets.Contains(dmg))
             {
                 var pm = col.GetComponentInParent<PlayerMovement>();
                 if (pm != null)
                 {
                     dmg.TakeDamage(aoeDamage);
 
+                    damagedTargets.Add(dmg);
                     Debug.Log(aoeDamage + " AOE Damage dealt to " + dmg.ToString() + " by " + this.ToString());
                 }
             }
