@@ -21,8 +21,8 @@ public class EnemyAOEArcingProjectile : MonoBehaviour
     [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
 
     [Header("AOE Effect")]
-    [SerializeField] private float aoeRadius = 5f;
-    [SerializeField] private float aoeDamage = 1f;
+    [SerializeField] private float aoeRadius = 3f;
+    [SerializeField] private float aoeDamage = 5f;
 
     public GameObject explosionVFX;
 
@@ -125,7 +125,7 @@ public class EnemyAOEArcingProjectile : MonoBehaviour
     /// Spawn the AOE effect at the current position and deal damage to players within the radius    
     public IEnumerator SpawnAOEEffect()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0f);
 
         Collider[] hits = Physics.OverlapSphere(transform.position, aoeRadius, hitMask);
         HashSet<IDamageable> damagedTargets = new HashSet<IDamageable>();
@@ -152,8 +152,7 @@ public class EnemyAOEArcingProjectile : MonoBehaviour
         GameObject newFx = Instantiate(explosionVFX);
         newFx.transform.position = transform.position;
         newFx.transform.rotation = Quaternion.identity;
-        newFx.transform.localScale = Vector3.one * aoeRadius;
-
+        newFx.transform.localScale = Vector3.one * aoeRadius * 0.3f;
         Destroy(newFx, 1); // destroy after one second
     }
 
