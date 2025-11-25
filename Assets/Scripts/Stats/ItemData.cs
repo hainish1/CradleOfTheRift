@@ -22,7 +22,10 @@ public enum ItemEffectKind
     BurnOnDamage,
     HomingProjectiles,
     ExplosiveProjectiles,
-    ChainLightning
+    ChainLightning,
+    BounceProjectiles,
+    DelayedProjectiles,
+    DashDamage
 }
 
 [Serializable]
@@ -66,6 +69,21 @@ public class EffectSpec
     public int maxChainCount = 3;
     public float chainRange = 8f;
     public GameObject chainLightningVFX;
+
+    // Bounce Projectiles
+    public float bounceRange = 10f;
+    public int maxBounceCount = 3;
+    [Range(0f, 1f)] public float damageMultiplierPerBounce = 0.8f;
+    public GameObject bounceVFX;
+
+    // Delayed Projectiles
+    public float delayedDamageTime = 2f;
+    public float delayedDamageMultiplier = 1f;
+    public GameObject delayedMarkVFX;
+
+    // Dash Damage
+    public float dashDamage = 10f;
+    public float dashDamageRange = 5f;
 }
 
 public enum ItemRarity

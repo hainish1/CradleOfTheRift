@@ -193,7 +193,41 @@ public class PlayerShooter : MonoBehaviour
         {
             GameObject pooled = ObjectPool.instance.GetObject(projectilePrefab.gameObject, muzzle);
             
-            if (ExplosiveProjectiles.IsEnabled)
+            if (BounceProjectiles.IsEnabled)
+            {
+                proj = pooled.GetComponent<BounceProjectile>();
+                if (proj == null)
+                {
+                    var oldProj = pooled.GetComponent<Projectile>();
+                    if (oldProj != null)
+                    {
+                        var bulletFX = oldProj.BulletImpactFX;
+                        var trail = oldProj.trail;
+                        Destroy(oldProj);
+                        proj = pooled.AddComponent<BounceProjectile>();
+                        proj.BulletImpactFX = bulletFX;
+                        proj.trail = trail;
+                    }
+                    else
+                    {
+                        var oldExpProj = pooled.GetComponent<ExplosiveProjectile>();
+                        if (oldExpProj != null)
+                        {
+                            var bulletFX = oldExpProj.BulletImpactFX;
+                            var trail = oldExpProj.trail;
+                            Destroy(oldExpProj);
+                            proj = pooled.AddComponent<BounceProjectile>();
+                            proj.BulletImpactFX = bulletFX;
+                            proj.trail = trail;
+                        }
+                        else
+                        {
+                            proj = pooled.AddComponent<BounceProjectile>();
+                        }
+                    }
+                }
+            }
+            else if (ExplosiveProjectiles.IsEnabled)
             {
                 proj = pooled.GetComponent<ExplosiveProjectile>();
                 if (proj == null)
@@ -210,7 +244,20 @@ public class PlayerShooter : MonoBehaviour
                     }
                     else
                     {
-                        proj = pooled.AddComponent<ExplosiveProjectile>();
+                        var oldBounceProj = pooled.GetComponent<BounceProjectile>();
+                        if (oldBounceProj != null)
+                        {
+                            var bulletFX = oldBounceProj.BulletImpactFX;
+                            var trail = oldBounceProj.trail;
+                            Destroy(oldBounceProj);
+                            proj = pooled.AddComponent<ExplosiveProjectile>();
+                            proj.BulletImpactFX = bulletFX;
+                            proj.trail = trail;
+                        }
+                        else
+                        {
+                            proj = pooled.AddComponent<ExplosiveProjectile>();
+                        }
                     }
                 }
             }
@@ -219,19 +266,32 @@ public class PlayerShooter : MonoBehaviour
                 proj = pooled.GetComponent<Projectile>();
                 if (proj == null)
                 {
-                    var oldProj = pooled.GetComponent<ExplosiveProjectile>();
-                    if (oldProj != null)
+                    var oldExpProj = pooled.GetComponent<ExplosiveProjectile>();
+                    if (oldExpProj != null)
                     {
-                        var bulletFX = oldProj.BulletImpactFX;
-                        var trail = oldProj.trail;
-                        Destroy(oldProj);
+                        var bulletFX = oldExpProj.BulletImpactFX;
+                        var trail = oldExpProj.trail;
+                        Destroy(oldExpProj);
                         proj = pooled.AddComponent<Projectile>();
                         proj.BulletImpactFX = bulletFX;
                         proj.trail = trail;
                     }
                     else
                     {
-                        proj = pooled.AddComponent<Projectile>();
+                        var oldBounceProj = pooled.GetComponent<BounceProjectile>();
+                        if (oldBounceProj != null)
+                        {
+                            var bulletFX = oldBounceProj.BulletImpactFX;
+                            var trail = oldBounceProj.trail;
+                            Destroy(oldBounceProj);
+                            proj = pooled.AddComponent<Projectile>();
+                            proj.BulletImpactFX = bulletFX;
+                            proj.trail = trail;
+                        }
+                        else
+                        {
+                            proj = pooled.AddComponent<Projectile>();
+                        }
                     }
                 }
             }
@@ -243,7 +303,38 @@ public class PlayerShooter : MonoBehaviour
         {
             GameObject go = Instantiate(projectilePrefab.gameObject, spawnPos, spawnRot);
             
-            if (ExplosiveProjectiles.IsEnabled)
+            if (BounceProjectiles.IsEnabled)
+            {
+                var oldProj = go.GetComponent<Projectile>();
+                if (oldProj != null)
+                {
+                    var bulletFX = oldProj.BulletImpactFX;
+                    var trail = oldProj.trail;
+                    Destroy(oldProj);
+                    proj = go.AddComponent<BounceProjectile>();
+                    proj.BulletImpactFX = bulletFX;
+                    proj.trail = trail;
+                }
+                else
+                {
+                    var oldExpProj = go.GetComponent<ExplosiveProjectile>();
+                    if (oldExpProj != null)
+                    {
+                        var bulletFX = oldExpProj.BulletImpactFX;
+                        var trail = oldExpProj.trail;
+                        Destroy(oldExpProj);
+                        proj = go.AddComponent<BounceProjectile>();
+                        proj.BulletImpactFX = bulletFX;
+                        proj.trail = trail;
+                    }
+                    else
+                    {
+                        proj = go.GetComponent<BounceProjectile>();
+                        if (proj == null) proj = go.AddComponent<BounceProjectile>();
+                    }
+                }
+            }
+            else if (ExplosiveProjectiles.IsEnabled)
             {
                 var oldProj = go.GetComponent<Projectile>();
                 if (oldProj != null)
@@ -257,26 +348,52 @@ public class PlayerShooter : MonoBehaviour
                 }
                 else
                 {
-                    proj = go.GetComponent<ExplosiveProjectile>();
-                    if (proj == null) proj = go.AddComponent<ExplosiveProjectile>();
+                    var oldBounceProj = go.GetComponent<BounceProjectile>();
+                    if (oldBounceProj != null)
+                    {
+                        var bulletFX = oldBounceProj.BulletImpactFX;
+                        var trail = oldBounceProj.trail;
+                        Destroy(oldBounceProj);
+                        proj = go.AddComponent<ExplosiveProjectile>();
+                        proj.BulletImpactFX = bulletFX;
+                        proj.trail = trail;
+                    }
+                    else
+                    {
+                        proj = go.GetComponent<ExplosiveProjectile>();
+                        if (proj == null) proj = go.AddComponent<ExplosiveProjectile>();
+                    }
                 }
             }
             else
             {
-                var oldProj = go.GetComponent<ExplosiveProjectile>();
-                if (oldProj != null)
+                var oldExpProj = go.GetComponent<ExplosiveProjectile>();
+                if (oldExpProj != null)
                 {
-                    var bulletFX = oldProj.BulletImpactFX;
-                    var trail = oldProj.trail;
-                    Destroy(oldProj);
+                    var bulletFX = oldExpProj.BulletImpactFX;
+                    var trail = oldExpProj.trail;
+                    Destroy(oldExpProj);
                     proj = go.AddComponent<Projectile>();
                     proj.BulletImpactFX = bulletFX;
                     proj.trail = trail;
                 }
                 else
                 {
-                    proj = go.GetComponent<Projectile>();
-                    if (proj == null) proj = go.AddComponent<Projectile>();
+                    var oldBounceProj = go.GetComponent<BounceProjectile>();
+                    if (oldBounceProj != null)
+                    {
+                        var bulletFX = oldBounceProj.BulletImpactFX;
+                        var trail = oldBounceProj.trail;
+                        Destroy(oldBounceProj);
+                        proj = go.AddComponent<Projectile>();
+                        proj.BulletImpactFX = bulletFX;
+                        proj.trail = trail;
+                    }
+                    else
+                    {
+                        proj = go.GetComponent<Projectile>();
+                        if (proj == null) proj = go.AddComponent<Projectile>();
+                    }
                 }
             }
         }
@@ -284,8 +401,9 @@ public class PlayerShooter : MonoBehaviour
         float speed = projectileSpeed;
         if (ExplosiveProjectiles.IsEnabled && proj is ExplosiveProjectile)
         {
-            speed *= 0.4f;
+            speed *= 0.2f;
         }
+        // 弹射投射物保持正常速度
         proj?.Init(direction * speed, shootMask, currentDamage, 100, playerEntity);
 
         // Debug.Log($"Fired projectile with {currentDamage} damage");
