@@ -8,13 +8,14 @@ public class PlayerManager : Entity
     private PlayerHealth playerHealth;
     private PlayerShooter playerShooter;
     private PlayerMovement playerMovement;
+    private Vector3 baseScale;
 
     void Start()
     {
-        // Get references to player components
         playerHealth = GetComponent<PlayerHealth>();
         playerShooter = GetComponent<PlayerShooter>();
         playerMovement = GetComponent<PlayerMovement>();
+        baseScale = transform.localScale;
 
         if (showStatsInConsole)
         {
@@ -25,6 +26,8 @@ public class PlayerManager : Entity
 
     void LateUpdate()
     {
+        transform.localScale = baseScale * Stats.CharacterSize;
+
         if (showStatsInConsole && Time.time % 5f < Time.deltaTime) // Every 5 seconds
         {
             string flightInfo = "";

@@ -20,7 +20,9 @@ public enum ItemEffectKind
     FallDamageBonus,
     DotOnHit,
     BurnOnDamage,
-    HomingProjectiles
+    HomingProjectiles,
+    ExplosiveProjectiles,
+    ChainLightning
 }
 
 [Serializable]
@@ -52,6 +54,18 @@ public class EffectSpec
     // Homing Projectiles
     public int numberOfProjectiles = 3;
     public float projectileDamageMultiplier = 1.5f;
+
+    // Explosive Projectiles
+    public float explosiveAoeRadius = 3f;
+    public float explosiveAoeDamageMultiplier = 0.5f;
+    public float explosiveMaxRange = 0f;
+    public GameObject explosiveVFX;
+
+    // Chain Lightning
+    public float chainDamagePercent = 0.5f;
+    public int maxChainCount = 3;
+    public float chainRange = 8f;
+    public GameObject chainLightningVFX;
 }
 
 public enum ItemRarity

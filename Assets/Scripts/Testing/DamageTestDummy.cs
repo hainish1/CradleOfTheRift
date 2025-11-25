@@ -29,7 +29,7 @@ public class DamageTestDummy : Enemy, IDamageable
         // dont run enemy AI
     }
 
-    void Start()
+    new void Start()
     {
         meshRenderer = GetComponentInChildren<Renderer>();
         if (meshRenderer != null)

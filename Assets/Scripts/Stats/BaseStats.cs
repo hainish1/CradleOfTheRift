@@ -71,4 +71,9 @@ public class BaseStats : ScriptableObject
     [Tooltip("Capacity value of flight energy")] public int flightMaxEnergy;
     [Tooltip("Amount of flight energy regeneration per second.")] public float flightRegenerationRate;
     [Tooltip("Amount of flight energy depleted per second.")] public float flightDepletionRate;
+
+    [Space]
+
+    [Header("Character Parameters")]
+    public float characterSize = 1f;
 }

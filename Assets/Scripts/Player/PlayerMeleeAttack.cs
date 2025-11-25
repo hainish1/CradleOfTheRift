@@ -181,29 +181,29 @@ public class PlayerMeleeAttack : MonoBehaviour
     }
 
     // Gizmos
-    void OnDrawGizmosSelected()
-    {
-        if (!drawGizmos) return;
+    //void OnDrawGizmosSelected()
+    //{
+    //    if (!drawGizmos) return;
 
-        var t = Forward ? Forward : transform;
-        Vector3 up = t.up;
-        Vector3 fwd = t.forward;
+    //    var t = Forward ? Forward : transform;
+    //    Vector3 up = t.up;
+    //    Vector3 fwd = t.forward;
 
-        Vector3 origin = t.position + up * heightOffset + fwd * (boxArea * 0.5f);
-        Vector3 size = new Vector3(boxWidth, boxHeight, boxArea); // size fo box to draw
-        Quaternion rot = Quaternion.LookRotation(fwd, up); // rotation of box
+    //    Vector3 origin = t.position + up * heightOffset + fwd * (boxArea * 0.5f);
+    //    Vector3 size = new Vector3(boxWidth, boxHeight, boxArea); // size fo box to draw
+    //    Quaternion rot = Quaternion.LookRotation(fwd, up); // rotation of box
 
-        var prevColor = Gizmos.color;
-        var prevMatrix = Gizmos.matrix;
+    //    var prevColor = Gizmos.color;
+    //    var prevMatrix = Gizmos.matrix;
 
-        Gizmos.color = gizmoColor;
-        Gizmos.matrix = Matrix4x4.TRS(origin, rot, Vector3.one);
-        Gizmos.DrawCube(Vector3.zero, size);
+    //    Gizmos.color = gizmoColor;
+    //    Gizmos.matrix = Matrix4x4.TRS(origin, rot, Vector3.one);
+    //    Gizmos.DrawCube(Vector3.zero, size);
 
 
-        Gizmos.matrix = prevMatrix;
-        Gizmos.color = prevColor;
-    }
+    //    Gizmos.matrix = prevMatrix;
+    //    Gizmos.color = prevColor;
+    //}
 
     protected void CreateImpactFX()
     {
