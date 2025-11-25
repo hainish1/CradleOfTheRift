@@ -11,7 +11,7 @@ public class EnemyAOEArcingProjectile : MonoBehaviour
 
     [Header("flight")]
     [SerializeField] private float lifeTime = 6f;
-    [SerializeField] private float gravity = 0f;
+    [SerializeField] private float gravity = 9f;
 
     [Header("hit")]
     [SerializeField] private float directDamage = 0;
