@@ -182,7 +182,7 @@ public class Stats
 
     public override string ToString()
     {
-        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, Projectile Damage: {ProjectileDamage}, Melee Damage: {MeleeDamage}, Slam Damage: {SlamDamage}, Attack Speed: {AttackSpeed}";
+        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, AttackSpeed: {AttackSpeed} ,Projectile Damage: {ProjectileDamage}, Melee Damage: {MeleeDamage}, Slam Damage: {SlamDamage}";
     }
 
     /// <summary>

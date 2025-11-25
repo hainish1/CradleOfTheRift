@@ -99,7 +99,7 @@ public class PlayerInventory : MonoBehaviour
             ApplyEffects(itemData, stack, stacksAdded: 1);
 
             OnItemStackChanged?.Invoke(itemData, stack);
-            Debug.Log($"Stacked item : {itemData.itemName} : {stack.count}");
+            Debug.Log($"Stacked item : {itemData.itemName} : Count: {stack.count}");
         }
         else
         {

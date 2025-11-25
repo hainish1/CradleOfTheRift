@@ -53,7 +53,7 @@ public class Projectile : MonoBehaviour
         startPos = transform.position;
         this.flyDistance = flyDistance + 1;
 
-        Debug.Log($"Projectile initialized with damage: {actualDamage}");
+        // Debug.Log($"Projectile initialized with damage: {actualDamage}");
 
         //Debug.Log("This belongs to the parent");
     }

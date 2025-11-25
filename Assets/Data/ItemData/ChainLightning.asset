@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
+  m_Name: ChainLightning
+  m_EditorClassIdentifier: 
+  itemName: New Item
+  description: Item Description Here
+  icon: {fileID: 0}
+  rarity: 0
+  rarityColor: {r: 1, g: 1, b: 1, a: 1}
+  canStack: 1
+  maxStacks: 99
+  stackingType: 0
+  useMultipleStats: 1
+  statMods: []
+  effects:
+  - kind: 8
+    duration: 0
+    healOnDamagePercentPerStack: 0
+    stompDamagePerStack: 0
+    stompBounceForce: 0
+    fallDamageBonusPerMeter: 0
+    fallDamageBonusPerStack: 0
+    dotDamagePerTick: 0
+    dotTickInterval: 0
+    dotDuration: 0
+    dotDamagePerStack: 0
+    dotCanStack: 0
+    dotMaxStacks: 0
+    dotApplyImmediately: 0
+    numberOfProjectiles: 0
+    projectileDamageMultiplier: 0
+    explosiveAoeRadius: 0
+    explosiveAoeDamageMultiplier: 0
+    explosiveMaxRange: 0
+    explosiveVFX: {fileID: 0}
+    chainDamagePercent: 0.5
+    maxChainCount: 3
+    chainRange: 20
+    chainLightningVFX: {fileID: 0}
+    bounceRange: 0
+    maxBounceCount: 0
+    damageMultiplierPerBounce: 0
+    bounceVFX: {fileID: 0}
+    delayedDamageTime: 0
+    delayedDamageMultiplier: 0
+    delayedMarkVFX: {fileID: 0}
+    dashDamage: 0
+    dashDamageRange: 0
+  statType: 9
+  operatorType: 0
+  value: 1
+  duration: -1
