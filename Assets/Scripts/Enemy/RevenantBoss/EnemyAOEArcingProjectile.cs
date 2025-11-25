@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -82,7 +83,7 @@ public class EnemyAOEArcingProjectile : MonoBehaviour
             return;
 
         // spawn AOE effect on collision
-        SpawnAOEEffect();
+        StartCoroutine(SpawnAOEEffect());
         CreateExplosionVFX();
         PlayExplosionSound();
 
@@ -122,8 +123,10 @@ public class EnemyAOEArcingProjectile : MonoBehaviour
 
     /// <summary>
     /// Spawn the AOE effect at the current position and deal damage to players within the radius    
-    void SpawnAOEEffect()
+    public IEnumerator SpawnAOEEffect()
     {
+        yield return new WaitForSeconds(2f);
+
         Collider[] hits = Physics.OverlapSphere(transform.position, aoeRadius, hitMask);
         HashSet<IDamageable> damagedTargets = new HashSet<IDamageable>();
         foreach (var col in hits)
