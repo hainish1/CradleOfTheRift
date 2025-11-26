@@ -1,0 +1,46 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "920721062",
+    "Type": "Event",
+    "GUID": "{26925292-B42B-492C-A49E-8491601813F4}",
+    "Language": "SFX",
+    "Hash": "{8C85B69C-9E58-11A1-919D-EE9F9E9DFC73}",
+    "ObjectPath": "Play_Song_PercussianOrchestra",
+    "ShortName": "Play_Song_PercussianOrchestra",
+    "Path": "Event/Play_Song_PercussianOrchestra.bnk",
+    "Media": [
+     {
+      "Id": "240217878",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "PercussianOrchestra.wav",
+      "Path": "Media/240217878.wem",
+      "CachePath": "FD/{FD2849F6-123F-FAF0-1FAC-AB942A5DB51F}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "920721062",
+      "Name": "Play_Song_PercussianOrchestra",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_Song_PercussianOrchestra",
+      "GUID": "{26925292-B42B-492C-A49E-8491601813F4}",
+      "DurationType": "Infinite",
+      "MediaRefs": [
+       {
+        "Id": "240217878"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{631FF369-1C10-B1A4-4140-B20BFE479E46}"
+ }
+}

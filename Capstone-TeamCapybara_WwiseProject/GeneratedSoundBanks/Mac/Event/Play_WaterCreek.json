@@ -1,0 +1,46 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Mac",
+  "BasePlatform": "Mac",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "1729314049",
+    "Type": "Event",
+    "GUID": "{1FF4E077-3CA1-4F7B-82B5-D9385D9A58C4}",
+    "Language": "SFX",
+    "Hash": "{9D3BA3ED-8229-EB6F-E518-263514CE7341}",
+    "ObjectPath": "Play_WaterCreek",
+    "ShortName": "Play_WaterCreek",
+    "Path": "Event/Play_WaterCreek.bnk",
+    "Media": [
+     {
+      "Id": "809343187",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "WATRFlow_Babbling Brook, Snow Melt, Calm, Constant, Bubbling_BOLT_Immersive Creek_RODE NTSF1 XY.wav",
+      "Path": "Media/809343187.wem",
+      "CachePath": "E6/{E68655E4-688C-55B3-A9B9-7AC64F297121}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "1729314049",
+      "Name": "Play_WaterCreek",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_WaterCreek",
+      "GUID": "{1FF4E077-3CA1-4F7B-82B5-D9385D9A58C4}",
+      "DurationType": "Infinite",
+      "MediaRefs": [
+       {
+        "Id": "809343187"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{C027B573-955C-3E58-98FE-53FF32BB4FD0}"
+ }
+}
