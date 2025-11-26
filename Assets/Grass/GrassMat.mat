@@ -126,7 +126,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _HeightBlend: 1.2
+    - _HeightBlend: 0.3
     - _InnerRadius: 10
     - _Metallic: 0
     - _OcclusionStrength: 1
@@ -158,10 +158,10 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FarColor: {r: 0.13478309, g: 0.4339623, b: 0.08392666, a: 0}
     - _NearColor: {r: 0.40188798, g: 0.8396226, b: 0.1544589, a: 0}
-    - _NearFarRange: {r: 10, g: 50, b: 0, a: 0}
-    - _ShadowColor: {r: 0.075170346, g: 0.03466536, b: 0.17924526, a: 0}
+    - _NearFarRange: {r: 50, g: 100, b: 0, a: 0}
+    - _ShadowColor: {r: 0.19665918, g: 0.1541919, b: 0.31132078, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _WindNoiseContrast: {r: 2, g: 1.51, b: 0, a: 0}
+    - _WindNoiseContrast: {r: 0.3, g: 1.5, b: 0, a: 0}
     - _WindNoiseScale: {r: 40, g: 100, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
