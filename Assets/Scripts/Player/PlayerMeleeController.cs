@@ -34,7 +34,14 @@ public class PlayerMeleeController : MonoBehaviour
 
     private float MeleeDamage => _playerEntity.Stats.MeleeDamage;
     [SerializeField] private float knockbackForce;
-    private float _attackCooldown;
+    private float _baseCooldown;
+    private float _currentCooldown;
+    private float _lastAttackSpeedStat;
+
+    // private float _attackSpeedMultiplier = 1f;
+
+    private static readonly int HashSpeedMultiplier = Animator.StringToHash("AttackSpeedMultiplier");
+
     public bool CanAttack { get; set; }
 
     void Awake()
@@ -68,15 +75,41 @@ public class PlayerMeleeController : MonoBehaviour
         _objectsHitThisAttack = new HashSet<Object>();
         _objectsHitThisSweep = new RaycastHit[32];
 
-        // Attack Parameters
-        _attackCooldown = _playerEntity.Stats.AttackSpeed; // TODO: Make melee attack speed property and change this to it.
+        _baseCooldown = _playerEntity.Stats.AttackSpeed;
+        _lastAttackSpeedStat = _baseCooldown;
+
+        RefreshAttackSpeed(); // to set animation speed + cooldown
         CanAttack = true;
+    }
+
+    public void RefreshAttackSpeed()
+    {
+        float current = _playerEntity.Stats.AttackSpeed;
+        _currentCooldown = current;
+
+        float speedMult = Mathf.Clamp(1f / current, 0.1f, 1000f);
+
+        _weaponAnim.SetFloat(HashSpeedMultiplier, speedMult);
+
+        _lastAttackSpeedStat = current;
+        Debug.Log("Anim Speed Mult = " + _weaponAnim.GetFloat(HashSpeedMultiplier));
     }
 
     void Update()
     {
+        
+
         // Align weapon with camera direction.
         transform.rotation = Quaternion.Euler(_playerCamera.rotation.eulerAngles.x, _playerCamera.rotation.eulerAngles.y, 0);
+
+
+        // check attack speed changed
+        float live = Mathf.Max(0.05f, _playerEntity.Stats.AttackSpeed);
+        if(!Mathf.Approximately(live, _lastAttackSpeedStat))
+        {
+            RefreshAttackSpeed();
+        }
+
 
         if (_attackActions.WasPressedThisFrame() && CanAttack)
         {
@@ -117,7 +150,7 @@ public class PlayerMeleeController : MonoBehaviour
     /// <returns> IEnumerator object. </returns>
     private IEnumerator AttackCooldown()
     {
-        yield return new WaitForSeconds(_attackCooldown);
+        yield return new WaitForSeconds(_currentCooldown);
         CanAttack = true;
     }
 

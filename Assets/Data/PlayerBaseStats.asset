@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meleeDamage: 10
   projectileDamage: 20
-  attackSpeed: 10
+  attackSpeed: 1
+  projectileFireRate: 1
   fireCharges: 3
   fireChargeCooldown: 1
   projectileSpread: 0.5

@@ -9,6 +9,7 @@ public enum StatType
     // Ranged Attack Enums
     ProjectileDamage,
     AttackSpeed,
+    ProjectileFireRate,
     FireCharges,
     FireChargeCooldown,
     ProjectileSpread,
@@ -67,6 +68,8 @@ public class Stats
     public float ProjectileDamage { get { return FloatStatQuery(StatType.ProjectileDamage, baseStats.projectileDamage); } }
     
     public float AttackSpeed { get { return FloatStatQuery(StatType.AttackSpeed, baseStats.attackSpeed); } }
+
+    public float ProjectileFireRate { get { return FloatStatQuery(StatType.ProjectileFireRate, baseStats.projectileFireRate); } }
 
     public int FireCharges { get { return IntStatQuery(StatType.FireCharges, baseStats.fireCharges); } }
 
@@ -154,6 +157,7 @@ public class Stats
             StatType.MeleeDamage => baseStats.meleeDamage,
             StatType.ProjectileDamage => baseStats.projectileDamage,
             StatType.AttackSpeed => baseStats.attackSpeed,
+            StatType.ProjectileFireRate => baseStats.projectileFireRate,
             StatType.FireCharges => baseStats.fireCharges,
             StatType.FireChargeCooldown => baseStats.fireChargeCooldown,
             StatType.ProjectileSpread => baseStats.projectileSpread,
@@ -182,7 +186,7 @@ public class Stats
 
     public override string ToString()
     {
-        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, AttackSpeed: {AttackSpeed} ,Projectile Damage: {ProjectileDamage}, Melee Damage: {MeleeDamage}, Slam Damage: {SlamDamage}";
+        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, AttackSpeed: {AttackSpeed}, FireChargeCooldown: {FireChargeCooldown} ,Projectile Damage: {ProjectileDamage}, Melee Damage: {MeleeDamage}, Slam Damage: {SlamDamage}";
     }
 
     /// <summary>

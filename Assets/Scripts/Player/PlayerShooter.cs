@@ -108,7 +108,7 @@ public class PlayerShooter : MonoBehaviour
         // TESTING : Update fire rate with stats
         if (playerEntity != null)
         {
-            fireRate = playerEntity.Stats.AttackSpeed;
+            fireRate = playerEntity.Stats.ProjectileFireRate;
             
             if (fireMaxCharges != playerEntity.Stats.FireCharges)
             {

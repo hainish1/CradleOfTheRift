@@ -48,7 +48,7 @@ public class PlayerManager : Entity
                 float currentEnergy = playerMovement.GetCurrentFlightEnergy();
                 flightInfo = $", Flight Energy: {currentEnergy:F0}";
             }
-            Debug.Log($"Health: {Stats.Health}, MoveSpeed: {Stats.MoveSpeed}, AttackSpeed: {Stats.AttackSpeed}, Projectile Damage: {Stats.ProjectileDamage}, Melee Damage: {Stats.MeleeDamage}, Slam Damage: {Stats.SlamDamage}{flightInfo}");
+            Debug.Log($"Health: {Stats.Health}, MoveSpeed: {Stats.MoveSpeed}, MeleeAttackCooldown: {Stats.AttackSpeed}, ProjectileFireRate: {Stats.ProjectileFireRate}, FireChargeCooldown: {Stats.FireChargeCooldown} , Projectile Damage: {Stats.ProjectileDamage}, Melee Damage: {Stats.MeleeDamage}, Slam Damage: {Stats.SlamDamage}{flightInfo}");
         }
     }
 

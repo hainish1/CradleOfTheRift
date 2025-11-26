@@ -11,6 +11,7 @@ public class BaseStats : ScriptableObject
     [Header("Ranged Attack Parameters")]
     public float projectileDamage = 1;
     public float attackSpeed = 5.0f; // attacks per second
+    public float projectileFireRate = 1; 
     public int fireCharges;
     public float fireChargeCooldown;
     public float projectileSpread = 0.1f; // in radians
