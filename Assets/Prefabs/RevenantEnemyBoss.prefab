@@ -20638,7 +20638,7 @@ MonoBehaviour:
   hoverHeight: 1.5
   hoverBobAmplitude: 0.25
   hoverBobSpeed: 2
-  chaseSpeed: 7.5
+  chaseSpeed: 15
   stopDistance: 12
   attackRange: 30
   turnSpeedWhileAiming: 10
@@ -20662,7 +20662,7 @@ MonoBehaviour:
   barrageAttackDelay: 0.5
   AOEAttackDelay: 0.8
   recoveryTime: 4
-  longRecoveryTime: 4
+  longRecoveryTime: 6
   attackIndicator: {fileID: 8974203713140315807, guid: 709b0bd6b0b625249a98409dd7a87343, type: 3}
 --- !u!114 &204557455612082024
 MonoBehaviour:

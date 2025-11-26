@@ -21,22 +21,24 @@ public class EnemyAOEArcingProjectile : MonoBehaviour
     [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
 
     [Header("AOE Effect")]
-    [SerializeField] private float aoeRadius = 3f;
-    [SerializeField] private float aoeDamage = 5f;
+    [SerializeField] private float AOERadius = 8f;
+    [SerializeField] private float AOEDamage = 5f;
+    [SerializeField] private float AOEDelay = 1f;
+    [SerializeField] private EnemyDelayedAOE delayedAOE;
 
-    public GameObject explosionVFX;
+    //public GameObject explosionVFX;
 
     Rigidbody rb;
     private float age;
-    private AudioSource audioSource;
-    [SerializeField] private AudioClip explosionSound;
+    //private AudioSource audioSource;
+    //[SerializeField] private AudioClip explosionSound;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-        rb.interpolation = RigidbodyInterpolation.Interpolate;
-        audioSource = GetComponent<AudioSource>();
+        // rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        // rb.interpolation = RigidbodyInterpolation.Interpolate;
+        //audioSource = GetComponent<AudioSource>();
     }
 
     /// <summary>
@@ -45,15 +47,15 @@ public class EnemyAOEArcingProjectile : MonoBehaviour
     /// <param name="velocity"></param>
     /// <param name="mask"></param>
     /// <param name="newDamage"></param>
-    public void Init(Vector3 velocity, LayerMask mask, float newDamage)
+    public void Init(Vector3 velocity, LayerMask mask)
     {
         rb.linearVelocity = velocity;
         hitMask = mask;
         age = 0f;
 
 
-        this.directDamage = newDamage;
-        this.aoeDamage = newDamage; // for now, both damages are same
+        //this.directDamage = newDamage;
+        //this.aoeDamage = newDamage; // for now, both damages are same
     }
 
     /// <summary>
@@ -67,10 +69,7 @@ public class EnemyAOEArcingProjectile : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        if (gravity != 0f)
-        {
-            rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
-        }
+        rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
     }   
 
     /// <summary>
@@ -83,82 +82,35 @@ public class EnemyAOEArcingProjectile : MonoBehaviour
             return;
 
         // spawn AOE effect on collision
-        CreateExplosionVFX();
-        SpawnAOEEffect();
+        // CreateExplosionVFX();
+        SpawnAOEObject(collision.GetContact(0).point);
         //PlayExplosionSound();
 
         Destroy(gameObject);
-
-        // // check if collided with enemy and if yes then damage it
-        // var pm = collision.collider.GetComponentInParent<PlayerMovement>();
-
-
-        // if (pm != null)
-        // {
-        //     var contact = collision.GetContact(0);
-
-        //     Vector3 dir = -contact.normal; // opposite of contact point
-        //     dir.y = 0f;
-        //     if (dir.sqrMagnitude > 0.0001f) dir.Normalize();
-
-        //     pm.ApplyImpulse(dir * knockBackImpulse);
-
-        // }
-
-        // // other rigidbodies it might hit
-        // if (collision.rigidbody != null)
-        // {
-        //     Vector3 force = rb.linearVelocity.normalized * hitForce;
-        //     collision.rigidbody.AddForceAtPosition(force, collision.GetContact(0).point, ForceMode.Impulse);
-        // }
-        // var damageable = collision.collider.GetComponentInParent<IDamageable>();
-        // if (damageable != null && !damageable.IsDead)
-        // {
-        //     damageable.TakeDamage(this.directDamage);
-        // }
     }
 
-    private void SpawnAOEEffect()
+    private void SpawnAOEObject(Vector3 position)
     {
-        Debug.Log("Soawn AOE Effect");
-        // Initialize 
-        //EnemyDelayedAOE aoeAttack = new EnemyDelayedAOE();
+        if (delayedAOE != null)
+        {
+            EnemyDelayedAOE explosion = Instantiate(delayedAOE, position, Quaternion.identity);
+            explosion.Init(AOERadius, AOEDamage, AOEDelay);
+        }
+        else
+        {
+            Debug.LogError("No delayed AOE prefab assigned in editor!");
+        }
     }
 
-    /// <summary>
-    /// Spawn the AOE effect at the current position and deal damage to players within the radius    
-    // public IEnumerator SpawnAOEEffect()
+    // public void CreateExplosionVFX()
     // {
-    //     yield return new WaitForSeconds(0f);
-
-    //     Collider[] hits = Physics.OverlapSphere(transform.position, aoeRadius, hitMask);
-    //     HashSet<IDamageable> damagedTargets = new HashSet<IDamageable>();
-    //     foreach (var col in hits)
-    //     {
-    //         var dmg = col.GetComponentInParent<IDamageable>();
-    //         if (dmg != null && !dmg.IsDead && !damagedTargets.Contains(dmg))
-    //         {
-    //             var pm = col.GetComponentInParent<PlayerMovement>();
-    //             if (pm != null)
-    //             {
-    //                 dmg.TakeDamage(aoeDamage);
-
-    //                 damagedTargets.Add(dmg);
-    //                 Debug.Log(aoeDamage + " AOE Damage dealt to " + dmg.ToString() + " by " + this.ToString());
-    //             }
-    //         }
-    //     }
+    //     if (explosionVFX == null) return;
+    //     GameObject newFx = Instantiate(explosionVFX);
+    //     newFx.transform.position = transform.position;
+    //     newFx.transform.rotation = Quaternion.identity;
+    //     newFx.transform.localScale = Vector3.one * aoeRadius * 0.3f;
+    //     Destroy(newFx, 1); // destroy after one second
     // }
-
-    public void CreateExplosionVFX()
-    {
-        if (explosionVFX == null) return;
-        GameObject newFx = Instantiate(explosionVFX);
-        newFx.transform.position = transform.position;
-        newFx.transform.rotation = Quaternion.identity;
-        newFx.transform.localScale = Vector3.one * aoeRadius * 0.3f;
-        Destroy(newFx, 1); // destroy after one second
-    }
 
     // public void PlayExplosionSound()
     // {
@@ -172,6 +124,6 @@ public class EnemyAOEArcingProjectile : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, aoeRadius);
+        Gizmos.DrawWireSphere(transform.position, AOERadius);
     }
 }

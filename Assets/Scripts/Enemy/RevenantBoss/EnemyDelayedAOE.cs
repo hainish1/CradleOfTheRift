@@ -4,21 +4,20 @@ using UnityEngine;
 
 
 /// <summary>
-/// Class - Represents a projectile that arcs towards the ground and creates a delayed area of effect on impact like a grenade.
-/// Copied again cus im not inheriting
+/// Class - Represents a stationary explosion that damages anything in its area after a delay.
 /// </summary>
 public class EnemyDelayedAOE : MonoBehaviour
 {
     [Header("hit")]
-    [SerializeField] private float hitForce = 8f;
-    [SerializeField] private float knockBackImpulse = 8f;
+    private float hitForce = 8f;
+    private float knockBackImpulse = 8f;
     [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
 
     [Header("AOE Effect")]
-    [SerializeField] private float aoeRadius = 3f;
-    [SerializeField] private float aoeDamage = 5f;
-
-    //public GameObject explosionVFX;
+    private float radius = 8f;
+    private float damage = 5f;
+    private float delay = 1f;
+    [SerializeField] private GameObject explosionVFX;
 
     //private float age;
     //private AudioSource audioSource;
@@ -35,15 +34,13 @@ public class EnemyDelayedAOE : MonoBehaviour
     /// <param name="mask"></param>
     /// <param name="aoeDamage"></param>
     /// <param name="aoeRadius"></param>
-    public void Init(LayerMask mask, float aoeDamage, float aoeRadius)
+    public void Init(float newRadius, float newDamage, float newDelay)
     {
-        hitMask = mask;
-        //age = 0f;
-
-
-        this.aoeDamage = aoeDamage;
-        this.aoeRadius = aoeRadius;
+        //this.hitMask = mask;
         //this.explosionVFX = explosionVFX;
+        radius = newRadius;
+        damage = newDamage;
+        delay = newDelay;
 
         StartCoroutine(SpawnAOEEffect());
     }
@@ -52,9 +49,11 @@ public class EnemyDelayedAOE : MonoBehaviour
     /// Spawn the AOE effect at the current position and deal damage to players within the radius    
     public IEnumerator SpawnAOEEffect()
     {
-        yield return new WaitForSeconds(1f);
+        CreateExplosionVFX();
 
-        Collider[] hits = Physics.OverlapSphere(transform.position, aoeRadius, hitMask);
+        yield return new WaitForSeconds(delay);
+
+        Collider[] hits = Physics.OverlapSphere(transform.position, radius, hitMask);
         HashSet<IDamageable> damagedTargets = new HashSet<IDamageable>();
         foreach (var col in hits)
         {
@@ -64,15 +63,29 @@ public class EnemyDelayedAOE : MonoBehaviour
                 var pm = col.GetComponentInParent<PlayerMovement>();
                 if (pm != null)
                 {
-                    dmg.TakeDamage(aoeDamage);
+                    dmg.TakeDamage(damage);
 
                     damagedTargets.Add(dmg);
-                    Debug.Log(aoeDamage + " AOE Damage dealt to " + dmg.ToString() + " by " + this.ToString());
+                    Debug.Log(damage + " Delayed AOE Damage dealt to " + dmg.ToString() + " by " + this.ToString());
                 }
             }
         }
 
         Destroy(gameObject);
+    }
+
+    public void CreateExplosionVFX()
+    {
+        if (explosionVFX == null)
+        {
+            Debug.LogError("No explosion VFX has been assigned!");
+            return;
+        }
+        GameObject newFx = Instantiate(explosionVFX);
+        newFx.transform.position = transform.position;
+        newFx.transform.rotation = Quaternion.identity;
+        newFx.transform.localScale = Vector3.one * radius * 0.25f;
+        Destroy(newFx, 2f); // destroy after two second
     }
 
     // /// <summary>
@@ -140,16 +153,6 @@ public class EnemyDelayedAOE : MonoBehaviour
     //     Destroy(gameObject); // its done its job now
     // }
 
-    // public void CreateExplosionVFX()
-    // {
-    //     if (explosionVFX == null) return;
-    //     GameObject newFx = Instantiate(explosionVFX);
-    //     newFx.transform.position = transform.position;
-    //     newFx.transform.rotation = Quaternion.identity;
-    //     newFx.transform.localScale = Vector3.one * aoeRadius * 0.3f;
-    //     Destroy(newFx, 1); // destroy after one second
-    // }
-
     // public void PlayExplosionSound()
     // {
     //     if (audioSource != null && explosionSound != null)
@@ -162,6 +165,6 @@ public class EnemyDelayedAOE : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, aoeRadius);
+        Gizmos.DrawWireSphere(transform.position, radius);
     }
 }
