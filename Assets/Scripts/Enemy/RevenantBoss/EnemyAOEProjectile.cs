@@ -84,7 +84,7 @@ public class EnemyAOEProjectile : MonoBehaviour
         // spawn AOE effect on collision
         SpawnAOEEffect();
         CreateExplosionVFX();
-        PlayExplosionSound();
+        //PlayExplosionSound();
 
         // check if collided with enemy and if yes then damage it
         var pm = collision.collider.GetComponentInParent<PlayerMovement>();
@@ -114,10 +114,7 @@ public class EnemyAOEProjectile : MonoBehaviour
             damageable.TakeDamage(this.directDamage);
         }
 
-
-        // plkace to add impact effects later
-
-        Destroy(gameObject); // its done its job now
+        Destroy(gameObject);
     }
 
     /// <summary>
@@ -154,14 +151,14 @@ public class EnemyAOEProjectile : MonoBehaviour
         Destroy(newFx, 1); // destroy after one second
     }
 
-    public void PlayExplosionSound()
-    {
-        if (audioSource != null && explosionSound != null)
-        {
-            audioSource.Stop();
-            audioSource.PlayOneShot(explosionSound);
-        }
-    }
+    // public void PlayExplosionSound()
+    // {
+    //     if (audioSource != null && explosionSound != null)
+    //     {
+    //         audioSource.Stop();
+    //         audioSource.PlayOneShot(explosionSound);
+    //     }
+    // }
 
     void OnDrawGizmos()
     {

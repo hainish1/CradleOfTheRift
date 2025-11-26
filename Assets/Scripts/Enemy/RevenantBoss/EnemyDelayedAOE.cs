@@ -18,33 +18,61 @@ public class EnemyDelayedAOE : MonoBehaviour
     [SerializeField] private float aoeRadius = 3f;
     [SerializeField] private float aoeDamage = 5f;
 
-    public GameObject explosionVFX;
+    //public GameObject explosionVFX;
 
-    private float age;
-    private AudioSource audioSource;
-    [SerializeField] private AudioClip explosionSound;
+    //private float age;
+    //private AudioSource audioSource;
+    //private AudioClip explosionSound;
 
-    void Awake()
-    {
-        audioSource = GetComponent<AudioSource>();
-    }
+    // void Awake()
+    // {
+    //     audioSource = GetComponent<AudioSource>();
+    // }
 
     /// <summary>
-    /// Initiailize this projectile with things like damage, velocity and what can it hit
+    /// Initialize the AOE explosion with what it can hit, its damage, and its radius
     /// </summary>
-    /// <param name="velocity"></param>
     /// <param name="mask"></param>
-    /// <param name="newDamage"></param>
+    /// <param name="aoeDamage"></param>
+    /// <param name="aoeRadius"></param>
     public void Init(LayerMask mask, float aoeDamage, float aoeRadius)
     {
         hitMask = mask;
-        age = 0f;
+        //age = 0f;
 
 
         this.aoeDamage = aoeDamage;
         this.aoeRadius = aoeRadius;
+        //this.explosionVFX = explosionVFX;
 
         StartCoroutine(SpawnAOEEffect());
+    }
+
+    /// <summary>
+    /// Spawn the AOE effect at the current position and deal damage to players within the radius    
+    public IEnumerator SpawnAOEEffect()
+    {
+        yield return new WaitForSeconds(1f);
+
+        Collider[] hits = Physics.OverlapSphere(transform.position, aoeRadius, hitMask);
+        HashSet<IDamageable> damagedTargets = new HashSet<IDamageable>();
+        foreach (var col in hits)
+        {
+            var dmg = col.GetComponentInParent<IDamageable>();
+            if (dmg != null && !dmg.IsDead && !damagedTargets.Contains(dmg))
+            {
+                var pm = col.GetComponentInParent<PlayerMovement>();
+                if (pm != null)
+                {
+                    dmg.TakeDamage(aoeDamage);
+
+                    damagedTargets.Add(dmg);
+                    Debug.Log(aoeDamage + " AOE Damage dealt to " + dmg.ToString() + " by " + this.ToString());
+                }
+            }
+        }
+
+        Destroy(gameObject);
     }
 
     // /// <summary>
@@ -112,51 +140,24 @@ public class EnemyDelayedAOE : MonoBehaviour
     //     Destroy(gameObject); // its done its job now
     // }
 
-    /// <summary>
-    /// Spawn the AOE effect at the current position and deal damage to players within the radius    
-    public IEnumerator SpawnAOEEffect()
-    {
-        yield return new WaitForSeconds(1f);
+    // public void CreateExplosionVFX()
+    // {
+    //     if (explosionVFX == null) return;
+    //     GameObject newFx = Instantiate(explosionVFX);
+    //     newFx.transform.position = transform.position;
+    //     newFx.transform.rotation = Quaternion.identity;
+    //     newFx.transform.localScale = Vector3.one * aoeRadius * 0.3f;
+    //     Destroy(newFx, 1); // destroy after one second
+    // }
 
-        Collider[] hits = Physics.OverlapSphere(transform.position, aoeRadius, hitMask);
-        HashSet<IDamageable> damagedTargets = new HashSet<IDamageable>();
-        foreach (var col in hits)
-        {
-            var dmg = col.GetComponentInParent<IDamageable>();
-            if (dmg != null && !dmg.IsDead && !damagedTargets.Contains(dmg))
-            {
-                var pm = col.GetComponentInParent<PlayerMovement>();
-                if (pm != null)
-                {
-                    dmg.TakeDamage(aoeDamage);
-
-                    damagedTargets.Add(dmg);
-                    Debug.Log(aoeDamage + " AOE Damage dealt to " + dmg.ToString() + " by " + this.ToString());
-                }
-            }
-        }
-
-        Destroy(gameObject);
-    }
-
-    public void CreateExplosionVFX()
-    {
-        if (explosionVFX == null) return;
-        GameObject newFx = Instantiate(explosionVFX);
-        newFx.transform.position = transform.position;
-        newFx.transform.rotation = Quaternion.identity;
-        newFx.transform.localScale = Vector3.one * aoeRadius * 0.3f;
-        Destroy(newFx, 1); // destroy after one second
-    }
-
-    public void PlayExplosionSound()
-    {
-        if (audioSource != null && explosionSound != null)
-        {
-            audioSource.Stop();
-            audioSource.PlayOneShot(explosionSound);
-        }
-    }
+    // public void PlayExplosionSound()
+    // {
+    //     if (audioSource != null && explosionSound != null)
+    //     {
+    //         audioSource.Stop();
+    //         audioSource.PlayOneShot(explosionSound);
+    //     }
+    // }
 
     void OnDrawGizmos()
     {
