@@ -837,7 +837,6 @@ public class PlayerMovement : MonoBehaviour
         _isRegeneratingDash = true;
 
         float timer = 0;
-
         while (_currDashCharges < DashMaxCharges && _isRegeneratingDash)
         {
             timer += Time.deltaTime;
