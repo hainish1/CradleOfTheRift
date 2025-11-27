@@ -125,14 +125,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lifeTime: 6
-  gravity: 9
+  gravity: 18
   directDamage: 0
   hitForce: 8
   knockBackImpulse: 8
   hitMask:
     serializedVersion: 2
     m_Bits: 1232
-  AOERadius: 12
+  AOERadius: 15
   AOEDamage: 15
   AOEDelay: 1
   delayedAOE: {fileID: 3758155777500473329, guid: c8b2412d2e936f041a4f8260e323f0ce, type: 3}
@@ -192,12 +192,16 @@ PrefabInstance:
       value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 4658278565933542675, guid: a8201a802e6fa2f4fb6267778cfaae1e, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4658278565933542675, guid: a8201a802e6fa2f4fb6267778cfaae1e, type: 3}
       propertyPath: InitialModule.startColor.maxColor.b
-      value: 0.17400849
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4658278565933542675, guid: a8201a802e6fa2f4fb6267778cfaae1e, type: 3}
       propertyPath: InitialModule.startColor.maxColor.g
-      value: 0.039215684
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4658278565933542675, guid: a8201a802e6fa2f4fb6267778cfaae1e, type: 3}
       propertyPath: InitialModule.startColor.maxColor.r

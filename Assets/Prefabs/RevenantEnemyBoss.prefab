@@ -20518,6 +20518,37 @@ Transform:
   - {fileID: 6855515103189422601}
   m_Father: {fileID: 265669369783172808}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8595414017570804856
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2120097368983292326}
+  m_Layer: 11
+  m_Name: arcFirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2120097368983292326
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8595414017570804856}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: 0.08}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9083025586867818779}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8841140246284276385
 GameObject:
   m_ObjectHideFlags: 0
@@ -20561,6 +20592,7 @@ Transform:
   - {fileID: 265669369783172808}
   - {fileID: 7588448968403286001}
   - {fileID: 6025983858397343963}
+  - {fileID: 2120097368983292326}
   - {fileID: 121653604844126356}
   - {fileID: 2435680311634701257}
   - {fileID: 3551773281840648770}
@@ -20634,7 +20666,8 @@ MonoBehaviour:
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
   nextAttackAllowed: 2
   projectileDamage: 8
-  AOEProjectileDamage: 8
+  AOEProjectileDamage: 16
+  AOEArcProjectileDamage: 16
   hoverHeight: 1.5
   hoverBobAmplitude: 0.25
   hoverBobSpeed: 2
@@ -20645,22 +20678,30 @@ MonoBehaviour:
   agentAngularSpeed: 720
   agentAcceleration: 100
   projectileSpeed: 50
-  fireCooldown: 2.5
+  fireCooldown: 3
   firePoint: {fileID: 7588448968403286001}
   firePoint2: {fileID: 6025983858397343963}
   AOEPoint: {fileID: 2435680311634701257}
   AOEPoint2: {fileID: 3551773281840648770}
+  arcFiringPoint: {fileID: 2120097368983292326}
   projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
   AOEProjectilePrefab: {fileID: 4739267247699924317, guid: 1dff6ae550385f244b0694002d4424df, type: 3}
+  AOEArcingProjectilePrefab: {fileID: 4445132549163554873, guid: 4a836d255f561bd45a91dd7c1c9ef00e, type: 3}
   projectileMask:
     serializedVersion: 2
     m_Bits: 9553
   spawnOffset: 0.1
   projectileSpread: 0.1
+  arcLaunchAngle: 45
+  randomDistanceVariance: 0.15
   barrageProjectileCount: 24
   barrageInterval: 0.05
-  barrageAttackDelay: 0.5
+  barrageAttackDelay: 0.8
   AOEAttackDelay: 0.8
+  recoveryBarrageCount: 18
+  recoveryBarrageRandomYaw: 20
+  recoveryBarrageProjectileSpeed: 25
+  attackPeriodLength: 3
   recoveryTime: 4
   longRecoveryTime: 6
   attackIndicator: {fileID: 8974203713140315807, guid: 709b0bd6b0b625249a98409dd7a87343, type: 3}
@@ -20709,9 +20750,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 400
+  maxHealth: 500
   cleanupDelay: 0
-  baseHealth: 400
+  baseHealth: 500
   damageVisuals: {fileID: 6516409030888228098}
 --- !u!114 &1065634495979649153
 MonoBehaviour:

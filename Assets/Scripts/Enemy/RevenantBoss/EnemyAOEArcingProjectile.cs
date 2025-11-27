@@ -15,14 +15,14 @@ public class EnemyAOEArcingProjectile : MonoBehaviour
     [SerializeField] private float gravity = 9f;
 
     [Header("hit")]
-    [SerializeField] private float directDamage = 0;
+    private float directDamage = 0;
     [SerializeField] private float hitForce = 8f;
     [SerializeField] private float knockBackImpulse = 8f;
     [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
 
     [Header("AOE Effect")]
     [SerializeField] private float AOERadius = 8f;
-    [SerializeField] private float AOEDamage = 5f;
+    private float AOEDamage = 5f;
     [SerializeField] private float AOEDelay = 1f;
     [SerializeField] private EnemyDelayedAOE delayedAOE;
 
@@ -47,10 +47,11 @@ public class EnemyAOEArcingProjectile : MonoBehaviour
     /// <param name="velocity"></param>
     /// <param name="mask"></param>
     /// <param name="newDamage"></param>
-    public void Init(Vector3 velocity, LayerMask mask)
+    public void Init(Vector3 velocity, LayerMask mask, float newDamage)
     {
         rb.linearVelocity = velocity;
         hitMask = mask;
+        AOEDamage = newDamage;
         age = 0f;
 
 

@@ -1,4 +1,5 @@
 using System.Collections;
+using Autodesk.Fbx;
 using UnityEngine;
 
 
@@ -10,8 +11,9 @@ using UnityEngine;
 public class RevenantBossRange : Enemy
 {
     [Header("Damage")]
-    public float projectileDamage = 4;
-    public float AOEProjectileDamage = 8;
+    public float projectileDamage = 8;
+    public float AOEProjectileDamage = 16;
+    public float AOEArcProjectileDamage = 16;
 
     [Header("Hover and movement")]
     public float hoverHeight = 2f; // height above ground
@@ -29,28 +31,36 @@ public class RevenantBossRange : Enemy
     [Header("Shooting")]
     public float projectileSpeed = 50f;
     public float fireCooldown = .6f;
-    public Transform firePoint;     // first barrage point
-    public Transform firePoint2;    // second barrage point
-    public Transform AOEPoint;      // first AOE attack point
-    public Transform AOEPoint2;     // second AOE attack point
+    public Transform firePoint;         // first barrage point
+    public Transform firePoint2;        // second barrage point
+    public Transform AOEPoint;          // first AOE attack point
+    public Transform AOEPoint2;         // second AOE attack point
+    public Transform arcFiringPoint;    // Arcing delayed AOE point
     public EnemyProjectile projectilePrefab;
     public EnemyAOEProjectile AOEProjectilePrefab;
+    public EnemyAOEArcingProjectile AOEArcingProjectilePrefab;
     public LayerMask projectileMask = ~0;
-    //public float AOEProjectileDamageMultiplier = 4f; // AOE does more damage
-    public float spawnOffset = 0.1f; // a little away fro fire point, safety
+    public float spawnOffset = 0.1f; // a little away from fire point for safety
     public float projectileSpread = 0.1f; // random spread angle
+    public float arcLaunchAngle = 45f;
+    public float randomDistanceVariance = 0.2f;
 
     public int barrageProjectileCount = 10; // how many projectiles in one barrage
     public float barrageInterval = 0.05f; // time between projectiles in barrage
     public float barrageAttackDelay = 0.5f; // delay attack to warn player
     public float AOEAttackDelay = 0.8f; // delay attack to warn player
+    public int recoveryBarrageCount = 8;
+    public float recoveryBarrageRandomYaw = 10f;
+    public float recoveryBarrageProjectileSpeed = 20f;
+    public float attackPeriodLength = 5f;
+    private float recoveryBarrageFiringInterval = 0.5f;
 
     [Space]
 
     [Header("Recovery")]
     [Tooltip("How much time to start again, basically reload time")]
-    public float recoveryTime = 0.5f;
-    public float longRecoveryTime = 5f;     // hacky shit i made bc i aint deviating from whats already written. used specifically after the aoe attack.
+    public float recoveryTime = 4f;
+    public float longRecoveryTime = 6f;     // actually a third attack phase bc why not
 
     [Header("Visuals")]
     public GameObject attackIndicator;
@@ -89,6 +99,7 @@ public class RevenantBossRange : Enemy
         recovery = new RecoveryStateRevenant(this, stateMachine);
         longRecovery = new LongRecoveryStateRevenant(this, stateMachine);
 
+        recoveryBarrageFiringInterval = Mathf.Abs(longRecoveryTime / recoveryBarrageCount);
         stateMachine.Initialize(idle); // enter idle first
     }
 
@@ -106,7 +117,7 @@ public class RevenantBossRange : Enemy
         if (agent == null) return;
 
         bobPhase += Time.deltaTime * hoverBobSpeed;
-        agent.baseOffset = hoverHeight + Mathf.Sin(bobPhase) * hoverBobAmplitude; // usign sin formula for bobbing
+        agent.baseOffset = hoverHeight + Mathf.Sin(bobPhase) * hoverBobAmplitude; // using sin formula for bobbing
     }
 
     // HELPERS
@@ -210,6 +221,76 @@ public class RevenantBossRange : Enemy
         projectile2.Init(direction2 * projectileSpeed, projectileMask, this.AOEProjectileDamage);
 
         audioController?.PlayFireAOEProjectileSound();
+    }
+
+    public void RecoveryBarrage()
+    {
+        StartCoroutine(RecoveryBarrageCoroutine());
+    }
+
+    public IEnumerator RecoveryBarrageCoroutine()
+    {
+        float angleStep = 360f / recoveryBarrageCount;
+        for (int i = 0; i < recoveryBarrageCount; i++)
+        {
+            float currentAngle = i * angleStep;
+            Quaternion facingRotation = Quaternion.Euler(0, currentAngle, 0);
+            Vector3 baseDir = facingRotation * transform.forward;
+            float randomYaw = Random.Range(-recoveryBarrageRandomYaw, recoveryBarrageRandomYaw);
+            Quaternion randomRot = Quaternion.Euler(0, randomYaw, 0);
+            Vector3 finalHorizontalDir = randomRot * baseDir;
+
+            Vector3 upComponent = Vector3.up * Mathf.Tan(arcLaunchAngle * Mathf.Deg2Rad);
+            Vector3 firingVector = (finalHorizontalDir + upComponent).normalized;
+
+            float randomSpeedMod = Random.Range(1f - randomDistanceVariance, 1f + randomDistanceVariance);
+            Vector3 finalVelocity = firingVector * recoveryBarrageProjectileSpeed * randomSpeedMod;
+            Vector3 spawnPoint = arcFiringPoint.position + finalHorizontalDir * spawnOffset;
+            EnemyAOEArcingProjectile projectile = Instantiate(AOEArcingProjectilePrefab, spawnPoint, Quaternion.LookRotation(firingVector));
+            projectile.Init(finalVelocity, projectileMask, AOEProjectileDamage);
+
+            yield return new WaitForSeconds(recoveryBarrageFiringInterval); // small delay between shots
+        }
+
+        // Ts dont work well at all
+        // for (int i = 0; i < recoveryBarrageCount; i++)
+        // {
+            
+        //     Vector3 baseDir;
+            
+        //     if (target != null)
+        //     {
+                
+        //         Vector3 directionToTarget = target.position - arcFiringPoint.position;
+        //         directionToTarget.y = 0; 
+                
+        //         baseDir = directionToTarget.normalized;
+        //     }
+        //     else
+        //     {
+        //         baseDir = transform.forward;
+        //     }
+
+        //     float randomYaw = Random.Range(-5f, 5f); 
+        //     Quaternion randomRot = Quaternion.Euler(0, randomYaw, 0);
+        //     Vector3 finalHorizontalDir = randomRot * baseDir;
+        //     Vector3 upComponent = Vector3.up * Mathf.Tan(arcLaunchAngle * Mathf.Deg2Rad);
+        //     Vector3 firingVector = (finalHorizontalDir + upComponent).normalized;
+
+        //     float randomSpeedMod = Random.Range(1f - randomDistanceVariance, 1f + randomDistanceVariance);
+        //     Vector3 finalVelocity = firingVector * projectileSpeed * randomSpeedMod;
+        //     Vector3 spawnPoint = arcFiringPoint.position + finalHorizontalDir * spawnOffset;
+            
+        //     EnemyAOEArcingProjectile projectile = Instantiate(
+        //         AOEArcingProjectilePrefab, 
+        //         spawnPoint, 
+        //         Quaternion.LookRotation(firingVector)
+        //     );
+            
+        //     projectile.Init(finalVelocity, projectileMask, AOEProjectileDamage);
+
+        //     yield return new WaitForSeconds(recoveryBarrageFiringInterval);
+        // }
     }   
 
     void playAttackIndicator()

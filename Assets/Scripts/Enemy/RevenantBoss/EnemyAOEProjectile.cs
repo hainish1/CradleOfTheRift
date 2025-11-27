@@ -14,14 +14,14 @@ public class EnemyAOEProjectile : MonoBehaviour
     [SerializeField] private float gravity = 0f;
 
     [Header("hit")]
-    [SerializeField] private float directDamage = 1;
+    private float directDamage = 1;
     [SerializeField] private float hitForce = 8f;
     [SerializeField] private float knockBackImpulse = 8f;
     [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
 
     [Header("AOE Effect")]
     [SerializeField] private float aoeRadius = 5f;
-    [SerializeField] private float aoeDamage = 1f;
+    private float aoeDamage = 1f;
 
     public GameObject explosionVFX;
 
