@@ -3,14 +3,14 @@
   "Platform": "Windows",
   "BasePlatform": "Windows",
   "SchemaVersion": "16",
-  "SoundBankVersion": "154",
+  "SoundBankVersion": "172",
   "SoundBanks": [
    {
     "Id": "1355168291",
     "Type": "User",
     "GUID": "{701ECBBD-9C7B-4030-8CDB-749EE5D1C7B9}",
     "Language": "SFX",
-    "Hash": "{E8C73C05-9AC5-A17E-EA11-491BBCB2A45E}",
+    "Hash": "{D666BFD0-3BEC-A041-A74C-ADE84001EC44}",
     "ObjectPath": "Init",
     "ShortName": "Init",
     "Path": "Init.bnk",
@@ -19,16 +19,16 @@
       {
        "Id": "2317455096",
        "Name": "No_Output",
-       "ObjectPath": "\\Audio Devices\\Default Work Unit\\No_Output",
-       "GUID": "{A5489A37-478A-405C-9ADC-1F6C4729F2B7}",
+       "ObjectPath": "\\Devices\\Default Work Unit\\No_Output",
+       "GUID": "{5B4AA7A2-EC50-4147-B817-75CE223ECC9C}",
        "LibName": "No Output",
        "LibId": "11862023"
       },
       {
        "Id": "3859886410",
        "Name": "System",
-       "ObjectPath": "\\Audio Devices\\Default Work Unit\\System",
-       "GUID": "{D37C98F1-7E45-4E2B-B59B-7EE7E4661C41}",
+       "ObjectPath": "\\Devices\\Default Work Unit\\System",
+       "GUID": "{39D15017-E3A6-4506-A9E3-CAEBBDB67F81}",
        "LibName": "System",
        "LibId": "11403271"
       }
@@ -36,14 +36,26 @@
     },
     "Busses": [
      {
-      "Id": "3803692087",
-      "Name": "Master Audio Bus",
-      "ObjectPath": "\\Master-Mixer Hierarchy\\Default Work Unit\\Master Audio Bus",
+      "Id": "2246998526",
+      "Name": "Main Audio Bus",
+      "ObjectPath": "\\Busses\\Default Work Unit\\Main Audio Bus",
       "GUID": "{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}"
+     },
+     {
+      "Id": "2833159698",
+      "Name": "Environment Bus",
+      "ObjectPath": "\\Busses\\Default Work Unit\\Environment Bus",
+      "GUID": "{25838D0C-782A-4510-B705-3FCAB37A2857}"
+     },
+     {
+      "Id": "3127962312",
+      "Name": "Music Bus",
+      "ObjectPath": "\\Busses\\Default Work Unit\\Music Bus",
+      "GUID": "{2535DC4D-E35F-4B3B-8BE6-0284AF857A73}"
      }
     ]
    }
   ],
-  "FileHash": "{22B33FF8-7FBB-85F6-991D-47A2D609CB88}"
+  "FileHash": "{745226BA-B4A0-F546-D7E0-FC2519AE4B2A}"
  }
 }

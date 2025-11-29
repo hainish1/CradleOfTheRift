@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{3965F864-7315-4D51-BF9F-405BFDDB9631}" SchemaVersion="133" RootDocumentID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}" ParentDocumentID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}">
+	<Events>
+		<WorkUnit Name="Environment" ID="{3965F864-7315-4D51-BF9F-405BFDDB9631}" OwnerID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}" PersistMode="Nested">
+			<ChildrenList>
+				<Folder Name="River" ID="{91B92F48-A923-4E63-B522-F84F5C1892B4}" ShortID="1056017042">
+					<ChildrenList>
+						<Event Name="Play_River1" ID="{A2A3CACD-0961-4DFF-A1AF-F6D5A5757002}">
+							<ChildrenList>
+								<Action Name="" ID="{B11BC682-5B05-482F-9FDA-041996709468}" ShortID="487097067">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="River1" ID="{BC580BF9-A91F-474C-B09F-76A65813AB49}" WorkUnitID="{8ADB7485-E0A9-4F0D-A14F-7ED951DF96EF}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+						<Event Name="Play_River2" ID="{35CD5EF1-903A-4DD6-BE5A-4A7D6B319298}">
+							<ChildrenList>
+								<Action Name="" ID="{C8F71D70-795F-49B8-B254-A726C295A5E6}" ShortID="453094820">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="River2" ID="{166E8137-6F37-43E2-AD9E-8DB86A18088F}" WorkUnitID="{8ADB7485-E0A9-4F0D-A14F-7ED951DF96EF}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+					</ChildrenList>
+				</Folder>
+			</ChildrenList>
+		</WorkUnit>
+	</Events>
+</WwiseDocument>

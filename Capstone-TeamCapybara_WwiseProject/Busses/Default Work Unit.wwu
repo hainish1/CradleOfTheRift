@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}" SchemaVersion="133">
+	<Busses>
+		<WorkUnit Name="Default Work Unit" ID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}" PersistMode="Standalone">
+			<ChildrenList>
+				<Bus Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}">
+					<ReferenceList>
+						<Reference Name="AudioDevice" PluginName="System" CompanyID="0" PluginID="174" PluginType="7">
+							<ObjectRef Name="System" ID="{39D15017-E3A6-4506-A9E3-CAEBBDB67F81}" WorkUnitID="{A5D37E5A-68EB-45E7-9D83-3FCA2A94B0DA}"/>
+						</Reference>
+					</ReferenceList>
+				</Bus>
+				<Bus Name="Environment Bus" ID="{25838D0C-782A-4510-B705-3FCAB37A2857}">
+					<ReferenceList>
+						<Reference Name="AudioDevice" PluginName="System" CompanyID="0" PluginID="174" PluginType="7">
+							<ObjectRef Name="System" ID="{39D15017-E3A6-4506-A9E3-CAEBBDB67F81}" WorkUnitID="{A5D37E5A-68EB-45E7-9D83-3FCA2A94B0DA}"/>
+						</Reference>
+					</ReferenceList>
+				</Bus>
+				<Bus Name="Music Bus" ID="{2535DC4D-E35F-4B3B-8BE6-0284AF857A73}">
+					<PropertyList>
+						<Property Name="BusVolume" Type="Real64">
+							<ValueList>
+								<Value>-17</Value>
+							</ValueList>
+						</Property>
+					</PropertyList>
+					<ReferenceList>
+						<Reference Name="AudioDevice" PluginName="System" CompanyID="0" PluginID="174" PluginType="7">
+							<ObjectRef Name="System" ID="{39D15017-E3A6-4506-A9E3-CAEBBDB67F81}" WorkUnitID="{A5D37E5A-68EB-45E7-9D83-3FCA2A94B0DA}"/>
+						</Reference>
+					</ReferenceList>
+				</Bus>
+			</ChildrenList>
+		</WorkUnit>
+	</Busses>
+</WwiseDocument>
