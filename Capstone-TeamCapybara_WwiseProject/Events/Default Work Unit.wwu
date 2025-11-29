@@ -8,23 +8,13 @@
 						<Action Name="" ID="{C6011DA8-7F42-4BE2-A8B1-8E8B3E558698}" ShortID="353094373">
 							<ReferenceList>
 								<Reference Name="Target">
-									<ObjectRef Name="Song_PercussianOrchestra" ID="{ABFB06D3-3D28-4F68-B441-B0B5B9DC7597}" WorkUnitID="{08864F24-BF33-4CEF-B914-3138B5E77E57}"/>
+									<ObjectRef Name="Song_PercussianOrchestra" ID="{ABFB06D3-3D28-4F68-B441-B0B5B9DC7597}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
 								</Reference>
 							</ReferenceList>
 						</Action>
 					</ChildrenList>
 				</Event>
-				<Event Name="Play_WaterCreek" ID="{1FF4E077-3CA1-4F7B-82B5-D9385D9A58C4}">
-					<ChildrenList>
-						<Action Name="" ID="{2FC80544-454D-466C-B15B-B6D305566E1E}" ShortID="378349922">
-							<ReferenceList>
-								<Reference Name="Target">
-									<ObjectRef Name="WaterCreek" ID="{4405B968-9F74-449E-BB7A-BD2BB9283CE7}" WorkUnitID="{08864F24-BF33-4CEF-B914-3138B5E77E57}"/>
-								</Reference>
-							</ReferenceList>
-						</Action>
-					</ChildrenList>
-				</Event>
+				<WorkUnit Name="Environment" ID="{3965F864-7315-4D51-BF9F-405BFDDB9631}" PersistMode="Reference"/>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

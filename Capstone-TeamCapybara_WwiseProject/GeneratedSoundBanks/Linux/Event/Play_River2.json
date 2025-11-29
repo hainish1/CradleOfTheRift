@@ -1,0 +1,49 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "2332603226",
+    "Type": "Event",
+    "GUID": "{35CD5EF1-903A-4DD6-BE5A-4A7D6B319298}",
+    "Language": "SFX",
+    "Hash": "{171CCC18-CE47-8968-91CF-A48B730F19BE}",
+    "ObjectPath": "Play_River2",
+    "ShortName": "Play_River2",
+    "Path": "Event/Play_River2.bnk",
+    "Media": [
+     {
+      "Id": "369542994",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "River2.wav",
+      "Path": "Media/369542994.wem",
+      "CachePath": "E6/{E6444F8F-49E9-47BA-FE72-7CA9C49CA4FD}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "2332603226",
+      "Name": "Play_River2",
+      "ObjectPath": "\\Events\\Default Work Unit\\Environment\\River\\Play_River2",
+      "GUID": "{35CD5EF1-903A-4DD6-BE5A-4A7D6B319298}",
+      "MaxAttenuation": "100",
+      "DurationType": "OneShot",
+      "DurationMin": "29.580698",
+      "DurationMax": "29.580698",
+      "MediaRefs": [
+       {
+        "Id": "369542994"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{F7A09C01-EC6E-7DBD-9DBE-A47553DF60FA}"
+ }
+}
