@@ -12,7 +12,7 @@ public class AUDIO_ThirdPersonListener : AkGameObj
 {
     public Transform player;
     
-    void Start()
+    void Awake()
     {
         if (player == null)
         {
