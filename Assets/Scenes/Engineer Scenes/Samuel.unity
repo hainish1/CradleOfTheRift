@@ -131,6 +131,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 2600056389756744934, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2692208781826445233, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -170,6 +174,14 @@ PrefabInstance:
     - target: {fileID: 2692208781826445233, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3932950717491979509, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8678201601994762703, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8678201601994762703, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
       propertyPath: _cameraTransform
@@ -3491,19 +3503,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55751c6469197504795b5389dd7d30c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InitializationSettings: {fileID: 11400000, guid: eb9b719f767ac7944b94e3b48cfe2d06, type: 2}
-  basePath: 
-  language: 
-  defaultPoolSize: 0
-  lowerPoolSize: 0
-  streamingPoolSize: 0
-  memoryCutoffThreshold: 0
-  monitorPoolSize: 0
-  monitorQueuePoolSize: 0
-  callbackManagerBufferSize: 0
-  spatialAudioPoolSize: 0
-  maxSoundPropagationDepth: 0
-  engineLogging: 0
 --- !u!4 &1861969267
 Transform:
   m_ObjectHideFlags: 0

@@ -2,29 +2,33 @@
 <WwiseSettings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <CopySoundBanksAsPreBuildStep>true</CopySoundBanksAsPreBuildStep>
   <GenerateSoundBanksAsPreBuildStep>false</GenerateSoundBanksAsPreBuildStep>
-  <SoundbankPath>Audio/GeneratedSoundBanks</SoundbankPath>
-  <GeneratedSoundbanksPath>StreamingAssets/Audio/GeneratedSoundBanks</GeneratedSoundbanksPath>
+  <WwiseStreamingAssetsPath>Audio\GeneratedSoundBanks</WwiseStreamingAssetsPath>
+  <RootOutputPath>../Capstone-TeamCapybara_WwiseProject/GeneratedSoundBanks/</RootOutputPath>
   <CreatedPicker>true</CreatedPicker>
-  <CreateWwiseGlobal>true</CreateWwiseGlobal>
+  <CreateWwiseGlobal>false</CreateWwiseGlobal>
   <CreateWwiseListener>false</CreateWwiseListener>
   <ObjectReferenceAutoCleanup>true</ObjectReferenceAutoCleanup>
   <LoadSoundEngineInEditMode>true</LoadSoundEngineInEditMode>
   <ShowMissingRigidBodyWarning>true</ShowMissingRigidBodyWarning>
   <ShowSpatialAudioWarningMsg>true</ShowSpatialAudioWarningMsg>
   <WwiseInstallationPathMac />
-  <WwiseInstallationPathWindows>C:\Audiokinetic\Wwise2024.1.9.8920</WwiseInstallationPathWindows>
+  <WwiseInstallationPathWindows>C:\Audiokinetic\Wwise2025.1.3.9039</WwiseInstallationPathWindows>
   <WwiseProjectPath>../Capstone-TeamCapybara_WwiseProject/Capstone-TeamCapybara_WwiseProject.wproj</WwiseProjectPath>
   <UseWaapi>true</UseWaapi>
   <WaapiPort>8080</WaapiPort>
   <WaapiIP>127.0.0.1</WaapiIP>
+  <AutoSyncWaapi>true</AutoSyncWaapi>
+  <WaapiChangePending>false</WaapiChangePending>
   <InstallationWasRequested>false</InstallationWasRequested>
   <UseGitRepository>true</UseGitRepository>
-  <PackageSource>https://github.com/audiokinetic/WwiseUnityAddressables.git#v24.1.9</PackageSource>
+  <PackageSource />
   <AddressableBankFolder>WwiseData/Bank</AddressableBankFolder>
   <UseCustomBuildScript>false</UseCustomBuildScript>
   <AddressableAssetBuilderPath>Assets/AddressableAssetsData/DataBuilders/BuildScriptWwisePacked.asset</AddressableAssetBuilderPath>
   <AutomaticallyUpdateExternalSourcesPath>false</AutomaticallyUpdateExternalSourcesPath>
   <ExternalSourcesPath>WwiseData/Bank</ExternalSourcesPath>
+  <EnableUninstallationPrompt>true</EnableUninstallationPrompt>
+  <DisableAsynchronousBankLoading>true</DisableAsynchronousBankLoading>
   <XMLTranslatorTimeout>0</XMLTranslatorTimeout>
   <WaapiTranslatorTimeout>0</WaapiTranslatorTimeout>
 </WwiseSettings>

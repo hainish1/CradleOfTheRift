@@ -519,7 +519,7 @@ Transform:
   - {fileID: 7626462467039816435}
   - {fileID: 3777271165567001104}
   - {fileID: 1193675887583349509}
-  - {fileID: 3935972546842473169}
+  - {fileID: 5220411842480617579}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &5837458692684639450
@@ -639,6 +639,7 @@ MonoBehaviour:
   fireRate: 0.1
   fullAuto: 0
   projectilePrefab: {fileID: 3140400090891409143, guid: a6fb9f8d0097a78469656e682c859c0d, type: 3}
+  explosiveProjectilePrefab: {fileID: 0}
   projectileSpeed: 150
   spawnOffset: 0.1
 --- !u!114 &146141417271177862
@@ -1256,7 +1257,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3935972546842473169}
   - component: {fileID: 1337875613363717214}
-  - component: {fileID: 9074830764197501354}
   m_Layer: 0
   m_Name: Melee Weapon
   m_TagString: Untagged
@@ -1280,7 +1280,7 @@ Transform:
   - {fileID: 3132668402224164764}
   - {fileID: 8403910430212717989}
   - {fileID: 6515147321210492741}
-  m_Father: {fileID: 2692208781826445233}
+  m_Father: {fileID: 5220411842480617579}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1337875613363717214
 Animator:
@@ -1304,25 +1304,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &9074830764197501354
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5225540021498470404}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 506b444d00ba8a046976836cdd04d1cc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _hitSweepStartPoint: {fileID: 8403910430212717989}
-  _hitSweepEndPoint: {fileID: 6515147321210492741}
-  _hitSweepCasts: 10
-  _hitLayerMasks:
-    serializedVersion: 2
-    m_Bits: 7232
-  knockbackForce: 18
 --- !u!1 &5947223034050071963
 GameObject:
   m_ObjectHideFlags: 0
@@ -1501,6 +1482,59 @@ MonoBehaviour:
     m_Bits: 3799
   playerRoot: {fileID: 2692208781826445233}
   aimTargetManager: {fileID: 0}
+--- !u!1 &6694808740719683087
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5220411842480617579}
+  - component: {fileID: 1957647174855255490}
+  m_Layer: 8
+  m_Name: Melee Weapon Holder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5220411842480617579
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6694808740719683087}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3935972546842473169}
+  m_Father: {fileID: 2692208781826445233}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1957647174855255490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6694808740719683087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 506b444d00ba8a046976836cdd04d1cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerCamera: {fileID: 3222700164973113527}
+  _hitSweepStartPoint: {fileID: 8403910430212717989}
+  _hitSweepEndPoint: {fileID: 6515147321210492741}
+  _hitSweepCasts: 15
+  _hitLayerMasks:
+    serializedVersion: 2
+    m_Bits: 7232
+  knockbackForce: 18
 --- !u!1 &8572879440829153071
 GameObject:
   m_ObjectHideFlags: 0
