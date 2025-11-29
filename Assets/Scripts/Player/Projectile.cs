@@ -53,7 +53,7 @@ public class Projectile : MonoBehaviour
         startPos = transform.position;
         this.flyDistance = flyDistance + 1;
 
-        Debug.Log($"Projectile initialized with damage: {actualDamage}");
+        // Debug.Log($"Projectile initialized with damage: {actualDamage}");
 
         //Debug.Log("This belongs to the parent");
     }
@@ -143,11 +143,14 @@ public class Projectile : MonoBehaviour
             var damageable = collision.collider.GetComponentInParent<IDamageable>();
             if (damageable != null && !damageable.IsDead)
             {
-                // HERE NOW I WILL USE THE MODIFIED DAMAGE
                 damageable.TakeDamage(actualDamage);
-
-                // report the combat event for damage
                 CombatEvents.ReportDamage(attacker, enemy, actualDamage);
+                
+                if (DelayedProjectiles.IsEnabled)
+                {
+                    CreateDelayedDamageMark(enemy, collision.GetContact(0).point);
+                }
+                
                 hasHit = true;
 
                 // checking teh event here
@@ -195,5 +198,100 @@ public class Projectile : MonoBehaviour
         }
     }
 
+    protected void CreateDelayedDamageMark(Enemy enemy, Vector3 hitPoint)
+    {
+        GameObject markObj = new GameObject("DelayedDamageMark");
+        markObj.transform.position = hitPoint;
+        
+        DelayedDamageMark mark = markObj.AddComponent<DelayedDamageMark>();
+        mark.Init(enemy, actualDamage, attacker, DelayedProjectiles.DelayTime, DelayedProjectiles.DamageMultiplier);
+
+        if (DelayedProjectiles.MarkVFX != null)
+        {
+            GameObject vfx = Instantiate(DelayedProjectiles.MarkVFX);
+            vfx.transform.position = hitPoint;
+            vfx.transform.SetParent(markObj.transform);
+            Destroy(vfx, DelayedProjectiles.DelayTime);
+        }
+        else
+        {
+            CreateDefaultMarkEffect(markObj);
+        }
+    }
+
+    private void CreateDefaultMarkEffect(GameObject markObj)
+    {
+        DelayedDamageMark mark = markObj.GetComponent<DelayedDamageMark>();
+        
+        Light light = markObj.AddComponent<Light>();
+        light.type = LightType.Point;
+        light.color = new Color(1f, 0.3f, 0f);
+        light.range = 3f;
+        light.intensity = 2f;
+        
+        if (mark != null)
+        {
+            mark.SetLight(light);
+        }
+
+        ParticleSystem ps = markObj.AddComponent<ParticleSystem>();
+        var main = ps.main;
+        main.startLifetime = DelayedProjectiles.DelayTime;
+        main.startSpeed = 0.5f;
+        main.startSize = 0.5f;
+        main.startColor = new Color(1f, 0f, 0f, 1f);
+        main.maxParticles = 50;
+        main.simulationSpace = ParticleSystemSimulationSpace.Local;
+
+        var renderer = ps.GetComponent<ParticleSystemRenderer>();
+        if (renderer != null)
+        {
+            renderer.material = new Material(Shader.Find("Sprites/Default"));
+        }
+
+        var emission = ps.emission;
+        emission.rateOverTime = 15f;
+
+        var shape = ps.shape;
+        shape.enabled = true;
+        shape.shapeType = ParticleSystemShapeType.Sphere;
+        shape.radius = 0.5f;
+
+        var velocity = ps.velocityOverLifetime;
+        velocity.enabled = true;
+        velocity.radial = new ParticleSystem.MinMaxCurve(0.3f);
+
+        var size = ps.sizeOverLifetime;
+        size.enabled = true;
+        size.size = new ParticleSystem.MinMaxCurve(0.5f, new AnimationCurve(
+            new Keyframe(0f, 0.5f),
+            new Keyframe(0.5f, 0.83f),
+            new Keyframe(1f, 0.33f)
+        ));
+
+        var color = ps.colorOverLifetime;
+        color.enabled = true;
+        var grad = new Gradient();
+        grad.SetKeys(
+            new GradientColorKey[] { 
+                new GradientColorKey(new Color(1f, 0f, 0f), 0f), 
+                new GradientColorKey(new Color(1f, 0f, 0f), 0.5f),
+                new GradientColorKey(new Color(0.8f, 0f, 0f), 1f) 
+            },
+            new GradientAlphaKey[] { 
+                new GradientAlphaKey(1f, 0f), 
+                new GradientAlphaKey(1f, 0.3f),
+                new GradientAlphaKey(0f, 1f) 
+            }
+        );
+        color.color = grad;
+
+        ps.Play();
+        
+        if (mark != null)
+        {
+            mark.SetParticles(ps);
+        }
+    }
 
 }
