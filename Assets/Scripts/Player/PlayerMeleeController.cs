@@ -42,17 +42,22 @@ public class PlayerMeleeController : MonoBehaviour
     // Hit Sweep Parameters
 
     [Header("Hit Sweep Parameters")] [Space]
-    [SerializeField] private Transform _hitSweepStartPoint;
-    [SerializeField] private Transform _hitSweepEndPoint;
-    [SerializeField] private int _hitSweepCasts;
-    [SerializeField] private float _castRadius;
-    [SerializeField] private LayerMask _hitLayerMasks;
+    [SerializeField]
+    [Tooltip("The start point for hit sweeps.")] private Transform _hitSweepStartPoint;
+    [SerializeField]
+    [Tooltip("The end point for hit sweeps.")] private Transform _hitSweepEndPoint;
+    [SerializeField]
+    [Tooltip("The amount of spheres that will be cast equidistantly between the start and end points.")] private int _hitSweepCasts;
+    [SerializeField]
+    [Tooltip("The radius of sphere casts.")] private float _castRadius;
+    [SerializeField]
+    [Tooltip("Layers that will be treated as damageables.")] private LayerMask _damageableLayerMasks;
     private float _hitSweepLength;
     private Vector3 _hitSweepStepVector;
     private Vector3 _hitSweepPointTemp;
     private Vector3[] _prevHitSweepPointsTemp;
     private bool _tempHitSweepArrayInitialized;
-    private HashSet<Object> _objectsHitThisAttack;
+    private HashSet<GameObject> _objectsHitThisAttack;
     private RaycastHit[] _objectsHitThisSweep;
 
     // Attack Parameters
@@ -78,13 +83,13 @@ public class PlayerMeleeController : MonoBehaviour
         _playerActions = _playerInput.Player;
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
         _attackActions = _playerActions.Attack;
         _attackActions.Enable();
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
         _attackActions.Disable();
     }
@@ -104,7 +109,7 @@ public class PlayerMeleeController : MonoBehaviour
         AlignHitSweep();
         _prevHitSweepPointsTemp = new Vector3[_hitSweepCasts];
         _tempHitSweepArrayInitialized = false;
-        _objectsHitThisAttack = new HashSet<Object>();
+        _objectsHitThisAttack = new HashSet<GameObject>();
         _objectsHitThisSweep = new RaycastHit[32];
 
         // Attack Parameters
@@ -145,7 +150,7 @@ public class PlayerMeleeController : MonoBehaviour
         {
             ExecuteHitRegistration();
         }
-        else
+        else if (_tempHitSweepArrayInitialized = true || _objectsHitThisAttack.Count > 0)
         {
             _tempHitSweepArrayInitialized = false;
             _objectsHitThisAttack.Clear();
@@ -332,7 +337,7 @@ public class PlayerMeleeController : MonoBehaviour
                                                          _castRadius,
                                                          (endPoint - startPoint).normalized,
                                                          (endPoint - startPoint).magnitude,
-                                                         _hitLayerMasks,
+                                                         _damageableLayerMasks,
                                                          QueryTriggerInteraction.Ignore);
             Debug.DrawRay(startPoint, endPoint - startPoint, Color.blue, 2);
 
@@ -340,32 +345,28 @@ public class PlayerMeleeController : MonoBehaviour
             if (_currComboCount == 1 && _objectsHitThisSweep.Length > 1)
             {
                 // Find the first object hit that has an Enemy script.
-                for (int j = 0; j < _objectsHitThisSweep.Length; j++)
+                foreach (RaycastHit hit in _objectsHitThisSweep)
                 {
-                    GameObject currObject = _objectsHitThisSweep[j].collider.gameObject;
-                    Enemy enemyScript = currObject.GetComponent<Enemy>();
-
+                    Enemy enemyScript = hit.collider.gameObject.GetComponent<Enemy>();
                     if (enemyScript == null) continue;
 
-                    ApplyDamageEffects(currObject, enemyScript);
-                    _objectsHitThisAttack.Add(currObject);
+                    _objectsHitThisAttack.Add(hit.collider.gameObject);
+                    ApplyDamageEffects(enemyScript);
                     return;
                 }
+
             }
             else if (_currComboCount != 1 && _objectsHitThisSweep.Length > 0) // Other two attacks have area damage.
             {
                 // For all valid objects that were hit, apply damage to them only if they haven't already received it.
-                for (int j = 0; j < _objectsHitThisSweep.Length; j++)
+                foreach (RaycastHit hit in _objectsHitThisSweep)
                 {
-                    GameObject currObject = _objectsHitThisSweep[j].collider.gameObject;
-                    if (_objectsHitThisAttack.Contains(currObject)) continue; // Skip this object if damage was already applied.
+                    Enemy enemyScript = hit.collider.gameObject.GetComponent<Enemy>();
+                    if (_objectsHitThisAttack.Contains(hit.collider.gameObject) || enemyScript == null) continue; // Skip this object if damage was already
+                                                                                                                  // applied or if it is not an enemy.
 
-                    Enemy enemyScript = currObject.GetComponent<Enemy>();
-                    if (enemyScript == null) continue; // <------------------------------ TODO: Make it so non-enemy objects can be damaged.
-
-                    ApplyDamageEffects(currObject, enemyScript);
-
-                    _objectsHitThisAttack.Add(currObject);
+                    _objectsHitThisAttack.Add(hit.collider.gameObject);
+                    ApplyDamageEffects(enemyScript);
                 }
             }
 
@@ -373,8 +374,10 @@ public class PlayerMeleeController : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+    void OnDrawGizmos()
     {
+        if (!_isAttacking) return;
+
         float hitSweepLength = (_hitSweepEndPoint.position - _hitSweepStartPoint.position).magnitude;
         float segmentLength = _hitSweepLength / _hitSweepCasts;
         Vector3 hitSweepStepVector = (segmentLength + segmentLength / _hitSweepCasts) * PointVectorTo(_hitSweepStartPoint.position,
@@ -391,16 +394,15 @@ public class PlayerMeleeController : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Applies damage and knockback to a given GameObject on any frame this method is called.
+    ///     Applies damage and knockback to a given Enemy on any frame this method is called.
     ///     The Enemy script should be checked for nullness before calling this method.
     ///   </para>
     /// </summary>
-    /// <param name="currObject"> The provided GameObject. </param>
-    /// <param name="enemyScript"> The object's Enemy script. </param>
-    private void ApplyDamageEffects(GameObject currObject, Enemy enemyScript)
+    /// <param name="enemyScript"> The Enemy script. </param>
+    private void ApplyDamageEffects(Enemy enemyScript)
     {
         // Apply damage.
-        IDamageable damageable = enemyScript.GetComponentInParent<IDamageable>();
+        IDamageable damageable = enemyScript.GetComponent<IDamageable>();
         if (damageable != null && !damageable.IsDead)
         {
             damageable.TakeDamage(MeleeDamage);
@@ -409,14 +411,14 @@ public class PlayerMeleeController : MonoBehaviour
         }
 
         // Apply flash effect.
-        TargetFlash targetFlash = enemyScript.GetComponentInParent<TargetFlash>();
+        TargetFlash targetFlash = enemyScript.GetComponent<TargetFlash>();
         if (targetFlash != null)
         {
             targetFlash.Flash();
         }
 
         // Apply knockback.
-        AgentKnockBack enemyKbScript = currObject.GetComponent<AgentKnockBack>();
+        AgentKnockBack enemyKbScript = enemyScript.GetComponent<AgentKnockBack>();
         if (enemyKbScript != null)
         {
             Vector3 impulseDirection = (enemyScript.transform.position - transform.position).normalized;

@@ -21,8 +21,10 @@ public class BaseStats : ScriptableObject
     [Space]
 
     [Header("Shockwave Parameters")]
-    public float slamDamage = 2;
-    public float slamRadius = 10;
+    public float shockwaveDamage = 2;
+    public float shockwaveRadius = 10;
+    public float shockwaveKnockback;
+    public float shockwaveCooldown;
 
     [Space]
 

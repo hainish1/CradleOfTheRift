@@ -80,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private float _groundedCastJumpPauseDuration;
     [SerializeField]
-    [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private LayerMask _groundedLayerMasks;
+    [Tooltip("Layers that will be treated as ground.")] private LayerMask _groundedLayerMasks;
     private float _currHoverHeight;
     public bool IsGrounded { get; private set; }
     private float _groundedCastRadius;
@@ -162,7 +162,7 @@ public class PlayerMovement : MonoBehaviour
         _playerActions = _playerInput.Player;
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
         _moveActions = _playerActions.Move;
         _dashActions = _playerActions.Dash;
@@ -181,7 +181,7 @@ public class PlayerMovement : MonoBehaviour
         _flightActions.started += FlightInputActionStarted;
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
         _moveActions.Disable();
         _dashActions.Disable();
