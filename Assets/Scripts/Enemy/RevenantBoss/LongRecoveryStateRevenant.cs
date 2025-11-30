@@ -21,6 +21,7 @@ public class LongRecoveryStateRevenant : EnemyState
     {
         endTime = Time.time + bossRange.longRecoveryTime; // set
         if (enemy.agent != null) enemy.agent.isStopped = false;
+        bossRange.RecoveryBarrage();
     }
 
     /// <summary>
@@ -28,6 +29,8 @@ public class LongRecoveryStateRevenant : EnemyState
     /// </summary>
     public override void Update()
     {
+        // Randomly shoot out arcing projectiles that leave behind delayed AOE explosions in a 360 degree pattern
+
         if (Time.time >= endTime)
         {
             if (PlayerInAggressionRange()) // if the player is still in aggression range

@@ -32,6 +32,9 @@ public class PlayerInventory : MonoBehaviour
     private HomingProjectileEffect homingProjectilesEffect;
     private ExplosiveProjectiles explosiveProjectilesEffect;
     private ChainLightning chainLightningEffect;
+    private BounceProjectiles bounceProjectilesEffect;
+    private DelayedProjectiles delayedProjectilesEffect;
+    private DashDamage dashDamageEffect;
 
     // if I have time limited effects that need use of Updates, I will keep em here
     private readonly List<IDisposable> tickingEffects = new();
@@ -62,6 +65,9 @@ public class PlayerInventory : MonoBehaviour
         dotOnHitEffect?.Update(dt);
         explosiveProjectilesEffect?.Update(dt);
         chainLightningEffect?.Update(dt);
+        bounceProjectilesEffect?.Update(dt);
+        delayedProjectilesEffect?.Update(dt);
+        dashDamageEffect?.Update(dt);
         //homingProjectilesEffect?.Update(dt);
         // more runtime effects would be updated here ig
     }
@@ -93,7 +99,7 @@ public class PlayerInventory : MonoBehaviour
             ApplyEffects(itemData, stack, stacksAdded: 1);
 
             OnItemStackChanged?.Invoke(itemData, stack);
-            Debug.Log($"Stacked item : {itemData.itemName} : {stack.count}");
+            Debug.Log($"Stacked item : {itemData.itemName} : Count: {stack.count}");
         }
         else
         {
@@ -222,6 +228,15 @@ public class PlayerInventory : MonoBehaviour
                     break;
                 case ItemEffectKind.ChainLightning:
                     EnsureChainLightning(effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.BounceProjectiles:
+                    EnsureBounceProjectiles(effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.DelayedProjectiles:
+                    EnsureDelayedProjectiles(effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.DashDamage:
+                    EnsureDashDamage(effect, initialStacks: stacksAdded);
                     break;
             }
         }
@@ -381,6 +396,81 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+    private void EnsureBounceProjectiles(EffectSpec effect, int initialStacks)
+    {
+        if (bounceProjectilesEffect == null)
+        {
+            bounceProjectilesEffect = new BounceProjectiles(
+                owner: playerEntity,
+                bounceRange: effect.bounceRange,
+                maxBounceCount: effect.maxBounceCount,
+                damageMultiplierPerBounce: effect.damageMultiplierPerBounce,
+                initialStacks: initialStacks,
+                durationSec: effect.duration,
+                bounceVFX: effect.bounceVFX
+            );
+            if (effect.duration > 0f) tickingEffects.Add(bounceProjectilesEffect);
+            Debug.Log($"[Effect] Bounce Projectiles created : Stacks{initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                bounceProjectilesEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Bounce Projectiles : Stacks {initialStacks}");
+        }
+    }
+
+    private void EnsureDelayedProjectiles(EffectSpec effect, int initialStacks)
+    {
+        if (delayedProjectilesEffect == null)
+        {
+            delayedProjectilesEffect = new DelayedProjectiles(
+                owner: playerEntity,
+                delayTime: effect.delayedDamageTime,
+                damageMultiplier: effect.delayedDamageMultiplier,
+                initialStacks: initialStacks,
+                durationSec: effect.duration,
+                markVFX: effect.delayedMarkVFX
+            );
+            if (effect.duration > 0f) tickingEffects.Add(delayedProjectilesEffect);
+            Debug.Log($"[Effect] Delayed Projectiles created : Stacks{initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                delayedProjectilesEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Delayed Projectiles : Stacks {initialStacks}");
+        }
+    }
+
+    private void EnsureDashDamage(EffectSpec effect, int initialStacks)
+    {
+        if (dashDamageEffect == null)
+        {
+            dashDamageEffect = new DashDamage(
+                owner: playerEntity,
+                dashDamage: effect.dashDamage,
+                dashDamageRange: effect.dashDamageRange,
+                initialStacks: initialStacks,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(dashDamageEffect);
+            Debug.Log($"[Effect] Dash Damage created : Stacks{initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                dashDamageEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Dash Damage : Stacks {initialStacks}");
+        }
+    }
+
     private void RemoveEffectStacks(ItemEffectKind kind, int stacks)
     {
         if (stacks <= 0) return;
@@ -428,6 +518,24 @@ public class PlayerInventory : MonoBehaviour
                     chainLightningEffect.AddStack(-stacks);
                 }
                 break;
+            case ItemEffectKind.BounceProjectiles:
+                if (bounceProjectilesEffect != null)
+                {
+                    bounceProjectilesEffect.AddStack(-stacks);
+                }
+                break;
+            case ItemEffectKind.DelayedProjectiles:
+                if (delayedProjectilesEffect != null)
+                {
+                    delayedProjectilesEffect.AddStack(-stacks);
+                }
+                break;
+            case ItemEffectKind.DashDamage:
+                if (dashDamageEffect != null)
+                {
+                    dashDamageEffect.AddStack(-stacks);
+                }
+                break;
 
         }
     }
@@ -440,6 +548,9 @@ public class PlayerInventory : MonoBehaviour
         dotOnHitEffect?.Dispose();
         explosiveProjectilesEffect?.Dispose();
         chainLightningEffect?.Dispose();
+        bounceProjectilesEffect?.Dispose();
+        delayedProjectilesEffect?.Dispose();
+        dashDamageEffect?.Dispose();
         //homingProjectilesEffect?.Dispose();
 
         // any other dispose handle

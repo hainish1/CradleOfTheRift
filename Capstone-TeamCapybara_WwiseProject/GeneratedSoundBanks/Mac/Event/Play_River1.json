@@ -1,0 +1,47 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Mac",
+  "BasePlatform": "Mac",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "2332603225",
+    "Type": "Event",
+    "GUID": "{A2A3CACD-0961-4DFF-A1AF-F6D5A5757002}",
+    "Language": "SFX",
+    "Hash": "{AFFAC1F0-8B91-A19C-758B-C9BEB36A929B}",
+    "ObjectPath": "Play_River1",
+    "ShortName": "Play_River1",
+    "Path": "Event/Play_River1.bnk",
+    "Media": [
+     {
+      "Id": "675519189",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "River1.wav",
+      "Path": "Media/675519189.wem",
+      "CachePath": "0F/{0F5B1D37-DE3B-DAB4-D3DC-C0EBEA8903DB}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "2332603225",
+      "Name": "Play_River1",
+      "ObjectPath": "\\Events\\Default Work Unit\\Environment\\River\\Play_River1",
+      "GUID": "{A2A3CACD-0961-4DFF-A1AF-F6D5A5757002}",
+      "MaxAttenuation": "100",
+      "DurationType": "Infinite",
+      "MediaRefs": [
+       {
+        "Id": "675519189"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{965EE40F-493C-D629-4FAF-858139F601BB}"
+ }
+}

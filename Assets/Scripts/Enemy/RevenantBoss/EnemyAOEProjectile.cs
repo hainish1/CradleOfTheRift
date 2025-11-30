@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -13,14 +14,14 @@ public class EnemyAOEProjectile : MonoBehaviour
     [SerializeField] private float gravity = 0f;
 
     [Header("hit")]
-    [SerializeField] private float directDamage = 1;
+    private float directDamage = 1;
     [SerializeField] private float hitForce = 8f;
     [SerializeField] private float knockBackImpulse = 8f;
     [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
 
     [Header("AOE Effect")]
     [SerializeField] private float aoeRadius = 5f;
-    [SerializeField] private float aoeDamage = 1f;
+    private float aoeDamage = 1f;
 
     public GameObject explosionVFX;
 
@@ -83,7 +84,7 @@ public class EnemyAOEProjectile : MonoBehaviour
         // spawn AOE effect on collision
         SpawnAOEEffect();
         CreateExplosionVFX();
-        PlayExplosionSound();
+        //PlayExplosionSound();
 
         // check if collided with enemy and if yes then damage it
         var pm = collision.collider.GetComponentInParent<PlayerMovement>();
@@ -113,10 +114,7 @@ public class EnemyAOEProjectile : MonoBehaviour
             damageable.TakeDamage(this.directDamage);
         }
 
-
-        // plkace to add impact effects later
-
-        Destroy(gameObject); // its done its job now
+        Destroy(gameObject);
     }
 
     /// <summary>
@@ -124,16 +122,18 @@ public class EnemyAOEProjectile : MonoBehaviour
     void SpawnAOEEffect()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, aoeRadius, hitMask);
+        HashSet<IDamageable> damagedTargets = new HashSet<IDamageable>();
         foreach (var col in hits)
         {
             var dmg = col.GetComponentInParent<IDamageable>();
-            if (dmg != null && !dmg.IsDead)
+            if (dmg != null && !dmg.IsDead && !damagedTargets.Contains(dmg))
             {
                 var pm = col.GetComponentInParent<PlayerMovement>();
                 if (pm != null)
                 {
                     dmg.TakeDamage(aoeDamage);
 
+                    damagedTargets.Add(dmg);
                     Debug.Log(aoeDamage + " AOE Damage dealt to " + dmg.ToString() + " by " + this.ToString());
                 }
             }
@@ -151,14 +151,14 @@ public class EnemyAOEProjectile : MonoBehaviour
         Destroy(newFx, 1); // destroy after one second
     }
 
-    public void PlayExplosionSound()
-    {
-        if (audioSource != null && explosionSound != null)
-        {
-            audioSource.Stop();
-            audioSource.PlayOneShot(explosionSound);
-        }
-    }
+    // public void PlayExplosionSound()
+    // {
+    //     if (audioSource != null && explosionSound != null)
+    //     {
+    //         audioSource.Stop();
+    //         audioSource.PlayOneShot(explosionSound);
+    //     }
+    // }
 
     void OnDrawGizmos()
     {

@@ -15,8 +15,9 @@ MonoBehaviour:
   meleeDamage: 10
   projectileDamage: 20
   attackSpeed: 1
+  projectileFireRate: 1
   fireCharges: 3
-  fireChargeCooldown: 0.7
+  fireChargeCooldown: 1
   projectileSpread: 0.5
   enableHomingProjectiles: 0
   slamDamage: 15
@@ -38,3 +39,4 @@ MonoBehaviour:
   flightMaxEnergy: 100
   flightRegenerationRate: 30
   flightDepletionRate: 20
+  characterSize: 1

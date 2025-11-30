@@ -102,8 +102,23 @@ public class PlayerMeleeController : MonoBehaviour
         _comboTimer = GetSecondsUpperMargin();
     }
 
+    public void RefreshAttackSpeed()
+    {
+        float current = _playerEntity.Stats.AttackSpeed;
+        _currentCooldown = current;
+
+        float speedMult = Mathf.Clamp(1f / current, 0.1f, 1000f);
+
+        _weaponAnim.SetFloat(HashSpeedMultiplier, speedMult);
+
+        _lastAttackSpeedStat = current;
+        Debug.Log("Anim Speed Mult = " + _weaponAnim.GetFloat(HashSpeedMultiplier));
+    }
+
     void Update()
     {
+        
+
         // Align weapon with camera direction.
         _weaponHolder.transform.rotation = Quaternion.Euler(_playerCamera.rotation.eulerAngles.x, _playerCamera.rotation.eulerAngles.y, 0);
 
