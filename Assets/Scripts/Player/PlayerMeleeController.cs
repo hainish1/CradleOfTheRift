@@ -1,3 +1,15 @@
+// <summary>
+//   <authors>
+//     Samuel Rigby, Hainish Acharya
+//   </authors>
+//   <para>
+//     Written by Samuel Rigby for GAMES 4500, University of Utah, November 2025.
+//     Contributed to by Hainish Acharya for GAMES 4500, University of Utah, November 2025.
+//          -Added Enemy script implementation for damage, knockback and flash effect
+//           in the ApplyDamageEffects method.
+//   </para>
+// </summary>
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +24,7 @@ public class PlayerMeleeController : MonoBehaviour
     // Weapon Parameters
 
     [Header("Weapon Parameters")] [Space]
+    [SerializeField] private GameObject _weaponModel;
     [SerializeField] private Transform _weaponHolder;
     [SerializeField] private Transform _playerCamera;
     private Animator _weaponAnim;
@@ -32,6 +45,7 @@ public class PlayerMeleeController : MonoBehaviour
     [SerializeField] private Transform _hitSweepStartPoint;
     [SerializeField] private Transform _hitSweepEndPoint;
     [SerializeField] private int _hitSweepCasts;
+    [SerializeField] private float _castRadius;
     [SerializeField] private LayerMask _hitLayerMasks;
     private float _hitSweepLength;
     private Vector3 _hitSweepStepVector;
@@ -44,10 +58,10 @@ public class PlayerMeleeController : MonoBehaviour
     // Attack Parameters
 
     private float MeleeDamage => _playerEntity.Stats.MeleeDamage;
+    private float AttackCooldown => FindLargestTimeCooldown();
     [Header("Attack Parameters")] [Space]
     [SerializeField] private float _comboInputSecondsMargin;
     [SerializeField] private float knockbackForce;
-    private float _attackCooldown;
     private float _currAttackDuration;
     private bool _attackInputPending;
     private bool _isAttacking;
@@ -79,11 +93,12 @@ public class PlayerMeleeController : MonoBehaviour
     {
         if (_playerEntity == null) return;
 
+        // Weapon Parameters
+        _weaponModel.SetActive(false);
+
         // Animation Parameters
         _attackDurations = new float[3];
-        _attackDurations[0] = _attack0.length;
-        _attackDurations[1] = _attack1.length;
-        _attackDurations[2] = _attack2.length;
+        RecalculateAttackSpeed();
 
         // Hit Sweep Parameters
         AlignHitSweep();
@@ -93,7 +108,6 @@ public class PlayerMeleeController : MonoBehaviour
         _objectsHitThisSweep = new RaycastHit[32];
 
         // Attack Parameters
-        _attackCooldown = FindLargestTime(); // TODO: Make melee attack speed property and change this to it.
         _currAttackDuration = _attackDurations[0];
         _attackInputPending = false;
         _isAttacking = false;
@@ -102,22 +116,9 @@ public class PlayerMeleeController : MonoBehaviour
         _comboTimer = GetSecondsUpperMargin();
     }
 
-    public void RefreshAttackSpeed()
-    {
-        float current = _playerEntity.Stats.AttackSpeed;
-        _currentCooldown = current;
-
-        float speedMult = Mathf.Clamp(1f / current, 0.1f, 1000f);
-
-        _weaponAnim.SetFloat(HashSpeedMultiplier, speedMult);
-
-        _lastAttackSpeedStat = current;
-        Debug.Log("Anim Speed Mult = " + _weaponAnim.GetFloat(HashSpeedMultiplier));
-    }
-
     void Update()
     {
-        
+        RecalculateAttackSpeed();
 
         // Align weapon with camera direction.
         _weaponHolder.transform.rotation = Quaternion.Euler(_playerCamera.rotation.eulerAngles.x, _playerCamera.rotation.eulerAngles.y, 0);
@@ -149,6 +150,34 @@ public class PlayerMeleeController : MonoBehaviour
             _tempHitSweepArrayInitialized = false;
             _objectsHitThisAttack.Clear();
         }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Recalculates the attack durations and animation speed multiplier on any frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void RecalculateAttackSpeed()
+    {
+        float currAttackSpeed = _playerEntity.Stats.MeleeAttackSpeed;
+        float attackSpeedMultiplier = Mathf.Clamp(1 / currAttackSpeed, 1e-3f, float.MaxValue);
+        _attackDurations[0] = _attack0.length * attackSpeedMultiplier;
+        _attackDurations[1] = _attack1.length * attackSpeedMultiplier;
+        _attackDurations[2] = _attack2.length * attackSpeedMultiplier;
+        _weaponAnim.SetFloat("AttackSpeedMultiplier", 1 / attackSpeedMultiplier);
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Finds the largest time value out of the attack cooldown and the combo attack durations and returns it.
+    ///     To avoid unexpected issues, the attack cooldown should always be set to a larger value than the upper
+    ///     time margin of the longest attack duration.
+    ///   </para>
+    /// </summary>
+    /// <returns> The largest time value. </returns>
+    private float FindLargestTimeCooldown()
+    {
+        return Mathf.Max(Mathf.Max(Mathf.Max(_attackDurations[0], _attackDurations[1]), _attackDurations[2]), _playerEntity.Stats.MeleeAttackRate);
     }
 
     /// <summary>
@@ -189,17 +218,15 @@ public class PlayerMeleeController : MonoBehaviour
         _currAttackDuration = _attackDurations[_currComboCount - 1];
         if (_currComboCount < 3)
         {
-            Debug.Log($"Reached case 1: {_currComboCount}");
             _comboTimer = 0;
             StartCoroutine(DelayAttack(GetSecondsLowerMargin()));
         }
         else
         {
-            Debug.Log($"Reached case 2: {_currComboCount}");
             _comboTimer = GetSecondsUpperMargin();
             _currComboCount = 0;
             _currAttackDuration = _attackDurations[_currComboCount];
-            StartCoroutine(DelayAttack(_attackCooldown));
+            StartCoroutine(DelayAttack(AttackCooldown));
         }
     }
 
@@ -225,7 +252,7 @@ public class PlayerMeleeController : MonoBehaviour
                 if (timer > GetSecondsUpperMargin() && !_attackInputPending)
                 {
                     _currComboCount = 0;
-                    yield return new WaitForSeconds(_attackCooldown - GetSecondsUpperMargin());
+                    yield return new WaitForSeconds(AttackCooldown - GetSecondsUpperMargin());
                     CanAttack = true;
                     break;
                 }
@@ -257,6 +284,8 @@ public class PlayerMeleeController : MonoBehaviour
     /// </summary>
     private void ExecuteHitRegistration()
     {
+        if (_currComboCount == 1 && _objectsHitThisAttack.Count == 1) return; // Skip registration if thrust attack damaged something.
+        
         // Initialize first hit sweep points of the attack.
         if (!_tempHitSweepArrayInitialized)
         {
@@ -279,7 +308,7 @@ public class PlayerMeleeController : MonoBehaviour
 
         for (int i = 0; i < _hitSweepCasts; i++)
         {
-            IncrementHitSweepTemp(i);
+            IncrementHitSweepPointTemp(i);
         }
     }
 
@@ -299,50 +328,99 @@ public class PlayerMeleeController : MonoBehaviour
             Vector3 endPoint = _hitSweepPointTemp;
 
             // Record all valid objects that were hit.
-            _objectsHitThisSweep = Physics.RaycastAll(startPoint,
-                                                      (endPoint - startPoint).normalized,
-                                                      (endPoint - startPoint).magnitude,
-                                                      _hitLayerMasks,
-                                                      QueryTriggerInteraction.Ignore);
-            //Debug.DrawRay(startPoint, endPoint - startPoint, Color.blue, 2);
+            _objectsHitThisSweep = Physics.SphereCastAll(startPoint,
+                                                         _castRadius,
+                                                         (endPoint - startPoint).normalized,
+                                                         (endPoint - startPoint).magnitude,
+                                                         _hitLayerMasks,
+                                                         QueryTriggerInteraction.Ignore);
+            Debug.DrawRay(startPoint, endPoint - startPoint, Color.blue, 2);
 
-            // For all valid objects that were hit, check if damage has already been applied to them.
-            for (int j = 0; j < _objectsHitThisSweep.Length; j++)
+            // Ensure the initial thrust attack can only damage a single enemy.
+            if (_currComboCount == 1 && _objectsHitThisSweep.Length > 1)
             {
-                var currObject = _objectsHitThisSweep[j].collider.gameObject;
-                if (_objectsHitThisAttack.Contains(currObject)) continue; // Skip this object if damage was already applied.
-
-                var enemyScript = currObject.GetComponent<Enemy>();
-                if (enemyScript == null) continue; // <------------------------------ TODO: Make it so non-enemy objects can be damaged.
-
-                // Apply knockback.
-                var enemyKbScript = currObject.GetComponent<AgentKnockBack>();
-                if (enemyKbScript != null)
+                // Find the first object hit that has an Enemy script.
+                for (int j = 0; j < _objectsHitThisSweep.Length; j++)
                 {
-                    Vector3 impulseDirection = (enemyScript.transform.position - transform.position).normalized;
-                    enemyKbScript.ApplyImpulse(knockbackForce * impulseDirection);
-                }
-                
-                // Apply flash effect.
-                var targetFlash = enemyScript.GetComponentInParent<TargetFlash>();
-                if (targetFlash != null)
-                {
-                    targetFlash.Flash();
-                }
+                    GameObject currObject = _objectsHitThisSweep[j].collider.gameObject;
+                    Enemy enemyScript = currObject.GetComponent<Enemy>();
 
-                // Apply damage.
-                var damageable = enemyScript.GetComponentInParent<IDamageable>();
-                if (damageable != null && !damageable.IsDead)
-                {
-                    damageable.TakeDamage(MeleeDamage);
-                    CombatEvents.ReportDamage(_playerEntity, enemyScript, MeleeDamage);
-                    Debug.Log($"Melee: {MeleeDamage} damage to {enemyScript.name}");
-                }
+                    if (enemyScript == null) continue;
 
-                _objectsHitThisAttack.Add(currObject);
+                    ApplyDamageEffects(currObject, enemyScript);
+                    _objectsHitThisAttack.Add(currObject);
+                    return;
+                }
+            }
+            else if (_currComboCount != 1 && _objectsHitThisSweep.Length > 0) // Other two attacks have area damage.
+            {
+                // For all valid objects that were hit, apply damage to them only if they haven't already received it.
+                for (int j = 0; j < _objectsHitThisSweep.Length; j++)
+                {
+                    GameObject currObject = _objectsHitThisSweep[j].collider.gameObject;
+                    if (_objectsHitThisAttack.Contains(currObject)) continue; // Skip this object if damage was already applied.
+
+                    Enemy enemyScript = currObject.GetComponent<Enemy>();
+                    if (enemyScript == null) continue; // <------------------------------ TODO: Make it so non-enemy objects can be damaged.
+
+                    ApplyDamageEffects(currObject, enemyScript);
+
+                    _objectsHitThisAttack.Add(currObject);
+                }
             }
 
-            IncrementHitSweepTemp(i);
+            IncrementHitSweepPointTemp(i);
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        float hitSweepLength = (_hitSweepEndPoint.position - _hitSweepStartPoint.position).magnitude;
+        float segmentLength = _hitSweepLength / _hitSweepCasts;
+        Vector3 hitSweepStepVector = (segmentLength + segmentLength / _hitSweepCasts) * PointVectorTo(_hitSweepStartPoint.position,
+                                                                                                      _hitSweepEndPoint.position);
+        Vector3 hitSweepPointTemp = _hitSweepStartPoint.position;
+
+        for (int i = 0; i < _hitSweepCasts; i++)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(hitSweepPointTemp, _castRadius);
+            hitSweepPointTemp += hitSweepStepVector;
+        }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Applies damage and knockback to a given GameObject on any frame this method is called.
+    ///     The Enemy script should be checked for nullness before calling this method.
+    ///   </para>
+    /// </summary>
+    /// <param name="currObject"> The provided GameObject. </param>
+    /// <param name="enemyScript"> The object's Enemy script. </param>
+    private void ApplyDamageEffects(GameObject currObject, Enemy enemyScript)
+    {
+        // Apply damage.
+        IDamageable damageable = enemyScript.GetComponentInParent<IDamageable>();
+        if (damageable != null && !damageable.IsDead)
+        {
+            damageable.TakeDamage(MeleeDamage);
+            CombatEvents.ReportDamage(_playerEntity, enemyScript, MeleeDamage);
+            Debug.Log($"Melee: {MeleeDamage} damage to {enemyScript.name}");
+        }
+
+        // Apply flash effect.
+        TargetFlash targetFlash = enemyScript.GetComponentInParent<TargetFlash>();
+        if (targetFlash != null)
+        {
+            targetFlash.Flash();
+        }
+
+        // Apply knockback.
+        AgentKnockBack enemyKbScript = currObject.GetComponent<AgentKnockBack>();
+        if (enemyKbScript != null)
+        {
+            Vector3 impulseDirection = (enemyScript.transform.position - transform.position).normalized;
+            enemyKbScript.ApplyImpulse(knockbackForce * impulseDirection);
         }
     }
 
@@ -367,8 +445,9 @@ public class PlayerMeleeController : MonoBehaviour
     private void AlignHitSweep()
     {
         _hitSweepLength = (_hitSweepEndPoint.position - _hitSweepStartPoint.position).magnitude;
-        _hitSweepStepVector = (_hitSweepLength / _hitSweepCasts) * PointVectorTo(_hitSweepStartPoint.position,
-                                                                                  _hitSweepEndPoint.position);
+        float segmentLength = _hitSweepLength / _hitSweepCasts;
+        _hitSweepStepVector = (segmentLength + segmentLength / _hitSweepCasts) * PointVectorTo(_hitSweepStartPoint.position,
+                                                                                               _hitSweepEndPoint.position);
         _hitSweepPointTemp = _hitSweepStartPoint.position;
     }
 
@@ -379,23 +458,10 @@ public class PlayerMeleeController : MonoBehaviour
     ///   </para>
     /// </summary>
     /// <param name="index"> Index of the temp point. </param>
-    private void IncrementHitSweepTemp(int index)
+    private void IncrementHitSweepPointTemp(int index)
     {
         _prevHitSweepPointsTemp[index] = _hitSweepPointTemp;
         _hitSweepPointTemp += _hitSweepStepVector;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Finds the largest time value out of the attack cooldown and the combo attack durations and returns it.
-    ///     To avoid unexpected issues, the attack cooldown should always be set to a larger value than the upper
-    ///     time margin of the longest attack duration.
-    ///   </para>
-    /// </summary>
-    /// <returns> The largest time value. </returns>
-    private float FindLargestTime()
-    {
-        return Mathf.Max(Mathf.Max(Mathf.Max(_attackDurations[1], _attackDurations[2]), _attackDurations[0]), _playerEntity.Stats.AttackSpeed);
     }
 
     /// <summary>
@@ -406,6 +472,7 @@ public class PlayerMeleeController : MonoBehaviour
     private void OnAttackStart()
     {
         _isAttacking = true;
+        _weaponModel.SetActive(true);
     }
 
     /// <summary>
@@ -416,5 +483,6 @@ public class PlayerMeleeController : MonoBehaviour
     private void OnAttackEnd()
     {
         _isAttacking = false;
+        _weaponModel.SetActive(false);
     }
 }

@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: PlayerBaseStats
   m_EditorClassIdentifier: 
   meleeDamage: 10
+  meleeAttackSpeed: 0.7
+  meleeAttackRate: 0.7
   projectileDamage: 20
-  attackSpeed: 1
   projectileFireRate: 1
   fireCharges: 3
   fireChargeCooldown: 1

@@ -5,10 +5,11 @@ public enum StatType
 {
     // Melee Attack Enums
     MeleeDamage,
+    MeleeAttackSpeed,
+    MeleeAttackRate,
 
     // Ranged Attack Enums
     ProjectileDamage,
-    AttackSpeed,
     ProjectileFireRate,
     FireCharges,
     FireChargeCooldown,
@@ -63,11 +64,13 @@ public class Stats
     
     public float MeleeDamage { get { return FloatStatQuery(StatType.MeleeDamage, baseStats.meleeDamage); } }
 
+    public float MeleeAttackSpeed { get { return FloatStatQuery(StatType.MeleeAttackSpeed, baseStats.meleeAttackSpeed); } }
+
+    public float MeleeAttackRate { get { return FloatStatQuery(StatType.MeleeAttackRate, baseStats.meleeAttackRate); } }
+
     // Ranged Attack Properties
-    
+
     public float ProjectileDamage { get { return FloatStatQuery(StatType.ProjectileDamage, baseStats.projectileDamage); } }
-    
-    public float AttackSpeed { get { return FloatStatQuery(StatType.AttackSpeed, baseStats.attackSpeed); } }
 
     public float ProjectileFireRate { get { return FloatStatQuery(StatType.ProjectileFireRate, baseStats.projectileFireRate); } }
 
@@ -155,8 +158,9 @@ public class Stats
         return type switch
         {
             StatType.MeleeDamage => baseStats.meleeDamage,
+            StatType.MeleeAttackSpeed => baseStats.meleeAttackSpeed,
+            StatType.MeleeAttackRate => baseStats.meleeAttackRate,
             StatType.ProjectileDamage => baseStats.projectileDamage,
-            StatType.AttackSpeed => baseStats.attackSpeed,
             StatType.ProjectileFireRate => baseStats.projectileFireRate,
             StatType.FireCharges => baseStats.fireCharges,
             StatType.FireChargeCooldown => baseStats.fireChargeCooldown,
@@ -186,7 +190,7 @@ public class Stats
 
     public override string ToString()
     {
-        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, AttackSpeed: {AttackSpeed}, FireChargeCooldown: {FireChargeCooldown} ,Projectile Damage: {ProjectileDamage}, Melee Damage: {MeleeDamage}, Slam Damage: {SlamDamage}";
+        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, AttackSpeed: {MeleeAttackSpeed}, FireChargeCooldown: {FireChargeCooldown} ,Projectile Damage: {ProjectileDamage}, Melee Damage: {MeleeDamage}, Slam Damage: {SlamDamage}";
     }
 
     /// <summary>
