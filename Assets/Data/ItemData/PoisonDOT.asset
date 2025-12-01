@@ -30,7 +30,7 @@ MonoBehaviour:
     stompBounceForce: 0
     fallDamageBonusPerMeter: 0
     fallDamageBonusPerStack: 0
-    dotDamagePerTick: 2
+    dotDamagePerTick: 4
     dotTickInterval: 1
     dotDuration: 4
     dotDamagePerStack: 2
@@ -39,6 +39,23 @@ MonoBehaviour:
     dotApplyImmediately: 1
     numberOfProjectiles: 0
     projectileDamageMultiplier: 0
+    explosiveAoeRadius: 3
+    explosiveAoeDamageMultiplier: 0.5
+    explosiveMaxRange: 0
+    explosiveVFX: {fileID: 0}
+    chainDamagePercent: 0.5
+    maxChainCount: 3
+    chainRange: 8
+    chainLightningVFX: {fileID: 0}
+    bounceRange: 10
+    maxBounceCount: 3
+    damageMultiplierPerBounce: 0.8
+    bounceVFX: {fileID: 0}
+    delayedDamageTime: 2
+    delayedDamageMultiplier: 1
+    delayedMarkVFX: {fileID: 0}
+    dashDamage: 10
+    dashDamageRange: 5
   statType: 0
   operatorType: 0
   value: 0
