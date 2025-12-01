@@ -5,6 +5,9 @@ using UnityEngine.AI;
 
 public class EnemyExploding : Enemy
 {
+    [Header("Chase Speed")]
+    [SerializeField] public float chaseSpeed = 10f;
+    [Space]
     [Header("Explosion Settings")]
     public float explosionTimer = 3f;
     public float explosionRadius = 3.5f;
@@ -23,6 +26,10 @@ public class EnemyExploding : Enemy
     public override void Start()
     {
         base.Start();
+        if(agent != null)
+        {
+            agent.speed = chaseSpeed;
+        }
         rb = GetComponent<Rigidbody>();
         chase = new ChaseState_ExplodingEnemy(this, stateMachine);
         explode = new ExplodeState_ExplodingEnemy(this, stateMachine);
