@@ -5,10 +5,11 @@ public enum StatType
 {
     // Melee Attack Enums
     MeleeDamage,
+    MeleeAttackSpeed,
+    MeleeAttackRate,
 
     // Ranged Attack Enums
     ProjectileDamage,
-    AttackSpeed,
     ProjectileFireRate,
     FireCharges,
     FireChargeCooldown,
@@ -16,8 +17,10 @@ public enum StatType
     HomingProjectiles,
 
     // Shockwave Enums
-    SlamDamage,
-    SlamRadius,
+    ShockwaveDamage,
+    ShockwaveRadius,
+    ShockwaveKnockback,
+    ShockwaveCooldown,
 
     // Health Enums
     Health,
@@ -63,11 +66,13 @@ public class Stats
     
     public float MeleeDamage { get { return FloatStatQuery(StatType.MeleeDamage, baseStats.meleeDamage); } }
 
+    public float MeleeAttackSpeed { get { return FloatStatQuery(StatType.MeleeAttackSpeed, baseStats.meleeAttackSpeed); } }
+
+    public float MeleeAttackRate { get { return FloatStatQuery(StatType.MeleeAttackRate, baseStats.meleeAttackRate); } }
+
     // Ranged Attack Properties
-    
+
     public float ProjectileDamage { get { return FloatStatQuery(StatType.ProjectileDamage, baseStats.projectileDamage); } }
-    
-    public float AttackSpeed { get { return FloatStatQuery(StatType.AttackSpeed, baseStats.attackSpeed); } }
 
     public float ProjectileFireRate { get { return FloatStatQuery(StatType.ProjectileFireRate, baseStats.projectileFireRate); } }
 
@@ -80,9 +85,14 @@ public class Stats
     public int HomingProjectiles { get { return IntStatQuery(StatType.HomingProjectiles, baseStats.enableHomingProjectiles); } }
 
     // Shockwave Properties
-    public float SlamDamage { get { return FloatStatQuery(StatType.SlamDamage, baseStats.slamDamage); } }
 
-    public float SlamRadius { get { return FloatStatQuery(StatType.SlamRadius, baseStats.slamRadius); } }
+    public float ShockwaveDamage { get { return FloatStatQuery(StatType.ShockwaveDamage, baseStats.shockwaveDamage); } }
+
+    public float ShockwaveRadius { get { return FloatStatQuery(StatType.ShockwaveRadius, baseStats.shockwaveRadius); } }
+
+    public float ShockwaveKnockback { get { return FloatStatQuery(StatType.ShockwaveKnockback, baseStats.shockwaveKnockback); } }
+
+    public float ShockwaveCooldown { get { return FloatStatQuery(StatType.ShockwaveCooldown, baseStats.shockwaveCooldown); } }
 
     // Health Properties
 
@@ -155,15 +165,18 @@ public class Stats
         return type switch
         {
             StatType.MeleeDamage => baseStats.meleeDamage,
+            StatType.MeleeAttackSpeed => baseStats.meleeAttackSpeed,
+            StatType.MeleeAttackRate => baseStats.meleeAttackRate,
             StatType.ProjectileDamage => baseStats.projectileDamage,
-            StatType.AttackSpeed => baseStats.attackSpeed,
             StatType.ProjectileFireRate => baseStats.projectileFireRate,
             StatType.FireCharges => baseStats.fireCharges,
             StatType.FireChargeCooldown => baseStats.fireChargeCooldown,
             StatType.ProjectileSpread => baseStats.projectileSpread,
             StatType.HomingProjectiles => baseStats.enableHomingProjectiles,
-            StatType.SlamDamage => baseStats.slamDamage,
-            StatType.SlamRadius => baseStats.slamRadius,
+            StatType.ShockwaveDamage => baseStats.shockwaveDamage,
+            StatType.ShockwaveRadius => baseStats.shockwaveRadius,
+            StatType.ShockwaveKnockback => baseStats.shockwaveKnockback,
+            StatType.ShockwaveCooldown => baseStats.shockwaveCooldown,
             StatType.Health => baseStats.health,
             StatType.MoveSpeed => baseStats.moveSpeed,
             StatType.KbDamping => baseStats.kbDamping,
@@ -186,7 +199,7 @@ public class Stats
 
     public override string ToString()
     {
-        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, AttackSpeed: {AttackSpeed}, FireChargeCooldown: {FireChargeCooldown} ,Projectile Damage: {ProjectileDamage}, Melee Damage: {MeleeDamage}, Slam Damage: {SlamDamage}";
+        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, AttackSpeed: {MeleeAttackSpeed}, FireChargeCooldown: {FireChargeCooldown} ,Projectile Damage: {ProjectileDamage}, Melee Damage: {MeleeDamage}, Slam Damage: {ShockwaveDamage}";
     }
 
     /// <summary>

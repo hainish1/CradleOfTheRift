@@ -1,3 +1,12 @@
+// <summary>
+//   <authors>
+//     Samuel Rigby
+//   </authors>
+//   <para>
+//     Written by Samuel Rigby for GAMES 4500, University of Utah, October 2025.
+//   </para>
+// </summary>
+
 using UnityEngine;
 
 public class PlayerGroundCheck : MonoBehaviour

@@ -80,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private float _groundedCastJumpPauseDuration;
     [SerializeField]
-    [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private LayerMask _groundedLayerMasks;
+    [Tooltip("Layers that will be treated as ground.")] private LayerMask _groundedLayerMasks;
     private float _currHoverHeight;
     public bool IsGrounded { get; private set; }
     private float _groundedCastRadius;
@@ -148,6 +148,7 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("Vertical strength of the jump right before flight in units per second.")] private float _flightJumpForce;
     private bool _isFlying;
     private bool _isRegeneratingFlight;
+    public float FlightCooldownRatio { get; private set; }
     private float _currFlightEnergy;
     private float _flightAcceleration;
     private float _flightDeceleration;
@@ -162,7 +163,7 @@ public class PlayerMovement : MonoBehaviour
         _playerActions = _playerInput.Player;
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
         _moveActions = _playerActions.Move;
         _dashActions = _playerActions.Dash;
@@ -181,7 +182,7 @@ public class PlayerMovement : MonoBehaviour
         _flightActions.started += FlightInputActionStarted;
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
         _moveActions.Disable();
         _dashActions.Disable();
@@ -252,6 +253,7 @@ public class PlayerMovement : MonoBehaviour
         _flightDepletionRate = _playerEntity.Stats.FlightDepletionRate;
         _isFlying = false;
         _isRegeneratingFlight = false;
+        FlightCooldownRatio = 1;
         _flightAcceleration = _flightMaxSpeed / _flightAccelerationSeconds;
         _flightDeceleration = _flightMaxSpeed / _flightDecelerationSeconds;
         _currFlightEnergy = _flightMaxEnergy;
@@ -388,6 +390,30 @@ public class PlayerMovement : MonoBehaviour
                         _isRegeneratingDash = false;
                     }
                 }
+            }
+
+            // Check flight speed.
+            if (_flightMaxSpeed != _playerEntity.Stats.FlightMaxSpeed)
+            {
+                _flightMaxSpeed = _playerEntity.Stats.FlightMaxSpeed;
+            }
+
+            // Check flight energy.
+            if (_flightMaxEnergy != _playerEntity.Stats.FlightMaxEnergy)
+            {
+                _flightMaxEnergy = _playerEntity.Stats.FlightMaxEnergy;
+            }
+
+            // Check flight regeneration rate.
+            if (_flightRegenerationRate != _playerEntity.Stats.FlightRegenerationRate)
+            {
+                _flightRegenerationRate = _playerEntity.Stats.FlightRegenerationRate;
+            }
+
+            // Check flight depletion rate.
+            if (_flightDepletionRate != _playerEntity.Stats.FlightDepletionRate)
+            {
+                _flightDepletionRate = _playerEntity.Stats.FlightDepletionRate;
             }
         }
     }
@@ -837,7 +863,6 @@ public class PlayerMovement : MonoBehaviour
         _isRegeneratingDash = true;
 
         float timer = 0;
-
         while (_currDashCharges < DashMaxCharges && _isRegeneratingDash)
         {
             timer += Time.deltaTime;
@@ -1066,8 +1091,8 @@ public class PlayerMovement : MonoBehaviour
             StartCoroutine(FlightRegeneration());
         }
 
-        // Skip calculations if not flying.
-        if (!_isFlying) return;
+        // Skip calculations if not flying or on cooldown.
+        if (!_isFlying || FlightCooldownRatio < 1) return;
 
         float depletionDecrement = Time.deltaTime * _flightDepletionRate;
 
@@ -1155,21 +1180,28 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator FlightRegeneration()
     {
         _isRegeneratingFlight = true;
+        GetFlightCooldownRatio();
 
         while (_currFlightEnergy < _flightMaxEnergy)
         {
-            // Cancel flight energy regeneration if flight was inputted.
-            if (_isFlying) break;
-
             float regenIncrement = Time.deltaTime * _flightRegenerationRate;
             _currFlightEnergy = Mathf.Clamp(_currFlightEnergy + regenIncrement, 0, _flightMaxEnergy);
-
-            if (_currFlightEnergy == _flightMaxEnergy) break;
+            GetFlightCooldownRatio();
 
             yield return null;
         }
 
         _isRegeneratingFlight = false;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Gets the remaining seconds needed before flight energy fully regenerates to max.
+    ///   </para>
+    /// </summary>
+    private void GetFlightCooldownRatio()
+    {
+        FlightCooldownRatio = _currFlightEnergy / _flightMaxEnergy;
     }
 
     /// <summary>
