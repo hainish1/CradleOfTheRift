@@ -28,8 +28,8 @@ public class IdleState_Boss : EnemyState
 
         if(idleTimer >= idleDuration)
         {
-            stateMachine.ChangeState(boss.GetBombState());
-            // stateMachine.ChangeState(boss.GetExploisionState());
+            // stateMachine.ChangeState(boss.GetBombState());
+            stateMachine.ChangeState(boss.GetExploisionState());
             // stateMachine.ChangeState(boss.GetLeapAttackState());
 
             // alrgith now here I am keeping it pretty random, which attack is chosen, but we can like mess with it if we want

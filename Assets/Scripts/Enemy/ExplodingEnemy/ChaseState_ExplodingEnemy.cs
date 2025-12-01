@@ -18,7 +18,7 @@ public class ChaseState_ExplodingEnemy : EnemyState
         if (enemyExploding.agent != null && enemyExploding.agent.isOnNavMesh)
         {
             enemyExploding.agent.isStopped = false; // enab it
-            enemyExploding.agent.speed = enemyExploding.chaseSpeed;
+            
         }
     }
 
