@@ -499,10 +499,10 @@ public class PlayerMovement : MonoBehaviour
         // simply stop recording new movement values instead of completely skipping the MoveCase method.
         Vector3 moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
 
-        ParallelizeMoveDirectionToGround(moveDirectionUnitVector);
+        ParallelizeMoveDirectionToGround(ref moveDirectionUnitVector);
 
         // Accelerate if movement is being inputted and sprint has not been canceled.
-        if (moveDirectionUnitVector != Vector3.zero && _lateralVelocityVector.magnitude <= MoveMaxSpeed)
+        if (_moveActions.ReadValue<Vector2>() != Vector2.zero && _lateralVelocityVector.magnitude <= MoveMaxSpeed)
         {
             MoveAccelerate(moveDirectionUnitVector);
         }
@@ -562,37 +562,43 @@ public class PlayerMovement : MonoBehaviour
     ///   </para>
     /// </summary>
     /// <param name="moveDirectionUnitVector"> World direction the player is moving. </param>
-    private void ParallelizeMoveDirectionToGround(Vector3 moveDirectionUnitVector)
+    private void ParallelizeMoveDirectionToGround(ref Vector3 moveDirectionUnitVector)
     {
+        // Set pitch of moveDirectionUnitVector to that of _lateralVelocityVector only if moving.
+        if (_lateralVelocityVector.magnitude >= MoveMaxSpeed - 1e-3f)
+        {
+            moveDirectionUnitVector = MatchPitchAngle(moveDirectionUnitVector, _lateralVelocityVector);
+        }
+
         // Move the player character parallel to the angle of the current ground plane.
-        if (moveDirectionUnitVector != Vector3.zero)
+        if (_moveActions.ReadValue<Vector2>() != Vector2.zero)
         {
             // Get unit vector parallel to ground plane.
             Vector3 groundPlaneMoveUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundPoint.normal).normalized;
 
-            //Debug.Log($"{IsGrounded} | {_lateralVelocityVector.magnitude >= MoveMaxSpeed - 5f} | {Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) >= (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1} | {moveActions.ReadValue<Vector2>() != _moveInputTemp}.");
+            Debug.Log($"{IsGrounded} | {Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp)} | {(_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1e-3f} | {Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) < (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1e-3f}");
+            //Debug.Log($"{IsGrounded} | {_lateralVelocityVector.magnitude >= MoveMaxSpeed - 5f} | {Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) >= (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1} | {_moveActions.ReadValue<Vector2>() != _moveInputTemp}");
 
             // Reset _lateralVelocityVector pitch if new move input is registered to ground clamp in a new direction faster.
-            if (IsGrounded && Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) < (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1 && _moveActions.ReadValue<Vector2>() == _moveInputTemp)
+            if (IsGrounded && Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) < (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1e-3f
+                && _moveActions.ReadValue<Vector2>() == _moveInputTemp)
             {
-                //Debug.Log("Reached normal case.");
-                // Set pitch of moveDirectionUnitVector to that of _lateralVelocityVector.
-                moveDirectionUnitVector = MatchPitchAngle(moveDirectionUnitVector, _lateralVelocityVector);
-
                 // Rotate pitch of moveDirectionUnitVector towards that of groundPlaneMoveUnitVector by a deltaTime degree.
                 float degreesPerSecond = Time.deltaTime * 360;
                 moveDirectionUnitVector = GetRotationTowards(moveDirectionUnitVector, groundPlaneMoveUnitVector, degreesPerSecond);
             }
             else if (IsGrounded
-                     && _lateralVelocityVector.magnitude >= MoveMaxSpeed - 5f
-                     && Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) >= (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1
+                     && _lateralVelocityVector.magnitude >= MoveMaxSpeed - 1
+                     && Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) >= (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1e-3f
                      && _moveActions.ReadValue<Vector2>() != _moveInputTemp)
             {
                 //Debug.Log("Reached fullspeed case.");
+                moveDirectionUnitVector = groundPlaneMoveUnitVector;
                 _lateralVelocityVector = _lateralVelocityVector.magnitude * groundPlaneMoveUnitVector;
             }
             else if (!IsGrounded)
             {
+                //Debug.Log("Reached not grounded case.");
                 _lateralVelocityVector = _lateralVelocityVector.magnitude * moveDirectionUnitVector;
             }
 
@@ -716,7 +722,6 @@ public class PlayerMovement : MonoBehaviour
     ///   </para>
     /// </summary>
     /// <param name="moveDirectionUnitVector"> The world direction of the most recent move input. </param>
-    /// <param name="aggregateMaxSpeedValue"> The aggregate speed value. </param>
     private void MoveAccelerate(Vector3 moveDirectionUnitVector)
     {
         if (_lateralVelocityVector.magnitude < MoveMaxSpeed)
