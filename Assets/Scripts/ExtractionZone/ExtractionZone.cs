@@ -32,6 +32,9 @@ public class ExtractionZone : MonoBehaviour
     private Transform spawnPoint;
     public Transform GetSpawnPoint => this.spawnPoint;
 
+    private bool isBossDead = false;
+    private BossSpawner bossSpawner;
+
 
 
     private Coroutine beamGrowRoutine;
@@ -40,6 +43,11 @@ public class ExtractionZone : MonoBehaviour
         spawnPoint = transform.Find("BossSpawnPoint");
         if (spawnPoint == null)
             Debug.LogError("SpawnPoint not found!");
+        
+        this.bossSpawner = GetComponent<BossSpawner>();
+        
+        if (bossSpawner != null)
+            this.bossSpawner.BossDied += OnBossDied;
     }
 
 
@@ -88,7 +96,7 @@ public class ExtractionZone : MonoBehaviour
         {
             this.currentCharge = Math.Clamp(this.currentCharge + Time.deltaTime, 0, this.chargeTime);
 
-            if (this.currentCharge == this.chargeTime && !this.hasFinishedExtracting)
+            if (this.currentCharge == this.chargeTime && !this.hasFinishedExtracting && this.isBossDead)
             {
                 this.hasFinishedExtracting = true;
                 PlayerHealth.instance.SetCanTakeDamage(false);
@@ -168,9 +176,21 @@ public class ExtractionZone : MonoBehaviour
     extractionBeam.transform.localPosition = new Vector3(0f, this.beamHeight, 0f);
     }
 
+    private void OnDestroy()
+    {
+        if (this.bossSpawner != null)
+            bossSpawner.BossDied -= OnBossDied;
+    }
+
+
 
     private void OnDisplayEndGame()
     {
         Debug.Log("Spawner received DisplayEndGame event!");
+    }
+
+    private void OnBossDied()
+    {
+        this.isBossDead = true;
     }
 }
