@@ -23,6 +23,13 @@ public class LeapAttackState_Boss : EnemyState
     public override void Enter()
     {
         base.Enter();
+
+        if(boss.firePoint != null)
+            {
+                Vector3 direction = (boss.target ? (boss.target.position + Vector3.up * .5f) - boss.firePoint.position : boss.transform.forward).normalized;
+                Vector3 spawnPoint = boss.firePoint.position + direction * 0.1f;
+                boss.CreateVFX(boss.flashVFX, spawnPoint, 5);
+            }
         if (enemy.agent != null)
         {
             enemy.agent.isStopped = true;

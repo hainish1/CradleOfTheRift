@@ -13,15 +13,18 @@ MonoBehaviour:
   m_Name: PlayerBaseStats
   m_EditorClassIdentifier: 
   meleeDamage: 10
-  projectileDamage: 20
-  attackSpeed: 1
-  projectileFireRate: 1
-  fireCharges: 3
-  fireChargeCooldown: 1
+  meleeAttackSpeed: 0.7
+  meleeAttackRate: 0.7
+  projectileDamage: 30
+  projectileFireRate: 0.5
+  fireCharges: 1
+  fireChargeCooldown: 4
   projectileSpread: 0.5
   enableHomingProjectiles: 0
-  slamDamage: 15
-  slamRadius: 10
+  shockwaveDamage: 20
+  shockwaveRadius: 20.9
+  shockwaveKnockback: 500
+  shockwaveCooldown: 8
   health: 100
   gravityMultiplier: 4
   gravityAirDrag: 1

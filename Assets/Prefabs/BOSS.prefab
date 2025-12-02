@@ -441,15 +441,17 @@ MonoBehaviour:
   explosionCameraShakeForce: 5
   poofVFX: {fileID: 141433446842962269, guid: 9fe8f8b3288e45a44af36ff8aa04486e, type: 3}
   explosionVFXPrefab: {fileID: 8276740080782940022, guid: a734952d6eee1584694f0543e79543e1, type: 3}
+  shockwaveVFXPrefab: {fileID: 9080140021571130472, guid: 82066d902ed0dd6488ddfd32eb994801, type: 3}
   hitbox: {fileID: 6458449840784157983}
   hitAppliedThisAttack: 0
-  slamDamage: 2
+  slamDamage: 15
   minRequiredPlayerDistance: 90
   playerTooClose: 15
   knockbackPower: 100
   windupTime: 0.25
   leapDuration: 0.6
   leapHeight: 1.5
+  flashVFX: {fileID: 1429954232896169633, guid: 83036083a4ebcd34f98131bd3cf6f4d2, type: 3}
 --- !u!1 &6286784482263930251
 GameObject:
   m_ObjectHideFlags: 0

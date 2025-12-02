@@ -5,12 +5,13 @@ public class BaseStats : ScriptableObject
 {
     [Header("Melee Attack Parameters")]
     public float meleeDamage = 1;
+    public float meleeAttackSpeed = 5.0f;
+    public float meleeAttackRate = 1;
 
     [Space]
 
     [Header("Ranged Attack Parameters")]
     public float projectileDamage = 1;
-    public float attackSpeed = 5.0f; // attacks per second
     public float projectileFireRate = 1; 
     public int fireCharges;
     public float fireChargeCooldown;
@@ -20,8 +21,10 @@ public class BaseStats : ScriptableObject
     [Space]
 
     [Header("Shockwave Parameters")]
-    public float slamDamage = 2;
-    public float slamRadius = 10;
+    public float shockwaveDamage = 2;
+    public float shockwaveRadius = 10;
+    public float shockwaveKnockback;
+    public float shockwaveCooldown;
 
     [Space]
 

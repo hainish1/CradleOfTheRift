@@ -33,7 +33,7 @@ public class PlayerGroundSlam : MonoBehaviour
     private bool canDoSlam => !controller.isGrounded && HeightAboveGroundSufficient();
 
     private Entity _playerEntity;
-    private float SlamDamage => _playerEntity.Stats.SlamDamage;
+    private float SlamDamage => _playerEntity.Stats.ShockwaveDamage;
     // private float SlamRadius => _playerEntity.Stats.SlamRadius;
     // public float slamRadius = 5f;
 
@@ -49,7 +49,7 @@ public class PlayerGroundSlam : MonoBehaviour
         {
             if (_playerEntity != null)
             {
-                return Mathf.Max(0.01f, _playerEntity.Stats.SlamRadius);
+                return Mathf.Max(0.01f, _playerEntity.Stats.ShockwaveRadius);
             }
             return Mathf.Max(0.01f, previewSlamRadius);
         }
