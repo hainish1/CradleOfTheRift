@@ -447,8 +447,30 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="hit"> The collision point. </param>
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        _groundPointColliding = hit;
+        if (!IsGrounded)
+        {
+            _groundPointColliding = hit;
+        }
     }
+
+    ///// <summary>
+    /////   <para>
+    /////     Applies calculated custom gravity to the player every frame.
+    /////   </para>
+    ///// </summary>
+    //private void GravityConditions()
+    //{
+    //    // Do not apply gravity when on the ground or flying.
+    //    if (IsGrounded || _isFlying) return;
+
+    //    float aggregateGravityValue = Physics.gravity.y * _gravityMultiplier * _currDriftDescentDivisor;
+    //    float accelIncrement = Time.deltaTime * aggregateGravityValue;
+    //    _verticalVelocityVector.y = Mathf.Clamp(_verticalVelocityVector.y + accelIncrement, aggregateGravityValue, float.MaxValue);
+
+    //    ApplyAirDrag(aggregateGravityValue); // Slow descent speed to the strength of gravity.
+
+    //    _characterController.Move(Time.deltaTime * _verticalVelocityVector);
+    //}
 
     /// <summary>
     ///   <para>
@@ -461,6 +483,7 @@ public class PlayerMovement : MonoBehaviour
         if (IsGrounded || _isFlying) return;
 
         float aggregateGravityStrength = Physics.gravity.y * _gravityMultiplier * _currDriftDescentDivisor;
+        Vector3 gravityVelocityVector;
 
         // Do not accelerate if sliding on a steep slope.
         if (_groundPointColliding == null)
@@ -468,10 +491,9 @@ public class PlayerMovement : MonoBehaviour
             float accelIncrement = Time.deltaTime * aggregateGravityStrength;
             _verticalVelocityVector.y = Mathf.Clamp(_verticalVelocityVector.y + accelIncrement, aggregateGravityStrength, float.MaxValue);
             ApplyAirDrag(aggregateGravityStrength); // Slow descent speed to the strength of gravity.
+            gravityVelocityVector = _verticalVelocityVector;
         }
-
-        Vector3 gravityVelocityVector;
-        if (_groundPointColliding != null)
+        else
         {
             // If sliding on a steep slope, ensure gravity is always sliding the player character.
             if (_verticalVelocityVector.y > -1)
@@ -479,15 +501,17 @@ public class PlayerMovement : MonoBehaviour
                 _verticalVelocityVector.y = -1;
             }
 
-            gravityVelocityVector = new Vector3(_groundPointColliding.normal.x, _verticalVelocityVector.y, _groundPointColliding.normal.z);
+            gravityVelocityVector = _verticalVelocityVector.magnitude * new Vector3(_groundPointColliding.normal.x,
+                                                                                    _verticalVelocityVector.y,
+                                                                                    _groundPointColliding.normal.z).normalized;
             _groundPointColliding = null;
         }
-        else
-        {
-            gravityVelocityVector = _verticalVelocityVector;
-        }
-        
+
         _characterController.Move(Time.deltaTime * gravityVelocityVector);
+
+        //Vector3 bottom = GetPlayerCharacterBottom();
+        //Debug.DrawRay(bottom, _verticalVelocityVector, Color.green);
+        //Debug.DrawRay(bottom, gravityVelocityVector, Color.red);
     }
 
     /// <summary>
@@ -588,20 +612,6 @@ public class PlayerMovement : MonoBehaviour
                                  + (cameraPerspectiveForward.normalized * inputDirection.z);
 
         return moveDirection.normalized;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Snaps the move direction of the player character to be parallel with the ground below it.
-    ///   </para>
-    /// </summary>
-    /// <param name="moveDirectionUnitVector"> World direction the player is moving. </param>
-    private void GroundClampSnap(ref Vector3 moveDirectionUnitVector)
-    {
-        if (IsGrounded)
-        {
-            moveDirectionUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundPointHovering.normal);
-        }
     }
 
     /// <summary>
@@ -816,6 +826,20 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
+    ///     Snaps the move direction of the player character to be parallel with the ground below it.
+    ///   </para>
+    /// </summary>
+    /// <param name="moveDirectionUnitVector"> World direction the player is moving. </param>
+    private void GroundClampSnap(ref Vector3 moveDirectionUnitVector)
+    {
+        if (IsGrounded)
+        {
+            moveDirectionUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundPointHovering.normal);
+        }
+    }
+
+    /// <summary>
+    ///   <para>
     ///     Coroutine for regenerating dash charges over time.
     ///   </para>
     /// </summary>
@@ -1018,7 +1042,7 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="context"> The flight input context. </param>
     private void FlightInputActionStarted(InputAction.CallbackContext context)
     {
-        if (_currFlightEnergy > 0)
+        if (_currFlightEnergy > 0 && !_isRegeneratingFlight)
         {
             // Toggle flight.
             if (_isFlying)
@@ -1047,14 +1071,8 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void FlightConditions()
     {
-        // Only initialize regeneration routine if did fly, not currently flying and not already regenerating.
-        if (_currFlightEnergy < _flightMaxEnergy && !_isFlying && !_isRegeneratingFlight)
-        {
-            StartCoroutine(FlightRegeneration());
-        }
-
-        // Skip calculations if not flying or on cooldown.
-        if (!_isFlying || FlightCooldownRatio < 1) return;
+        // Skip calculations if not flying or still regenerating.
+        if (!_isFlying || _isRegeneratingFlight) return;
 
         float depletionDecrement = Time.deltaTime * _flightDepletionRate;
 
@@ -1065,6 +1083,7 @@ public class PlayerMovement : MonoBehaviour
         if (_currFlightEnergy == 0)
         {
             DisableFlight();
+            StartCoroutine(FlightRegeneration());
             EnableDrift();
             return;
         }
@@ -1073,6 +1092,7 @@ public class PlayerMovement : MonoBehaviour
         if (IsGrounded)
         {
             DisableFlight();
+            StartCoroutine(FlightRegeneration());
             return;
         }
 
@@ -1142,6 +1162,12 @@ public class PlayerMovement : MonoBehaviour
     /// <returns> IEnumerator object. </returns>
     private IEnumerator FlightRegeneration()
     {
+        // Only begin regenerating when on the ground.
+        while (!IsGrounded)
+        {
+            yield return null;
+        }
+        
         _isRegeneratingFlight = true;
         GetFlightCooldownRatio();
 

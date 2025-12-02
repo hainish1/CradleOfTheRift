@@ -175,6 +175,10 @@ PrefabInstance:
       propertyPath: _cameraTransform
       value: 
       objectReference: {fileID: 1469625039}
+    - target: {fileID: 8678201601994762703, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+      propertyPath: _groundedCastLength
+      value: 1.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3238,13 +3242,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1497538179}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.5075384, w: 0.8616291}
+  m_LocalRotation: {x: 0, y: 0, z: 0.5224985, w: 0.8526402}
   m_LocalPosition: {x: 10, y: 7, z: -13}
   m_LocalScale: {x: 1, y: 1, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 61}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 63}
 --- !u!1 &1532145755
 GameObject:
   m_ObjectHideFlags: 0
