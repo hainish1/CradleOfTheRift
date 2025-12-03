@@ -5,6 +5,7 @@ public class SpawnBombState_Boss : EnemyState
 {
     private EnemyBoss_SS boss;
     private float timer;
+    private int bombsThrown;
 
 
     public SpawnBombState_Boss(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
@@ -15,8 +16,17 @@ public class SpawnBombState_Boss : EnemyState
     public override void Enter()
     {
         base.Enter();
-        
-        if(boss.firePoint != null)
+
+        bombsThrown = 0;
+
+        ThrowBomb();
+
+        timer = boss.bombSpawnInterval;
+    }
+
+    private void ThrowBomb()
+    {
+        if (boss.firePoint != null)
         {
             Vector3 direction = (boss.target ? (boss.target.position + Vector3.up * .5f) - boss.firePoint.position : boss.transform.forward).normalized;
 
@@ -26,7 +36,7 @@ public class SpawnBombState_Boss : EnemyState
             GameObject slimeObj = GameObject.Instantiate(boss.expEnemyPrefab, spawnPoint, rotation);
 
             var arcScript = slimeObj.GetComponent<EnemyExploding>();
-            if(arcScript != null)
+            if (arcScript != null)
             {
                 Vector3 targetPos = boss.firePoint.position + direction * boss.slimeArcDistance - Vector3.up;
                 NavMeshHit hit;
@@ -44,10 +54,7 @@ public class SpawnBombState_Boss : EnemyState
                 arcScript.LaunchWithRigidbody(targetPos, boss.slimeArcDuration);
             }
         }
-
-        timer = boss.bombSpawnInterval;
     }
-
 
     public override void Update()
     {
@@ -55,7 +62,16 @@ public class SpawnBombState_Boss : EnemyState
         timer -= Time.deltaTime;
         if(timer <= 0)
         {
-            stateMachine.ChangeState(boss.GetRecoveryState());
+            bombsThrown++;
+
+            if(bombsThrown >= boss.bombsPerCycle)
+            {
+                stateMachine.ChangeState(boss.GetRecoveryState());
+                return;
+            }
+
+            ThrowBomb();
+            timer = boss.bombSpawnInterval;
         }
     }
 }
