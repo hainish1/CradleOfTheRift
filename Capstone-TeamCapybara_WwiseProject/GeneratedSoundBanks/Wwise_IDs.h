@@ -13,10 +13,27 @@ namespace AK
 {
     namespace EVENTS
     {
+        static const AkUniqueID PLAY_MUSIC = 2932040671U;
         static const AkUniqueID PLAY_RIVER1 = 2332603225U;
         static const AkUniqueID PLAY_RIVER2 = 2332603226U;
         static const AkUniqueID PLAY_SONG_PERCUSSIANORCHESTRA = 920721062U;
     } // namespace EVENTS
+
+    namespace SWITCHES
+    {
+        namespace SWITCH_MUSIC_REGION
+        {
+            static const AkUniqueID GROUP = 275596552U;
+
+            namespace SWITCH
+            {
+                static const AkUniqueID CAVE = 4122393694U;
+                static const AkUniqueID FOREST = 491961918U;
+                static const AkUniqueID TREE = 3322072369U;
+            } // namespace SWITCH
+        } // namespace SWITCH_MUSIC_REGION
+
+    } // namespace SWITCHES
 
     namespace BUSSES
     {

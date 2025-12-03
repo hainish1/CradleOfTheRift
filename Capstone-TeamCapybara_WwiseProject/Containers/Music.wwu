@@ -8,6 +8,9 @@
 						<Reference Name="Conversion">
 							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
 						</Reference>
+						<Reference Name="DefaultSwitchOrState">
+							<ObjectRef Name="Forest" ID="{D3FBA438-6E14-4C2C-9A1A-C1D9A18D4C98}" WorkUnitID="{9C4E3796-92FA-4949-B150-C94DA19B4A65}"/>
+						</Reference>
 						<Reference Name="OutputBus">
 							<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
 						</Reference>
@@ -18,11 +21,6 @@
 					<ChildrenList>
 						<Sound Name="Song_PercussianOrchestra" ID="{ABFB06D3-3D28-4F68-B441-B0B5B9DC7597}" ShortID="1030595448">
 							<PropertyList>
-								<Property Name="Inclusion" Type="bool">
-									<ValueList>
-										<Value>False</Value>
-									</ValueList>
-								</Property>
 								<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
 							</PropertyList>
 							<ReferenceList>

@@ -1,3 +1,11 @@
 Event	ID	Name			Wwise Object Path	Notes
 	920721062	Play_Song_PercussianOrchestra			\Default Work Unit\Play_Song_PercussianOrchestra	
 
+Switch Group	ID	Name			Wwise Object Path	Notes
+	275596552	Switch_Music_Region			\Default Work Unit\Switch_Music_Region	
+
+Switch	ID	Name	Switch Group			Notes
+	491961918	Forest	Switch_Music_Region			
+	3322072369	Tree	Switch_Music_Region			
+	4122393694	Cave	Switch_Music_Region			
+

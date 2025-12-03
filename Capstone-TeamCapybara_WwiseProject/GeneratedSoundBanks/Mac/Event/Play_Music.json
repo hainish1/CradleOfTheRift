@@ -1,0 +1,129 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Mac",
+  "BasePlatform": "Mac",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "2932040671",
+    "Type": "Event",
+    "GUID": "{7350712A-6C2C-4480-8AF3-17F38DC9DCC2}",
+    "Language": "SFX",
+    "Hash": "{FFE6F6F5-7640-6917-CCC4-2E1CB2BD0767}",
+    "ObjectPath": "Play_Music",
+    "ShortName": "Play_Music",
+    "Path": "Event/Play_Music.bnk",
+    "Media": [
+     {
+      "Id": "240217878",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "PercussianOrchestra.wav",
+      "Path": "Media/240217878.wem",
+      "CachePath": "DD/{DD111076-3F59-AFC5-4822-CB0EB781720B}.wem"
+     },
+     {
+      "Id": "729420675",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Icey.wav",
+      "Path": "Media/729420675.wem",
+      "CachePath": "8B/{8B431FE9-CCBE-42DE-C3DD-888DA33BF2F1}.wem"
+     },
+     {
+      "Id": "781041820",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "CaveJam.wav",
+      "Path": "Media/781041820.wem",
+      "CachePath": "1D/{1D127F80-CAE5-6B2C-B125-748EF7205CDE}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "2932040671",
+      "Name": "Play_Music",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_Music",
+      "GUID": "{7350712A-6C2C-4480-8AF3-17F38DC9DCC2}",
+      "DurationType": "Infinite",
+      "SwitchContainers": [
+       {
+        "SwitchValue": {
+         "GroupType": "Switch",
+         "GroupId": "275596552",
+         "Id": "4122393694",
+         "GUID": "{2CB70606-B448-4B05-AA56-3E4994DDC55C}"
+        },
+        "MediaRefs": [
+         {
+          "Id": "781041820"
+         }
+        ]
+       },
+       {
+        "SwitchValue": {
+         "GroupType": "Switch",
+         "GroupId": "275596552",
+         "Id": "491961918",
+         "GUID": "{D3FBA438-6E14-4C2C-9A1A-C1D9A18D4C98}",
+         "Default": "true"
+        },
+        "MediaRefs": [
+         {
+          "Id": "240217878"
+         }
+        ]
+       },
+       {
+        "SwitchValue": {
+         "GroupType": "Switch",
+         "GroupId": "275596552",
+         "Id": "3322072369",
+         "GUID": "{127B34F3-B606-4259-B79F-CE1ED9F5B786}"
+        },
+        "MediaRefs": [
+         {
+          "Id": "729420675"
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "SwitchGroups": [
+     {
+      "Id": "275596552",
+      "Name": "Switch_Music_Region",
+      "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region",
+      "GUID": "{AB43E67E-82B3-4A77-B046-DDFE6F3D3321}",
+      "Switches": [
+       {
+        "Id": "491961918",
+        "Name": "Forest",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region\\Forest",
+        "GUID": "{D3FBA438-6E14-4C2C-9A1A-C1D9A18D4C98}"
+       },
+       {
+        "Id": "3322072369",
+        "Name": "Tree",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region\\Tree",
+        "GUID": "{127B34F3-B606-4259-B79F-CE1ED9F5B786}"
+       },
+       {
+        "Id": "4122393694",
+        "Name": "Cave",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region\\Cave",
+        "GUID": "{2CB70606-B448-4B05-AA56-3E4994DDC55C}"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{7C2287B2-7685-2685-FE05-6C366A93FD9D}"
+ }
+}

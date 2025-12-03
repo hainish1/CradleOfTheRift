@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{26925292-B42B-492C-A49E-8491601813F4}",
     "Language": "SFX",
-    "Hash": "{B4F59CA7-50EB-B9B5-5B34-B7CD71F869AF}",
+    "Hash": "{2D1ED37F-9411-18C0-080B-2DBC11A1A2BA}",
     "ObjectPath": "Play_Song_PercussianOrchestra",
     "ShortName": "Play_Song_PercussianOrchestra",
     "Path": "Event/Play_Song_PercussianOrchestra.bnk",
@@ -38,9 +38,37 @@
        }
       ]
      }
+    ],
+    "SwitchGroups": [
+     {
+      "Id": "275596552",
+      "Name": "Switch_Music_Region",
+      "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region",
+      "GUID": "{AB43E67E-82B3-4A77-B046-DDFE6F3D3321}",
+      "Switches": [
+       {
+        "Id": "491961918",
+        "Name": "Forest",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region\\Forest",
+        "GUID": "{D3FBA438-6E14-4C2C-9A1A-C1D9A18D4C98}"
+       },
+       {
+        "Id": "3322072369",
+        "Name": "Tree",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region\\Tree",
+        "GUID": "{127B34F3-B606-4259-B79F-CE1ED9F5B786}"
+       },
+       {
+        "Id": "4122393694",
+        "Name": "Cave",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region\\Cave",
+        "GUID": "{2CB70606-B448-4B05-AA56-3E4994DDC55C}"
+       }
+      ]
+     }
     ]
    }
   ],
-  "FileHash": "{84121192-58BA-5E75-7684-C3167007D9B1}"
+  "FileHash": "{65AC2CB5-87D6-9B72-762F-6055B3144DBA}"
  }
 }
