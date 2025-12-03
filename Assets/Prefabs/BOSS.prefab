@@ -641,7 +641,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e26cb0109185dc74b8d6bbcc8692268f, type: 2}
+  - {fileID: 2100000, guid: a20afa69e0e67a24ab18f8cadc3fe864, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -740,7 +740,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b7684082c124f45893380d545b25c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  original: {fileID: 2100000, guid: e26cb0109185dc74b8d6bbcc8692268f, type: 2}
+  original: {fileID: 2100000, guid: a20afa69e0e67a24ab18f8cadc3fe864, type: 2}
   flash: {fileID: 2100000, guid: 679327a50d72c694bab0b63b6b2baec1, type: 2}
   flashDuration: 0.1
 --- !u!114 &2190310424032612533
@@ -865,6 +865,7 @@ MonoBehaviour:
   nextAttackAllowed: 1
   expEnemyPrefab: {fileID: 5621828695960796660, guid: 01ca7b173ad714449ae5062cfcbffe9a, type: 3}
   spawnPoints: []
+  bombsPerCycle: 3
   bombSpawnInterval: 0.3
   idleTime: 0.2
   firePoint: {fileID: 1506330798211209176}
@@ -1174,7 +1175,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e26cb0109185dc74b8d6bbcc8692268f, type: 2}
+  - {fileID: 2100000, guid: a20afa69e0e67a24ab18f8cadc3fe864, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
