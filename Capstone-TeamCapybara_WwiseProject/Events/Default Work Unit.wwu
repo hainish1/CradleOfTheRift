@@ -15,6 +15,17 @@
 					</ChildrenList>
 				</Event>
 				<WorkUnit Name="Environment" ID="{3965F864-7315-4D51-BF9F-405BFDDB9631}" PersistMode="Reference"/>
+				<Event Name="Play_Music" ID="{7350712A-6C2C-4480-8AF3-17F38DC9DCC2}">
+					<ChildrenList>
+						<Action Name="" ID="{0D3B7297-8CCF-4787-B9E9-2CA4FD8FB572}" ShortID="471894057">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Music_Regions" ID="{9F10F8CE-5DE1-4F37-8B55-EE3E303306C6}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>
