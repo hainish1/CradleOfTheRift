@@ -154,6 +154,10 @@ public class PlayerMovement : MonoBehaviour
     private float _flightDeceleration;
 
     private bool strafe = false; // Set by AimController.
+    
+    [Header("Audio")]
+    [SerializeField]
+    private AK.Wwise.Event dashSoundEvent;
 
     void Awake()
     {
@@ -834,6 +838,8 @@ public class PlayerMovement : MonoBehaviour
             float dashDuration = DashDistance / DashSpeed;
             StartCoroutine(InitiateDashDuration(dashDuration));
             DashCooldownStarted?.Invoke(dashDuration); // Notify listener to start the dash fade visual effect.
+            // Play the dash audio effect here?
+            dashSoundEvent.Post(gameObject);
         }
     }
 

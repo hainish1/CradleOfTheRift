@@ -1,0 +1,48 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "1408288908",
+    "Type": "Event",
+    "GUID": "{C486BF1C-C3E4-44E7-A646-AF33A7FDB7C8}",
+    "Language": "SFX",
+    "Hash": "{E3752226-45BE-0913-17FD-417E7083F4F4}",
+    "ObjectPath": "Play_player_fire",
+    "ShortName": "Play_player_fire",
+    "Path": "Event/Play_player_fire.bnk",
+    "Media": [
+     {
+      "Id": "653905337",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "player_fire.wav",
+      "Path": "Media/653905337.wem",
+      "CachePath": "72/{72D6FC98-0E76-1300-1383-393766C48FB3}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "1408288908",
+      "Name": "Play_player_fire",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_fire",
+      "GUID": "{C486BF1C-C3E4-44E7-A646-AF33A7FDB7C8}",
+      "DurationType": "OneShot",
+      "DurationMin": "0.5020917",
+      "DurationMax": "1.2651917",
+      "MediaRefs": [
+       {
+        "Id": "653905337"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{68A14625-72A9-8264-D1FF-1C86051B462D}"
+ }
+}

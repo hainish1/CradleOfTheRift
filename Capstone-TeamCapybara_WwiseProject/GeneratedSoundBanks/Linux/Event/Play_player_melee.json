@@ -1,0 +1,48 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "3619611380",
+    "Type": "Event",
+    "GUID": "{A0E4E348-9A60-481D-80A0-A62A6E74E1D3}",
+    "Language": "SFX",
+    "Hash": "{F22472F9-9FE2-574E-5A5C-6908E49EFE33}",
+    "ObjectPath": "Play_player_melee",
+    "ShortName": "Play_player_melee",
+    "Path": "Event/Play_player_melee.bnk",
+    "Media": [
+     {
+      "Id": "634256709",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "player_melee.wav",
+      "Path": "Media/634256709.wem",
+      "CachePath": "36/{36CA500E-8F43-8690-245A-9248FF6506A8}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "3619611380",
+      "Name": "Play_player_melee",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_melee",
+      "GUID": "{A0E4E348-9A60-481D-80A0-A62A6E74E1D3}",
+      "DurationType": "OneShot",
+      "DurationMin": "1.5780962",
+      "DurationMax": "2.5050716",
+      "MediaRefs": [
+       {
+        "Id": "634256709"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{024DE36C-BB05-3EBA-7C0F-DBEEB2FB58FA}"
+ }
+}
