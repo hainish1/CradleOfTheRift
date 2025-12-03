@@ -1,6 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WwiseDocument Type="WorkUnit" ID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}" SchemaVersion="133" RootDocumentID="{08864F24-BF33-4CEF-B914-3138B5E77E57}" ParentDocumentID="{08864F24-BF33-4CEF-B914-3138B5E77E57}">
 	<Containers>
-		<WorkUnit Name="Player" ID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}" OwnerID="{08864F24-BF33-4CEF-B914-3138B5E77E57}" PersistMode="Nested"/>
+		<WorkUnit Name="Player" ID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}" OwnerID="{08864F24-BF33-4CEF-B914-3138B5E77E57}" PersistMode="Nested">
+			<ChildrenList>
+				<Sound Name="magefiresound" ID="{AB18AAB6-B1BA-4D4A-A1E1-9961D0809C74}" ShortID="733803102">
+					<ReferenceList>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="magefiresound" ID="{70233F2D-A0B5-463D-8B58-AEA80EB5986D}">
+							<Language>SFX</Language>
+							<AudioFile>magefiresound.wav</AudioFile>
+							<MediaIDList>
+								<MediaID ID="424276914"/>
+							</MediaIDList>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="magefiresound" ID="{70233F2D-A0B5-463D-8B58-AEA80EB5986D}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
+				<Sound Name="magic_explosion" ID="{23FA0231-DAAC-4825-96AD-725D51A28A82}" ShortID="537924831">
+					<ReferenceList>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="magic_explosion" ID="{690C0168-92AC-4FB7-8A32-B29AD6BF3372}">
+							<Language>SFX</Language>
+							<AudioFile>magic_explosion.wav</AudioFile>
+							<MediaIDList>
+								<MediaID ID="86528835"/>
+							</MediaIDList>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="magic_explosion" ID="{690C0168-92AC-4FB7-8A32-B29AD6BF3372}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
+				<Sound Name="player_dash" ID="{7FBAB5D7-8069-445C-B565-E24D7DF4842E}" ShortID="760540771">
+					<ReferenceList>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="player_dash" ID="{BCAC59D5-31EC-484E-BFB2-DA633CD4C43E}">
+							<Language>SFX</Language>
+							<AudioFile>player_dash.wav</AudioFile>
+							<MediaIDList>
+								<MediaID ID="525294349"/>
+							</MediaIDList>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="player_dash" ID="{BCAC59D5-31EC-484E-BFB2-DA633CD4C43E}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
+				<Sound Name="player_fire" ID="{1888B20C-BBC0-4924-84A6-1C23F5E1FF8D}" ShortID="44946536">
+					<PropertyList>
+						<Property Name="Pitch" Type="int32">
+							<ModifierList>
+								<ModifierInfo>
+									<Modifier Name="" ID="{9A3FD21D-6624-4D5E-B787-F0672BFC8597}">
+										<PropertyList>
+											<Property Name="Enabled" Type="bool" Value="True"/>
+											<Property Name="Max" Type="Real64" Value="800"/>
+											<Property Name="Min" Type="Real64" Value="-800"/>
+										</PropertyList>
+									</Modifier>
+								</ModifierInfo>
+							</ModifierList>
+						</Property>
+					</PropertyList>
+					<ReferenceList>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="player_fire" ID="{EA429086-123D-4BF2-B6AB-51E1041A1473}">
+							<Language>SFX</Language>
+							<AudioFile>player_fire.wav</AudioFile>
+							<MediaIDList>
+								<MediaID ID="653905337"/>
+							</MediaIDList>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="player_fire" ID="{EA429086-123D-4BF2-B6AB-51E1041A1473}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
+				<Sound Name="player_melee" ID="{9543637D-19CD-4664-BCD2-8FD78E9815F3}" ShortID="143564123">
+					<PropertyList>
+						<Property Name="Pitch" Type="int32">
+							<ModifierList>
+								<ModifierInfo>
+									<Modifier Name="" ID="{6EF8F976-55FB-4088-B40D-B284223FCE7B}">
+										<PropertyList>
+											<Property Name="Enabled" Type="bool" Value="True"/>
+											<Property Name="Max" Type="Real64" Value="400"/>
+											<Property Name="Min" Type="Real64" Value="-400"/>
+										</PropertyList>
+									</Modifier>
+								</ModifierInfo>
+							</ModifierList>
+						</Property>
+						<Property Name="Volume" Type="Real64">
+							<ValueList>
+								<Value>-3</Value>
+							</ValueList>
+							<ModifierList>
+								<ModifierInfo>
+									<Modifier Name="" ID="{8D9455DA-7A26-4542-8634-0D14349942AA}">
+										<PropertyList>
+											<Property Name="Enabled" Type="bool" Value="True"/>
+											<Property Name="Max" Type="Real64" Value="3"/>
+											<Property Name="Min" Type="Real64" Value="-3"/>
+										</PropertyList>
+									</Modifier>
+								</ModifierInfo>
+							</ModifierList>
+						</Property>
+					</PropertyList>
+					<ReferenceList>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="player_melee" ID="{43A4EF6C-317A-4C2C-9C81-D6C0DCDAD3EF}">
+							<Language>SFX</Language>
+							<AudioFile>player_melee.wav</AudioFile>
+							<MediaIDList>
+								<MediaID ID="634256709"/>
+							</MediaIDList>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="player_melee" ID="{43A4EF6C-317A-4C2C-9C81-D6C0DCDAD3EF}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
+			</ChildrenList>
+		</WorkUnit>
 	</Containers>
 </WwiseDocument>

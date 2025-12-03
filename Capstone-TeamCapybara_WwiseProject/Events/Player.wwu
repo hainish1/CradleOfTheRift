@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{691DB035-59FA-42BD-8C22-AF773BE39B09}" SchemaVersion="133" RootDocumentID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}" ParentDocumentID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}">
+	<Events>
+		<WorkUnit Name="Player" ID="{691DB035-59FA-42BD-8C22-AF773BE39B09}" OwnerID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}" PersistMode="Nested">
+			<ChildrenList>
+				<Event Name="Play_player_melee" ID="{A0E4E348-9A60-481D-80A0-A62A6E74E1D3}">
+					<ChildrenList>
+						<Action Name="" ID="{77147E79-BB9D-41FC-83CE-21613DF27FC2}" ShortID="875605143">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="player_melee" ID="{9543637D-19CD-4664-BCD2-8FD78E9815F3}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+			</ChildrenList>
+		</WorkUnit>
+	</Events>
+</WwiseDocument>
