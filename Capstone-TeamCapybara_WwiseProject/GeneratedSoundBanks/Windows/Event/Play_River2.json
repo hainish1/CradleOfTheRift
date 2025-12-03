@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{35CD5EF1-903A-4DD6-BE5A-4A7D6B319298}",
     "Language": "SFX",
-    "Hash": "{87A8B1AA-206B-7AAF-AF50-4AE2F891D9F5}",
+    "Hash": "{171CCC18-CE47-8968-91CF-A48B730F19BE}",
     "ObjectPath": "Play_River2",
     "ShortName": "Play_River2",
     "Path": "Event/Play_River2.bnk",
@@ -22,7 +22,7 @@
       "Location": "Loose",
       "ShortName": "River2.wav",
       "Path": "Media/369542994.wem",
-      "CachePath": "4D/{4D7779B0-0241-64C5-7D16-0A342B5461E8}.wem"
+      "CachePath": "E6/{E6444F8F-49E9-47BA-FE72-7CA9C49CA4FD}.wem"
      }
     ],
     "Events": [
@@ -31,8 +31,10 @@
       "Name": "Play_River2",
       "ObjectPath": "\\Events\\Default Work Unit\\Environment\\River\\Play_River2",
       "GUID": "{35CD5EF1-903A-4DD6-BE5A-4A7D6B319298}",
-      "MaxAttenuation": "200",
-      "DurationType": "Infinite",
+      "MaxAttenuation": "100",
+      "DurationType": "OneShot",
+      "DurationMin": "29.580698",
+      "DurationMax": "29.580698",
       "MediaRefs": [
        {
         "Id": "369542994"
@@ -42,6 +44,6 @@
     ]
    }
   ],
-  "FileHash": "{985CF1B1-6770-76C4-ED95-137B156E5670}"
+  "FileHash": "{8CFD962B-4D7E-49EF-FE0D-2A138FEFD8F4}"
  }
 }
