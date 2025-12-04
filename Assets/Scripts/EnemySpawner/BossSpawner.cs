@@ -10,6 +10,8 @@ public class BossSpawner : MonoBehaviour
     private float heightOffset = 5f;
     [SerializeField] private float spawnDelay = 1f;
 
+    private EnemyHealth activeBoss;
+    public event Action BossDied;
 
     private void Awake()
     {
@@ -51,7 +53,22 @@ public class BossSpawner : MonoBehaviour
             }
         }
 
-        Instantiate(randomBoss.prefab, spawnPoint, Quaternion.identity);
+        GameObject boss = Instantiate(randomBoss.prefab, spawnPoint, Quaternion.identity);
+        this.activeBoss = boss.GetComponent<EnemyHealth>();
+        this.activeBoss.EnemyDied += OnBossDied;
+        
+    }
+
+    private void OnBossDied(EnemyHealth deadBoss)
+    {
+        if (this.activeBoss != null)
+        {
+            this.activeBoss.EnemyDied -= OnBossDied;  
+        }
+
+        this.activeBoss = null;
+
+        this.BossDied?.Invoke();
     }
 }
 

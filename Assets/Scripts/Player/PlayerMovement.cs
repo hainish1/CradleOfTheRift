@@ -61,7 +61,6 @@ public class PlayerMovement : MonoBehaviour
     private float _moveAcceleration;
     private float _moveDeceleration;
     private Vector3 _lateralVelocityVector;
-    private Vector3 _groundPlaneMoveVectorTemp;
     private Vector2 _moveInputTemp;
 
     // Hover Parameters
@@ -74,9 +73,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     [Tooltip("How strongly Hover Pull Strength dissipates in units per second.")] private float _hoverDampingStrength;
     [SerializeField]
-    [Tooltip("Sphere casting distance below the player in units.")] private float _groundedCastLength;
+    [Tooltip("Sphere casting distance below the player for hovering in units.")] private float _groundedCastLength;
     [SerializeField]
-    [Tooltip("The maximum degree angle of valid ground surfaces.")] private float _maxGroundAngle;
+    [Tooltip("The maximum degree angle of valid ground surfaces when hovering.")] private float _maxGroundAngle;
     [SerializeField]
     [Tooltip("Seconds that sphere casting is paused after a jump is registered.")] private float _groundedCastJumpPauseDuration;
     [SerializeField]
@@ -85,10 +84,11 @@ public class PlayerMovement : MonoBehaviour
     public bool IsGrounded { get; private set; }
     private float _groundedCastRadius;
     private float _groundedCastPauseTimer;
-    private RaycastHit _groundPoint;
+    private RaycastHit _groundPointHovering;
+    private ControllerColliderHit _groundPointColliding;
 
     // Knockback Parameters
-    
+
     private float _kbDamping;
     private float _kbControlsLockTime;
     private float _kbDashLockTime;
@@ -220,6 +220,7 @@ public class PlayerMovement : MonoBehaviour
         _groundedCastRadius = _playerRadius - 0.1f;
         _groundedCastPauseTimer = 0;
         GetIsGrounded();
+        _groundPointColliding = null;
 
         // KnockBack Parameters
         _kbDamping = _playerEntity.Stats.KbDamping;
@@ -307,7 +308,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void SnapToHoverAfterSlam()
     {
-        float targetY = _groundPoint.point.y + _hoverHeight + _playerHalfHeight;
+        float targetY = _groundPointHovering.point.y + _hoverHeight + _playerHalfHeight;
 
         _characterController.Move(Vector3.up * 0.02f); // tiny upward
 
@@ -424,22 +425,56 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Updates all grounded information on the frame this method is called.
+    ///     Updates all grounded information for hovering on the frame this method is called.
     ///   </para>
     /// </summary>
     private void GetIsGrounded()
     {
         IsGrounded = PlayerGroundCheck.GetIsGrounded(GetPlayerCharacterBottom(),
-                                                     _groundedCastLength,
-                                                     _groundedCastRadius,
-                                                     _maxGroundAngle,
-                                                     _groundedLayerMasks,
-                                                     out RaycastHit hitInfo,
-                                                     _groundedCastPauseTimer);
-        _groundPoint = hitInfo;
+                                                    _groundedCastLength,
+                                                    _groundedCastRadius,
+                                                    _maxGroundAngle,
+                                                    _groundedLayerMasks,
+                                                    out RaycastHit hitInfo,
+                                                    _groundedCastPauseTimer);
+        _groundPointHovering = hitInfo;
 
         //Debug.DrawRay(GetPlayerCharacterBottom(), _groundedCastLength * Vector3.down, Color.red);
     }
+
+    /// <summary>
+    ///   <para>
+    ///     Get the collision point of the player character for when it needs to slide on a slope
+    ///     that is too steep to be treated as ground.
+    ///   </para>
+    /// </summary>
+    /// <param name="hit"> The collision point. </param>
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (!IsGrounded)
+        {
+            _groundPointColliding = hit;
+        }
+    }
+
+    ///// <summary>
+    /////   <para>
+    /////     Applies calculated custom gravity to the player every frame.
+    /////   </para>
+    ///// </summary>
+    //private void GravityConditions()
+    //{
+    //    // Do not apply gravity when on the ground or flying.
+    //    if (IsGrounded || _isFlying) return;
+
+    //    float aggregateGravityValue = Physics.gravity.y * _gravityMultiplier * _currDriftDescentDivisor;
+    //    float accelIncrement = Time.deltaTime * aggregateGravityValue;
+    //    _verticalVelocityVector.y = Mathf.Clamp(_verticalVelocityVector.y + accelIncrement, aggregateGravityValue, float.MaxValue);
+
+    //    ApplyAirDrag(aggregateGravityValue); // Slow descent speed to the strength of gravity.
+
+    //    _characterController.Move(Time.deltaTime * _verticalVelocityVector);
+    //}
 
     /// <summary>
     ///   <para>
@@ -448,16 +483,39 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void GravityConditions()
     {
-        // Do not apply gravity when on the ground or flying.
+        // Do not apply gravity while on the ground or flying.
         if (IsGrounded || _isFlying) return;
 
-        float aggregateGravityValue = Physics.gravity.y * _gravityMultiplier * _currDriftDescentDivisor;
-        float accelIncrement = Time.deltaTime * aggregateGravityValue;
-        _verticalVelocityVector.y = Mathf.Clamp(_verticalVelocityVector.y + accelIncrement, aggregateGravityValue, float.MaxValue);
+        float aggregateGravityStrength = Physics.gravity.y * _gravityMultiplier * _currDriftDescentDivisor;
+        Vector3 gravityVelocityVector;
 
-        ApplyAirDrag(aggregateGravityValue); // Slow descent speed to the strength of gravity.
+        // Do not accelerate if sliding on a steep slope.
+        if (_groundPointColliding == null)
+        {
+            float accelIncrement = Time.deltaTime * aggregateGravityStrength;
+            _verticalVelocityVector.y = Mathf.Clamp(_verticalVelocityVector.y + accelIncrement, aggregateGravityStrength, float.MaxValue);
+            ApplyAirDrag(aggregateGravityStrength); // Slow descent speed to the strength of gravity.
+            gravityVelocityVector = _verticalVelocityVector;
+        }
+        else
+        {
+            // If sliding on a steep slope, ensure gravity is always sliding the player character.
+            if (_verticalVelocityVector.y > -1)
+            {
+                _verticalVelocityVector.y = -1;
+            }
 
-        _characterController.Move(Time.deltaTime * _verticalVelocityVector);
+            gravityVelocityVector = _verticalVelocityVector.magnitude * new Vector3(_groundPointColliding.normal.x,
+                                                                                    _verticalVelocityVector.y,
+                                                                                    _groundPointColliding.normal.z).normalized;
+            _groundPointColliding = null;
+        }
+
+        _characterController.Move(Time.deltaTime * gravityVelocityVector);
+
+        //Vector3 bottom = GetPlayerCharacterBottom();
+        //Debug.DrawRay(bottom, _verticalVelocityVector, Color.green);
+        //Debug.DrawRay(bottom, gravityVelocityVector, Color.red);
     }
 
     /// <summary>
@@ -503,10 +561,10 @@ public class PlayerMovement : MonoBehaviour
         // simply stop recording new movement values instead of completely skipping the MoveCase method.
         Vector3 moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
 
-        ParallelizeMoveDirectionToGround(moveDirectionUnitVector);
+        GroundClampInterpolate(ref moveDirectionUnitVector);
 
         // Accelerate if movement is being inputted and sprint has not been canceled.
-        if (moveDirectionUnitVector != Vector3.zero && _lateralVelocityVector.magnitude <= MoveMaxSpeed)
+        if (_moveActions.ReadValue<Vector2>() != Vector2.zero && _lateralVelocityVector.magnitude <= MoveMaxSpeed)
         {
             MoveAccelerate(moveDirectionUnitVector);
         }
@@ -562,49 +620,38 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Interpolates the move direction of the player character to be parallel with the
+    ///     Gradually interpolates the move direction of the player character to be parallel with
+    ///     the ground below it while moving.
     ///   </para>
     /// </summary>
     /// <param name="moveDirectionUnitVector"> World direction the player is moving. </param>
-    private void ParallelizeMoveDirectionToGround(Vector3 moveDirectionUnitVector)
+    private void GroundClampInterpolate(ref Vector3 moveDirectionUnitVector)
     {
-        // Move the player character parallel to the angle of the current ground plane.
-        if (moveDirectionUnitVector != Vector3.zero)
+        if (IsGrounded)
         {
-            // Get unit vector parallel to ground plane.
-            Vector3 groundPlaneMoveUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundPoint.normal).normalized;
-
-            //Debug.Log($"{IsGrounded} | {_lateralVelocityVector.magnitude >= MoveMaxSpeed - 5f} | {Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) >= (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1} | {moveActions.ReadValue<Vector2>() != _moveInputTemp}.");
-
-            // Reset _lateralVelocityVector pitch if new move input is registered to ground clamp in a new direction faster.
-            if (IsGrounded && Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) < (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1 && _moveActions.ReadValue<Vector2>() == _moveInputTemp)
+            if (_moveActions.ReadValue<Vector2>() != Vector2.zero)
             {
-                //Debug.Log("Reached normal case.");
-                // Set pitch of moveDirectionUnitVector to that of _lateralVelocityVector.
-                moveDirectionUnitVector = MatchPitchAngle(moveDirectionUnitVector, _lateralVelocityVector);
+                Vector3 groundPlaneMoveUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundPointHovering.normal);
 
-                // Rotate pitch of moveDirectionUnitVector towards that of groundPlaneMoveUnitVector by a deltaTime degree.
-                float degreesPerSecond = Time.deltaTime * 360;
-                moveDirectionUnitVector = GetRotationTowards(moveDirectionUnitVector, groundPlaneMoveUnitVector, degreesPerSecond);
-            }
-            else if (IsGrounded
-                     && _lateralVelocityVector.magnitude >= MoveMaxSpeed - 5f
-                     && Vector3.Dot(_lateralVelocityVector, _groundPlaneMoveVectorTemp) >= (_lateralVelocityVector.magnitude * _groundPlaneMoveVectorTemp.magnitude) - 1
-                     && _moveActions.ReadValue<Vector2>() != _moveInputTemp)
-            {
-                //Debug.Log("Reached fullspeed case.");
-                _lateralVelocityVector = _lateralVelocityVector.magnitude * groundPlaneMoveUnitVector;
-            }
-            else if (!IsGrounded)
-            {
-                _lateralVelocityVector = _lateralVelocityVector.magnitude * moveDirectionUnitVector;
-            }
+                if (_moveInputTemp == Vector2.zero)
+                {
+                    moveDirectionUnitVector = CopyVectorAngles(groundPlaneMoveUnitVector, moveDirectionUnitVector);
+                }
+                else
+                {
+                    moveDirectionUnitVector = CopyVectorAngles(_lateralVelocityVector, moveDirectionUnitVector);
 
-            _groundPlaneMoveVectorTemp = groundPlaneMoveUnitVector;
+                    if (_moveActions.ReadValue<Vector2>() == _moveInputTemp)
+                    {
+                        float degreesPerSecond = Time.deltaTime * Mathf.Deg2Rad * 120;
+                        moveDirectionUnitVector = Vector3.RotateTowards(moveDirectionUnitVector, groundPlaneMoveUnitVector, degreesPerSecond, 0);
+                    }
+                }
 
-            Vector3 bottom = GetPlayerCharacterBottom();
-            Debug.DrawRay(bottom, _lateralVelocityVector, Color.green);
-            Debug.DrawRay(bottom, groundPlaneMoveUnitVector * 10, Color.red);
+                Vector3 bottom = GetPlayerCharacterBottom();
+                Debug.DrawRay(bottom, _lateralVelocityVector, Color.green);
+                Debug.DrawRay(bottom, groundPlaneMoveUnitVector * 10, Color.red);
+            }
         }
 
         _moveInputTemp = _moveActions.ReadValue<Vector2>();
@@ -612,106 +659,26 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Matches a vector's vertical pitch to that of a target vector while preserving its horizontal yaw. 
+    ///     Gets a Vector3 that is composed of the pitch and yaw from two other given vectors.
     ///   </para>
     /// </summary>
-    /// <param name="currVector"> Vector with yaw to be preserved. </param>
-    /// <param name="targetVector"> Vector with pitch to be matched. </param>
-    /// <returns> A vector with modified yaw and preserved pitch. </returns>
-    private Vector3 MatchPitchAngle(Vector3 currVector, Vector3 targetVector)
+    /// <param name="copyVectorPitch"> The vector pitch to copy. </param>
+    /// <param name="copyVectorYaw"> The vector yaw to copy. </param>
+    /// <returns>  </returns>
+    private Vector3 CopyVectorAngles(Vector3 copyVectorPitch, Vector3 copyVectorYaw)
     {
-        const float Epsilon = 1e-9f;
+        // Get copied pitch and yaw in radians.
+        float copiedPitch = Mathf.Atan2(copyVectorPitch.y, Mathf.Sqrt(copyVectorPitch.x * copyVectorPitch.x
+                                                                      + copyVectorPitch.z * copyVectorPitch.z));
+        float copiedYaw = Mathf.Atan2(copyVectorYaw.x, copyVectorYaw.z);
 
-        Vector3 currHorizontal = new Vector3(currVector.x, 0, currVector.z);
-        Vector3 targetHorizontal = new Vector3(targetVector.x, 0, targetVector.z);
-
-        // return targetVector if it and currVector are both extremely close to being fully vertical.
-        if (currHorizontal.sqrMagnitude < Epsilon && targetHorizontal.sqrMagnitude < Epsilon)
-        {
-            return targetVector.normalized;
-        }
-
-        // Use horizontal of the target vector for yaw if the current vector is too short.
-        if (currHorizontal.sqrMagnitude < Epsilon)
-        {
-            currHorizontal = targetHorizontal;
-        }
-
-        float yaw = Mathf.Atan2(currHorizontal.x, currHorizontal.z);
-        float targetHorizontalLength = new Vector2(targetVector.x, targetVector.z).magnitude;
-        float pitch = Mathf.Atan2(targetVector.y, targetHorizontalLength);
-        float cosPitch = Mathf.Cos(pitch);
+        // Calculate the composite vector using the copied pitch and yaw.
+        float cosPitch = Mathf.Cos(copiedPitch);
+        float vectorX = cosPitch * Mathf.Sin(copiedYaw);
+        float vectorY = Mathf.Sin(copiedPitch);
+        float vectorZ = cosPitch * Mathf.Cos(copiedYaw);
         
-        float resultX = Mathf.Sin(yaw) * cosPitch;
-        float resultY = Mathf.Sin(pitch);
-        float resultZ = Mathf.Cos(yaw) * cosPitch;
-        Vector3 result = new Vector3(Mathf.Sin(yaw) * cosPitch, Mathf.Sin(pitch), Mathf.Cos(yaw) * cosPitch);
-
-        return result.normalized;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Rotates a vector's direction towards that of a target vector by a given amount of degrees per second.
-    ///   </para>
-    /// </summary>
-    /// <returns> The vector rotation this frame. </returns>
-    private Vector3 GetRotationTowards(Vector3 currVector, Vector3 targetVector, float maxDegreesDelta)
-    {
-        const float Epsilon = 1e-9f;
-        
-        // Do nothing if current vector or target vector is too short.
-        if (currVector.magnitude < Epsilon || targetVector.magnitude < Epsilon)
-        {
-            return currVector;
-        }
-
-        Vector3 currUnitVector = currVector.normalized;
-        Vector3 targetUnitVector = targetVector.normalized;
-        float currMagnitude = currVector.magnitude;
-        float targetMagnitude = targetVector.magnitude;
-        float dot = Mathf.Clamp(Vector3.Dot(currUnitVector, targetUnitVector), -1, 1);
-        float angleRadians = Mathf.Acos(dot);
-        float maxRadiansDelta = Mathf.Max(0, maxDegreesDelta) * Mathf.Deg2Rad;
-
-        // Return target vector's direction if the maximum rotation this frame meets or exceeds it,
-        // or if current vector's alignment is extremely close.
-        if (maxRadiansDelta >= angleRadians || angleRadians < Epsilon)
-        {
-            return currMagnitude * targetUnitVector;
-        }
-
-        Vector3 axis = Vector3.Cross(currUnitVector, targetUnitVector);
-        float axisMagnitude = axis.magnitude;
-
-        // Normalize the axis vector.
-        if (axis.magnitude < Epsilon)
-        {
-            axis = Vector3.Cross(currUnitVector, Vector3.right);
-            if (axis.sqrMagnitude < Epsilon)
-            {
-                axis = Vector3.Cross(currUnitVector, Vector3.up);
-            }
-
-            axis.Normalize();
-        }
-        else
-        {
-            axis.Normalize();
-        }
-
-        // Rodrigues' Vector Rotation Formula: v * cos(theta) + (k � v) * sin(theta) + k * (k � v) * (1 - cos(theta))
-        Vector3 currV = currUnitVector;
-        Vector3 axisK = axis;
-        float maxTheta = maxRadiansDelta;
-        float cos = Mathf.Cos(maxTheta);
-        float sin = Mathf.Sin(maxTheta);
-
-        Vector3 term1 = currV * cos;
-        Vector3 term2 = Vector3.Cross(axisK, currV) * sin;
-        Vector3 term3 = axisK * Vector3.Dot(axisK, currV) * (1 - cos);
-
-        return term1 + term2 + term3;
+        return new Vector3(vectorX, vectorY, vectorZ);
     }
 
     /// <summary>
@@ -720,7 +687,6 @@ public class PlayerMovement : MonoBehaviour
     ///   </para>
     /// </summary>
     /// <param name="moveDirectionUnitVector"> The world direction of the most recent move input. </param>
-    /// <param name="aggregateMaxSpeedValue"> The aggregate speed value. </param>
     private void MoveAccelerate(Vector3 moveDirectionUnitVector)
     {
         if (_lateralVelocityVector.magnitude < MoveMaxSpeed)
@@ -773,7 +739,7 @@ public class PlayerMovement : MonoBehaviour
         // Skip hover calculations if not on the ground.
         if (!IsGrounded) return;
 
-        _currHoverHeight = _groundPoint.point.y + _hoverHeight;
+        _currHoverHeight = _groundPointHovering.point.y + _hoverHeight;
         float playerCharacterBottomHeight = GetPlayerCharacterBottom().y;
         float heightDisplacement = _currHoverHeight - playerCharacterBottomHeight;
 
@@ -850,12 +816,32 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void DashConditions()
     {
+        Vector3 dashVelocityVector = _dashDirectionUnitVector;
+
+        if (IsGrounded)
+        {
+            GroundClampSnap(ref dashVelocityVector);
+        }
         if (_isFlying)
         {
             FlightConditions();
         }
 
-        _characterController.Move(Time.deltaTime * DashSpeed * _dashDirectionUnitVector);
+        _characterController.Move(Time.deltaTime * DashSpeed * dashVelocityVector);
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Snaps the move direction of the player character to be parallel with the ground below it.
+    ///   </para>
+    /// </summary>
+    /// <param name="moveDirectionUnitVector"> World direction the player is moving. </param>
+    private void GroundClampSnap(ref Vector3 moveDirectionUnitVector)
+    {
+        if (IsGrounded)
+        {
+            moveDirectionUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundPointHovering.normal);
+        }
     }
 
     /// <summary>
@@ -1062,7 +1048,7 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="context"> The flight input context. </param>
     private void FlightInputActionStarted(InputAction.CallbackContext context)
     {
-        if (_currFlightEnergy > 0)
+        if (_currFlightEnergy > 0 && !_isRegeneratingFlight)
         {
             // Toggle flight.
             if (_isFlying)
@@ -1091,14 +1077,8 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void FlightConditions()
     {
-        // Only initialize regeneration routine if flew, on the ground and not already regenerating.
-        if (_currFlightEnergy < _flightMaxEnergy && IsGrounded && !_isRegeneratingFlight)
-        {
-            StartCoroutine(FlightRegeneration());
-        }
-
-        // Skip calculations if not flying or on cooldown.
-        if (!_isFlying || FlightCooldownRatio < 1) return;
+        // Skip calculations if not flying or still regenerating.
+        if (!_isFlying || _isRegeneratingFlight) return;
 
         float depletionDecrement = Time.deltaTime * _flightDepletionRate;
 
@@ -1109,13 +1089,16 @@ public class PlayerMovement : MonoBehaviour
         if (_currFlightEnergy == 0)
         {
             DisableFlight();
+            StartCoroutine(FlightRegeneration());
             EnableDrift();
             return;
         }
-        // Just disable flight if on the ground.
+        
+        // Disable flight if on the ground.
         if (IsGrounded)
         {
             DisableFlight();
+            StartCoroutine(FlightRegeneration());
             return;
         }
 
@@ -1123,8 +1106,8 @@ public class PlayerMovement : MonoBehaviour
         if (_jumpActions.IsPressed()) flightInputValue += 1;
         if (_sprintActions.IsPressed()) flightInputValue -= 1;
 
-        // If in midair and flight energy is not depleted, then fly.
-        if (!IsGrounded && _currFlightEnergy > 0)
+        // If flight energy is not depleted, then fly.
+        if (_currFlightEnergy > 0)
         {
             // Accelerate if jump or descend are being inputted.
             if (flightInputValue != 0 && _verticalVelocityVector.magnitude <= _flightMaxSpeed)
@@ -1185,6 +1168,12 @@ public class PlayerMovement : MonoBehaviour
     /// <returns> IEnumerator object. </returns>
     private IEnumerator FlightRegeneration()
     {
+        // Only begin regenerating when on the ground.
+        while (!IsGrounded)
+        {
+            yield return null;
+        }
+        
         _isRegeneratingFlight = true;
         GetFlightCooldownRatio();
 

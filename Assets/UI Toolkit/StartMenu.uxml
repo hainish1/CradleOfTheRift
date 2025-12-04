@@ -1,0 +1,9 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/PauseMenuStyleSheet.uss?fileID=7433441132597879392&amp;guid=e780f1131c06d4602ab181ccec82676f&amp;type=3#PauseMenuStyleSheet" />
+    <engine:VisualElement name="Canvas" style="flex-grow: 1; width: 1920px; height: 1080px; background-color: rgba(143, 115, 245, 0);">
+        <engine:VisualElement name="BackgroundColor" style="flex-grow: 1; position: absolute; height: 1136px; width: 1978px; background-color: rgba(63, 0, 255, 0); -unity-background-image-tint-color: rgb(29, 7, 120); background-image: url(&quot;project://database/Assets/Art%20Assets/Engineering%20Assets/background.png?fileID=2800000&amp;guid=be2c029779e8a194b9a616edab630782&amp;type=3#background&quot;); -unity-background-scale-mode: stretch-to-fill;" />
+        <engine:Label text="Cradle of the Rift" name="LabelStartMenu" class="header" style="font-size: 150px;" />
+        <engine:Button text="Start Game" name="ButtonStartGame" class="button unityButtonHover" style="position: absolute; top: 264px; left: 705px;" />
+        <engine:Button text="Quit Game" name="ButtonQuitGame" class="button unityButtonHover" style="position: absolute; top: 665px; left: 718px;" />
+    </engine:VisualElement>
+</engine:UXML>
