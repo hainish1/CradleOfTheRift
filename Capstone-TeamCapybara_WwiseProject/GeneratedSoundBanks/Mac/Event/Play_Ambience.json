@@ -1,0 +1,46 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Mac",
+  "BasePlatform": "Mac",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "278617630",
+    "Type": "Event",
+    "GUID": "{CE6BB63A-104F-4DB4-8942-57550847B9DA}",
+    "Language": "SFX",
+    "Hash": "{00D8474B-C2CC-2115-691A-EFF0FC4C8C80}",
+    "ObjectPath": "Play_Ambience",
+    "ShortName": "Play_Ambience",
+    "Path": "Event/Play_Ambience.bnk",
+    "Media": [
+     {
+      "Id": "4830906",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "SBAww_Cane Fields 001.wav",
+      "Path": "Media/4830906.wem",
+      "CachePath": "7A/{7A028304-03BE-27E2-B235-EE14023E89CC}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "278617630",
+      "Name": "Play_Ambience",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_Ambience",
+      "GUID": "{CE6BB63A-104F-4DB4-8942-57550847B9DA}",
+      "DurationType": "Infinite",
+      "MediaRefs": [
+       {
+        "Id": "4830906"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{E75DF5FF-CFEC-4EA7-E487-40558F0E7F57}"
+ }
+}

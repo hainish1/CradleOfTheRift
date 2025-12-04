@@ -18,142 +18,96 @@
 							<ObjectRef Name="Switch_Music_Region" ID="{AB43E67E-82B3-4A77-B046-DDFE6F3D3321}" WorkUnitID="{9C4E3796-92FA-4949-B150-C94DA19B4A65}"/>
 						</Reference>
 					</ReferenceList>
-					<ChildrenList>
-						<Sound Name="Song_PercussianOrchestra" ID="{ABFB06D3-3D28-4F68-B441-B0B5B9DC7597}" ShortID="1030595448">
-							<PropertyList>
-								<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
-							</PropertyList>
-							<ReferenceList>
-								<Reference Name="Conversion">
-									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
-								</Reference>
-								<Reference Name="OutputBus">
-									<ObjectRef Name="Music Bus" ID="{2535DC4D-E35F-4B3B-8BE6-0284AF857A73}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
-								</Reference>
-							</ReferenceList>
-							<ChildrenList>
-								<AudioFileSource Name="PercussianOrchestra" ID="{C9EA50BE-7724-481B-B346-31A4F0705E29}">
-									<PropertyList>
-										<Property Name="LoopBegin" Type="Real64" Value="0"/>
-										<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
-									</PropertyList>
-									<Language>SFX</Language>
-									<AudioFile>PercussianOrchestra.wav</AudioFile>
-									<MediaIDList>
-										<MediaID ID="240217878"/>
-									</MediaIDList>
-								</AudioFileSource>
-							</ChildrenList>
-							<ActiveSourceList>
-								<ActiveSource Name="PercussianOrchestra" ID="{C9EA50BE-7724-481B-B346-31A4F0705E29}" Platform="Linked"/>
-							</ActiveSourceList>
-						</Sound>
-						<Sound Name="Song_CaveJam" ID="{102D2251-66C2-4132-8C77-AEF0B4D19D70}" ShortID="676365436">
-							<PropertyList>
-								<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
-							</PropertyList>
-							<ReferenceList>
-								<Reference Name="Conversion">
-									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
-								</Reference>
-								<Reference Name="OutputBus">
-									<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
-								</Reference>
-							</ReferenceList>
-							<ChildrenList>
-								<AudioFileSource Name="CaveJam" ID="{84F6F5B4-C935-406F-8407-5C7B6ABD1A77}">
-									<Language>SFX</Language>
-									<AudioFile>CaveJam.wav</AudioFile>
-									<MediaIDList>
-										<MediaID ID="781041820"/>
-									</MediaIDList>
-								</AudioFileSource>
-							</ChildrenList>
-							<ActiveSourceList>
-								<ActiveSource Name="CaveJam" ID="{84F6F5B4-C935-406F-8407-5C7B6ABD1A77}" Platform="Linked"/>
-							</ActiveSourceList>
-						</Sound>
-						<Sound Name="Song_Icey" ID="{C25E1A64-7228-4301-95D5-D1E167EB3C26}" ShortID="1012288480">
-							<PropertyList>
-								<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
-							</PropertyList>
-							<ReferenceList>
-								<Reference Name="Conversion">
-									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
-								</Reference>
-								<Reference Name="OutputBus">
-									<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
-								</Reference>
-							</ReferenceList>
-							<ChildrenList>
-								<AudioFileSource Name="Icey" ID="{CC90E730-5F53-4301-9094-6FEE1C7CC4DC}">
-									<Language>SFX</Language>
-									<AudioFile>Icey.wav</AudioFile>
-									<MediaIDList>
-										<MediaID ID="729420675"/>
-									</MediaIDList>
-								</AudioFileSource>
-							</ChildrenList>
-							<ActiveSourceList>
-								<ActiveSource Name="Icey" ID="{CC90E730-5F53-4301-9094-6FEE1C7CC4DC}" Platform="Linked"/>
-							</ActiveSourceList>
-						</Sound>
-					</ChildrenList>
-					<GroupingInfo>
-						<GroupingBehaviorList>
-							<GroupingBehavior>
-								<ItemRef Name="Song_CaveJam" ID="{102D2251-66C2-4132-8C77-AEF0B4D19D70}"/>
-								<PropertyList>
-									<Property Name="FadeOutTime" Type="Real64">
-										<ValueList>
-											<Value>1</Value>
-										</ValueList>
-									</Property>
-								</PropertyList>
-							</GroupingBehavior>
-							<GroupingBehavior>
-								<ItemRef Name="Song_Icey" ID="{C25E1A64-7228-4301-95D5-D1E167EB3C26}"/>
-								<PropertyList>
-									<Property Name="FadeOutTime" Type="Real64">
-										<ValueList>
-											<Value>1</Value>
-										</ValueList>
-									</Property>
-								</PropertyList>
-							</GroupingBehavior>
-							<GroupingBehavior>
-								<ItemRef Name="Song_PercussianOrchestra" ID="{ABFB06D3-3D28-4F68-B441-B0B5B9DC7597}"/>
-								<PropertyList>
-									<Property Name="FadeOutTime" Type="Real64">
-										<ValueList>
-											<Value>1</Value>
-										</ValueList>
-									</Property>
-								</PropertyList>
-							</GroupingBehavior>
-						</GroupingBehaviorList>
-						<GroupingList>
-							<Grouping>
-								<SwitchRef Name="Cave" ID="{2CB70606-B448-4B05-AA56-3E4994DDC55C}"/>
-								<ItemList>
-									<ItemRef Name="Song_CaveJam" ID="{102D2251-66C2-4132-8C77-AEF0B4D19D70}"/>
-								</ItemList>
-							</Grouping>
-							<Grouping>
-								<SwitchRef Name="Forest" ID="{D3FBA438-6E14-4C2C-9A1A-C1D9A18D4C98}"/>
-								<ItemList>
-									<ItemRef Name="Song_PercussianOrchestra" ID="{ABFB06D3-3D28-4F68-B441-B0B5B9DC7597}"/>
-								</ItemList>
-							</Grouping>
-							<Grouping>
-								<SwitchRef Name="Tree" ID="{127B34F3-B606-4259-B79F-CE1ED9F5B786}"/>
-								<ItemList>
-									<ItemRef Name="Song_Icey" ID="{C25E1A64-7228-4301-95D5-D1E167EB3C26}"/>
-								</ItemList>
-							</Grouping>
-						</GroupingList>
-					</GroupingInfo>
+					<GroupingInfo/>
 				</SwitchContainer>
+				<Sound Name="Song_Icey" ID="{C25E1A64-7228-4301-95D5-D1E167EB3C26}" ShortID="1012288480">
+					<PropertyList>
+						<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+					</PropertyList>
+					<ReferenceList>
+						<Reference Name="Attenuation">
+							<ObjectRef Name="Environment Attenuation" ID="{0215F850-5BC9-4893-AC9F-BD3ECA73CEDA}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+						</Reference>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Music Bus" ID="{2535DC4D-E35F-4B3B-8BE6-0284AF857A73}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="Icey" ID="{CC90E730-5F53-4301-9094-6FEE1C7CC4DC}">
+							<Language>SFX</Language>
+							<AudioFile>Icey.wav</AudioFile>
+							<MediaIDList>
+								<MediaID ID="729420675"/>
+							</MediaIDList>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="Icey" ID="{CC90E730-5F53-4301-9094-6FEE1C7CC4DC}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
+				<Sound Name="Song_PercussianOrchestra" ID="{ABFB06D3-3D28-4F68-B441-B0B5B9DC7597}" ShortID="1030595448">
+					<PropertyList>
+						<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+					</PropertyList>
+					<ReferenceList>
+						<Reference Name="Attenuation">
+							<ObjectRef Name="Environment Attenuation" ID="{0215F850-5BC9-4893-AC9F-BD3ECA73CEDA}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+						</Reference>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Music Bus" ID="{2535DC4D-E35F-4B3B-8BE6-0284AF857A73}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="PercussianOrchestra" ID="{C9EA50BE-7724-481B-B346-31A4F0705E29}">
+							<PropertyList>
+								<Property Name="LoopBegin" Type="Real64" Value="0"/>
+								<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+							</PropertyList>
+							<Language>SFX</Language>
+							<AudioFile>PercussianOrchestra.wav</AudioFile>
+							<MediaIDList>
+								<MediaID ID="240217878"/>
+							</MediaIDList>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="PercussianOrchestra" ID="{C9EA50BE-7724-481B-B346-31A4F0705E29}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
+				<Sound Name="Song_CaveJam" ID="{102D2251-66C2-4132-8C77-AEF0B4D19D70}" ShortID="676365436">
+					<PropertyList>
+						<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+					</PropertyList>
+					<ReferenceList>
+						<Reference Name="Attenuation">
+							<ObjectRef Name="Environment Attenuation" ID="{0215F850-5BC9-4893-AC9F-BD3ECA73CEDA}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+						</Reference>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Music Bus" ID="{2535DC4D-E35F-4B3B-8BE6-0284AF857A73}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="CaveJam" ID="{84F6F5B4-C935-406F-8407-5C7B6ABD1A77}">
+							<Language>SFX</Language>
+							<AudioFile>CaveJam.wav</AudioFile>
+							<MediaIDList>
+								<MediaID ID="781041820"/>
+							</MediaIDList>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="CaveJam" ID="{84F6F5B4-C935-406F-8407-5C7B6ABD1A77}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
 			</ChildrenList>
 		</WorkUnit>
 	</Containers>

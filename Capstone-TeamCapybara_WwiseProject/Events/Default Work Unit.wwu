@@ -27,6 +27,39 @@
 					</ChildrenList>
 				</Event>
 				<WorkUnit Name="Player" ID="{691DB035-59FA-42BD-8C22-AF773BE39B09}" PersistMode="Reference"/>
+				<Event Name="Play_Ambience" ID="{CE6BB63A-104F-4DB4-8942-57550847B9DA}">
+					<ChildrenList>
+						<Action Name="" ID="{DC46A79F-1993-4FE6-B5F8-2913546A0C9A}" ShortID="1063254417">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="CaneField" ID="{05CC7C0D-CB7D-45FE-8B67-E1F090927282}" WorkUnitID="{8ADB7485-E0A9-4F0D-A14F-7ED951DF96EF}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_Song_Cave" ID="{839840A6-AE8D-4003-901A-D3FCF7B9FFE6}">
+					<ChildrenList>
+						<Action Name="" ID="{BFE7E685-4CDB-46A9-A2FA-8F1667A02183}" ShortID="108663395">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Song_CaveJam" ID="{102D2251-66C2-4132-8C77-AEF0B4D19D70}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_Song_Icey" ID="{A3A35380-C253-492B-9A9B-1099C778BB0A}">
+					<ChildrenList>
+						<Action Name="" ID="{B13A2024-370A-495D-A8A6-D9DB7FE4152B}" ShortID="422986124">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Song_Icey" ID="{C25E1A64-7228-4301-95D5-D1E167EB3C26}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>
