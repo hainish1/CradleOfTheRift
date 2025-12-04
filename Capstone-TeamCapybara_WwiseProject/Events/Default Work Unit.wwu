@@ -60,6 +60,17 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Stop_All" ID="{E10F8F55-1AD6-48A6-8544-94E10C94EC2E}">
+					<ChildrenList>
+						<Action Name="" ID="{1D10240A-E35E-49A1-9005-ACC035A8CB84}" ShortID="610791106">
+							<PropertyList>
+								<Property Name="ActionType" Type="int16" Value="3"/>
+								<Property Name="Scope" Type="int16" Value="1"/>
+							</PropertyList>
+							<ReferenceList/>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

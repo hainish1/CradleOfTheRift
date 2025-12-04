@@ -23,6 +23,7 @@ namespace AK
         static const AkUniqueID PLAY_SONG_CAVE = 332365527U;
         static const AkUniqueID PLAY_SONG_ICEY = 3808693238U;
         static const AkUniqueID PLAY_SONG_PERCUSSIANORCHESTRA = 920721062U;
+        static const AkUniqueID STOP_ALL = 452547817U;
     } // namespace EVENTS
 
     namespace SWITCHES
