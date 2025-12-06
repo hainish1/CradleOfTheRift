@@ -43,9 +43,9 @@ public class BounceProjectiles : IDisposable
 
     private void UpdateValues()
     {
-        BounceRange = baseBounceRange * (1f + (stacks - 1) * 0.2f);
-        MaxBounceCount = baseMaxBounceCount + (stacks - 1);
-        DamageMultiplierPerBounce = baseDamageMultiplierPerBounce;
+        BounceRange = baseBounceRange;
+        MaxBounceCount = baseMaxBounceCount;
+        DamageMultiplierPerBounce = baseDamageMultiplierPerBounce + (stacks - 1) * 0.15f;
     }
 
     public void Update(float dt)

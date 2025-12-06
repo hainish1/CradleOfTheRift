@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: New Item
   description: Item Description Here
   icon: {fileID: 0}
-  rarity: 0
+  rarity: 1
   rarityColor: {r: 1, g: 1, b: 1, a: 1}
   canStack: 1
   maxStacks: 99
@@ -43,7 +43,7 @@ MonoBehaviour:
     explosiveAoeDamageMultiplier: 0
     explosiveMaxRange: 0
     explosiveVFX: {fileID: 0}
-    chainDamagePercent: 0.5
+    chainDamagePercent: 0.2
     maxChainCount: 3
     chainRange: 20
     chainLightningVFX: {fileID: 0}

@@ -47,9 +47,9 @@ public class ChainLightning : IDisposable
 
     private void UpdateValues()
     {
-        chainDamagePercent = baseChainDamagePercent * (1f + (stacks - 1) * 0.2f);
+        chainDamagePercent = baseChainDamagePercent + (stacks - 1) * 0.05f;
         maxChainCount = baseMaxChainCount + (stacks - 1);
-        chainRange = baseChainRange * (1f + (stacks - 1) * 0.2f);
+        chainRange = baseChainRange;
     }
 
     public void Update(float dt)
@@ -67,10 +67,11 @@ public class ChainLightning : IDisposable
         if (enemy == null) return;
 
         HashSet<Enemy> hit = new HashSet<Enemy> { enemy };
-        ChainFromEnemy(enemy, enemy.transform.position, damage, 0, hit);
+        float chainDamage = damage * chainDamagePercent;
+        ChainFromEnemy(enemy, enemy.transform.position, chainDamage, 0, hit);
     }
 
-    private void ChainFromEnemy(Enemy from, Vector3 fromPos, float fromDamage, int chainNum, HashSet<Enemy> hit)
+    private void ChainFromEnemy(Enemy from, Vector3 fromPos, float baseDamage, int chainNum, HashSet<Enemy> hit)
     {
         if (chainNum >= maxChainCount) return;
 
@@ -99,15 +100,14 @@ public class ChainLightning : IDisposable
         if (closest != null)
         {
             hit.Add(closest);
-            float dmg = fromDamage * chainDamagePercent;
             
             IDamageable damageable = closest.GetComponent<IDamageable>();
             if (damageable != null && !damageable.IsDead)
             {
-                damageable.TakeDamage(dmg);
-                CombatEvents.ReportDamage(owner, closest, dmg);
+                damageable.TakeDamage(baseDamage);
+                CombatEvents.ReportDamage(owner, closest, baseDamage);
                 CreateLightningEffect(fromPos, closest.transform.position);
-                ChainFromEnemy(closest, closest.transform.position, dmg, chainNum + 1, hit);
+                ChainFromEnemy(closest, closest.transform.position, baseDamage, chainNum + 1, hit);
             }
         }
 
