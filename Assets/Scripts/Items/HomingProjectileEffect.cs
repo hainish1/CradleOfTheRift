@@ -13,6 +13,7 @@ public class HomingProjectileEffect : MonoBehaviour
     //private float projectileSpeed = 15f; // This doesn't do anything but its how the base projectile 
     [SerializeField] private LayerMask shootMask = ~0;
     [SerializeField] private HomingProjectile homingProjectilePrefab;
+    [SerializeField] private float homingDamageMultiplier = 0.25f; // multiplying this with the attack to determine the attack stat for homing projectiles
     private Entity playerEntity;
     //Vector3 spawnPosition;
 
@@ -64,7 +65,7 @@ public class HomingProjectileEffect : MonoBehaviour
         Debug.Log("Spawning homing projectiles");
         // Vector3 playerPosition = transform.position + (Vector3.up * projectileSpawnOffset);
         Vector3 basePos = transform.position + Vector3.up * projectileSpawnOffset;
-        float currentDamage = playerEntity.Stats.ProjectileDamage * 1.5f;
+        float currentDamage = playerEntity.Stats.ProjectileDamage * homingDamageMultiplier;
         
         for (int i = 0; i < projectileCount; i++)
         {
