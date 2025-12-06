@@ -1,0 +1,47 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "3808693238",
+    "Type": "Event",
+    "GUID": "{A3A35380-C253-492B-9A9B-1099C778BB0A}",
+    "Language": "SFX",
+    "Hash": "{5751B5E9-5D44-C7E5-B184-C062860B31A3}",
+    "ObjectPath": "Play_Song_Icey",
+    "ShortName": "Play_Song_Icey",
+    "Path": "Event/Play_Song_Icey.bnk",
+    "Media": [
+     {
+      "Id": "729420675",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Icey.wav",
+      "Path": "Media/729420675.wem",
+      "CachePath": "8B/{8B431FE9-CCBE-42DE-C3DD-888DA33BF2F1}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "3808693238",
+      "Name": "Play_Song_Icey",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_Song_Icey",
+      "GUID": "{A3A35380-C253-492B-9A9B-1099C778BB0A}",
+      "MaxAttenuation": "200",
+      "DurationType": "Infinite",
+      "MediaRefs": [
+       {
+        "Id": "729420675"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{85E6AFF5-B520-6A1D-AE07-64D8C8CCE107}"
+ }
+}

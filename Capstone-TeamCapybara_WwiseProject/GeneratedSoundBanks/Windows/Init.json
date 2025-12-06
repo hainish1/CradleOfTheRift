@@ -10,7 +10,7 @@
     "Type": "User",
     "GUID": "{701ECBBD-9C7B-4030-8CDB-749EE5D1C7B9}",
     "Language": "SFX",
-    "Hash": "{D666BFD0-3BEC-A041-A74C-ADE84001EC44}",
+    "Hash": "{59A5C0EC-391F-3A26-96E3-DD95B298E37E}",
     "ObjectPath": "Init",
     "ShortName": "Init",
     "Path": "Init.bnk",
@@ -53,9 +53,37 @@
       "ObjectPath": "\\Busses\\Default Work Unit\\Music Bus",
       "GUID": "{2535DC4D-E35F-4B3B-8BE6-0284AF857A73}"
      }
+    ],
+    "SwitchGroups": [
+     {
+      "Id": "275596552",
+      "Name": "Switch_Music_Region",
+      "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region",
+      "GUID": "{AB43E67E-82B3-4A77-B046-DDFE6F3D3321}",
+      "Switches": [
+       {
+        "Id": "491961918",
+        "Name": "Forest",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region\\Forest",
+        "GUID": "{D3FBA438-6E14-4C2C-9A1A-C1D9A18D4C98}"
+       },
+       {
+        "Id": "3322072369",
+        "Name": "Tree",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region\\Tree",
+        "GUID": "{127B34F3-B606-4259-B79F-CE1ED9F5B786}"
+       },
+       {
+        "Id": "4122393694",
+        "Name": "Cave",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region\\Cave",
+        "GUID": "{2CB70606-B448-4B05-AA56-3E4994DDC55C}"
+       }
+      ]
+     }
     ]
    }
   ],
-  "FileHash": "{745226BA-B4A0-F546-D7E0-FC2519AE4B2A}"
+  "FileHash": "{3A7C6EB6-30A3-5DF0-FBD4-836A37F042B0}"
  }
 }

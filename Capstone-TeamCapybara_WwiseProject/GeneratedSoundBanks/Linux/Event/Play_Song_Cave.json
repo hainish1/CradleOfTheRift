@@ -1,0 +1,47 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "332365527",
+    "Type": "Event",
+    "GUID": "{839840A6-AE8D-4003-901A-D3FCF7B9FFE6}",
+    "Language": "SFX",
+    "Hash": "{A575A934-7C92-879C-E35E-8A9F735C5E5D}",
+    "ObjectPath": "Play_Song_Cave",
+    "ShortName": "Play_Song_Cave",
+    "Path": "Event/Play_Song_Cave.bnk",
+    "Media": [
+     {
+      "Id": "781041820",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "CaveJam.wav",
+      "Path": "Media/781041820.wem",
+      "CachePath": "1D/{1D127F80-CAE5-6B2C-B125-748EF7205CDE}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "332365527",
+      "Name": "Play_Song_Cave",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_Song_Cave",
+      "GUID": "{839840A6-AE8D-4003-901A-D3FCF7B9FFE6}",
+      "MaxAttenuation": "200",
+      "DurationType": "Infinite",
+      "MediaRefs": [
+       {
+        "Id": "781041820"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{DD2F405D-B62D-0D4E-B195-3DB7121770C2}"
+ }
+}

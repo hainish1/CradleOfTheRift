@@ -8,6 +8,11 @@
 						<Sound Name="River1" ID="{BC580BF9-A91F-474C-B09F-76A65813AB49}" ShortID="1032619235">
 							<PropertyList>
 								<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+								<Property Name="Volume" Type="Real64">
+									<ValueList>
+										<Value>-8</Value>
+									</ValueList>
+								</Property>
 							</PropertyList>
 							<ReferenceList>
 								<Reference Name="Attenuation">
@@ -59,6 +64,40 @@
 							</ChildrenList>
 							<ActiveSourceList>
 								<ActiveSource Name="River2" ID="{F6495DA1-4B60-49EF-A7CF-5BB6F8922F57}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+					</ChildrenList>
+				</Folder>
+				<Folder Name="Ambience" ID="{821FCB6A-8350-4B4A-AFD2-677D06BDA837}" ShortID="981024925">
+					<ChildrenList>
+						<Sound Name="CaneField" ID="{05CC7C0D-CB7D-45FE-8B67-E1F090927282}" ShortID="767307550">
+							<PropertyList>
+								<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+								<Property Name="Volume" Type="Real64">
+									<ValueList>
+										<Value>-8</Value>
+									</ValueList>
+								</Property>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Environment Bus" ID="{25838D0C-782A-4510-B705-3FCAB37A2857}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="SBAww_Cane Fields 001" ID="{D611A6BA-E5B8-46BC-BEB7-6F1050A18439}">
+									<Language>SFX</Language>
+									<AudioFile>SBAww_Cane Fields 001.wav</AudioFile>
+									<MediaIDList>
+										<MediaID ID="4830906"/>
+									</MediaIDList>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="SBAww_Cane Fields 001" ID="{D611A6BA-E5B8-46BC-BEB7-6F1050A18439}" Platform="Linked"/>
 							</ActiveSourceList>
 						</Sound>
 					</ChildrenList>

@@ -1,0 +1,60 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "2932040671",
+    "Type": "Event",
+    "GUID": "{7350712A-6C2C-4480-8AF3-17F38DC9DCC2}",
+    "Language": "SFX",
+    "Hash": "{A3EEBEDA-E4D5-377C-08C4-3272138331CB}",
+    "ObjectPath": "Play_Music",
+    "ShortName": "Play_Music",
+    "Path": "Event/Play_Music.bnk",
+    "Events": [
+     {
+      "Id": "2932040671",
+      "Name": "Play_Music",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_Music",
+      "GUID": "{7350712A-6C2C-4480-8AF3-17F38DC9DCC2}",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0"
+     }
+    ],
+    "SwitchGroups": [
+     {
+      "Id": "275596552",
+      "Name": "Switch_Music_Region",
+      "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region",
+      "GUID": "{AB43E67E-82B3-4A77-B046-DDFE6F3D3321}",
+      "Switches": [
+       {
+        "Id": "491961918",
+        "Name": "Forest",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region\\Forest",
+        "GUID": "{D3FBA438-6E14-4C2C-9A1A-C1D9A18D4C98}"
+       },
+       {
+        "Id": "3322072369",
+        "Name": "Tree",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region\\Tree",
+        "GUID": "{127B34F3-B606-4259-B79F-CE1ED9F5B786}"
+       },
+       {
+        "Id": "4122393694",
+        "Name": "Cave",
+        "ObjectPath": "\\Switches\\Default Work Unit\\Switch_Music_Region\\Cave",
+        "GUID": "{2CB70606-B448-4B05-AA56-3E4994DDC55C}"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{C17A6EB2-679C-35C1-6692-4B7E7C804668}"
+ }
+}

@@ -39,6 +39,9 @@ public class PlayerShooter : MonoBehaviour
     // Sounds
     private PlayerAudioController audioController;
 
+    [SerializeField]
+    private AK.Wwise.Event fireEvent;
+
     // projectiles should ignore their own kind
     Collider[] selfColliders;
 
@@ -409,6 +412,7 @@ public class PlayerShooter : MonoBehaviour
         // Debug.Log($"Fired projectile with {currentDamage} damage");
         // Play firing sound
         audioController?.PlayAttackSound();
+        fireEvent.Post(gameObject);
 
         currFireCharges--;
 
