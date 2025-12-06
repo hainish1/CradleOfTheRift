@@ -643,11 +643,11 @@ MonoBehaviour:
   visual: {fileID: 334824559409466416}
   velocitySmoothing: 12
   maxVelForFullStretch: 6
-  squashAmount: 0.5
-  stiff: 5
+  squashAmount: 0.1
+  stiff: 10
   damping: 0.1
   tiltAmount: 0.05
-  wobbleShake: 0.19
+  wobbleShake: 0.06
   fallBackWobble: 1
   minScale: 0.1
   maxScale: 3
