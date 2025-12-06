@@ -58,7 +58,7 @@ MonoBehaviour:
   - lootItemPrefab: {fileID: 4351812632746690140, guid: 86075e9c834524441840a55246feabd2, type: 3}
     dropPercent: 3
   - lootItemPrefab: {fileID: 3167716483107671169, guid: b97249f71247ba64ea1f0de7b6a926af, type: 3}
-    dropPercent: 2
+    dropPercent: 3
   - lootItemPrefab: {fileID: 3167716483107671169, guid: a5c2ffb5108d01a419221cd9dbcd3913, type: 3}
     dropPercent: 2
   - lootItemPrefab: {fileID: 5816259779739221662, guid: f924ee5cc5f439b49aeac9eb3c575060, type: 3}
@@ -73,6 +73,8 @@ MonoBehaviour:
     dropPercent: 2
   - lootItemPrefab: {fileID: 7228271200306073161, guid: f838bdc949bec2840891bf60c48e3da0, type: 3}
     dropPercent: 2
+  - lootItemPrefab: {fileID: 7228271200306073161, guid: e43c1daa00386fa47a030191236f3b6a, type: 3}
+    dropPercent: 1
   playerGold: {fileID: 0}
 --- !u!82 &3729324380016192616
 AudioSource:
