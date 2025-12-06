@@ -159,19 +159,21 @@ public class BounceProjectile : Projectile
         if (closest != null)
         {
             Vector3 direction = (closest.transform.position - currentPos).normalized;
-            direction.y = 0f;
+            
+            float speed = initialSpeed > 0f ? initialSpeed : rb.linearVelocity.magnitude;
+            if (initialSpeed == 0f) initialSpeed = speed;
             
             float offsetDistance = 0.5f;
             Vector3 newPosition = currentPos + direction * offsetDistance;
             transform.position = newPosition;
             
-            float speed = initialSpeed > 0f ? initialSpeed : rb.linearVelocity.magnitude;
-            if (initialSpeed == 0f) initialSpeed = speed;
             rb.linearVelocity = direction * speed;
+            rb.angularVelocity = Vector3.zero;
             
             if (direction.sqrMagnitude > 0.0001f)
             {
-                transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
+                Vector3 up = Mathf.Abs(direction.y) > 0.99f ? Vector3.forward : Vector3.up;
+                transform.rotation = Quaternion.LookRotation(direction, up);
             }
 
             CreateBounceEffect(currentPos, closest.transform.position);
