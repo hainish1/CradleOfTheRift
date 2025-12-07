@@ -39,26 +39,25 @@ public class PlayerMeleeController : MonoBehaviour
     [SerializeField] private AnimationClip _attack2;
     private float[] _attackDurations;
 
-    // Hit Sweep Parameters
+    // Hit Registration Parameters
 
-    [Header("Hit Sweep Parameters")] [Space]
+    [Header("Hit Registration Parameters")] [Space]
     [SerializeField]
-    [Tooltip("The start point for hit sweeps.")] private Transform _hitSweepStartPoint;
+    [Tooltip("The start point for hit sweeps.")] private Transform _hitCapsuleStartPoint;
     [SerializeField]
-    [Tooltip("The end point for hit sweeps.")] private Transform _hitSweepEndPoint;
+    [Tooltip("The end point for hit sweeps.")] private Transform _hitCapsuleEndPoint;
     [SerializeField]
-    [Tooltip("The amount of spheres that will be cast equidistantly between the start and end points.")] private int _hitSweepCasts;
-    [SerializeField]
-    [Tooltip("The radius of sphere casts.")] private float _castRadius;
+    [Tooltip("The radius of sphere casts.")] private float _hitCapsuleCastRadius;
     [SerializeField]
     [Tooltip("Layers that will be treated as damageables.")] private LayerMask _damageableLayerMasks;
-    private float _hitSweepLength;
-    private Vector3 _hitSweepStepVector;
-    private Vector3 _hitSweepPointTemp;
-    private Vector3[] _prevHitSweepPointsTemp;
-    private bool _tempHitSweepArrayInitialized;
+    [SerializeField]
+    [Tooltip("Toggle visual debugging for attack registration.")] private bool _debug;
+    private Vector3 _prevHitCapsuleStartPointTemp;
+    private Vector3 _prevHitCapsuleEndPointTemp;
+    private Vector3 _prevHitCapsuleCenterPointTemp;
+    private RaycastHit[] _objectsHitThisCast;
     private HashSet<GameObject> _objectsHitThisAttack;
-    private RaycastHit[] _objectsHitThisSweep;
+    private bool _prevHitCapsuleTempPointsInitialized;
 
     // Attack Parameters
 
@@ -105,12 +104,10 @@ public class PlayerMeleeController : MonoBehaviour
         _attackDurations = new float[3];
         RecalculateAttackSpeed();
 
-        // Hit Sweep Parameters
-        AlignHitSweep();
-        _prevHitSweepPointsTemp = new Vector3[_hitSweepCasts];
-        _tempHitSweepArrayInitialized = false;
+        // Hit Registration Parameters
+        _objectsHitThisCast = new RaycastHit[32];
         _objectsHitThisAttack = new HashSet<GameObject>();
-        _objectsHitThisSweep = new RaycastHit[32];
+        _prevHitCapsuleTempPointsInitialized = false;
 
         // Attack Parameters
         _currAttackDuration = _attackDurations[0];
@@ -133,14 +130,14 @@ public class PlayerMeleeController : MonoBehaviour
         {
             _comboTimer += Time.deltaTime;
 
-            if (_attackActions.WasPressedThisFrame() && _comboTimer > GetSecondsLowerMargin())
+            if (_attackActions.IsPressed() && _comboTimer > GetSecondsLowerMargin())
             {
                 _attackInputPending = true;
             }
         }
 
         // Activate an attack when inputted.
-        if ((_attackActions.WasPressedThisFrame() || _attackInputPending) && CanAttack)
+        if ((_attackActions.IsPressed() || _attackInputPending) && CanAttack)
         {
             PerformAttack();
         }
@@ -148,12 +145,7 @@ public class PlayerMeleeController : MonoBehaviour
         // Continually register targets while an attack is active.
         if (_isAttacking)
         {
-            ExecuteHitRegistration();
-        }
-        else if (_tempHitSweepArrayInitialized = true || _objectsHitThisAttack.Count > 0)
-        {
-            _tempHitSweepArrayInitialized = false;
-            _objectsHitThisAttack.Clear();
+            ExecuteHitRegistrationCast();
         }
     }
 
@@ -217,7 +209,6 @@ public class PlayerMeleeController : MonoBehaviour
         _attackInputPending = false;
         CanAttack = false;
         _weaponAnim.SetTrigger("Attack" + _currComboCount);
-        _audioController.PlayMeleeSound();
         
         _currComboCount++;
         _currAttackDuration = _attackDurations[_currComboCount - 1];
@@ -229,8 +220,7 @@ public class PlayerMeleeController : MonoBehaviour
         else
         {
             _comboTimer = GetSecondsUpperMargin();
-            _currComboCount = 0;
-            _currAttackDuration = _attackDurations[_currComboCount];
+            _currAttackDuration = _attackDurations[0];
             StartCoroutine(DelayAttack(AttackCooldown));
         }
     }
@@ -284,83 +274,63 @@ public class PlayerMeleeController : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Executes a hit registration sequence on any frame this method is called.
+    ///     Executes a hit registration cast on any frame this method is called.
     ///   </para>
     /// </summary>
-    private void ExecuteHitRegistration()
+    private void ExecuteHitRegistrationCast()
     {
         if (_currComboCount == 1 && _objectsHitThisAttack.Count == 1) return; // Skip registration if thrust attack damaged something.
-        
-        // Initialize first hit sweep points of the attack.
-        if (!_tempHitSweepArrayInitialized)
+
+        // Initialize the hit capsule temp points at the beginning of every attack.
+        if (!_prevHitCapsuleTempPointsInitialized)
         {
-            _tempHitSweepArrayInitialized = true;
-            InitializeHitSweepPointsTempArray();
-            return;
+            _prevHitCapsuleTempPointsInitialized = true;
+            InitializePrevHitSweepPointTemp();
         }
 
-        ExecuteHitSweep();
-    }
+        // Cast a capsule from the previous attack point to the current one.
+        Vector3 prevStartPoint = _prevHitCapsuleStartPointTemp;
+        Vector3 prevEndPoint = _prevHitCapsuleEndPointTemp;
+        Vector3 currCenterPoint = _hitCapsuleStartPoint.position + (_hitCapsuleEndPoint.position - _hitCapsuleStartPoint.position) / 2;
+        Vector3 castDirection = currCenterPoint - _prevHitCapsuleCenterPointTemp;
 
-    /// <summary>
-    ///   <para>
-    ///     Prepares the temp points array for a hit sweep on any frame this method is called.
-    ///   </para>
-    /// </summary>
-    private void InitializeHitSweepPointsTempArray()
-    {
-        AlignHitSweep();
+        // Record all valid objects that were hit.
+        int hitCountThisCast = Physics.CapsuleCastNonAlloc(prevStartPoint,
+                                                           prevEndPoint,
+                                                           _hitCapsuleCastRadius,
+                                                           castDirection.normalized,
+                                                           _objectsHitThisCast,
+                                                           castDirection.magnitude,
+                                                           _damageableLayerMasks,
+                                                           QueryTriggerInteraction.Ignore);
 
-        for (int i = 0; i < _hitSweepCasts; i++)
+        if (_debug)
         {
-            IncrementHitSweepPointTemp(i);
+            Debug.DrawRay(_prevHitCapsuleCenterPointTemp, castDirection, Color.blue, 2);
         }
-    }
 
-    /// <summary>
-    ///   <para>
-    ///     Executes a full hit sweep sequence on any frame this method is called.
-    ///   </para>
-    /// </summary>
-    private void ExecuteHitSweep()
-    {
-        AlignHitSweep();
-
-        // Cast rays from previous hit sweep points to current ones all the way down the weapon length.
-        for (int i = 0; i < _hitSweepCasts; i++)
+        if (hitCountThisCast > 0)
         {
-            Vector3 startPoint = _prevHitSweepPointsTemp[i];
-            Vector3 endPoint = _hitSweepPointTemp;
-
-            // Record all valid objects that were hit.
-            _objectsHitThisSweep = Physics.SphereCastAll(startPoint,
-                                                         _castRadius,
-                                                         (endPoint - startPoint).normalized,
-                                                         (endPoint - startPoint).magnitude,
-                                                         _damageableLayerMasks,
-                                                         QueryTriggerInteraction.Ignore);
-            Debug.DrawRay(startPoint, endPoint - startPoint, Color.blue, 2);
-
             // Ensure the initial thrust attack can only damage a single enemy.
-            if (_currComboCount == 1 && _objectsHitThisSweep.Length > 1)
+            if (_currComboCount == 1)
             {
-                // Find the first object hit that has an Enemy script.
-                foreach (RaycastHit hit in _objectsHitThisSweep)
+                for (int i = 0; i < hitCountThisCast; i++)
                 {
+                    RaycastHit hit = _objectsHitThisCast[i];
                     Enemy enemyScript = hit.collider.gameObject.GetComponent<Enemy>();
-                    if (enemyScript == null) continue;
+                    if (enemyScript == null) continue; // Find the first object hit that has an Enemy script.
 
                     _objectsHitThisAttack.Add(hit.collider.gameObject);
                     ApplyDamageEffects(enemyScript);
                     return;
                 }
-
             }
-            else if (_currComboCount != 1 && _objectsHitThisSweep.Length > 0) // Other two attacks have area damage.
+            else if (_currComboCount > 1) // Other two attacks have area damage.
             {
                 // For all valid objects that were hit, apply damage to them only if they haven't already received it.
-                foreach (RaycastHit hit in _objectsHitThisSweep)
+                for (int i = 0; i < hitCountThisCast; i++)
                 {
+                    RaycastHit hit = _objectsHitThisCast[i];
                     Enemy enemyScript = hit.collider.gameObject.GetComponent<Enemy>();
                     if (_objectsHitThisAttack.Contains(hit.collider.gameObject) || enemyScript == null) continue; // Skip this object if damage was already
                                                                                                                   // applied or if it is not an enemy.
@@ -369,26 +339,49 @@ public class PlayerMeleeController : MonoBehaviour
                     ApplyDamageEffects(enemyScript);
                 }
             }
-
-            IncrementHitSweepPointTemp(i);
         }
+
+        InitializePrevHitSweepPointTemp();
     }
 
+    /// <summary>
+    ///   <para>
+    ///     Prepares the temp points array for a hit sweep on any frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void InitializePrevHitSweepPointTemp()
+    {
+        _prevHitCapsuleStartPointTemp = _hitCapsuleStartPoint.position;
+        _prevHitCapsuleEndPointTemp = _hitCapsuleEndPoint.position;
+        _prevHitCapsuleCenterPointTemp = _hitCapsuleStartPoint.position + (_hitCapsuleEndPoint.position - _hitCapsuleStartPoint.position) / 2;
+    }
+
+    /// <summary>
+    ///   Draws a wire capsule using two wire spheres and four lines connecting them.
+    /// </summary>
     void OnDrawGizmos()
     {
-        if (!_isAttacking) return;
+        if (!_isAttacking || !_debug) return;
 
-        float hitSweepLength = (_hitSweepEndPoint.position - _hitSweepStartPoint.position).magnitude;
-        float segmentLength = _hitSweepLength / _hitSweepCasts;
-        Vector3 hitSweepStepVector = (segmentLength + segmentLength / _hitSweepCasts) * PointVectorTo(_hitSweepStartPoint.position,
-                                                                                                      _hitSweepEndPoint.position);
-        Vector3 hitSweepPointTemp = _hitSweepStartPoint.position;
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(_hitCapsuleStartPoint.position, _hitCapsuleCastRadius);
+        Gizmos.DrawWireSphere(_hitCapsuleEndPoint.position, _hitCapsuleCastRadius);
 
-        for (int i = 0; i < _hitSweepCasts; i++)
+        Vector3[] lineStartPoints = new Vector3[4];
+        lineStartPoints[0] = _hitCapsuleStartPoint.position + _hitCapsuleCastRadius * _hitCapsuleStartPoint.forward;
+        lineStartPoints[1] = _hitCapsuleStartPoint.position - _hitCapsuleCastRadius * _hitCapsuleStartPoint.forward;
+        lineStartPoints[2] = _hitCapsuleStartPoint.position + _hitCapsuleCastRadius * _hitCapsuleStartPoint.right;
+        lineStartPoints[3] = _hitCapsuleStartPoint.position - _hitCapsuleCastRadius * _hitCapsuleStartPoint.right;
+
+        Vector3[] lineEndPoints = new Vector3[4];
+        lineEndPoints[0] = _hitCapsuleEndPoint.position + _hitCapsuleCastRadius * _hitCapsuleEndPoint.forward;
+        lineEndPoints[1] = _hitCapsuleEndPoint.position - _hitCapsuleCastRadius * _hitCapsuleEndPoint.forward;
+        lineEndPoints[2] = _hitCapsuleEndPoint.position + _hitCapsuleCastRadius * _hitCapsuleEndPoint.right;
+        lineEndPoints[3] = _hitCapsuleEndPoint.position - _hitCapsuleCastRadius * _hitCapsuleEndPoint.right;
+
+        for (int i = 0; i < 4; i++)
         {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(hitSweepPointTemp, _castRadius);
-            hitSweepPointTemp += hitSweepStepVector;
+            Gizmos.DrawLine(lineStartPoints[i], lineEndPoints[i]);
         }
     }
 
@@ -428,46 +421,6 @@ public class PlayerMeleeController : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Gets a normalized vector pointing from a "from" vector to a "to" vector.
-    ///   </para>
-    /// </summary>
-    /// <param name="fromVector"> The "from" vector. </param>
-    /// <param name="toVector"> The "to" vector. </param>
-    /// <returns> A normalized vector pointing from one vector to another. </returns>
-    private Vector3 PointVectorTo(Vector3 fromVector, Vector3 toVector)
-    {
-        return (toVector - fromVector).normalized;
-    }
-    
-    /// <summary>
-    ///   <para>
-    ///     Gets the hit sweep length and step vector alignment on any frame this method is called.
-    ///   </para>
-    /// </summary>
-    private void AlignHitSweep()
-    {
-        _hitSweepLength = (_hitSweepEndPoint.position - _hitSweepStartPoint.position).magnitude;
-        float segmentLength = _hitSweepLength / _hitSweepCasts;
-        _hitSweepStepVector = (segmentLength + segmentLength / _hitSweepCasts) * PointVectorTo(_hitSweepStartPoint.position,
-                                                                                               _hitSweepEndPoint.position);
-        _hitSweepPointTemp = _hitSweepStartPoint.position;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Increments the hit sweep temp point to the next step down the weapon length on any frame
-    ///     this method is called.
-    ///   </para>
-    /// </summary>
-    /// <param name="index"> Index of the temp point. </param>
-    private void IncrementHitSweepPointTemp(int index)
-    {
-        _prevHitSweepPointsTemp[index] = _hitSweepPointTemp;
-        _hitSweepPointTemp += _hitSweepStepVector;
-    }
-
-    /// <summary>
-    ///   <para>
     ///     Animation event to activate hit registration.
     ///   </para>
     /// </summary>
@@ -485,6 +438,19 @@ public class PlayerMeleeController : MonoBehaviour
     private void OnAttackEnd()
     {
         _isAttacking = false;
+        if (_currComboCount == 3) _currComboCount = 0;
+        _prevHitCapsuleTempPointsInitialized = false;
+        _objectsHitThisAttack.Clear();
         _weaponModel.SetActive(false);
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Animation event to play an attack sound.
+    ///   </para>
+    /// </summary>
+    private void PlaySound()
+    {
+        _audioController.PlayMeleeSound();
     }
 }

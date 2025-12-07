@@ -442,7 +442,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8403910430212717989}
   m_Layer: 0
-  m_Name: Hit Sweep Start Point
+  m_Name: Hit Detection Start Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -629,6 +629,10 @@ MonoBehaviour:
   _flightDecelerationSeconds: 0.5
   _flightCounterAccelerationMultiplier: 2
   _flightJumpForce: 20
+  dashSoundEvent:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
 --- !u!114 &3932950717491979509
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -653,6 +657,10 @@ MonoBehaviour:
   explosiveProjectilePrefab: {fileID: 0}
   projectileSpeed: 150
   spawnOffset: 0.1
+  fireEvent:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
 --- !u!114 &146141417271177862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -955,6 +963,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 3153
   homingProjectilePrefab: {fileID: 786387644219627909, guid: 1abe98f5a8e4b634ab46dbc4ffd399f4, type: 3}
+  homingDamageMultiplier: 0.25
 --- !u!1 &2808975749909750632
 GameObject:
   m_ObjectHideFlags: 0
@@ -1353,14 +1362,14 @@ MonoBehaviour:
   _attack0: {fileID: 7400000, guid: 975082a0d76614f4f956725dc6b5a9df, type: 2}
   _attack1: {fileID: 7400000, guid: 0ddbfb97c6e8ad348b3510e6eeecf6c5, type: 2}
   _attack2: {fileID: 7400000, guid: beca78283c4d3804795945b1405b46c8, type: 2}
-  _hitSweepStartPoint: {fileID: 8403910430212717989}
-  _hitSweepEndPoint: {fileID: 6515147321210492741}
-  _hitSweepCasts: 5
-  _castRadius: 3
+  _hitCapsuleStartPoint: {fileID: 8403910430212717989}
+  _hitCapsuleEndPoint: {fileID: 6515147321210492741}
+  _hitCapsuleCastRadius: 2
   _damageableLayerMasks:
     serializedVersion: 2
     m_Bits: 7168
-  _comboInputSecondsMargin: 0.2
+  _debug: 0
+  _comboInputSecondsMargin: 0.1
   knockbackForce: 18
 --- !u!1 &5947223034050071963
 GameObject:
@@ -1920,7 +1929,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6515147321210492741}
   m_Layer: 0
-  m_Name: Hit Sweep End Point
+  m_Name: Hit Detection End Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
