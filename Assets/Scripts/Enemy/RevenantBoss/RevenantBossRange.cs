@@ -1,12 +1,10 @@
 using System.Collections;
-// using Autodesk.Fbx;
 using UnityEngine;
 
-
 /// <summary>
-/// Class - Represents a Revenant enemy boss, inherits from Base Enemy class 
-/// ,also defines functionality of its own.
-/// Code copied straight from RangeEnemy.
+/// Class - Represents a ranged enemy boss, inherits from Base Enemy class and Ranged Enemy class.
+/// Two main attack patterns - Barrage of projectiles and AOE projectiles
+/// Two recovery states - normal and an extended bombing run
 /// </summary>
 public class RevenantBossRange : Enemy
 {
@@ -20,7 +18,7 @@ public class RevenantBossRange : Enemy
     public float hoverBobAmplitude = 0.25f; // up n down
     public float hoverBobSpeed = 2f;
     public float chaseSpeed = 3.5f;
-    public float stopDistance = 7f; // how far away from player should it stop 
+    public float stopDistance = 7f; // how far away from player should it stop to attack
     public float attackRange = 12f;
     public float turnSpeedWhileAiming = 12f;
     public float agentAngularSpeed = 720f;
@@ -40,7 +38,7 @@ public class RevenantBossRange : Enemy
     public EnemyAOEProjectile AOEProjectilePrefab;
     public EnemyAOEArcingProjectile AOEArcingProjectilePrefab;
     public LayerMask projectileMask = ~0;
-    public float spawnOffset = 0.1f; // a little away from fire point for safety
+    public float spawnOffset = 0.1f; // distance from fire point for safety
     public float projectileSpread = 0.1f; // random spread angle
     public float arcLaunchAngle = 45f;
     public float randomDistanceVariance = 0.2f;
@@ -58,7 +56,7 @@ public class RevenantBossRange : Enemy
     [Space]
 
     [Header("Recovery")]
-    [Tooltip("How much time to start again, basically reload time")]
+    [Tooltip("How much time until the next attack")]
     public float recoveryTime = 4f;
     public float longRecoveryTime = 6f;     // actually a third attack phase bc why not
 
@@ -75,8 +73,7 @@ public class RevenantBossRange : Enemy
     private RevenantAudioController audioController;
 
     float bobPhase;
-    //public RevOrbitVisuals orbitVisuals; // I promise i will actually implement this later but for now just get rid of it.
-
+    //public RevOrbitVisuals orbitVisuals; // replaced with simpler visuals
 
     public override void Start()
     {
@@ -110,7 +107,7 @@ public class RevenantBossRange : Enemy
     }
 
     /// <summary>
-    /// Apply Hovering Visuals to the Enemy
+    /// Apply hovering visuals
     /// </summary>
     void UpdateHover()
     {
@@ -120,8 +117,7 @@ public class RevenantBossRange : Enemy
         agent.baseOffset = hoverHeight + Mathf.Sin(bobPhase) * hoverBobAmplitude; // using sin formula for bobbing
     }
 
-    // HELPERS
-
+    // State Getters
     public EnemyState GetIdle() => idle;
     public EnemyState GetChase() => chase;
     public EnemyState GetAttack() => barrage_attack;
@@ -130,13 +126,14 @@ public class RevenantBossRange : Enemy
     public EnemyState GetLongRecovery() => longRecovery;
 
     /// <summary>
-    /// Used to fire one projectile in direction of te target
+    /// Used to fire two projectile in direction of the target
     /// </summary>
     public void FireOnce()
     {
 
         if (!firePoint || !firePoint2 || !projectilePrefab) return;
         
+        // Calculate directions and spawn projectiles
         Vector3 direction1 = (target ? target.position + Vector3.up * .5f - firePoint.position : transform.forward).normalized;
         Vector3 spawnPoint1 = firePoint.position + direction1 * spawnOffset;
         Quaternion rotation1 = Quaternion.LookRotation(direction1, Vector3.up);
@@ -153,27 +150,12 @@ public class RevenantBossRange : Enemy
         direction2.Normalize();
 
         EnemyProjectile projectile1 = Instantiate(projectilePrefab, spawnPoint1, rotation1);
-        //EnemyAOEProjectile projectile1 = Instantiate(AOEProjectilePrefab, spawnPoint1, rotation1); // For testing AOE
         projectile1.Init(direction1 * projectileSpeed, projectileMask, this.projectileDamage);
 
         EnemyProjectile projectile2 = Instantiate(projectilePrefab, spawnPoint2, rotation2);
-        //EnemyAOEProjectile projectile2 = Instantiate(AOEProjectilePrefab, spawnPoint2, rotation2); // For testing AOE
         projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
 
         audioController?.PlayFireProjectileSound();
-        // TODO: Rework orbit visuals
-        // if (orbitVisuals != null)
-        // {
-        //     int orbIndex = orbitVisuals.GetNextVisibleOrbIndex();
-        //     if (orbIndex >= 0)
-        //     {
-        //         orbitVisuals.HideOrb(orbIndex);
-        //     }
-        //     else
-        //     {
-        //         // no orbs left,maybe i can go to recovery
-        //     }
-        // }
     }
 
     public void FireBarrage()
@@ -196,16 +178,24 @@ public class RevenantBossRange : Enemy
 
     public void FireAOE()
     {
-        if (!AOEPoint || !AOEPoint2 || !projectilePrefab) return;
+        if (!AOEPoint || !AOEPoint2 || !projectilePrefab) {
+            Debug.LogWarning("AOE firing points and/or projectile prefab are not assigned.");
+            return;
+        }
         StartCoroutine(FireAOECoroutine());
     }
 
+    /// <summary>
+    /// Fire two AOE projectiles towards the target
+    /// </summary>
     public IEnumerator FireAOECoroutine()
     {
         // Insert firing indicator vfx/sfx here
         playAttackIndicator();
 
         yield return new WaitForSeconds(AOEAttackDelay); // initial delay before firing AOE
+
+        // Calculate directions and spawn projectiles
         Vector3 direction1 = (target ? target.position + Vector3.up * .5f - AOEPoint.position : transform.forward).normalized;
         Vector3 spawnPoint1 = AOEPoint.position + direction1 * spawnOffset;
         Quaternion rotation1 = Quaternion.LookRotation(direction1, Vector3.up);
@@ -228,11 +218,16 @@ public class RevenantBossRange : Enemy
         StartCoroutine(RecoveryBarrageCoroutine());
     }
 
+    /// <summary>
+    /// Fire a circular barrage of arcing AOE projectiles around the boss.
+    /// </summary>
     public IEnumerator RecoveryBarrageCoroutine()
     {
+        // Fire projectiles in a circular pattern with some random yaw
         float angleStep = 360f / recoveryBarrageCount;
         for (int i = 0; i < recoveryBarrageCount; i++)
         {
+            // Calculate firing direction with random yaw
             float currentAngle = i * angleStep;
             Quaternion facingRotation = Quaternion.Euler(0, currentAngle, 0);
             Vector3 baseDir = facingRotation * transform.forward;
@@ -240,59 +235,25 @@ public class RevenantBossRange : Enemy
             Quaternion randomRot = Quaternion.Euler(0, randomYaw, 0);
             Vector3 finalHorizontalDir = randomRot * baseDir;
 
+            // Calculate firing vector with arc angle
             Vector3 upComponent = Vector3.up * Mathf.Tan(arcLaunchAngle * Mathf.Deg2Rad);
             Vector3 firingVector = (finalHorizontalDir + upComponent).normalized;
 
+            // Apply random speed variance
             float randomSpeedMod = Random.Range(1f - randomDistanceVariance, 1f + randomDistanceVariance);
             Vector3 finalVelocity = firingVector * recoveryBarrageProjectileSpeed * randomSpeedMod;
             Vector3 spawnPoint = arcFiringPoint.position + finalHorizontalDir * spawnOffset;
+            
             EnemyAOEArcingProjectile projectile = Instantiate(AOEArcingProjectilePrefab, spawnPoint, Quaternion.LookRotation(firingVector));
             projectile.Init(finalVelocity, projectileMask, AOEProjectileDamage);
 
             yield return new WaitForSeconds(recoveryBarrageFiringInterval); // small delay between shots
         }
-
-        // Ts dont work well at all
-        // for (int i = 0; i < recoveryBarrageCount; i++)
-        // {
-            
-        //     Vector3 baseDir;
-            
-        //     if (target != null)
-        //     {
-                
-        //         Vector3 directionToTarget = target.position - arcFiringPoint.position;
-        //         directionToTarget.y = 0; 
-                
-        //         baseDir = directionToTarget.normalized;
-        //     }
-        //     else
-        //     {
-        //         baseDir = transform.forward;
-        //     }
-
-        //     float randomYaw = Random.Range(-5f, 5f); 
-        //     Quaternion randomRot = Quaternion.Euler(0, randomYaw, 0);
-        //     Vector3 finalHorizontalDir = randomRot * baseDir;
-        //     Vector3 upComponent = Vector3.up * Mathf.Tan(arcLaunchAngle * Mathf.Deg2Rad);
-        //     Vector3 firingVector = (finalHorizontalDir + upComponent).normalized;
-
-        //     float randomSpeedMod = Random.Range(1f - randomDistanceVariance, 1f + randomDistanceVariance);
-        //     Vector3 finalVelocity = firingVector * projectileSpeed * randomSpeedMod;
-        //     Vector3 spawnPoint = arcFiringPoint.position + finalHorizontalDir * spawnOffset;
-            
-        //     EnemyAOEArcingProjectile projectile = Instantiate(
-        //         AOEArcingProjectilePrefab, 
-        //         spawnPoint, 
-        //         Quaternion.LookRotation(firingVector)
-        //     );
-            
-        //     projectile.Init(finalVelocity, projectileMask, AOEProjectileDamage);
-
-        //     yield return new WaitForSeconds(recoveryBarrageFiringInterval);
-        // }
     }   
 
+    /// <summary>
+    /// Play attack indicator VFX and SFX (we're using WWise later)
+    /// </summary>
     void playAttackIndicator()
     {
         if (attackIndicator != null)
@@ -309,9 +270,9 @@ public class RevenantBossRange : Enemy
     }
 
     /// <summary>
-    /// Used to initialize damage done by this Range enemy when it is initialized. New Damage value can be initialized using this.
+    /// Used to initialize damage for this enemy.
     /// </summary>
-    /// <param name="newDamage"></param>
+    /// <param name="newDamage"> Intended damage value </param>
     public void InitializeDamage(float newDamage)
     {
         // this.projectileDamage = Mathf.CeilToInt(newDamage);
@@ -320,17 +281,7 @@ public class RevenantBossRange : Enemy
     }
 
     /// <summary>
-    /// Get Base Damage of this Range Enemy
+    /// Get base damage of this Range Enemy
     /// </summary>
-    /// <returns></returns>
     public float GetBaseDamage() => projectileDamage;
-
-    public override void Die()
-    {
-        // DOESNT WORRRK!!!!!! FFUUUUUUUCKKK
-        Debug.Log("Revenant Boss Died");
-        audioController?.PlayDeathSound();
-        base.Die();
-    }
-
 }

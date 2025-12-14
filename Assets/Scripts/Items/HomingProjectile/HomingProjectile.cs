@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Class - Represents a projectile that homes in on a target after an initial launch phase.
+/// Multiple parameters to control homing behavior and targeting.
+/// </summary>
 public class HomingProjectile : Projectile
 {
     [Header("Homing Properties")]
@@ -9,16 +13,15 @@ public class HomingProjectile : Projectile
     [SerializeField] private float rotationForce = 30f;
     [SerializeField] private float homingForce = 20f;
     [SerializeField] private float initialLaunchForce = 20f;
-    [SerializeField] private float delayBeforeTracking = 0.5f;
-    [SerializeField] private float launchConeAngle = 1.0f;
+    [SerializeField] private float delayBeforeTracking = 0.5f;  // Time to wait before starting to home in
+    [SerializeField] private float launchConeAngle = 1.0f;  // Angle in degrees for random launch direction
 
     [Header("Targeting")]
     [SerializeField] private float targetingRange = 50f;
     [SerializeField] private LayerMask targetMask;
-    [SerializeField] private float reTargetRate = 0.25f; // How often to scan for a target if we don't have one
+    [SerializeField] private float reTargetRate = 0.25f; // How often to scan for a target if current target is lost
 
     private bool following = false;
-    private Entity target;
     private IDamageable targetDamageable; 
 
     public override void Awake()
@@ -50,10 +53,10 @@ public class HomingProjectile : Projectile
     {
         base.Update();
 
-        // Update() is now only for movement logic
+        // Handle movement logic
         if (targetLocation != null && following)
         {
-            // We have a target, home in on it
+            // If target exists, home in on it
             Vector3 direction = targetLocation.position - transform.position;
             direction.Normalize();
 
@@ -66,7 +69,7 @@ public class HomingProjectile : Projectile
         }
         else if (targetLocation == null && following)
         {
-            // We don't have a target, just fly upwards
+            // If no target exists, just fly upwards
             if (rb != null && rb.linearVelocity.sqrMagnitude < homingForce * homingForce)
             {
                 rb.linearVelocity = transform.up * Mathf.Max(homingForce * 0.25f, 5f);
@@ -74,6 +77,10 @@ public class HomingProjectile : Projectile
         }
     }
 
+    /// <summary>
+    /// Coroutine to handle the homing behavior after an initial launch phase.
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator HomingCoroutine()
     {
         // Initial launch
@@ -88,7 +95,6 @@ public class HomingProjectile : Projectile
         yield return new WaitForSeconds(delayBeforeTracking);
         following = true;
 
-        // Start the persistent targeting loop
         while (true)
         {
             // Check if we need a new target
@@ -102,6 +108,9 @@ public class HomingProjectile : Projectile
         }
     }
 
+    /// <summary>
+    /// Find the closest valid target within range and set it as the current target
+    /// </summary>
     private void FindTarget()
     {
         Collider[] colliders = Physics.OverlapSphere(transform.position, targetingRange, targetMask);
