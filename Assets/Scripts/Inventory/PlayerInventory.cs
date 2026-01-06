@@ -9,8 +9,11 @@ public class PlayerInventory : MonoBehaviour
     {
         public ItemData itemData;
         public int count;
-        public List<StatModifier> activeModifiers = new List<StatModifier>();
-        public Dictionary<ItemEffectKind, int> contributedEffectStacks = new();
+        public List<StatModifier> activeModifiers = new List<StatModifier>(); // all modifiers created for this item's stacks
+
+        public Dictionary<ItemEffectKind, int> contributedEffectStacks = new(); // how many stacks this item contributed into each runtime effect
+        public List<(ElementType, ElementType)> contributedElementFusions = new(); // element fusion rules added by this item
+        // public IDisposable activeEffect; 
         public IDisposable runtimeEffect;
 
         public ItemStack(ItemData data)
@@ -23,6 +26,7 @@ public class PlayerInventory : MonoBehaviour
     private Dictionary<ItemData, ItemStack> items = new();
     private Entity playerEntity;
     
+    // once instance per effect kind on the player
     private HealOnDamage healOnDamageEffect;
     private StompDamage stompDamageEffect;
     private FallDamageBonus fallDamageBonusEffect;
@@ -34,8 +38,11 @@ public class PlayerInventory : MonoBehaviour
     private DelayedProjectiles delayedProjectilesEffect;
     private DashDamage dashDamageEffect;
 
+    // if I have time limited effects that need use of Updates, I will keep em here
     private readonly List<IDisposable> tickingEffects = new();
+    // private List<HealOnDamage> healEffects = new();
 
+    // for UI updates
     public event Action<ItemData, ItemStack> OnItemAdded;
     public event Action<ItemData, ItemStack> OnItemStackChanged;
     public event Action<ItemData> OnItemRemoved;
@@ -63,6 +70,9 @@ public class PlayerInventory : MonoBehaviour
         bounceProjectilesEffect?.Update(dt);
         delayedProjectilesEffect?.Update(dt);
         dashDamageEffect?.Update(dt);
+        //homingProjectilesEffect?.Update(dt);
+
+        // more runtime effects would be updated here ig
     }
 
     public void AddItem(ItemData itemData)
@@ -73,18 +83,23 @@ public class PlayerInventory : MonoBehaviour
         {
             stack = new ItemStack(itemData);
             items.Add(itemData, stack);
+
             ApplyStatModifiers(itemData, stack, stacksAdded: 1);
             ApplyEffects(itemData, stack, stacksAdded: 1);
+
             OnItemAdded?.Invoke(itemData, stack);
             Debug.Log($"Added new item: {itemData.itemName}");
             return;
         }
         
+
+        // stacking existing thing
         if(itemData.canStack && stack.count < itemData.maxStacks)
         {
             stack.count++;
             ApplyStatModifiers(itemData, stack, stacksAdded: 1);
             ApplyEffects(itemData, stack, stacksAdded: 1);
+
             OnItemStackChanged?.Invoke(itemData, stack);
             Debug.Log($"Stacked item : {itemData.itemName} : Count: {stack.count}");
         }
@@ -97,12 +112,13 @@ public class PlayerInventory : MonoBehaviour
     public void RemoveItem(ItemData itemData)
     {
         if (!items.TryGetValue(itemData, out ItemStack stack)) return;
-
+        // remove all stat modifiers created by this item
         foreach (var modifier in stack.activeModifiers)
         {
             modifier.Dispose();
         }
 
+        // remove contributed effect stacks
         foreach (var kv in stack.contributedEffectStacks)
         {
             var kind = kv.Key;
@@ -110,20 +126,31 @@ public class PlayerInventory : MonoBehaviour
             RemoveEffectStacks(kind, stacks);
         }
 
+        // remove element fusion rules
+        foreach (var fusionKey in stack.contributedElementFusions)
+        {
+            ElementSystem.RemoveTempRule(fusionKey.Item1, fusionKey.Item2);
+        }
+
         items.Remove(itemData);
         OnItemRemoved?.Invoke(itemData);
         Debug.Log($"Removed item : {itemData.itemName}");
     }
     
+    // some getters
     public int GetItemCount(ItemData itemData) => items.TryGetValue(itemData, out var stck) ? stck.count : 0;
     public bool HasItem(ItemData itemData) => items.ContainsKey(itemData);
+
+    // --------------------------------------STATS--------------------------------------
 
     private void ApplyStatModifiers(ItemData data, ItemStack stack, int stacksAdded)
     {
         if (playerEntity == null || playerEntity.Stats == null) return;
 
+        // decide which specs
         if (data.useMultipleStats == true)
         {
+            // if effect items only, no stats to apply
             if (data.statMods == null || data.statMods.Count == 0) 
             {
                 return;
@@ -135,6 +162,7 @@ public class PlayerInventory : MonoBehaviour
             return;
         }
 
+        // Legacy single stat
         var legacy = new StatModSpec
         {
             statType = data.statType,
@@ -143,12 +171,14 @@ public class PlayerInventory : MonoBehaviour
             duration = data.duration
         };
         AddOneModifier(legacy, stack, stacksAdded);
+        
     }
 
     private void AddOneModifier(StatModSpec spec, ItemStack stack, int stacksAdded)
     {
+        // how much to apply per new stack
         float baseValue = playerEntity.Stats.BaseValueForStat(spec.statType);
-        float inc = spec.value;
+        float inc = spec.value; // linear stacking
 
         for (int i = 0; i < stacksAdded; i++)
         {
@@ -165,7 +195,10 @@ public class PlayerInventory : MonoBehaviour
             Debug.Log($"Applied {spec.statType} modifier: {inc} ({spec.operatorType})");
         }
     }
+
     
+    // ------------------ EFFECTS ------------------------
+
     private void ApplyEffects(ItemData data, ItemStack stack, int stacksAdded)
     {
         if (playerEntity == null) return;
@@ -194,7 +227,7 @@ public class PlayerInventory : MonoBehaviour
                     EnsureDot(effect, initialStacks: stacksAdded);
                     break;
                 case ItemEffectKind.BurnOnDamage:
-                    break;
+                    break; // nothing yet, prolly dont even need it
                 case ItemEffectKind.HomingProjectiles:
                     EnsureHomingProjectiles(effect, initialStacks: stacksAdded);
                     break;
@@ -213,10 +246,13 @@ public class PlayerInventory : MonoBehaviour
                 case ItemEffectKind.DashDamage:
                     EnsureDashDamage(effect, initialStacks: stacksAdded);
                     break;
+                case ItemEffectKind.ElementFusion:
+                    EnsureElementFusion(effect, stack, initialStacks: stacksAdded);
+                    break;
             }
         }
-    }
 
+    }
     private void EnsureHealOnDamage(EffectSpec effect, int initialStacks)
     {
         if (healOnDamageEffect == null)
@@ -286,7 +322,6 @@ public class PlayerInventory : MonoBehaviour
             Debug.Log($"[Effect] FallBonus : Stacks {initialStacks}");
         }
     }
-
     private void EnsureDot(EffectSpec effect, int initialStacks)
     {
         if (dotOnHitEffect == null)
@@ -318,6 +353,7 @@ public class PlayerInventory : MonoBehaviour
 
     private void EnsureHomingProjectiles(EffectSpec effect, int initialStacks)
     {
+        // Do nothing idk
     }
 
     private void EnsureExplosiveProjectiles(EffectSpec effect, int initialStacks)
@@ -447,6 +483,25 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+    private void EnsureElementFusion(EffectSpec effect, ItemStack stack, int initialStacks)
+    {
+        if (effect.fusionTriggerElement == ElementType.None || effect.fusionEffectElement == ElementType.None)
+        {
+            Debug.LogWarning("[Effect] ElementFusion: Invalid element types");
+            return;
+        }
+
+        var key = (effect.fusionTriggerElement, effect.fusionEffectElement);
+        
+        for (int i = 0; i < initialStacks; i++)
+        {
+            ElementSystem.AddTempRule(effect.fusionTriggerElement, effect.fusionEffectElement);
+            stack.contributedElementFusions.Add(key);
+        }
+        
+        Debug.Log($"[Effect] Element Fusion : {effect.fusionTriggerElement} -> {effect.fusionEffectElement} : Stacks {initialStacks}");
+    }
+
     private void RemoveEffectStacks(ItemEffectKind kind, int stacks)
     {
         if (stacks <= 0) return;
@@ -457,30 +512,35 @@ public class PlayerInventory : MonoBehaviour
                 if (healOnDamageEffect != null)
                 {
                     healOnDamageEffect.AddStack(-stacks);
+                    // if it reaches 0 it'll dispose itself
                 }
                 break;
             case ItemEffectKind.StompDamage:
                 if (stompDamageEffect != null)
                 {
                     stompDamageEffect.AddStack(-stacks);
+                    // if it reaches 0 it'll dispose itself
                 }
                 break;
             case ItemEffectKind.FallDamageBonus:
                 if (fallDamageBonusEffect != null)
                 {
                     fallDamageBonusEffect.AddStack(-stacks);
+                    // if it reaches 0 it'll dispose itself
                 }
                 break;
             case ItemEffectKind.DotOnHit:
                 if (dotOnHitEffect != null)
                 {
                     dotOnHitEffect.AddStack(-stacks);
+                    // if it reaches 0 it'll dispose itself
                 }
                 break;
             case ItemEffectKind.ExplosiveProjectiles:
                 if (explosiveProjectilesEffect != null)
                 {
                     explosiveProjectilesEffect.AddStack(-stacks);
+                    // if it reaches 0 it'll dispose itself
                 }
                 break;
             case ItemEffectKind.ChainLightning:
@@ -507,6 +567,7 @@ public class PlayerInventory : MonoBehaviour
                     dashDamageEffect.AddStack(-stacks);
                 }
                 break;
+
         }
     }
     
@@ -521,5 +582,12 @@ public class PlayerInventory : MonoBehaviour
         bounceProjectilesEffect?.Dispose();
         delayedProjectilesEffect?.Dispose();
         dashDamageEffect?.Dispose();
+        //homingProjectilesEffect?.Dispose();
+        ElementSystem.ClearTempRules();
+
+        // any other dispose handle
     }
+
+    
+
 }

@@ -25,7 +25,8 @@ public enum ItemEffectKind
     ChainLightning,
     BounceProjectiles,
     DelayedProjectiles,
-    DashDamage
+    DashDamage,
+    ElementFusion
 }
 
 [Serializable]
