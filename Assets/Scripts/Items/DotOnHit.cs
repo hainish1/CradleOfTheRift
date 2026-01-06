@@ -1,23 +1,22 @@
 using System;
 using UnityEngine;
 
-// Handles DOT for items like poison, burn etc
-// Listens to player damage events and applies DOT to enemies
 public class DotOnHit : IDisposable
 {
     private readonly Entity owner;
     private readonly float dotDamagePerTick;
     private readonly float dotTickInterval;
     private readonly float dotDuration;
-    private readonly float dotDamagePerStack;  // extra dmg per item stack
+    private readonly float dotDamagePerStack;
     private int stacks; 
-    private readonly float duration; // -1 = perm item
+    private readonly float duration;
     private float timer;
     private bool disposed;
     private readonly bool dotCanStack;
     private readonly string dotId;  
     private readonly int dotMaxStacks;
-    private readonly bool dotApplyImmediately;  // first tick instant
+    private readonly bool dotApplyImmediately;
+    private readonly ElementType elementType = ElementType.Poison;
 
     public DotOnHit(
         Entity owner, 
@@ -36,7 +35,7 @@ public class DotOnHit : IDisposable
         this.dotTickInterval = dotTickInterval;
         this.dotDuration = dotDuration;
         this.dotDamagePerStack = dotDamagePerStack;
-        this.stacks = Mathf.Max(1, initialStacks);  // at least 1 stack
+        this.stacks = Mathf.Max(1, initialStacks);
         this.duration = durationSec;
         this.timer = durationSec;
         this.dotCanStack = dotCanStack;
@@ -44,7 +43,6 @@ public class DotOnHit : IDisposable
         this.dotMaxStacks = dotMaxStacks;
         this.dotApplyImmediately = dotApplyImmediately;
 
-        // subscribe to damage events
         CombatEvents.DamageDealt += OnDamageDealt;
 
         string immediateText = dotApplyImmediately ? "instant" : $"delayed {dotTickInterval}s";
@@ -64,17 +62,20 @@ public class DotOnHit : IDisposable
         if (timer <= 0f) Dispose();
     }
 
-    private void OnDamageDealt(Entity attacker, Component target, float damage)
+    private void OnDamageDealt(Entity attacker, Component target, float damage, ElementType triggerElement)
     {
         if (disposed || attacker != owner) return;
 
-        // prevent DOT damage from triggering more DOT 
+        if (!ElementSystem.CanTrigger(triggerElement, elementType))
+        {
+            return;
+        }
+
         if (DotDebuff.IsProcessingDotDamage) return;
 
         var enemy = target as Enemy;
         if (!enemy) return;
 
-        // add or get the DOT manager on the enemy
         var dotDebuff = enemy.GetComponent<DotDebuff>();
         if (!dotDebuff)
             dotDebuff = enemy.gameObject.AddComponent<DotDebuff>();

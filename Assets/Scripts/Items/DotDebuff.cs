@@ -1,11 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-// Handles all active DOT effects on an enemy
-// Gets added to enemy gameobjects when they get hit with DOT items
 public class DotDebuff : MonoBehaviour
 {
-    // flag to prevent DOT recursion 
     public static bool IsProcessingDotDamage { get; private set; }
     
     private class DotEffect
@@ -115,18 +112,17 @@ public class DotDebuff : MonoBehaviour
     {
         if (damageable == null || damageable.IsDead)
         {
-            activeDots.Clear();  // enemy dead, clear all DOTs
+            activeDots.Clear();
             return;
         }
 
-        // iterate backwards so we can remove while looping
         for (int i = activeDots.Count - 1; i >= 0; i--)
         {
             var dot = activeDots[i];
 
             if (dot.IsExpired())
             {
-                activeDots.RemoveAt(i);  // DOT ran out
+                activeDots.RemoveAt(i);
                 continue;
             }
 
@@ -149,7 +145,7 @@ public class DotDebuff : MonoBehaviour
         
         var enemy = GetComponent<Enemy>();
         if (enemy && dot.source)
-            CombatEvents.ReportDamage(dot.source, enemy, totalDamage);
+            CombatEvents.ReportDamage(dot.source, enemy, totalDamage, ElementType.Poison);
 
         if (showDotNumbers)
             ShowDotNumber(totalDamage);
@@ -161,7 +157,6 @@ public class DotDebuff : MonoBehaviour
 
     private void ShowDotNumber(float damage)
     {
-        // we have the dummy so don't need this
         Debug.Log($"[DOT Visual] {gameObject.name} -{damage:F1}", gameObject);
     }
 

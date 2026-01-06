@@ -59,9 +59,11 @@ public class ChainLightning : IDisposable
         if (timer <= 0f) Dispose();
     }
 
-    private void OnDamageDealt(Entity attacker, Component target, float damage)
+    private void OnDamageDealt(Entity attacker, Component target, float damage, ElementType triggerElement)
     {
         if (disposed || attacker != owner || IsProcessingChain) return;
+
+        if (triggerElement != ElementType.None) return;
 
         Enemy enemy = target as Enemy;
         if (enemy == null) return;
@@ -105,7 +107,7 @@ public class ChainLightning : IDisposable
             if (damageable != null && !damageable.IsDead)
             {
                 damageable.TakeDamage(baseDamage);
-                CombatEvents.ReportDamage(owner, closest, baseDamage);
+                CombatEvents.ReportDamage(owner, closest, baseDamage, ElementType.Lightning);
                 CreateLightningEffect(fromPos, closest.transform.position);
                 ChainFromEnemy(closest, closest.transform.position, baseDamage, chainNum + 1, hit);
             }

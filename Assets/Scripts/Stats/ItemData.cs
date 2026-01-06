@@ -84,6 +84,10 @@ public class EffectSpec
     // Dash Damage
     public float dashDamage = 10f;
     public float dashDamageRange = 5f;
+
+    // Element Fusion
+    public ElementType fusionTriggerElement = ElementType.None;
+    public ElementType fusionEffectElement = ElementType.None;
 }
 
 public enum ItemRarity

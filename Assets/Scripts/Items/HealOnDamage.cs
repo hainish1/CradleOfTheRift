@@ -5,12 +5,11 @@ public class HealOnDamage : IDisposable
 {
     private readonly Entity owner;
     private readonly PlayerHealth ownerHealth;
-    private readonly float percentPerStack; // 0.15 means 15%
+    private readonly float percentPerStack;
     private int stacks;
-    private readonly float duration; // -1 means perm
+    private readonly float duration;
     private float timer;
     private bool disposed;
-
 
     public HealOnDamage(Entity owner, float percentPerStack, int initialStacks, float durationSec = -1f)
     {
@@ -33,13 +32,10 @@ public class HealOnDamage : IDisposable
         if (timer <= 0f) Dispose();
     }
 
-
-    // do the actual effect
-    private void OnDamageDealt(Entity attacker, Component target, float damage)
+    private void OnDamageDealt(Entity attacker, Component target, float damage, ElementType triggerElement)
     {
         if (disposed || attacker != owner || ownerHealth == null) return;
-        // float heal = damage * percentPerStack * stacks;
-        float heal = 1 * stacks; // just for testing
+        float heal = 1 * stacks;
         if (heal > 0f) ownerHealth.Heal(heal);
     }
 
@@ -47,6 +43,6 @@ public class HealOnDamage : IDisposable
     {
         if (disposed) return;
         disposed = true;
-        CombatEvents.DamageDealt -= OnDamageDealt; // unsubscribe
+        CombatEvents.DamageDealt -= OnDamageDealt;
     }
 }
