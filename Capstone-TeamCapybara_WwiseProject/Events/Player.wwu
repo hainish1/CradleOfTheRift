@@ -8,7 +8,25 @@
 						<Action Name="" ID="{77147E79-BB9D-41FC-83CE-21613DF27FC2}" ShortID="875605143">
 							<ReferenceList>
 								<Reference Name="Target">
-									<ObjectRef Name="player_melee" ID="{9543637D-19CD-4664-BCD2-8FD78E9815F3}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+									<ObjectRef Name="Weapon Swoosh" ID="{2AE8E6C6-4232-46A7-A956-8CDA05C20061}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{25D643C7-A0ED-414D-8D11-E3169410E1AB}" ShortID="213746814">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Weapon Bell" ID="{92A289F7-4E7F-4813-A35F-009A3BF5B92D}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{E6D9C840-2109-463F-93AD-1E7224DF53E4}" ShortID="797257904">
+							<PropertyList>
+								<Property Name="FadeTime" Type="Real64" Value="1"/>
+								<Property Name="Probability" Type="Real64" Value="50"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Weapon Sparkle" ID="{6EDCDA07-581F-4FB5-9AF8-1F8E58E01748}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
 								</Reference>
 							</ReferenceList>
 						</Action>
