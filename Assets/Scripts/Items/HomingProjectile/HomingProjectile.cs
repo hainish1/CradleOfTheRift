@@ -4,7 +4,7 @@ using UnityEngine;
 
 /// <summary>
 /// Class - Represents a projectile that homes in on a target after an initial launch phase.
-/// Multiple parameters to control homing behavior and targeting.
+/// Uses multiple parameters to control homing behavior and targeting.
 /// </summary>
 public class HomingProjectile : Projectile
 {
