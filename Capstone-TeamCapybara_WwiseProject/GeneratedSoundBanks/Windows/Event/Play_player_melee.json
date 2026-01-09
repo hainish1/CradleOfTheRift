@@ -10,19 +10,37 @@
     "Type": "Event",
     "GUID": "{A0E4E348-9A60-481D-80A0-A62A6E74E1D3}",
     "Language": "SFX",
-    "Hash": "{F22472F9-9FE2-574E-5A5C-6908E49EFE33}",
+    "Hash": "{8EDB90A1-8827-B312-5AE7-320CCFE0C0D8}",
     "ObjectPath": "Play_player_melee",
     "ShortName": "Play_player_melee",
     "Path": "Event/Play_player_melee.bnk",
     "Media": [
      {
-      "Id": "634256709",
+      "Id": "151469928",
       "Language": "SFX",
       "Streaming": "false",
       "Location": "Loose",
-      "ShortName": "player_melee.wav",
-      "Path": "Media/634256709.wem",
-      "CachePath": "36/{36CA500E-8F43-8690-245A-9248FF6506A8}.wem"
+      "ShortName": "Weapon Swoosh.wav",
+      "Path": "Media/151469928.wem",
+      "CachePath": "A5/{A5731AF0-AB1D-922E-AD9C-F89103EE69B5}.wem"
+     },
+     {
+      "Id": "647025352",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Weapon Bell.wav",
+      "Path": "Media/647025352.wem",
+      "CachePath": "63/{639B6DC0-1E97-F899-2282-18B7CDA97302}.wem"
+     },
+     {
+      "Id": "887072207",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Weapon Sparkle.wav",
+      "Path": "Media/887072207.wem",
+      "CachePath": "6B/{6B904866-7EFF-B851-A22D-A17C72AC3EC4}.wem"
      }
     ],
     "Events": [
@@ -32,17 +50,23 @@
       "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_melee",
       "GUID": "{A0E4E348-9A60-481D-80A0-A62A6E74E1D3}",
       "DurationType": "OneShot",
-      "DurationMin": "1.5780962",
-      "DurationMax": "2.5050716",
+      "DurationMin": "4.6250114",
+      "DurationMax": "4.6250114",
       "MediaRefs": [
        {
-        "Id": "634256709"
+        "Id": "151469928"
+       },
+       {
+        "Id": "647025352"
+       },
+       {
+        "Id": "887072207"
        }
       ]
      }
     ]
    }
   ],
-  "FileHash": "{08952FD5-FF6E-605F-2882-848F4660197C}"
+  "FileHash": "{6FDF0356-EEC5-DB3A-5DA3-F76EB96DA6CE}"
  }
 }
