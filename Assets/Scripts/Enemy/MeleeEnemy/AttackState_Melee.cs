@@ -19,6 +19,12 @@ public class AttackState_Melee : EnemyState
     private float leapTimer;
 
     float endTime;
+    
+    // Sorry Hainish!!!
+    // This is used to detect when the phase changes from
+    // Windup to leap.
+    // This helps to know when to play the slime jump sfx.
+    private Phase lastPhase;
 
     public AttackState_Melee(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
@@ -46,6 +52,7 @@ public class AttackState_Melee : EnemyState
 
         // small windup, basically freeze in place
         phase = Phase.Windup;
+        lastPhase = phase;
         timer = enemyMelee.windupTime;
         leapTimer = 0f;
         // TryApplyHit();
@@ -69,6 +76,14 @@ public class AttackState_Melee : EnemyState
                 HandleLeap();
                 break;
         }
+        // If we just phase changed from windup to leap, play slime jump sfx.
+        if (lastPhase == Phase.Windup && phase == Phase.Leap)
+        {
+            // Play the slime jump sound effect.
+            enemyMelee.PlayJumpSFX();
+        }
+
+        lastPhase = phase;
     }
 
     private void HandleWindup()
