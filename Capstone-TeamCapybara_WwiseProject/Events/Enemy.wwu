@@ -16,6 +16,17 @@
 								</Action>
 							</ChildrenList>
 						</Event>
+						<Event Name="Slime_Death" ID="{67F4EC14-C85C-4C1C-8276-FE33BAEB0848}">
+							<ChildrenList>
+								<Action Name="" ID="{8600294C-E0C1-4D97-99BF-30A3E5ABB311}" ShortID="736003838">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Slime" ID="{F468D715-9549-4314-98C5-A7BEA258295B}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
 					</ChildrenList>
 				</Folder>
 				<Folder Name="Skull" ID="{C8E368DF-A674-49F7-B678-9637B89F3E3A}" ShortID="764658622">
