@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
-  m_Name: elementtest 1
+  m_Name: FTP
   m_EditorClassIdentifier: 
   itemName: New Item
   description: Item Description Here
@@ -56,8 +56,14 @@ MonoBehaviour:
     delayedMarkVFX: {fileID: 0}
     dashDamage: 0
     dashDamageRange: 0
-    fusionTriggerElement: 3
+    fusionTriggerElement: 1
     fusionEffectElement: 2
+    burnAuraDamagePerSecond: 5
+    burnAuraRange: 3
+    burnAuraTickInterval: 1
+    arcStrikeDamage: 10
+    arcStrikeRange: 10
+    arcStrikePoissonLambda: 5.5
   statType: 9
   operatorType: 0
   value: 1

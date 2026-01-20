@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 // dummy for testing damage numbers
 // just shows damage, doesn't actually take damage or die
@@ -6,7 +7,7 @@ using UnityEngine;
 public class DamageTestDummy : Enemy, IDamageable
 {
     [Header("Visuals")]
-    [SerializeField] private Color damageColor = Color.red;
+    [SerializeField] private Color damageColor = Color.white;
     [SerializeField] private Material hitFlashMaterial;
     [SerializeField] private float flashDuration = 0.1f;
     [SerializeField] private int fontSize = 50;
@@ -34,6 +35,8 @@ public class DamageTestDummy : Enemy, IDamageable
         meshRenderer = GetComponentInChildren<Renderer>();
         if (meshRenderer != null)
             originalMaterial = meshRenderer.material;
+        
+        CombatEvents.DamageDealt += OnDamageDealt;
     }
 
     public override void Update()
@@ -46,14 +49,21 @@ public class DamageTestDummy : Enemy, IDamageable
         totalDamageTaken += damage;
         hitCount++;
 
-        if (logDamage)
-            Debug.Log($"[Dummy] Took {damage:F1} damage | Total Hits: {hitCount} | Total Damage: {totalDamageTaken:F1}");
-
-        ShowDamageNumber(damage);
         StartCoroutine(FlashHit());
     }
 
-    private void ShowDamageNumber(float damage)
+    private void OnDamageDealt(Entity attacker, Component target, float damage, ElementType elementType)
+    {
+        if (target == this || target == this as Component)
+        {
+            if (logDamage)
+                Debug.Log($"[Dummy] Took {damage:F1} damage ({elementType}) | Total Hits: {hitCount} | Total Damage: {totalDamageTaken:F1}");
+            
+            ShowDamageNumber(damage, elementType);
+        }
+    }
+
+    private void ShowDamageNumber(float damage, ElementType elementType)
     {
         GameObject damageText = new GameObject("DamageText");
         
@@ -69,11 +79,24 @@ public class DamageTestDummy : Enemy, IDamageable
         TextMesh textMesh = damageText.AddComponent<TextMesh>();
         textMesh.text = damage.ToString("F1");
         textMesh.fontSize = fontSize;
-        textMesh.color = damageColor;
+        textMesh.color = GetElementColor(elementType);
         textMesh.anchor = TextAnchor.MiddleCenter;
         textMesh.characterSize = 0.2f;
         
         StartCoroutine(AnimateDamageText(damageText, textMesh));
+    }
+
+    private Color GetElementColor(ElementType elementType)
+    {
+        return elementType switch
+        {
+            ElementType.None => Color.white,
+            ElementType.Fire => Color.red,
+            ElementType.Lightning => Color.yellow,
+            ElementType.Poison => Color.green,
+            ElementType.Ice => new Color(0.5f, 0.8f, 1f), // light blue
+            _ => Color.white
+        };
     }
     
     private System.Collections.IEnumerator AnimateDamageText(GameObject damageText, TextMesh textMesh)
@@ -96,7 +119,7 @@ public class DamageTestDummy : Enemy, IDamageable
             
             // fade out
             float alpha = 1f - (t * t);  // quadratic fade looks better
-            textMesh.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
+                textMesh.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
             
             // keep facing camera
             if (Camera.main != null)
@@ -142,5 +165,10 @@ public class DamageTestDummy : Enemy, IDamageable
     private void PrintStats()
     {
         Debug.Log($"[Dummy] Total Hits: {hitCount} | Total Damage: {totalDamageTaken:F1}");
+    }
+
+    void OnDestroy()
+    {
+        CombatEvents.DamageDealt -= OnDamageDealt;
     }
 }

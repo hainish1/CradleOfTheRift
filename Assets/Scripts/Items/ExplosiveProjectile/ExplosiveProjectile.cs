@@ -67,9 +67,8 @@ public class ExplosiveProjectile : Projectile
             if (damageable != null && !damageable.IsDead)
             {
                 damageable.TakeDamage(actualDamage);
-                CombatEvents.ReportDamage(attacker, enemy, actualDamage);
+                CombatEvents.ReportDamage(attacker, enemy, actualDamage, ElementType.Fire);
                 hasHit = true;
-                Debug.Log($"Dealt {actualDamage} damage to {collision.gameObject.name}");
             }
         }
 
@@ -99,7 +98,7 @@ public class ExplosiveProjectile : Projectile
             if (damageable != null && !damageable.IsDead && !hit.Contains(damageable))
             {
                 damageable.TakeDamage(aoeDamage);
-                CombatEvents.ReportDamage(attacker, enemy, aoeDamage);
+                CombatEvents.ReportDamage(attacker, enemy, aoeDamage, ElementType.Fire);
                 hit.Add(damageable);
             }
         }

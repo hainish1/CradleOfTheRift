@@ -26,7 +26,9 @@ public enum ItemEffectKind
     BounceProjectiles,
     DelayedProjectiles,
     DashDamage,
-    ElementFusion
+    ElementFusion,
+    ArcStrike,
+    ElementReactionExplosion
 }
 
 [Serializable]
@@ -89,6 +91,22 @@ public class EffectSpec
     // Element Fusion
     public ElementType fusionTriggerElement = ElementType.None;
     public ElementType fusionEffectElement = ElementType.None;
+
+    // Burn Aura (Sunfire-like)
+    public float burnAuraDamagePerSecond = 5f;
+    public float burnAuraRange = 3f;
+    public float burnAuraTickInterval = 1f;
+
+    // Arc Strike (Poisson-based lightning)
+    public float arcStrikeDamage = 10f;
+    public float arcStrikeRange = 10f;
+    public float arcStrikePoissonLambda = 5.5f;
+
+    // Element Reaction Explosion (Lightning + Fire)
+    public float elementReactionExplosionDamage = 20f;
+    public float elementReactionExplosionRadius = 3f;
+    public float elementReactionExplosionCooldown = 1f;
+    public GameObject elementReactionExplosionVFX;
 }
 
 public enum ItemRarity
@@ -122,7 +140,7 @@ public class ItemData : ScriptableObject
     public bool canStack = true;
     public int maxStacks = 99;
     public StackingType stackingType = StackingType.Linear;
-    
+
     [Space]
 
     [Header("MULTIPLE Stat Effects")]

@@ -37,6 +37,9 @@ public class PlayerInventory : MonoBehaviour
     private BounceProjectiles bounceProjectilesEffect;
     private DelayedProjectiles delayedProjectilesEffect;
     private DashDamage dashDamageEffect;
+    private BurnAura burnAuraEffect;
+    private ArcStrike arcStrikeEffect;
+    private ElementReactionExplosion elementReactionExplosionEffect;
 
     // if I have time limited effects that need use of Updates, I will keep em here
     private readonly List<IDisposable> tickingEffects = new();
@@ -70,6 +73,9 @@ public class PlayerInventory : MonoBehaviour
         bounceProjectilesEffect?.Update(dt);
         delayedProjectilesEffect?.Update(dt);
         dashDamageEffect?.Update(dt);
+        burnAuraEffect?.Update(dt);
+        arcStrikeEffect?.Update(dt);
+        elementReactionExplosionEffect?.Update(dt);
         //homingProjectilesEffect?.Update(dt);
 
         // more runtime effects would be updated here ig
@@ -95,7 +101,7 @@ public class PlayerInventory : MonoBehaviour
 
         // stacking existing thing
         if(itemData.canStack && stack.count < itemData.maxStacks)
-        {
+            {
             stack.count++;
             ApplyStatModifiers(itemData, stack, stacksAdded: 1);
             ApplyEffects(itemData, stack, stacksAdded: 1);
@@ -183,15 +189,15 @@ public class PlayerInventory : MonoBehaviour
         for (int i = 0; i < stacksAdded; i++)
         {
             StatModifier modifier = spec.operatorType switch
-            {
+        {
                 OperatorType.Add => new BasicStatsModifier(spec.statType, spec.duration, v => v + inc),
                 OperatorType.Multiply => new BasicStatsModifier(spec.statType, spec.duration, v => v * inc),
                 OperatorType.Percentage => new BasicStatsModifier(spec.statType, spec.duration, v => v + baseValue * inc),
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
-            stack.activeModifiers.Add(modifier);
-            playerEntity.Stats.Mediator.AddModifier(modifier);
+        stack.activeModifiers.Add(modifier);
+        playerEntity.Stats.Mediator.AddModifier(modifier);
             Debug.Log($"Applied {spec.statType} modifier: {inc} ({spec.operatorType})");
         }
     }
@@ -227,7 +233,8 @@ public class PlayerInventory : MonoBehaviour
                     EnsureDot(effect, initialStacks: stacksAdded);
                     break;
                 case ItemEffectKind.BurnOnDamage:
-                    break; // nothing yet, prolly dont even need it
+                    EnsureBurnAura(effect, initialStacks: stacksAdded);
+                    break;
                 case ItemEffectKind.HomingProjectiles:
                     EnsureHomingProjectiles(effect, initialStacks: stacksAdded);
                     break;
@@ -248,6 +255,12 @@ public class PlayerInventory : MonoBehaviour
                     break;
                 case ItemEffectKind.ElementFusion:
                     EnsureElementFusion(effect, stack, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.ArcStrike:
+                    EnsureArcStrike(effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.ElementReactionExplosion:
+                    EnsureElementReactionExplosion(effect, initialStacks: stacksAdded);
                     break;
             }
         }
@@ -289,7 +302,7 @@ public class PlayerInventory : MonoBehaviour
             );
             if (effect.duration > 0f) tickingEffects.Add(stompDamageEffect);
             Debug.Log($"[Effect] Stomp created : Stacks{initialStacks}");
-        }
+    }
         else
         {
             for (int i = 0; i < initialStacks; i++)
@@ -344,7 +357,7 @@ public class PlayerInventory : MonoBehaviour
         else
         {
             for (int i = 0; i < initialStacks; i++)
-            {
+        {
                 dotOnHitEffect.AddStack(1);
             }
             Debug.Log($"[Effect] DOT : Stacks {initialStacks}");
@@ -381,7 +394,7 @@ public class PlayerInventory : MonoBehaviour
             Debug.Log($"[Effect] Explosive Projectiles : Stacks {initialStacks}");
         }
     }
-
+    
     private void EnsureChainLightning(EffectSpec effect, int initialStacks)
     {
         if (chainLightningEffect == null)
@@ -433,7 +446,7 @@ public class PlayerInventory : MonoBehaviour
             Debug.Log($"[Effect] Bounce Projectiles : Stacks {initialStacks}");
         }
     }
-
+    
     private void EnsureDelayedProjectiles(EffectSpec effect, int initialStacks)
     {
         if (delayedProjectilesEffect == null)
@@ -482,6 +495,57 @@ public class PlayerInventory : MonoBehaviour
             Debug.Log($"[Effect] Dash Damage : Stacks {initialStacks}");
         }
     }
+    
+    private void EnsureBurnAura(EffectSpec effect, int initialStacks)
+    {
+        if (burnAuraEffect == null)
+        {
+            burnAuraEffect = new BurnAura(
+                owner: playerEntity,
+                damagePerSecond: effect.burnAuraDamagePerSecond,
+                range: effect.burnAuraRange,
+                initialStacks: initialStacks,
+                durationSec: effect.duration,
+                tickInterval: effect.burnAuraTickInterval
+            );
+            if (effect.duration > 0f) tickingEffects.Add(burnAuraEffect);
+            Debug.Log($"[Effect] Burn Aura created, stacks {initialStacks}");
+        }
+        else
+        {
+            Debug.LogWarning("Burn Aura already exists, stacking.");
+            for (int i = 0; i < initialStacks; i++)
+            {
+                burnAuraEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Burn Aura : Stacks {initialStacks}");
+        }
+    }
+    
+    private void EnsureArcStrike(EffectSpec effect, int initialStacks)
+    {
+        if (arcStrikeEffect == null)
+        {
+            arcStrikeEffect = new ArcStrike(
+                owner: playerEntity,
+                damage: effect.arcStrikeDamage,
+                range: effect.arcStrikeRange,
+                poissonLambda: effect.arcStrikePoissonLambda,
+                initialStacks: initialStacks,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(arcStrikeEffect);
+            Debug.Log($"[Effect] Arc Strike created : {effect.arcStrikeDamage} damage, {effect.arcStrikeRange}m range, {effect.arcStrikePoissonLambda} lambda, Stacks{initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                arcStrikeEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Arc Strike : Stacks {initialStacks}");
+        }
+    }
 
     private void EnsureElementFusion(EffectSpec effect, ItemStack stack, int initialStacks)
     {
@@ -498,8 +562,31 @@ public class PlayerInventory : MonoBehaviour
             ElementSystem.AddTempRule(effect.fusionTriggerElement, effect.fusionEffectElement);
             stack.contributedElementFusions.Add(key);
         }
-        
-        Debug.Log($"[Effect] Element Fusion : {effect.fusionTriggerElement} -> {effect.fusionEffectElement} : Stacks {initialStacks}");
+    }
+
+    private void EnsureElementReactionExplosion(EffectSpec effect, int initialStacks)
+    {
+        if (elementReactionExplosionEffect == null)
+        {
+            elementReactionExplosionEffect = new ElementReactionExplosion(
+                owner: playerEntity,
+                explosionDamage: effect.elementReactionExplosionDamage,
+                explosionRadius: effect.elementReactionExplosionRadius,
+                initialStacks: initialStacks,
+                durationSec: effect.duration,
+                explosionVFX: effect.elementReactionExplosionVFX
+            );
+            if (effect.duration > 0f) tickingEffects.Add(elementReactionExplosionEffect);
+            Debug.Log($"[Effect] Element Reaction Explosion created : {effect.elementReactionExplosionDamage} damage, {effect.elementReactionExplosionRadius}m radius, Stacks{initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                elementReactionExplosionEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Element Reaction Explosion : Stacks {initialStacks}");
+        }
     }
 
     private void RemoveEffectStacks(ItemEffectKind kind, int stacks)
@@ -567,6 +654,24 @@ public class PlayerInventory : MonoBehaviour
                     dashDamageEffect.AddStack(-stacks);
                 }
                 break;
+            case ItemEffectKind.BurnOnDamage:
+                if (burnAuraEffect != null)
+                {
+                    burnAuraEffect.AddStack(-stacks);
+                }
+                break;
+            case ItemEffectKind.ArcStrike:
+                if (arcStrikeEffect != null)
+                {
+                    arcStrikeEffect.AddStack(-stacks);
+                }
+                break;
+            case ItemEffectKind.ElementReactionExplosion:
+                if (elementReactionExplosionEffect != null)
+                {
+                    elementReactionExplosionEffect.AddStack(-stacks);
+                }
+                break;
 
         }
     }
@@ -582,6 +687,9 @@ public class PlayerInventory : MonoBehaviour
         bounceProjectilesEffect?.Dispose();
         delayedProjectilesEffect?.Dispose();
         dashDamageEffect?.Dispose();
+        burnAuraEffect?.Dispose();
+        arcStrikeEffect?.Dispose();
+        elementReactionExplosionEffect?.Dispose();
         //homingProjectilesEffect?.Dispose();
         ElementSystem.ClearTempRules();
 

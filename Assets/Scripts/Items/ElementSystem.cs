@@ -13,10 +13,10 @@ public enum ElementType
 
 public static class ElementSystem
 {
-    private static Dictionary<ElementType, HashSet<ElementType>> baseRules = 
+    private static readonly Dictionary<ElementType, HashSet<ElementType>> baseRules =
         new Dictionary<ElementType, HashSet<ElementType>>();
 
-    private static Dictionary<ElementType, HashSet<ElementType>> tempRules = 
+    private static readonly Dictionary<ElementType, HashSet<ElementType>> tempRules =
         new Dictionary<ElementType, HashSet<ElementType>>();
 
     public static bool CanTrigger(ElementType triggerElement, ElementType effectElement)
@@ -45,7 +45,6 @@ public static class ElementSystem
             tempRules[trigger] = new HashSet<ElementType>();
         
         tempRules[trigger].Add(effect);
-        Debug.Log($"[ElementSystem] Added temp rule: {trigger} can trigger {effect}");
     }
 
     public static void RemoveTempRule(ElementType trigger, ElementType effect)
@@ -53,7 +52,6 @@ public static class ElementSystem
         if (tempRules.TryGetValue(trigger, out var set))
         {
             set.Remove(effect);
-            Debug.Log($"[ElementSystem] Removed temp rule: {trigger} can trigger {effect}");
             
             if (set.Count == 0)
                 tempRules.Remove(trigger);
@@ -63,12 +61,11 @@ public static class ElementSystem
     public static void ClearTempRules()
     {
         tempRules.Clear();
-        Debug.Log("[ElementSystem] Cleared all temp rules");
     }
 
     public static Dictionary<ElementType, HashSet<ElementType>> GetTempRules()
     {
-        return new Dictionary<ElementType, HashSet<ElementType>>(tempRules);
+        return tempRules;
     }
 }
 
