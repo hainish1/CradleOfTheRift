@@ -16,6 +16,8 @@ public class EndScreenUI : MonoBehaviour
     private GameObject loseScreen;
     private GameObject activeScreen;
     private TimerUI timerUI;
+    [SerializeField]
+    private PauseManager ManagePause;
 
 
     void OnEnable()
@@ -51,7 +53,7 @@ public class EndScreenUI : MonoBehaviour
         HookEndScreenButtons(activeScreen);
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
-        Time.timeScale = 0f; // pause gameplay
+        ManagePause.PauseGame();
 
 
         // go back to Start scene
@@ -64,8 +66,7 @@ public class EndScreenUI : MonoBehaviour
         HookEndScreenButtons(activeScreen);
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
-        Time.timeScale = 0f; // pause gameplay
-
+        ManagePause.PauseGame();
         // go back to Start scene
         // StartCoroutine(LoadSceneAfterDelay("Jared", 5f)); // 5 second delay
     }
