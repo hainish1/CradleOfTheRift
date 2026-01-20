@@ -1,99 +1,45 @@
 using System;
 using UnityEngine;
 
+
 public class DotOnHit : IDisposable
 {
     private readonly Entity owner;
-    private readonly float dotDamagePerTick;
-    private readonly float dotTickInterval;
-    private readonly float dotDuration;
-    private readonly float dotDamagePerStack;
-    private int stacks; 
-    private readonly float duration;
-    private float timer;
+    private readonly float lifetime;
+    private float lifeTimer;
     private bool disposed;
-    private readonly bool dotCanStack;
-    private readonly string dotId;  
-    private readonly int dotMaxStacks;
-    private readonly bool dotApplyImmediately;
-    private readonly ElementType elementType = ElementType.Poison;
 
-    public DotOnHit(
-        Entity owner, 
-        float dotDamagePerTick, 
-        float dotTickInterval, 
-        float dotDuration,
-        float dotDamagePerStack,
-        int initialStacks = 1,
-        float durationSec = -1f,
-        bool dotCanStack = true,
-        int dotMaxStacks = 5,
-        bool dotApplyImmediately = false)
+    public DotOnHit(Entity owner, float durationSec = -1f)
     {
         this.owner = owner;
-        this.dotDamagePerTick = dotDamagePerTick;
-        this.dotTickInterval = dotTickInterval;
-        this.dotDuration = dotDuration;
-        this.dotDamagePerStack = dotDamagePerStack;
-        this.stacks = Mathf.Max(1, initialStacks);
-        this.duration = durationSec;
-        this.timer = durationSec;
-        this.dotCanStack = dotCanStack;
-        this.dotId = "poison";  
-        this.dotMaxStacks = dotMaxStacks;
-        this.dotApplyImmediately = dotApplyImmediately;
-
+        lifetime = durationSec;
+        lifeTimer = durationSec;
         CombatEvents.DamageDealt += OnDamageDealt;
-
-        string immediateText = dotApplyImmediately ? "instant" : $"delayed {dotTickInterval}s";
-        Debug.Log($"[DotOnHit] Init: {dotDamagePerTick}dmg/tick, {dotTickInterval}s interval, {dotDuration}s, {stacks} stacks, max {dotMaxStacks} ({immediateText})");
     }
 
-    public void AddStack(int count = 1)
-    {
-        stacks += Mathf.Max(1, count);
-        Debug.Log($"[DotOnHit] Stacks: {stacks}");
-    }
+    public void AddStack(int count = 1) { }
 
     public void Update(float dt)
     {
-        if (duration < 0f || disposed) return;
-        timer -= dt;
-        if (timer <= 0f) Dispose();
+        if (lifetime < 0f || disposed) return;
+
+        lifeTimer -= dt;
+        if (lifeTimer <= 0f)
+            Dispose();
     }
 
     private void OnDamageDealt(Entity attacker, Component target, float damage, ElementType triggerElement)
     {
         if (disposed || attacker != owner) return;
-
-        if (!ElementSystem.CanTrigger(triggerElement, elementType))
-        {
-            return;
-        }
-
+        if (!ElementSystem.CanTrigger(triggerElement, ElementType.Poison)) return;
         if (DotDebuff.IsProcessingDotDamage) return;
 
         var enemy = target as Enemy;
         if (!enemy) return;
 
-        var dotDebuff = enemy.GetComponent<DotDebuff>();
-        if (!dotDebuff)
-            dotDebuff = enemy.gameObject.AddComponent<DotDebuff>();
-
-        dotDebuff.AddDot(
-            baseDamagePerTick: dotDamagePerTick,
-            damagePerStack: dotDamagePerStack,
-            tickInterval: dotTickInterval,
-            duration: dotDuration,
-            source: owner,
-            canStack: dotCanStack,
-            id: dotId,
-            maxStacks: dotMaxStacks,
-            applyImmediately: dotApplyImmediately
-        );
-
-        string immediateText = dotApplyImmediately ? "instant" : "delayed";
-        Debug.Log($"[DotOnHit] Applied to {enemy.name}: {dotDamagePerTick}dmg/tick + {dotDamagePerStack} per stack for {dotDuration}s ({immediateText}, item stacks: {stacks})");
+        var core = PoisonCore.Active;
+        if (core == null) return;
+        core.ApplyTo(enemy, owner, true);
     }
 
     public void Dispose()
@@ -101,7 +47,6 @@ public class DotOnHit : IDisposable
         if (disposed) return;
         disposed = true;
         CombatEvents.DamageDealt -= OnDamageDealt;
-        Debug.Log("[DotOnHit] Disposed");
     }
 }
 

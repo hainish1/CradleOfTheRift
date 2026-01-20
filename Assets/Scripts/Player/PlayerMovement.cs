@@ -1242,4 +1242,6 @@ public class PlayerMovement : MonoBehaviour
     {
         return _currFlightEnergy;
     }
+
+    public bool IsFlying => _isFlying;
 }

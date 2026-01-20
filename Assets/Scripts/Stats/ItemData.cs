@@ -19,6 +19,7 @@ public enum ItemEffectKind
     StompDamage,
     FallDamageBonus,
     DotOnHit,
+    PoisonPoolOnDash,
     BurnOnDamage,
     HomingProjectiles,
     ExplosiveProjectiles,
@@ -28,7 +29,9 @@ public enum ItemEffectKind
     DashDamage,
     ElementFusion,
     ArcStrike,
-    ElementReactionExplosion
+    ElementReactionExplosion,
+    LightningStrike,
+    FlyFire
 }
 
 [Serializable]
@@ -49,13 +52,10 @@ public class EffectSpec
     public float fallDamageBonusPerStack = 1f;
 
     // DOT
-    public float dotDamagePerTick = 2f;
-    public float dotTickInterval = 1f;
-    public float dotDuration = 5f;
-    public float dotDamagePerStack = 1f;
-    public bool dotCanStack = true;
-    public int dotMaxStacks = 5;
-    public bool dotApplyImmediately = false;
+
+    // Poison pool on dash
+    public float poisonPoolRadius = 4f;
+    public float poisonPoolLifetime = 4f;
 
     // Homing Projectiles
     public int numberOfProjectiles = 3;
@@ -101,6 +101,22 @@ public class EffectSpec
     public float arcStrikeDamage = 10f;
     public float arcStrikeRange = 10f;
     public float arcStrikePoissonLambda = 5.5f;
+
+    // Player Lightning Strike
+    public float playerLightningStrikeDamage = 12f;
+    public float playerLightningStrikeRadius = 3f;
+    public float playerLightningStrikeInterval = 5f;
+    public float playerLightningStrikeDelay = 0.5f;
+    public float playerLightningStrikeHeight = 10f;
+    public float playerLightningStrikeVfxDuration = 0.25f;
+    public float playerLightningStrikeElectrifyDuration = 3f;
+    public float playerLightningStrikeElectrifyDamage = 4f;
+
+    // Flying Fire Spray
+    public float flyingFireDamage = 8f;
+    public float flyingFireRadius = 3f;
+    public float flyingFireTickInterval = 0.5f;
+    public float flyingFireOffset = 1.5f;
 
     // Element Reaction Explosion (Lightning + Fire)
     public float elementReactionExplosionDamage = 20f;
