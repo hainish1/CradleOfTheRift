@@ -175,9 +175,18 @@ public class EnemySpawner_2 : MonoBehaviour
             if (nodeResults[i].TryGetComponent(out SpawnNode node))
             {
                 float dist = Vector3.Distance(playerLocation.position, node.transform.position);
+
+                float nodeRadius = 0f;
+                if (nodeResults[i] is SphereCollider sphere) {
+                    nodeRadius = sphere.radius * node.transform.lossyScale.x;
+                }
+
+                // Check the NEAR EDGE of the node
+                float distanceToNearEdge = dist - nodeRadius;
+
                 bool correctType = enemy.isFlying ? node.isForFlyingEnemies : node.isForGroundEnemies;
 
-                if (dist >= minSpawnDist && correctType)
+                if (distanceToNearEdge >= minSpawnDist && correctType)
                 {
                     if (useLineOfSightCheck && IsNodeVisible(node))
                         continue; 
