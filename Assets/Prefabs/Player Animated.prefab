@@ -606,7 +606,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerCenter: {fileID: 8569377081838828647}
-  _cameraTransform: {fileID: 0}
+  _cameraTransform: {fileID: 3222700164973113527}
   _gravityMultiplier: 3
   _gravityAirDrag: 1
   _moveAccelerationSeconds: 0.4
@@ -1294,7 +1294,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3935972546842473169}
-  - component: {fileID: 1337875613363717214}
   m_Layer: 0
   m_Name: Melee Weapon
   m_TagString: Untagged
@@ -1320,28 +1319,6 @@ Transform:
   - {fileID: 6515147321210492741}
   m_Father: {fileID: 7116722707824478082}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!95 &1337875613363717214
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5225540021498470404}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 16a2cac9ea682d64fbb5e8d24200d313, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5947223034050071963
 GameObject:
   m_ObjectHideFlags: 0
