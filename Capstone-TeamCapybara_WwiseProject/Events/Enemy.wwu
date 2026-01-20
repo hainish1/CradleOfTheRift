@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{518660F2-9329-4177-B1A1-C32439A8E88C}" SchemaVersion="133" RootDocumentID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}" ParentDocumentID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}">
+	<Events>
+		<WorkUnit Name="Enemy" ID="{518660F2-9329-4177-B1A1-C32439A8E88C}" OwnerID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}" PersistMode="Nested">
+			<ChildrenList>
+				<Folder Name="Slime" ID="{AF8A587B-B8AC-4803-A688-0814236A3982}" ShortID="322120471">
+					<ChildrenList>
+						<Event Name="Slime_Jump" ID="{681ED6E9-8D14-4769-A9C7-3C6DAA991D4B}">
+							<ChildrenList>
+								<Action Name="" ID="{6C570D0D-128B-484F-B5A0-9DA4FE8B789F}" ShortID="826732887">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Slime" ID="{F468D715-9549-4314-98C5-A7BEA258295B}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+					</ChildrenList>
+				</Folder>
+				<Folder Name="Skull" ID="{C8E368DF-A674-49F7-B678-9637B89F3E3A}" ShortID="764658622">
+					<ChildrenList>
+						<Event Name="Skull_Death" ID="{A8E4830F-5B35-40AF-AE8F-1180F925315F}">
+							<ChildrenList>
+								<Action Name="" ID="{4CC82F94-9943-4F0F-8F23-B13A6FA4ACCC}" ShortID="740827167">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="SkullBreak" ID="{8F9013A0-8435-4BAD-99F5-9EDCCE8AB5D0}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+					</ChildrenList>
+				</Folder>
+			</ChildrenList>
+		</WorkUnit>
+	</Events>
+</WwiseDocument>

@@ -15,6 +15,10 @@ public class EnemyHealth : HealthController
     [Header("Visuals")]
     [SerializeField] private EnemyDamageVisuals damageVisuals;
 
+    [Header("Sounds")]
+    [SerializeField]
+    private AK.Wwise.Event deathSFX;
+
 
     /// <summary>
     /// Called when any Enemy dies, Resets navmesh agent and destroys gameObject(self)
@@ -41,7 +45,7 @@ public class EnemyHealth : HealthController
         EnemyDied?.Invoke(this);
         PlayerGold.Instance.AddGold(3); // Set it to 3 for now
 
-
+        PlayDeathSFX();
 
         Destroy(gameObject, cleanupDelay);
 
@@ -77,5 +81,15 @@ public class EnemyHealth : HealthController
         {
             damageVisuals.ShowDamageVisuals(damage);
         }
+    }
+
+    /// <summary>
+    /// Posts the enemy death
+    /// Wwise Event.
+    /// </summary>
+    private void PlayDeathSFX()
+    {
+        if (deathSFX != null)
+            deathSFX.Post(gameObject);
     }
 }

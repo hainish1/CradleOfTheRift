@@ -1,3 +1,4 @@
+using UnityEditor.UI;
 using UnityEngine;
 
 /// <summary>
@@ -42,6 +43,11 @@ public class EnemyMelee : Enemy
     ChaseState_Melee chase;
     AttackState_Melee attack;
     RecoveryState_Melee recovery;
+    
+    [Header("Jump Sound Effect")]
+    // The sound effect of the slime jumping at the player
+    [SerializeField]
+    private AK.Wwise.Event jumpSFX;
 
     public override void Start()
     {
@@ -135,6 +141,11 @@ public class EnemyMelee : Enemy
 
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
+
+    public void PlayJumpSFX()
+    {
+        this.jumpSFX.Post(gameObject);
     }
 
 }
