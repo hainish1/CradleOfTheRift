@@ -7,7 +7,6 @@ using UnityEngine.InputSystem;
 public class EnemySpawner_2 : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private ExtractionZone extractionZone;
     [SerializeField] private List<EnemyType> enemies;
     [SerializeField] private Transform playerLocation;
     [SerializeField] private DifficultyScaler difficultyScaler;
@@ -85,8 +84,12 @@ public class EnemySpawner_2 : MonoBehaviour
 
     void Start()
     {
-        this.extractionZone.ExtractionInteracted += OnExtractionZoneStarted;
-        this.extractionZone.ExtractionFinished += OnExtractionZoneFinished;
+        if (ExtractionManager.Instance != null)
+        {
+            ExtractionManager.Instance.ExtractionStarted += OnExtractionZoneStarted;
+            ExtractionManager.Instance.AllExtractionsFinished += OnExtractionZoneFinished;
+        }
+        
         this.waveCountdown = this.timeBetweenWaves;
 
         // Sort the list of enemies from cheapest to most expensive
@@ -95,6 +98,15 @@ public class EnemySpawner_2 : MonoBehaviour
         var input = new InputAction("Toggle Spawning", binding: "<Keyboard>/l");
         input.performed += _ => ToggleSpawning();
         input.Enable();
+    }
+
+    private void OnDisable()
+    {
+        if (ExtractionManager.Instance != null)
+        {
+            ExtractionManager.Instance.ExtractionStarted -= OnExtractionZoneStarted;
+            ExtractionManager.Instance.AllExtractionsFinished -= OnExtractionZoneFinished;
+        }
     }
 
     private void ToggleSpawning()
@@ -338,7 +350,7 @@ public class EnemySpawner_2 : MonoBehaviour
     }
 
     private float GetDifficulty() => difficultyScaler ? difficultyScaler.GetDifficultyScale() : difficultyScale;
-    private void OnExtractionZoneStarted() => this.isExtractionActive = true;
+    private void OnExtractionZoneStarted(ExtractionZone zone) => this.isExtractionActive = true;
     private void OnExtractionZoneFinished() => this.isExtractionActive = false;
     private void OnEnemyDied(EnemyHealth enemy) 
     {

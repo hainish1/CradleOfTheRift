@@ -7,8 +7,6 @@ using System.Collections;
 public class EndScreenUI : MonoBehaviour
 {
     [SerializeField]
-    private ExtractionZone extractionZone;
-    [SerializeField]
     private PlayerHealth playerHealth;
     [SerializeField]
     private GameObject winScreen;
@@ -18,8 +16,17 @@ public class EndScreenUI : MonoBehaviour
 
     void OnEnable()
     {
-        if (this.extractionZone != null)
-            this.extractionZone.WinScreen += OnWinScreen;
+        if (ExtractionManager.Instance != null)
+            ExtractionManager.Instance.OnGameWon += OnWinScreen;
+
+        if (this.playerHealth != null)
+            this.playerHealth.LoseScreen += OnLoseScreen;
+    }
+
+    void Start()
+    {
+        if (ExtractionManager.Instance != null)
+            ExtractionManager.Instance.OnGameWon += OnWinScreen;
 
         if (this.playerHealth != null)
             this.playerHealth.LoseScreen += OnLoseScreen;
@@ -27,8 +34,8 @@ public class EndScreenUI : MonoBehaviour
 
     void OnDisable()
     {
-        if (this.extractionZone != null)
-            this.extractionZone.WinScreen -= OnWinScreen;
+        if (ExtractionManager.Instance != null)
+            ExtractionManager.Instance.OnGameWon -= OnWinScreen;
 
         if (this.playerHealth != null)
             this.playerHealth.LoseScreen -= OnLoseScreen;

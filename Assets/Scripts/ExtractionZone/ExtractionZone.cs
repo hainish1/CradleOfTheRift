@@ -14,9 +14,8 @@ public class ExtractionZone : MonoBehaviour
 
 
     public event Action<float> ChargeChanged;
-    public event Action ExtractionInteracted;
+    public event Action<ExtractionZone> ExtractionInteracted;
     public event Action ExtractionFinished;
-    public event Action WinScreen;
     public float ChargeTime => this.chargeTime;
 
     [SerializeField] private GameObject extractionBeam;
@@ -49,6 +48,13 @@ public class ExtractionZone : MonoBehaviour
             this.bossSpawner.BossDied += OnBossDied;
     }
 
+    private void Start()
+    {
+        if (ExtractionManager.Instance != null)
+        {
+            ExtractionManager.Instance.RegisterZone(this);
+        }    
+    }
 
 
     // Update is called once per frame
@@ -63,19 +69,25 @@ public class ExtractionZone : MonoBehaviour
 
         if (player != null)
         {
-            this.isExtracting = true;
-
-            // Notify UI to display extraction UI
-            if (!this.isInteracted)
+            // 1. If this is the VERY FIRST time anyone touches this zone
+            if (!this.isInteracted && ExtractionManager.Instance.CanStartExtraction())
             {
                 this.isInteracted = true;
-                this.ExtractionInteracted?.Invoke();
-            }
+                this.isExtracting = true;
 
-            if (!this.hasSpawnedBoss)
+                ExtractionManager.Instance.OnZoneStarted(this);
+                this.ExtractionInteracted?.Invoke(this);
+
+                if (!this.hasSpawnedBoss)
+                {
+                    hasSpawnedBoss = true;
+                    BossSpawnRequested?.Invoke();
+                }
+            }
+            // 2. If the zone was already activated/interacted with, just resume extracting
+            else if (this.isInteracted) 
             {
-                hasSpawnedBoss = true;
-                BossSpawnRequested?.Invoke();
+                this.isExtracting = true;
             }
         }
     }
@@ -95,14 +107,12 @@ public class ExtractionZone : MonoBehaviour
         {
             this.currentCharge = Math.Clamp(this.currentCharge + Time.deltaTime, 0, this.chargeTime);
 
-            if (this.currentCharge == this.chargeTime && !this.hasFinishedExtracting && this.isBossDead)
+            if (this.currentCharge >= this.chargeTime && !this.hasFinishedExtracting && this.isBossDead)
             {
                 this.hasFinishedExtracting = true;
-                PlayerHealth.instance.SetCanTakeDamage(false);
-                this.WinScreen?.Invoke();
-                this.ExtractionFinished?.Invoke();
-                PlayerHealth.GameIsOver = true;
+                this.isExtracting = false;
 
+                this.ExtractionFinished?.Invoke();
             }
         }
         else
