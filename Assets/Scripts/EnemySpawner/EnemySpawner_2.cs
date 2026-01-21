@@ -167,11 +167,13 @@ public class EnemySpawner_2 : MonoBehaviour
 
     private void SpawnEnemyFromNode(EnemyType enemy)
     {
+        // 1. SEARCH: Find all objects on the spawn node layer within the spawnRadius
         int nodesFound = Physics.OverlapSphereNonAlloc(playerLocation.position, spawnRadius, nodeResults, spawnNodeLayer);
         List<SpawnNode> candidates = new List<SpawnNode>();
 
         for (int i = 0; i < nodesFound; i++)
         {
+            // 2. EDGE DETECTION: Get distance to center, then subtract radius to find the nearest edge
             if (nodeResults[i].TryGetComponent(out SpawnNode node))
             {
                 float dist = Vector3.Distance(playerLocation.position, node.transform.position);
@@ -180,12 +182,12 @@ public class EnemySpawner_2 : MonoBehaviour
                 if (nodeResults[i] is SphereCollider sphere) {
                     nodeRadius = sphere.radius * node.transform.lossyScale.x;
                 }
-
-                // Check the NEAR EDGE of the node
                 float distanceToNearEdge = dist - nodeRadius;
 
+                // 3. FILTERING: Match enemy type (Flying/Ground) to node settings
                 bool correctType = enemy.isFlying ? node.isForFlyingEnemies : node.isForGroundEnemies;
 
+                // 4. VALIDATION: Ensure edge is far enough away and not visible (if LOS enabled)
                 if (distanceToNearEdge >= minSpawnDist && correctType)
                 {
                     if (useLineOfSightCheck && IsNodeVisible(node))
@@ -198,6 +200,7 @@ public class EnemySpawner_2 : MonoBehaviour
 
         if (candidates.Count > 0)
         {
+            // 5. SELECTION: Pick one valid node from the list of candidates
             SpawnNode selectedNode = candidates[UnityEngine.Random.Range(0, candidates.Count)];
             
             float radius = 1f; 
@@ -206,15 +209,21 @@ public class EnemySpawner_2 : MonoBehaviour
                 radius = sphere.radius * selectedNode.transform.lossyScale.x;
             }
 
+            // 6. POSITIONING: Pick a random X/Z point in a circle. Y stays at 0 (flat offset)
             Vector2 randomCircle = UnityEngine.Random.insideUnitCircle * radius;
             Vector3 randomOffset = new Vector3(randomCircle.x, 0, randomCircle.y);
+
+            // Final position starts at the Node's altitude (Y)
             Vector3 spawnPos = selectedNode.transform.position + randomOffset;
 
+            // 7. NAVMESH SNAP: Search a sphere (radius + 2) for the closest walkable surface.
+            // If found (like the ground beneath a sky node), Y is updated to the ground height.
             if (NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, radius + 2f, NavMesh.AllAreas))
             {
                 spawnPos = hit.position;
             }
 
+            // 8. SPAWN: Instantiate at the final calculated position
             GameObject enemyObj = Instantiate(enemy.prefab, spawnPos, Quaternion.identity);
 
             if (showSpawnDebug)
@@ -226,6 +235,7 @@ public class EnemySpawner_2 : MonoBehaviour
         }
         else
         {
+            // 9. FALLBACK: If no valid nodes exist, spawn at a random node ignoring distance/LOS rules
             if (showSpawnDebug)
             {
                 recentSpawns.Add(new SpawnDebugInfo { position = playerLocation.position, isSuccess = false });
