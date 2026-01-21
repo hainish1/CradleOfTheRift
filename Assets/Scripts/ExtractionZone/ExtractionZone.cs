@@ -19,7 +19,6 @@ public class ExtractionZone : MonoBehaviour
     public event Action WinScreen;
     public float ChargeTime => this.chargeTime;
 
-    [SerializeField] private TimerUI timerUI;
     [SerializeField] private GameObject extractionBeam;
 
     [Header("Beam Grow Settings")]
@@ -115,24 +114,6 @@ public class ExtractionZone : MonoBehaviour
         }
 
         this.ChargeChanged?.Invoke(this.currentCharge);
-    }
-
-    private void OnEnable()
-    {
-        if (timerUI != null)
-        {
-            timerUI.DisplayExtraction += OnDisplayExtraction;
-            timerUI.DisplayEndGame += OnDisplayEndGame;
-        }
-    }
-
-    private void OnDisable()
-    {
-        if (timerUI != null)
-        {
-            timerUI.DisplayExtraction -= OnDisplayExtraction;
-            timerUI.DisplayEndGame -= OnDisplayEndGame;
-        }
     }
 
     private void OnDisplayExtraction()

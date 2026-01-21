@@ -15,22 +15,14 @@ public class EndScreenUI : MonoBehaviour
     [SerializeField]
     private GameObject loseScreen;
     private GameObject activeScreen;
-    private TimerUI timerUI;
-
 
     void OnEnable()
     {
-        if (this.timerUI == null)
-            this.timerUI = GetComponent<TimerUI>();
-
         if (this.extractionZone != null)
             this.extractionZone.WinScreen += OnWinScreen;
 
         if (this.playerHealth != null)
             this.playerHealth.LoseScreen += OnLoseScreen;
-
-        if (this.timerUI != null)
-            this.timerUI.DisplayEndGame += OnLoseScreen;
     }
 
     void OnDisable()
@@ -40,9 +32,6 @@ public class EndScreenUI : MonoBehaviour
 
         if (this.playerHealth != null)
             this.playerHealth.LoseScreen -= OnLoseScreen;
-
-        if (this.timerUI != null)
-            this.timerUI.DisplayEndGame -= OnLoseScreen;
     }
 
     private void OnWinScreen()
