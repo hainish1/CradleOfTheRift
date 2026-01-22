@@ -7,6 +7,7 @@ using UnityEngine;
 public class ChaseState_Range : EnemyState
 {
     EnemyRange enemyRange;
+    float repathTimer; // limit how many times we recalculate path - performance purpose
     public ChaseState_Range(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
         enemyRange = enemy as EnemyRange;
