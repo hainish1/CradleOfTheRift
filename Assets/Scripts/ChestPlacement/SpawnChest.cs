@@ -31,34 +31,6 @@ public class SpawnChest : MonoBehaviour
         }
 
         SpawnChestWithDistanceCheck();
-
-        //while (numberOfChestsToSpawn > 0)
-        //{
-        //    int randomIndex = Random.Range(0, chests.Length);
-        //    Debug.Log("Random Index: " + randomIndex);
-        //    var chest = chests[randomIndex].gameObject;
-        //    if (!chests[randomIndex].gameObject.activeSelf)
-        //        chests[randomIndex].gameObject.SetActive(true);
-        //        activeChests.Add(chest);
-        //        numberOfChestsToSpawn--;
-
-        //        // Doesn't work, ignore for now
-        //        // This is very unoptimized and very prone to infinite while loops if the distance is too high
-        //        // Checks if the chest is too close to another chest
-        //        //foreach (var activeChest in activeChests)
-        //        //{
-        //        //    if (Vector3.Distance(activeChest.transform.position, chest.transform.position) >= minDistanceBetweenChests)
-        //        //    {
-        //        //        chests[randomIndex].gameObject.SetActive(true);
-        //        //        activeChests.Add(chest);
-        //        //        numberOfChestsToSpawn--;
-        //        //    }
-        //        //    else
-        //        //    {
-        //        //        Debug.Log("Chest too close to another chest. Retrying");
-        //        //    }
-        //        //}
-        //}
     }
 
     void SpawnChestWithDistanceCheck()
@@ -107,44 +79,5 @@ public class SpawnChest : MonoBehaviour
         {
             Debug.LogWarning($"Could not find valid positions for all chests. Spawned {activeChests.Count} out of {numberOfChestsToSpawn}.");
         }
-        
-        // Alternative approach
-        //activeChests = new List<GameObject>();
-        //int attempts = 0;
-        //int maxAttempts = 1000; // Prevent infinite loops
-        //while (numberOfChestsToSpawn > 0 && attempts < maxAttempts)
-        //{
-        //    int randomIndex = Random.Range(0, chests.Length);
-        //    var chest = chests[randomIndex].gameObject;
-        //    if (!chest.activeSelf)
-        //    {
-        //        bool tooClose = false;
-        //        foreach (var activeChest in activeChests)
-        //        {
-        //            if (Vector3.Distance(activeChest.transform.position, chest.transform.position) < minDistanceBetweenChests)
-        //            {
-        //                tooClose = true;
-        //                break;
-        //            }
-        //        }
-        //        if (!tooClose)
-        //        {
-        //            chest.SetActive(true);
-        //            activeChests.Add(chest);
-        //            numberOfChestsToSpawn--;
-        //        }
-        //    }
-        //    attempts++;
-        //}
-        //if (attempts >= maxAttempts)
-        //{
-        //    Debug.LogWarning("Max attempts reached. Could not place all chests with the given distance constraints.");
-        //}
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
