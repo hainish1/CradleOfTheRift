@@ -8,10 +8,6 @@ public class PlayerLightningStrike : IDisposable
     private readonly float baseDamage;
     private readonly float radius;
     private readonly float interval;
-    private readonly float delay;
-    private readonly float height;
-    private readonly float vfxDuration;
-    private readonly float electrifyDuration;
     private readonly float electrifyDamage;
     private readonly LayerMask enemyLayer;
     private int stacks;
@@ -19,6 +15,13 @@ public class PlayerLightningStrike : IDisposable
     private float timer;
     private float nextStrikeTime;
     private bool disposed;
+
+    private const int ChainOnPlayerHitMaxCount = 3;
+    private const float ChainOnPlayerHitDamagePercent = 0.5f;
+    private const float ChainOnPlayerHitRangeMultiplier = 1.5f;
+    private const float StrikeDelay = 0.5f;
+    private const float StrikeHeight = 10f;
+    private const float StrikeVfxDuration = 0.25f;
 
     private struct PendingStrike
     {
@@ -33,10 +36,6 @@ public class PlayerLightningStrike : IDisposable
         float damage,
         float radius,
         float interval,
-        float delay,
-        float height,
-        float vfxDuration,
-        float electrifyDuration,
         float electrifyDamage,
         int initialStacks = 1,
         float durationSec = -1f)
@@ -45,16 +44,11 @@ public class PlayerLightningStrike : IDisposable
         this.baseDamage = damage;
         this.radius = radius;
         this.interval = Mathf.Max(0.1f, interval);
-        this.delay = Mathf.Max(0f, delay);
-        this.height = Mathf.Max(1f, height);
-        this.vfxDuration = Mathf.Max(0.05f, vfxDuration);
-        this.electrifyDuration = Mathf.Max(0.1f, electrifyDuration);
         this.electrifyDamage = Mathf.Max(0f, electrifyDamage);
         this.stacks = initialStacks > 0 ? initialStacks : 1;
         this.duration = durationSec;
         this.timer = durationSec;
         this.nextStrikeTime = Time.time + this.interval;
-
         enemyLayer = LayerMask.GetMask("Enemy");
     }
 
@@ -95,7 +89,7 @@ public class PlayerLightningStrike : IDisposable
         pending.Add(new PendingStrike
         {
             groundPoint = groundPoint,
-            triggerTime = Time.time + delay
+            triggerTime = Time.time + StrikeDelay
         });
     }
 
@@ -124,9 +118,11 @@ public class PlayerLightningStrike : IDisposable
         }
 
         var playerDamageable = owner.GetComponent<IDamageable>();
-        if (playerDamageable != null && !playerDamageable.IsDead)
+        bool playerHit = IsPlayerHit(position);
+        if (playerDamageable != null && !playerDamageable.IsDead && playerHit)
         {
             playerDamageable.TakeDamage(damage);
+            TriggerChainFromPlayer(damage * ChainOnPlayerHitDamagePercent);
         }
 
         CreateStrikeVfx(position);
@@ -135,7 +131,7 @@ public class PlayerLightningStrike : IDisposable
 
     private void ElectrifyPools(Vector3 position)
     {
-        if (electrifyDamage <= 0f && electrifyDuration <= 0f) return;
+        if (electrifyDamage <= 0f) return;
 
         Collider[] hits = Physics.OverlapSphere(position, radius);
         HashSet<PoisonPool> unique = new HashSet<PoisonPool>();
@@ -145,7 +141,7 @@ public class PlayerLightningStrike : IDisposable
             var pool = col.GetComponentInParent<PoisonPool>();
             if (pool == null || unique.Contains(pool)) continue;
             unique.Add(pool);
-            pool.Electrify(electrifyDuration, electrifyDamage);
+            pool.Electrify(electrifyDamage);
         }
     }
 
@@ -202,7 +198,7 @@ public class PlayerLightningStrike : IDisposable
 
     private void CreateWarningVfx(Vector3 groundPoint)
     {
-        Vector3 startPos = groundPoint + Vector3.up * height;
+        Vector3 startPos = groundPoint + Vector3.up * StrikeHeight;
         GameObject warningObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         warningObj.name = "LightningWarning";
         warningObj.transform.position = startPos;
@@ -219,12 +215,12 @@ public class PlayerLightningStrike : IDisposable
             renderer.material = mat;
         }
 
-        UnityEngine.Object.Destroy(warningObj, delay);
+        UnityEngine.Object.Destroy(warningObj, StrikeDelay);
     }
 
     private void CreateStrikeVfx(Vector3 position)
     {
-        Vector3 startPos = position + Vector3.up * height;
+        Vector3 startPos = position + Vector3.up * StrikeHeight;
         Vector3 endPos = position;
 
         GameObject startObj = new GameObject("LightningStart");
@@ -236,16 +232,80 @@ public class PlayerLightningStrike : IDisposable
         LightningCore.CreateLightningVFX(
             startObj.transform,
             endObj.transform,
-            height,
-            vfxDuration,
+            StrikeHeight,
+            StrikeVfxDuration,
             null,
             0f,
             0f,
             0.15f
         );
 
-        UnityEngine.Object.Destroy(startObj, vfxDuration + 0.1f);
-        UnityEngine.Object.Destroy(endObj, vfxDuration + 0.1f);
+        UnityEngine.Object.Destroy(startObj, StrikeVfxDuration + 0.1f);
+        UnityEngine.Object.Destroy(endObj, StrikeVfxDuration + 0.1f);
+    }
+
+    private bool IsPlayerHit(Vector3 strikePosition)
+    {
+        if (owner == null) return false;
+        float maxDist = radius + 0.05f;
+        Vector3 playerPos = owner.transform.position;
+        Vector2 delta = new Vector2(playerPos.x - strikePosition.x, playerPos.z - strikePosition.z);
+        return delta.sqrMagnitude <= maxDist * maxDist;
+    }
+
+    private void TriggerChainFromPlayer(float chainDamage)
+    {
+        if (chainDamage <= 0f || owner == null) return;
+
+        float chainRange = ChainLightning.DefaultRange;
+        HashSet<Enemy> hit = new HashSet<Enemy>();
+        Enemy first = FindClosestEnemy(owner.transform.position, chainRange, hit);
+        if (first == null) return;
+
+        hit.Add(first);
+        LightningCore.ApplyLightningDamage(owner, first, chainDamage);
+        LightningCore.CreateLightningVFX(owner.transform, first.transform, chainRange, 0.2f, null, 0.5f, 0.5f, 0.18f);
+
+        ChainFromEnemy(first, first.transform.position, chainDamage, 0, chainRange, hit);
+    }
+
+    private void ChainFromEnemy(Enemy from, Vector3 fromPos, float damage, int chainNum, float chainRange, HashSet<Enemy> hit)
+    {
+        if (from == null || chainNum >= ChainOnPlayerHitMaxCount) return;
+
+        Enemy closest = FindClosestEnemy(fromPos, chainRange, hit);
+        if (closest == null) return;
+
+        hit.Add(closest);
+        LightningCore.ApplyLightningDamage(owner, closest, damage);
+        LightningCore.CreateLightningVFX(from.transform, closest.transform, chainRange, 0.2f, null, 0.5f, 0.5f, 0.18f);
+
+        ChainFromEnemy(closest, closest.transform.position, damage, chainNum + 1, chainRange, hit);
+    }
+
+    private Enemy FindClosestEnemy(Vector3 fromPos, float chainRange, HashSet<Enemy> hit)
+    {
+        Collider[] nearby = Physics.OverlapSphere(fromPos, chainRange, enemyLayer);
+        Enemy closest = null;
+        float minDist = float.MaxValue;
+
+        foreach (Collider col in nearby)
+        {
+            Enemy enemy = col.GetComponentInParent<Enemy>();
+            if (enemy == null || hit.Contains(enemy)) continue;
+
+            IDamageable dmg = enemy.GetComponent<IDamageable>();
+            if (dmg == null || dmg.IsDead) continue;
+
+            float dist = Vector3.Distance(fromPos, enemy.transform.position);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                closest = enemy;
+            }
+        }
+
+        return closest;
     }
 
     public void Dispose()

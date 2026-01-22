@@ -59,14 +59,14 @@ MonoBehaviour:
     arcStrikeDamage: 10
     arcStrikeRange: 10
     arcStrikePoissonLambda: 5.5
-    playerLightningStrikeDamage: 12
+    playerLightningStrikeDamage: 12.1
     playerLightningStrikeRadius: 3
     playerLightningStrikeInterval: 5
-    playerLightningStrikeDelay: 0.5
-    playerLightningStrikeHeight: 10
-    playerLightningStrikeVfxDuration: 0.25
-    playerLightningStrikeElectrifyDuration: 3
     playerLightningStrikeElectrifyDamage: 4
+    flyingFireDamage: 8
+    flyingFireRadius: 3
+    flyingFireTickInterval: 0.5
+    flyingFireOffset: 1.5
     elementReactionExplosionDamage: 20
     elementReactionExplosionRadius: 3
     elementReactionExplosionCooldown: 1

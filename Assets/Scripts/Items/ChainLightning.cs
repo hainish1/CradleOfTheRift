@@ -5,6 +5,7 @@ using UnityEngine;
 public class ChainLightning : IDisposable
 {
     public static bool IsProcessingChain = false;
+    public const float DefaultRange = 16f;
 
     private Entity owner;
     private float baseChainDamagePercent;
@@ -19,6 +20,8 @@ public class ChainLightning : IDisposable
     private float chainDamagePercent;
     private int maxChainCount;
     private float chainRange;
+
+    public float CurrentRange => chainRange;
 
     public ChainLightning(Entity owner, float chainDamagePercent, int maxChainCount, float chainRange, int initialStacks = 1, float durationSec = -1f, GameObject lightningVFX = null)
     {

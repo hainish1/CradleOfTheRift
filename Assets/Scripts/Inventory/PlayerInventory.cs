@@ -55,7 +55,6 @@ public class PlayerInventory : MonoBehaviour
     public event Action<ItemData> OnItemRemoved;
 
     public IReadOnlyDictionary<ItemData, ItemStack> Items => items;
-
     void Awake()
     {
         playerEntity = GetComponent<Entity>();
@@ -611,10 +610,6 @@ public class PlayerInventory : MonoBehaviour
                 damage: effect.playerLightningStrikeDamage,
                 radius: effect.playerLightningStrikeRadius,
                 interval: effect.playerLightningStrikeInterval,
-                delay: effect.playerLightningStrikeDelay,
-                height: effect.playerLightningStrikeHeight,
-                vfxDuration: effect.playerLightningStrikeVfxDuration,
-                electrifyDuration: effect.playerLightningStrikeElectrifyDuration,
                 electrifyDamage: effect.playerLightningStrikeElectrifyDamage,
                 initialStacks: initialStacks,
                 durationSec: effect.duration
@@ -699,6 +694,7 @@ public class PlayerInventory : MonoBehaviour
             Debug.Log($"[Effect] Element Reaction Explosion : Stacks {initialStacks}");
         }
     }
+
 
     private void RemoveEffectStacks(ItemEffectKind kind, int stacks)
     {

@@ -195,7 +195,7 @@ public class PoisonPool : MonoBehaviour
         trigger.center = Vector3.zero;
     }
 
-    public void Electrify(float duration, float damage)
+    public void Electrify(float damage)
     {
         electrifyDamage = Mathf.Max(electrifyDamage, damage);
         electrifiedUntil = endTime;

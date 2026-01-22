@@ -106,10 +106,6 @@ public class EffectSpec
     public float playerLightningStrikeDamage = 12f;
     public float playerLightningStrikeRadius = 3f;
     public float playerLightningStrikeInterval = 5f;
-    public float playerLightningStrikeDelay = 0.5f;
-    public float playerLightningStrikeHeight = 10f;
-    public float playerLightningStrikeVfxDuration = 0.25f;
-    public float playerLightningStrikeElectrifyDuration = 3f;
     public float playerLightningStrikeElectrifyDamage = 4f;
 
     // Flying Fire Spray
