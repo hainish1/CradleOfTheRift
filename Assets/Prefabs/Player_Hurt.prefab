@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4658278565933542675}
   - component: {fileID: 4658278565933542676}
   m_Layer: 0
-  m_Name: Generic_Hurt
+  m_Name: Player_Hurt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -226,8 +226,8 @@ ParticleSystem:
       maxColor: {r: 1, g: 0.23921567, b: 0.3808974, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 0, b: 0, a: 1}
-        key1: {r: 0.49019608, g: 0, b: 0, a: 1}
+        key0: {r: 0.71287364, g: 0, b: 0.8632074, a: 1}
+        key1: {r: 0.49019608, g: 0, b: 0.044174287, a: 1}
         key2: {r: 0, g: 0, b: 0, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -4886,7 +4886,7 @@ ParticleSystemRenderer:
   m_MinParticleSize: 0
   m_MaxParticleSize: 0.8
   m_CameraVelocityScale: 0
-  m_VelocityScale: 0.03
+  m_VelocityScale: 0.01
   m_LengthScale: 1
   m_SortingFudge: 0
   m_NormalDirection: 1
