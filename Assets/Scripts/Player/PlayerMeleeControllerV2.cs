@@ -68,6 +68,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private bool _attackInputPending;
     private bool _isAttacking;
     public bool CanAttack { get; set; }
+    private int _maxComboCount;
     private int _currComboCount;
     private float _comboTimer;
 
@@ -109,6 +110,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _attackInputPending = false;
         _isAttacking = false;
         CanAttack = true;
+        _maxComboCount = _attackDurations.Length;
         _currComboCount = 0;
         _comboTimer = GetSecondsUpperMargin();
     }
@@ -202,11 +204,12 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     {
         _attackInputPending = false;
         CanAttack = false;
+        print($"Combo Try. | {_currComboCount}");
         _weaponAnim.SetTrigger("Attack" + _currComboCount);
         
         _currComboCount++;
         _currAttackDuration = _attackDurations[_currComboCount - 1];
-        if (_currComboCount < 2)
+        if (_currComboCount < _maxComboCount)
         {
             _comboTimer = 0;
             StartCoroutine(DelayAttack(GetSecondsLowerMargin()));
@@ -420,6 +423,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// </summary>
     private void OnAttackStart()
     {
+        print("Reached attack begin.");
         _isAttacking = true;
     }
 
@@ -430,8 +434,9 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// </summary>
     private void OnAttackEnd()
     {
+        print($"Reached attack end. | {_currComboCount}");
         _isAttacking = false;
-        if (_currComboCount == 2) _currComboCount = 0;
+        if (_currComboCount == _maxComboCount) _currComboCount = 0;
         _prevHitCapsuleTempPointsInitialized = false;
         _objectsHitThisAttack.Clear();
     }
