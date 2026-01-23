@@ -31,10 +31,13 @@ public class EnemyRange : Enemy
     [Header("Shooting")]
     public float projectileSpeed = 50f;
     public float fireCooldown = .6f;
+    public float recoveryDuration = 1f; // pause after shooting before chasing again
+    [Space]
     public Transform firePoint; // where bullet come from
     public EnemyProjectile projectilePrefab;
-    public LayerMask projectileMask = ~0;
     public float spawnOffset = 0.1f; // a little away fro fire point, safety
+    public LayerMask projectileMask = ~0;
+    public LayerMask obstacleMask = 1; // to detect walls
 
     [Space]
 

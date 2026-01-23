@@ -20,11 +20,12 @@ public class ChaseState_Range : EnemyState
     {
         if (enemy != null)
         {
-            if (enemy.agent != null)
+            if (enemy.agent != null && enemy.agent.isOnNavMesh)
             {
                 enemy.agent.isStopped = false;
                 enemy.agent.speed = enemyRange.chaseSpeed; // set navmesh speed
             }
+
         }
     }
 
@@ -33,30 +34,86 @@ public class ChaseState_Range : EnemyState
     /// </summary>
     public override void Update()
     {
-        if (enemy.target == null) return;
-
-        float distance = Vector3.Distance(enemy.transform.position, enemy.target.position); // go but keep distance
-        if (distance > enemyRange.stopDistance * .8f)
+        if (enemy.target == null)
         {
-            if (enemy != null) SetAgentDestination(enemy.target.position);
-        }
-        else
-        {
-            if (enemy != null)
-            {
-                if (enemy.agent) enemy.agent.isStopped = true; // too close, stop there
-            }
+            stateMachine.ChangeState(enemyRange.GetIdle());
+            return;
         }
 
-        FaceTarget(enemy.turnSpeed);
+        //Handle Movement
+        ManageMovement();
 
-        if (distance <= enemyRange.attackRange && Time.time >= enemy.nextAttackAllowed)
-        {
-            stateMachine.ChangeState(enemyRange.GetAttack());
-        }
+        // Handle Rotation
+        enemyRange.FaceTargetSmooth(enemyRange.turnSpeed);
+
+        // handle combat stuff
+        ManageCombat();
+
+        // float distance = Vector3.Distance(enemy.transform.position, enemy.target.position); // go but keep distance
+        // if (distance > enemyRange.stopDistance * .8f)
+        // {
+        //     if (enemy != null) SetAgentDestination(enemy.target.position);
+        // }
+        // else
+        // {
+        //     if (enemy != null)
+        //     {
+        //         if (enemy.agent) enemy.agent.isStopped = true; // too close, stop there
+        //     }
+        // }
+
+        // FaceTarget(enemy.turnSpeed);
+
+        // if (distance <= enemyRange.attackRange && Time.time >= enemy.nextAttackAllowed)
+        // {
+        //     stateMachine.ChangeState(enemyRange.GetAttack());
+        // }
 
     }
 
+
+    void ManageMovement()
+    {
+        repathTimer -= Time.deltaTime;
+        if(repathTimer > 0) return;
+
+        repathTimer = 0.2f; // do about 5 times a second
+
+        float distToTarget = Vector3.Distance(enemy.transform.position, enemy.target.position);
+
+        Vector3 dest = enemy.target.position;
+
+        // if too close, stop moving closer and move a bit back
+        if(distToTarget < enemyRange.desiredDistance)
+        {
+            // back away a bit
+            Vector3 dirFromTarget = (enemy.transform.position - enemy.target.position).normalized;
+            dest = enemy.target.position + dirFromTarget * enemyRange.desiredDistance; 
+        }
+
+        if(enemy.agent != null && enemy.agent.isOnNavMesh)
+        {
+            enemy.agent.SetDestination(dest);
+        }
+    }
+
+    void ManageCombat()
+    {
+        // Check Distance
+        float distSqr = (enemy.target.position - enemy.transform.position).sqrMagnitude;
+        float rangeSqr = enemyRange.attackRange * enemyRange.attackRange;
+
+        if (distSqr <= rangeSqr)
+        {
+            // we are in range, check cooldown
+            if (Time.time >= enemyRange.nextShootTime)
+            {
+                enemyRange.FireAtTarget();
+                enemyRange.nextShootTime = Time.time + enemyRange.fireCooldown;
+                
+            }
+        }
+    }
 
     /// <summary>
     /// What to do when exiting the ChaseState
