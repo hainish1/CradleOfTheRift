@@ -989,6 +989,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 204557455612082024, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
+      propertyPath: manageAgentPosition
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3349805392606994707, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
+      propertyPath: maxHealth
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3349805392606994707, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
+      propertyPath: baseHealth
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 4412303297756605295, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
       propertyPath: chaseSpeed
       value: 5

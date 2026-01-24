@@ -77,6 +77,9 @@ public class EnemyRange : Enemy
             agent.updateRotation = true; // let agent handle the rotation on Y axis for now
         }
 
+        var kb = GetComponent<AgentKnockBack>();
+        if (kb != null) kb.manageAgentPosition = false;
+
         idle = new IdleState_Range(this, stateMachine);
         chase = new ChaseState_Range(this, stateMachine);
         attack = new AttackState_Range(this, stateMachine);
@@ -90,67 +93,84 @@ public class EnemyRange : Enemy
     {
         base.Update();
 
-        UpdateHover();
+        // UpdateHover();
         UpdateFlightMovement();
     }
 
     /// <summary>
     /// Manually move the Transform to match the AGENT X and Z, but override the Y for flight control
+    /// Also handles Bobbing
     /// </summary>
     void UpdateFlightMovement()
     {
         if (agent == null) return;
-        if (target == null) return;
 
-        // find the target height
-        float targetY = target.position.y + flyHeight;
+        float baseTargetY = transform.position.y;
+        if (target != null)
+        {
+            baseTargetY = target.position.y + flyHeight;
+        }
+        // if (target == null) return;
+
+        // Add Bobbing
+        bobPhase += Time.deltaTime * hoverBobSpeed;
+        float bobOffset = Mathf.Sin(bobPhase) * hoverBobAmplitude;
+        float finalTargetY = baseTargetY + bobOffset;
+
+        // // find the target height
+        // float targetY = target.position.y + flyHeight;
 
         // find horizontal target
-        Vector3 nextPos = transform.position;
-        Vector3 desiredHorizontalPos;
+        Vector3 desiredHorizontalPos = transform.position;
 
-        // check for line of sight to target
-        Vector3 dirToTarget = target.position - transform.position;
-        float distToTarget = dirToTarget.magnitude;
-
-        // raycast check
-        bool hasLineOfSight = !Physics.Raycast(transform.position, dirToTarget.normalized, distToTarget, obstacleMask); // check if no wall in between
-
-        if (hasLineOfSight)
+        if (agent.isOnNavMesh)
         {
-            // DO TRUE FLIGHT, IGNORE SHITTY NAVMESH
-            desiredHorizontalPos = target.position;
-            if (agent.isOnNavMesh)
-            {
-                agent.nextPosition = transform.position;
-            }
-        }
-        else
-        {
-            // go back to navmesh
             desiredHorizontalPos = agent.nextPosition;
         }
+
+        if (target != null)
+        {
+            // check for line of sight to target
+            Vector3 dirToTarget = target.position - transform.position;
+            float distToTarget = dirToTarget.magnitude;
+
+            // raycast check
+            bool hasLineOfSight = !Physics.Raycast(transform.position, dirToTarget.normalized, distToTarget, obstacleMask); // check if no wall in between
+
+            if (hasLineOfSight)
+            {
+                // DO TRUE FLIGHT, IGNORE SHITTY NAVMESH
+                desiredHorizontalPos = target.position;
+                if (agent.isOnNavMesh)
+                {
+                    agent.nextPosition = transform.position;
+                }
+            }
+        }
+
+        // Apply Smoothing
+        Vector3 nextPos = transform.position;
 
         nextPos.x = Mathf.SmoothDamp(transform.position.x, desiredHorizontalPos.x, ref currentHorizontalVelocity.x, horizontalSmoothTime);
         nextPos.z = Mathf.SmoothDamp(transform.position.z, desiredHorizontalPos.z, ref currentHorizontalVelocity.z, horizontalSmoothTime);
 
         // vertical move, try to match the target's height
-        nextPos.y = Mathf.SmoothDamp(transform.position.y, targetY, ref currentYVelocity, verticalSmoothTime);
+        nextPos.y = Mathf.SmoothDamp(transform.position.y, finalTargetY, ref currentYVelocity, verticalSmoothTime);
 
         // Apply
         transform.position = nextPos;
     }
 
-    /// <summary>
-    /// Apply Hovering Visuals to the Enemy
-    /// </summary>
-    void UpdateHover()
-    {
-        if (agent == null) return;
+    // /// <summary>
+    // /// Apply Hovering Visuals to the Enemy
+    // /// </summary>
+    // void UpdateHover()
+    // {
+    //     if (agent == null) return;
 
-        bobPhase += Time.deltaTime * hoverBobSpeed;
-        agent.baseOffset = hoverHeight + Mathf.Sin(bobPhase) * hoverBobAmplitude; // usign sin formula for bobbing
-    }
+    //     bobPhase += Time.deltaTime * hoverBobSpeed;
+    //     agent.baseOffset = hoverHeight + Mathf.Sin(bobPhase) * hoverBobAmplitude; // usign sin formula for bobbing
+    // }
 
 
     public void FireAtTarget()
@@ -179,7 +199,7 @@ public class EnemyRange : Enemy
 
     public void SafeStopAgent()
     {
-        if(agent != null && agent.isOnNavMesh && agent.isActiveAndEnabled)
+        if (agent != null && agent.isOnNavMesh && agent.isActiveAndEnabled)
         {
             agent.isStopped = true;
             agent.velocity = Vector3.zero;
@@ -188,7 +208,7 @@ public class EnemyRange : Enemy
 
     public void SafeResumeAgent()
     {
-        if(agent != null && agent.isOnNavMesh && agent.isActiveAndEnabled)
+        if (agent != null && agent.isOnNavMesh && agent.isActiveAndEnabled)
         {
             agent.isStopped = false;
         }
