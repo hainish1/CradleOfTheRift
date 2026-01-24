@@ -620,6 +620,10 @@ MonoBehaviour:
   cleanupDelay: 0
   baseHealth: 30
   damageVisuals: {fileID: 403803493152912263}
+  deathSFX:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
 --- !u!114 &403803493152912263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -638,6 +642,8 @@ MonoBehaviour:
   fontSize: 50
   textDuration: 1.5
   riseSpeed: 1.5
+  takeDamageVFXPrefab: {fileID: 4658278565933542678, guid: 86d031785bde0a149bba6d699b1227b6, type: 3}
+  damageVfxAttachPoint: {fileID: 0}
 --- !u!114 &7908511209242578229
 MonoBehaviour:
   m_ObjectHideFlags: 0
