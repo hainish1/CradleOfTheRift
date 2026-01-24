@@ -35,6 +35,9 @@ public class EnemyMelee : Enemy
     public float minAttackDistance = 3f; // min safe dist
     public float leapHeight = 1f; // vertical arc
     public float leapDuration = .5f; // time for leap
+    public float leapOverShootDistance = 4f; // How far past the player to jump
+    public float gravityScale = 2f;
+    public LayerMask groundMask = ~0; // to detect what is ground
 
 
 
@@ -55,13 +58,15 @@ public class EnemyMelee : Enemy
 
         agent.speed = chaseSpeed;
 
+        var kb = GetComponent<AgentKnockBack>();
+        if(kb != null) kb.manageAgentPosition = true; // just in case yk
+
         idle = new IdleState_Melee(this, stateMachine);
         chase = new ChaseState_Melee(this, stateMachine);
         attack = new AttackState_Melee(this, stateMachine);
         recovery = new RecoveryState_Melee(this, stateMachine);
 
         stateMachine.Initialize(idle);
-
     }
 
     /// <summary>
@@ -87,14 +92,11 @@ public class EnemyMelee : Enemy
 
         Vector3 toPlayer = playerCol.transform.position - transform.position;
         toPlayer.y = 0f;
-        if (toPlayer.sqrMagnitude < 0.0001f) return;
-
-        toPlayer.Normalize();
 
         var pm = playerCol.GetComponentInParent<PlayerMovement>();
         if (pm != null)
         {
-            pm.ApplyImpulse(toPlayer * knockbackPower);
+            pm.ApplyImpulse(toPlayer.normalized * knockbackPower);
 
             var damageable = pm.GetComponentInParent<IDamageable>();
             if (damageable != null && !damageable.IsDead)
@@ -103,9 +105,8 @@ public class EnemyMelee : Enemy
             }
         }
         hitAppliedThisAttack = true;
-        nextAttackAllowed = Time.time + attackCooldown;
+        nextAttackAllowed = Time.time + attackCooldown; // ehhh do I need this here
         EnableHitBox(false);
-
 
     }
 
@@ -119,6 +120,32 @@ public class EnemyMelee : Enemy
         this.slamDamage = newDamage;
         Debug.Log("Slam Damage: " + this.slamDamage);
     }
+
+    public Vector3 CalculateBallisticVelocity(Vector3 startPoint, Vector3 endPoint, float height ,out float duration)
+    {
+        float gravity = Physics.gravity.y * gravityScale;
+        float displacementY = endPoint.y - startPoint.y;
+
+        // Safety: Peak height must be higher than the target step
+        if(displacementY >= height) height = displacementY + 1f;
+
+        Vector3 displacementXZ = new Vector3(endPoint.x - startPoint.x, 0, endPoint.z - startPoint.z);
+
+        // vertical velocity: v = sqrt(-2gh)
+        float velocityY = Mathf.Sqrt(-2 * gravity * height);
+
+        // time calcs
+        float timeToPeak = -velocityY/gravity;
+        float timeToFall = Mathf.Sqrt(2 * (displacementY - height) / gravity);
+
+        duration = timeToPeak + timeToFall; // total flight time
+
+        // horizontal velocity
+        Vector3 velocityXZ = displacementXZ / duration;
+
+        return velocityXZ + Vector3.up * velocityY;
+    }
+
 
     //Getters for States that this Melee Enemy has
     public EnemyState GetIdle() => idle;
