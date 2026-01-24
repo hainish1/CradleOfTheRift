@@ -102,7 +102,7 @@ public class AgentKnockBack : MonoBehaviour
         {
             if (manageAgentPosition)
             {
-                agent.Warp(transform.position); // snap to mesh
+                // agent.Warp(transform.position); // snap to mesh
                 agent.updatePosition = true; // give control back to agent
             }
 
