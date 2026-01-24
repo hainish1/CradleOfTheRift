@@ -11,6 +11,10 @@ public class AgentKnockBack : MonoBehaviour
     [SerializeField] float maxDuration = 0.35f;
     [SerializeField] LayerMask collisionMask = ~0;
 
+    [Header("Settings")]
+    [Tooltip("If true, this script will snap the agent to navmesh after knockback")]
+    public bool manageAgentPosition = true; // DEFAULT TRUE for GROUND Enemies
+
     NavMeshAgent agent;
     Vector3 externalVelocity;
     float timer;
@@ -40,7 +44,11 @@ public class AgentKnockBack : MonoBehaviour
         }
 
         transform.position += delta;
-        agent.nextPosition = transform.position; // keep agent in sync
+
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.nextPosition = transform.position; // keep agent in sync
+        }
 
         externalVelocity = Vector3.Lerp(externalVelocity, Vector3.zero, decay * Time.deltaTime);
 
@@ -64,13 +72,16 @@ public class AgentKnockBack : MonoBehaviour
             // pause steering 
             if (agent != null)
             {
-                if (agent.isOnNavMesh == false && agent.isActiveAndEnabled == false) return;
-                agent.isStopped = true;
-                agent.updatePosition = false;
+                if (agent.isActiveAndEnabled && agent.isOnNavMesh)
+                {
+                    agent.isStopped = true;
+                    // disable during physics control
+                    agent.updatePosition = false;
+                }
             }
         }
         externalVelocity += impulse;
-        externalVelocity.y = 0f;
+        externalVelocity.y = 0f; // keep knockback horizontal
 
         if (softBody != null)
         {
@@ -89,8 +100,14 @@ public class AgentKnockBack : MonoBehaviour
 
         if (agent != null && agent.isOnNavMesh && agent.isActiveAndEnabled)
         {
-            agent.Warp(transform.position);
-            agent.updatePosition = true;
+            if (manageAgentPosition)
+            {
+                agent.Warp(transform.position); // snap to mesh
+                agent.updatePosition = true; // give control back to agent
+            }
+
+            // for Flying enemy, we stay where we are in the air, and simply unpause agent logic
+
             agent.isStopped = false;
         }
     }
