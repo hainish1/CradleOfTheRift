@@ -36,7 +36,7 @@ public class EnemyMelee : Enemy
     public float leapHeight = 1f; // vertical arc
     public float leapDuration = .5f; // time for leap
     public float leapOverShootDistance = 4f; // How far past the player to jump
-    public float gravityScale = 2f;
+    public float gravityScale = 4f;
     public LayerMask groundMask = ~0; // to detect what is ground
 
 
