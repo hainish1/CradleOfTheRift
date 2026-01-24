@@ -147,12 +147,16 @@ public class AttackState_Melee : EnemyState
             enemyMelee.leapHeight,
             out estimatedFlightDuration
         );
+
+        // look now
+        Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
+        if (horizontalVelocity.sqrMagnitude > 0.001f)
+        {
+            enemy.transform.rotation = Quaternion.LookRotation(horizontalVelocity);
+        }
+
+
         currentFlightTime = 0f;
-
-
-        // phase = Phase.Leap;
-        // timer = enemyMelee.leapDuration;
-        // leapTimer = 0f;
     }
 
     private void HandleLeap()
@@ -166,17 +170,17 @@ public class AttackState_Melee : EnemyState
         // move
         enemy.transform.position += velocity * dt;
 
-        // face the player
-        if (enemy.target != null)
-        {
-            Vector3 dirToTarget = enemy.target.position - enemy.transform.position;
-            dirToTarget.y = 0;
-            if (dirToTarget != Vector3.zero)
-            {
-                Quaternion targetRot = Quaternion.LookRotation(dirToTarget);
-                enemy.transform.rotation = Quaternion.Slerp(enemy.transform.rotation, targetRot, dt * 10f);
-            }
-        }
+        // NOT face the player constatnly
+        // if (enemy.target != null)
+        // {
+        //     Vector3 dirToTarget = enemy.target.position - enemy.transform.position;
+        //     dirToTarget.y = 0;
+        //     if (dirToTarget != Vector3.zero)
+        //     {
+        //         Quaternion targetRot = Quaternion.LookRotation(dirToTarget);
+        //         enemy.transform.rotation = Quaternion.Slerp(enemy.transform.rotation, targetRot, dt * 10f);
+        //     }
+        // }
 
 
         // check landing
