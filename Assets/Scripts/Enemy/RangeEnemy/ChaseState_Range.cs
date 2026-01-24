@@ -18,15 +18,17 @@ public class ChaseState_Range : EnemyState
     /// </summary>
     public override void Enter()
     {
-        if (enemy != null)
-        {
-            if (enemy.agent != null && enemy.agent.isOnNavMesh)
-            {
-                enemy.agent.isStopped = false;
-                enemy.agent.speed = enemyRange.chaseSpeed; // set navmesh speed
-            }
+        // if (enemy != null)
+        // {
+        //     if (enemy.agent != null && enemy.agent.isOnNavMesh)
+        //     {
+        //         enemy.agent.isStopped = false;
+        //         enemy.agent.speed = enemyRange.chaseSpeed; // set navmesh speed
+        //     }
 
-        }
+        // }
+        enemyRange.SafeResumeAgent();
+        if(enemy.agent != null) enemy.agent.speed = enemyRange.chaseSpeed;
     }
 
     /// <summary>
@@ -46,8 +48,14 @@ public class ChaseState_Range : EnemyState
         // Handle Rotation
         enemyRange.FaceTargetSmooth(enemyRange.turnSpeed);
 
-        // handle combat stuff
-        ManageCombat();
+        float distSqr = (enemy.target.position - enemy.transform.position).sqrMagnitude;
+        float attackRangeSqr = enemyRange.attackRange * enemyRange.attackRange;
+
+        // if in range and cooldown ready -> ATTACK
+        if(distSqr <= attackRangeSqr && Time.time >= enemyRange.nextShootTime)
+        {
+            stateMachine.ChangeState(enemyRange.GetAttack());
+        }
 
         // float distance = Vector3.Distance(enemy.transform.position, enemy.target.position); // go but keep distance
         // if (distance > enemyRange.stopDistance * .8f)
@@ -97,29 +105,11 @@ public class ChaseState_Range : EnemyState
         }
     }
 
-    void ManageCombat()
-    {
-        // Check Distance
-        float distSqr = (enemy.target.position - enemy.transform.position).sqrMagnitude;
-        float rangeSqr = enemyRange.attackRange * enemyRange.attackRange;
-
-        if (distSqr <= rangeSqr)
-        {
-            // we are in range, check cooldown
-            if (Time.time >= enemyRange.nextShootTime)
-            {
-                enemyRange.FireAtTarget();
-                enemyRange.nextShootTime = Time.time + enemyRange.fireCooldown;
-                
-            }
-        }
-    }
-
     /// <summary>
     /// What to do when exiting the ChaseState
     /// </summary>
     public override void Exit()
     {
-        if (enemy.agent) enemy.agent.isStopped = false; // free him again
+        if (enemy.agent != null && enemy.agent.isActiveAndEnabled) enemy.agent.isStopped = false; // free him again
     }
 }

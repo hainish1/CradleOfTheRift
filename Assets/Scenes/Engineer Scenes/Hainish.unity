@@ -990,6 +990,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 4412303297756605295, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
+      propertyPath: chaseSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4412303297756605295, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
       propertyPath: attackRange
       value: 20
       objectReference: {fileID: 0}
@@ -999,7 +1003,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4412303297756605295, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
       propertyPath: horizontalSmoothTime
-      value: 0.06
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 8841140246284276385, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
       propertyPath: m_Name

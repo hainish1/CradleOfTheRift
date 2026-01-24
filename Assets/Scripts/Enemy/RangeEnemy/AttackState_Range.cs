@@ -8,6 +8,8 @@ public class AttackState_Range : EnemyState
 {
     EnemyRange enemyRange;
 
+    float delayTimer;
+    bool hasFired;
 
     private float nextShootTime;
     private float endTime;
@@ -22,14 +24,17 @@ public class AttackState_Range : EnemyState
     /// </summary>
     public override void Enter()
     {
-        if (enemy.agent != null)
-        {
-            enemy.agent.isStopped = true; // pause my brother a bit
-            enemy.agent.velocity = Vector3.zero;
-        }
+        // if (enemy.agent != null)
+        // {
+        //     enemy.agent.isStopped = true; // pause my brother a bit
+        //     enemy.agent.velocity = Vector3.zero;
+        // }
+        enemyRange.SafeStopAgent();
+        hasFired = false;
+        delayTimer = 0.5f; // tiny delay before shooting
 
-        endTime = Time.time + Mathf.Max(enemyRange.fireCooldown * 1.5f, 0.3f);
-        nextShootTime = Time.time; // first shoot immedietly
+        // endTime = Time.time + Mathf.Max(enemyRange.fireCooldown * 1.5f, 0.3f);
+        // nextShootTime = Time.time; // first shoot immedietly
     }
 
     /// <summary>
@@ -43,27 +48,38 @@ public class AttackState_Range : EnemyState
             return;
         }
 
-        Vector3 direction = enemy.target.position - enemy.transform.position;
-        direction.y = 0f;
-        if (direction.sqrMagnitude > 0.0001f)
+        // Vector3 direction = enemy.target.position - enemy.transform.position;
+        // direction.y = 0f;
+        // if (direction.sqrMagnitude > 0.0001f)
+        // {
+        //     Quaternion look = Quaternion.LookRotation(direction);
+        //     enemy.transform.rotation = Quaternion.Slerp(enemy.transform.rotation, look, enemyRange.turnSpeedWhileAiming * Time.deltaTime); // turn towards
+
+        // }
+
+        // // now fire
+        // if (Time.time >= nextShootTime)
+        // {
+        //     enemyRange.FireOnce();
+        //     nextShootTime = Time.time + enemyRange.fireCooldown;
+        //     enemyRange.nextAttackAllowed = Time.time + enemyRange.fireCooldown * 0.1f; // for re-entry
+        // }
+
+
+        // float distance = Vector3.Distance(enemy.transform.position, enemy.target.position);
+        // if (distance >= enemyRange.attackRange * 1.2f || Time.time >= endTime)
+        // {
+        //     stateMachine.ChangeState(enemyRange.GetRecovery());
+        // }
+
+        enemyRange.FaceTargetSmooth(enemyRange.turnSpeedWhileAiming);
+        delayTimer -= Time.deltaTime;
+
+        if(delayTimer <= 0f && !hasFired)
         {
-            Quaternion look = Quaternion.LookRotation(direction);
-            enemy.transform.rotation = Quaternion.Slerp(enemy.transform.rotation, look, enemyRange.turnSpeedWhileAiming * Time.deltaTime); // turn towards
+            enemyRange.FireAtTarget();
+            hasFired = true;
 
-        }
-
-        // now fire
-        if (Time.time >= nextShootTime)
-        {
-            enemyRange.FireOnce();
-            nextShootTime = Time.time + enemyRange.fireCooldown;
-            enemyRange.nextAttackAllowed = Time.time + enemyRange.fireCooldown * 0.1f; // for re-entry
-        }
-
-
-        float distance = Vector3.Distance(enemy.transform.position, enemy.target.position);
-        if (distance >= enemyRange.attackRange * 1.2f || Time.time >= endTime)
-        {
             stateMachine.ChangeState(enemyRange.GetRecovery());
         }
     }

@@ -99,37 +99,46 @@ public class EnemyRange : Enemy
     /// </summary>
     void UpdateFlightMovement()
     {
-        if (!agent) return;
+        if (agent == null) return;
+        if (target == null) return;
 
-        // calculate target position
-        Vector3 targetPos = agent.nextPosition;
+        // find the target height
+        float targetY = target.position.y + flyHeight;
 
-        if (target != null)
+        // find horizontal target
+        Vector3 nextPos = transform.position;
+        Vector3 desiredHorizontalPos;
+
+        // check for line of sight to target
+        Vector3 dirToTarget = target.position - transform.position;
+        float distToTarget = dirToTarget.magnitude;
+
+        // raycast check
+        bool hasLineOfSight = !Physics.Raycast(transform.position, dirToTarget.normalized, distToTarget, obstacleMask); // check if no wall in between
+
+        if (hasLineOfSight)
         {
-            // fly above the target
-            targetPos.y = target.position.y + flyHeight;
+            // DO TRUE FLIGHT, IGNORE SHITTY NAVMESH
+            desiredHorizontalPos = target.position;
+            if (agent.isOnNavMesh)
+            {
+                agent.nextPosition = transform.position;
+            }
         }
         else
         {
-            // maintain current height relative to ground
-            targetPos.y = transform.position.y;
+            // go back to navmesh
+            desiredHorizontalPos = agent.nextPosition;
         }
 
-        // Move X and Z horizontally, to sync with the agent
-        Vector3 currentPos = transform.position;
-        Vector3 nextPos = currentPos;
+        nextPos.x = Mathf.SmoothDamp(transform.position.x, desiredHorizontalPos.x, ref currentHorizontalVelocity.x, horizontalSmoothTime);
+        nextPos.z = Mathf.SmoothDamp(transform.position.z, desiredHorizontalPos.z, ref currentHorizontalVelocity.z, horizontalSmoothTime);
 
-        // interp x and z with agent
-        Vector3 agentPos = agent.nextPosition;
-        nextPos.x = Mathf.SmoothDamp(currentPos.x, agentPos.x, ref currentHorizontalVelocity.x, horizontalSmoothTime);
-        nextPos.z = Mathf.SmoothDamp(currentPos.z, agentPos.z, ref currentHorizontalVelocity.z, horizontalSmoothTime);
-
-        // move y smoothly to adjust height
-        nextPos.y = Mathf.SmoothDamp(currentPos.y, targetPos.y, ref currentYVelocity, verticalSmoothTime);
+        // vertical move, try to match the target's height
+        nextPos.y = Mathf.SmoothDamp(transform.position.y, targetY, ref currentYVelocity, verticalSmoothTime);
 
         // Apply
         transform.position = nextPos;
-
     }
 
     /// <summary>
@@ -148,8 +157,6 @@ public class EnemyRange : Enemy
     {
         if (target == null || firePoint == null || projectilePrefab == null) return;
 
-
-        
         Vector3 aimPosition = target.position + Vector3.up * 0.5f; // Aim at chest of player
 
 
@@ -158,6 +165,7 @@ public class EnemyRange : Enemy
         Quaternion rotation = Quaternion.LookRotation(direction);
         Vector3 spawnPoint = firePoint.position + direction * spawnOffset;
 
+        // I could probably use Object Pooling here
         EnemyProjectile projectile = Instantiate(projectilePrefab, spawnPoint, rotation);
         projectile.Init(direction * projectileSpeed, projectileMask, projectileDamage);
 
@@ -169,13 +177,31 @@ public class EnemyRange : Enemy
         }
     }
 
+    public void SafeStopAgent()
+    {
+        if(agent != null && agent.isOnNavMesh && agent.isActiveAndEnabled)
+        {
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+        }
+    }
+
+    public void SafeResumeAgent()
+    {
+        if(agent != null && agent.isOnNavMesh && agent.isActiveAndEnabled)
+        {
+            agent.isStopped = false;
+        }
+    }
+
+
     public void FaceTargetSmooth(float speed)
     {
         if (target == null) return;
         Vector3 dir = (target.position - transform.position).normalized;
         dir.y = 0; // Keep rotation upright
         if (dir == Vector3.zero) return;
-        
+
         Quaternion lookRot = Quaternion.LookRotation(dir);
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * speed);
     }
