@@ -457,25 +457,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    ///// <summary>
-    /////   <para>
-    /////     Applies calculated custom gravity to the player every frame.
-    /////   </para>
-    ///// </summary>
-    //private void GravityConditions()
-    //{
-    //    // Do not apply gravity when on the ground or flying.
-    //    if (IsGrounded || _isFlying) return;
-
-    //    float aggregateGravityValue = Physics.gravity.y * _gravityMultiplier * _currDriftDescentDivisor;
-    //    float accelIncrement = Time.deltaTime * aggregateGravityValue;
-    //    _verticalVelocityVector.y = Mathf.Clamp(_verticalVelocityVector.y + accelIncrement, aggregateGravityValue, float.MaxValue);
-
-    //    ApplyAirDrag(aggregateGravityValue); // Slow descent speed to the strength of gravity.
-
-    //    _characterController.Move(Time.deltaTime * _verticalVelocityVector);
-    //}
-
     /// <summary>
     ///   <para>
     ///     Applies calculated custom gravity to the player every frame.

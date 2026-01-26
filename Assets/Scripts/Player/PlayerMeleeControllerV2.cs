@@ -24,7 +24,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     // Weapon Parameters
 
     [Header("Weapon Parameters")] [Space]
-    //[SerializeField] private Transform _weaponHolder;
+    [SerializeField] private Transform _playerModel;
     [SerializeField] private Transform _playerCamera;
     private Animator _weaponAnim;
     private Entity _playerEntity;
@@ -35,6 +35,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [Header("Animation Parameters")] [Space]
     [SerializeField] private AnimationClip _attack0;
     [SerializeField] private AnimationClip _attack1;
+    [SerializeField] private AnimationClip _transition0;
+    [SerializeField] private AnimationClip _transition1;
     private float[] _attackDurations;
 
     // Hit Registration Parameters
@@ -67,6 +69,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private float _currAttackDuration;
     private bool _attackInputPending;
     private bool _isAttacking;
+    private bool _isRegistering;
     public bool CanAttack { get; set; }
     private int _maxComboCount;
     private int _currComboCount;
@@ -109,38 +112,54 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _currAttackDuration = _attackDurations[0];
         _attackInputPending = false;
         _isAttacking = false;
+        _isRegistering = false;
         CanAttack = true;
         _maxComboCount = _attackDurations.Length;
         _currComboCount = 0;
-        _comboTimer = GetSecondsUpperMargin();
+        _comboTimer = _currAttackDuration;
     }
 
     void Update()
     {
         RecalculateAttackSpeed();
 
-        // Align weapon with camera direction.
-        //_weaponHolder.transform.rotation = Quaternion.Euler(_playerCamera.rotation.eulerAngles.x, _playerCamera.rotation.eulerAngles.y, 0);
+        if (_comboTimer < _currAttackDuration) _comboTimer += Time.deltaTime;
 
-        // Check if attack was inputted slightly before or after the latest attack ends.
-        if (_comboTimer < GetSecondsUpperMargin())
+        // Check if attack was inputted slightly before the latest attack ends.
+        if (_attackActions.IsPressed() && (CanAttack || _comboTimer > GetCooldownMinusBuffer()))
         {
-            _comboTimer += Time.deltaTime;
-
-            if (_attackActions.IsPressed() && _comboTimer > GetSecondsLowerMargin())
-            {
-                _attackInputPending = true;
-            }
+            _attackInputPending = true;
         }
 
         // Activate an attack when inputted.
-        if ((_attackActions.IsPressed() || _attackInputPending) && CanAttack)
+        if (_attackInputPending)
         {
             PerformAttack();
         }
 
-        // Continually register targets while an attack is active.
+        // Gradually align player model with camera direction.
         if (_isAttacking)
+        {
+            float degreesPerSecond = Time.deltaTime * Mathf.Deg2Rad * 120;
+            Vector3 rotateIncrement = Vector3.RotateTowards(_playerModel.forward, _playerCamera.forward, degreesPerSecond, 0);
+            _playerModel.forward = rotateIncrement;
+
+            //_playerModel.transform.rotation = Quaternion.Euler(_playerCamera.rotation.eulerAngles.x, _playerCamera.rotation.eulerAngles.y, 0);
+        }
+        else
+        {
+            //Vector3 cameraForward = _playerCamera.forward;
+            //cameraForward.y = 0;
+            //cameraForward.Normalize();
+
+            //if (_playerModel.forward != cameraForward)
+            //{
+            //    _playerModel.transform.rotation = Quaternion.LookRotation(cameraForward, Vector3.up);
+            //}
+        }
+
+        // Continually register targets while an attack is active.
+        if (_isRegistering)
         {
             ExecuteHitRegistrationCast();
         }
@@ -154,10 +173,11 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private void RecalculateAttackSpeed()
     {
         float currAttackSpeed = _playerEntity.Stats.MeleeAttackSpeed;
-        float attackSpeedMultiplier = Mathf.Clamp(1 / currAttackSpeed, 1e-3f, float.MaxValue);
-        _attackDurations[0] = _attack0.length * attackSpeedMultiplier;
-        _attackDurations[1] = _attack1.length * attackSpeedMultiplier;
-        _weaponAnim.SetFloat("AttackSpeedMultiplier", 1 / attackSpeedMultiplier);
+        float inverseAttackSpeed = Mathf.Clamp(1 / currAttackSpeed, 1e-3f, float.MaxValue);
+
+        _attackDurations[0] = (_attack0.length + _transition0.length) * inverseAttackSpeed;
+        _attackDurations[1] = (_attack1.length + _transition1.length) * inverseAttackSpeed;
+        _weaponAnim.SetFloat("AttackSpeedMultiplier", 1 / inverseAttackSpeed);
     }
 
     /// <summary>
@@ -175,22 +195,11 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     The upper margin of time around the current attack duration in which a combo can be inputted.
-    ///   </para>
-    /// </summary>
-    /// <returns> The upper time margin. </returns>
-    private float GetSecondsUpperMargin()
-    {
-        return _currAttackDuration + _comboInputSecondsMargin;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     The lower margin of time around the current attack duration in which a combo can be inputted.
+    ///     The duration of the current attack cooldown in seconds with the input buffer time subtracted from it.
     ///   </para>
     /// </summary>
     /// <returns> The lower time margin. </returns>
-    private float GetSecondsLowerMargin()
+    private float GetCooldownMinusBuffer()
     {
         return _currAttackDuration - _comboInputSecondsMargin;
     }
@@ -206,17 +215,19 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         CanAttack = false;
         print($"Combo Try. | {_currComboCount}");
         _weaponAnim.SetTrigger("Attack" + _currComboCount);
-        
+
+        _currAttackDuration = _attackDurations[_currComboCount];
         _currComboCount++;
-        _currAttackDuration = _attackDurations[_currComboCount - 1];
+
+        // Wait for lower delay margin if combo attack is still possible
         if (_currComboCount < _maxComboCount)
         {
             _comboTimer = 0;
-            StartCoroutine(DelayAttack(GetSecondsLowerMargin()));
+            StartCoroutine(DelayAttack(GetCooldownMinusBuffer()));
         }
         else
         {
-            _comboTimer = GetSecondsUpperMargin();
+            _comboTimer = _currAttackDuration;
             _currAttackDuration = _attackDurations[0];
             StartCoroutine(DelayAttack(AttackCooldown));
         }
@@ -228,44 +239,44 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     ///   </para>
     /// </summary>
     /// <returns> IEnumerator object. </returns>
-    private IEnumerator DelayAttack(float seconds)
+    private IEnumerator DelayAttack(float delaySeconds)
     {
-        yield return new WaitForSeconds(seconds);
+        yield return new WaitForSeconds(delaySeconds);
 
-        // Execute extra functionality if a combo attack is still possible.
-        if (seconds == GetSecondsLowerMargin())
-        {
-            float timer = seconds;
-            while (timer < GetSecondsUpperMargin())
-            {
-                timer += Time.deltaTime;
-                
-                // Force a longer delay if the combo time window was missed.
-                if (timer > GetSecondsUpperMargin() && !_attackInputPending)
-                {
-                    _currComboCount = 0;
-                    yield return new WaitForSeconds(AttackCooldown - GetSecondsUpperMargin());
-                    CanAttack = true;
-                    break;
-                }
-                else if (_attackInputPending) // Otherwise, break out of the coroutine if an attack input is pending.
-                {
-                    // Wait until the current attack has ended before allowing the next one.
-                    while (_isAttacking)
-                    {
-                        yield return null;
-                    }
-
-                    CanAttack = true;
-                    break;
-                }
-
-                yield return null;
-            }
-        }
-        else // Otherwise, a full delay was executed and further functionality is not necessary.
+        // Return immediately if a full delay was executed.
+        if (delaySeconds != GetCooldownMinusBuffer())
         {
             CanAttack = true;
+            yield return null;
+        }
+
+        // Execute extra functionality if a combo attack is still possible.
+        float timer = delaySeconds;
+        while (timer < _currAttackDuration)
+        {
+            timer += Time.deltaTime;
+
+            // Break out of the coroutine if an attack input is pending.
+            if (_attackInputPending)
+            {
+                // Wait until the current attack has ended before allowing the next one.
+                while (_isAttacking)
+                {
+                    yield return null;
+                }
+
+                CanAttack = true;
+                break;
+            }
+            else if (timer >= _currAttackDuration) // Otherwise, force a longer delay if the combo time window was missed.
+            {
+                _currComboCount = 0;
+                yield return new WaitForSeconds(AttackCooldown);
+                CanAttack = true;
+                break;
+            }
+
+            yield return null;
         }
     }
 
@@ -358,7 +369,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// </summary>
     void OnDrawGizmos()
     {
-        if (!_isAttacking || !_debug) return;
+        if (!_isRegistering || !_debug) return;
 
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(_hitCapsuleStartPoint.position, _hitCapsuleCastRadius);
@@ -418,7 +429,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Animation event to activate hit registration.
+    ///     Animation event to activate attacking condition.
     ///   </para>
     /// </summary>
     private void OnAttackStart()
@@ -429,13 +440,24 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Animation event to deactivate hit registration.
+    ///     Animation event to activate registration condition.
+    ///   </para>
+    /// </summary>
+    private void StartRegistering()
+    {
+        _isRegistering = true;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Animation event to deactivate attacking and registration conditions.
     ///   </para>
     /// </summary>
     private void OnAttackEnd()
     {
         print($"Reached attack end. | {_currComboCount}");
         _isAttacking = false;
+        _isRegistering = false;
         if (_currComboCount == _maxComboCount) _currComboCount = 0;
         _prevHitCapsuleTempPointsInitialized = false;
         _objectsHitThisAttack.Clear();

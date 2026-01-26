@@ -2061,9 +2061,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1fc6dff3922fad44aa77c3d8ef1fa82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerModel: {fileID: 0}
   _playerCamera: {fileID: 3222700164973113527}
   _attack0: {fileID: 7400000, guid: ec28673b76f163940a7ec254708a0505, type: 2}
   _attack1: {fileID: 7400000, guid: ec28673b76f163940a7ec254708a0505, type: 2}
+  _transition0: {fileID: 0}
+  _transition1: {fileID: 0}
   _hitCapsuleStartPoint: {fileID: 8403910430212717989}
   _hitCapsuleEndPoint: {fileID: 6515147321210492741}
   _hitCapsuleCastRadius: 2
