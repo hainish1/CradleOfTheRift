@@ -50,7 +50,7 @@
 
 .h2 {
     background-color: rgba(255, 255, 255, 0);
-    font-size: 100px;
+    font-size: 90px;
     -unity-font-definition: url("project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&guid=74a5091d8707f334b9a5c31ef71a64ba&type=3#PerfectDOSVGA437");
     color: rgb(255, 255, 255);
 }
@@ -92,4 +92,16 @@
     border-top-right-radius: 1px;
     border-bottom-right-radius: 1px;
     border-bottom-left-radius: 1px;
+}
+
+.description {
+    -unity-font-definition: resource('FlatSkin/Font/Roboto-ThinItalic');
+    font-size: 60px;
+    color: rgb(255, 255, 255);
+}
+
+.item:hover {
+    transition-duration: 0.25s;
+    transition-property: scale;
+    scale: 1.1 1.1;
 }
