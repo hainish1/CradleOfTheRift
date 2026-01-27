@@ -70,6 +70,8 @@ public class EnemyRange : Enemy
 
     public override void Update()
     {
+        if (PauseManager.GameIsPaused) return;
+
         base.Update();
         UpdateHover();
     }
@@ -79,6 +81,8 @@ public class EnemyRange : Enemy
     /// </summary>
     void UpdateHover()
     {
+        if (PauseManager.GameIsPaused) return;
+
         if (agent == null) return;
 
         bobPhase += Time.deltaTime * hoverBobSpeed;
