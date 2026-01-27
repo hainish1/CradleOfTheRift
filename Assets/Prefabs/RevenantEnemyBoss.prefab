@@ -491,7 +491,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.3
+      scalar: 0.7
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -10238,7 +10238,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.8627451, g: 0.039215688, b: 1, a: 1}
+      maxColor: {r: 0.8627451, g: 0.039215688, b: 1, a: 0.5882353}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -10302,7 +10302,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.3
+      scalar: 1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -12709,7 +12709,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
   NoiseModule:
-    enabled: 0
+    enabled: 1
     strength:
       serializedVersion: 2
       minMaxState: 0
@@ -15523,7 +15523,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.3
+      scalar: 0.7
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -20754,6 +20754,10 @@ MonoBehaviour:
   cleanupDelay: 0
   baseHealth: 500
   damageVisuals: {fileID: 6516409030888228098}
+  deathSFX:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
 --- !u!114 &1065634495979649153
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20789,6 +20793,8 @@ MonoBehaviour:
   fontSize: 50
   textDuration: 1.5
   riseSpeed: 1.5
+  takeDamageVFXPrefab: {fileID: 4658278565933542678, guid: de2e62541d660f943807b06d7ffa0e73, type: 3}
+  damageVfxAttachPoint: {fileID: 0}
 --- !u!114 &2761777855947941824
 MonoBehaviour:
   m_ObjectHideFlags: 0

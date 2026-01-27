@@ -1,0 +1,48 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "2252982343",
+    "Type": "Event",
+    "GUID": "{A8E4830F-5B35-40AF-AE8F-1180F925315F}",
+    "Language": "SFX",
+    "Hash": "{61D99205-0F17-9C5F-54D4-96DA315C0086}",
+    "ObjectPath": "Skull_Death",
+    "ShortName": "Skull_Death",
+    "Path": "Event/Skull_Death.bnk",
+    "Media": [
+     {
+      "Id": "572053790",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "SkullBreak.wav",
+      "Path": "Media/572053790.wem",
+      "CachePath": "C8/{C80BFBDE-CA06-4416-AAB7-A61D18252F6A}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "2252982343",
+      "Name": "Skull_Death",
+      "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Skull\\Skull_Death",
+      "GUID": "{A8E4830F-5B35-40AF-AE8F-1180F925315F}",
+      "DurationType": "OneShot",
+      "DurationMin": "0.70790565",
+      "DurationMax": "0.7945974",
+      "MediaRefs": [
+       {
+        "Id": "572053790"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{D475219F-BD58-FDF2-7B06-D37E45B6C177}"
+ }
+}
