@@ -137,28 +137,36 @@ public class ItemData : ScriptableObject
     public float value = 1f;
     public int duration = -1; // perm by default
 
-public string GetFormattedDescription(int stackCount, bool showTotalStats)
-{
-    // 1. Determine the multiplier based on the toggle setting
-    // If showTotalStats is true, multiply the value by the number of items.
-    // If false (the setting is off), we just use 1 as the multiplier.
-    int multiplier = showTotalStats ? Mathf.Max(1, stackCount) : 1;
-
-    // 2. Use ONLY the 'value' field from the bottom of ItemData
-    float finalValue = this.value * multiplier;
-
-    // 3. Insert that value into your description string
-    try 
+    public string GetFormattedDescription(int stackCount, bool showTotalStats)
     {
-        // Replaces {0} in your Inspector text with the finalValue
-        return string.Format(description, finalValue);
+        int multiplier = showTotalStats ? Mathf.Max(1, stackCount) : 1;
+        float displayValue = 0f;
+
+        if (operatorType == OperatorType.Percentage)
+        {
+            // 0.15 becomes 15%
+            displayValue = value * 100f * multiplier; 
+        }
+        else if (operatorType == OperatorType.Multiply)
+        {
+            // 1.15 becomes 15% boost
+            displayValue = (value - 1f) * 100f * multiplier;
+        }
+        else if (operatorType == OperatorType.Add)
+        {
+            // For 'Add', just use the raw number (e.g., +5 Damage)
+            displayValue = value * multiplier;
+        }
+
+        try 
+        {
+            return string.Format(description, displayValue);
+        }
+        catch 
+        {
+            return description;
+        }
     }
-    catch (System.FormatException)
-    {
-        // If you forgot to put {0} in the inspector, it just returns the text as-is
-        return description;
-    }
-}
 
 }
 
