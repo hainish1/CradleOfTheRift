@@ -139,31 +139,34 @@ public class ItemData : ScriptableObject
 
     public string GetFormattedDescription(int stackCount, bool showTotalStats)
     {
+        // Determine if we multiply by stack count or just show base value (1x)
         int multiplier = showTotalStats ? Mathf.Max(1, stackCount) : 1;
         float displayValue = 0f;
 
+        // Convert fraction to whole percentage (e.g., 0.15 -> 15%)
         if (operatorType == OperatorType.Percentage)
         {
-            // 0.15 becomes 15%
             displayValue = value * 100f * multiplier; 
         }
+    // Extract the boost percentage from a multiplier (e.g., 1.15 -> 15%)
         else if (operatorType == OperatorType.Multiply)
         {
-            // 1.15 becomes 15% boost
             displayValue = (value - 1f) * 100f * multiplier;
         }
+        // Use the raw flat value (e.g., +5 Damage)
         else if (operatorType == OperatorType.Add)
         {
-            // For 'Add', just use the raw number (e.g., +5 Damage)
             displayValue = value * multiplier;
         }
 
         try 
         {
+            // Inject the calculated value into the {0} placeholder in the description
             return string.Format(description, displayValue);
         }
         catch 
         {
+            // Fallback to raw description if formatting fails (e.g., missing {0})
             return description;
         }
     }

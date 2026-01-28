@@ -25,26 +25,28 @@ public class InventoryController : MonoBehaviour
     {
         root = uiDocument.rootVisualElement;
         
-        // --- 1. HIDE INVENTORY ON START ---
-        // We set the display to None immediately so it doesn't block the screen on start
+        // HIDE INVENTORY ON START
         root.style.display = DisplayStyle.None;
         isInventoryOpen = false;
 
-        descriptionLabel = root.Q<Label>("DescriptionLabel"); // [cite: 20]
+        // Locate UI elements by their names/classes defined in UXML
+        descriptionLabel = root.Q<Label>("DescriptionLabel");
         
-        var itemsContainer = root.Q<VisualElement>("ItemsVisual"); // [cite: 2]
+        var itemsContainer = root.Q<VisualElement>("ItemsVisual");
         if (itemsContainer != null)
         {
-            itemSlots = itemsContainer.Query<VisualElement>(className: "item").ToList(); // [cite: 4]
+            // Gather all visual slots tagged with the "item" class
+            itemSlots = itemsContainer.Query<VisualElement>(className: "item").ToList();
         }
 
-        // Register Clicks
+        // Link click events to every slot in the grid
         for (int i = 0; i < itemSlots.Count; i++)
         {
             VisualElement slot = itemSlots[i];
             slot.RegisterCallback<ClickEvent>(evt => OnSlotClicked(slot));
         }
 
+        // Subscribe to inventory logic events to trigger UI refreshes
         if (playerInventory != null)
         {
             playerInventory.OnItemAdded += HandleInventoryChanged;
@@ -55,7 +57,7 @@ public class InventoryController : MonoBehaviour
 
     private void Update()
     {
-        // --- 2. LISTEN FOR INPUT ---
+        // Listen for input to open or close the menu
         if (Input.GetKeyDown(toggleKey))
         {
             ToggleInventory(!isInventoryOpen);
@@ -82,7 +84,7 @@ public class InventoryController : MonoBehaviour
             // Close Inventory
             root.style.display = DisplayStyle.None; // Hide UI
             
-            // Lock Cursor (assuming First Person / Third Person game)
+            // Lock Cursor 
             UnityEngine.Cursor.visible = false;
             UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         }
@@ -98,12 +100,14 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    // Refresh UI automatically when the inventory contents change
     private void HandleInventoryChanged(ItemData data, PlayerInventory.ItemStack stack)
     {
         if (isInventoryOpen) RefreshInventoryDisplay();
         if (currentSelectedItem == data) UpdateDescription(data);
     }
 
+    // Clear selection if the currently viewed item is dropped/removed
     private void HandleItemRemoved(ItemData data)
     {
         if (isInventoryOpen) RefreshInventoryDisplay();
@@ -116,14 +120,14 @@ public class InventoryController : MonoBehaviour
 
     private void RefreshInventoryDisplay()
     {
-        // Clear slots
+        // Clear icons and data from all UI slots
         foreach(var slot in itemSlots)
         {
             slot.style.backgroundImage = null; 
             slot.userData = null;
         }
 
-        // Fill slots
+        // Map items from the logic dictionary to the visual slot grid
         int index = 0;
         foreach(var kvp in playerInventory.Items)
         {
@@ -132,13 +136,14 @@ public class InventoryController : MonoBehaviour
             
             VisualElement slot = itemSlots[index];
             if (data.icon != null) slot.style.backgroundImage = new StyleBackground(data.icon);
-            slot.userData = data; 
+            slot.userData = data; // Attach data to the UI element for retrieval on click
             index++;
         }
     }
 
     private void OnSlotClicked(VisualElement slot)
     {
+        // Retrieve the data we stored in userData during Refresh
         if (slot.userData is ItemData data)
         {
             currentSelectedItem = data;
@@ -149,9 +154,14 @@ public class InventoryController : MonoBehaviour
     private void UpdateDescription(ItemData data)
     {
         if (data == null) return;
+
+        // Query current count from logic to handle dynamic math
         int currentStacks = playerInventory.GetItemCount(data);
+
+        // Request the formatted text from the ItemData script
         string finalDescription = data.GetFormattedDescription(currentStacks, useDynamicDescriptions);
         
+        // Append footer info if dynamic scaling is active
         if (useDynamicDescriptions && currentStacks > 1)
              finalDescription += $"\n(Total for {currentStacks} stacks)";
 
