@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{1300FC1B-85BE-420F-B007-E0C8136BD10D}",
     "Language": "SFX",
-    "Hash": "{20E869BC-DD9F-7C06-65AF-83BB0E3AD4DE}",
+    "Hash": "{B26DE220-7C9D-6929-093F-F4752FC4AAB2}",
     "ObjectPath": "Play_player_dash",
     "ShortName": "Play_player_dash",
     "Path": "Event/Play_player_dash.bnk",
@@ -23,6 +23,15 @@
       "ShortName": "player_dash.wav",
       "Path": "Media/525294349.wem",
       "CachePath": "B4/{B4508153-A108-3A74-B81F-6C643105D9F4}.wem"
+     },
+     {
+      "Id": "711944547",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "FairyJump.wav",
+      "Path": "Media/711944547.wem",
+      "CachePath": "60/{60FB2A45-612B-6A4B-D91C-179CDA8D9C84}.wem"
      }
     ],
     "Events": [
@@ -32,17 +41,20 @@
       "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_dash",
       "GUID": "{1300FC1B-85BE-420F-B007-E0C8136BD10D}",
       "DurationType": "OneShot",
-      "DurationMin": "0.40141666",
-      "DurationMax": "0.40141666",
+      "DurationMin": "2",
+      "DurationMax": "2",
       "MediaRefs": [
        {
         "Id": "525294349"
+       },
+       {
+        "Id": "711944547"
        }
       ]
      }
     ]
    }
   ],
-  "FileHash": "{716E7B8B-EE1A-405E-2C4D-76F58624D203}"
+  "FileHash": "{E71F2917-17E7-6A9D-0F5A-0D810111E10F}"
  }
 }

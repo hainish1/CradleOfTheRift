@@ -17,6 +17,7 @@ namespace AK
         static const AkUniqueID PLAY_MUSIC = 2932040671U;
         static const AkUniqueID PLAY_PLAYER_DASH = 2175711460U;
         static const AkUniqueID PLAY_PLAYER_FIRE = 1408288908U;
+        static const AkUniqueID PLAY_PLAYER_JUMP = 562256996U;
         static const AkUniqueID PLAY_PLAYER_MELEE = 3619611380U;
         static const AkUniqueID PLAY_RIVER1 = 2332603225U;
         static const AkUniqueID PLAY_RIVER2 = 2332603226U;
@@ -24,6 +25,7 @@ namespace AK
         static const AkUniqueID PLAY_SONG_ICEY = 3808693238U;
         static const AkUniqueID PLAY_SONG_PERCUSSIANORCHESTRA = 920721062U;
         static const AkUniqueID SKULL_DEATH = 2252982343U;
+        static const AkUniqueID SLIME_DEATH = 510073564U;
         static const AkUniqueID SLIME_JUMP = 2006797914U;
         static const AkUniqueID STOP_ALL = 452547817U;
     } // namespace EVENTS

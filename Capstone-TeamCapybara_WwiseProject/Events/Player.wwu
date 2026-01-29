@@ -52,6 +52,24 @@
 								</Reference>
 							</ReferenceList>
 						</Action>
+						<Action Name="" ID="{CBA0CC93-E7CC-4BE3-B4D9-EC6B84CE0D26}" ShortID="113830007">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="player_jump" ID="{A14AA23A-33DC-480B-8E86-CABEB2366C64}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_player_jump" ID="{D05EFD5A-996A-4B7B-90A3-11EBBB6E1288}">
+					<ChildrenList>
+						<Action Name="" ID="{FD5B4D20-6DEB-4C43-A04D-C8E483F15FBF}" ShortID="895273639">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="player_jump" ID="{A14AA23A-33DC-480B-8E86-CABEB2366C64}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
 					</ChildrenList>
 				</Event>
 			</ChildrenList>
