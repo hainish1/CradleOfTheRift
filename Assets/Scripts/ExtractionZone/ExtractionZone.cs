@@ -101,30 +101,35 @@ public class ExtractionZone : MonoBehaviour
             this.isExtracting = false;
         }
     }
-    private void OnExtraction()
+private void OnExtraction()
+{
+    if (this.isExtracting && this.currentCharge < this.chargeTime)
     {
-        if (this.isExtracting & this.currentCharge < this.chargeTime)
+        // Calculate the 99% threshold
+        float maxAllowedCharge = this.isBossDead ? this.chargeTime : this.chargeTime * 0.99f;
+
+        // Increment charge
+        this.currentCharge += Time.deltaTime;
+
+        // Clamp based on whether the boss is dead or not
+        this.currentCharge = Math.Clamp(this.currentCharge, 0, maxAllowedCharge);
+
+        // Check for completion (only possible if isBossDead is true and charge hits 100%)
+        if (this.currentCharge >= this.chargeTime && !this.hasFinishedExtracting && this.isBossDead)
         {
-            this.currentCharge = Math.Clamp(this.currentCharge + Time.deltaTime, 0, this.chargeTime);
-
-            if (this.currentCharge >= this.chargeTime && !this.hasFinishedExtracting && this.isBossDead)
-            {
-                this.hasFinishedExtracting = true;
-                this.isExtracting = false;
-
-                this.ExtractionFinished?.Invoke();
-            }
+            this.hasFinishedExtracting = true;
+            this.isExtracting = false;
+            this.ExtractionFinished?.Invoke();
         }
-        else
-        {
-            if (!this.hasFinishedExtracting)
-            {
-                this.currentCharge = Math.Clamp(this.currentCharge - Time.deltaTime, 0, this.chargeTime);
-            }
-        }
-
-        this.ChargeChanged?.Invoke(this.currentCharge);
     }
+    else if (!this.isExtracting && !this.hasFinishedExtracting)
+    {
+        // Decay charge if the player leaves the zone
+        this.currentCharge = Math.Clamp(this.currentCharge - Time.deltaTime, 0, this.chargeTime);
+    }
+
+    this.ChargeChanged?.Invoke(this.currentCharge);
+}
 
     private void OnDisplayExtraction()
     {
