@@ -61,8 +61,9 @@ public class PauseManager : MonoBehaviour
             playerAim.SetLookEnabled(false);
             playerAim.IsPaused = true;
         }
+        if (PlayerHealth.GameIsOver) return;
 
-        if (pauseMenuUI != null && PlayerHealth.GameIsOver)
+        if (pauseMenuUI != null)
             pauseMenuUI.SetActive(true);
     }
 
@@ -79,7 +80,9 @@ public class PauseManager : MonoBehaviour
             playerAim.IsPaused = false;
         }
 
-        if (pauseMenuUI != null && PlayerHealth.GameIsOver)
+        if (PlayerHealth.GameIsOver) return;
+
+        if (pauseMenuUI != null)
             pauseMenuUI.SetActive(false);
     }
     // public void OpenInventory()
