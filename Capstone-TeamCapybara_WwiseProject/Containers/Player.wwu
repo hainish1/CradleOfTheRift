@@ -163,6 +163,22 @@
 					<ChildrenList>
 						<Sound Name="Weapon Swoosh" ID="{2AE8E6C6-4232-46A7-A956-8CDA05C20061}" ShortID="823999341">
 							<PropertyList>
+								<Property Name="Highpass" Type="int16">
+									<ValueList>
+										<Value>30</Value>
+									</ValueList>
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{7A650160-B7BD-4B75-8EB8-2AD94BE9F52E}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Max" Type="Real64" Value="5"/>
+													<Property Name="Min" Type="Real64" Value="-5"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
 								<Property Name="Lowpass" Type="int16">
 									<ValueList>
 										<Value>6</Value>
