@@ -13,6 +13,9 @@
 							</ReferenceList>
 						</Action>
 						<Action Name="" ID="{25D643C7-A0ED-414D-8D11-E3169410E1AB}" ShortID="213746814">
+							<PropertyList>
+								<Property Name="FadeTime" Type="Real64" Value="2"/>
+							</PropertyList>
 							<ReferenceList>
 								<Reference Name="Target">
 									<ObjectRef Name="Weapon Bell" ID="{92A289F7-4E7F-4813-A35F-009A3BF5B92D}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
@@ -21,7 +24,7 @@
 						</Action>
 						<Action Name="" ID="{E6D9C840-2109-463F-93AD-1E7224DF53E4}" ShortID="797257904">
 							<PropertyList>
-								<Property Name="FadeTime" Type="Real64" Value="1"/>
+								<Property Name="FadeTime" Type="Real64" Value="2"/>
 								<Property Name="Probability" Type="Real64" Value="50"/>
 							</PropertyList>
 							<ReferenceList>
