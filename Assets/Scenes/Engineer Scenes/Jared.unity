@@ -305865,6 +305865,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+--- !u!114 &1499544451 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1600938844907053042, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+  m_PrefabInstance: {fileID: 1499544450}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7044a37391385ba449f5aa830b6a7074, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1505353235
 GameObject:
   m_ObjectHideFlags: 0
@@ -333352,7 +333363,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenuUI: {fileID: 1988271202}
-  playerAim: {fileID: 0}
+  playerAim: {fileID: 1499544451}
   inventoryUI: {fileID: 0}
 --- !u!4 &1645519323
 Transform:
