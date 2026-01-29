@@ -313,6 +313,34 @@
 					</ChildrenList>
 				</Folder>
 				<Sound Name="player_jump" ID="{A14AA23A-33DC-480B-8E86-CABEB2366C64}" ShortID="654693844">
+					<PropertyList>
+						<Property Name="Pitch" Type="int32">
+							<ModifierList>
+								<ModifierInfo>
+									<Modifier Name="" ID="{D36B41CA-18FD-411D-BBFA-F06CA5EEA4CC}">
+										<PropertyList>
+											<Property Name="Enabled" Type="bool" Value="True"/>
+											<Property Name="Max" Type="Real64" Value="300"/>
+											<Property Name="Min" Type="Real64" Value="-300"/>
+										</PropertyList>
+									</Modifier>
+								</ModifierInfo>
+							</ModifierList>
+						</Property>
+						<Property Name="Volume" Type="Real64">
+							<ModifierList>
+								<ModifierInfo>
+									<Modifier Name="" ID="{E7D9F3E0-50D2-4206-ADA1-0D3FC8AAFD43}">
+										<PropertyList>
+											<Property Name="Enabled" Type="bool" Value="True"/>
+											<Property Name="Max" Type="Real64" Value="3"/>
+											<Property Name="Min" Type="Real64" Value="-3"/>
+										</PropertyList>
+									</Modifier>
+								</ModifierInfo>
+							</ModifierList>
+						</Property>
+					</PropertyList>
 					<ReferenceList>
 						<Reference Name="Conversion">
 							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>

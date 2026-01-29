@@ -28,6 +28,7 @@ namespace AK
         static const AkUniqueID SLIME_DEATH = 510073564U;
         static const AkUniqueID SLIME_JUMP = 2006797914U;
         static const AkUniqueID STOP_ALL = 452547817U;
+        static const AkUniqueID WISP_SHOOT = 1320046920U;
     } // namespace EVENTS
 
     namespace SWITCHES

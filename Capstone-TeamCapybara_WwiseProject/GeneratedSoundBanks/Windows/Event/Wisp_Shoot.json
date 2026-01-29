@@ -1,0 +1,48 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "1320046920",
+    "Type": "Event",
+    "GUID": "{5927D32A-011B-427A-861A-E335EDACC3D5}",
+    "Language": "SFX",
+    "Hash": "{80CA7C06-8E19-2240-680D-C281157716F0}",
+    "ObjectPath": "Wisp_Shoot",
+    "ShortName": "Wisp_Shoot",
+    "Path": "Event/Wisp_Shoot.bnk",
+    "Media": [
+     {
+      "Id": "738529620",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "WispFireball.wav",
+      "Path": "Media/738529620.wem",
+      "CachePath": "7E/{7EB53EC8-1228-0F2F-88C1-AD7AC0D4AE60}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "1320046920",
+      "Name": "Wisp_Shoot",
+      "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Skull\\Wisp_Shoot",
+      "GUID": "{5927D32A-011B-427A-861A-E335EDACC3D5}",
+      "DurationType": "OneShot",
+      "DurationMin": "0.6250113",
+      "DurationMax": "0.6250113",
+      "MediaRefs": [
+       {
+        "Id": "738529620"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{80ECD8D2-A867-3D66-521C-222CDAD5C173}"
+ }
+}

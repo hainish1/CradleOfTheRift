@@ -29,6 +29,8 @@ public class EnemyRange : Enemy
     public EnemyProjectile projectilePrefab;
     public LayerMask projectileMask = ~0;
     public float spawnOffset = 0.1f; // a little away fro fire point, safety
+    [SerializeField]
+    private AK.Wwise.Event shootSFX;
 
     [Space]
 
@@ -106,6 +108,8 @@ public class EnemyRange : Enemy
 
         EnemyProjectile projectile = Instantiate(projectilePrefab, spawnPoint, rotation);
         projectile.Init(direction * projectileSpeed, projectileMask, this.projectileDamage);
+        
+        shootSFX.Post(gameObject);
 
         if (orbitVisuals != null)
         {

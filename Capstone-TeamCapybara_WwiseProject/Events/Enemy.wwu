@@ -42,6 +42,17 @@
 								</Action>
 							</ChildrenList>
 						</Event>
+						<Event Name="Wisp_Shoot" ID="{5927D32A-011B-427A-861A-E335EDACC3D5}">
+							<ChildrenList>
+								<Action Name="" ID="{52183D56-F979-42F8-88EC-8B594FA5C47D}" ShortID="783160019">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="WispFireball" ID="{1F242EEF-E08F-453D-B75F-9AE25F37F05D}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
 					</ChildrenList>
 				</Folder>
 			</ChildrenList>
