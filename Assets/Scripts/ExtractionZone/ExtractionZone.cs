@@ -34,8 +34,18 @@ public class ExtractionZone : MonoBehaviour
     private BossSpawner bossSpawner;
 
 
-
     private Coroutine beamGrowRoutine;
+
+    private void OnEnable()
+    {
+        TimerUI.DisplayExtractionBeam += OnDisplayExtraction;
+    }
+
+    private void OnDisable()
+    {
+        TimerUI.DisplayExtractionBeam -= OnDisplayExtraction;
+    }
+
     private void Awake()
     {
         spawnPoint = transform.Find("BossSpawnPoint");

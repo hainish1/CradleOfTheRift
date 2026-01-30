@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -6,6 +7,9 @@ public class TimerUI : MonoBehaviour
     private float elapsedTime = 0f;
     private bool isRunning = true;
     private Label timerLabel;
+    private float timeToDisplayExtraction = 30f;
+    public static event Action DisplayExtractionBeam;
+    private bool hasDisplayedExtraction = false;
 
     void Start()
     {
@@ -18,8 +22,13 @@ public class TimerUI : MonoBehaviour
     {
         if (!isRunning) return;
 
-        // Increase time instead of decreasing it
         this.elapsedTime += Time.deltaTime;
+
+        if (!this.hasDisplayedExtraction && elapsedTime >= this.timeToDisplayExtraction)
+        {
+            this.hasDisplayedExtraction = true;
+            DisplayExtractionBeam?.Invoke();
+        }
 
         UpdateTimerUI();
     }
@@ -32,8 +41,6 @@ public class TimerUI : MonoBehaviour
 
         timerLabel.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
-
-    // Optional: Public methods to control the timer from other scripts
     public void SetRunning(bool run) => isRunning = run;
     public void ResetTimer() => elapsedTime = 0f;
 }
