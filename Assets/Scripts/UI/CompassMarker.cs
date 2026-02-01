@@ -5,10 +5,10 @@ public enum MarkerType { Cave, Extraction }
 
 public class CompassMarker : MonoBehaviour
 {
-    public MarkerType type;
-
-    // Static list acts as a global registry that exists before any Start() calls
-    public static List<CompassMarker> AllMarkers = new List<CompassMarker>();
+    [SerializeField]
+    private MarkerType type;
+    public MarkerType Type => type;
+    public static List<CompassMarker> AllMarkers { get; private set; } = new List<CompassMarker>();
 
     private void OnEnable()
     {

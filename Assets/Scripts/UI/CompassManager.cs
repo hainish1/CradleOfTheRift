@@ -4,18 +4,21 @@ using UnityEngine.UIElements;
 
 public class CompassManager : MonoBehaviour
 {
-    [Header("Settings")]
-    public Transform playerTransform;
-    public float maxVisibleAngle = 90f; 
+    [SerializeField]
+    private Transform playerTransform;
+    [SerializeField]
+    private float maxVisibleAngle = 90f; 
 
-    [Header("UI References")]
-    public UIDocument uiDocument;
+    [SerializeField]
+    private UIDocument uiDocument;
     private VisualElement iconContainer;
 
+    // Pairs world markers with their corresponding UI elements
     private Dictionary<CompassMarker, VisualElement> markerMap = new Dictionary<CompassMarker, VisualElement>();
 
     void Start()
     {
+        // Get the UI container from UXML where markers will be spawned
         var root = uiDocument.rootVisualElement;
         iconContainer = root.Q<VisualElement>("icon-container");
 
@@ -36,12 +39,19 @@ public class CompassManager : MonoBehaviour
     {
         if (markerMap.ContainsKey(marker)) return;
 
+        // Create a new UI element and apply the base "marker" styling
         var element = new VisualElement();
-        element.AddToClassList("marker"); // [cite: 6]
+        element.AddToClassList("marker");
         
-        string className = marker.type == MarkerType.Cave ? "icon-cave" : "icon-extraction";
+        // Add specific icon class based on marker type
+        string className = marker.Type switch
+        {
+            MarkerType.Cave => "icon-cave",
+            MarkerType.Extraction => "icon-extraction",
+            _ => "marker"
+        };
+    
         element.AddToClassList(className);
-
         iconContainer.Add(element);
         markerMap.Add(marker, element);
     }
@@ -58,12 +68,13 @@ public class CompassManager : MonoBehaviour
             CompassMarker marker = pair.Key;
             VisualElement uiElement = pair.Value;
 
+            // Calculate horizontal angle between player forward and the target
             Vector3 dirToMarker = marker.transform.position - playerTransform.position;
             dirToMarker.y = 0; 
             
             float angle = Vector3.SignedAngle(playerTransform.forward, dirToMarker, Vector3.up);
 
-            // Visibility logic
+            // Toggle visibility based on whether the marker is within the visible FOV
             if (Mathf.Abs(angle) > maxVisibleAngle)
             {
                 uiElement.style.display = DisplayStyle.None;
@@ -72,10 +83,11 @@ public class CompassManager : MonoBehaviour
             {
                 uiElement.style.display = DisplayStyle.Flex;
                 
-                // Angle to Pixel mapping
+                // Map the angle to a horizontal pixel position relative to the center
                 float normalizedAngle = angle / maxVisibleAngle; 
                 float posX = centerX + (normalizedAngle * centerX);
                 
+                // Apply the position, centering the icon on the calculated pixel
                 uiElement.style.left = posX - (uiElement.resolvedStyle.width / 2);
             }
         }
