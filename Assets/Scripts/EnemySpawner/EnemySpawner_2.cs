@@ -253,6 +253,16 @@ public class EnemySpawner_2 : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        if (playerLocation == null) return;
+
+        // Draw the Minimum Spawn Distance 
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(playerLocation.position, minSpawnDist);
+
+        // Draw the Maximum Spawn Radius
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(playerLocation.position, spawnRadius);
+
         if (!showSpawnDebug || !isDevModeEnabled) return;
 
         foreach (var spawn in recentSpawns)

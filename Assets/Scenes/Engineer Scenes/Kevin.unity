@@ -9574,10 +9574,6 @@ MonoBehaviour:
   spawnRadius: 40
   minSpawnDist: 10
   isSpawning: 1
-  useLineOfSightCheck: 0
-  visionObstacleMask:
-    serializedVersion: 2
-    m_Bits: 1104
   timeBetweenWaves: 20
   difficultyScale: 1.03
   baseWaveCredits: 10
@@ -52783,6 +52779,74 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.019999992, y: 0.0010848565, z: 0.01958278}
   m_Center: {x: -0.0049999994, y: -0.0001848164, z: 0.002291405}
+--- !u!1 &286816596
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 286816599}
+  - component: {fileID: 286816598}
+  - component: {fileID: 286816597}
+  m_Layer: 15
+  m_Name: SpawnNode (27)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!135 &286816597
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 286816596}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 70.37
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &286816598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 286816596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16de996f528356b48b52b48dbfafd647, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isForFlyingEnemies: 1
+  isForGroundEnemies: 1
+--- !u!4 &286816599
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 286816596}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 269.6, y: 27.3, z: -353.9}
+  m_LocalScale: {x: 0.28987706, y: 0.28987706, z: 0.28987706}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &287247984
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -286695,7 +286759,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 292.1, y: 27.3, z: -324}
-  m_LocalScale: {x: 1.0882497, y: 1.0882497, z: 1.0882497}
+  m_LocalScale: {x: 0.28987706, y: 0.28987706, z: 0.28987706}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -325041,6 +325105,74 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &1694987846
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1694987849}
+  - component: {fileID: 1694987848}
+  - component: {fileID: 1694987847}
+  m_Layer: 15
+  m_Name: SpawnNode (26)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!135 &1694987847
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1694987846}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 70.37
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1694987848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1694987846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16de996f528356b48b52b48dbfafd647, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isForFlyingEnemies: 1
+  isForGroundEnemies: 1
+--- !u!4 &1694987849
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1694987846}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 292.1, y: 27.3, z: -365.5}
+  m_LocalScale: {x: 0.28987706, y: 0.28987706, z: 0.28987706}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1697926848
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -393504,6 +393636,8 @@ SceneRoots:
   - {fileID: 517742063}
   - {fileID: 531546420}
   - {fileID: 1435835146}
+  - {fileID: 1694987849}
+  - {fileID: 286816599}
   - {fileID: 93412827}
   - {fileID: 1173971557}
   - {fileID: 1567272617}
