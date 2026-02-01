@@ -139,34 +139,46 @@ public class ItemData : ScriptableObject
 
     public string GetFormattedDescription(int stackCount, bool showTotalStats)
     {
-        // Determine if we multiply by stack count or just show base value (1x)
-        int multiplier = showTotalStats ? Mathf.Max(1, stackCount) : 1;
+        // Calculate the Multiplier
+        // For exponential stacking: Total = Value ^ StackCount
+        float effectiveStack = showTotalStats ? Mathf.Max(1, stackCount) : 1f;
+        float compoundedValue = Mathf.Pow(value, effectiveStack);
+
         float displayValue = 0f;
 
-        // Convert fraction to whole percentage (e.g., 0.15 -> 15%)
+        // Format based on Operator Type
         if (operatorType == OperatorType.Percentage)
         {
-            displayValue = value * 100f * multiplier; 
+            // Example: 0.8^2 = 0.64 -> 64%
+            displayValue = compoundedValue * 100f;
         }
-    // Extract the boost percentage from a multiplier (e.g., 1.15 -> 15%)
         else if (operatorType == OperatorType.Multiply)
         {
-            displayValue = (value - 1f) * 100f * multiplier;
+            if (compoundedValue < 1.0f)
+                {
+                    // For values like 0.8: (0.8^1) * 100 = 80% 
+                    displayValue = compoundedValue * 100f;
+                }
+            else
+            {
+                // Example: 1.05^2 = 1.1025 -> 10.25% increase
+                // Subtract 1 to show just the "bonus" percentage
+                displayValue = (compoundedValue - 1f) * 100f;
+            }
         }
-        // Use the raw flat value (e.g., +5 Damage)
         else if (operatorType == OperatorType.Add)
         {
-            displayValue = value * multiplier;
+            // Example: 5 * 2 = 10
+            displayValue = value * effectiveStack;
         }
 
         try 
         {
-            // Inject the calculated value into the {0} placeholder in the description
+            // Inject the calculated value into the {0} placeholder
             return string.Format(description, displayValue);
         }
         catch 
         {
-            // Fallback to raw description if formatting fails (e.g., missing {0})
             return description;
         }
     }
