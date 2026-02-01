@@ -18,9 +18,6 @@ public class EnemySpawner_2 : MonoBehaviour
     
     [Header("Optional Features")]
     [SerializeField] private bool isSpawning = true; 
-    [Tooltip("If true, enemies will try to spawn where the player cannot see them.")]
-    [SerializeField] private bool useLineOfSightCheck = true;
-    [SerializeField] private LayerMask visionObstacleMask;
 
     [Header("Wave Settings")]
     [SerializeField] private float timeBetweenWaves = 8f;
@@ -202,9 +199,6 @@ public class EnemySpawner_2 : MonoBehaviour
                 // 4. VALIDATION: Ensure edge is far enough away and not visible (if LOS enabled)
                 if (distanceToNearEdge >= minSpawnDist && correctType)
                 {
-                    if (useLineOfSightCheck && IsNodeVisible(node))
-                        continue; 
-
                     candidates.Add(node);
                 }
             }
@@ -253,10 +247,7 @@ public class EnemySpawner_2 : MonoBehaviour
                 recentSpawns.Add(new SpawnDebugInfo { position = playerLocation.position, isSuccess = false });
             }
 
-            if (useLineOfSightCheck)
-            {
-                SpawnFromAnyValidNode(enemy);
-            }
+            SpawnFromAnyValidNode(enemy);
         }
     }
 
@@ -280,13 +271,6 @@ public class EnemySpawner_2 : MonoBehaviour
             }
         }
     }
-
-    private bool IsNodeVisible(SpawnNode node)
-    {
-        Vector3 direction = node.transform.position - playerLocation.position;
-        return !Physics.Raycast(playerLocation.position + Vector3.up, direction, direction.magnitude, visionObstacleMask);
-    }
-
     private void HandleEnemySpawned(GameObject enemyObj)
     {
         ScaleEnemyHealth(enemyObj);
@@ -360,11 +344,46 @@ public class EnemySpawner_2 : MonoBehaviour
 
     private void SpawnFromAnyValidNode(EnemyType enemy)
     {
+        // 1. Find all potential nodes in range
         int nodesFound = Physics.OverlapSphereNonAlloc(playerLocation.position, spawnRadius, nodeResults, spawnNodeLayer);
-        if (nodesFound > 0)
+        
+        // 2. Filter by type (Ground vs Flying) so we don't pick a "Flying Only" node for a tank
+        List<SpawnNode> validFallbackNodes = new List<SpawnNode>();
+        for (int i = 0; i < nodesFound; i++)
         {
-            SpawnNode node = nodeResults[UnityEngine.Random.Range(0, nodesFound)].GetComponent<SpawnNode>();
-            GameObject obj = Instantiate(enemy.prefab, node.transform.position, Quaternion.identity);
+            if (nodeResults[i].TryGetComponent(out SpawnNode node))
+            {
+                bool correctType = enemy.isFlying ? node.isForFlyingEnemies : node.isForGroundEnemies;
+                if (correctType)
+                {
+                    validFallbackNodes.Add(node);
+                }
+            }
+        }
+
+        // 3. If we found nodes matching the type, pick one. 
+        // If not, use the first node found regardless of type as a last resort.
+        SpawnNode selectedNode = null;
+        if (validFallbackNodes.Count > 0)
+        {
+            selectedNode = validFallbackNodes[UnityEngine.Random.Range(0, validFallbackNodes.Count)];
+        }
+        else if (nodesFound > 0)
+        {
+            selectedNode = nodeResults[0].GetComponent<SpawnNode>();
+        }
+
+        if (selectedNode != null)
+        {
+            Vector3 spawnPos = selectedNode.transform.position;
+
+            // 4. NavMesh Snap: Ensure they are on the ground/walkable surface
+            if (NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, 5f, NavMesh.AllAreas))
+            {
+                spawnPos = hit.position;
+            }
+
+            GameObject obj = Instantiate(enemy.prefab, spawnPos, Quaternion.identity);
             HandleEnemySpawned(obj);
         }
     }
