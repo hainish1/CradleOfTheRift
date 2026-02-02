@@ -137,6 +137,17 @@ public class ItemData : ScriptableObject
     public float value = 1f;
     public int duration = -1; // perm by default
 
+    [Header("Identity")]
+    public string itemId; // unique ID for saving / quering
+
+    private void OnValidate()
+    {
+        if (string.IsNullOrWhiteSpace(itemId))
+        {
+            itemId = System.Guid.NewGuid().ToString("N");
+        }
+    }
+
 }
 
 

@@ -23,7 +23,7 @@ public class PlayerInventory : MonoBehaviour
 
     private Dictionary<ItemData, ItemStack> items = new();
     private Entity playerEntity;
-    
+
     // once instance per effect kind on the player
     private HealOnDamage healOnDamageEffect;
     private StompDamage stompDamageEffect;
@@ -89,10 +89,10 @@ public class PlayerInventory : MonoBehaviour
             Debug.Log($"Added new item: {itemData.itemName}");
             return;
         }
-        
+
 
         // stacking existing thing
-        if(itemData.canStack && stack.count < itemData.maxStacks)
+        if (itemData.canStack && stack.count < itemData.maxStacks)
         {
             stack.count++;
             ApplyStatModifiers(itemData, stack, stacksAdded: 1);
@@ -128,7 +128,7 @@ public class PlayerInventory : MonoBehaviour
         OnItemRemoved?.Invoke(itemData);
         Debug.Log($"Removed item : {itemData.itemName}");
     }
-    
+
     // some getters
     public int GetItemCount(ItemData itemData) => items.TryGetValue(itemData, out var stck) ? stck.count : 0;
     public bool HasItem(ItemData itemData) => items.ContainsKey(itemData);
@@ -144,7 +144,7 @@ public class PlayerInventory : MonoBehaviour
         if (data.useMultipleStats == true)
         {
             // if effect items only, no stats to apply
-            if (data.statMods == null || data.statMods.Count == 0) 
+            if (data.statMods == null || data.statMods.Count == 0)
             {
                 return;
             }
@@ -164,7 +164,7 @@ public class PlayerInventory : MonoBehaviour
             duration = data.duration
         };
         AddOneModifier(legacy, stack, stacksAdded);
-        
+
     }
 
     private void AddOneModifier(StatModSpec spec, ItemStack stack, int stacksAdded)
@@ -188,7 +188,7 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
-    
+
     // ------------------ EFFECTS ------------------------
 
     private void ApplyEffects(ItemData data, ItemStack stack, int stacksAdded)
@@ -196,7 +196,7 @@ public class PlayerInventory : MonoBehaviour
         if (playerEntity == null) return;
         if (data.effects == null || data.effects.Count == 0) return;
 
-        foreach(var effect in data.effects)
+        foreach (var effect in data.effects)
         {
             if (effect.kind == ItemEffectKind.None) continue;
 
@@ -539,7 +539,122 @@ public class PlayerInventory : MonoBehaviour
 
         }
     }
-    
+
+    public bool TryRemoveStacks(ItemData itemData, int stacksToRemove)
+    {
+        if (itemData == null) return false;
+        if (stacksToRemove <= 0) return true;
+
+        if (!items.TryGetValue(itemData, out ItemStack stack)) return false;
+
+        int removable = Mathf.Min(stacksToRemove, stack.count);
+
+        // Remove stat modifiers contrinuted by these stacks (1 modifier per stack)
+        for (int i = 0; i < removable; i++)
+        {
+            int last = stack.activeModifiers.Count - 1;
+            if (last >= 0)
+            {
+                stack.activeModifiers[last].Dispose();
+                stack.activeModifiers.RemoveAt(last);
+            }
+        }
+
+        // remove effect stacks as well
+        if (stack.contributedEffectStacks != null)
+        {
+            var keys = new List<ItemEffectKind>(stack.contributedEffectStacks.Keys);
+            foreach (var kind in keys)
+            {
+                int contributed = stack.contributedEffectStacks[kind];
+                int toRemoveForKind = Mathf.Min(removable, contributed);
+                if (toRemoveForKind <= 0) continue;
+
+                RemoveEffectStacks(kind, toRemoveForKind);
+                stack.contributedEffectStacks[kind] = contributed - toRemoveForKind;
+            }
+        }
+
+        stack.count -= removable;
+
+        if (stack.count <= 0)
+        {
+            items.Remove(itemData);
+            OnItemRemoved?.Invoke(itemData);
+        }
+        else
+        {
+            OnItemStackChanged?.Invoke(itemData, stack);
+        }
+
+        return true;
+    }
+
+
+    // Set Item Count - Helper for new Inventory changes
+    public void SetItemCount(ItemData itemData, int newCount)
+    {
+        if (itemData == null) return;
+        newCount = Mathf.Max(0, newCount);
+
+        int current = GetItemCount(itemData);
+        if (newCount == current) return;
+
+        if (newCount > current)
+        {
+            int add = newCount - current;
+            for (int i = 0; i < add; i++)
+            {
+                AddItem(itemData);
+            }
+        }
+        else
+        {
+            int remove = current - newCount;
+            TryRemoveStacks(itemData, remove);
+        }
+    }
+
+    public void Clear()
+    {
+        // remove modifiers + effect stacks by items
+        foreach (var pair in items)
+        {
+            var stack = pair.Value;
+
+            foreach (var mod in stack.activeModifiers)
+            {
+                mod.Dispose();
+            }
+            stack.activeModifiers.Clear();
+
+            foreach (var kv in stack.contributedEffectStacks)
+            {
+                RemoveEffectStacks(kv.Key, kv.Value);
+            }
+            stack.contributedEffectStacks.Clear();
+
+            OnItemRemoved?.Invoke(pair.Key);
+        }
+
+        items.Clear();
+
+        // stop any remaining runtime effects and reset 
+        healOnDamageEffect?.Dispose(); healOnDamageEffect = null;
+        stompDamageEffect?.Dispose(); stompDamageEffect = null;
+        fallDamageBonusEffect?.Dispose(); fallDamageBonusEffect = null;
+        dotOnHitEffect?.Dispose(); dotOnHitEffect = null;
+        explosiveProjectilesEffect?.Dispose(); explosiveProjectilesEffect = null;
+        chainLightningEffect?.Dispose(); chainLightningEffect = null;
+        bounceProjectilesEffect?.Dispose(); bounceProjectilesEffect = null;
+        delayedProjectilesEffect?.Dispose(); delayedProjectilesEffect = null;
+        dashDamageEffect?.Dispose(); dashDamageEffect = null;
+
+        tickingEffects.Clear();
+    }
+
+
+
     void OnDestroy()
     {
         healOnDamageEffect?.Dispose();
@@ -556,6 +671,6 @@ public class PlayerInventory : MonoBehaviour
         // any other dispose handle
     }
 
-    
+
 
 }
