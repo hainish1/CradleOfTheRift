@@ -10,10 +10,10 @@ public class PauseMenu : MonoBehaviour
     private Button startButton;
     private Button continueButton;
 
-    private Button inventoryButton; // Future setup
+    //private Button inventoryButton; // Future setup
     private Button quitButton;
 
-    public GameObject inventoryObject;
+    //public GameObject inventoryObject;
 
     public InputActionAsset InputActions;
     public PauseManager pauseManager;
@@ -29,7 +29,7 @@ public class PauseMenu : MonoBehaviour
 
         startButton = root.Q<Button>("ButtonStartGame");
         continueButton = root.Q<Button>("ButtonContinue");
-        inventoryButton = root.Q<Button>("ButtonInventory");
+        //inventoryButton = root.Q<Button>("ButtonInventory");
         quitButton = root.Q<Button>("ButtonQuitGame");
 
         // m_pauseAction = InputActions.FindAction("Pause");
@@ -54,7 +54,7 @@ public class PauseMenu : MonoBehaviour
 
         startButton = document.rootVisualElement.Q("ButtonStartGame") as Button;
         continueButton = document.rootVisualElement.Q("ButtonContinue") as Button;
-        inventoryButton = document.rootVisualElement.Q("ButtonInventory") as Button;
+        //inventoryButton = document.rootVisualElement.Q("ButtonInventory") as Button;
         quitButton = document.rootVisualElement.Q("ButtonQuitGame") as Button;
 
         var action = InputActions.FindAction("Pause");
@@ -69,8 +69,8 @@ public class PauseMenu : MonoBehaviour
         if (continueButton != null)
             continueButton.RegisterCallback<ClickEvent>(OnContinueClick);
 
-        if (inventoryButton != null)
-            inventoryButton.RegisterCallback<ClickEvent>(OnInventoryClick);
+        // if (inventoryButton != null)
+        //     inventoryButton.RegisterCallback<ClickEvent>(OnInventoryClick);
 
         if (quitButton != null)
             quitButton.RegisterCallback<ClickEvent>(OnQuitGameClick);
@@ -84,11 +84,11 @@ public class PauseMenu : MonoBehaviour
         if (startButton != null)
             startButton.UnregisterCallback<ClickEvent>(OnStartGameClick);
 
-        if (inventoryButton != null)
+        if (continueButton != null)
             continueButton.UnregisterCallback<ClickEvent>(OnContinueClick);
 
-        if (inventoryButton != null)
-            inventoryButton.UnregisterCallback<ClickEvent>(OnInventoryClick);
+        // if (inventoryButton != null)
+        //     inventoryButton.UnregisterCallback<ClickEvent>(OnInventoryClick);
 
         if (quitButton != null)
             quitButton.UnregisterCallback<ClickEvent>(OnQuitGameClick);
@@ -120,11 +120,11 @@ public class PauseMenu : MonoBehaviour
 
     }
 
-    private void OnInventoryClick(ClickEvent evt)
-    {
-        // Debug.Log("Opening inventory...");
-        pauseManager.OpenInventory();
-    }
+    // private void OnInventoryClick(ClickEvent evt)
+    // {
+    //     // Debug.Log("Opening inventory...");
+    //     pauseManager.OpenInventory();
+    // }
 
     private void OnQuitGameClick(ClickEvent evt)
     {
