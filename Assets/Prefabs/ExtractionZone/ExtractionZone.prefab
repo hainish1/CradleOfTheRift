@@ -290,6 +290,8 @@ MonoBehaviour:
     isFlying: 1
   - prefab: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
     isFlying: 0
+  spawnDelay: 1
+  spawnVFXPrefab: {fileID: 4658278565933542678, guid: f34e100b55966c1489074b8f7c3853d8, type: 3}
 --- !u!1 &7863322857822642270
 GameObject:
   m_ObjectHideFlags: 0
