@@ -10,11 +10,11 @@ public class AttackState_Melee : EnemyState
     private enum Phase { Windup, Leap, Charge }
     private Phase phase;
     private float timer;
-    private Vector3 chargeDirection;
-    private Quaternion lockedChargeRot;
+    // private Vector3 chargeDirection;
+    // private Quaternion lockedChargeRot;
 
-    private Vector3 leapStartPosition;
-    private Vector3 leapTargetPosition;
+    // private Vector3 leapStartPosition;
+    // private Vector3 leapTargetPosition;
     private float leapTimer;
     private Vector3 velocity;
     private bool hasLanded;
@@ -23,7 +23,7 @@ public class AttackState_Melee : EnemyState
     private float currentFlightTime;
     private float estimatedFlightDuration;
 
-    float endTime;
+    // float endTime;
 
     // Sorry Hainish!!! No Problem MAAAN
     // This is used to detect when the phase changes from
@@ -48,6 +48,7 @@ public class AttackState_Melee : EnemyState
         {
             enemy.agent.isStopped = true;
             enemy.agent.velocity = Vector3.zero;
+            enemy.agent.ResetPath();
             enemy.agent.updateRotation = false;
         }
 
@@ -123,21 +124,6 @@ public class AttackState_Melee : EnemyState
 
             targetPos = rawTargetPos + jumpDir * enemyMelee.leapOverShootDistance;
 
-
-            // leapStartPosition = enemy.transform.position;
-            // leapTargetPosition = enemy.target.position;
-
-            // leapTargetPosition.y += 0.2f; // THIS MIGHT NEED CHANGE
-
-            // chargeDirection = leapTargetPosition - leapStartPosition;
-            // chargeDirection.y = 0f; // keep horizontal for rotation
-
-            // if (chargeDirection.sqrMagnitude > 0.0001f)
-            // {
-            //     chargeDirection.Normalize();
-            //     lockedChargeRot = Quaternion.LookRotation(chargeDirection, Vector3.up);
-            //     enemy.transform.rotation = lockedChargeRot;
-            // }
         }
 
         // calculate Physics Trajectory and get duration
@@ -170,18 +156,6 @@ public class AttackState_Melee : EnemyState
         // move
         enemy.transform.position += velocity * dt;
 
-        // NOT face the player constatnly
-        // if (enemy.target != null)
-        // {
-        //     Vector3 dirToTarget = enemy.target.position - enemy.transform.position;
-        //     dirToTarget.y = 0;
-        //     if (dirToTarget != Vector3.zero)
-        //     {
-        //         Quaternion targetRot = Quaternion.LookRotation(dirToTarget);
-        //         enemy.transform.rotation = Quaternion.Slerp(enemy.transform.rotation, targetRot, dt * 10f);
-        //     }
-        // }
-
 
         // check landing
         if (currentFlightTime > estimatedFlightDuration * 0.5f)
@@ -192,47 +166,18 @@ public class AttackState_Melee : EnemyState
             }
         }
 
-        // // leapTimer += Time.deltaTime;
-        // float t = Mathf.Clamp01(leapTimer / enemyMelee.leapDuration);
-        // Vector3 currentPos = Vector3.Lerp(leapStartPosition, leapTargetPosition, t);
-        // float heightOffset = enemyMelee.leapHeight * Mathf.Sin(t * Mathf.PI);
-        // currentPos.y += heightOffset;
-
-        // if (enemy.agent != null)
-        // {
-        //     enemy.agent.updatePosition = false;
-        //     enemy.transform.position = currentPos;
-        // }
-        // else
-        // {
-        //     enemy.transform.position = currentPos;
-        // }
-        // enemy.transform.rotation = lockedChargeRot;
-
-
-        // enemyMelee.EnableHitBox(true);
-
-        // if (timer <= 0f || t >= 1f)
-        // {
-        //     if (enemy.agent != null)
-        //     {
-        //         enemy.agent.updatePosition = true;
-        //         enemy.agent.Warp(enemy.transform.position);
-        //     }
-        //     enemyMelee.EnableHitBox(false);
-        //     stateMachine.ChangeState(enemyMelee.GetRecovery());
-        // }
     }
     private void CheckGroundLanding()
     {
         if (Physics.Raycast(enemy.transform.position + Vector3.up * 0.5f, Vector3.down, out RaycastHit hit, 0.8f, enemyMelee.groundMask))
         {
-            Land();
+            Land(hit.point);
         }
     }
 
-    private void Land()
+    private void Land(Vector3 groundPoint)
     {
+        enemy.transform.position = groundPoint;
         if (hasLanded) return;
         hasLanded = true;
 
@@ -240,10 +185,14 @@ public class AttackState_Melee : EnemyState
 
         if (enemy.agent != null)
         {
-            enemy.agent.Warp(enemy.transform.position);
+            enemy.agent.ResetPath();
+            enemy.agent.Warp(groundPoint);
+            enemy.agent.nextPosition = enemy.transform.position;
+            enemy.agent.velocity = Vector3.zero;
+
             enemy.agent.updatePosition = true;
             enemy.agent.updateRotation = true;
-            enemy.agent.velocity = Vector3.zero;
+            enemy.agent.isStopped = true;
         }
 
         stateMachine.ChangeState(enemyMelee.GetRecovery());

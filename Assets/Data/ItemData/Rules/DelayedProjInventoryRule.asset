@@ -15,8 +15,9 @@ MonoBehaviour:
   requirements:
   - item: {fileID: 11400000, guid: d9fa34a6d32afc044830c8f009378998, type: 2}
     minCount: 1
-  addToPool: []
-  removeFromPool:
-  - {fileID: 11400000, guid: 4f2f213141ed4974fb18474b6964362d, type: 2}
-  actions: []
+  actions:
+  - type: 2
+    item: {fileID: 11400000, guid: 4f2f213141ed4974fb18474b6964362d, type: 2}
+    amount: 1
+    otherItem: {fileID: 0}
   oneWayUnlock: 1

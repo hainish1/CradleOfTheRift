@@ -58,24 +58,62 @@ public class InventoryRuleRunner : MonoBehaviour
 
             if (met && !isApplied)
             {
-                // first block spawns of items that are removed using rules
-                foreach (var item in rule.removeFromPool)
-                    runLootState.Block(item);
-                foreach (var item in rule.addToPool)
-                    runLootState.Unlock(item);
-
-                if (rule.actions != null && rule.actions.Count > 0)
-                {
-                    isApplying = true;
-                    foreach (var action in rule.actions)
-                    {
-                        if (action != null) action.Execute(inventory); // execute the actions here
-                    }
-                    isApplying = false;
-                }
-
-                applied.Add(rule);
+                ApplyActions(rule);
             }
         }
     }
+
+    private void ApplyActions(InventoryRule rule)
+    {
+        if (rule.actions == null || rule.actions.Count == 0) return;
+
+        isApplying = true;
+
+        foreach (var action in rule.actions)
+        {
+            switch (action.type)
+            {
+                case InventoryRuleActionType.AddStacks:
+                    if (action.item != null)
+                    {
+                        int n = action.SafeAmount;
+                        for (int i = 0; i < n; i++) inventory.AddItem(action.item);
+                    }
+                    break;
+                case InventoryRuleActionType.RemoveStacks:
+                    if (action.item != null)
+                        inventory.TryRemoveStacks(action.item, action.SafeAmount);
+                    break;
+
+                case InventoryRuleActionType.RemoveAllStacks:
+                    if (action.item != null)
+                        inventory.TryRemoveStacks(action.item, inventory.GetItemCount(action.item));
+                    break;
+
+                case InventoryRuleActionType.SetCount:
+                    if (action.item != null)
+                        inventory.SetItemCount(action.item, Mathf.Max(0, action.amount));
+                    break;
+
+                case InventoryRuleActionType.TransformItem:
+                    if (action.item != null && action.otherItem != null)
+                    {
+                        int n = action.SafeAmount;
+                        if (inventory.TryRemoveStacks(action.item, n))
+                            for (int i = 0; i < n; i++) inventory.AddItem(action.otherItem);
+                    }
+                    break;
+
+                case InventoryRuleActionType.UnlockLootItem:
+                    if (action.item != null) runLootState.Unlock(action.item);
+                    break;
+
+                case InventoryRuleActionType.BlockLootItem:
+                    if (action.item != null) runLootState.Block(action.item);
+                    break;
+            }
+        }
+        isApplying = false;
+    }
+
 }

@@ -1,6 +1,36 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+public enum InventoryRuleActionType
+{
+    None,
+
+    //inventory changes
+    AddStacks,
+    RemoveStacks,
+    RemoveAllStacks,
+    SetCount,
+    TransformItem,
+
+    // loot state changes
+    UnlockLootItem,
+    BlockLootItem
+}
+
+[Serializable]
+public struct InventoryRuleActionSpec
+{
+    public InventoryRuleActionType type;
+
+    // [Header("Primary")]
+    public ItemData item; // used by most actions
+    public int amount; // stacks/count
+
+    // [Header("Transform")]
+    public ItemData otherItem; // used by TransformItem
+
+    public int SafeAmount => Mathf.Max(1, amount);
+}
 
 [CreateAssetMenu(fileName = "InventoryRule", menuName = "Items/Inventory Rule")]
 public class InventoryRule : ScriptableObject
@@ -14,14 +44,11 @@ public class InventoryRule : ScriptableObject
 
     public List<Requirement> requirements = new();
 
-    [Header("When requirements are met")]
-    public List<ItemData> addToPool = new();
 
-    [Header("When requirements are met (block from spawning)")]
-    public List<ItemData> removeFromPool = new();
 
-    [Header("Actions (run-time effects)")]
-    public List<InventoryRuleAction> actions = new();
+
+    [Header("Actions")]
+    public List<InventoryRuleActionSpec> actions = new();
 
     [Header("Behavior")]
     public bool oneWayUnlock = true;
@@ -38,7 +65,5 @@ public class InventoryRule : ScriptableObject
         }
         return true;
     }
-
-
-
 }
+
