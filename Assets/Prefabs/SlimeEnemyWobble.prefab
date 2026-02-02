@@ -575,8 +575,8 @@ MonoBehaviour:
   minAttackDistance: 4.5
   leapHeight: 0.7
   leapDuration: 0.55
-  leapOverShootDistance: 4
-  gravityScale: 2
+  leapOverShootDistance: 0.5
+  gravityScale: 1
   groundMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -701,6 +701,8 @@ MonoBehaviour:
   fontSize: 50
   textDuration: 1.5
   riseSpeed: 1.5
+  takeDamageVFXPrefab: {fileID: 4658278565933542678, guid: 4af3f4d5c6cd02e4cb7b3d31760090e1, type: 3}
+  damageVfxAttachPoint: {fileID: 0}
 --- !u!114 &4348034529348328701
 MonoBehaviour:
   m_ObjectHideFlags: 0
