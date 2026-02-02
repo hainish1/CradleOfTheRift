@@ -38,7 +38,7 @@ public class AgentKnockBack : MonoBehaviour
 
         // for wall blocking
         if (delta.sqrMagnitude > 0.000001f)
-        {
+        { 
             if (Physics.Raycast(transform.position + Vector3.up * 0.2f, delta.normalized, out var hit, delta.magnitude, collisionMask, QueryTriggerInteraction.Ignore))
                 delta = delta.normalized * Mathf.Max(0f, hit.distance - 0.02f);
         }
