@@ -26,6 +26,13 @@ public class EnemyRange : Enemy
     public float agentAngularSpeed = 720f;
     public float agentAcceleration = 100f;
 
+    [Header("Spacing / Anti-clump")]
+    public float spreadInterval = 0.2f;
+    public float spreadRadiusJitter = 2f;
+    public float wispSeparationRadius = 4f;
+    public float wispSeparationStrength = 1.2f;
+    public float navSampleDistance = 2f;
+
     [Space]
 
     [Header("Shooting")]
@@ -58,10 +65,19 @@ public class EnemyRange : Enemy
     private Vector3 currentHorizontalVelocity; // for smoothDamp
     public float nextShootTime { get; set; } // used by state
 
+    private float spreadAngleRad;
+    private float spreadRadiusOffset;
+    private float nextSpreadUpdateTime;
+    private Vector3 cachedSpreadPoint;
+    private Vector3 cachedSeparation;
+    private bool holdHorizontalPosition;
+
 
     public override void Start()
     {
         base.Start();
+
+        InitializeSpread();
 
         orbitVisuals = GetComponent<EnemyRangeOrbitVisuals>();
         if (agent != null)
@@ -69,10 +85,6 @@ public class EnemyRange : Enemy
             agent.speed = chaseSpeed;
             // agent.stoppingDistance = stopDistance * 0.8f;
             agent.stoppingDistance = 0f; // control stopping manually
-
-            // agent.angularSpeed = agentAngularSpeed;
-            // agent.acceleration = agentAcceleration;
-            // agent.autoBraking = true;
             agent.updatePosition = false;
             agent.updateRotation = true; // let agent handle the rotation on Y axis for now
         }
@@ -88,6 +100,8 @@ public class EnemyRange : Enemy
         stateMachine.Initialize(idle); // enter idle first
 
     }
+
+
 
     public override void Update()
     {
@@ -140,7 +154,7 @@ public class EnemyRange : Enemy
             if (hasLineOfSight)
             {
                 // DO TRUE FLIGHT, IGNORE SHITTY NAVMESH
-                desiredHorizontalPos = target.position;
+                desiredHorizontalPos = GetSpreadoutChasePoint();
                 if (agent.isOnNavMesh)
                 {
                     agent.nextPosition = transform.position;
@@ -160,17 +174,6 @@ public class EnemyRange : Enemy
         // Apply
         transform.position = nextPos;
     }
-
-    // /// <summary>
-    // /// Apply Hovering Visuals to the Enemy
-    // /// </summary>
-    // void UpdateHover()
-    // {
-    //     if (agent == null) return;
-
-    //     bobPhase += Time.deltaTime * hoverBobSpeed;
-    //     agent.baseOffset = hoverHeight + Mathf.Sin(bobPhase) * hoverBobAmplitude; // usign sin formula for bobbing
-    // }
 
 
     public void FireAtTarget()
@@ -256,6 +259,91 @@ public class EnemyRange : Enemy
             }
         }
     }
+
+
+    public void SetHorizontalPosition(bool hold)
+    {
+        holdHorizontalPosition = hold;
+    }
+
+    public Vector3 GetSpreadoutChasePoint()
+    {
+        if (target == null) return transform.position;
+
+        if (holdHorizontalPosition)
+        {
+            Vector3 here = transform.position;
+            here.y = target.position.y;
+            return here;
+        }
+
+        if (Time.time < nextSpreadUpdateTime) return cachedSpreadPoint;
+        nextSpreadUpdateTime = Time.time + Mathf.Max(0.05f, spreadInterval);
+
+        Vector3 targetPos = target.position;
+        float radius = Mathf.Max(0.25f, desiredDistance + spreadRadiusOffset);
+        Vector3 ringOffset = new Vector3(Mathf.Cos(spreadAngleRad), 0f, Mathf.Sin(spreadAngleRad)) * radius;
+
+        cachedSeparation = ComputeWispSeparation();
+        cachedSpreadPoint = targetPos + ringOffset + cachedSeparation;
+        cachedSpreadPoint.y = targetPos.y;
+
+        return cachedSpreadPoint;
+    }
+
+    Vector3 ComputeWispSeparation()
+    {
+        if (wispSeparationRadius <= 0f || wispSeparationStrength <= 0f) return Vector3.zero;
+
+        Collider[] hits = Physics.OverlapSphere(transform.position, wispSeparationRadius);
+        if (hits == null || hits.Length == 0) return Vector3.zero;
+
+        Vector3 push = Vector3.zero;
+        int count = 0;
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            Collider c = hits[i];
+            if (c == null) continue;
+            if (c.attachedRigidbody != null && c.attachedRigidbody.gameObject == gameObject) continue;
+            if (c.gameObject == gameObject) continue;
+
+            EnemyRange other = c.GetComponentInParent<EnemyRange>();
+            if (other == null) continue;
+
+            Vector3 delta = transform.position - other.transform.position;
+            delta.y = 0f;
+            float d = delta.magnitude;
+            if (d < 0.0001f) continue;
+
+            float t = 1f - Mathf.Clamp01(d / wispSeparationRadius);
+            push += (delta / d) * t;
+            count++;
+        }
+
+        if (count == 0) return Vector3.zero;
+
+        push /= count;
+        push *= wispSeparationStrength;
+        push.y = 0f;
+        return push;
+    }
+
+    void InitializeSpread()
+    {
+        int id = GetInstanceID();
+        float h1 = Mathf.Abs(Mathf.Sin(id * 13f) * 10000f);
+        float h2 = Mathf.Abs(Mathf.Sin(id * 47f) * 10000f);
+        h1 = h1 - Mathf.Floor(h1);
+        h2 = h2 - Mathf.Floor(h2);
+
+        // give each enemy their own unique spot
+        spreadAngleRad = h1 * Mathf.PI * 2f;
+        spreadRadiusOffset = (h2 - 0.5f) * spreadRadiusJitter;
+        nextSpreadUpdateTime = 0f;
+    }
+
+
 
     /// <summary>
     /// Used to initialize damage done by this Range enemy when it is initialized. New Damage value can be initialized using this.

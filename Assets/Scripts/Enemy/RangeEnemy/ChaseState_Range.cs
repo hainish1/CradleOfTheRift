@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 
 /// <summary>
@@ -28,6 +29,7 @@ public class ChaseState_Range : EnemyState
 
         // }
         enemyRange.SafeResumeAgent();
+        enemyRange.SetHorizontalPosition(false);
         if(enemy.agent != null) enemy.agent.speed = enemyRange.chaseSpeed;
     }
 
@@ -85,23 +87,22 @@ public class ChaseState_Range : EnemyState
         repathTimer -= Time.deltaTime;
         if(repathTimer > 0) return;
 
-        repathTimer = 0.2f; // do about 5 times a second
+        repathTimer = Mathf.Max(0.05f, enemyRange.spreadInterval); // default ~5x/sec
 
-        float distToTarget = Vector3.Distance(enemy.transform.position, enemy.target.position);
+        Vector3 desired = enemyRange.GetSpreadoutChasePoint();
 
-        Vector3 dest = enemy.target.position;
-
-        // if too close, stop moving closer and move a bit back
-        if(distToTarget < enemyRange.desiredDistance)
+        // Keep the movement on the NavMesh even though visuals may "fly".
+        if (enemy.agent != null && enemy.agent.isOnNavMesh)
         {
-            // back away a bit
-            Vector3 dirFromTarget = (enemy.transform.position - enemy.target.position).normalized;
-            dest = enemy.target.position + dirFromTarget * enemyRange.desiredDistance; 
-        }
-
-        if(enemy.agent != null && enemy.agent.isOnNavMesh)
-        {
-            enemy.agent.SetDestination(dest);
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(desired, out hit, enemyRange.navSampleDistance, NavMesh.AllAreas))
+            {
+                enemy.agent.SetDestination(hit.position);
+            }
+            else
+            {
+                enemy.agent.SetDestination(desired);
+            }
         }
     }
 

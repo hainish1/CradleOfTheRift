@@ -76,7 +76,7 @@ public class AgentKnockBack : MonoBehaviour
             timer = 0f;
 
             // pause steering 
-            if (agent != null)
+            if (agent != null && agent.isOnNavMesh)
             {
                 if (!cached)
                 {
@@ -113,26 +113,35 @@ public class AgentKnockBack : MonoBehaviour
         active = false;
         externalVelocity = Vector3.zero;
 
-        if (agent != null && agent.isOnNavMesh && agent.isActiveAndEnabled)
+        if (agent == null || !agent.isActiveAndEnabled) return;
+
+        if (manageAgentPosition)
         {
-            if (manageAgentPosition)
+            const float snapRadius = 6f;
+            if (NavMesh.SamplePosition(transform.position, out var hit, snapRadius, NavMesh.AllAreas))
             {
-                agent.Warp(transform.position); // snap to mesh
-                // agent.updatePosition = true; // give control back to agent
+                transform.position = hit.position;
+                agent.Warp(hit.position);
+                agent.nextPosition = hit.position;
+            }
+            else
+            {
+                
                 agent.nextPosition = transform.position;
             }
-            if (cached)
-            {
-                agent.updatePosition = prevUpdatePosition;
-                agent.updateRotation = prevUpdateRotation;
-                agent.isStopped = prevIsStopped;
-                cached = false;
-            }
-
-            // for Flying enemy, we stay where we are in the air, and simply unpause agent logic
-
-            // agent.isStopped = false;
         }
+
+        if (cached)
+        {
+            agent.updatePosition = prevUpdatePosition;
+            agent.updateRotation = prevUpdateRotation;
+            agent.isStopped = prevIsStopped;
+            cached = false;
+        }
+
+        // avoid drift
+        agent.velocity = Vector3.zero;
+        agent.ResetPath();
     }
 
     /// <summary>

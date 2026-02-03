@@ -30,11 +30,17 @@ public class AttackState_Range : EnemyState
         //     enemy.agent.velocity = Vector3.zero;
         // }
         enemyRange.SafeStopAgent();
+        enemyRange.SetHorizontalPosition(true);
         hasFired = false;
         delayTimer = 0.5f; // tiny delay before shooting
 
         // endTime = Time.time + Mathf.Max(enemyRange.fireCooldown * 1.5f, 0.3f);
         // nextShootTime = Time.time; // first shoot immedietly
+    }
+
+    public override void Exit()
+    {
+        enemyRange.SetHorizontalPosition(false);
     }
 
     /// <summary>
