@@ -6,10 +6,13 @@ using UnityEngine;
 [Serializable]
 public class LootTableItem
 {
-    [SerializeField]
-    private GameObject lootItemPrefab;
-    [SerializeField]
-    private int dropPercent;
+    [SerializeField] private ItemData itemData;
+    [SerializeField] private GameObject lootItemPrefab;
+    [SerializeField] private int dropPercent;
+
+    [SerializeField] private bool requiresUnlock;
+    public bool RequiresUnlock => requiresUnlock;
+    public ItemData ItemData => itemData;
 
     public int GetDropPercent()
     {
@@ -20,5 +23,5 @@ public class LootTableItem
     {
         return lootItemPrefab;
     }
-    
+
 }
