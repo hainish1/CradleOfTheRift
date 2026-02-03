@@ -6,7 +6,6 @@ using UnityEngine;
 public class BossSpawner : MonoBehaviour
 {
     private ExtractionZone extractionZone;
-    [SerializeField] private List<BossType> bosses;
     private float heightOffset = 5f;
     [SerializeField] private float spawnDelay = 1f;
 
@@ -42,7 +41,7 @@ public class BossSpawner : MonoBehaviour
         Transform spawn = extractionZone.GetSpawnPoint;
         Vector3 spawnPoint = spawn.position + Vector3.up * heightOffset;
 
-        BossType randomBoss = bosses[UnityEngine.Random.Range(0, bosses.Count)];
+        BossType randomBoss = ExtractionManager.Instance.GetNextBoss();
 
         // Ground alignment
         if (!randomBoss.isFlying)
@@ -56,18 +55,15 @@ public class BossSpawner : MonoBehaviour
         GameObject boss = Instantiate(randomBoss.prefab, spawnPoint, Quaternion.identity);
         this.activeBoss = boss.GetComponent<EnemyHealth>();
         this.activeBoss.EnemyDied += OnBossDied;
-        
     }
 
     private void OnBossDied(EnemyHealth deadBoss)
     {
         if (this.activeBoss != null)
         {
-            this.activeBoss.EnemyDied -= OnBossDied;  
+            this.activeBoss.EnemyDied -= OnBossDied;
         }
-
         this.activeBoss = null;
-
         this.BossDied?.Invoke();
     }
 }
