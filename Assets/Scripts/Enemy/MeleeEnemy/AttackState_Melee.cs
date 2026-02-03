@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 /// <summary>
@@ -11,16 +10,22 @@ public class AttackState_Melee : EnemyState
     private enum Phase { Windup, Leap, Charge }
     private Phase phase;
     private float timer;
-    private Vector3 chargeDirection;
-    private Quaternion lockedChargeRot;
+    // private Vector3 chargeDirection;
+    // private Quaternion lockedChargeRot;
 
-    private Vector3 leapStartPosition;
-    private Vector3 leapTargetPosition;
+    // private Vector3 leapStartPosition;
+    // private Vector3 leapTargetPosition;
     private float leapTimer;
+    private Vector3 velocity;
+    private bool hasLanded;
 
-    float endTime;
-    
-    // Sorry Hainish!!!
+    // safety variables
+    private float currentFlightTime;
+    private float estimatedFlightDuration;
+
+    // float endTime;
+
+    // Sorry Hainish!!! No Problem MAAAN
     // This is used to detect when the phase changes from
     // Windup to leap.
     // This helps to know when to play the slime jump sfx.
@@ -43,7 +48,7 @@ public class AttackState_Melee : EnemyState
         {
             enemy.agent.isStopped = true;
             enemy.agent.velocity = Vector3.zero;
-
+            enemy.agent.ResetPath();
             enemy.agent.updateRotation = false;
         }
 
@@ -55,6 +60,7 @@ public class AttackState_Melee : EnemyState
         lastPhase = phase;
         timer = enemyMelee.windupTime;
         leapTimer = 0f;
+        hasLanded = false;
         // TryApplyHit();
     }
 
@@ -64,8 +70,16 @@ public class AttackState_Melee : EnemyState
     /// </summary>
     public override void Update()
     {
-        
-        timer -= Time.deltaTime;
+
+        // timer -= Time.deltaTime;
+
+        // var kb = enemy.GetComponent<AgentKnockBack>();
+        // if(kb != null && kb.isActiveAndEnabled)
+        // {
+        //     stateMachine.ChangeState(enemyMelee.GetRecovery()); // switch to recovery early
+        //     return;
+        // }
+
 
         switch (phase)
         {
@@ -88,69 +102,109 @@ public class AttackState_Melee : EnemyState
 
     private void HandleWindup()
     {
-        FaceTarget(enemy.turnSpeed);
+        FaceTarget(enemy.turnSpeed * 2f);
+        timer -= Time.deltaTime;
 
-        if(timer <= 0f)
+        if (timer <= 0f)
         {
-            if (enemy.target != null)
-            {
-                leapStartPosition = enemy.transform.position;
-                leapTargetPosition = enemy.target.position;
+            StartLeap();
+        }
+    }
 
-                leapTargetPosition.y += 0.2f; // THIS MIGHT NEED CHANGE
+    private void StartLeap()
+    {
+        phase = Phase.Leap;
+        enemyMelee.EnableHitBox(true);
+        if (enemy.agent != null) enemy.agent.updatePosition = false;
 
-                chargeDirection = leapTargetPosition - leapStartPosition;
-                chargeDirection.y = 0f; // keep horizontal for rotation
 
-                if (chargeDirection.sqrMagnitude > 0.0001f)
-                {
-                    chargeDirection.Normalize();
-                    lockedChargeRot = Quaternion.LookRotation(chargeDirection, Vector3.up);
-                    enemy.transform.rotation = lockedChargeRot;
-                }
-            }
+        // NEW overshoot logic
+        Vector3 startPos = enemy.transform.position;
+        Vector3 targetPos = startPos + enemy.transform.forward * 2f; // fallback
 
-            phase = Phase.Leap;
-            timer = enemyMelee.leapDuration;
-            leapTimer = 0f;
+        if (enemy.target != null)
+        {
+            Vector3 rawTargetPos = enemy.target.position;
+
+            // calc distance from enemy to player
+            Vector3 jumpDir = (rawTargetPos - startPos).normalized;
+            jumpDir.y = 0; // keep horizontal
+
+            targetPos = rawTargetPos + jumpDir * enemyMelee.leapOverShootDistance;
 
         }
+
+        // calculate Physics Trajectory and get duration
+        velocity = enemyMelee.CalculateBallisticVelocity(
+            startPos,
+            targetPos,
+            enemyMelee.leapHeight,
+            out estimatedFlightDuration
+        );
+
+        // look now
+        Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
+        if (horizontalVelocity.sqrMagnitude > 0.001f)
+        {
+            enemy.transform.rotation = Quaternion.LookRotation(horizontalVelocity);
+        }
+
+
+        currentFlightTime = 0f;
     }
 
     private void HandleLeap()
     {
-        leapTimer += Time.deltaTime;
-        float t = Mathf.Clamp01(leapTimer / enemyMelee.leapDuration);
-        Vector3 currentPos = Vector3.Lerp(leapStartPosition, leapTargetPosition, t);
-        float heightOffset = enemyMelee.leapHeight * Mathf.Sin(t * Mathf.PI);
-        currentPos.y += heightOffset;
+        float dt = Time.deltaTime;
+        currentFlightTime += dt;
 
-        if (enemy.agent != null)
+        // apply gravity
+        velocity.y += Physics.gravity.y * enemyMelee.gravityScale * dt;
+
+        // move
+        enemy.transform.position += velocity * dt;
+
+
+        // check landing
+        if (currentFlightTime > estimatedFlightDuration * 0.5f)
         {
-            enemy.agent.updatePosition = false;
-            enemy.transform.position = currentPos;
-        }
-        else
-        {
-            enemy.transform.position = currentPos;
-        }
-        enemy.transform.rotation = lockedChargeRot;
-
-
-        enemyMelee.EnableHitBox(true);
-
-        if (timer <= 0f || t >= 1f)
-        {
-            if (enemy.agent != null)
+            if (velocity.y < 0)
             {
-                enemy.agent.updatePosition = true;
-                enemy.agent.Warp(enemy.transform.position);
+                CheckGroundLanding();
             }
-            enemyMelee.EnableHitBox(false);
-            stateMachine.ChangeState(enemyMelee.GetRecovery());
+        }
+
+    }
+    private void CheckGroundLanding()
+    {
+        if (Physics.Raycast(enemy.transform.position + Vector3.up * 0.5f, Vector3.down, out RaycastHit hit, 0.8f, enemyMelee.groundMask))
+        {
+            Land(hit.point);
         }
     }
 
+    private void Land(Vector3 groundPoint)
+    {
+        enemy.transform.position = groundPoint;
+        if (hasLanded) return;
+        hasLanded = true;
+
+        enemyMelee.EnableHitBox(false);
+
+        if (enemy.agent != null)
+        {
+            enemy.agent.ResetPath();
+            enemy.agent.Warp(groundPoint);
+            enemy.agent.nextPosition = enemy.transform.position;
+            enemy.agent.velocity = Vector3.zero;
+
+            enemy.agent.updatePosition = true;
+            enemy.agent.updateRotation = true;
+            enemy.agent.isStopped = true;
+        }
+
+        stateMachine.ChangeState(enemyMelee.GetRecovery());
+    }
 
 
     /// <summary>
@@ -161,10 +215,10 @@ public class AttackState_Melee : EnemyState
         enemyMelee.EnableHitBox(false);
         if (enemy.agent != null)
         {
-            enemy.agent.nextPosition = enemy.transform.position;
+            // enemy.agent.nextPosition = enemy.transform.position;
             enemy.agent.updateRotation = true; // give control back to agent
-            enemy.agent.Warp(enemy.transform.position);
             enemy.agent.updatePosition = true;
+            // enemy.agent.Warp(enemy.transform.position);
             enemy.agent.isStopped = false;
         }
     }

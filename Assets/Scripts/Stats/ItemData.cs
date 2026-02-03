@@ -136,8 +136,19 @@ public class ItemData : ScriptableObject
     public OperatorType operatorType = OperatorType.Add;
     public float value = 1f;
     public int duration = -1; // perm by default
+    
+    [Header("Identity")]
+    public string itemId; // unique ID for saving / quering
 
-    public string GetFormattedDescription(int stackCount, bool showTotalStats)
+    private void OnValidate()
+    {
+        if (string.IsNullOrWhiteSpace(itemId))
+        {
+            itemId = System.Guid.NewGuid().ToString("N");
+        }
+    }
+
+        public string GetFormattedDescription(int stackCount, bool showTotalStats)
     {
         // Calculate the Multiplier
         // For exponential stacking: Total = Value ^ StackCount
@@ -182,7 +193,6 @@ public class ItemData : ScriptableObject
             return description;
         }
     }
-
 }
 
 
