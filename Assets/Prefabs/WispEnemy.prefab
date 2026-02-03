@@ -5992,9 +5992,16 @@ MonoBehaviour:
   projectileMask:
     serializedVersion: 2
     m_Bits: 1361
+
+  shootSFX:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: ea4f29e582160464f8db6eee986250d2, type: 2}
+
   obstacleMask:
     serializedVersion: 2
     m_Bits: 1
+	
   recoveryTime: 1
   orbitVisuals: {fileID: -3325380021058808314}
 --- !u!114 &204557455612082024
@@ -6048,6 +6055,10 @@ MonoBehaviour:
   baseHealth: 50
   damageVisuals: {fileID: 6516409030888228098}
   deathSFX:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: 3761622205eb5854d971fce671c99143, type: 2}
+  damagedSFX:
     idInternal: 0
     valueGuidInternal: 
     WwiseObjectReference: {fileID: 11400000, guid: 3761622205eb5854d971fce671c99143, type: 2}
