@@ -233386,6 +233386,17 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!114 &1154955906 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8319483170705975023, guid: 316b22bc7cf1a8f42a4dcecac966b111, type: 3}
+  m_PrefabInstance: {fileID: 1499544450}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b32ac315caf68c74480d0e0358acd466, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1157413023
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -436409,6 +436420,7 @@ GameObject:
   - component: {fileID: 2124910234}
   - component: {fileID: 2124910233}
   - component: {fileID: 2124910235}
+  - component: {fileID: 2124910236}
   m_Layer: 0
   m_Name: Inventory
   m_TagString: Untagged
@@ -436464,6 +436476,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InputActions: {fileID: -944628639613478452, guid: d6a7529352e2d456dbbdcbac11e7d337, type: 3}
   pauseManager: {fileID: 1645519322}
+--- !u!114 &2124910236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2124910232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3f612ee91657134196eba6f0a14287b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerInventory: {fileID: 1154955906}
+  uiDocument: {fileID: 2124910233}
+  toggleKey: 9
+  useDynamicDescriptions: 1
 --- !u!1 &2128468047
 GameObject:
   m_ObjectHideFlags: 0

@@ -110,14 +110,11 @@ public class PauseMenu : MonoBehaviour
 
     private void OnMainMenuClick(ClickEvent evt)
     {
-        // Unpause the game
+        SceneManager.LoadScene("MainMenu");
         Time.timeScale = 1f;
         PauseManager.GameIsPaused = false;
         PauseManager.CurrentPauseState = PauseManager.PauseState.None;
         PlayerHealth.GameIsOver = false;
-
-        // Load the StartScreen scene
-        SceneManager.LoadScene("MainMenu");
     }
 
     private void OnStartGameClick(ClickEvent evt)
