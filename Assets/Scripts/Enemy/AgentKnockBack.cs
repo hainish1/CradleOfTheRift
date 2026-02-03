@@ -11,10 +11,19 @@ public class AgentKnockBack : MonoBehaviour
     [SerializeField] float maxDuration = 0.35f;
     [SerializeField] LayerMask collisionMask = ~0;
 
+    [Header("Settings")]
+    [Tooltip("If true, this script will snap the agent to navmesh after knockback")]
+    public bool manageAgentPosition = true; // DEFAULT TRUE for GROUND Enemies
+
     NavMeshAgent agent;
     Vector3 externalVelocity;
     float timer;
     bool active;
+
+    bool cached;
+    bool prevUpdatePosition;
+    bool prevUpdateRotation;
+    bool prevIsStopped;
 
     [Header("SoftBody")]
     public SoftBodyPhysics softBody;
@@ -40,7 +49,11 @@ public class AgentKnockBack : MonoBehaviour
         }
 
         transform.position += delta;
-        agent.nextPosition = transform.position; // keep agent in sync
+
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.nextPosition = transform.position; // keep agent in sync
+        }
 
         externalVelocity = Vector3.Lerp(externalVelocity, Vector3.zero, decay * Time.deltaTime);
 
@@ -61,16 +74,29 @@ public class AgentKnockBack : MonoBehaviour
         {
             active = true;
             timer = 0f;
+
             // pause steering 
-            if (agent != null)
+            if (agent != null && agent.isOnNavMesh)
             {
-                if (agent.isOnNavMesh == false) return;
-                agent.isStopped = true;
-                agent.updatePosition = false;
+                if (!cached)
+                {
+                    prevUpdatePosition = agent.updatePosition;
+                    prevUpdateRotation = agent.updateRotation;
+                    prevIsStopped = agent.isStopped;
+                    cached = true;
+                }
+
+                if (agent.isActiveAndEnabled && agent.isOnNavMesh)
+                {
+                    agent.isStopped = true;
+                    // disable during physics control
+                    agent.updatePosition = false;
+                    agent.ResetPath(); // prevent post knockback glide
+                }
             }
         }
         externalVelocity += impulse;
-        externalVelocity.y = 0f;
+        externalVelocity.y = 0f; // keep knockback horizontal
 
         if (softBody != null)
         {
@@ -87,12 +113,35 @@ public class AgentKnockBack : MonoBehaviour
         active = false;
         externalVelocity = Vector3.zero;
 
-        if (agent != null && agent.isOnNavMesh)
+        if (agent == null || !agent.isActiveAndEnabled) return;
+
+        if (manageAgentPosition)
         {
-            agent.Warp(transform.position);
-            agent.updatePosition = true;
-            agent.isStopped = false;
+            const float snapRadius = 6f;
+            if (NavMesh.SamplePosition(transform.position, out var hit, snapRadius, NavMesh.AllAreas))
+            {
+                transform.position = hit.position;
+                agent.Warp(hit.position);
+                agent.nextPosition = hit.position;
+            }
+            else
+            {
+                
+                agent.nextPosition = transform.position;
+            }
         }
+
+        if (cached)
+        {
+            agent.updatePosition = prevUpdatePosition;
+            agent.updateRotation = prevUpdateRotation;
+            agent.isStopped = prevIsStopped;
+            cached = false;
+        }
+
+        // avoid drift
+        agent.velocity = Vector3.zero;
+        agent.ResetPath();
     }
 
     /// <summary>

@@ -11,7 +11,7 @@ public class PROTO_LootTableChest : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             print("Colliding!");
-            lootTable.DoDrop();
+            // lootTable.DoDrop();
             this.gameObject.SetActive(false);
         }
     }
