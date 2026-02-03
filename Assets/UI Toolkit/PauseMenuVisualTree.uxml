@@ -1,6 +1,6 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI%20Toolkit/PauseMenuStyleSheet.uss?fileID=7433441132597879392&amp;guid=e780f1131c06d4602ab181ccec82676f&amp;type=3#PauseMenuStyleSheet" />
-    <engine:VisualElement name="Canvas" style="flex-grow: 1; background-color: rgba(14, 0, 29, 0.7);">
+    <engine:VisualElement name="Canvas" class="Background">
         <engine:Label text="Cradle of the Rift" name="LabelStartMenu" class="header" style="font-size: 175px; margin-top: -17px;" />
         <engine:Button text="Continue" name="ButtonContinue" class="button unityButtonHover" style="margin-top: 17px; margin-bottom: 10px; position: absolute; top: 348px; left: 23px; width: 350px;" />
         <engine:Button text="Quit Game" name="ButtonQuitGame" class="button unityButtonHover" style="translate: 0 100px; margin-top: -17px; position: absolute; top: 723px; left: 28px; width: 400px;" />
