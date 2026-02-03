@@ -73,6 +73,14 @@ public class AttackState_Melee : EnemyState
 
         // timer -= Time.deltaTime;
 
+        // var kb = enemy.GetComponent<AgentKnockBack>();
+        // if(kb != null && kb.isActiveAndEnabled)
+        // {
+        //     stateMachine.ChangeState(enemyMelee.GetRecovery()); // switch to recovery early
+        //     return;
+        // }
+
+
         switch (phase)
         {
             case Phase.Windup:

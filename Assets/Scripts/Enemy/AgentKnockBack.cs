@@ -20,6 +20,11 @@ public class AgentKnockBack : MonoBehaviour
     float timer;
     bool active;
 
+    bool cached;
+    bool prevUpdatePosition;
+    bool prevUpdateRotation;
+    bool prevIsStopped;
+
     [Header("SoftBody")]
     public SoftBodyPhysics softBody;
 
@@ -38,7 +43,7 @@ public class AgentKnockBack : MonoBehaviour
 
         // for wall blocking
         if (delta.sqrMagnitude > 0.000001f)
-        { 
+        {
             if (Physics.Raycast(transform.position + Vector3.up * 0.2f, delta.normalized, out var hit, delta.magnitude, collisionMask, QueryTriggerInteraction.Ignore))
                 delta = delta.normalized * Mathf.Max(0f, hit.distance - 0.02f);
         }
@@ -69,14 +74,24 @@ public class AgentKnockBack : MonoBehaviour
         {
             active = true;
             timer = 0f;
+
             // pause steering 
             if (agent != null)
             {
+                if (!cached)
+                {
+                    prevUpdatePosition = agent.updatePosition;
+                    prevUpdateRotation = agent.updateRotation;
+                    prevIsStopped = agent.isStopped;
+                    cached = true;
+                }
+
                 if (agent.isActiveAndEnabled && agent.isOnNavMesh)
                 {
                     agent.isStopped = true;
                     // disable during physics control
                     agent.updatePosition = false;
+                    agent.ResetPath(); // prevent post knockback glide
                 }
             }
         }
@@ -102,13 +117,21 @@ public class AgentKnockBack : MonoBehaviour
         {
             if (manageAgentPosition)
             {
-                // agent.Warp(transform.position); // snap to mesh
-                agent.updatePosition = true; // give control back to agent
+                agent.Warp(transform.position); // snap to mesh
+                // agent.updatePosition = true; // give control back to agent
+                agent.nextPosition = transform.position;
+            }
+            if (cached)
+            {
+                agent.updatePosition = prevUpdatePosition;
+                agent.updateRotation = prevUpdateRotation;
+                agent.isStopped = prevIsStopped;
+                cached = false;
             }
 
             // for Flying enemy, we stay where we are in the air, and simply unpause agent logic
 
-            agent.isStopped = false;
+            // agent.isStopped = false;
         }
     }
 
