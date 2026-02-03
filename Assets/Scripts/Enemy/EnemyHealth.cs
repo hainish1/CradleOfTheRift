@@ -18,6 +18,8 @@ public class EnemyHealth : HealthController
     [Header("Sounds")]
     [SerializeField]
     private AK.Wwise.Event deathSFX;
+    [SerializeField]
+    private AK.Wwise.Event damagedSFX;
 
 
     /// <summary>
@@ -81,6 +83,13 @@ public class EnemyHealth : HealthController
         {
             damageVisuals.ShowDamageVisuals(damage);
         }
+
+        if (damagedSFX != null && !IsDead)
+        {
+            damagedSFX.Post(gameObject);
+        }
+        
+        
     }
 
     /// <summary>

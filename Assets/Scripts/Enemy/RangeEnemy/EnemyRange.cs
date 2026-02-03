@@ -43,6 +43,10 @@ public class EnemyRange : Enemy
     public Transform firePoint; // where bullet come from
     public EnemyProjectile projectilePrefab;
     public float spawnOffset = 0.1f; // a little away fro fire point, safety
+	
+    [SerializeField]
+    private AK.Wwise.Event shootSFX;
+
     public LayerMask projectileMask = ~0;
     public LayerMask obstacleMask = 1; // to detect walls
 
@@ -249,6 +253,8 @@ public class EnemyRange : Enemy
 
         EnemyProjectile projectile = Instantiate(projectilePrefab, spawnPoint, rotation);
         projectile.Init(direction * projectileSpeed, projectileMask, this.projectileDamage);
+        
+        shootSFX.Post(gameObject);
 
         if (orbitVisuals != null)
         {
