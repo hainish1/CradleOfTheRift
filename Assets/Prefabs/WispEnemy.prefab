@@ -5970,27 +5970,38 @@ MonoBehaviour:
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
   nextAttackAllowed: 1
   projectileDamage: 20
+  flyHeight: 3
+  verticalSmoothTime: 2.5
+  horizontalSmoothTime: 2.5
+  chaseSpeed: 5
+  attackRange: 15
+  desiredDistance: 6
+  stopDistance: 9
   hoverHeight: 2
   hoverBobAmplitude: 0.7
   hoverBobSpeed: 4
-  chaseSpeed: 10
-  stopDistance: 9
-  attackRange: 12
   turnSpeedWhileAiming: 20
   agentAngularSpeed: 720
   agentAcceleration: 100
   projectileSpeed: 30
   fireCooldown: 0.9
+  recoveryDuration: 1
   firePoint: {fileID: 7588448968403286001}
   projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
+  spawnOffset: 0.1
   projectileMask:
     serializedVersion: 2
     m_Bits: 1361
-  spawnOffset: 0.1
+
   shootSFX:
     idInternal: 0
     valueGuidInternal: 
     WwiseObjectReference: {fileID: 11400000, guid: ea4f29e582160464f8db6eee986250d2, type: 2}
+
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 1
+	
   recoveryTime: 1
   orbitVisuals: {fileID: -3325380021058808314}
 --- !u!114 &204557455612082024
@@ -6010,6 +6021,7 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 768
+  manageAgentPosition: 0
   softBody: {fileID: 0}
 --- !u!114 &2851529993679917071
 MonoBehaviour:
@@ -6038,9 +6050,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 30
+  maxHealth: 50
   cleanupDelay: 0
-  baseHealth: 20
+  baseHealth: 50
   damageVisuals: {fileID: 6516409030888228098}
   deathSFX:
     idInternal: 0

@@ -7,6 +7,7 @@ using UnityEngine;
 public class RecoveryState_Range : EnemyState
 {
     EnemyRange enemyRange;
+    float timer;
     private float endTime;
 
     public RecoveryState_Range(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
@@ -19,8 +20,17 @@ public class RecoveryState_Range : EnemyState
     /// </summary>
     public override void Enter()
     {
-        endTime = Time.time + enemyRange.recoveryTime; // set
-        if (enemy.agent != null) enemy.agent.isStopped = false;
+        timer = enemyRange.recoveryDuration;
+
+
+        // endTime = Time.time + enemyRange.recoveryTime; // set
+        // if (enemy.agent != null) enemy.agent.isStopped = false;
+        if(enemy.agent != null && enemy.agent.isOnNavMesh)
+        {
+            enemy.agent.speed = enemyRange.chaseSpeed * 0.5f; // slow drift
+        }
+
+        enemyRange.nextShootTime = Time.time + enemyRange.fireCooldown;
     }
 
     /// <summary>
@@ -28,16 +38,25 @@ public class RecoveryState_Range : EnemyState
     /// </summary>
     public override void Update()
     {
-        if (Time.time >= endTime)
+        // if (Time.time >= endTime)
+        // {
+        //     if (PlayerInAggressionRange()) // if the player is still in aggression range
+        //     {
+        //         stateMachine.ChangeState(enemyRange.GetChase());
+        //     }
+        //     else
+        //     {
+        //         stateMachine.ChangeState(enemyRange.GetIdle());
+        //     }
+        // }
+
+        timer -= Time.deltaTime;
+
+        enemyRange.FaceTargetSmooth(enemy.turnSpeed * 0.5f);
+
+        if(timer <= 0f)
         {
-            if (PlayerInAggressionRange()) // if the player is still in aggression range
-            {
-                stateMachine.ChangeState(enemyRange.GetChase());
-            }
-            else
-            {
-                stateMachine.ChangeState(enemyRange.GetIdle());
-            }
+            stateMachine.ChangeState(enemyRange.GetChase()); // it may switch to attack from chase
         }
     }
 
