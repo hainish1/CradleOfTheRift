@@ -7,44 +7,40 @@ using System.Collections;
 public class EndScreenUI : MonoBehaviour
 {
     [SerializeField]
-    private ExtractionZone extractionZone;
-    [SerializeField]
     private PlayerHealth playerHealth;
     [SerializeField]
     private GameObject winScreen;
     [SerializeField]
     private GameObject loseScreen;
     private GameObject activeScreen;
-    private TimerUI timerUI;
     [SerializeField]
     private PauseManager ManagePause;
 
-
     void OnEnable()
     {
-        if (this.timerUI == null)
-            this.timerUI = GetComponent<TimerUI>();
-
-        if (this.extractionZone != null)
-            this.extractionZone.WinScreen += OnWinScreen;
+        if (ExtractionManager.Instance != null)
+            ExtractionManager.Instance.OnGameWon += OnWinScreen;
 
         if (this.playerHealth != null)
             this.playerHealth.LoseScreen += OnLoseScreen;
+    }
 
-        if (this.timerUI != null)
-            this.timerUI.DisplayEndGame += OnLoseScreen;
+    void Start()
+    {
+        if (ExtractionManager.Instance != null)
+            ExtractionManager.Instance.OnGameWon += OnWinScreen;
+
+        if (this.playerHealth != null)
+            this.playerHealth.LoseScreen += OnLoseScreen;
     }
 
     void OnDisable()
     {
-        if (this.extractionZone != null)
-            this.extractionZone.WinScreen -= OnWinScreen;
+        if (ExtractionManager.Instance != null)
+            ExtractionManager.Instance.OnGameWon -= OnWinScreen;
 
         if (this.playerHealth != null)
             this.playerHealth.LoseScreen -= OnLoseScreen;
-
-        if (this.timerUI != null)
-            this.timerUI.DisplayEndGame -= OnLoseScreen;
     }
 
     private void OnWinScreen()

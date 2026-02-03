@@ -1,83 +1,46 @@
 using System;
 using UnityEngine;
 using UnityEngine.UIElements;
+
 public class TimerUI : MonoBehaviour
 {
     private float elapsedTime = 0f;
-    private float remainingTime = 300f;
-    private float timeToDisplayExtraction = 120f;
-
-    // Used for pausing game
     private bool isRunning = true;
     private Label timerLabel;
+    private float timeToDisplayExtraction = 30f;
+    public static event Action DisplayExtractionBeam;
     private bool hasDisplayedExtraction = false;
-    public event Action DisplayExtraction;
-    public event Action DisplayEndGame;
 
-
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        string labelName = "TimerLabel";
+        // Initialize the UI Label
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
-
-        this.timerLabel = root.Q<Label>(name: labelName);
+        this.timerLabel = root.Q<Label>(name: "TimerLabel");
     }
 
     void Update()
     {
         if (!isRunning) return;
 
-        this.remainingTime -= Time.deltaTime;
+        this.elapsedTime += Time.deltaTime;
 
-        if (this.remainingTime < 0f)
-        {
-            this.remainingTime = 0f;
-        }
-        
-        UpdateTimerUI();
-
-        if (!this.hasDisplayedExtraction && this.remainingTime <= this.timeToDisplayExtraction)
+        if (!this.hasDisplayedExtraction && elapsedTime >= this.timeToDisplayExtraction)
         {
             this.hasDisplayedExtraction = true;
-            this.DisplayExtraction?.Invoke();
-            Debug.Log("Timer hit 2 minutes");
-            timerLabel.style.color = Color.red;
+            DisplayExtractionBeam?.Invoke();
         }
 
-        if (this.remainingTime <= 0f)
-        {
-            this.isRunning = false;
-            this.DisplayEndGame?.Invoke();
-            Debug.Log("Timer hit 0 minutes");
-        }
+        UpdateTimerUI();
     }
+
     private void UpdateTimerUI()
     {
-        // Format minutes and seconds
-        int minutes = Mathf.FloorToInt(this.remainingTime / 60f);
-        int seconds = Mathf.FloorToInt(this.remainingTime % 60f);
+        // Format minutes and seconds for display
+        int minutes = Mathf.FloorToInt(this.elapsedTime / 60f);
+        int seconds = Mathf.FloorToInt(this.elapsedTime % 60f);
 
         timerLabel.text = string.Format("{0:00}:{1:00}", minutes, seconds);
-        UpdateColor();
     }
-
-    private void UpdateColor()
-    {
-        float colorEndTime = 0f;  
-
-        Color customRed;
-        ColorUtility.TryParseHtmlString("#660000", out customRed);
-
-        if (this.remainingTime <= this.timeToDisplayExtraction)
-        {
-            float t = Mathf.Clamp01(1f - ((this.remainingTime - colorEndTime) / (this.timeToDisplayExtraction - colorEndTime)));
-            timerLabel.style.color = Color.Lerp(Color.white, customRed, t);
-        }
-        else
-        {
-            timerLabel.style.color = Color.white;
-        }
-    }
+    public void SetRunning(bool run) => isRunning = run;
+    public void ResetTimer() => elapsedTime = 0f;
 }

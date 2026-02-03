@@ -348,7 +348,7 @@ public bool IsDevModeEnabled
         return playerLocation.position + locationOffset;
     }
 
-    private void OnExtractionZoneStarted()
+    private void OnExtractionZoneStarted(ExtractionZone zone)
     {
         this.isExtractionActive = true;
     }

@@ -5,39 +5,44 @@ using UnityEngine.UIElements;
 public class ExtractionUI : MonoBehaviour
 {
     private ProgressBar extractionBar;
+    private ExtractionZone activeZoneRef;
 
-    [SerializeField]
-    private ExtractionZone extractionZone;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        String name = "ExtractionBar";
-        float zeroValue = 0f;
-
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
-        this.extractionBar = root.Q<ProgressBar>(name);
-
-        this.extractionBar.lowValue = zeroValue;
-        this.extractionBar.highValue = this.extractionZone.ChargeTime;
-        this.extractionBar.value = zeroValue;
+        this.extractionBar = root.Q<ProgressBar>("ExtractionBar");
         this.extractionBar.style.display = DisplayStyle.None;
-        
 
-        this.extractionZone.ChargeChanged += this.OnChargeChanged;
-        this.extractionZone.ExtractionInteracted += this.OnExtractionInteracted;
+        if (ExtractionManager.Instance != null)
+        {
+            ExtractionManager.Instance.ExtractionStarted += OnExtractionStarted;
+            ExtractionManager.Instance.AllExtractionsFinished += OnExtractionFinished;
+        }
     }
 
-    private void OnChargeChanged(float currentCharge)
+    private void OnExtractionStarted(ExtractionZone zone)
+    {
+        activeZoneRef = zone;
+        this.extractionBar.highValue = zone.ChargeTime;
+        this.extractionBar.style.display = DisplayStyle.Flex;
+        
+        // Subscribe to the specific zone's progress
+        zone.ChargeChanged += OnChargeUpdate;
+    }
+
+    private void OnExtractionFinished()
+    {
+        if (activeZoneRef != null)
+            activeZoneRef.ChargeChanged -= OnChargeUpdate;
+
+        this.extractionBar.style.display = DisplayStyle.None;
+        activeZoneRef = null;
+    }
+
+    private void OnChargeUpdate(float currentCharge)
     {
         this.extractionBar.value = currentCharge;
-
-        float percent = (currentCharge / this.extractionZone.ChargeTime) * 100f;
+        float percent = (currentCharge / activeZoneRef.ChargeTime) * 100f;
         this.extractionBar.title = $"Extraction: [{Mathf.RoundToInt(percent)}%]";
-    }
-
-    private void OnExtractionInteracted()
-    {
-        this.extractionBar.style.display = DisplayStyle.Flex;
     }
 }
