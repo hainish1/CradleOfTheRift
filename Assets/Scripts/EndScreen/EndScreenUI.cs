@@ -85,6 +85,7 @@ public class EndScreenUI : MonoBehaviour
         var root = document.rootVisualElement;
         var playAgainButton = root.Q<Button>("playAgainButton");
         var quitButton = root.Q<Button>("quitButton");
+        var mainMenuButton = root.Q<Button>("mainMenuButton");
 
         // Play Again → restart current level
         if (playAgainButton != null)
@@ -101,6 +102,17 @@ public class EndScreenUI : MonoBehaviour
                 UnityEngine.Cursor.visible = false;
 
                 SceneManager.LoadScene("Design"); // or your current game scene name
+            });
+        }
+        if (mainMenuButton != null)
+        {
+            mainMenuButton.RegisterCallback<ClickEvent>(evt =>
+            {
+            SceneManager.LoadScene("MainMenu");
+            Time.timeScale = 1f;
+            PauseManager.GameIsPaused = false;
+            PauseManager.CurrentPauseState = PauseManager.PauseState.None;
+            PlayerHealth.GameIsOver = false;
             });
         }
 
