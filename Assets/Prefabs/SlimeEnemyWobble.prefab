@@ -576,7 +576,7 @@ MonoBehaviour:
   leapHeight: 0.7
   leapDuration: 0.55
   leapOverShootDistance: 0.5
-  gravityScale: 1
+  gravityScale: 4
   groundMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -616,7 +616,7 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 256
-  manageAgentPosition: 0
+  manageAgentPosition: 1
   softBody: {fileID: 1932630377921340712}
 --- !u!65 &8032525674095066417
 BoxCollider:
