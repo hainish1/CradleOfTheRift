@@ -51,9 +51,12 @@ public class EndScreenUI : MonoBehaviour
     {
         this.activeScreen = Instantiate(winScreen);
         HookEndScreenButtons(activeScreen);
+
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
-        ManagePause.PauseGame();
+
+        PlayerHealth.GameIsOver = true;
+        ManagePause.PauseForEndGame();
 
 
         // go back to Start scene
@@ -64,14 +67,16 @@ public class EndScreenUI : MonoBehaviour
     {
         this.activeScreen = Instantiate(loseScreen);
         HookEndScreenButtons(activeScreen);
+
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
-        ManagePause.PauseGame();
-        // go back to Start scene
+
+        PlayerHealth.GameIsOver = true;
+        ManagePause.PauseForEndGame();
         // StartCoroutine(LoadSceneAfterDelay("Jared", 5f)); // 5 second delay
     }
-    
-        private void HookEndScreenButtons(GameObject screen)
+
+    private void HookEndScreenButtons(GameObject screen)
     {
         // get UI Document on the end screen object
         var document = screen.GetComponent<UIDocument>();
@@ -92,6 +97,10 @@ public class EndScreenUI : MonoBehaviour
             {
                 Debug.Log("Play Again clicked!");
                 Time.timeScale = 1f; // unpause
+                PauseManager.GameIsPaused = false;
+                PauseManager.CurrentPauseState = PauseManager.PauseState.None;
+                PlayerHealth.GameIsOver = false;
+
                 UnityEngine.Cursor.lockState = CursorLockMode.Locked;
                 UnityEngine.Cursor.visible = false;
 
@@ -115,7 +124,7 @@ public class EndScreenUI : MonoBehaviour
     }
 
 
-    
+
     private IEnumerator LoadSceneAfterDelay(string sceneName, float delay)
     {
         yield return new WaitForSeconds(delay);

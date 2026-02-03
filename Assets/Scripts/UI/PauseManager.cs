@@ -6,7 +6,8 @@ public class PauseManager : MonoBehaviour
     {
         None,
         PauseMenu,
-        Inventory
+        Inventory,
+        EndGame
     }
     public static bool GameIsPaused; // Global Pause Var
     public static PauseState CurrentPauseState = PauseState.None;
@@ -98,6 +99,8 @@ public class PauseManager : MonoBehaviour
     private void TogglePauseMenu()
     {
         if (PlayerHealth.GameIsOver) return;
+        if (CurrentPauseState == PauseState.EndGame) return;
+
 
         if (CurrentPauseState == PauseState.PauseMenu)
         {
@@ -115,6 +118,7 @@ public class PauseManager : MonoBehaviour
     private void ToggleInventory()
     {
         if (PlayerHealth.GameIsOver) return;
+        if (CurrentPauseState == PauseState.EndGame) return;
 
         if (CurrentPauseState == PauseState.Inventory)
         {
@@ -129,4 +133,21 @@ public class PauseManager : MonoBehaviour
         ApplyPause();
         inventoryMenuUI.SetActive(true);
     }
+    public void PauseForEndGame()
+    {
+        CurrentPauseState = PauseState.EndGame;
+        GameIsPaused = true;
+        Time.timeScale = 0f;
+
+        if (playerAim != null)
+        {
+            playerAim.SetLookEnabled(false);
+            playerAim.IsPaused = true;
+        }
+
+        // Safety disable gameplay menus
+        pauseMenuUI.SetActive(false);
+        inventoryMenuUI.SetActive(false);
+    }
+
 }
