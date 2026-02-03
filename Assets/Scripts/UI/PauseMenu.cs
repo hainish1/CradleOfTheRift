@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
-using System.ComponentModel.Design.Serialization;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -11,6 +10,7 @@ public class PauseMenu : MonoBehaviour
     private Button continueButton;
 
     //private Button inventoryButton; // Future setup
+    private Button mainMenuButton;
     private Button quitButton;
 
     //public GameObject inventoryObject;
@@ -29,6 +29,7 @@ public class PauseMenu : MonoBehaviour
 
         startButton = root.Q<Button>("ButtonStartGame");
         continueButton = root.Q<Button>("ButtonContinue");
+        mainMenuButton = root.Q<Button>("ButtonMainMenu");
         //inventoryButton = root.Q<Button>("ButtonInventory");
         quitButton = root.Q<Button>("ButtonQuitGame");
 
@@ -54,6 +55,7 @@ public class PauseMenu : MonoBehaviour
 
         startButton = document.rootVisualElement.Q("ButtonStartGame") as Button;
         continueButton = document.rootVisualElement.Q("ButtonContinue") as Button;
+        mainMenuButton = document.rootVisualElement.Q("ButtonMainMenu") as Button;
         //inventoryButton = document.rootVisualElement.Q("ButtonInventory") as Button;
         quitButton = document.rootVisualElement.Q("ButtonQuitGame") as Button;
 
@@ -68,6 +70,9 @@ public class PauseMenu : MonoBehaviour
 
         if (continueButton != null)
             continueButton.RegisterCallback<ClickEvent>(OnContinueClick);
+
+        if (mainMenuButton != null)
+            mainMenuButton.RegisterCallback<ClickEvent>(OnMainMenuClick);
 
         // if (inventoryButton != null)
         //     inventoryButton.RegisterCallback<ClickEvent>(OnInventoryClick);
@@ -87,6 +92,9 @@ public class PauseMenu : MonoBehaviour
         if (continueButton != null)
             continueButton.UnregisterCallback<ClickEvent>(OnContinueClick);
 
+        if (mainMenuButton != null)
+            mainMenuButton.UnregisterCallback<ClickEvent>(OnMainMenuClick);
+
         // if (inventoryButton != null)
         //     inventoryButton.UnregisterCallback<ClickEvent>(OnInventoryClick);
 
@@ -98,6 +106,18 @@ public class PauseMenu : MonoBehaviour
         //     action.performed -= OnPausePressed;
 
         InputActions.Disable();
+    }
+
+    private void OnMainMenuClick(ClickEvent evt)
+    {
+        // Unpause the game
+        Time.timeScale = 1f;
+        PauseManager.GameIsPaused = false;
+        PauseManager.CurrentPauseState = PauseManager.PauseState.None;
+        PlayerHealth.GameIsOver = false;
+
+        // Load the StartScreen scene
+        SceneManager.LoadScene("MainMenu");
     }
 
     private void OnStartGameClick(ClickEvent evt)
@@ -117,7 +137,6 @@ public class PauseMenu : MonoBehaviour
 
         pauseManager.ResumeGame();
         // Debug.Log("Continue Button Clicked, should continue.");
-
     }
 
     // private void OnInventoryClick(ClickEvent evt)
