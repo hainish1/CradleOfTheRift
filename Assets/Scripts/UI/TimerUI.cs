@@ -7,7 +7,7 @@ public class TimerUI : MonoBehaviour
     private float elapsedTime = 0f;
     private bool isRunning = true;
     private Label timerLabel;
-    private float timeToDisplayExtraction = 30f;
+    private float timeToDisplayExtraction = 180f;
     public static event Action DisplayExtractionBeam;
     private bool hasDisplayedExtraction = false;
 
