@@ -1,0 +1,49 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "1203559441",
+    "Type": "Event",
+    "GUID": "{6CC0AE86-55C5-4E31-9565-55AAF808CC27}",
+    "Language": "SFX",
+    "Hash": "{80DFE974-04F8-650D-21B8-F53F02035176}",
+    "ObjectPath": "Play_Teleporter_Ambience",
+    "ShortName": "Play_Teleporter_Ambience",
+    "Path": "Event/Play_Teleporter_Ambience.bnk",
+    "Media": [
+     {
+      "Id": "696031791",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "TeleporterThrum.wav",
+      "Path": "Media/696031791.wem",
+      "CachePath": "BB/{BB53FD89-2970-53B0-9D1F-7942AA9A8C76}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "1203559441",
+      "Name": "Play_Teleporter_Ambience",
+      "ObjectPath": "\\Events\\Default Work Unit\\Teleporter\\Play_Teleporter_Ambience",
+      "GUID": "{6CC0AE86-55C5-4E31-9565-55AAF808CC27}",
+      "MaxAttenuation": "200",
+      "DurationType": "OneShot",
+      "DurationMin": "10",
+      "DurationMax": "10",
+      "MediaRefs": [
+       {
+        "Id": "696031791"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{58B4BDA3-E9D8-A380-DD1D-79846266A1B3}"
+ }
+}
