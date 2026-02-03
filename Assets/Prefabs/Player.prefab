@@ -591,6 +591,8 @@ MonoBehaviour:
   regenMinRate: 0.5
   regenMaxRate: 8
   regenRampupTime: 5
+  takeDamageVFXPrefab: {fileID: 0}
+  damageVfxAttachPoint: {fileID: 0}
   healthRegenVFXPrefab: {fileID: 0}
   regenVfxAttachPoint: {fileID: 0}
   normalHealVFXDuration: 4
@@ -629,6 +631,10 @@ MonoBehaviour:
   _flightDecelerationSeconds: 0.5
   _flightCounterAccelerationMultiplier: 2
   _flightJumpForce: 20
+  dashSoundEvent:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
 --- !u!114 &3932950717491979509
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -653,6 +659,10 @@ MonoBehaviour:
   explosiveProjectilePrefab: {fileID: 0}
   projectileSpeed: 150
   spawnOffset: 0.1
+  fireEvent:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
 --- !u!114 &146141417271177862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -955,6 +965,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 3153
   homingProjectilePrefab: {fileID: 786387644219627909, guid: 1abe98f5a8e4b634ab46dbc4ffd399f4, type: 3}
+  homingDamageMultiplier: 1
 --- !u!1 &2808975749909750632
 GameObject:
   m_ObjectHideFlags: 0
