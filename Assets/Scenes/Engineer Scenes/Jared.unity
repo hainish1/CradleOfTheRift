@@ -280909,22 +280909,46 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 129042964921982419, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 580616057974938403, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 580616057974938403, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
       propertyPath: extractionZone
       value: 
       objectReference: {fileID: 589405215}
     - target: {fileID: 825087635916863066, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 825087635916863066, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
       propertyPath: playerGold
       value: 
       objectReference: {fileID: 707673963}
+    - target: {fileID: 899406527227418699, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1557612151386117096, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
       propertyPath: playerManager
       value: 
       objectReference: {fileID: 707673973}
+    - target: {fileID: 4927917409409899154, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5504009049952780630, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
       propertyPath: spawner
       value: 
       objectReference: {fileID: 1669222942}
+    - target: {fileID: 5504009049952780630, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6171083751830730270, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
       propertyPath: m_Name
       value: UIDocument (1)
@@ -280974,6 +280998,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7473195389893767818, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7473195389893767818, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
       propertyPath: ManagePause
       value: 
       objectReference: {fileID: 1645519322}
@@ -280989,6 +281017,10 @@ PrefabInstance:
       propertyPath: health
       value: 
       objectReference: {fileID: 707673962}
+    - target: {fileID: 8070210690962360478, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -333408,8 +333440,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenuUI: {fileID: 1988271202}
-  playerAim: {fileID: 1499544451}
   inventoryMenuUI: {fileID: 2124910232}
+  playerAim: {fileID: 1499544451}
 --- !u!4 &1645519323
 Transform:
   m_ObjectHideFlags: 0

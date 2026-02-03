@@ -11,14 +11,7 @@ public class InventoryMenu : MonoBehaviour
 
     private Button backButton;
 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    void awake()
+    void Awake()
     {
         document = GetComponent<UIDocument>();
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
@@ -56,15 +49,6 @@ public class InventoryMenu : MonoBehaviour
 
     private void OnBackClick(ClickEvent evt)
     {
-        // Debug.Log("Opening inventory...");
         pauseManager.ResumeGame();
-
-    }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
