@@ -1,3 +1,37 @@
+.button {
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    justify-content: flex-end;
+    width: 450px;
+    height: 100px;
+    align-content: auto;
+    align-items: center;
+    align-self: center;
+    background-image: none;
+    border-left-color: rgba(0, 0, 0, 0.47);
+    border-right-color: rgba(0, 0, 0, 0.47);
+    border-top-color: rgba(0, 0, 0, 0.47);
+    border-bottom-color: rgba(0, 0, 0, 0.47);
+    font-size: 80px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    background-color: rgba(21, 7, 34, 0.94);
+    color: rgb(255, 255, 255);
+}
+
+.unityButtonHover:hover {
+    background-color: rgba(21, 6, 34, 0.94);
+    color: rgb(228, 0, 255);
+    transition-property: scale;
+    scale: 1.1 1.1;
+    transition-duration: 0.25s;
+}
+
 .header {
     font-size: 200px;
     -unity-text-align: upper-center;
@@ -6,37 +40,78 @@
     justify-content: flex-start;
     background-position-x: center 0;
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-font-definition: url("project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&guid=74a5091d8707f334b9a5c31ef71a64ba&type=3#PerfectDOSVGA437");
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerLight-aGnx-Font.ttf?fileID=12800000&guid=353234806b51d43e58d9161acf6d5b78&type=3#CocobikerLight-aGnx-Font");
 }
 
-.button {
-    border-top-width: 10px;
-    border-right-width: 10px;
-    border-bottom-width: 10px;
-    border-left-width: 10px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    justify-content: flex-end;
-    width: 500px;
-    height: 200px;
-    align-content: auto;
-    align-items: center;
-    align-self: center;
-    background-image: url("project://database/Assets/Art%20Assets/Engineering%20Assets/ButtonPlsWrk.png?fileID=1985428801&guid=7b8f9ea28393f45719932cb70e4704bd&type=3#ButtonPlsWrk_0");
-    border-left-color: rgba(0, 0, 0, 0.47);
-    border-right-color: rgba(0, 0, 0, 0.47);
-    border-top-color: rgba(0, 0, 0, 0.47);
-    border-bottom-color: rgba(0, 0, 0, 0.47);
-    font-size: 80px;
-    -unity-font-definition: url("project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&guid=74a5091d8707f334b9a5c31ef71a64ba&type=3#PerfectDOSVGA437");
+.h1 {
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    font-size: 100px;
+    color: rgb(255, 255, 255);
+    translate: 25px 0;
 }
 
-.unityButtonHover:hover {
+.h2 {
+    background-color: rgba(255, 255, 255, 0);
+    font-size: 90px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    color: rgb(255, 255, 255);
+}
+
+.listBox {
+    border-left-color: rgba(255, 255, 255, 0);
+    border-right-color: rgba(255, 255, 255, 0);
+    border-top-color: rgba(255, 255, 255, 0);
+    border-bottom-color: rgba(255, 255, 255, 0);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    background-color: rgba(255, 255, 255, 0);
+    -unity-background-image-tint-color: rgb(255, 244, 244);
+    opacity: 1;
+}
+
+.descBox {
+}
+
+.item {
+    -unity-font-definition: url("project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&guid=74a5091d8707f334b9a5c31ef71a64ba&type=3#PerfectDOSVGA437");
+    position: absolute;
     background-color: rgba(0, 0, 0, 0);
-    color: rgb(228, 0, 255);
+    border-left-color: rgba(255, 255, 255, 0);
+    border-right-color: rgba(255, 255, 255, 0);
+    border-top-color: rgba(255, 255, 255, 0);
+    border-bottom-color: rgba(255, 255, 255, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.description {
+    -unity-font-definition: resource('FlatSkin/Font/Roboto-ThinItalic');
+    font-size: 60px;
+    color: rgb(255, 255, 255);
+}
+
+.item:hover {
+    transition-duration: 0.25s;
     transition-property: scale;
     scale: 1.1 1.1;
-    transition-duration: 0.25s;
+}
+
+.Background {
+    flex-grow: 1;
+    background-color: rgba(14, 0, 29, 0.94);
+    width: 1920px;
+    height: 1080px;
 }

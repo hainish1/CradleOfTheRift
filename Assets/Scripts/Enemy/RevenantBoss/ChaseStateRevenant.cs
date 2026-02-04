@@ -32,6 +32,8 @@ public class ChaseStateRevenant : EnemyState
     /// </summary>
     public override void Update()
     {
+        if (PauseManager.GameIsPaused) return;
+
         if (enemy.target == null) return;
 
         float distance = Vector3.Distance(enemy.transform.position, enemy.target.position); // go but keep distance

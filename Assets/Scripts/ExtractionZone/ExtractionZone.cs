@@ -14,12 +14,10 @@ public class ExtractionZone : MonoBehaviour
 
 
     public event Action<float> ChargeChanged;
-    public event Action ExtractionInteracted;
+    public event Action<ExtractionZone> ExtractionInteracted;
     public event Action ExtractionFinished;
-    public event Action WinScreen;
     public float ChargeTime => this.chargeTime;
 
-    [SerializeField] private TimerUI timerUI;
     [SerializeField] private GameObject extractionBeam;
 
     [Header("Beam Grow Settings")]
@@ -36,8 +34,18 @@ public class ExtractionZone : MonoBehaviour
     private BossSpawner bossSpawner;
 
 
-
     private Coroutine beamGrowRoutine;
+
+    private void OnEnable()
+    {
+        TimerUI.DisplayExtractionBeam += OnDisplayExtraction;
+    }
+
+    private void OnDisable()
+    {
+        TimerUI.DisplayExtractionBeam -= OnDisplayExtraction;
+    }
+
     private void Awake()
     {
         spawnPoint = transform.Find("BossSpawnPoint");
@@ -50,6 +58,13 @@ public class ExtractionZone : MonoBehaviour
             this.bossSpawner.BossDied += OnBossDied;
     }
 
+    private void Start()
+    {
+        if (ExtractionManager.Instance != null)
+        {
+            ExtractionManager.Instance.RegisterZone(this);
+        }    
+    }
 
 
     // Update is called once per frame
@@ -64,19 +79,25 @@ public class ExtractionZone : MonoBehaviour
 
         if (player != null)
         {
-            this.isExtracting = true;
-
-            // Notify UI to display extraction UI
-            if (!this.isInteracted)
+            // 1. If this is the VERY FIRST time anyone touches this zone
+            if (!this.isInteracted && ExtractionManager.Instance.CanStartExtraction())
             {
                 this.isInteracted = true;
-                this.ExtractionInteracted?.Invoke();
-            }
+                this.isExtracting = true;
 
-            if (!this.hasSpawnedBoss)
+                ExtractionManager.Instance.OnZoneStarted(this);
+                this.ExtractionInteracted?.Invoke(this);
+
+                if (!this.hasSpawnedBoss)
+                {
+                    hasSpawnedBoss = true;
+                    BossSpawnRequested?.Invoke();
+                }
+            }
+            // 2. If the zone was already activated/interacted with, just resume extracting
+            else if (this.isInteracted) 
             {
-                hasSpawnedBoss = true;
-                BossSpawnRequested?.Invoke();
+                this.isExtracting = true;
             }
         }
     }
@@ -90,50 +111,35 @@ public class ExtractionZone : MonoBehaviour
             this.isExtracting = false;
         }
     }
-    private void OnExtraction()
+private void OnExtraction()
+{
+    if (this.isExtracting && this.currentCharge < this.chargeTime)
     {
-        if (this.isExtracting & this.currentCharge < this.chargeTime)
+        // Calculate the 99% threshold
+        float maxAllowedCharge = this.isBossDead ? this.chargeTime : this.chargeTime * 0.99f;
+
+        // Increment charge
+        this.currentCharge += Time.deltaTime;
+
+        // Clamp based on whether the boss is dead or not
+        this.currentCharge = Math.Clamp(this.currentCharge, 0, maxAllowedCharge);
+
+        // Check for completion (only possible if isBossDead is true and charge hits 100%)
+        if (this.currentCharge >= this.chargeTime && !this.hasFinishedExtracting && this.isBossDead)
         {
-            this.currentCharge = Math.Clamp(this.currentCharge + Time.deltaTime, 0, this.chargeTime);
-
-            if (this.currentCharge == this.chargeTime && !this.hasFinishedExtracting && this.isBossDead)
-            {
-                this.hasFinishedExtracting = true;
-                PlayerHealth.instance.SetCanTakeDamage(false);
-                this.WinScreen?.Invoke();
-                this.ExtractionFinished?.Invoke();
-                PlayerHealth.GameIsOver = true;
-
-            }
-        }
-        else
-        {
-            if (!this.hasFinishedExtracting)
-            {
-                this.currentCharge = Math.Clamp(this.currentCharge - Time.deltaTime, 0, this.chargeTime);
-            }
-        }
-
-        this.ChargeChanged?.Invoke(this.currentCharge);
-    }
-
-    private void OnEnable()
-    {
-        if (timerUI != null)
-        {
-            timerUI.DisplayExtraction += OnDisplayExtraction;
-            timerUI.DisplayEndGame += OnDisplayEndGame;
+            this.hasFinishedExtracting = true;
+            this.isExtracting = false;
+            this.ExtractionFinished?.Invoke();
         }
     }
-
-    private void OnDisable()
+    else if (!this.isExtracting && !this.hasFinishedExtracting)
     {
-        if (timerUI != null)
-        {
-            timerUI.DisplayExtraction -= OnDisplayExtraction;
-            timerUI.DisplayEndGame -= OnDisplayEndGame;
-        }
+        // Decay charge if the player leaves the zone
+        this.currentCharge = Math.Clamp(this.currentCharge - Time.deltaTime, 0, this.chargeTime);
     }
+
+    this.ChargeChanged?.Invoke(this.currentCharge);
+}
 
     private void OnDisplayExtraction()
     {
