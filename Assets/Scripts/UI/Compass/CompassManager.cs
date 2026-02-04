@@ -13,8 +13,14 @@ public class CompassManager : MonoBehaviour
     private UIDocument uiDocument;
     private VisualElement iconContainer;
 
-    // Pairs world markers with their corresponding UI elements
+    [Header("Data Settings")]
+    [Tooltip("Assign the CompassMarkerData assets here.")]
+    [SerializeField] private List<CompassMarkerData> markerDefinitions;
+
     private Dictionary<CompassMarker, VisualElement> markerMap = new Dictionary<CompassMarker, VisualElement>();
+    
+    // Quick lookup to map MarkerType -> USS Class name
+    private Dictionary<MarkerType, string> typeToClassMap = new Dictionary<MarkerType, string>();
 
     void OnEnable()
     {
@@ -34,10 +40,13 @@ public class CompassManager : MonoBehaviour
         var root = uiDocument.rootVisualElement;
         iconContainer = root.Q<VisualElement>("icon-container");
 
-        if (iconContainer == null)
+        // Initialize the dictionary for fast lookups
+        foreach (var data in markerDefinitions)
         {
-            Debug.LogError("Compass Manager: 'icon-container' not found in UXML. Check your element names!");
-            return;
+            if (data != null && !typeToClassMap.ContainsKey(data.markerType))
+            {
+                typeToClassMap.Add(data.markerType, data.ussClass);
+            }
         }
     }
 
@@ -52,21 +61,23 @@ public class CompassManager : MonoBehaviour
 
     void AddMarkerUI(CompassMarker marker)
     {
-        if (markerMap.ContainsKey(marker)) return;
+        if (iconContainer == null || markerMap.ContainsKey(marker)) return;
 
         // Create a new UI element and apply the base "marker" styling
         var element = new VisualElement();
         element.AddToClassList("marker");
-        
-        // Add specific icon class based on marker type
-        string className = marker.Type switch
+
+        // Dynamic lookup using the ScriptableObject data
+        if (typeToClassMap.TryGetValue(marker.Type, out string className))
         {
-            MarkerType.Cave => "icon-cave",
-            MarkerType.Extraction => "icon-extraction",
-            _ => "marker"
-        };
+            element.AddToClassList(className);
+        }
+        else
+        {
+            // Default fallback if no data asset is found for this type
+            element.AddToClassList("marker"); 
+        }
     
-        element.AddToClassList(className);
         iconContainer.Add(element);
         markerMap.Add(marker, element);
     }
