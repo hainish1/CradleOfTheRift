@@ -13,6 +13,12 @@ public class CompassManager : MonoBehaviour
     private UIDocument uiDocument;
     private VisualElement iconContainer;
 
+
+    [Header("Hybrid Settings")]
+    [SerializeField] private float maxDistance = 100f; // Distance where marker is smallest/faded
+    [SerializeField] private float minScale = 0.6f;     // Smallest icon size
+
+
     [Header("Data Settings")]
     [Tooltip("Assign the CompassMarkerData assets here.")]
     [SerializeField] private List<CompassMarkerData> markerDefinitions;
@@ -67,6 +73,11 @@ public class CompassManager : MonoBehaviour
         var element = new VisualElement();
         element.AddToClassList("marker");
 
+        // Add the Distance Label
+        var distanceLabel = new Label();
+        distanceLabel.AddToClassList("marker-distance-text");
+        element.Add(distanceLabel);
+
         // Dynamic lookup using the ScriptableObject data
         if (typeToClassMap.TryGetValue(marker.Type, out string className))
         {
@@ -105,6 +116,10 @@ public class CompassManager : MonoBehaviour
         {
             CompassMarker marker = pair.Key;
             VisualElement uiElement = pair.Value;
+            Label dLabel = uiElement.Q<Label>(); 
+
+            Vector3 offset = marker.transform.position - playerTransform.position;
+            float distance = offset.magnitude;
 
             // Calculate horizontal angle between player forward and the target
             Vector3 dirToMarker = marker.transform.position - playerTransform.position;
@@ -120,12 +135,24 @@ public class CompassManager : MonoBehaviour
             else
             {
                 uiElement.style.display = DisplayStyle.Flex;
+
+                // Calculate Distance Visuals
+                float normalizedDist = Mathf.Clamp01(distance / maxDistance);
+
+                // Fade out and shrink as distance increases
+                uiElement.style.opacity = 1.0f - (normalizedDist * 0.5f); 
+                float scale = Mathf.Lerp(1.0f, minScale, normalizedDist);
+                uiElement.style.scale = new StyleScale(new Scale(new Vector3(scale, scale, 1f)));
+
+                // Update Distance Text
+                if (dLabel != null)
+                {
+                    dLabel.text = $"{(int)distance}m";
+                }
                 
-                // Map the angle to a horizontal pixel position relative to the center
+                // Position on Compass
                 float normalizedAngle = angle / maxVisibleAngle; 
                 float posX = centerX + (normalizedAngle * centerX);
-                
-                // Apply the position, centering the icon on the calculated pixel
                 uiElement.style.left = posX - (uiElement.resolvedStyle.width / 2);
             }
         }
