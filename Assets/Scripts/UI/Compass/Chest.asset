@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b02c2baadaa6b44b84533e77969a7e0, type: 3}
   m_Name: Chest
   m_EditorClassIdentifier: 
-  markerType: 1
+  markerType: 2
   ussClass: icon-chest
   fallbackSprite: {fileID: 0}
+  detectionRadius: 50

@@ -126,9 +126,11 @@ public class CompassManager : MonoBehaviour
             VisualElement uiElement = pair.Value;
             Label dLabel = uiElement.Q<Label>();
 
+            // Calculate world-space vector and total distance to target
             Vector3 offset = marker.transform.position - playerTransform.position;
             float distance = offset.magnitude;
 
+            // Retrieve the specific detection range for this marker type
             float maxRadius = 9999f;
             typeToRadiusMap.TryGetValue(marker.Type, out maxRadius);
 
@@ -147,11 +149,17 @@ public class CompassManager : MonoBehaviour
             {
                 uiElement.style.display = DisplayStyle.Flex;
 
-                // Calculate Distance Visuals
-                float normalizedDist = Mathf.Clamp01(distance / maxDistance);
+                // Fade out as the marker approaches its maximum detection range
+                float proximityAlpha = 1.0f - Mathf.Clamp01(distance / maxRadius);
 
-                // Fade out and shrink as distance increases
-                uiElement.style.opacity = 1.0f - (normalizedDist * 0.5f); 
+                // Calculate generic distance-based fade (maxes at 50% transparency)
+                float normalizedDist = Mathf.Clamp01(distance / maxDistance);
+                float distanceAlpha = 1.0f - (normalizedDist * 0.5f);
+
+                // Combine both alphas to ensure a smooth transition into visibility
+                uiElement.style.opacity = distanceAlpha * proximityAlpha;
+
+                // Shrink the icon size based on its distance from the player
                 float scale = Mathf.Lerp(1.0f, minScale, normalizedDist);
                 uiElement.style.scale = new StyleScale(new Scale(new Vector3(scale, scale, 1f)));
 
@@ -176,7 +184,7 @@ public class CompassManager : MonoBehaviour
 
     void UpdateStackingOrder()
     {
-        // Only reset height for markers that are actually visible
+        // Reset vertical alignment for visible markers before re-calculating overlaps
         foreach (var pair in markerMap)
             {
                 if (pair.Value.resolvedStyle.display == DisplayStyle.Flex)
@@ -185,13 +193,13 @@ public class CompassManager : MonoBehaviour
                 }
             }
 
-            // Sort by horizontal position 
+            // Filter visible markers and sort by screen-space X position to check neighbors
             var visibleByPos = markerMap.Keys
                 .Where(m => markerMap[m].resolvedStyle.display == DisplayStyle.Flex)
                 .OrderBy(m => markerMap[m].resolvedStyle.left)
                 .ToList();
 
-        // Calculate Stacking
+        // Check adjacent markers; if they overlap horizontally, offset the one further away
         for (int i = 1; i < visibleByPos.Count; i++)
         {
             VisualElement currentUI = markerMap[visibleByPos[i]];
@@ -207,7 +215,7 @@ public class CompassManager : MonoBehaviour
             }
         }
 
-        // Reorder Hierarchy (Closest on top)
+        // Sort by physical distance and reorder the UI hierarchy so closest icons draw on top
         var sortedByDist = visibleByPos
             .OrderByDescending(m => Vector3.Distance(playerTransform.position, m.transform.position))
             .ToList();
