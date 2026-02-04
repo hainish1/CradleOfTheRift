@@ -1,16 +1,14 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class CompassManager : MonoBehaviour
 {
-    [SerializeField]
-    private Transform playerTransform;
-    [SerializeField]
-    private float maxVisibleAngle = 90f; 
+    [SerializeField] private Transform playerTransform;
+    [SerializeField] private float maxVisibleAngle = 90f; 
 
-    [SerializeField]
-    private UIDocument uiDocument;
+    [SerializeField] private UIDocument uiDocument;
     private VisualElement iconContainer;
 
 
@@ -18,15 +16,24 @@ public class CompassManager : MonoBehaviour
     [SerializeField] private float maxDistance = 100f; // Distance where marker is smallest/faded
     [SerializeField] private float minScale = 0.6f;     // Smallest icon size
 
+    [Header("Stacking Settings")]
+    [SerializeField] private float horizontalThreshold = 35f; // Pixels apart before stacking
+    [SerializeField] private float verticalOffset = 25f;      // How high to jump
+    [SerializeField] private float defaultTop = 9f;           // Original 'top' from USS
+    [SerializeField] private float stackUpdateInterval = 0.1f; // 10 updates per second
+
 
     [Header("Data Settings")]
     [Tooltip("Assign the CompassMarkerData assets here.")]
     [SerializeField] private List<CompassMarkerData> markerDefinitions;
 
+
     private Dictionary<CompassMarker, VisualElement> markerMap = new Dictionary<CompassMarker, VisualElement>();
-    
+
     // Quick lookup to map MarkerType -> USS Class name
     private Dictionary<MarkerType, string> typeToClassMap = new Dictionary<MarkerType, string>();
+    private Dictionary<MarkerType, float> typeToRadiusMap = new Dictionary<MarkerType, float>();
+    private float stackTimer;
 
     void OnEnable()
     {
@@ -52,6 +59,7 @@ public class CompassManager : MonoBehaviour
             if (data != null && !typeToClassMap.ContainsKey(data.markerType))
             {
                 typeToClassMap.Add(data.markerType, data.ussClass);
+                typeToRadiusMap.Add(data.markerType, data.detectionRadius);
             }
         }
     }
@@ -116,19 +124,22 @@ public class CompassManager : MonoBehaviour
         {
             CompassMarker marker = pair.Key;
             VisualElement uiElement = pair.Value;
-            Label dLabel = uiElement.Q<Label>(); 
+            Label dLabel = uiElement.Q<Label>();
 
             Vector3 offset = marker.transform.position - playerTransform.position;
             float distance = offset.magnitude;
 
+            float maxRadius = 9999f;
+            typeToRadiusMap.TryGetValue(marker.Type, out maxRadius);
+
+
             // Calculate horizontal angle between player forward and the target
-            Vector3 dirToMarker = marker.transform.position - playerTransform.position;
+            Vector3 dirToMarker = offset;
             dirToMarker.y = 0; 
-            
             float angle = Vector3.SignedAngle(playerTransform.forward, dirToMarker, Vector3.up);
 
-            // Toggle visibility based on whether the marker is within the visible FOV
-            if (Mathf.Abs(angle) > maxVisibleAngle)
+            // Hide if too far away OR if outside the FOV angle
+            if (distance > maxRadius || Mathf.Abs(angle) > maxVisibleAngle)
             {
                 uiElement.style.display = DisplayStyle.None;
             }
@@ -145,10 +156,7 @@ public class CompassManager : MonoBehaviour
                 uiElement.style.scale = new StyleScale(new Scale(new Vector3(scale, scale, 1f)));
 
                 // Update Distance Text
-                if (dLabel != null)
-                {
-                    dLabel.text = $"{(int)distance}m";
-                }
+                if (dLabel != null) dLabel.text = $"{(int)distance}m";
                 
                 // Position on Compass
                 float normalizedAngle = angle / maxVisibleAngle; 
@@ -156,5 +164,54 @@ public class CompassManager : MonoBehaviour
                 uiElement.style.left = posX - (uiElement.resolvedStyle.width / 2);
             }
         }
+
+        // STACKING & SORTING (Throttled - 10x per second)
+        stackTimer += Time.deltaTime;
+        if (stackTimer >= stackUpdateInterval)
+        {
+            UpdateStackingOrder();
+            stackTimer = 0f;
+        }
+    }
+
+    void UpdateStackingOrder()
+    {
+        // Only reset height for markers that are actually visible
+        foreach (var pair in markerMap)
+            {
+                if (pair.Value.resolvedStyle.display == DisplayStyle.Flex)
+                {
+                    pair.Value.style.top = defaultTop;
+                }
+            }
+
+            // Sort by horizontal position 
+            var visibleByPos = markerMap.Keys
+                .Where(m => markerMap[m].resolvedStyle.display == DisplayStyle.Flex)
+                .OrderBy(m => markerMap[m].resolvedStyle.left)
+                .ToList();
+
+        // Calculate Stacking
+        for (int i = 1; i < visibleByPos.Count; i++)
+        {
+            VisualElement currentUI = markerMap[visibleByPos[i]];
+            VisualElement prevUI = markerMap[visibleByPos[i - 1]];
+
+            if (Mathf.Abs(currentUI.resolvedStyle.left - prevUI.resolvedStyle.left) < horizontalThreshold)
+            {
+                float distA = Vector3.Distance(playerTransform.position, visibleByPos[i].transform.position);
+                float distB = Vector3.Distance(playerTransform.position, visibleByPos[i-1].transform.position);
+
+                if (distA > distB) currentUI.style.top = defaultTop - verticalOffset;
+                else prevUI.style.top = defaultTop - verticalOffset;
+            }
+        }
+
+        // Reorder Hierarchy (Closest on top)
+        var sortedByDist = visibleByPos
+            .OrderByDescending(m => Vector3.Distance(playerTransform.position, m.transform.position))
+            .ToList();
+
+        foreach (var m in sortedByDist) markerMap[m].BringToFront();
     }
 }

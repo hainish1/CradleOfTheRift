@@ -28,6 +28,9 @@
     top: 9px;
     background-color: red;
     z-index: 10;
+    transition-property: top;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-out-back;
 }
 
 .center-notch {
