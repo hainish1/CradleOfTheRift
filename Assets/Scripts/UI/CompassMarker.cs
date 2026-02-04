@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,8 @@ public class CompassMarker : MonoBehaviour
     [SerializeField]
     private MarkerType type;
     public MarkerType Type => type;
+    public static event Action<CompassMarker> OnMarkerAdded;
+    public static event Action<CompassMarker> OnMarkerRemoved;
     public static List<CompassMarker> AllMarkers { get; private set; } = new List<CompassMarker>();
 
     private void OnEnable()
@@ -15,11 +18,16 @@ public class CompassMarker : MonoBehaviour
         if (!AllMarkers.Contains(this))
         {
             AllMarkers.Add(this);
+            OnMarkerAdded?.Invoke(this);
         }
     }
 
     private void OnDisable()
     {
-        AllMarkers.Remove(this);
+        if (AllMarkers.Contains(this))
+        {   
+            AllMarkers.Remove(this);
+            OnMarkerRemoved?.Invoke(this);
+        }
     }
 }

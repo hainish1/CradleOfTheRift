@@ -16,7 +16,19 @@ public class CompassManager : MonoBehaviour
     // Pairs world markers with their corresponding UI elements
     private Dictionary<CompassMarker, VisualElement> markerMap = new Dictionary<CompassMarker, VisualElement>();
 
-    void Start()
+    void OnEnable()
+    {
+        CompassMarker.OnMarkerAdded += AddMarkerUI;
+        CompassMarker.OnMarkerRemoved += RemoveMarkerUI;
+    }
+
+    void OnDisable()
+    {
+        CompassMarker.OnMarkerAdded -= AddMarkerUI;
+        CompassMarker.OnMarkerRemoved -= RemoveMarkerUI;
+    }
+
+    void Awake()
     {
         // Get the UI container from UXML where markers will be spawned
         var root = uiDocument.rootVisualElement;
@@ -27,7 +39,10 @@ public class CompassManager : MonoBehaviour
             Debug.LogError("Compass Manager: 'icon-container' not found in UXML. Check your element names!");
             return;
         }
+    }
 
+    void Start()
+    {
         // Initialize markers already in the world
         foreach (var marker in CompassMarker.AllMarkers)
         {
@@ -54,6 +69,18 @@ public class CompassManager : MonoBehaviour
         element.AddToClassList(className);
         iconContainer.Add(element);
         markerMap.Add(marker, element);
+    }
+
+    void RemoveMarkerUI(CompassMarker marker)
+    {
+        if (markerMap.TryGetValue(marker, out VisualElement element))
+        {
+            // Remove from the UI hierarchy
+            element.RemoveFromHierarchy();
+
+            // Remove from our internal tracking dictionary
+            markerMap.Remove(marker);
+        }
     }
 
     void Update()
