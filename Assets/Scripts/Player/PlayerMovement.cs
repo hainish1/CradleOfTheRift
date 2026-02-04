@@ -159,6 +159,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private AK.Wwise.Event dashSoundEvent;
 
+    [Header("VFX")]
+    [SerializeField] private GameObject dashVFXPrefab;
+
     void Awake()
     {
         _playerEntity = GetComponent<Entity>();
@@ -806,6 +809,9 @@ public class PlayerMovement : MonoBehaviour
             DashCooldownStarted?.Invoke(dashDuration); // Notify listener to start the dash fade visual effect.
             // Play the dash audio effect here?
             dashSoundEvent.Post(gameObject);
+
+            // Play Dash VFX
+            PlayDashVFX(transform.position, Quaternion.LookRotation(_dashDirectionUnitVector));
         }
     }
 
@@ -1241,5 +1247,13 @@ public class PlayerMovement : MonoBehaviour
     public float GetCurrentFlightEnergy()
     {
         return _currFlightEnergy;
+    }
+
+    private void PlayDashVFX(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation)
+    {
+        if(dashVFXPrefab == null) return;
+        GameObject vfx = Instantiate(dashVFXPrefab, position, rotation);
+        Debug.Log("Test: Position " + position + " Rotation " + rotation);
+        Destroy(vfx, 1.0f); // Should prob make the VFX auto destroy instead of doing it here.
     }
 }

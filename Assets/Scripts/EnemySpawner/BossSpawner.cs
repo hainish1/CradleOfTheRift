@@ -79,7 +79,7 @@ public class BossSpawner : MonoBehaviour
         if(spawnVFXPrefab == null) return;
         GameObject vfx = Instantiate(spawnVFXPrefab, position, rotation);
 
-        Destroy(vfx, 3.0f); // Should prob make the VFX auto destroy instead of doing it here.
+        Destroy(vfx, 4.0f); // Should prob make the VFX auto destroy instead of doing it here.
     }
 }
 
