@@ -20702,6 +20702,10 @@ MonoBehaviour:
   recoveryBarrageRandomYaw: 20
   recoveryBarrageProjectileSpeed: 25
   attackPeriodLength: 3
+  shootSFX:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: ea4f29e582160464f8db6eee986250d2, type: 2}
   recoveryTime: 4
   longRecoveryTime: 6
   attackIndicator: {fileID: 8974203713140315807, guid: 709b0bd6b0b625249a98409dd7a87343, type: 3}
@@ -20757,7 +20761,11 @@ MonoBehaviour:
   deathSFX:
     idInternal: 0
     valueGuidInternal: 
-    WwiseObjectReference: {fileID: 0}
+    WwiseObjectReference: {fileID: 11400000, guid: 3761622205eb5854d971fce671c99143, type: 2}
+  damagedSFX:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: 3761622205eb5854d971fce671c99143, type: 2}
 --- !u!114 &1065634495979649153
 MonoBehaviour:
   m_ObjectHideFlags: 0

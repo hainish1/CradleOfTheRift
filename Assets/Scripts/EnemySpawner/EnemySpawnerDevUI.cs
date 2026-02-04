@@ -5,11 +5,12 @@ using UnityEngine.UIElements;
 public class EnemySpawnerUI : MonoBehaviour
 {
     [SerializeField] private EnemySpawner spawner;
+    [SerializeField] private EnemySpawner_2 spawner_2;
+
     private Label currentEnemyCountLabel;
     private Label currentCreditsLabel;
     private Label currentMaxEnemyCapLabel;
     private Label currentWaveLabel;
-
     private VisualElement devContainer;
 
     void Start()
@@ -22,13 +23,32 @@ public class EnemySpawnerUI : MonoBehaviour
         this.currentWaveLabel = root.Q<Label>("CurrentWave");
         this.devContainer = root.Q<VisualElement>("SpawnerDev");
 
-        this.spawner.CurrentEnemyCountChanged += OnCurrentEnemyCountChanged;
-        this.spawner.CurrentCreditsChanged += OnCurrentCreditsChanged;
-        this.spawner.CurrentMaxEnemyCapChanged += OnCurrentMaxEnemyCapChanged;
-        this.spawner.CurrentWaveChanged += OnCurrentWaveChanged;
-        this.spawner.DevModeChanged += OnDevModeChanged;
+        // Logic for Original Spawner
+        if (this.spawner != null)
+        {
+            this.spawner.CurrentEnemyCountChanged += OnCurrentEnemyCountChanged;
+            this.spawner.CurrentCreditsChanged += OnCurrentCreditsChanged;
+            this.spawner.CurrentMaxEnemyCapChanged += OnCurrentMaxEnemyCapChanged;
+            this.spawner.CurrentWaveChanged += OnCurrentWaveChanged;
+            this.spawner.DevModeChanged += OnDevModeChanged;
 
-        OnDevModeChanged(this.spawner.IsDevModeEnabled);        
+            OnDevModeChanged(this.spawner.IsDevModeEnabled);        
+        }
+        // Logic for New Node Spawner
+        else if (this.spawner_2 != null)
+        {
+            this.spawner_2.CurrentEnemyCountChanged += OnCurrentEnemyCountChanged;
+            this.spawner_2.CurrentCreditsChanged += OnCurrentCreditsChanged;
+            this.spawner_2.CurrentMaxEnemyCapChanged += OnCurrentMaxEnemyCapChanged;
+            this.spawner_2.CurrentWaveChanged += OnCurrentWaveChanged;
+            this.spawner_2.DevModeChanged += OnDevModeChanged;
+
+            OnDevModeChanged(this.spawner_2.IsDevModeEnabled);
+        }
+        else
+        {
+            Debug.LogError("EnemySpawnerUI: No spawner assigned in the inspector!");
+        }
     }
 
     private void OnCurrentEnemyCountChanged(int currentChange) {
@@ -41,7 +61,6 @@ public class EnemySpawnerUI : MonoBehaviour
 
     private void OnCurrentMaxEnemyCapChanged(int currentChange) {
         this.currentMaxEnemyCapLabel.text =  $"Current Max Enemy Cap: {currentChange}";
-
     }
 
     private void OnCurrentWaveChanged(int currentChange) {

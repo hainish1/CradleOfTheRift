@@ -158,6 +158,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Audio")]
     [SerializeField]
     private AK.Wwise.Event dashSoundEvent;
+    [SerializeField]
+    private AK.Wwise.Event jumpSoundEvent;
 
     [Header("VFX")]
     [SerializeField] private GameObject dashVFXPrefab;
@@ -954,6 +956,9 @@ public class PlayerMovement : MonoBehaviour
         _verticalVelocityVector.y = jumpForce;
 
         _characterController.Move(Time.deltaTime * _verticalVelocityVector);
+        
+        // Play the jump sound effect.
+        jumpSoundEvent.Post(gameObject);
     }
 
     /// <summary>
