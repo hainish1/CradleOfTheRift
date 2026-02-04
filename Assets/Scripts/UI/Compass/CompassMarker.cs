@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum MarkerType { Cave, Extraction }
+public enum MarkerType { Cave, Extraction, Chest }
 
 public class CompassMarker : MonoBehaviour
 {
