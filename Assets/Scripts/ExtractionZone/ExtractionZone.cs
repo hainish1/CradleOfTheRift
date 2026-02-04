@@ -130,6 +130,9 @@ private void OnExtraction()
             this.hasFinishedExtracting = true;
             this.isExtracting = false;
             this.ExtractionFinished?.Invoke();
+
+            // Disable the entire zone object
+            gameObject.SetActive(false);
         }
     }
     else if (!this.isExtracting && !this.hasFinishedExtracting)
