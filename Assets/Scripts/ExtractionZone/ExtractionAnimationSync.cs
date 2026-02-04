@@ -2,12 +2,20 @@ using UnityEngine;
 
 public class ExtractionAnimationSync : MonoBehaviour
 {
-    [SerializeField] private ExtractionZone zone;
+    private ExtractionZone zone;
     private Animator animator;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
+
+        zone = GetComponentInParent<ExtractionZone>();
+
+        if (zone == null)
+        {
+            Debug.LogError($"ExtractionAnimationSync on {gameObject.name} can't find ExtractionZone on any parent!");
+        }
+        
         // Set speed to 0 so the animation only moves when we tell it to
         animator.speed = 0; 
     }
