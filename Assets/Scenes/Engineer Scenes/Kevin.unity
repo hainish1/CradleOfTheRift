@@ -116929,83 +116929,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!1 &524055030
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 524055032}
-  - component: {fileID: 524055031}
-  - component: {fileID: 524055033}
-  m_Layer: 0
-  m_Name: Compass
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &524055031
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 524055030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PanelSettings: {fileID: 11400000, guid: 1e78771022128b742a8650341387398f, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: aec96ab084164dd488d200d0c2b9bb5c, type: 3}
-  m_SortingOrder: 0
-  m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 1920
-  m_WorldSpaceHeight: 1080
---- !u!4 &524055032
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 524055030}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 286.69818, y: 122.52771, z: -461.22635}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &524055033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 524055030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1526a3b70452d54ebdec838e474eb52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerTransform: {fileID: 492210151}
-  maxVisibleAngle: 90
-  uiDocument: {fileID: 524055031}
-  maxDistance: 100
-  minScale: 0.6
-  horizontalThreshold: 35
-  verticalOffset: 25
-  defaultTop: 9
-  stackUpdateInterval: 0.1
-  markerDefinitions:
-  - {fileID: 11400000, guid: f75f9d5a870b33c4dba41b720e516479, type: 2}
-  - {fileID: 11400000, guid: ab8015bf0fb36e44eab52b3da5b25919, type: 2}
-  - {fileID: 11400000, guid: b28cce75605716247929c21dafe46a23, type: 2}
 --- !u!1001 &526605156
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -393760,6 +393683,67 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3ace0744d315dfd40ba6f17e0d880c6d, type: 3}
+--- !u!1001 &1491202278409039015
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 54424195025414639, guid: 12587fafa62dcdf42923cd4a099fab66, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 286.69818
+      objectReference: {fileID: 0}
+    - target: {fileID: 54424195025414639, guid: 12587fafa62dcdf42923cd4a099fab66, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 122.52771
+      objectReference: {fileID: 0}
+    - target: {fileID: 54424195025414639, guid: 12587fafa62dcdf42923cd4a099fab66, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -461.22635
+      objectReference: {fileID: 0}
+    - target: {fileID: 54424195025414639, guid: 12587fafa62dcdf42923cd4a099fab66, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 54424195025414639, guid: 12587fafa62dcdf42923cd4a099fab66, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 54424195025414639, guid: 12587fafa62dcdf42923cd4a099fab66, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 54424195025414639, guid: 12587fafa62dcdf42923cd4a099fab66, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 54424195025414639, guid: 12587fafa62dcdf42923cd4a099fab66, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 54424195025414639, guid: 12587fafa62dcdf42923cd4a099fab66, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 54424195025414639, guid: 12587fafa62dcdf42923cd4a099fab66, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 361305367274270287, guid: 12587fafa62dcdf42923cd4a099fab66, type: 3}
+      propertyPath: playerTransform
+      value: 
+      objectReference: {fileID: 492210151}
+    - target: {fileID: 9153597553385548827, guid: 12587fafa62dcdf42923cd4a099fab66, type: 3}
+      propertyPath: m_Name
+      value: CompassManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 12587fafa62dcdf42923cd4a099fab66, type: 3}
 --- !u!1001 &4694789362321060023
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -393989,5 +393973,5 @@ SceneRoots:
   - {fileID: 1657721465}
   - {fileID: 1005347473}
   - {fileID: 783811487}
-  - {fileID: 524055032}
+  - {fileID: 1491202278409039015}
   - {fileID: 1495974185}
