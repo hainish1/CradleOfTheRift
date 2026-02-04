@@ -151,20 +151,33 @@ public class InventoryController : MonoBehaviour
         }
     }
 
-    private void UpdateDescription(ItemData data)
+private void UpdateDescription(ItemData data)
+{
+    if (data == null) return;
+
+    // Get the current stack count from the inventory logic
+    int currentStacks = playerInventory.GetItemCount(data);
+
+    string finalDescription;
+
+    if (useDynamicDescriptions)
     {
-        if (data == null) return;
-
-        // Query current count from logic to handle dynamic math
-        int currentStacks = playerInventory.GetItemCount(data);
-
-        // Request the formatted text from the ItemData script
-        string finalDescription = data.GetFormattedDescription(currentStacks, useDynamicDescriptions);
-        
-        // Append footer info if dynamic scaling is active
-        if (useDynamicDescriptions && currentStacks > 1)
-             finalDescription += $"\n(Total for {currentStacks} stacks)";
-
-        descriptionLabel.text = finalDescription;
+        // Use the math-heavy version from ItemData
+        finalDescription = data.GetFormattedDescription(currentStacks, true);
     }
+    else
+    {
+        // Use the raw description from ItemData (no math/formatting applied)
+        finalDescription = data.description;
+    }
+
+    // Append the stack footer regardless of the dynamic description toggle
+    // We only show it if the player actually has more than 1 of the item
+    if (currentStacks > 1)
+    {
+        finalDescription += $"\n\n<b>Stack Count: {currentStacks}</b>";
+    }
+
+    descriptionLabel.text = finalDescription;
+}
 }
