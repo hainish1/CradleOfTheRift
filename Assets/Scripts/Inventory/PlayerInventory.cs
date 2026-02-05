@@ -239,6 +239,8 @@ public class PlayerInventory : MonoBehaviour
         if (playerEntity == null) return;
         if (data.effects == null || data.effects.Count == 0) return;
 
+        bool poisonCoreAdded = false;
+
         foreach (var effect in data.effects)
         {
             if (effect.kind == ItemEffectKind.None) continue;
