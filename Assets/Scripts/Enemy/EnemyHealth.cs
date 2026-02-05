@@ -50,7 +50,7 @@ public class EnemyHealth : HealthController
         PlayerGold.Instance.AddGold(3); // Set it to 3 for now
 
         PlayDeathSFX();
-        PlayPSVFX(deathVFX, transform);
+        PlayPSVFX(deathVFX, deathVFXSpawnPoint != null ? deathVFXSpawnPoint : transform);
 
         Destroy(gameObject, cleanupDelay);
 
@@ -115,10 +115,13 @@ public class EnemyHealth : HealthController
         if (ObjectPool.instance != null)
         {
             fx = ObjectPool.instance.GetObject(vfxPrefab, spawnPos);
+            // fx.transform.SetPositionAndRotation(spawnPos.position, spawnPos.rotation);
+
         }
         else
         {
-            fx = Instantiate(vfxPrefab, spawnPos.position, Quaternion.identity);
+            fx = Instantiate(vfxPrefab, spawnPos.position, spawnPos.rotation);
+            
         }
 
         float lifetime = EstimateParticleLifetime(fx);
