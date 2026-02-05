@@ -161,6 +161,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private AK.Wwise.Event jumpSoundEvent;
 
+    [Header("VFX")]
+    [SerializeField] private GameObject dashVFXPrefab;
+
     void Awake()
     {
         _playerEntity = GetComponent<Entity>();
@@ -264,6 +267,10 @@ public class PlayerMovement : MonoBehaviour
         _flightAcceleration = _flightMaxSpeed / _flightAccelerationSeconds;
         _flightDeceleration = _flightMaxSpeed / _flightDecelerationSeconds;
         _currFlightEnergy = _flightMaxEnergy;
+
+        // VFX
+        if(dashVFXPrefab != null)
+            dashVFXPrefab.SetActive(false);
     }
 
     void Update()
@@ -808,6 +815,11 @@ public class PlayerMovement : MonoBehaviour
             DashCooldownStarted?.Invoke(dashDuration); // Notify listener to start the dash fade visual effect.
             // Play the dash audio effect here?
             dashSoundEvent.Post(gameObject);
+
+            // Play Dash VFX
+            if(dashVFXPrefab == null) return;
+            else StartCoroutine(EnableDashVFX());
+            //PlayDashVFX(transform.position, Quaternion.LookRotation(_dashDirectionUnitVector));
         }
     }
 
@@ -1247,4 +1259,21 @@ public class PlayerMovement : MonoBehaviour
     {
         return _currFlightEnergy;
     }
+
+    private IEnumerator EnableDashVFX()
+    {
+        dashVFXPrefab.SetActive(true);
+        yield return new WaitForSeconds(0.15f);
+        dashVFXPrefab.SetActive(false);
+    }
+
+    // private void PlayDashVFX(Vector3 position, Quaternion rotation)
+    // {
+    //     if(dashVFXPrefab != null)
+    //     {
+    //         GameObject vfx = Instantiate(dashVFXPrefab, position, rotation);
+    //         Debug.Log("Test: Position " + position + " Rotation " + rotation);
+    //         Destroy(vfx, 1.0f);
+    //     }
+    // }
 }

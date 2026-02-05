@@ -286,6 +286,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnDelay: 1
+  spawnVFXPrefab: {fileID: 4658278565933542678, guid: f34e100b55966c1489074b8f7c3853d8, type: 3}
 --- !u!1 &7863322857822642270
 GameObject:
   m_ObjectHideFlags: 0
@@ -539,7 +540,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebb71342bdd22284c9dc7ebf7abe5350, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zone: {fileID: 8052474352153079364}
 --- !u!4 &3397826875460230665 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 05906a1dccfa1114cab04e288b293d23, type: 3}
