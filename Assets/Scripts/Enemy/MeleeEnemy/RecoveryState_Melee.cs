@@ -22,7 +22,12 @@ public class RecoveryState_Melee : EnemyState
     public override void Enter()
     {
         endTime = Time.time + enemyMelee.recoveryTime; // post attack pause
-        if (enemy.agent != null) enemy.agent.isStopped = false;
+        if (enemy.agent != null)
+        {
+            enemy.agent.isStopped = true;
+            enemy.agent.velocity = Vector3.zero;
+            enemy.agent.ResetPath();
+        }
 
         //check if too close to the player
         if (enemy.target != null)
@@ -54,6 +59,7 @@ public class RecoveryState_Melee : EnemyState
         float currentDistance = Vector3.Distance(enemy.transform.position, enemy.target.position);
         if (needsRetreat && currentDistance < enemyMelee.minAttackDistance)
         {
+
             // calc retreat position
             Vector3 awayFromPlayer = enemy.transform.position - enemy.target.position;
             awayFromPlayer.y = 0f;
@@ -65,6 +71,7 @@ public class RecoveryState_Melee : EnemyState
                 if (enemy.agent != null && enemy.agent.enabled)
                 {
                     enemy.agent.SetDestination(retreatPosition);
+                    enemy.agent.isStopped = false;
                 }
             }
 

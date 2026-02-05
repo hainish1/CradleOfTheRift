@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91cad227e3a047e419b536eeaf72806a, type: 3}
+  m_Name: BossPool
+  m_EditorClassIdentifier: 
+  allBosses:
+  - prefab: {fileID: 5038527764505416237, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
+    isFlying: 0
+  - prefab: {fileID: 8841140246284276385, guid: 15a8a068ce872ef498ea76b3b627fd7c, type: 3}
+    isFlying: 1

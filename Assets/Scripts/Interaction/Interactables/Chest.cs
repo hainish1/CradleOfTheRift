@@ -31,7 +31,9 @@ public class Chest : MonoBehaviour, IInteractable
                 if (lootTable != null)
                 {
                     //Instantiate(item, transform.position + Vector3.up, Quaternion.identity);
-                    lootTable.DoDrop();
+                    // grab the inventory here and pass it down
+                    var inv = interactor.GetComponent<PlayerInventory>();
+                    lootTable.DoDrop(inv);
                     Debug.Log("Dropped loot.");
                 }
                 else

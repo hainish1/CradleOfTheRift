@@ -136,7 +136,63 @@ public class ItemData : ScriptableObject
     public OperatorType operatorType = OperatorType.Add;
     public float value = 1f;
     public int duration = -1; // perm by default
+    
+    [Header("Identity")]
+    public string itemId; // unique ID for saving / quering
 
+    private void OnValidate()
+    {
+        if (string.IsNullOrWhiteSpace(itemId))
+        {
+            itemId = System.Guid.NewGuid().ToString("N");
+        }
+    }
+
+        public string GetFormattedDescription(int stackCount, bool showTotalStats)
+    {
+        // Calculate the Multiplier
+        // For exponential stacking: Total = Value ^ StackCount
+        float effectiveStack = showTotalStats ? Mathf.Max(1, stackCount) : 1f;
+        float compoundedValue = Mathf.Pow(value, effectiveStack);
+
+        float displayValue = 0f;
+
+        // Format based on Operator Type
+        if (operatorType == OperatorType.Percentage)
+        {
+            // Example: 0.8^2 = 0.64 -> 64%
+            displayValue = compoundedValue * 100f;
+        }
+        else if (operatorType == OperatorType.Multiply)
+        {
+            if (compoundedValue < 1.0f)
+                {
+                    // For values like 0.8: (0.8^1) * 100 = 80% 
+                    displayValue = compoundedValue * 100f;
+                }
+            else
+            {
+                // Example: 1.05^2 = 1.1025 -> 10.25% increase
+                // Subtract 1 to show just the "bonus" percentage
+                displayValue = (compoundedValue - 1f) * 100f;
+            }
+        }
+        else if (operatorType == OperatorType.Add)
+        {
+            // Example: 5 * 2 = 10
+            displayValue = value * effectiveStack;
+        }
+
+        try 
+        {
+            // Inject the calculated value into the {0} placeholder
+            return string.Format(description, displayValue);
+        }
+        catch 
+        {
+            return description;
+        }
+    }
 }
 
 
