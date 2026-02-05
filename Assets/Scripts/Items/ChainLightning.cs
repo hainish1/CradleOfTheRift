@@ -6,6 +6,7 @@ public class ChainLightning : IDisposable
 {
     public static bool IsProcessingChain = false;
     public const float DefaultRange = 16f;
+    private const float VFXDuration = 0.5f;
 
     private Entity owner;
     private float baseChainDamagePercent;
@@ -20,6 +21,8 @@ public class ChainLightning : IDisposable
     private float chainDamagePercent;
     private int maxChainCount;
     private float chainRange;
+    
+    private HashSet<Enemy> hitEnemiesCache = new HashSet<Enemy>();
 
     public float CurrentRange => chainRange;
 
@@ -68,9 +71,11 @@ public class ChainLightning : IDisposable
         Enemy enemy = target as Enemy;
         if (enemy == null) return;
 
-        HashSet<Enemy> hit = new HashSet<Enemy> { enemy };
+        // reset the hit list and start the chain
+        hitEnemiesCache.Clear();
+        hitEnemiesCache.Add(enemy);
         float chainDamage = damage * chainDamagePercent;
-        ChainFromEnemy(enemy, enemy.transform.position, chainDamage, 0, hit);
+        ChainFromEnemy(enemy, enemy.transform.position, chainDamage, 0, hitEnemiesCache);
     }
 
     private void ChainFromEnemy(Enemy from, Vector3 fromPos, float baseDamage, int chainNum, HashSet<Enemy> hit)
@@ -104,7 +109,7 @@ public class ChainLightning : IDisposable
             hit.Add(closest);
             
             LightningCore.ApplyLightningDamage(owner, closest, baseDamage);
-            LightningCore.CreateLightningVFX(from.transform, closest.transform, chainRange, 0.2f, null, 0.5f, 0.5f, 0.18f);
+            LightningCore.CreateLightningVFX(from.transform, closest.transform, chainRange, VFXDuration, null, 0.5f, 0.5f, 0.18f);
             
             ChainFromEnemy(closest, closest.transform.position, baseDamage, chainNum + 1, hit);
         }

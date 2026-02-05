@@ -98,8 +98,8 @@ public class PoisonPool : MonoBehaviour
         baseObj.transform.localPosition = Vector3.zero;
         baseObj.transform.localRotation = Quaternion.identity;
 
-        CreatePoolMesh(baseObj.transform, radius * 2f, new Color(0.08f, 0.45f, 0.12f, 1f), 0.15f, 0f);
-        CreatePoolMesh(baseObj.transform, radius * 1.6f, new Color(0.07f, 0.38f, 0.1f, 0.95f), 0.2f, 25f);
+        CreatePoolMesh(baseObj.transform, radius * 2f, new Color(0.05f, 0.25f, 0.08f, 1f), 0.15f, 0f);
+        CreatePoolMesh(baseObj.transform, radius * 1.6f, new Color(0.04f, 0.2f, 0.06f, 0.95f), 0.2f, 25f);
 
         CreateBubbles(baseObj.transform);
     }
@@ -108,14 +108,14 @@ public class PoisonPool : MonoBehaviour
     {
         var obj = new GameObject("PoolMesh");
         obj.transform.SetParent(parent);
-        obj.transform.localPosition = new Vector3(0f, 0.02f, 0f);
-        obj.transform.localRotation = Quaternion.Euler(0f, rotation, 0f);
+        obj.transform.localPosition = Vector3.zero;
+        obj.transform.localRotation = Quaternion.identity;
         obj.transform.localScale = Vector3.one;
 
         var meshFilter = obj.AddComponent<MeshFilter>();
         var meshRenderer = obj.AddComponent<MeshRenderer>();
 
-        meshFilter.mesh = BuildDiscMesh(size * 0.5f, jitter, 32);
+        meshFilter.mesh = BuildTerrainAdaptiveMesh(size * 0.5f, jitter, 24, rotation);
 
         var mat = new Material(Shader.Find("Sprites/Default"));
         mat.color = color;
@@ -123,30 +123,75 @@ public class PoisonPool : MonoBehaviour
 
     }
 
-    private Mesh BuildDiscMesh(float radius, float jitter, int segments)
+    private Mesh BuildTerrainAdaptiveMesh(float radius, float jitter, int segments, float rotation)
     {
         Mesh mesh = new Mesh();
-        Vector3[] verts = new Vector3[segments + 1];
-        int[] tris = new int[segments * 3];
+        int rings = 2;
+        int totalVerts = 1 + segments * rings;
+        Vector3[] verts = new Vector3[totalVerts];
+        int triCount = segments * 3 + (rings - 1) * segments * 6;
+        int[] tris = new int[triCount];
 
-        verts[0] = Vector3.zero;
+        Vector3 center = transform.position;
+        verts[0] = GetGroundOffset(center);
+        
         float angleStep = Mathf.PI * 2f / segments;
+        float rotRad = rotation * Mathf.Deg2Rad;
+        int vertIndex = 1;
 
-        for (int i = 0; i < segments; i++)
+        for (int ring = 1; ring <= rings; ring++)
         {
-            float angle = angleStep * i;
-            float r = radius * (1f + Random.Range(-jitter, jitter));
-            verts[i + 1] = new Vector3(Mathf.Cos(angle) * r, 0f, Mathf.Sin(angle) * r);
+            float ringRadius = (radius / rings) * ring;
+            bool isOuterRing = (ring == rings);
+            
+            for (int i = 0; i < segments; i++)
+            {
+                float angle = angleStep * i + rotRad;
+                float r = ringRadius * (1f + Random.Range(-jitter, jitter));
+                Vector3 worldPos = center + new Vector3(Mathf.Cos(angle) * r, 0f, Mathf.Sin(angle) * r);
+                
+                if (isOuterRing || i % 4 == 0)
+                {
+                    verts[vertIndex] = GetGroundOffset(worldPos);
+                }
+                else
+                {
+                    int prevKey = vertIndex - (i % 4);
+                    int nextKey = (i % 4 == 3) ? vertIndex - 3 : vertIndex + (4 - i % 4);
+                    if (nextKey >= totalVerts) nextKey = vertIndex;
+                    float t = (i % 4) / 4f;
+                    verts[vertIndex] = Vector3.Lerp(verts[prevKey], verts[0], t);
+                }
+                vertIndex++;
+            }
         }
 
+        int triIndex = 0;
         for (int i = 0; i < segments; i++)
         {
-            int next = i + 1;
-            int nextIndex = (i + 1) % segments + 1;
-            int triIndex = i * 3;
-            tris[triIndex] = 0;
-            tris[triIndex + 1] = nextIndex;
-            tris[triIndex + 2] = next;
+            int next = (i + 1) % segments;
+            tris[triIndex++] = 0;
+            tris[triIndex++] = 1 + next;
+            tris[triIndex++] = 1 + i;
+        }
+
+        for (int ring = 0; ring < rings - 1; ring++)
+        {
+            int currentRingStart = 1 + ring * segments;
+            int nextRingStart = 1 + (ring + 1) * segments;
+            
+            for (int i = 0; i < segments; i++)
+            {
+                int next = (i + 1) % segments;
+                
+                tris[triIndex++] = currentRingStart + i;
+                tris[triIndex++] = nextRingStart + i;
+                tris[triIndex++] = currentRingStart + next;
+                
+                tris[triIndex++] = currentRingStart + next;
+                tris[triIndex++] = nextRingStart + i;
+                tris[triIndex++] = nextRingStart + next;
+            }
         }
 
         mesh.vertices = verts;
@@ -154,6 +199,21 @@ public class PoisonPool : MonoBehaviour
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
         return mesh;
+    }
+
+    private Vector3 GetGroundOffset(Vector3 worldPos)
+    {
+        Vector3 rayStart = worldPos + Vector3.up * 2f;
+        Vector3 rayEnd = worldPos + Vector3.down * 5f;
+        float rayDistance = 7f;
+
+        if (Physics.Raycast(rayStart, Vector3.down, out RaycastHit hit, rayDistance, ~0, QueryTriggerInteraction.Ignore))
+        {
+            Vector3 localPos = transform.InverseTransformPoint(hit.point + Vector3.up * 0.5f);
+            return localPos;
+        }
+
+        return transform.InverseTransformPoint(worldPos);
     }
 
     private void CreateBubbles(Transform parent)
@@ -180,6 +240,21 @@ public class PoisonPool : MonoBehaviour
         shape.enabled = true;
         shape.shapeType = ParticleSystemShapeType.Circle;
         shape.radius = radius * 0.5f;
+        
+        var colorOverLifetime = bubbleSystem.colorOverLifetime;
+        colorOverLifetime.enabled = true;
+        Gradient gradient = new Gradient();
+        gradient.SetKeys(
+            new GradientColorKey[] { 
+                new GradientColorKey(new Color(0.05f, 0.35f, 0.1f), 0f),
+                new GradientColorKey(new Color(0.08f, 0.4f, 0.15f), 1f)
+            },
+            new GradientAlphaKey[] { 
+                new GradientAlphaKey(0.9f, 0f), 
+                new GradientAlphaKey(0f, 1f) 
+            }
+        );
+        colorOverLifetime.color = gradient;
 
         var renderer = bubbleSystem.GetComponent<ParticleSystemRenderer>();
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
@@ -232,7 +307,7 @@ public class PoisonPool : MonoBehaviour
             GameObject endObj = new GameObject("PoolArcEnd");
             endObj.transform.position = end;
 
-            LightningCore.CreateLightningVFX(startObj.transform, endObj.transform, radius, 0.2f, null, 0f, 0f, 0.1f);
+            LightningCore.CreateLightningVFX(startObj.transform, endObj.transform, radius, 0.2f, null, 0f, 0f, 0.1f, true);
             Destroy(startObj, 0.3f);
             Destroy(endObj, 0.3f);
         }

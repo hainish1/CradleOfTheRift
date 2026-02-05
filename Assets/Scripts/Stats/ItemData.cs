@@ -31,7 +31,11 @@ public enum ItemEffectKind
     ArcStrike,
     ElementReactionExplosion,
     LightningStrike,
-    FlyFire
+    FlyFire,
+    OrbitingFireballs,
+    LightningDash,
+    OrbitingFireballsTest,
+    ChainLightningTest
 }
 
 [Serializable]
@@ -119,6 +123,30 @@ public class EffectSpec
     public float elementReactionExplosionRadius = 3f;
     public float elementReactionExplosionCooldown = 1f;
     public GameObject elementReactionExplosionVFX;
+
+    // Orbiting Fireballs
+    public float orbitingFireballDamage = 10f;
+    public float orbitingFireballRadius = 3f;
+    public float orbitingFireballRotationSpeed = 60f;
+
+    // Lightning Dash
+    public float lightningDashDamage = 20f;
+    public int lightningDashChainCount = 5;
+    public float lightningDashChainRange = 15f;
+
+    // Orbiting Fireballs Test
+    public float orbitingFireballTestDamage = 10f;
+    public float orbitingFireballTestDamageThreshold = 100f;
+    public int orbitingFireballTestMaxCount = 20;
+    public float orbitingFireballTestLifetime = 5f;
+
+    // Chain Lightning Test
+    public float chainLightningTestStrikeInterval = 5f;
+    public float chainLightningTestBuffDuration = 3f;
+    public float chainLightningTestChainDamagePercent = 0.5f;
+    public int chainLightningTestMaxDepth = 2;
+    public int chainLightningTestBranchesPerNode = 2;
+    public float chainLightningTestChainRange = 10f;
 }
 
 public enum ItemRarity

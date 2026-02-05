@@ -233,7 +233,7 @@ public class PlayerLightningStrike : IDisposable
             startObj.transform,
             endObj.transform,
             StrikeHeight,
-            StrikeVfxDuration,
+            0.3f,
             null,
             0f,
             0f,

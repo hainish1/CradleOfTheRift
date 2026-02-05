@@ -167,6 +167,37 @@ public class DotDebuff : MonoBehaviour
         activeDots.Clear();
     }
 
+    public float GetRemainingPoisonDamageAndClear(out bool hadPoison)
+    {
+        hadPoison = false;
+        float totalRemainingDamage = 0f;
+
+        foreach (var dot in activeDots)
+        {
+            if (dot.id == "poison")
+            {
+                hadPoison = true;
+                float remainingTime = dot.endTime - Time.time;
+                int remainingTicks = Mathf.CeilToInt(remainingTime / dot.tickInterval);
+                float damagePerTick = dot.GetTotalDamagePerTick();
+                totalRemainingDamage += damagePerTick * remainingTicks;
+            }
+        }
+
+        if (hadPoison)
+        {
+            for (int i = activeDots.Count - 1; i >= 0; i--)
+            {
+                if (activeDots[i].id == "poison")
+                {
+                    activeDots.RemoveAt(i);
+                }
+            }
+        }
+
+        return totalRemainingDamage;
+    }
+
     void OnDestroy()
     {
         activeDots.Clear();

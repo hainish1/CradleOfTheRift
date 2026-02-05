@@ -10,53 +10,53 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
-  m_Name: Arc
+  m_Name: OrbitingFireballs
   m_EditorClassIdentifier: 
-  itemName: Arc
+  itemName: dotpool
   description: Item Description Here
-  icon: {fileID: 21300066, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  icon: {fileID: 21300000, guid: 32700198561e47044863cf80370fe63a, type: 3}
   rarity: 1
   rarityColor: {r: 0.29803923, g: 0.8, b: 0.29803923, a: 1}
   canStack: 1
   maxStacks: 99
   stackingType: 0
-  useMultipleStats: 0
+  useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 14
+  - kind: 20
     duration: -1
     healOnDamagePercentPerStack: 0
     stompDamagePerStack: 0
     stompBounceForce: 0
     fallDamageBonusPerMeter: 0
     fallDamageBonusPerStack: 0
-    poisonPoolRadius: 4
-    poisonPoolLifetime: 4
+    poisonPoolRadius: 10
+    poisonPoolLifetime: 8
     numberOfProjectiles: 0
     projectileDamageMultiplier: 0
     explosiveAoeRadius: 0
     explosiveAoeDamageMultiplier: 0
     explosiveMaxRange: 0
     explosiveVFX: {fileID: 0}
-    chainDamagePercent: 0
-    maxChainCount: 0
-    chainRange: 0
+    chainDamagePercent: 0.2
+    maxChainCount: 3
+    chainRange: 20
     chainLightningVFX: {fileID: 0}
     bounceRange: 0
     maxBounceCount: 0
     damageMultiplierPerBounce: 0
     bounceVFX: {fileID: 0}
-    delayedDamageTime: 1
-    delayedDamageMultiplier: 2
+    delayedDamageTime: 0
+    delayedDamageMultiplier: 0
     delayedMarkVFX: {fileID: 0}
     dashDamage: 0
     dashDamageRange: 0
-    fusionTriggerElement: 0
-    fusionEffectElement: 0
+    fusionTriggerElement: 1
+    fusionEffectElement: 3
     burnAuraDamagePerSecond: 5
     burnAuraRange: 3
     burnAuraTickInterval: 1
-    arcStrikeDamage: 1
+    arcStrikeDamage: 10
     arcStrikeRange: 10
     arcStrikePoissonLambda: 5.5
     playerLightningStrikeDamage: 12
@@ -67,8 +67,8 @@ MonoBehaviour:
     flyingFireRadius: 3
     flyingFireTickInterval: 0.5
     flyingFireOffset: 1.5
-    elementReactionExplosionDamage: 20
-    elementReactionExplosionRadius: 3
+    elementReactionExplosionDamage: 50
+    elementReactionExplosionRadius: 10
     elementReactionExplosionCooldown: 1
     elementReactionExplosionVFX: {fileID: 0}
     orbitingFireballDamage: 10
@@ -81,12 +81,6 @@ MonoBehaviour:
     orbitingFireballTestDamageThreshold: 100
     orbitingFireballTestMaxCount: 20
     orbitingFireballTestLifetime: 5
-    chainLightningTestStrikeInterval: 5
-    chainLightningTestBuffDuration: 3
-    chainLightningTestChainDamagePercent: 0.5
-    chainLightningTestMaxDepth: 2
-    chainLightningTestBranchesPerNode: 2
-    chainLightningTestChainRange: 10
   statType: 9
   operatorType: 0
   value: 1

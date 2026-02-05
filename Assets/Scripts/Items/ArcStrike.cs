@@ -18,7 +18,12 @@ public class ArcStrike : IDisposable
     private Dictionary<Enemy, float> targetCooldowns = new Dictionary<Enemy, float>();
     private List<PendingArc> pendingArcs = new List<PendingArc>();
     
-    private class PendingArc
+    private List<Enemy> candidatesBuffer = new List<Enemy>();
+    private List<Enemy> toRemoveBuffer = new List<Enemy>();
+    private List<PendingArc> toProcessBuffer = new List<PendingArc>();
+    private Collider[] overlapBuffer = new Collider[64];
+    
+    private struct PendingArc
     {
         public Enemy target;
         public float damage;
@@ -110,12 +115,12 @@ public class ArcStrike : IDisposable
 
     private Enemy PickWeightedTarget()
     {
-        Collider[] nearby = Physics.OverlapSphere(owner.transform.position, range, enemyLayer);
-        List<Enemy> candidates = new List<Enemy>();
+        int hitCount = Physics.OverlapSphereNonAlloc(owner.transform.position, range, overlapBuffer, enemyLayer);
+        candidatesBuffer.Clear();
         
-        foreach (Collider col in nearby)
+        for (int i = 0; i < hitCount; i++)
         {
-            Enemy enemy = col.GetComponentInParent<Enemy>();
+            Enemy enemy = overlapBuffer[i].GetComponentInParent<Enemy>();
             if (enemy == null) continue;
             
             IDamageable damageable = enemy.GetComponent<IDamageable>();
@@ -123,13 +128,13 @@ public class ArcStrike : IDisposable
             
             if (IsOnCooldown(enemy)) continue;
             
-            candidates.Add(enemy);
+            candidatesBuffer.Add(enemy);
         }
         
-        if (candidates.Count == 0) return null;
+        if (candidatesBuffer.Count == 0) return null;
         
-        int index = UnityEngine.Random.Range(0, candidates.Count);
-        return candidates[index];
+        int index = UnityEngine.Random.Range(0, candidatesBuffer.Count);
+        return candidatesBuffer[index];
     }
 
     private bool IsOnCooldown(Enemy enemy)
@@ -140,29 +145,29 @@ public class ArcStrike : IDisposable
 
     private void UpdateCooldowns()
     {
-        var toRemove = new List<Enemy>();
+        toRemoveBuffer.Clear();
         foreach (var kvp in targetCooldowns)
         {
             if (Time.time >= kvp.Value)
-                toRemove.Add(kvp.Key);
+                toRemoveBuffer.Add(kvp.Key);
         }
-        foreach (var enemy in toRemove)
+        foreach (var enemy in toRemoveBuffer)
             targetCooldowns.Remove(enemy);
     }
 
     private void ProcessPendingArcs()
     {
-        var toProcess = new List<PendingArc>();
+        toProcessBuffer.Clear();
         for (int i = pendingArcs.Count - 1; i >= 0; i--)
         {
             if (Time.time >= pendingArcs[i].triggerTime)
             {
-                toProcess.Add(pendingArcs[i]);
+                toProcessBuffer.Add(pendingArcs[i]);
                 pendingArcs.RemoveAt(i);
             }
         }
         
-        foreach (var arc in toProcess)
+        foreach (var arc in toProcessBuffer)
         {
             if (arc.target == null || arc.target.GetComponent<IDamageable>()?.IsDead == true)
                 continue;
@@ -175,7 +180,8 @@ public class ArcStrike : IDisposable
             float startHeight = UnityEngine.Random.Range(0.4f, 0.6f);
             float extendTime = Mathf.Lerp(0.15f, 0.25f, distance / range);
             
-            LightningCore.CreateLightningVFX(owner.transform, arc.target.transform, range, flightTime, null, startHeight, 0.5f, extendTime);
+            
+            LightningCore.CreateLightningVFX(owner.transform, arc.target.transform, range, flightTime, null, startHeight, 0.5f, extendTime, enableArcBend: true);
         }
     }
 

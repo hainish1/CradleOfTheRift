@@ -343,6 +343,18 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
+    ///     Locks player movement and actions for a set time.
+    ///   </para>
+    /// </summary>
+    /// <param name="duration"> How long to lock controls in seconds. </param>
+    public void LockMovement(float duration)
+    {
+        _kbControlsLockTimer = Mathf.Max(_kbControlsLockTimer, duration);
+        _kbDashLockTimer = Mathf.Max(_kbDashLockTimer, duration);
+    }
+
+    /// <summary>
+    ///   <para>
     ///     Gets all stat changes from the stats file on any frame this method is called.
     ///   </para>
     /// </summary>
