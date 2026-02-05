@@ -33,10 +33,12 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     // Animation Parameters
 
     [Header("Animation Parameters")] [Space]
-    [SerializeField] private AnimationClip _attack0;
     [SerializeField] private AnimationClip _attack1;
-    [SerializeField] private AnimationClip _transition0;
-    [SerializeField] private AnimationClip _transition1;
+    [SerializeField] private AnimationClip _attack2;
+    [SerializeField] private AnimationClip _preTransition1;
+    [SerializeField] private AnimationClip _preTransition2;
+    [SerializeField] private AnimationClip _postTransition1;
+    [SerializeField] private AnimationClip _postTransition2;
     private float[] _attackDurations;
 
     // Hit Registration Parameters
@@ -64,7 +66,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private float MeleeDamage => _playerEntity.Stats.MeleeDamage;
     private float AttackCooldown => FindLargestTimeCooldown();
     [Header("Attack Parameters")] [Space]
-    [SerializeField] private float _comboInputSecondsMargin;
+    [SerializeField] private float _comboInputSecondsBuffer;
     [SerializeField] private float knockbackForce;
     private float _currAttackDuration;
     private bool _attackInputPending;
@@ -140,9 +142,9 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         // Gradually align player model with camera direction.
         if (_isAttacking)
         {
-            float degreesPerSecond = Time.deltaTime * Mathf.Deg2Rad * 120;
-            Vector3 rotateIncrement = Vector3.RotateTowards(_playerModel.forward, _playerCamera.forward, degreesPerSecond, 0);
-            _playerModel.forward = rotateIncrement;
+            //float degreesPerSecond = Time.deltaTime * Mathf.Deg2Rad * 120;
+            //Vector3 rotateIncrement = Vector3.RotateTowards(_playerModel.forward, _playerCamera.forward, degreesPerSecond, 0);
+            //_playerModel.forward = rotateIncrement;
 
             //_playerModel.transform.rotation = Quaternion.Euler(_playerCamera.rotation.eulerAngles.x, _playerCamera.rotation.eulerAngles.y, 0);
         }
@@ -175,22 +177,24 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         float currAttackSpeed = _playerEntity.Stats.MeleeAttackSpeed;
         float inverseAttackSpeed = Mathf.Clamp(1 / currAttackSpeed, 1e-3f, float.MaxValue);
 
-        _attackDurations[0] = (_attack0.length + _transition0.length) * inverseAttackSpeed;
-        _attackDurations[1] = (_attack1.length + _transition1.length) * inverseAttackSpeed;
-        _weaponAnim.SetFloat("AttackSpeedMultiplier", 1 / inverseAttackSpeed);
+        _attackDurations[0] = (_attack1.length + _preTransition1.length) * inverseAttackSpeed;
+        _attackDurations[1] = (_attack2.length + _preTransition2.length) * inverseAttackSpeed;
+        _weaponAnim.SetFloat("AttackSpeedMultiplier", currAttackSpeed);
     }
 
     /// <summary>
     ///   <para>
     ///     Finds the largest time value out of the attack cooldown and the combo attack durations and returns it.
-    ///     To avoid unexpected issues, the attack cooldown should always be set to a larger value than the upper
-    ///     time margin of the longest attack duration.
+    ///     To avoid unexpected issues, the attack cooldown should always be set to a larger value than the longest
+    ///     attack duration.
     ///   </para>
     /// </summary>
     /// <returns> The largest time value. </returns>
     private float FindLargestTimeCooldown()
     {
-        return Mathf.Max(Mathf.Max(_attackDurations[0], _attackDurations[1]), _playerEntity.Stats.MeleeAttackRate);
+        float duration1 = _attackDurations[0] + _postTransition1.length;
+        float duration2 = _attackDurations[1] + _postTransition2.length;
+        return Mathf.Max(Mathf.Max(duration1, duration2), _playerEntity.Stats.MeleeAttackRate);
     }
 
     /// <summary>
@@ -198,10 +202,10 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     ///     The duration of the current attack cooldown in seconds with the input buffer time subtracted from it.
     ///   </para>
     /// </summary>
-    /// <returns> The lower time margin. </returns>
+    /// <returns> The cooldown minus the buffer margin. </returns>
     private float GetCooldownMinusBuffer()
     {
-        return _currAttackDuration - _comboInputSecondsMargin;
+        return _currAttackDuration - _comboInputSecondsBuffer;
     }
 
     /// <summary>
@@ -213,24 +217,26 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     {
         _attackInputPending = false;
         CanAttack = false;
-        print($"Combo Try. | {_currComboCount}");
-        _weaponAnim.SetTrigger("Attack" + _currComboCount);
-
-        _currAttackDuration = _attackDurations[_currComboCount];
+        //print($"Combo Try. | {_currComboCount}");
         _currComboCount++;
+        _weaponAnim.SetTrigger("Attack" + _currComboCount);
+        _currAttackDuration = _attackDurations[_currComboCount - 1];
+        float delaySeconds;
 
         // Wait for lower delay margin if combo attack is still possible
         if (_currComboCount < _maxComboCount)
         {
             _comboTimer = 0;
-            StartCoroutine(DelayAttack(GetCooldownMinusBuffer()));
+            delaySeconds = GetCooldownMinusBuffer();
         }
         else
         {
             _comboTimer = _currAttackDuration;
             _currAttackDuration = _attackDurations[0];
-            StartCoroutine(DelayAttack(AttackCooldown));
+            delaySeconds = AttackCooldown;
         }
+
+        StartCoroutine(DelayAttack(delaySeconds));
     }
 
     /// <summary>
@@ -238,6 +244,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     ///     Coroutine for putting melee attack on cooldown.
     ///   </para>
     /// </summary>
+    /// <param name="delaySeconds"> The seconds to delay the next attack. </param>
     /// <returns> IEnumerator object. </returns>
     private IEnumerator DelayAttack(float delaySeconds)
     {
@@ -256,7 +263,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         {
             timer += Time.deltaTime;
 
-            // Break out of the coroutine if an attack input is pending.
+            // Break out of the coroutine if an attack input is pending during the buffer.
             if (_attackInputPending)
             {
                 // Wait until the current attack has ended before allowing the next one.
@@ -434,7 +441,6 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// </summary>
     private void OnAttackStart()
     {
-        print("Reached attack begin.");
         _isAttacking = true;
     }
 
@@ -455,7 +461,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// </summary>
     private void OnAttackEnd()
     {
-        print($"Reached attack end. | {_currComboCount}");
+        //print($"Attack end: {_currComboCount}");
         _isAttacking = false;
         _isRegistering = false;
         if (_currComboCount == _maxComboCount) _currComboCount = 0;
