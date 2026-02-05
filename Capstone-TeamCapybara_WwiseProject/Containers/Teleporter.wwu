@@ -4,6 +4,20 @@
 		<WorkUnit Name="Teleporter" ID="{EC381AB7-06D5-4C30-99D5-7FE62023AD2F}" OwnerID="{8ADB7485-E0A9-4F0D-A14F-7ED951DF96EF}" PersistMode="Nested">
 			<ChildrenList>
 				<Sound Name="TeleporterThrum" ID="{8031F236-B365-4A21-AA8E-3F056A58EC3A}" ShortID="173407493">
+					<PropertyList>
+						<Property Name="3DSpatialization" Type="int16" Value="2"/>
+						<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+						<Property Name="IsStreamingEnabled" Type="bool">
+							<ValueList>
+								<Value>True</Value>
+							</ValueList>
+						</Property>
+						<Property Name="Volume" Type="Real64">
+							<ValueList>
+								<Value>12</Value>
+							</ValueList>
+						</Property>
+					</PropertyList>
 					<ReferenceList>
 						<Reference Name="Attenuation">
 							<ObjectRef Name="Environment Attenuation" ID="{0215F850-5BC9-4893-AC9F-BD3ECA73CEDA}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>

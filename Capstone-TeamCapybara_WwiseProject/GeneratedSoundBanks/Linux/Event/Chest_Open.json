@@ -1,0 +1,47 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "2728948375",
+    "Type": "Event",
+    "GUID": "{E8ACB5E9-C9AC-4B80-97EF-9A825FC9C893}",
+    "Language": "SFX",
+    "Hash": "{7BAF82EB-2E91-1993-4A3F-D6D6512E9D5F}",
+    "ObjectPath": "Chest_Open",
+    "ShortName": "Chest_Open",
+    "Path": "Event/Chest_Open.bnk",
+    "Media": [
+     {
+      "Id": "4361091",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Chest.wav",
+      "Path": "Media/4361091.wem",
+      "CachePath": "8A/{8A8F0717-CAC2-27C2-5E30-638883B9B5E1}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "2728948375",
+      "Name": "Chest_Open",
+      "ObjectPath": "\\Events\\Default Work Unit\\Environment\\Chest\\Chest_Open",
+      "GUID": "{E8ACB5E9-C9AC-4B80-97EF-9A825FC9C893}",
+      "MaxAttenuation": "50",
+      "DurationType": "Infinite",
+      "MediaRefs": [
+       {
+        "Id": "4361091"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{38B4560E-8E66-C172-CC24-043108FA4BA8}"
+ }
+}

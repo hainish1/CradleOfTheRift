@@ -103,6 +103,43 @@
 					</ChildrenList>
 				</Folder>
 				<WorkUnit Name="Teleporter" ID="{EC381AB7-06D5-4C30-99D5-7FE62023AD2F}" PersistMode="Reference"/>
+				<Folder Name="Chest" ID="{3AD4800C-1EFD-4DDA-B1E7-FA6356839204}" ShortID="535766201">
+					<ChildrenList>
+						<Sound Name="Chest_Ambient" ID="{C1B07238-5A1E-4B3C-8A90-B98E6C0740D1}" ShortID="96403284">
+							<PropertyList>
+								<Property Name="3DPosition" Type="int16" Value="1"/>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
+								<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Chest Attenuation" ID="{342B66EC-3B00-4619-92C2-3938E7313634}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+								</Reference>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="Chest" ID="{DFA96E53-4C72-4B55-9B0B-D7D222EEEDCB}">
+									<Language>SFX</Language>
+									<AudioFile>Chest.wav</AudioFile>
+									<MediaIDList>
+										<MediaID ID="4361091"/>
+									</MediaIDList>
+								</AudioFileSource>
+							</ChildrenList>
+							<PositioningInfo>
+								<Position Name="" ID="{0147839B-F3BC-41EC-9B69-1300D04F1F29}"/>
+							</PositioningInfo>
+							<ActiveSourceList>
+								<ActiveSource Name="Chest" ID="{DFA96E53-4C72-4B55-9B0B-D7D222EEEDCB}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+					</ChildrenList>
+				</Folder>
 			</ChildrenList>
 		</WorkUnit>
 	</Containers>
