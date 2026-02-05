@@ -152,10 +152,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemSlotTemplate: {fileID: 9197481963319205126, guid: 925452721cfba164895b6760d6a155ba, type: 3}
-  commonColor: {r: 1, g: 1, b: 1, a: 1}
-  uncommonColor: {r: 0, g: 1, b: 0, a: 1}
-  rareColor: {r: 1, g: 0, b: 0, a: 1}
-  legendaryColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  commonColor: {r: 1, g: 1, b: 1, a: 0.4}
+  uncommonColor: {r: 0, g: 1, b: 0, a: 0.4}
+  rareColor: {r: 1, g: 0, b: 0, a: 0.4}
+  legendaryColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 0.4}
   maxVisibleItems: 20
 --- !u!114 &1557612151386117096
 MonoBehaviour:
@@ -170,4 +170,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilitySlotAsset: {fileID: 9197481963319205126, guid: a8e77727db11c7e40809d6ff565c7ddc, type: 3}
-  abilities: []
+  playerManager: {fileID: 0}
+  images:
+  - {fileID: 2800000, guid: 60543084556cda8439f8d4834475dbaa, type: 3}
