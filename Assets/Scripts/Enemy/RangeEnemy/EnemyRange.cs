@@ -109,6 +109,8 @@ public class EnemyRange : Enemy
 
     public override void Update()
     {
+        if (PauseManager.GameIsPaused) return;
+
         base.Update();
 
         // UpdateHover();
@@ -121,6 +123,8 @@ public class EnemyRange : Enemy
     /// </summary>
     void UpdateFlightMovement()
     {
+        if (PauseManager.GameIsPaused) return;
+
         if (agent == null) return;
 
         float baseTargetY = transform.position.y;

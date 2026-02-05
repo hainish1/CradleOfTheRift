@@ -2,57 +2,44 @@ using UnityEngine;
 
 public class PauseManager : MonoBehaviour
 {
+    public enum PauseState
+    {
+        None,
+        PauseMenu,
+        Inventory,
+        EndGame
+    }
     public static bool GameIsPaused; // Global Pause Var
+    public static PauseState CurrentPauseState = PauseState.None;
 
     private bool isPaused = false;
-    PauseAction action;
+    private PauseAction action;
     [SerializeField] private GameObject pauseMenuUI;
+    [SerializeField] private GameObject inventoryMenuUI;
     [SerializeField] private PlayerAimController playerAim;
-    [SerializeField] private GameObject inventoryUI;
-
 
     void Awake()
     {
         action = new PauseAction();
-        GameIsPaused = false; // Reset static flag on scene start
-        isPaused = false;     // Reset instance flag
-
+        ResumeInternal();
     }
 
     void Start()
     {
         pauseMenuUI.SetActive(false);
-        Time.timeScale = 1f;
-        GameIsPaused = false;
+        inventoryMenuUI.SetActive(false);
 
-        action.Pause.PauseGame.performed += _ => DeterminedPause();
+        action.Pause.PauseGame.performed += _ => TogglePauseMenu();
+        action.Inventory.Inventory.performed += _ => ToggleInventory();
     }
+    void OnEnable() { action.Enable(); }
 
-
-    private void DeterminedPause()
-    {
-        if (PlayerHealth.GameIsOver) return; // cannot pause if game ended
-
-        if (isPaused)
-            ResumeGame();
-        else
-            PauseGame();
-    }
-    void OnEnable()
-    {
-        action.Enable();
-    }
-
-    void OnDisable()
-    {
-        action.Disable();
-    }
+    void OnDisable() { action.Disable(); }
 
     public void PauseGame()
     {
         isPaused = true;
         GameIsPaused = true;
-
         Time.timeScale = 0f;
 
         if (playerAim != null)
@@ -61,15 +48,23 @@ public class PauseManager : MonoBehaviour
             playerAim.IsPaused = true;
         }
 
+        if (PlayerHealth.GameIsOver) return;
+
         if (pauseMenuUI != null)
             pauseMenuUI.SetActive(true);
     }
 
     public void ResumeGame()
     {
-        isPaused = false;
-        GameIsPaused = false;
+        ResumeInternal();
+    }
 
+    private void ResumeInternal()
+    {
+        GameIsPaused = false;
+        isPaused = false;
+
+        CurrentPauseState = PauseState.None;
         Time.timeScale = 1f;
 
         if (playerAim != null)
@@ -78,15 +73,9 @@ public class PauseManager : MonoBehaviour
             playerAim.IsPaused = false;
         }
 
-        if (pauseMenuUI != null)
-            pauseMenuUI.SetActive(false);
+        pauseMenuUI.SetActive(false);
+        inventoryMenuUI.SetActive(false);
     }
-    public void OpenInventory()
-    {
-        // pauseMenuUI.SetActive(false);
-        // inventoryUI.SetActive(true);
-    }
-
     public void QuitGame()
     {
         Debug.Log("Quitting game...");
@@ -94,6 +83,71 @@ public class PauseManager : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
+    }
+
+    private void ApplyPause()
+    {
+        GameIsPaused = true;
+        Time.timeScale = 0f;
+
+        if (playerAim != null)
+        {
+            playerAim.SetLookEnabled(false);
+            playerAim.IsPaused = true;
+        }
+    }
+    private void TogglePauseMenu()
+    {
+        if (PlayerHealth.GameIsOver) return;
+        if (CurrentPauseState == PauseState.EndGame) return;
+
+
+        if (CurrentPauseState == PauseState.PauseMenu)
+        {
+            ResumeInternal();
+            return;
+        }
+
+        if (CurrentPauseState != PauseState.None)
+            return; // inventory open → ignore ESC
+
+        CurrentPauseState = PauseState.PauseMenu;
+        ApplyPause();
+        pauseMenuUI.SetActive(true);
+    }
+    private void ToggleInventory()
+    {
+        if (PlayerHealth.GameIsOver) return;
+        if (CurrentPauseState == PauseState.EndGame) return;
+
+        if (CurrentPauseState == PauseState.Inventory)
+        {
+            ResumeInternal();
+            return;
+        }
+
+        if (CurrentPauseState != PauseState.None)
+            return; // pause menu open → ignore inventory
+
+        CurrentPauseState = PauseState.Inventory;
+        ApplyPause();
+        inventoryMenuUI.SetActive(true);
+    }
+    public void PauseForEndGame()
+    {
+        CurrentPauseState = PauseState.EndGame;
+        GameIsPaused = true;
+        Time.timeScale = 0f;
+
+        if (playerAim != null)
+        {
+            playerAim.SetLookEnabled(false);
+            playerAim.IsPaused = true;
+        }
+
+        // Safety disable gameplay menus
+        pauseMenuUI.SetActive(false);
+        inventoryMenuUI.SetActive(false);
     }
 
 }
