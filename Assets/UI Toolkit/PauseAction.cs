@@ -41,11 +41,39 @@ public partial class @PauseAction: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""830de352-ade1-4352-aeb8-91e45919e281"",
-                    ""path"": ""<Keyboard>/tab"",
+                    ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""PauseGame"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Inventory"",
+            ""id"": ""33209ab8-dcfc-4165-ae9a-017e10f47ebd"",
+            ""actions"": [
+                {
+                    ""name"": ""Inventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""d8fb2053-8e00-4f55-87e2-b84a0bd959ce"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""a6e6273d-2916-4caf-88e3-9316ebd7982a"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Inventory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -57,11 +85,15 @@ public partial class @PauseAction: IInputActionCollection2, IDisposable
         // Pause
         m_Pause = asset.FindActionMap("Pause", throwIfNotFound: true);
         m_Pause_PauseGame = m_Pause.FindAction("PauseGame", throwIfNotFound: true);
+        // Inventory
+        m_Inventory = asset.FindActionMap("Inventory", throwIfNotFound: true);
+        m_Inventory_Inventory = m_Inventory.FindAction("Inventory", throwIfNotFound: true);
     }
 
     ~@PauseAction()
     {
         UnityEngine.Debug.Assert(!m_Pause.enabled, "This will cause a leak and performance issues, PauseAction.Pause.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Inventory.enabled, "This will cause a leak and performance issues, PauseAction.Inventory.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -165,8 +197,58 @@ public partial class @PauseAction: IInputActionCollection2, IDisposable
         }
     }
     public PauseActions @Pause => new PauseActions(this);
+
+    // Inventory
+    private readonly InputActionMap m_Inventory;
+    private List<IInventoryActions> m_InventoryActionsCallbackInterfaces = new List<IInventoryActions>();
+    private readonly InputAction m_Inventory_Inventory;
+    public struct InventoryActions
+    {
+        private @PauseAction m_Wrapper;
+        public InventoryActions(@PauseAction wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Inventory => m_Wrapper.m_Inventory_Inventory;
+        public InputActionMap Get() { return m_Wrapper.m_Inventory; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(InventoryActions set) { return set.Get(); }
+        public void AddCallbacks(IInventoryActions instance)
+        {
+            if (instance == null || m_Wrapper.m_InventoryActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_InventoryActionsCallbackInterfaces.Add(instance);
+            @Inventory.started += instance.OnInventory;
+            @Inventory.performed += instance.OnInventory;
+            @Inventory.canceled += instance.OnInventory;
+        }
+
+        private void UnregisterCallbacks(IInventoryActions instance)
+        {
+            @Inventory.started -= instance.OnInventory;
+            @Inventory.performed -= instance.OnInventory;
+            @Inventory.canceled -= instance.OnInventory;
+        }
+
+        public void RemoveCallbacks(IInventoryActions instance)
+        {
+            if (m_Wrapper.m_InventoryActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IInventoryActions instance)
+        {
+            foreach (var item in m_Wrapper.m_InventoryActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_InventoryActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public InventoryActions @Inventory => new InventoryActions(this);
     public interface IPauseActions
     {
         void OnPauseGame(InputAction.CallbackContext context);
+    }
+    public interface IInventoryActions
+    {
+        void OnInventory(InputAction.CallbackContext context);
     }
 }

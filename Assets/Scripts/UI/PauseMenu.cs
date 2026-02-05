@@ -2,25 +2,16 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
-using System.ComponentModel.Design.Serialization;
 
 public class PauseMenu : MonoBehaviour
 {
     private UIDocument document;
     private Button startButton;
     private Button continueButton;
-
-    private Button inventoryButton; // Future setup
+    private Button mainMenuButton;
     private Button quitButton;
-
-    public GameObject inventoryObject;
-
     public InputActionAsset InputActions;
     public PauseManager pauseManager;
-    // private InputAction m_pauseAction;
-    //public GameObject PauseObject;
-
-    // [SerializeField] private UIDocument settingsMenu; // Future setup
 
     private void Awake()
     {
@@ -29,18 +20,9 @@ public class PauseMenu : MonoBehaviour
 
         startButton = root.Q<Button>("ButtonStartGame");
         continueButton = root.Q<Button>("ButtonContinue");
-        inventoryButton = root.Q<Button>("ButtonInventory");
+        mainMenuButton = root.Q<Button>("ButtonMainMenu");
         quitButton = root.Q<Button>("ButtonQuitGame");
-
-        // m_pauseAction = InputActions.FindAction("Pause");
-
     }
-
-    // void Update()
-    // {
-    //     if (m_pauseAction.WasPressedThisFrame())
-    //         TogglePause();
-    // }
 
     private void OnEnable()
     {
@@ -54,12 +36,10 @@ public class PauseMenu : MonoBehaviour
 
         startButton = document.rootVisualElement.Q("ButtonStartGame") as Button;
         continueButton = document.rootVisualElement.Q("ButtonContinue") as Button;
-        inventoryButton = document.rootVisualElement.Q("ButtonInventory") as Button;
+        mainMenuButton = document.rootVisualElement.Q("ButtonMainMenu") as Button;
         quitButton = document.rootVisualElement.Q("ButtonQuitGame") as Button;
 
         var action = InputActions.FindAction("Pause");
-        // if (action != null)
-        //     action.performed += OnPausePressed;
 
         InputActions.Enable();
 
@@ -69,8 +49,8 @@ public class PauseMenu : MonoBehaviour
         if (continueButton != null)
             continueButton.RegisterCallback<ClickEvent>(OnContinueClick);
 
-        if (inventoryButton != null)
-            inventoryButton.RegisterCallback<ClickEvent>(OnInventoryClick);
+        if (mainMenuButton != null)
+            mainMenuButton.RegisterCallback<ClickEvent>(OnMainMenuClick);
 
         if (quitButton != null)
             quitButton.RegisterCallback<ClickEvent>(OnQuitGameClick);
@@ -84,20 +64,25 @@ public class PauseMenu : MonoBehaviour
         if (startButton != null)
             startButton.UnregisterCallback<ClickEvent>(OnStartGameClick);
 
-        if (inventoryButton != null)
+        if (continueButton != null)
             continueButton.UnregisterCallback<ClickEvent>(OnContinueClick);
 
-        if (inventoryButton != null)
-            inventoryButton.UnregisterCallback<ClickEvent>(OnInventoryClick);
+        if (mainMenuButton != null)
+            mainMenuButton.UnregisterCallback<ClickEvent>(OnMainMenuClick);
 
         if (quitButton != null)
             quitButton.UnregisterCallback<ClickEvent>(OnQuitGameClick);
 
-        // var action = InputActions.FindAction("Pause");
-        // if (action != null)
-        //     action.performed -= OnPausePressed;
-
         InputActions.Disable();
+    }
+
+    private void OnMainMenuClick(ClickEvent evt)
+    {
+        SceneManager.LoadScene("MainMenu");
+        Time.timeScale = 1f;
+        PauseManager.GameIsPaused = false;
+        PauseManager.CurrentPauseState = PauseManager.PauseState.None;
+        PlayerHealth.GameIsOver = false;
     }
 
     private void OnStartGameClick(ClickEvent evt)
@@ -106,24 +91,14 @@ public class PauseMenu : MonoBehaviour
         PauseManager.GameIsPaused = false;
         PlayerHealth.GameIsOver = false;
         SceneManager.LoadScene("Design");// Change name to game
-        // gameObject.SetActive(false);
     }
 
     private void OnContinueClick(ClickEvent evt)
     {
-        //PauseObject.SetActive(!PauseObject.activeSelf);
-        //Time.timeScale = PauseObject.activeSelf ? 0f : 1f;
         if (PlayerHealth.GameIsOver) return;
 
         pauseManager.ResumeGame();
         // Debug.Log("Continue Button Clicked, should continue.");
-
-    }
-
-    private void OnInventoryClick(ClickEvent evt)
-    {
-        // Debug.Log("Opening inventory...");
-        pauseManager.OpenInventory();
     }
 
     private void OnQuitGameClick(ClickEvent evt)

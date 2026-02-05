@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3729324380016192616}
   - component: {fileID: 7073777368435312804}
   - component: {fileID: 6121807446205894657}
+  - component: {fileID: 2129955365252726034}
   m_Layer: 7
   m_Name: CHEST_Main
   m_TagString: Untagged
@@ -51,30 +52,54 @@ MonoBehaviour:
   minimumGold: 0
   maximumGold: 0
   lootTable:
-  - lootItemPrefab: {fileID: 5816259779739221662, guid: fe24415391651f044baf0bfa092bed0b, type: 3}
+  - itemData: {fileID: 0}
+    lootItemPrefab: {fileID: 5816259779739221662, guid: fe24415391651f044baf0bfa092bed0b, type: 3}
     dropPercent: 3
-  - lootItemPrefab: {fileID: 3167716483107671169, guid: 31964fdfe4de4904c9fef2d3b7c15565, type: 3}
+    requiresUnlock: 0
+  - itemData: {fileID: 0}
+    lootItemPrefab: {fileID: 3167716483107671169, guid: 31964fdfe4de4904c9fef2d3b7c15565, type: 3}
     dropPercent: 2
-  - lootItemPrefab: {fileID: 4351812632746690140, guid: 86075e9c834524441840a55246feabd2, type: 3}
+    requiresUnlock: 0
+  - itemData: {fileID: 0}
+    lootItemPrefab: {fileID: 4351812632746690140, guid: 86075e9c834524441840a55246feabd2, type: 3}
     dropPercent: 3
-  - lootItemPrefab: {fileID: 3167716483107671169, guid: b97249f71247ba64ea1f0de7b6a926af, type: 3}
+    requiresUnlock: 0
+  - itemData: {fileID: 0}
+    lootItemPrefab: {fileID: 3167716483107671169, guid: b97249f71247ba64ea1f0de7b6a926af, type: 3}
     dropPercent: 3
-  - lootItemPrefab: {fileID: 3167716483107671169, guid: a5c2ffb5108d01a419221cd9dbcd3913, type: 3}
+    requiresUnlock: 0
+  - itemData: {fileID: 0}
+    lootItemPrefab: {fileID: 3167716483107671169, guid: a5c2ffb5108d01a419221cd9dbcd3913, type: 3}
     dropPercent: 2
-  - lootItemPrefab: {fileID: 5816259779739221662, guid: f924ee5cc5f439b49aeac9eb3c575060, type: 3}
+    requiresUnlock: 0
+  - itemData: {fileID: 0}
+    lootItemPrefab: {fileID: 5816259779739221662, guid: f924ee5cc5f439b49aeac9eb3c575060, type: 3}
     dropPercent: 3
-  - lootItemPrefab: {fileID: 5816259779739221662, guid: 334183d9496fa5443a571c990154fb53, type: 3}
+    requiresUnlock: 0
+  - itemData: {fileID: 0}
+    lootItemPrefab: {fileID: 5816259779739221662, guid: 334183d9496fa5443a571c990154fb53, type: 3}
     dropPercent: 3
-  - lootItemPrefab: {fileID: 3167716483107671169, guid: ae692d0ac8d39644589b225de79b7f73, type: 3}
+    requiresUnlock: 0
+  - itemData: {fileID: 0}
+    lootItemPrefab: {fileID: 3167716483107671169, guid: ae692d0ac8d39644589b225de79b7f73, type: 3}
     dropPercent: 3
-  - lootItemPrefab: {fileID: 7228271200306073161, guid: a40bbef7257dae54899c3463f81a2ad2, type: 3}
+    requiresUnlock: 0
+  - itemData: {fileID: 0}
+    lootItemPrefab: {fileID: 7228271200306073161, guid: a40bbef7257dae54899c3463f81a2ad2, type: 3}
     dropPercent: 2
-  - lootItemPrefab: {fileID: 7228271200306073161, guid: 2ecc2bdd371bf01429d2dcdd695764ce, type: 3}
+    requiresUnlock: 0
+  - itemData: {fileID: 0}
+    lootItemPrefab: {fileID: 7228271200306073161, guid: 2ecc2bdd371bf01429d2dcdd695764ce, type: 3}
     dropPercent: 2
-  - lootItemPrefab: {fileID: 7228271200306073161, guid: f838bdc949bec2840891bf60c48e3da0, type: 3}
+    requiresUnlock: 0
+  - itemData: {fileID: 0}
+    lootItemPrefab: {fileID: 7228271200306073161, guid: f838bdc949bec2840891bf60c48e3da0, type: 3}
     dropPercent: 2
-  - lootItemPrefab: {fileID: 7228271200306073161, guid: e43c1daa00386fa47a030191236f3b6a, type: 3}
+    requiresUnlock: 0
+  - itemData: {fileID: 0}
+    lootItemPrefab: {fileID: 7228271200306073161, guid: e43c1daa00386fa47a030191236f3b6a, type: 3}
     dropPercent: 1
+    requiresUnlock: 0
   playerGold: {fileID: 0}
 --- !u!82 &3729324380016192616
 AudioSource:
@@ -210,6 +235,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.5, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2129955365252726034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3849949702175841422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2623813dc8700664ea79ddd9dde7d45d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 2
 --- !u!1001 &6288649012810227437
 PrefabInstance:
   m_ObjectHideFlags: 0

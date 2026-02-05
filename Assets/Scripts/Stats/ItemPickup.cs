@@ -40,4 +40,6 @@ public class ItemPickup : MonoBehaviour
             }
         }
     }
+    public ItemData ItemData => itemData;
+
 }

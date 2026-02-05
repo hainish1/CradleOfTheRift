@@ -52,6 +52,8 @@ public class RevenantBossRange : Enemy
     public float recoveryBarrageProjectileSpeed = 20f;
     public float attackPeriodLength = 5f;
     private float recoveryBarrageFiringInterval = 0.5f;
+    [SerializeField]
+    private AK.Wwise.Event shootSFX;
 
     [Space]
 
@@ -102,6 +104,7 @@ public class RevenantBossRange : Enemy
 
     public override void Update()
     {
+        if (PauseManager.GameIsPaused) return;
         base.Update();
         UpdateHover();
     }
@@ -111,6 +114,7 @@ public class RevenantBossRange : Enemy
     /// </summary>
     void UpdateHover()
     {
+        if (PauseManager.GameIsPaused) return;
         if (agent == null) return;
 
         bobPhase += Time.deltaTime * hoverBobSpeed;
@@ -156,6 +160,7 @@ public class RevenantBossRange : Enemy
         projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
 
         audioController?.PlayFireProjectileSound();
+        shootSFX.Post(gameObject);
     }
 
     public void FireBarrage()
@@ -211,6 +216,7 @@ public class RevenantBossRange : Enemy
         projectile2.Init(direction2 * projectileSpeed, projectileMask, this.AOEProjectileDamage);
 
         audioController?.PlayFireAOEProjectileSound();
+        shootSFX.Post(gameObject);
     }
 
     public void RecoveryBarrage()

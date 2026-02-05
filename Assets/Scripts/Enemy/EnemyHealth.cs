@@ -14,10 +14,14 @@ public class EnemyHealth : HealthController
 
     [Header("Visuals")]
     [SerializeField] private EnemyDamageVisuals damageVisuals;
+    [SerializeField] private GameObject deathVFX;
+    [SerializeField] private Transform deathVFXSpawnPoint; // optional probably
 
     [Header("Sounds")]
     [SerializeField]
     private AK.Wwise.Event deathSFX;
+    [SerializeField]
+    private AK.Wwise.Event damagedSFX;
 
 
     /// <summary>
@@ -27,7 +31,7 @@ public class EnemyHealth : HealthController
     protected override void Die()
     {
         // Debug.Log("[Enemy Health] Enemy died");
-        if(damageVisuals != null)
+        if (damageVisuals != null)
         {
             damageVisuals.SetDeadForVisuals();
         }
@@ -46,6 +50,7 @@ public class EnemyHealth : HealthController
         PlayerGold.Instance.AddGold(3); // Set it to 3 for now
 
         PlayDeathSFX();
+        PlayPSVFX(deathVFX, deathVFXSpawnPoint != null ? deathVFXSpawnPoint : transform);
 
         Destroy(gameObject, cleanupDelay);
 
@@ -77,10 +82,17 @@ public class EnemyHealth : HealthController
     {
         base.TakeDamage(damage);
 
-        if(damageVisuals != null && !IsDead)
+        if (damageVisuals != null && !IsDead)
         {
             damageVisuals.ShowDamageVisuals(damage);
         }
+
+        if (damagedSFX != null && !IsDead)
+        {
+            damagedSFX.Post(gameObject);
+        }
+
+
     }
 
     /// <summary>
@@ -91,5 +103,55 @@ public class EnemyHealth : HealthController
     {
         if (deathSFX != null)
             deathSFX.Post(gameObject);
+    }
+
+    public void PlayPSVFX(GameObject vfxPrefab, Transform spawnPos)
+    {
+        if (vfxPrefab == null) return;
+
+        spawnPos = spawnPos != null ? spawnPos : transform;
+
+        GameObject fx;
+        if (ObjectPool.instance != null)
+        {
+            fx = ObjectPool.instance.GetObject(vfxPrefab, spawnPos);
+            // fx.transform.SetPositionAndRotation(spawnPos.position, spawnPos.rotation);
+
+        }
+        else
+        {
+            fx = Instantiate(vfxPrefab, spawnPos.position, spawnPos.rotation);
+            
+        }
+
+        float lifetime = EstimateParticleLifetime(fx);
+
+        if (ObjectPool.instance != null)
+        {
+            ObjectPool.instance.ReturnObject(fx, lifetime);
+        }
+        else
+        {
+            Destroy(fx, lifetime);
+        }
+    }
+
+    private float EstimateParticleLifetime(GameObject fx)
+    {
+        float max = 0.25f;
+
+        var systems = fx.GetComponentsInChildren<ParticleSystem>(true);
+        foreach (var ps in systems)
+        {
+            var main = ps.main;
+            float startDelay = main.startDelay.constantMax;
+            float duration = main.duration;
+            float startLifetime = main.startLifetime.constantMax;
+
+            float total = startDelay + duration + startLifetime;
+            if (total > max) max = total;
+        }
+
+        return max;
     }
 }
