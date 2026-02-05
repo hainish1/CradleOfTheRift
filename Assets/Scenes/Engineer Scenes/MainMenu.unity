@@ -119,6 +119,74 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &112685559
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 112685561}
+  - component: {fileID: 112685560}
+  - component: {fileID: 112685562}
+  m_Layer: 5
+  m_Name: CreditsUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &112685560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 112685559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PanelSettings: {fileID: 11400000, guid: 1e78771022128b742a8650341387398f, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: d48ccd7dbad6d45e19213f572e5195ab, type: 3}
+  m_SortingOrder: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+--- !u!4 &112685561
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 112685559}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &112685562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 112685559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87326cd9745b14be5b2dc1d01ef64ac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InputActions: {fileID: -944628639613478452, guid: d6a7529352e2d456dbbdcbac11e7d337, type: 3}
+  pauseManager: {fileID: 274470169}
+  creditsUI: {fileID: 112685559}
+  mainMenuUI: {fileID: 561388815}
 --- !u!1 &274470168
 GameObject:
   m_ObjectHideFlags: 0
@@ -198,6 +266,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InputActions: {fileID: -944628639613478452, guid: d6a7529352e2d456dbbdcbac11e7d337, type: 3}
   pauseManager: {fileID: 274470169}
+  creditsUI: {fileID: 112685559}
+  mainMenuUI: {fileID: 561388815}
 --- !u!114 &561388817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -441,6 +511,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InputActions: {fileID: -944628639613478452, guid: d6a7529352e2d456dbbdcbac11e7d337, type: 3}
   pauseManager: {fileID: 274470169}
+  creditsUI: {fileID: 112685559}
+  mainMenuUI: {fileID: 561388815}
 --- !u!4 &1728729436
 Transform:
   m_ObjectHideFlags: 0
@@ -587,3 +659,4 @@ SceneRoots:
   - {fileID: 274470170}
   - {fileID: 1578403598}
   - {fileID: 561388818}
+  - {fileID: 112685561}
