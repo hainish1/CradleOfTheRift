@@ -199,6 +199,9 @@ public class EnemyRange : Enemy
         // I could probably use Object Pooling here
         EnemyProjectile projectile = Instantiate(projectilePrefab, spawnPoint, rotation);
         projectile.Init(direction * projectileSpeed, projectileMask, projectileDamage);
+        
+        
+        shootSFX.Post(gameObject);
 
         // Handle Visuals
         if (orbitVisuals != null)
