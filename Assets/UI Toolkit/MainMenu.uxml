@@ -3,8 +3,8 @@
     <engine:Template name="AbilitiesPage" src="project://database/Assets/UI%20Toolkit/AbilitiesPage.uxml?fileID=9197481963319205126&amp;guid=0709fcb7005d31847a9da449f6c8e79b&amp;type=3#AbilitiesPage" />
     <engine:VisualElement name="MainContainer" style="flex-grow: 1;">
         <engine:VisualElement name="TabGroup" style="flex-grow: 1;">
-            <engine:Button text="Button" name="TabInvBtn" />
-            <engine:Button text="Button" name="TabAbilityBtn" />
+            <engine:Button text="Inventory" name="TabInvBtn" />
+            <engine:Button text="Abilities" name="TabAbilityBtn" />
         </engine:VisualElement>
         <engine:VisualElement name="PageContainer" style="flex-grow: 1;">
             <engine:VisualElement name="InventoryPage" style="flex-grow: 1;">

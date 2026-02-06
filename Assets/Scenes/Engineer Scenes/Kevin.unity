@@ -37683,8 +37683,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilityQ: {fileID: 11400000, guid: 93518cc0f18141146b2c7f3e448cebd2, type: 2}
-  abilityW: {fileID: 11400000, guid: 93518cc0f18141146b2c7f3e448cebd2, type: 2}
-  abilityE: {fileID: 11400000, guid: 93518cc0f18141146b2c7f3e448cebd2, type: 2}
+  abilityW: {fileID: 11400000, guid: f5c428cdef6dbed4392ea4668879a67e, type: 2}
+  abilityE: {fileID: 11400000, guid: c23cb878603987c499b40f0b2d29190d, type: 2}
   abilityR: {fileID: 11400000, guid: 93518cc0f18141146b2c7f3e448cebd2, type: 2}
   videoPlayer: {fileID: 171290475}
   videoTexture: {fileID: 8400000, guid: 4fc63601f4d009f48af09b1c3e70221b, type: 2}
@@ -279723,7 +279723,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 206638388532156557, guid: a6f206b8dbc506d4eb764be3257fd338, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3566674791497303553, guid: a6f206b8dbc506d4eb764be3257fd338, type: 3}
       propertyPath: playerInventory
@@ -279738,11 +279738,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a6f206b8dbc506d4eb764be3257fd338, type: 3}
---- !u!1 &1546958402 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 206638388532156557, guid: a6f206b8dbc506d4eb764be3257fd338, type: 3}
-  m_PrefabInstance: {fileID: 1546958401}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1551589578
 GameObject:
   m_ObjectHideFlags: 0
@@ -363676,6 +363671,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7473195389893767818, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
+      propertyPath: ManagePause
+      value: 
+      objectReference: {fileID: 1489314893}
+    - target: {fileID: 7473195389893767818, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
       propertyPath: playerHealth
       value: 
       objectReference: {fileID: 492210149}
@@ -393667,7 +393666,7 @@ PrefabInstance:
     - target: {fileID: 4526442510806449292, guid: 04f382082c040d140a97cebed8f7b8cb, type: 3}
       propertyPath: inventoryMenuUI
       value: 
-      objectReference: {fileID: 1546958402}
+      objectReference: {fileID: 171290469}
     - target: {fileID: 7832666634453981958, guid: 04f382082c040d140a97cebed8f7b8cb, type: 3}
       propertyPath: m_Name
       value: PauseSystem
