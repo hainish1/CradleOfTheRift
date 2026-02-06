@@ -1,0 +1,18 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="Inventory" src="project://database/Assets/UI%20Toolkit/Inventory.uxml?fileID=9197481963319205126&amp;guid=7548839543be944b986dd3a5311bcd48&amp;type=3#Inventory" />
+    <engine:Template name="AbilitiesPage" src="project://database/Assets/UI%20Toolkit/AbilitiesPage.uxml?fileID=9197481963319205126&amp;guid=0709fcb7005d31847a9da449f6c8e79b&amp;type=3#AbilitiesPage" />
+    <engine:VisualElement name="MainContainer" style="flex-grow: 1;">
+        <engine:VisualElement name="TabGroup" style="flex-grow: 1;">
+            <engine:Button text="Button" name="TabInvBtn" />
+            <engine:Button text="Button" name="TabAbilityBtn" />
+        </engine:VisualElement>
+        <engine:VisualElement name="PageContainer" style="flex-grow: 1;">
+            <engine:VisualElement name="InventoryPage" style="flex-grow: 1;">
+                <engine:Instance template="Inventory" />
+            </engine:VisualElement>
+            <engine:VisualElement name="AbilitiesPage" style="flex-grow: 1;">
+                <engine:Instance template="AbilitiesPage" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
