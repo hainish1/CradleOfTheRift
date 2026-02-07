@@ -95,6 +95,8 @@ public class AttackState_Melee : EnemyState
         {
             // Play the slime jump sound effect.
             enemyMelee.PlayJumpSFX();
+            // Play Jump Poof VFX
+            enemyMelee.PlayMeleePSVFX(enemyMelee.jumpPoofVFXPrefab, enemyMelee.jumpVFXAttackPoint);
         }
 
         lastPhase = phase;
