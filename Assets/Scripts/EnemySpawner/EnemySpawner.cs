@@ -20,6 +20,7 @@ public class EnemySpawner : MonoBehaviour
     [Header("Settings")]
     [SerializeField]
     private float timeBetweenWaves = 8f;
+    [SerializeField] private GameObject spawnVFXPrefab;
 
     // This is now controlled by the Difficulty Scaler object.
     [Tooltip("If the DifficultyScaler object is set, this field is ignored!")]
@@ -243,6 +244,10 @@ public bool IsDevModeEnabled
         }
 
         spawnDebugList.Add((location, true));
+
+        // Play spawn VFX
+        PlaySpawnVFX(location, Quaternion.identity);
+
         GameObject enemyObj = Instantiate(enemy.prefab, location, Quaternion.identity);
 
         ScaleEnemyHealth(enemyObj);
@@ -348,7 +353,7 @@ public bool IsDevModeEnabled
         return playerLocation.position + locationOffset;
     }
 
-    private void OnExtractionZoneStarted()
+    private void OnExtractionZoneStarted(ExtractionZone zone)
     {
         this.isExtractionActive = true;
     }
@@ -461,6 +466,14 @@ public bool IsDevModeEnabled
         float size = Mathf.Max(worldSize.x, worldSize.z) * 0.5f * 1.1f;
         Debug.Log("ENEMY SIZE: " + size);
         return size;
+    }
+
+    private void PlaySpawnVFX(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation)
+    {
+        if(spawnVFXPrefab == null) return;
+        GameObject vfx = Instantiate(spawnVFXPrefab, position, rotation);
+
+        Destroy(vfx, 2.0f); // Should prob make the VFX auto destroy instead of doing it here.
     }
 }
 

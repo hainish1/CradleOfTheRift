@@ -16,6 +16,7 @@ public class IdleStateRevenant : EnemyState
     /// </summary>
     public override void Update()
     {
+        if (PauseManager.GameIsPaused) return;
         if (PlayerInAggressionRange())
         {
             stateMachine.ChangeState(bossRange.GetChase());

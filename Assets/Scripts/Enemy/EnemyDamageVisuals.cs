@@ -9,6 +9,8 @@ public class EnemyDamageVisuals : MonoBehaviour
     [SerializeField] private int fontSize = 50;
     [SerializeField] private float textDuration = 1.5f;
     [SerializeField] private float riseSpeed = 1.5f;
+    [SerializeField] private GameObject takeDamageVFXPrefab;
+    [SerializeField] private Transform damageVfxAttachPoint;
 
     private Renderer meshRenderer;
     private Material originalMaterial;
@@ -25,11 +27,20 @@ public class EnemyDamageVisuals : MonoBehaviour
             originalMaterial = meshRenderer.material;
         }
     }
+    private void PlayTakeDamageVFX()
+    {
+        if(takeDamageVFXPrefab == null) return;
+        Transform parent = damageVfxAttachPoint != null ? damageVfxAttachPoint : transform;
+        GameObject vfx = Instantiate(takeDamageVFXPrefab, parent.position, parent.rotation, parent);
+
+        Destroy(vfx, 0.5f); // Should prob make the VFX auto destroy instead of doing it here.
+    }
     
     public void ShowDamageVisuals(float damage)
     {
         if (isDead) return;
         ShowDamageNumber(damage);
+        PlayTakeDamageVFX();
         StartCoroutine(FlashHit());
     }
 

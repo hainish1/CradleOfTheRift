@@ -8,7 +8,28 @@
 						<Action Name="" ID="{77147E79-BB9D-41FC-83CE-21613DF27FC2}" ShortID="875605143">
 							<ReferenceList>
 								<Reference Name="Target">
-									<ObjectRef Name="player_melee" ID="{9543637D-19CD-4664-BCD2-8FD78E9815F3}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+									<ObjectRef Name="Weapon Swoosh" ID="{2AE8E6C6-4232-46A7-A956-8CDA05C20061}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{25D643C7-A0ED-414D-8D11-E3169410E1AB}" ShortID="213746814">
+							<PropertyList>
+								<Property Name="FadeTime" Type="Real64" Value="2"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Weapon Bell" ID="{92A289F7-4E7F-4813-A35F-009A3BF5B92D}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{E6D9C840-2109-463F-93AD-1E7224DF53E4}" ShortID="797257904">
+							<PropertyList>
+								<Property Name="FadeTime" Type="Real64" Value="2"/>
+								<Property Name="Probability" Type="Real64" Value="50"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Weapon Sparkle" ID="{6EDCDA07-581F-4FB5-9AF8-1F8E58E01748}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
 								</Reference>
 							</ReferenceList>
 						</Action>
@@ -31,6 +52,24 @@
 							<ReferenceList>
 								<Reference Name="Target">
 									<ObjectRef Name="player_dash" ID="{7FBAB5D7-8069-445C-B565-E24D7DF4842E}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{CBA0CC93-E7CC-4BE3-B4D9-EC6B84CE0D26}" ShortID="113830007">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="player_jump" ID="{A14AA23A-33DC-480B-8E86-CABEB2366C64}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_player_jump" ID="{D05EFD5A-996A-4B7B-90A3-11EBBB6E1288}">
+					<ChildrenList>
+						<Action Name="" ID="{FD5B4D20-6DEB-4C43-A04D-C8E483F15FBF}" ShortID="895273639">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="player_jump" ID="{A14AA23A-33DC-480B-8E86-CABEB2366C64}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
 								</Reference>
 							</ReferenceList>
 						</Action>

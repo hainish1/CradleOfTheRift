@@ -172,6 +172,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2977173361993762485
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6136272082482821300}
+  m_Layer: 0
+  m_Name: jumpVFXPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6136272082482821300
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2977173361993762485}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.686, z: 0}
+  m_LocalScale: {x: 0.6666667, y: 0.6666667, z: 0.6666667}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 984479434153791223}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3355718146158017857
 GameObject:
   m_ObjectHideFlags: 0
@@ -488,6 +519,7 @@ GameObject:
   - component: {fileID: 1932630377921340712}
   - component: {fileID: 1162765825911862605}
   - component: {fileID: 2533069923019125397}
+  - component: {fileID: 4348034529348328701}
   m_Layer: 11
   m_Name: SlimeEnemyWobble
   m_TagString: Untagged
@@ -511,6 +543,7 @@ Transform:
   - {fileID: 405378756697726061}
   - {fileID: 334824559409466416}
   - {fileID: 2727553493511759867}
+  - {fileID: 6136272082482821300}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!195 &8068391143491128734
@@ -572,8 +605,19 @@ MonoBehaviour:
   hitAppliedThisAttack: 0
   leapAttackRange: 10
   minAttackDistance: 4.5
-  leapHeight: 1
+  leapHeight: 0.7
   leapDuration: 0.55
+  leapOverShootDistance: 0.5
+  gravityScale: 4
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  jumpSFX:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: d374e5a4ff86e584b8ad1c9d3b58d644, type: 2}
+  jumpPoofVFXPrefab: {fileID: 2354571732057607369, guid: 414681518bc93d14ea11003f96b10d90, type: 3}
+  jumpVFXAttackPoint: {fileID: 6136272082482821300}
 --- !u!114 &6554202718004137176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -606,6 +650,7 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 256
+  manageAgentPosition: 1
   softBody: {fileID: 1932630377921340712}
 --- !u!65 &8032525674095066417
 BoxCollider:
@@ -668,6 +713,16 @@ MonoBehaviour:
   cleanupDelay: 0
   baseHealth: 30
   damageVisuals: {fileID: 2533069923019125397}
+  deathVFX: {fileID: 676540690991785363, guid: ceee2cd6e8010af4bbcec230578f8910, type: 3}
+  deathVFXSpawnPoint: {fileID: 0}
+  deathSFX:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: 693a1bfe042f0e0469b894030866c160, type: 2}
+  damagedSFX:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: 3761622205eb5854d971fce671c99143, type: 2}
 --- !u!114 &2533069923019125397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -686,6 +741,63 @@ MonoBehaviour:
   fontSize: 50
   textDuration: 1.5
   riseSpeed: 1.5
+  takeDamageVFXPrefab: {fileID: 4658278565933542678, guid: 86d031785bde0a149bba6d699b1227b6, type: 3}
+  damageVfxAttachPoint: {fileID: 0}
+--- !u!114 &4348034529348328701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6223163396465808229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03bc8063c9e95401f9a8a38bc716750d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Method: 2
+  m_Curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.1755751
+      value: 0.1179439
+      inSlope: 0.6587437
+      outSlope: 0.6587437
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5555668
+      value: 0.13517845
+      inSlope: -0.07600026
+      outSlope: -0.07600026
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.46422103
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1.0041809
+      value: 0.002357483
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &6380071158745332297
 GameObject:
   m_ObjectHideFlags: 0

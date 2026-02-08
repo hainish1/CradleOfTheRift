@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}" SchemaVersion="133" RootDocumentID="{08864F24-BF33-4CEF-B914-3138B5E77E57}" ParentDocumentID="{08864F24-BF33-4CEF-B914-3138B5E77E57}">
+	<Containers>
+		<WorkUnit Name="Enemy" ID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}" OwnerID="{08864F24-BF33-4CEF-B914-3138B5E77E57}" PersistMode="Nested">
+			<ChildrenList>
+				<Folder Name="Slime" ID="{3C7A7C26-5BAB-4EBA-9B24-68F548F02226}" ShortID="330769477">
+					<ChildrenList>
+						<Sound Name="Slime" ID="{F468D715-9549-4314-98C5-A7BEA258295B}" ShortID="581225961">
+							<PropertyList>
+								<Property Name="Pitch" Type="int32">
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{B5951E28-D8B8-4820-AA91-653F4ECB44C8}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Max" Type="Real64" Value="275"/>
+													<Property Name="Min" Type="Real64" Value="-325"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+								<Property Name="Volume" Type="Real64">
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{55477670-D1C7-428F-B7D9-BF31C6800850}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Max" Type="Real64" Value="3"/>
+													<Property Name="Min" Type="Real64" Value="-3"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="Slime" ID="{F02076AB-6D4A-4A5E-BBC5-D8302780C4A7}">
+									<Language>SFX</Language>
+									<AudioFile>Slime.wav</AudioFile>
+									<MediaIDList>
+										<MediaID ID="759369655"/>
+									</MediaIDList>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="Slime" ID="{F02076AB-6D4A-4A5E-BBC5-D8302780C4A7}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+					</ChildrenList>
+				</Folder>
+				<Folder Name="Skull" ID="{3211FEF7-CEF4-4C19-AEE3-4BE3FACE3F14}" ShortID="901917003">
+					<ChildrenList>
+						<Sound Name="SkullBreak" ID="{8F9013A0-8435-4BAD-99F5-9EDCCE8AB5D0}" ShortID="272321459">
+							<PropertyList>
+								<Property Name="Pitch" Type="int32">
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{4DA87A4A-30F4-42A6-9D2D-D858A52D8581}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Max" Type="Real64" Value="100"/>
+													<Property Name="Min" Type="Real64" Value="-100"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+								<Property Name="Volume" Type="Real64">
+									<ValueList>
+										<Value>4</Value>
+									</ValueList>
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{F95CD3F9-6E69-4ED1-AA85-AABE2D5128FA}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Max" Type="Real64" Value="2"/>
+													<Property Name="Min" Type="Real64" Value="-2"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="SkullBreak" ID="{E30D6BB1-9C6F-442F-85BA-0EA1E81C697A}">
+									<Language>SFX</Language>
+									<AudioFile>SkullBreak.wav</AudioFile>
+									<MediaIDList>
+										<MediaID ID="572053790"/>
+									</MediaIDList>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="SkullBreak" ID="{E30D6BB1-9C6F-442F-85BA-0EA1E81C697A}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+						<Sound Name="WispFireball" ID="{1F242EEF-E08F-453D-B75F-9AE25F37F05D}" ShortID="389389405">
+							<PropertyList>
+								<Property Name="Pitch" Type="int32">
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{099EAB18-CC91-4B1B-84D5-24BEF8BD3207}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Max" Type="Real64" Value="300"/>
+													<Property Name="Min" Type="Real64" Value="-300"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+								<Property Name="Volume" Type="Real64">
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{10E70DAC-8184-45F0-BB22-D8D0DF87E856}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Max" Type="Real64" Value="3"/>
+													<Property Name="Min" Type="Real64" Value="-3"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="WispFireball" ID="{0DB93005-6459-4E74-B5CC-2970CDB478FB}">
+									<Language>SFX</Language>
+									<AudioFile>WispFireball.wav</AudioFile>
+									<MediaIDList>
+										<MediaID ID="738529620"/>
+									</MediaIDList>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="WispFireball" ID="{0DB93005-6459-4E74-B5CC-2970CDB478FB}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+					</ChildrenList>
+				</Folder>
+			</ChildrenList>
+		</WorkUnit>
+	</Containers>
+</WwiseDocument>

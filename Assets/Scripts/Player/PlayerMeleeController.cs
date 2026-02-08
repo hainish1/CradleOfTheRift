@@ -120,6 +120,7 @@ public class PlayerMeleeController : MonoBehaviour
 
     void Update()
     {
+        if (PauseManager.GameIsPaused) return;
         RecalculateAttackSpeed();
 
         // Align weapon with camera direction.

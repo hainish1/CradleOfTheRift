@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
     using UnityEngine.SceneManagement;
 
@@ -22,6 +23,8 @@ public class PlayerHealth : HealthController
 
     [Space]
     [Header("Health VFX")]
+    [SerializeField] private GameObject takeDamageVFXPrefab;
+    [SerializeField] private Transform damageVfxAttachPoint;
     [SerializeField] private GameObject healthRegenVFXPrefab;
     [SerializeField] private Transform regenVfxAttachPoint;
     [SerializeField] private float normalHealVFXDuration = 4f;
@@ -148,6 +151,9 @@ public class PlayerHealth : HealthController
         
         base.TakeDamage(damage);
         healthChanged?.Invoke(currentHealth, maxHealth);
+
+        // Play VFX for taking damage
+        PlayTakeDamageVFX();
         
         Debug.Log($"[PLAYER HEALTH] Player took {damage} damage, current health: {currentHealth}/{maxHealth}");
     
@@ -187,7 +193,14 @@ public class PlayerHealth : HealthController
 
     }
 
+    private void PlayTakeDamageVFX()
+    {
+        if(takeDamageVFXPrefab == null) return;
+        Transform parent = damageVfxAttachPoint != null ? damageVfxAttachPoint : transform;
+        GameObject vfx = Instantiate(takeDamageVFXPrefab, parent.position, parent.rotation, parent);
 
+        Destroy(vfx, 0.5f); // Should prob make the VFX auto destroy instead of doing it here.
+    }
 
 
     private void StartRegenVFX()

@@ -7,51 +7,52 @@ using System.Collections;
 public class EndScreenUI : MonoBehaviour
 {
     [SerializeField]
-    private ExtractionZone extractionZone;
-    [SerializeField]
     private PlayerHealth playerHealth;
     [SerializeField]
     private GameObject winScreen;
     [SerializeField]
     private GameObject loseScreen;
     private GameObject activeScreen;
-    private TimerUI timerUI;
-
+    [SerializeField]
+    private PauseManager ManagePause;
 
     void OnEnable()
     {
-        if (this.timerUI == null)
-            this.timerUI = GetComponent<TimerUI>();
-
-        if (this.extractionZone != null)
-            this.extractionZone.WinScreen += OnWinScreen;
+        if (ExtractionManager.Instance != null)
+            ExtractionManager.Instance.OnGameWon += OnWinScreen;
 
         if (this.playerHealth != null)
             this.playerHealth.LoseScreen += OnLoseScreen;
+    }
 
-        if (this.timerUI != null)
-            this.timerUI.DisplayEndGame += OnLoseScreen;
+    void Start()
+    {
+        if (ExtractionManager.Instance != null)
+            ExtractionManager.Instance.OnGameWon += OnWinScreen;
+
+        if (this.playerHealth != null)
+            this.playerHealth.LoseScreen += OnLoseScreen;
     }
 
     void OnDisable()
     {
-        if (this.extractionZone != null)
-            this.extractionZone.WinScreen -= OnWinScreen;
+        if (ExtractionManager.Instance != null)
+            ExtractionManager.Instance.OnGameWon -= OnWinScreen;
 
         if (this.playerHealth != null)
             this.playerHealth.LoseScreen -= OnLoseScreen;
-
-        if (this.timerUI != null)
-            this.timerUI.DisplayEndGame -= OnLoseScreen;
     }
 
     private void OnWinScreen()
     {
         this.activeScreen = Instantiate(winScreen);
         HookEndScreenButtons(activeScreen);
+
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
-        Time.timeScale = 0f; // pause gameplay
+
+        PlayerHealth.GameIsOver = true;
+        ManagePause.PauseForEndGame();
 
 
         // go back to Start scene
@@ -62,15 +63,16 @@ public class EndScreenUI : MonoBehaviour
     {
         this.activeScreen = Instantiate(loseScreen);
         HookEndScreenButtons(activeScreen);
+
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
-        Time.timeScale = 0f; // pause gameplay
 
-        // go back to Start scene
+        PlayerHealth.GameIsOver = true;
+        ManagePause.PauseForEndGame();
         // StartCoroutine(LoadSceneAfterDelay("Jared", 5f)); // 5 second delay
     }
-    
-        private void HookEndScreenButtons(GameObject screen)
+
+    private void HookEndScreenButtons(GameObject screen)
     {
         // get UI Document on the end screen object
         var document = screen.GetComponent<UIDocument>();
@@ -83,6 +85,7 @@ public class EndScreenUI : MonoBehaviour
         var root = document.rootVisualElement;
         var playAgainButton = root.Q<Button>("playAgainButton");
         var quitButton = root.Q<Button>("quitButton");
+        var mainMenuButton = root.Q<Button>("mainMenuButton");
 
         // Play Again → restart current level
         if (playAgainButton != null)
@@ -91,10 +94,25 @@ public class EndScreenUI : MonoBehaviour
             {
                 Debug.Log("Play Again clicked!");
                 Time.timeScale = 1f; // unpause
+                PauseManager.GameIsPaused = false;
+                PauseManager.CurrentPauseState = PauseManager.PauseState.None;
+                PlayerHealth.GameIsOver = false;
+
                 UnityEngine.Cursor.lockState = CursorLockMode.Locked;
                 UnityEngine.Cursor.visible = false;
 
                 SceneManager.LoadScene("Design"); // or your current game scene name
+            });
+        }
+        if (mainMenuButton != null)
+        {
+            mainMenuButton.RegisterCallback<ClickEvent>(evt =>
+            {
+            SceneManager.LoadScene("MainMenu");
+            Time.timeScale = 1f;
+            PauseManager.GameIsPaused = false;
+            PauseManager.CurrentPauseState = PauseManager.PauseState.None;
+            PlayerHealth.GameIsOver = false;
             });
         }
 
@@ -114,7 +132,7 @@ public class EndScreenUI : MonoBehaviour
     }
 
 
-    
+
     private IEnumerator LoadSceneAfterDelay(string sceneName, float delay)
     {
         yield return new WaitForSeconds(delay);

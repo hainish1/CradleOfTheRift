@@ -1,7 +1,7 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/InventoryUI.uss?fileID=7433441132597879392&amp;guid=0245b826d6f78304784ded6a340d8aaa&amp;type=3#InventoryUI" />
-    <engine:VisualElement name="item-slot" class="inventory-slot">
-        <engine:VisualElement name="icon" class="item-icon" />
+    <engine:VisualElement name="item-slot" class="inventory-slot" style="border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0;">
+        <engine:VisualElement name="icon" class="item-icon" style="border-top-width: 5px; border-right-width: 5px; border-bottom-width: 5px; border-left-width: 5px;" />
         <engine:VisualElement name="count-bg" class="count-bg">
             <engine:Label text="1" name="stack-count" class="item-count" />
         </engine:VisualElement>
