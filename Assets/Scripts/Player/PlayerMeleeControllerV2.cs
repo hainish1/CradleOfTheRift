@@ -128,16 +128,13 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         if (_comboTimer < _currAttackDuration) _comboTimer += Time.deltaTime;
 
         // Check if attack was inputted slightly before the latest attack ends.
-        if (_attackActions.IsPressed() && (CanAttack || _comboTimer > GetCooldownMinusBuffer()))
+        if (_attackActions.IsPressed() && _comboTimer > GetCooldownMinusBuffer() && _currComboCount < _maxComboCount)
         {
             _attackInputPending = true;
         }
 
         // Activate an attack when inputted.
-        if (_attackInputPending)
-        {
-            PerformAttack();
-        }
+        if (_attackInputPending && CanAttack) PerformAttack();
 
         // Gradually align player model with camera direction.
         if (_isAttacking)
@@ -161,10 +158,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         }
 
         // Continually register targets while an attack is active.
-        if (_isRegistering)
-        {
-            ExecuteHitRegistrationCast();
-        }
+        if (_isRegistering) ExecuteHitRegistrationCast();
     }
 
     /// <summary>
@@ -175,10 +169,11 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private void RecalculateAttackSpeed()
     {
         float currAttackSpeed = _playerEntity.Stats.MeleeAttackSpeed;
-        float inverseAttackSpeed = Mathf.Clamp(1 / currAttackSpeed, 1e-3f, float.MaxValue);
+        float duration1 = Mathf.Clamp((_preTransition1.length + _attack1.length) / currAttackSpeed, 1e-3f, float.MaxValue);
+        float duration2 = Mathf.Clamp((_preTransition2.length + _attack2.length) / currAttackSpeed, 1e-3f, float.MaxValue);
 
-        _attackDurations[0] = (_attack1.length + _preTransition1.length) * inverseAttackSpeed;
-        _attackDurations[1] = (_attack2.length + _preTransition2.length) * inverseAttackSpeed;
+        _attackDurations[0] = duration1;
+        _attackDurations[1] = duration2;
         _weaponAnim.SetFloat("AttackSpeedMultiplier", currAttackSpeed);
     }
 
@@ -192,8 +187,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// <returns> The largest time value. </returns>
     private float FindLargestTimeCooldown()
     {
-        float duration1 = _attackDurations[0] + _postTransition1.length;
-        float duration2 = _attackDurations[1] + _postTransition2.length;
+        float duration1 = _postTransition1.length;
+        float duration2 = _postTransition2.length;
         return Mathf.Max(Mathf.Max(duration1, duration2), _playerEntity.Stats.MeleeAttackRate);
     }
 
@@ -217,13 +212,14 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     {
         _attackInputPending = false;
         CanAttack = false;
-        //print($"Combo Try. | {_currComboCount}");
+        
         _currComboCount++;
+        print($"PerformAttack: {_currComboCount}");
         _weaponAnim.SetTrigger("Attack" + _currComboCount);
         _currAttackDuration = _attackDurations[_currComboCount - 1];
-        float delaySeconds;
 
-        // Wait for lower delay margin if combo attack is still possible
+        // Wait for lower delay margin if combo attack is still possible.
+        float delaySeconds;
         if (_currComboCount < _maxComboCount)
         {
             _comboTimer = 0;
@@ -254,37 +250,30 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         if (delaySeconds != GetCooldownMinusBuffer())
         {
             CanAttack = true;
-            yield return null;
+            yield break;
         }
 
-        // Execute extra functionality if a combo attack is still possible.
-        float timer = delaySeconds;
-        while (timer < _currAttackDuration)
+        print($"Was Attacking: {_isAttacking}");
+        // Wait for another attack if a combo is still possible.
+        while (_isAttacking)
         {
-            timer += Time.deltaTime;
-
             // Break out of the coroutine if an attack input is pending during the buffer.
-            if (_attackInputPending)
+            if (_attackInputPending && _currComboCount < _maxComboCount)
             {
                 // Wait until the current attack has ended before allowing the next one.
-                while (_isAttacking)
-                {
-                    yield return null;
-                }
-
+                while (_isAttacking) yield return null;
                 CanAttack = true;
-                break;
-            }
-            else if (timer >= _currAttackDuration) // Otherwise, force a longer delay if the combo time window was missed.
-            {
-                _currComboCount = 0;
-                yield return new WaitForSeconds(AttackCooldown);
-                CanAttack = true;
-                break;
+                yield break;
             }
 
             yield return null;
         }
+
+        // Force a longer delay if the combo time window was missed.
+        _currComboCount = 0;
+        _weaponAnim.SetTrigger("ComboMiss");
+        yield return new WaitForSeconds(AttackCooldown);
+        CanAttack = true;
     }
 
     /// <summary>
@@ -326,33 +315,16 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
         if (hitCountThisCast > 0)
         {
-            // Ensure the initial thrust attack can only damage a single enemy.
-            if (_currComboCount == 1)
+            // For all valid objects that were hit, apply damage to them only if they haven't already received it.
+            for (int i = 0; i < hitCountThisCast; i++)
             {
-                for (int i = 0; i < hitCountThisCast; i++)
-                {
-                    RaycastHit hit = _objectsHitThisCast[i];
-                    Enemy enemyScript = hit.collider.gameObject.GetComponent<Enemy>();
-                    if (enemyScript == null) continue; // Find the first object hit that has an Enemy script.
+                RaycastHit hit = _objectsHitThisCast[i];
+                Enemy enemyScript = hit.collider.gameObject.GetComponent<Enemy>();
+                if (_objectsHitThisAttack.Contains(hit.collider.gameObject) || enemyScript == null) continue; // Skip this object if damage was already
+                                                                                                              // applied or if it is not an enemy.
 
-                    _objectsHitThisAttack.Add(hit.collider.gameObject);
-                    ApplyDamageEffects(enemyScript);
-                    return;
-                }
-            }
-            else if (_currComboCount > 1) // Other two attacks have area damage.
-            {
-                // For all valid objects that were hit, apply damage to them only if they haven't already received it.
-                for (int i = 0; i < hitCountThisCast; i++)
-                {
-                    RaycastHit hit = _objectsHitThisCast[i];
-                    Enemy enemyScript = hit.collider.gameObject.GetComponent<Enemy>();
-                    if (_objectsHitThisAttack.Contains(hit.collider.gameObject) || enemyScript == null) continue; // Skip this object if damage was already
-                                                                                                                  // applied or if it is not an enemy.
-
-                    _objectsHitThisAttack.Add(hit.collider.gameObject);
-                    ApplyDamageEffects(enemyScript);
-                }
+                _objectsHitThisAttack.Add(hit.collider.gameObject);
+                ApplyDamageEffects(enemyScript);
             }
         }
 
@@ -461,10 +433,12 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// </summary>
     private void OnAttackEnd()
     {
-        //print($"Attack end: {_currComboCount}");
         _isAttacking = false;
         _isRegistering = false;
+
+        print($"Attack end: {_currComboCount}");
         if (_currComboCount == _maxComboCount) _currComboCount = 0;
+        
         _prevHitCapsuleTempPointsInitialized = false;
         _objectsHitThisAttack.Clear();
     }

@@ -464,6 +464,17 @@ public class PlayerMovement : MonoBehaviour
         {
             _groundPointColliding = hit;
         }
+
+        if (hit.gameObject.layer == LayerMask.NameToLayer("TutorialEvent"))
+        {
+            TutorialObject tutorialScript = hit.gameObject.GetComponent<TutorialObject>();
+            if (!tutorialScript.isKillable)
+            {
+                tutorialScript.wasTriggered = true;
+                TutorialManager.TriggerTutorialEvent(tutorialScript.EventID);
+                Destroy(hit.gameObject);
+            }
+        }
     }
 
     /// <summary>
