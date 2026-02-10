@@ -1,3 +1,16 @@
+// <summary>
+//   <authors>
+//     Hainish Acharya, Samuel Rigby
+//   </authors>
+//   <para>
+//     Written by Hainish Acharya for GAMES 4500, University of Utah, September 2025.
+//     Contributed to by Samuel Rigby.
+//          -Added properties for player movement.
+//          -Refactored properties to work with FloatStatQuery and IntStatQuery methods
+//           for readability and scalability.
+//   </para>
+// </summary>
+
 using System;
 using UnityEngine;
 

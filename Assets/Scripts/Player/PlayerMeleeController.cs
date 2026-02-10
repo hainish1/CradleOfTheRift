@@ -4,7 +4,7 @@
 //   </authors>
 //   <para>
 //     Written by Samuel Rigby for GAMES 4500, University of Utah, November 2025.
-//     Contributed to by Hainish Acharya for GAMES 4500, University of Utah, November 2025.
+//     Contributed to by Hainish Acharya.
 //          -Added Enemy script implementation for damage, knockback and flash effect
 //           in the ApplyDamageEffects method.
 //   </para>

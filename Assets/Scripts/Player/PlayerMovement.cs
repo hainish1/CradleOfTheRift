@@ -4,7 +4,7 @@
 //   </authors>
 //   <para>
 //     Written by Samuel Rigby for GAMES 4500, University of Utah, August 2025.
-//     Contributed to by Hainish Acharya for GAMES 4500, University of Utah, August 2025.
+//     Contributed to by Hainish Acharya.
 //          -Added independent character rotation functionality.
 //          -Added knockback functionality.
 //          -Added support for stat data modification.
@@ -468,12 +468,7 @@ public class PlayerMovement : MonoBehaviour
         if (hit.gameObject.layer == LayerMask.NameToLayer("TutorialEvent"))
         {
             TutorialObject tutorialScript = hit.gameObject.GetComponent<TutorialObject>();
-            if (!tutorialScript.isKillable)
-            {
-                tutorialScript.wasTriggered = true;
-                TutorialManager.TriggerTutorialEvent(tutorialScript.EventID);
-                Destroy(hit.gameObject);
-            }
+            tutorialScript.OnTriggerOrCollide();
         }
     }
 

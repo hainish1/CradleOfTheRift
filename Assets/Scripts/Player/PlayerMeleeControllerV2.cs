@@ -3,8 +3,8 @@
 //     Samuel Rigby, Hainish Acharya
 //   </authors>
 //   <para>
-//     Written by Samuel Rigby for GAMES 4500, University of Utah, November 2025.
-//     Contributed to by Hainish Acharya for GAMES 4500, University of Utah, November 2025.
+//     Written by Samuel Rigby for GAMES 4510, University of Utah, January 2026.
+//     Contributed to by Hainish Acharya.
 //          -Added Enemy script implementation for damage, knockback and flash effect
 //           in the ApplyDamageEffects method.
 //   </para>
@@ -200,7 +200,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// <returns> The cooldown minus the buffer margin. </returns>
     private float GetCooldownMinusBuffer()
     {
-        return _currAttackDuration - _comboInputSecondsBuffer;
+        //print($"CooldownMinusBuffer: {_currAttackDuration - _comboInputSecondsBuffer}");
+        return Mathf.Clamp(_currAttackDuration - _comboInputSecondsBuffer, 0, float.MaxValue);
     }
 
     /// <summary>
@@ -214,11 +215,11 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         CanAttack = false;
         
         _currComboCount++;
-        print($"PerformAttack: {_currComboCount}");
         _weaponAnim.SetTrigger("Attack" + _currComboCount);
         _currAttackDuration = _attackDurations[_currComboCount - 1];
+        print($"_currAttackDuration: {_currAttackDuration}");
 
-        // Wait for lower delay margin if combo attack is still possible.
+        // Wait for cooldown minus buffer if combo attack is still possible.
         float delaySeconds;
         if (_currComboCount < _maxComboCount)
         {
@@ -228,7 +229,6 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         else
         {
             _comboTimer = _currAttackDuration;
-            _currAttackDuration = _attackDurations[0];
             delaySeconds = AttackCooldown;
         }
 
@@ -247,13 +247,15 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         yield return new WaitForSeconds(delaySeconds);
 
         // Return immediately if a full delay was executed.
-        if (delaySeconds != GetCooldownMinusBuffer())
+        if (delaySeconds == AttackCooldown)
         {
             CanAttack = true;
+            _currComboCount = 0;
+            print($"AttackCooldown ended: {delaySeconds}");
             yield break;
         }
 
-        print($"Was Attacking: {_isAttacking}");
+        //print($"Was Attacking: {_isAttacking}");
         // Wait for another attack if a combo is still possible.
         while (_isAttacking)
         {
@@ -283,8 +285,6 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// </summary>
     private void ExecuteHitRegistrationCast()
     {
-        if (_currComboCount == 1 && _objectsHitThisAttack.Count == 1) return; // Skip registration if thrust attack damaged something.
-
         // Initialize the hit capsule temp points at the beginning of every attack.
         if (!_prevHitCapsuleTempPointsInitialized)
         {
@@ -320,8 +320,9 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
             {
                 RaycastHit hit = _objectsHitThisCast[i];
                 Enemy enemyScript = hit.collider.gameObject.GetComponent<Enemy>();
-                if (_objectsHitThisAttack.Contains(hit.collider.gameObject) || enemyScript == null) continue; // Skip this object if damage was already
-                                                                                                              // applied or if it is not an enemy.
+
+                // Skip this object if damage was already applied or if it is not an enemy.
+                if (_objectsHitThisAttack.Contains(hit.collider.gameObject) || enemyScript == null) continue;
 
                 _objectsHitThisAttack.Add(hit.collider.gameObject);
                 ApplyDamageEffects(enemyScript);
@@ -436,7 +437,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _isAttacking = false;
         _isRegistering = false;
 
-        print($"Attack end: {_currComboCount}");
+        //print($"Attack end: {_currComboCount}");
         if (_currComboCount == _maxComboCount) _currComboCount = 0;
         
         _prevHitCapsuleTempPointsInitialized = false;
