@@ -28,6 +28,7 @@ public class PlayerInventory : MonoBehaviour
 
     // once instance per effect kind on the player
     private HealOnDamage healOnDamageEffect;
+    private HealOnPoison healOnPoisonEffect;
     private StompDamage stompDamageEffect;
     private FallDamageBonus fallDamageBonusEffect;
     private DotOnHit dotOnHitEffect;
@@ -73,6 +74,7 @@ public class PlayerInventory : MonoBehaviour
     {
         float dt = Time.deltaTime;
         healOnDamageEffect?.Update(dt);
+        healOnPoisonEffect?.Update(dt);
         stompDamageEffect?.Update(dt);
         fallDamageBonusEffect?.Update(dt);
         dotOnHitEffect?.Update(dt);
@@ -254,6 +256,9 @@ public class PlayerInventory : MonoBehaviour
                 case ItemEffectKind.HealOnDamage:
                     EnsureHealOnDamage(effect, initialStacks: stacksAdded);
                     break;
+                case ItemEffectKind.HealOnPoison:
+                    EnsureHealOnPoison(effect);
+                    break;
                 case ItemEffectKind.StompDamage:
                     EnsureStomp(effect, initialStacks: stacksAdded);
                     break;
@@ -348,6 +353,21 @@ public class PlayerInventory : MonoBehaviour
                 healOnDamageEffect.AddStack(1);
             }
             Debug.Log($"[Effect] Heal on Damage : Stacks {initialStacks}");
+        }
+    }
+
+    private void EnsureHealOnPoison(EffectSpec effect)
+    {
+        if (healOnPoisonEffect == null || healOnPoisonEffect.IsDisposed)
+        {
+            healOnPoisonEffect = new HealOnPoison(
+                owner: playerEntity,
+                range: effect.healOnPoisonRange,
+                healPerPoisonStackPerSecond: effect.healPerPoisonStackPerSecond,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(healOnPoisonEffect);
+            Debug.Log($"[Effect] HealOnPoison created");
         }
     }
 
@@ -844,7 +864,13 @@ public class PlayerInventory : MonoBehaviour
                 if (healOnDamageEffect != null)
                 {
                     healOnDamageEffect.AddStack(-stacks);
-                    // if it reaches 0 it'll dispose itself
+                }
+                break;
+            case ItemEffectKind.HealOnPoison:
+                if (healOnPoisonEffect != null && !healOnPoisonEffect.IsDisposed)
+                {
+                    healOnPoisonEffect.Dispose();
+                    healOnPoisonEffect = null;
                 }
                 break;
             case ItemEffectKind.StompDamage:
@@ -1097,6 +1123,7 @@ public class PlayerInventory : MonoBehaviour
         tickingEffects.Clear();
 
         healOnDamageEffect?.Dispose();
+        healOnPoisonEffect?.Dispose();
         stompDamageEffect?.Dispose();
         fallDamageBonusEffect?.Dispose();
         dotOnHitEffect?.Dispose();

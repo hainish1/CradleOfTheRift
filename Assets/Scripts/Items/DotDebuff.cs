@@ -162,6 +162,15 @@ public class DotDebuff : MonoBehaviour
 
     public int GetActiveDotCount() => activeDots.Count;
 
+    public int GetPoisonStackCount()
+    {
+        int total = 0;
+        foreach (var dot in activeDots)
+            if (dot.id == "poison")
+                total += dot.stackCount;
+        return total;
+    }
+
     public void ClearAllDots()
     {
         activeDots.Clear();

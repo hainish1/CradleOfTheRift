@@ -16,6 +16,7 @@ public enum ItemEffectKind
 {
     None,
     HealOnDamage,
+    HealOnPoison,
     StompDamage,
     FallDamageBonus,
     DotOnHit,
@@ -46,6 +47,11 @@ public class EffectSpec
 
     // HEAL ON DAMAGE
     [Range(0f, 1f)] public float healOnDamagePercentPerStack = .02f;
+
+    // Heal on Poison 
+    public float healOnPoisonRange = 8f;
+    public float healPerPoisonStackPerSecond = 0.5f;
+    public float healOnPoisonTickInterval = 1f;
 
     // Stomp
     public float stompDamagePerStack = 10f;

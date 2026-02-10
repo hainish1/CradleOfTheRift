@@ -59,6 +59,12 @@ public class EffectSpecDrawer : PropertyDrawer
             "healOnDamagePercentPerStack",
         },
 
+        ItemEffectKind.HealOnPoison => new[]
+        {
+            "healOnPoisonRange",
+            "healPerPoisonStackPerSecond",
+        },
+
         ItemEffectKind.StompDamage => new[]
         {
             "stompDamagePerStack","stompBounceForce",
@@ -120,6 +126,67 @@ public class EffectSpecDrawer : PropertyDrawer
         {
             "dashDamage", "dashDamageRange",
         },
+
+        ItemEffectKind.PoisonPoolOnDash => new[]
+        {
+            "poisonPoolRadius", "poisonPoolLifetime",
+        },
+
+        ItemEffectKind.BurnOnDamage => new[]
+        {
+            "burnAuraDamagePerSecond", "burnAuraRange", "burnAuraTickInterval",
+        },
+
+        ItemEffectKind.ElementFusion => new[]
+        {
+            "fusionTriggerElement", "fusionEffectElement",
+        },
+
+        ItemEffectKind.ArcStrike => new[]
+        {
+            "arcStrikeDamage", "arcStrikeRange", "arcStrikePoissonLambda",
+        },
+
+        ItemEffectKind.ElementReactionExplosion => new[]
+        {
+            "elementReactionExplosionDamage", "elementReactionExplosionRadius",
+            "elementReactionExplosionCooldown", "elementReactionExplosionVFX",
+        },
+
+        ItemEffectKind.LightningStrike => new[]
+        {
+            "playerLightningStrikeDamage", "playerLightningStrikeRadius",
+            "playerLightningStrikeInterval", "playerLightningStrikeElectrifyDamage",
+        },
+
+        ItemEffectKind.FlyFire => new[]
+        {
+            "flyingFireDamage", "flyingFireRadius", "flyingFireTickInterval", "flyingFireOffset",
+        },
+
+        ItemEffectKind.OrbitingFireballs => new[]
+        {
+            "orbitingFireballDamage", "orbitingFireballRadius", "orbitingFireballRotationSpeed",
+        },
+
+        ItemEffectKind.LightningDash => new[]
+        {
+            "lightningDashDamage", "lightningDashChainCount", "lightningDashChainRange",
+        },
+
+        ItemEffectKind.OrbitingFireballsTest => new[]
+        {
+            "orbitingFireballTestDamage", "orbitingFireballTestDamageThreshold",
+            "orbitingFireballTestMaxCount", "orbitingFireballTestLifetime",
+        },
+
+        ItemEffectKind.ChainLightningTest => new[]
+        {
+            "chainLightningTestStrikeInterval", "chainLightningTestBuffDuration",
+            "chainLightningTestChainDamagePercent", "chainLightningTestMaxDepth",
+            "chainLightningTestBranchesPerNode", "chainLightningTestChainRange",
+        },
+
         _ => Array.Empty<string>(),
     };
 }
