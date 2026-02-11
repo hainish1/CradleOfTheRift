@@ -36,6 +36,6 @@ public class HealthUI : MonoBehaviour
 
         healthBar.highValue = maxHealth;
         healthBar.value = currentHealth;
-        healthBar.title = $"Health: {currentHealth}/{maxHealth}";
+        healthBar.title = $"Health: {(int)currentHealth}/{maxHealth}";
     }
 }

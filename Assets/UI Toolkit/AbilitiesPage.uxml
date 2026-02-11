@@ -1,0 +1,32 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:VisualElement name="AbilitiesPage" style="flex-grow: 1; padding: 40px; justify-content: flex-start;">
+        <engine:VisualElement name="AbilitySelector" style="flex-direction: row; justify-content: center; margin-bottom: 50px; margin-top: 20px;">
+            <engine:VisualElement class="ability-group" style="align-items: center; margin: 0 20px;">
+                <engine:Button name="BtnQ" class="button" style="width: 130px; height: 130px; border-width: 4px; border-color: white; margin-bottom: 10px;" />
+                <engine:Label text="Q" name="KeyLabelQ" style="font-size: 28px; -unity-font-style: bold; color: white;" />
+            </engine:VisualElement>
+            <engine:VisualElement class="ability-group" style="align-items: center; margin: 0 20px;">
+                <engine:Button name="BtnW" class="button" style="width: 130px; height: 130px; border-width: 4px; border-color: white; margin-bottom: 10px;" />
+                <engine:Label text="W" name="KeyLabelW" style="font-size: 28px; -unity-font-style: bold; color: white;" />
+            </engine:VisualElement>
+            <engine:VisualElement class="ability-group" style="align-items: center; margin: 0 20px;">
+                <engine:Button name="BtnE" class="button" style="width: 130px; height: 130px; border-width: 4px; border-color: white; margin-bottom: 10px;" />
+                <engine:Label text="E" name="KeyLabelE" style="font-size: 28px; -unity-font-style: bold; color: white;" />
+            </engine:VisualElement>
+            <engine:VisualElement class="ability-group" style="align-items: center; margin: 0 20px;">
+                <engine:Button name="BtnR" class="button" style="width: 130px; height: 130px; border-width: 4px; border-color: white; margin-bottom: 10px;" />
+                <engine:Label text="R" name="KeyLabelR" style="font-size: 28px; -unity-font-style: bold; color: white;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:VisualElement name="ContentSplit" style="flex-direction: row; flex-grow: 1; align-items: flex-start;">
+            <engine:VisualElement name="AbilityTextContent" style="width: 40%; padding-right: 40px; padding-left: 60px;">
+                <engine:Label text="Ability Name" name="AbilityTitle" class="h1" style="font-size: 65px; margin-bottom: 20px; color: white;" />
+                <engine:Label text="Select an ability to see a preview of how it works." name="AbilityDescription" style="white-space: normal; font-size: 26px; color: rgba(255, 255, 255, 0.8); line-height: 30px;" />
+            </engine:VisualElement>
+            <engine:VisualElement name="VideoContainer" class="listBox" style="width: 55%; height: 500px; border-width: 4px; border-color: white; background-color: black; overflow: hidden; margin-right: 60px;">
+                <engine:Image name="AbilityVideoPlayer" style="flex-grow: 1; -unity-background-scale-mode: aspect-fill;" />
+                <engine:Label text="PREVIEW" style="position: absolute; top: 10px; left: 15px; font-size: 14px; color: rgba(255, 255, 255, 0.4);" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
