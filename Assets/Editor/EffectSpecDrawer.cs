@@ -120,6 +120,10 @@ public class EffectSpecDrawer : PropertyDrawer
         {
             "dashDamage", "dashDamageRange",
         },
+        // ItemEffectKind.PassThroughSpear => new[]
+        // {
+        //     ""
+        // },
         _ => Array.Empty<string>(),
     };
 }
