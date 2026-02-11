@@ -35,6 +35,8 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("An empty object positioned at the exact center of the player character object.")] private Transform _playerCenter;
     [SerializeField]
     [Tooltip("The player camera object.")] private Transform _cameraTransform;
+    [SerializeField]
+    [Tooltip("The player model object.")] private GameObject _playerModel;
     private Entity _playerEntity;
     private CharacterController _characterController;
     private float _playerHalfHeight;
@@ -154,7 +156,13 @@ public class PlayerMovement : MonoBehaviour
     private float _flightDeceleration;
 
     private bool strafe = false; // Set by AimController.
-    
+
+    [Header("Animation Parameters")] [Space]
+    [SerializeField] private AnimationClip _dashPreAnim;
+    [SerializeField] private AnimationClip _dashAnim;
+    [SerializeField] private AnimationClip _dashPostAnim;
+    private Animator _playerAnim;
+
     [Header("Audio")]
     [SerializeField]
     private AK.Wwise.Event dashSoundEvent;
@@ -168,6 +176,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _playerEntity = GetComponent<Entity>();
         _characterController = GetComponent<CharacterController>();
+        _playerAnim = _playerModel.GetComponent<Animator>();
         _playerInput = new InputSystem_Actions();
         _playerActions = _playerInput.Player;
     }
@@ -886,10 +895,12 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator InitiateDashDuration(float seconds)
     {
         _isDashing = true;
+        _playerAnim.SetTrigger("Dash");
 
         yield return new WaitForSeconds(seconds);
 
         _isDashing = false;
+        _playerAnim.SetTrigger("DashExit");
     }
 
     /// <summary>

@@ -476,6 +476,7 @@ GameObject:
   - component: {fileID: 8704286100763316472}
   - component: {fileID: 2600056389756744934}
   - component: {fileID: 8678201601994762703}
+  - component: {fileID: 424730690599398153}
   - component: {fileID: 3932950717491979509}
   - component: {fileID: 146141417271177862}
   - component: {fileID: 3225160770112030272}
@@ -609,6 +610,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerCenter: {fileID: 8569377081838828647}
   _cameraTransform: {fileID: 3222700164973113527}
+  _playerModel: {fileID: 6999564380929698516}
   _gravityMultiplier: 3
   _gravityAirDrag: 1
   _moveAccelerationSeconds: 0.4
@@ -630,6 +632,9 @@ MonoBehaviour:
   _flightDecelerationSeconds: 0.5
   _flightCounterAccelerationMultiplier: 2
   _flightJumpForce: 20
+  _dashPreAnim: {fileID: 0}
+  _dashAnim: {fileID: 0}
+  _dashPostAnim: {fileID: 0}
   dashSoundEvent:
     idInternal: 0
     valueGuidInternal: 
@@ -639,6 +644,35 @@ MonoBehaviour:
     valueGuidInternal: 
     WwiseObjectReference: {fileID: 0}
   dashVFXPrefab: {fileID: 0}
+--- !u!114 &424730690599398153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2377490915647840013}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1fc6dff3922fad44aa77c3d8ef1fa82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerModel: {fileID: 7667556574553632878}
+  _playerCamera: {fileID: 0}
+  _attack1: {fileID: 7400000, guid: 15e6dfb76ca55ee4aaca5276755563dd, type: 2}
+  _attack2: {fileID: 7400000, guid: 89ef886bf0b2b29408cf18cfcc2e0e5c, type: 2}
+  _preTransition1: {fileID: 7400000, guid: 0a2f0fcac3bd6344789873b22676d91e, type: 2}
+  _preTransition2: {fileID: 7400000, guid: 69fb3859a0490ad4f9c68f0386e5a0cd, type: 2}
+  _postTransition1: {fileID: 7400000, guid: 8d8882d831a04cf4d8b8f37c8517c541, type: 2}
+  _postTransition2: {fileID: 7400000, guid: 06ee67416e1dad3459ba39ec5a6afc57, type: 2}
+  _hitCapsuleStartPoint: {fileID: 8403910430212717989}
+  _hitCapsuleEndPoint: {fileID: 6515147321210492741}
+  _hitCapsuleCastRadius: 2
+  _damageableLayerMasks:
+    serializedVersion: 2
+    m_Bits: 7168
+  _debug: 1
+  _comboInputSecondsBuffer: 0.18
+  knockbackForce: 18
 --- !u!114 &3932950717491979509
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2437,7 +2471,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerModel: {fileID: 7667556574553632878}
-  _playerCamera: {fileID: 3935972546842473169}
+  _playerCamera: {fileID: 0}
   _attack1: {fileID: 7400000, guid: 15e6dfb76ca55ee4aaca5276755563dd, type: 2}
   _attack2: {fileID: 7400000, guid: 89ef886bf0b2b29408cf18cfcc2e0e5c, type: 2}
   _preTransition1: {fileID: 7400000, guid: 0a2f0fcac3bd6344789873b22676d91e, type: 2}

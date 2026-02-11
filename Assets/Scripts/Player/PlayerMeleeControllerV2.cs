@@ -26,7 +26,6 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [Header("Weapon Parameters")] [Space]
     [SerializeField] private Transform _playerModel;
     [SerializeField] private Transform _playerCamera;
-    private Animator _weaponAnim;
     private Entity _playerEntity;
     private PlayerAudioController _audioController;
 
@@ -39,6 +38,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [SerializeField] private AnimationClip _preTransition2;
     [SerializeField] private AnimationClip _postTransition1;
     [SerializeField] private AnimationClip _postTransition2;
+    private Animator _weaponAnim;
     private float[] _attackDurations;
 
     // Hit Registration Parameters
@@ -80,7 +80,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     void Awake()
     {
         _playerEntity = GetComponentInParent<Entity>();
-        _weaponAnim = GetComponent<Animator>();
+        _weaponAnim = _playerModel.GetComponent<Animator>();
         _audioController = GetComponentInParent<PlayerAudioController>();
         _playerInput = new InputSystem_Actions();
         _playerActions = _playerInput.Player;
