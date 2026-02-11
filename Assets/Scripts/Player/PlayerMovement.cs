@@ -38,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     [Tooltip("The player model object.")] private GameObject _playerModel;
     private Entity _playerEntity;
+    private Animator _playerAnim;
     private CharacterController _characterController;
     private float _playerHalfHeight;
     private float _playerRadius;
@@ -156,12 +157,6 @@ public class PlayerMovement : MonoBehaviour
     private float _flightDeceleration;
 
     private bool strafe = false; // Set by AimController.
-
-    [Header("Animation Parameters")] [Space]
-    [SerializeField] private AnimationClip _dashPreAnim;
-    [SerializeField] private AnimationClip _dashAnim;
-    [SerializeField] private AnimationClip _dashPostAnim;
-    private Animator _playerAnim;
 
     [Header("Audio")]
     [SerializeField]
