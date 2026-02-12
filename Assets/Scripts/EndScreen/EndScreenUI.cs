@@ -19,9 +19,20 @@ public class EndScreenUI : MonoBehaviour
 
     void OnEnable()
     {
+        if(playerHealth == null)
+        {
+            playerHealth = PlayerLocator.FindPlayerComponent<PlayerHealth>();
+        }
+
         if (ExtractionManager.Instance != null)
             ExtractionManager.Instance.OnGameWon += OnWinScreen;
 
+        if(playerHealth == null)
+        {
+            Debug.Log("Player health missing on player, or player missing");
+            return;
+        }
+        
         if (this.playerHealth != null)
             this.playerHealth.LoseScreen += OnLoseScreen;
     }
