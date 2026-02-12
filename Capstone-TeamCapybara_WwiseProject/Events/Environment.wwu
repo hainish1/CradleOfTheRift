@@ -118,6 +118,24 @@
 								</Action>
 							</ChildrenList>
 						</Event>
+						<Event Name="Chest_Locked" ID="{45515A68-3C88-4BE3-9E9F-1CEF6A8B5019}">
+							<ChildrenList>
+								<Action Name="" ID="{953C81B8-850D-4026-9AD5-F5B6DF321D99}" ShortID="721168747">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Chest Variety" ID="{1D48B53F-1C14-4D98-85B9-7A9CA74D336B}" WorkUnitID="{8ADB7485-E0A9-4F0D-A14F-7ED951DF96EF}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{B6EDEEED-F9D9-43ED-AED9-F601AD2E5B0F}" ShortID="283398516">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Chain Variety" ID="{DF456E0B-5335-430F-939B-495DCD609EA9}" WorkUnitID="{8ADB7485-E0A9-4F0D-A14F-7ED951DF96EF}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
 					</ChildrenList>
 				</Folder>
 			</ChildrenList>
