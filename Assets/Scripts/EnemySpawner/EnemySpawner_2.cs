@@ -10,6 +10,8 @@ public class EnemySpawner_2 : MonoBehaviour
     [SerializeField] private List<EnemyType> enemies;
     [SerializeField] private Transform playerLocation;
     [SerializeField] private DifficultyScaler difficultyScaler;
+    [SerializeField] private GameObject spawnVFXPrefab;
+
 
     [Header("Node Settings")]
     [SerializeField] private LayerMask spawnNodeLayer;
@@ -82,6 +84,7 @@ public class EnemySpawner_2 : MonoBehaviour
 
     void Start()
     {
+        EnsurePlayerLocation();
         if (ExtractionManager.Instance != null)
         {
             ExtractionManager.Instance.ExtractionStarted += OnExtractionZoneStarted;
@@ -230,6 +233,9 @@ public class EnemySpawner_2 : MonoBehaviour
                 spawnPos = hit.position;
             }
 
+            // Play spawn VFX
+            PlaySpawnVFX(spawnPos, Quaternion.identity);
+
             // Spawn Enemy
             GameObject enemyObj = Instantiate(enemy.prefab, spawnPos, Quaternion.identity);
 
@@ -351,66 +357,86 @@ public class EnemySpawner_2 : MonoBehaviour
     }
 
     private void SpawnFromAnyValidNode(EnemyType enemy)
-{
-    // Find any nodes in the radius
-    int nodesFound = Physics.OverlapSphereNonAlloc(playerLocation.position, spawnRadius, nodeResults, spawnNodeLayer);
-    
-    // Still try to match Ground/Flying types for a "soft" filter
-    List<SpawnNode> validFallbackNodes = new List<SpawnNode>();
-    for (int i = 0; i < nodesFound; i++)
     {
-        if (nodeResults[i].TryGetComponent(out SpawnNode node))
+        // Find any nodes in the radius
+        int nodesFound = Physics.OverlapSphereNonAlloc(playerLocation.position, spawnRadius, nodeResults, spawnNodeLayer);
+        
+        // Still try to match Ground/Flying types for a "soft" filter
+        List<SpawnNode> validFallbackNodes = new List<SpawnNode>();
+        for (int i = 0; i < nodesFound; i++)
         {
-            bool correctType = enemy.isFlying ? node.isForFlyingEnemies : node.isForGroundEnemies;
-            if (correctType)
+            if (nodeResults[i].TryGetComponent(out SpawnNode node))
             {
-                validFallbackNodes.Add(node);
+                bool correctType = enemy.isFlying ? node.isForFlyingEnemies : node.isForGroundEnemies;
+                if (correctType)
+                {
+                    validFallbackNodes.Add(node);
+                }
             }
         }
-    }
 
-    // Pick from type-matched nodes first; if none exist, pick any node found
-    SpawnNode selectedNode = null;
-    if (validFallbackNodes.Count > 0)
-    {
-        selectedNode = validFallbackNodes[UnityEngine.Random.Range(0, validFallbackNodes.Count)];
-    }
-    else if (nodesFound > 0)
-    {
-        selectedNode = nodeResults[0].GetComponent<SpawnNode>();
-    }
-
-    if (selectedNode != null)
-    {
-        // Get the node size and pick a random point (Same as main method)
-        float radius = 1f; 
-        if (selectedNode.TryGetComponent(out SphereCollider sphere))
+        // Pick from type-matched nodes first; if none exist, pick any node found
+        SpawnNode selectedNode = null;
+        if (validFallbackNodes.Count > 0)
         {
-            radius = sphere.radius * selectedNode.transform.lossyScale.x;
+            selectedNode = validFallbackNodes[UnityEngine.Random.Range(0, validFallbackNodes.Count)];
+        }
+        else if (nodesFound > 0)
+        {
+            selectedNode = nodeResults[0].GetComponent<SpawnNode>();
         }
 
-        Vector2 randomCircle = UnityEngine.Random.insideUnitCircle * radius;
-        Vector3 randomOffset = new Vector3(randomCircle.x, 0, randomCircle.y);
-        Vector3 spawnPos = selectedNode.transform.position + randomOffset;
-
-        // Update height to snap location to ground level
-        if (NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, radius + 2f, NavMesh.AllAreas))
+        if (selectedNode != null)
         {
-            spawnPos = hit.position;
-        }
+            // Get the node size and pick a random point (Same as main method)
+            float radius = 1f; 
+            if (selectedNode.TryGetComponent(out SphereCollider sphere))
+            {
+                radius = sphere.radius * selectedNode.transform.lossyScale.x;
+            }
 
-        // Spawn Enemy
-        GameObject obj = Instantiate(enemy.prefab, spawnPos, Quaternion.identity);
+            Vector2 randomCircle = UnityEngine.Random.insideUnitCircle * radius;
+            Vector3 randomOffset = new Vector3(randomCircle.x, 0, randomCircle.y);
+            Vector3 spawnPos = selectedNode.transform.position + randomOffset;
 
-        if (showSpawnDebug)
-        {
-            recentSpawns.Add(new SpawnDebugInfo { 
-                position = spawnPos, 
-                isSuccess = true, 
-                isFallback = true 
-            });
+            // Update height to snap location to ground level
+            if (NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, radius + 2f, NavMesh.AllAreas))
+            {
+                spawnPos = hit.position;
+            }
+
+            // Play spawn VFX
+            PlaySpawnVFX(spawnPos, Quaternion.identity);
+
+            // Spawn Enemy
+            GameObject obj = Instantiate(enemy.prefab, spawnPos, Quaternion.identity);
+
+            if (showSpawnDebug)
+            {
+                recentSpawns.Add(new SpawnDebugInfo { 
+                    position = spawnPos, 
+                    isSuccess = true, 
+                    isFallback = true 
+                });
+            }
+            HandleEnemySpawned(obj);
         }
-        HandleEnemySpawned(obj);
     }
-}
+
+    private void PlaySpawnVFX(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation)
+    {
+        if (spawnVFXPrefab == null) return;
+        GameObject vfx = Instantiate(spawnVFXPrefab, position, rotation);
+
+        Destroy(vfx, 2.0f); // Should prob make the VFX auto destroy instead of doing it here.
+    }
+
+    private void EnsurePlayerLocation()
+    {
+        if (playerLocation != null) return;
+
+        var playerGo = PlayerLocator.FindPlayerGameObject();
+        if (playerGo != null)
+            playerLocation = playerGo.transform;
+    }
 }

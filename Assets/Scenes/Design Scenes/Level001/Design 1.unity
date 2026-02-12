@@ -221846,11 +221846,15 @@ PrefabInstance:
     - target: {fileID: 183193264435491579, guid: 177ae1a4dbff84524bb5910db7c9fcbd, type: 3}
       propertyPath: playerLocation
       value: 
-      objectReference: {fileID: 1617356812}
+      objectReference: {fileID: 2081306878}
     - target: {fileID: 183193264435491579, guid: 177ae1a4dbff84524bb5910db7c9fcbd, type: 3}
       propertyPath: showSpawnDebug
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 183193264435491579, guid: 177ae1a4dbff84524bb5910db7c9fcbd, type: 3}
+      propertyPath: spawnVFXPrefab
+      value: 
+      objectReference: {fileID: 4658278565933542678, guid: dbce492c514721647bde8d0ff7ab8791, type: 3}
     - target: {fileID: 2571862994984526756, guid: 177ae1a4dbff84524bb5910db7c9fcbd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 52.170166
