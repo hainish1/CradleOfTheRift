@@ -98809,6 +98809,42 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 424730690599398153, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 424730690599398153, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: _playerCamera
+      value: 
+      objectReference: {fileID: 2109972189}
+    - target: {fileID: 424730690599398153, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: _attacks.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 424730690599398153, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: _attacks.Array.data[0].AttackAnim
+      value: 
+      objectReference: {fileID: 7400000, guid: 15e6dfb76ca55ee4aaca5276755563dd, type: 2}
+    - target: {fileID: 424730690599398153, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: _attacks.Array.data[1].AttackAnim
+      value: 
+      objectReference: {fileID: 7400000, guid: 89ef886bf0b2b29408cf18cfcc2e0e5c, type: 2}
+    - target: {fileID: 424730690599398153, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: _attacks.Array.data[0].PreTransitionAnim
+      value: 
+      objectReference: {fileID: 7400000, guid: 0a2f0fcac3bd6344789873b22676d91e, type: 2}
+    - target: {fileID: 424730690599398153, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: _attacks.Array.data[1].PreTransitionAnim
+      value: 
+      objectReference: {fileID: 7400000, guid: 69fb3859a0490ad4f9c68f0386e5a0cd, type: 2}
+    - target: {fileID: 424730690599398153, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: _attacks.Array.data[0].PostTransitionAnim
+      value: 
+      objectReference: {fileID: 7400000, guid: 8d8882d831a04cf4d8b8f37c8517c541, type: 2}
+    - target: {fileID: 424730690599398153, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: _attacks.Array.data[1].PostTransitionAnim
+      value: 
+      objectReference: {fileID: 7400000, guid: 06ee67416e1dad3459ba39ec5a6afc57, type: 2}
     - target: {fileID: 2377490915647840013, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: m_Name
       value: Player Animated
