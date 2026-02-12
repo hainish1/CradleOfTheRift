@@ -763,7 +763,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 1
-  m_BaseOffset: 0.5
+  m_BaseOffset: 0.6
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &8877547689073220538
@@ -788,7 +788,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5038527764505416237}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b3318528a5d3d464aa454d8a551403ac, type: 3}
   m_Name: 
@@ -798,6 +798,7 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 256
+  manageAgentPosition: 1
   softBody: {fileID: 7059184117800156990}
 --- !u!65 &3750231269497975560
 BoxCollider:
@@ -818,8 +819,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.27, y: 1.3954468, z: 1.6214478}
-  m_Center: {x: 0, y: -0.003111458, z: -0.0032653809}
+  m_Size: {x: 1.27, y: 1.6370577, z: 1.6214478}
+  m_Center: {x: 0, y: -0.12391672, z: -0.0032653809}
 --- !u!114 &7059184117800156990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -860,6 +861,8 @@ MonoBehaviour:
   cleanupDelay: 0
   baseHealth: 400
   damageVisuals: {fileID: 6878723207774671312}
+  deathVFX: {fileID: 0}
+  deathVFXSpawnPoint: {fileID: 0}
   deathSFX:
     idInternal: 0
     valueGuidInternal: 
@@ -904,7 +907,7 @@ MonoBehaviour:
   aggressionRange: 500
   playerOutOfRange: 500
   turnSpeed: 20
-  attackCooldown: 0.2
+  attackCooldown: 0.8
   playerMask:
     serializedVersion: 2
     m_Bits: 256
@@ -932,10 +935,20 @@ MonoBehaviour:
   minRequiredPlayerDistance: 90
   playerTooClose: 15
   knockbackPower: 100
-  windupTime: 0.25
-  leapDuration: 0.6
-  leapHeight: 1.5
+  windupTime: 1
+  leapDuration: 0.3
+  leapHeight: 5
+  leapOverShootDistance: 2
+  gravityScale: 4
+  startHeightAboveGround: 7
+  maxAttackHeightDiff: 7
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 259831
   flashVFX: {fileID: 1429954232896169633, guid: 83036083a4ebcd34f98131bd3cf6f4d2, type: 3}
+  collisionRadius: 15
+  isInAir: 0
+  inAirVelocity: {x: 0, y: 0, z: 0}
 --- !u!1 &6286784482263930251
 GameObject:
   m_ObjectHideFlags: 0
