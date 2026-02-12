@@ -59,7 +59,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     // Attack Parameters
 
     private float MeleeDamage => _playerEntity.Stats.MeleeDamage;
-    private float AttackCooldown => FindLargestTimeCooldown();
+    private float AttackCooldown => GetAttackCooldown();
     [Header("Attack Parameters")] [Space]
     [SerializeField] private float _comboInputSecondsBuffer;
     [SerializeField] private float knockbackForce;
@@ -168,22 +168,14 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Finds the largest time value out of the attack cooldown and the combo attack durations and returns it.
-    ///     To avoid unexpected issues, the attack cooldown should always be set to a larger value than the longest
-    ///     attack duration.
+    ///     Gets the current attack cooldown on any frame this method is called.
     ///   </para>
     /// </summary>
-    /// <returns> The largest time value. </returns>
-    private float FindLargestTimeCooldown()
+    /// <returns> The caluclated attack cooldown. </returns>
+    private float GetAttackCooldown()
     {
-        float largestCooldown = _playerEntity.Stats.MeleeAttackRate;
-        foreach (AttackInfo info in _attacks)
-        {
-            if (largestCooldown < info.AttackDuration)
-                largestCooldown = info.AttackDuration;
-        }
-
-        return largestCooldown;
+        return _attacks[_currComboCount - 1].PostTransitionAnim.length
+               + _playerEntity.Stats.MeleeAttackRate;
     }
 
     /// <summary>
@@ -199,7 +191,6 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _currComboCount++;
         _weaponAnim.SetTrigger("Attack" + _currComboCount);
         print($"_currComboCount: {_currComboCount}");
-        //print($"_attacks.Count: {_attacks.Count}");
         
         _currAttackDuration = _attacks[_currComboCount - 1].AttackDuration;
         _currBufferedAttackDuration = _attacks[_currComboCount - 1].BufferedAttackDuration;
@@ -221,7 +212,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
             // Wait for another attack if a combo is still possible.
             float timer = _currBufferedAttackDuration;
-            while (timer <= _currAttackDuration)
+            while (timer < _currAttackDuration)
             {
                 timer += Time.deltaTime;
 
@@ -243,8 +234,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
         // Wait for a full delay if max combo count was reached or a combo was missed.
         yield return new WaitForSeconds(AttackCooldown);
+        print(AttackCooldown);
         _currComboCount = 0;
-        print("Reset");
         AllowNextAttack();
         yield break;
     }
