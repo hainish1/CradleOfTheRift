@@ -6,6 +6,7 @@ using UnityEngine;
 public class ChaseState_Melee : EnemyState
 {
     private EnemyMelee enemyMelee;
+    private AgentKnockBack knockBack;
 
     private bool dragging;
     private float phaseTimer;
@@ -13,7 +14,7 @@ public class ChaseState_Melee : EnemyState
     public ChaseState_Melee(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
         enemyMelee = enemy as EnemyMelee;
-
+        knockBack = enemy.GetComponent<AgentKnockBack>();
     }
 
     /// <summary>
@@ -92,6 +93,13 @@ public class ChaseState_Melee : EnemyState
             enemy.agent.isStopped = false;
             SetAgentDestination(retreatPosition);
         }
+
+        // Don't initiate attack during active knockback (PLS)
+        if (knockBack != null && knockBack.IsKnockbackActive) return;
+
+        // Don't leap at a player who is too high above or below - looks unnatural
+        float yDiff = Mathf.Abs(enemy.target.position.y - enemy.transform.position.y);
+        if (yDiff > enemyMelee.maxAttackHeightDiff) return;
 
         if(distanceToPlayer <= enemyMelee.leapAttackRange &&
             distanceToPlayer >= enemyMelee.minAttackDistance &&

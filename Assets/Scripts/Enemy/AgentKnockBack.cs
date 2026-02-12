@@ -25,6 +25,8 @@ public class AgentKnockBack : MonoBehaviour
     bool prevUpdateRotation;
     bool prevIsStopped;
 
+    EnemyMelee melee; // cached for airborne knockback redirect
+
     [Header("SoftBody")]
     public SoftBodyPhysics softBody;
 
@@ -32,6 +34,7 @@ public class AgentKnockBack : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         softBody = GetComponentInChildren<SoftBodyPhysics>();
+        melee = GetComponent<EnemyMelee>();
     }
 
     void Update()
@@ -49,6 +52,17 @@ public class AgentKnockBack : MonoBehaviour
         }
 
         transform.position += delta;
+
+        // snap to ground surface during knockback to prevent floating
+        if (manageAgentPosition)
+        {
+            if (Physics.Raycast(transform.position + Vector3.up * 1f, Vector3.down,
+                    out var groundHit, 3f, collisionMask, QueryTriggerInteraction.Ignore))
+            {
+                float halfH = agent != null ? agent.height * 0.7f : 0f;
+                transform.position = new Vector3(transform.position.x, groundHit.point.y + (halfH + melee.startHeightAboveGround), transform.position.z);
+            }
+        }
 
         if (agent != null && agent.isOnNavMesh)
         {
@@ -70,6 +84,15 @@ public class AgentKnockBack : MonoBehaviour
     /// <param name="impulse"></param>
     public void ApplyImpulse(Vector3 impulse)
     {
+        // If the enemy is mid leap (in air), redirect impulse into flight velocity
+        // so the attack states swept collision physics handles it smoothly
+        if (melee != null && melee.isInAir)
+        {
+            melee.inAirVelocity += impulse;
+            if (softBody != null) softBody.Impulse();
+            return;
+        }
+
         if (!active)
         {
             active = true;
@@ -117,17 +140,31 @@ public class AgentKnockBack : MonoBehaviour
 
         if (manageAgentPosition)
         {
-            const float snapRadius = 6f;
-            if (NavMesh.SamplePosition(transform.position, out var hit, snapRadius, NavMesh.AllAreas))
+            // first find the true physics ground 
+            Vector3 correctedPos = transform.position;
+            Vector3 rayOrigin = correctedPos + Vector3.up * 5f;
+            float halfHeight = agent != null ? agent.height * 0.7f : 0f;
+            if (Physics.Raycast(rayOrigin, Vector3.down, out var groundHit, 10f,
+                    collisionMask, QueryTriggerInteraction.Ignore))
             {
-                transform.position = hit.position;
-                agent.Warp(hit.position);
-                agent.nextPosition = hit.position;
+                correctedPos.y = groundHit.point.y + (halfHeight + melee.startHeightAboveGround);
+            }
+
+            const float snapRadius = 6f;
+            if (NavMesh.SamplePosition(correctedPos, out var hit, snapRadius, NavMesh.AllAreas))
+            {
+                // Use NavMesh for XZ but keep the physics-ground Y
+                Vector3 finalPos = hit.position;
+                finalPos.y = correctedPos.y;
+
+                transform.position = finalPos;
+                agent.Warp(finalPos);
+                agent.nextPosition = finalPos;
             }
             else
             {
-                
-                agent.nextPosition = transform.position;
+                transform.position = correctedPos;
+                agent.nextPosition = correctedPos;
             }
         }
 

@@ -38,7 +38,7 @@ public class IdleState_Boss : EnemyState
             {
                 stateMachine.ChangeState(boss.GetBombState());
             }
-            else if (random < 0.8f && !boss.IsPlayerTooFar() && !boss.IsPlayerTooClose()) // ensure player is not too far or too close to leap
+            else if (random < 0.8f && !boss.IsPlayerTooFar() && !boss.IsPlayerTooClose() && !boss.IsPlayerTooHighOrLow()) // ensure player is not too far, too close, or too high to leap
             {
                 stateMachine.ChangeState(boss.GetLeapAttackState());
             }
