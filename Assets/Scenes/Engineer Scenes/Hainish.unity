@@ -5034,73 +5034,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 984479434153791223, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-      propertyPath: maxHealth
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-      propertyPath: baseHealth
-      value: 100
-      objectReference: {fileID: 0}
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: m_Name
       value: SlimeEnemyWobble
       objectReference: {fileID: 0}
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7738743892704107704, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-      propertyPath: decay
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 7738743892704107704, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-      propertyPath: manageAgentPosition
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8068391143491128734, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-      propertyPath: m_BaseOffset
-      value: 0.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 8200006461687915286, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-      propertyPath: leapHeight
-      value: 1.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 8200006461687915286, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-      propertyPath: gravityScale
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 8200006461687915286, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-      propertyPath: leapDuration
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 8200006461687915286, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-      propertyPath: collisionRadius
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 8200006461687915286, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-      propertyPath: groundMask.m_Bits
-      value: 259831
-      objectReference: {fileID: 0}
-    - target: {fileID: 8200006461687915286, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-      propertyPath: jumpPoofVFXPrefab
-      value: 
-      objectReference: {fileID: 2354571732057607369, guid: 414681518bc93d14ea11003f96b10d90, type: 3}
-    - target: {fileID: 8200006461687915286, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-      propertyPath: maxAttackHeightDiff
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8200006461687915286, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-      propertyPath: leapOverShootDistance
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 8200006461687915286, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
-      propertyPath: startHeightAboveGround
-      value: 0.3
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
