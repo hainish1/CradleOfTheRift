@@ -48,6 +48,22 @@ public class CompassManager : MonoBehaviour
 
     void Awake()
     {
+        // Find the player
+        if (playerTransform == null)
+        {
+            GameObject playerGo = PlayerLocator.FindPlayerGameObject();
+
+            if(playerGo != null)
+            {
+                playerTransform = playerGo.transform;
+            }
+            else
+            {
+                Debug.LogWarning("CompassUI: Could not find player Transform");
+                return;
+            }
+        }
+
         // Get the UI container from UXML where markers will be spawned
         var root = uiDocument.rootVisualElement;
         iconContainer = root.Q<VisualElement>("icon-container");
