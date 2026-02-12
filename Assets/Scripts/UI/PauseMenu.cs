@@ -90,7 +90,7 @@ public class PauseMenu : MonoBehaviour
         // Debug.Log("You Pressed the Start Button");
         PauseManager.GameIsPaused = false;
         PlayerHealth.GameIsOver = false;
-        SceneManager.LoadScene("Design");// Change name to game
+        SceneManager.LoadScene("Design 1");// Change name to game
     }
 
     private void OnContinueClick(ClickEvent evt)

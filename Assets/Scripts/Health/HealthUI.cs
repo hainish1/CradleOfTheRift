@@ -10,6 +10,17 @@ public class HealthUI : MonoBehaviour
 
     void Start()
     {
+        if(health == null)
+        {
+            health = PlayerLocator.FindPlayerComponent<PlayerHealth>();
+        }
+
+        if(health == null)
+        {
+            Debug.LogWarning("Health component not on player or player missing");
+            return;
+        }
+
         var root = GetComponent<UIDocument>().rootVisualElement;
         healthBar = root.Q<ProgressBar>("HealthBar");
         healthBar.lowValue = 0;
@@ -36,6 +47,6 @@ public class HealthUI : MonoBehaviour
 
         healthBar.highValue = maxHealth;
         healthBar.value = currentHealth;
-        healthBar.title = $"Health: {currentHealth}/{maxHealth}";
+        healthBar.title = $"Health: {(int)currentHealth}/{maxHealth}";
     }
 }

@@ -19,15 +19,13 @@ public class InventoryController : MonoBehaviour
     private List<VisualElement> itemSlots = new List<VisualElement>();
     private ItemData currentSelectedItem;
 
-    private bool isInventoryOpen = false;
 
     private void OnEnable()
     {
         root = uiDocument.rootVisualElement;
         
         // HIDE INVENTORY ON START
-        root.style.display = DisplayStyle.None;
-        isInventoryOpen = false;
+        // root.style.display = DisplayStyle.None;
 
         // Locate UI elements by their names/classes defined in UXML
         descriptionLabel = root.Q<Label>("DescriptionLabel");
@@ -46,6 +44,10 @@ public class InventoryController : MonoBehaviour
             slot.RegisterCallback<ClickEvent>(evt => OnSlotClicked(slot));
         }
 
+
+        RefreshInventoryDisplay();
+
+
         // Subscribe to inventory logic events to trigger UI refreshes
         if (playerInventory != null)
         {
@@ -55,40 +57,40 @@ public class InventoryController : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        // Listen for input to open or close the menu
-        if (Input.GetKeyDown(toggleKey))
-        {
-            ToggleInventory(!isInventoryOpen);
-        }
-    }
+    // private void Update()
+    // {
+    //     // Listen for input to open or close the menu
+    //     if (Input.GetKeyDown(toggleKey))
+    //     {
+    //         ToggleInventory(!isInventoryOpen);
+    //     }
+    // }
 
-    private void ToggleInventory(bool isOpen)
-    {
-        isInventoryOpen = isOpen;
+    // private void ToggleInventory(bool isOpen)
+    // {
+    //     isInventoryOpen = isOpen;
 
-        if (isInventoryOpen)
-        {
-            // Open Inventory
-            root.style.display = DisplayStyle.Flex; // Show UI
+    //     if (isInventoryOpen)
+    //     {
+    //         // Open Inventory
+    //         root.style.display = DisplayStyle.Flex; // Show UI
             
-            // Unlock Cursor so you can click items
-            UnityEngine.Cursor.visible = true;
-            UnityEngine.Cursor.lockState = CursorLockMode.None;
+    //         // Unlock Cursor so you can click items
+    //         UnityEngine.Cursor.visible = true;
+    //         UnityEngine.Cursor.lockState = CursorLockMode.None;
             
-            RefreshInventoryDisplay();
-        }
-        else
-        {
-            // Close Inventory
-            root.style.display = DisplayStyle.None; // Hide UI
+    //         RefreshInventoryDisplay();
+    //     }
+    //     else
+    //     {
+    //         // Close Inventory
+    //         root.style.display = DisplayStyle.None; // Hide UI
             
-            // Lock Cursor 
-            UnityEngine.Cursor.visible = false;
-            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        }
-    }
+    //         // Lock Cursor 
+    //         UnityEngine.Cursor.visible = false;
+    //         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+    //     }
+    // }
 
     private void OnDisable()
     {
@@ -103,14 +105,14 @@ public class InventoryController : MonoBehaviour
     // Refresh UI automatically when the inventory contents change
     private void HandleInventoryChanged(ItemData data, PlayerInventory.ItemStack stack)
     {
-        if (isInventoryOpen) RefreshInventoryDisplay();
+        RefreshInventoryDisplay();
         if (currentSelectedItem == data) UpdateDescription(data);
     }
 
     // Clear selection if the currently viewed item is dropped/removed
     private void HandleItemRemoved(ItemData data)
     {
-        if (isInventoryOpen) RefreshInventoryDisplay();
+        RefreshInventoryDisplay();
         if (currentSelectedItem == data)
         {
             currentSelectedItem = null;

@@ -4,7 +4,7 @@
 //   </authors>
 //   <para>
 //     Written by Samuel Rigby for GAMES 4500, University of Utah, August 2025.
-//     Contributed to by Hainish Acharya for GAMES 4500, University of Utah, August 2025.
+//     Contributed to by Hainish Acharya.
 //          -Added independent character rotation functionality.
 //          -Added knockback functionality.
 //          -Added support for stat data modification.
@@ -35,7 +35,10 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("An empty object positioned at the exact center of the player character object.")] private Transform _playerCenter;
     [SerializeField]
     [Tooltip("The player camera object.")] private Transform _cameraTransform;
+    [SerializeField]
+    [Tooltip("The player model object.")] private GameObject _playerModel;
     private Entity _playerEntity;
+    private Animator _playerAnim;
     private CharacterController _characterController;
     private float _playerHalfHeight;
     private float _playerRadius;
@@ -154,7 +157,7 @@ public class PlayerMovement : MonoBehaviour
     private float _flightDeceleration;
 
     private bool strafe = false; // Set by AimController.
-    
+
     [Header("Audio")]
     [SerializeField]
     private AK.Wwise.Event dashSoundEvent;
@@ -168,6 +171,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _playerEntity = GetComponent<Entity>();
         _characterController = GetComponent<CharacterController>();
+        _playerAnim = _playerModel.GetComponent<Animator>();
         _playerInput = new InputSystem_Actions();
         _playerActions = _playerInput.Player;
     }
@@ -464,26 +468,13 @@ public class PlayerMovement : MonoBehaviour
         {
             _groundPointColliding = hit;
         }
+
+        if (hit.gameObject.layer == LayerMask.NameToLayer("TutorialEvent"))
+        {
+            TutorialObject tutorialScript = hit.gameObject.GetComponent<TutorialObject>();
+            tutorialScript.OnTriggerOrCollide();
+        }
     }
-
-    ///// <summary>
-    /////   <para>
-    /////     Applies calculated custom gravity to the player every frame.
-    /////   </para>
-    ///// </summary>
-    //private void GravityConditions()
-    //{
-    //    // Do not apply gravity when on the ground or flying.
-    //    if (IsGrounded || _isFlying) return;
-
-    //    float aggregateGravityValue = Physics.gravity.y * _gravityMultiplier * _currDriftDescentDivisor;
-    //    float accelIncrement = Time.deltaTime * aggregateGravityValue;
-    //    _verticalVelocityVector.y = Mathf.Clamp(_verticalVelocityVector.y + accelIncrement, aggregateGravityValue, float.MaxValue);
-
-    //    ApplyAirDrag(aggregateGravityValue); // Slow descent speed to the strength of gravity.
-
-    //    _characterController.Move(Time.deltaTime * _verticalVelocityVector);
-    //}
 
     /// <summary>
     ///   <para>
@@ -899,10 +890,12 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator InitiateDashDuration(float seconds)
     {
         _isDashing = true;
+        _playerAnim.SetTrigger("Dash");
 
         yield return new WaitForSeconds(seconds);
 
         _isDashing = false;
+        _playerAnim.SetTrigger("DashExit");
     }
 
     /// <summary>
