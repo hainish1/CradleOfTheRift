@@ -81,21 +81,29 @@ public class CompassManager : MonoBehaviour
         var element = new VisualElement();
         element.AddToClassList("marker");
 
+        // Set the specific icon image from the ScriptableObject
+        var data = markerDefinitions.Find(d => d.markerType == marker.Type);
+        if (data != null) 
+        {
+            if (data.markerIcon != null)
+            {
+                element.style.backgroundImage = new StyleBackground(data.markerIcon);
+
+                // Remove the default red in the marker uss class
+                element.style.backgroundColor = Color.clear;
+            }
+        }
+
+        // Apply the USS class for extra styling (tints, glows, etc.)
+        if (data != null && !string.IsNullOrEmpty(data.ussClass))
+        {
+            element.AddToClassList(data.ussClass);
+        }
+
         // Add the Distance Label
         var distanceLabel = new Label();
         distanceLabel.AddToClassList("marker-distance-text");
         element.Add(distanceLabel);
-
-        // Dynamic lookup using the ScriptableObject data
-        if (typeToClassMap.TryGetValue(marker.Type, out string className))
-        {
-            element.AddToClassList(className);
-        }
-        else
-        {
-            // Default fallback if no data asset is found for this type
-            element.AddToClassList("marker"); 
-        }
     
         iconContainer.Add(element);
         markerMap.Add(marker, element);
