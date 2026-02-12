@@ -1,3 +1,14 @@
+// <summary>
+//   <authors>
+//     Hainish Acharya, Samuel Rigby
+//   </authors>
+//   <para>
+//     Written by Hainish Acharya for GAMES 4500, University of Utah, September 2025.
+//     Contributed to by Samuel Rigby.
+//          -Added paremeters for player movement.
+//   </para>
+// </summary>
+
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "PlayerBaseStats", menuName = "Stats/BaseStats")]

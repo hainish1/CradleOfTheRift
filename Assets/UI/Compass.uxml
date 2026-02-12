@@ -1,6 +1,6 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/Compass.uss?fileID=7433441132597879392&amp;guid=d29b1642c11154b49916333ed8f81e2e&amp;type=3#Compass" />
-    <engine:VisualElement name="compass-root" class="compass-root">
+    <engine:VisualElement name="compass-root" picking-mode="Ignore" class="compass-root">
         <engine:VisualElement name="compass-mask" class="compass-mask">
             <engine:VisualElement name="icon-container" class="icon-container" />
             <engine:VisualElement name="center-notch" class="center-notch" />

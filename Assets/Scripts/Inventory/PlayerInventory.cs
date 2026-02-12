@@ -35,6 +35,7 @@ public class PlayerInventory : MonoBehaviour
     private BounceProjectiles bounceProjectilesEffect;
     private DelayedProjectiles delayedProjectilesEffect;
     private DashDamage dashDamageEffect;
+    private PassThroughSpear passThroughSpearEffect;
 
     // if I have time limited effects that need use of Updates, I will keep em here
     private readonly List<IDisposable> tickingEffects = new();
@@ -68,6 +69,7 @@ public class PlayerInventory : MonoBehaviour
         bounceProjectilesEffect?.Update(dt);
         delayedProjectilesEffect?.Update(dt);
         dashDamageEffect?.Update(dt);
+        passThroughSpearEffect?.Update(dt);
         //homingProjectilesEffect?.Update(dt);
         // more runtime effects would be updated here ig
     }
@@ -237,6 +239,9 @@ public class PlayerInventory : MonoBehaviour
                     break;
                 case ItemEffectKind.DashDamage:
                     EnsureDashDamage(effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.PassThroughSpear:
+                    EnsurePassThroughSpear(effect, initialStacks: stacksAdded);
                     break;
             }
         }
@@ -471,6 +476,28 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+    private void EnsurePassThroughSpear(EffectSpec effect, int initialStacks)
+    {
+        if (passThroughSpearEffect == null)
+        {
+            passThroughSpearEffect = new PassThroughSpear(
+                owner: playerEntity,
+                initialStacks: initialStacks,
+                durationSec: effect.duration
+            );
+
+            if (effect.duration > 0f) tickingEffects.Add(passThroughSpearEffect);
+            Debug.Log($"[Effect] Pass Through Spear created : Stacks{initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+                passThroughSpearEffect.AddStack(1);
+
+            Debug.Log($"[Effect] Pass Through Spear : Stacks {initialStacks}");
+        }
+    }
+
     private void RemoveEffectStacks(ItemEffectKind kind, int stacks)
     {
         if (stacks <= 0) return;
@@ -535,6 +562,10 @@ public class PlayerInventory : MonoBehaviour
                 {
                     dashDamageEffect.AddStack(-stacks);
                 }
+                break;
+            case ItemEffectKind.PassThroughSpear:
+                if (passThroughSpearEffect != null)
+                    passThroughSpearEffect.AddStack(-stacks);
                 break;
 
         }
@@ -649,6 +680,7 @@ public class PlayerInventory : MonoBehaviour
         bounceProjectilesEffect?.Dispose(); bounceProjectilesEffect = null;
         delayedProjectilesEffect?.Dispose(); delayedProjectilesEffect = null;
         dashDamageEffect?.Dispose(); dashDamageEffect = null;
+        passThroughSpearEffect?.Dispose(); passThroughSpearEffect = null;
 
         tickingEffects.Clear();
     }
@@ -666,6 +698,7 @@ public class PlayerInventory : MonoBehaviour
         bounceProjectilesEffect?.Dispose();
         delayedProjectilesEffect?.Dispose();
         dashDamageEffect?.Dispose();
+        passThroughSpearEffect?.Dispose();
         //homingProjectilesEffect?.Dispose();
 
         // any other dispose handle
