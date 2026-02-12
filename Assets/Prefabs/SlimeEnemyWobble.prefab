@@ -95,6 +95,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8580578050825531092}
+  - component: {fileID: 8489190590680676199}
   m_Layer: 11
   m_Name: height
   m_TagString: Untagged
@@ -119,6 +120,28 @@ Transform:
   - {fileID: 2727553493511759867}
   m_Father: {fileID: 984479434153791223}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &8489190590680676199
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1878886682714220591}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f9b882fc8e5857f439727cdaa772c611, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2283264427731943097
 GameObject:
   m_ObjectHideFlags: 0
@@ -655,6 +678,7 @@ MonoBehaviour:
     WwiseObjectReference: {fileID: 11400000, guid: d374e5a4ff86e584b8ad1c9d3b58d644, type: 2}
   jumpPoofVFXPrefab: {fileID: 2354571732057607369, guid: 414681518bc93d14ea11003f96b10d90, type: 3}
   jumpVFXAttackPoint: {fileID: 6136272082482821300}
+  height: {fileID: 8580578050825531092}
 --- !u!114 &6554202718004137176
 MonoBehaviour:
   m_ObjectHideFlags: 0

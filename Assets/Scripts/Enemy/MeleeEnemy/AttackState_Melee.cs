@@ -44,6 +44,9 @@ public class AttackState_Melee : EnemyState
         timer = enemyMelee.windupTime;
         hasLanded = false;
         hasReachedPeak = false;
+
+        // Squash animation as the slime winds up
+        enemyMelee.height.GetComponent<Animator>().SetTrigger("squash");
     }
 
 
@@ -110,6 +113,9 @@ public class AttackState_Melee : EnemyState
         phase = Phase.Leap;
         enemyMelee.EnableHitBox(true);
         enemyMelee.isInAir = true;
+
+        // Stretch animation as the slime goes up
+        enemyMelee.height.GetComponent<Animator>().SetTrigger("stretch");
 
         Vector3 startPos = enemy.transform.position;
         Vector3 targetPos = startPos + enemy.transform.forward * 2f;
@@ -199,6 +205,9 @@ public class AttackState_Melee : EnemyState
         enemyMelee.isInAir = false;
         enemyMelee.inAirVelocity = Vector3.zero;
         enemyMelee.EnableHitBox(false);
+
+        // Squash animation on landing impact
+        enemyMelee.height.GetComponent<Animator>().SetTrigger("squash");
 
         // Always enforce cooldown on landing so the slime
         // can never immediately leap again after missing once

@@ -63,6 +63,9 @@ public class EnemyMelee : Enemy
     public GameObject jumpPoofVFXPrefab;
     public Transform jumpVFXAttackPoint;
 
+    [Header("Jump animation")]
+    public Transform height;
+
     public override void Start()
     {
         base.Start(); // run stuff that we wrote in base enemy class first
