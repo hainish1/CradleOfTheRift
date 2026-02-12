@@ -30,9 +30,8 @@ public class CompassManager : MonoBehaviour
 
     private Dictionary<CompassMarker, VisualElement> markerMap = new Dictionary<CompassMarker, VisualElement>();
 
-    // Quick lookup to map MarkerType -> USS Class name
-    private Dictionary<MarkerType, string> typeToClassMap = new Dictionary<MarkerType, string>();
-    private Dictionary<MarkerType, float> typeToRadiusMap = new Dictionary<MarkerType, float>();
+    // Quick lookup to map MarkerType
+    private Dictionary<MarkerType, CompassMarkerData> markerDataLookup = new Dictionary<MarkerType, CompassMarkerData>();
     private float stackTimer;
 
     void OnEnable()
@@ -56,10 +55,9 @@ public class CompassManager : MonoBehaviour
         // Initialize the dictionary for fast lookups
         foreach (var data in markerDefinitions)
         {
-            if (data != null && !typeToClassMap.ContainsKey(data.markerType))
+            if (data != null && !markerDataLookup.ContainsKey(data.markerType))
             {
-                typeToClassMap.Add(data.markerType, data.ussClass);
-                typeToRadiusMap.Add(data.markerType, data.detectionRadius);
+                markerDataLookup.Add(data.markerType, data);
             }
         }
     }
@@ -82,8 +80,7 @@ public class CompassManager : MonoBehaviour
         element.AddToClassList("marker");
 
         // Set the specific icon image from the ScriptableObject
-        var data = markerDefinitions.Find(d => d.markerType == marker.Type);
-        if (data != null) 
+        if (markerDataLookup.TryGetValue(marker.Type, out CompassMarkerData data))
         {
             if (data.markerIcon != null)
             {
@@ -140,8 +137,10 @@ public class CompassManager : MonoBehaviour
 
             // Retrieve the specific detection range for this marker type
             float maxRadius = 9999f;
-            typeToRadiusMap.TryGetValue(marker.Type, out maxRadius);
-
+            if (markerDataLookup.TryGetValue(marker.Type, out var data))
+            {
+                maxRadius = data.detectionRadius;
+            }
 
             // Calculate horizontal angle between player forward and the target
             Vector3 dirToMarker = offset;
