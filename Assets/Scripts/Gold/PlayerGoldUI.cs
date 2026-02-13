@@ -31,6 +31,15 @@ public class PlayerGoldUI : MonoBehaviour
         }
 
         this.playerGold.goldChanged += this.OnGoldChanged;
+        OnGoldChanged(playerGold.Gold);
+    }
+
+    private void OnDisable()
+    {
+        if (playerGold != null)
+        {
+            playerGold.goldChanged -= OnGoldChanged;
+        }
     }
 
     private void OnGoldChanged(int gold) {
