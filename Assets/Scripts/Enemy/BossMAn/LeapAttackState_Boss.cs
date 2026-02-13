@@ -96,6 +96,9 @@ public class LeapAttackState_Boss : EnemyState
         Vector3 startPos = enemy.transform.position;
         Vector3 targetPos = startPos + enemy.transform.forward * 2f;
 
+        // Play jump VFX
+        boss.PlayPSVFX(boss.jumpVFX, boss.jumpVFXPoint);
+
         if (enemy.target != null)
         {
             Vector3 rawTargetPos = enemy.target.position;

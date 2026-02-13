@@ -42,7 +42,11 @@ public class EnemyBoss_SS : Enemy
     [Tooltip("Max height to player allowed for leap attack")]
     public float maxAttackHeightDiff = 4f;
     public LayerMask groundMask = ~0;
+    
+    [Header("VFX")]
     public GameObject flashVFX;
+    public GameObject jumpVFX;
+    public Transform jumpVFXPoint;
 
     [Header("Sweep Collision")]
     public float collisionRadius = 0.5f;
@@ -142,6 +146,8 @@ public class EnemyBoss_SS : Enemy
     public void PlayPSVFX(GameObject vfxPrefab, Transform spawnPos)
     {
         if (vfxPrefab == null) return;
+
+        Debug.Log("Playing VFX: " + vfxPrefab.name);
 
         spawnPos = spawnPos != null ? spawnPos : transform;
 

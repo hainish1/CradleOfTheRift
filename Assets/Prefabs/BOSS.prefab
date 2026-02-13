@@ -240,6 +240,37 @@ Transform:
   - {fileID: 4090991294030544216}
   m_Father: {fileID: 4986790702526380331}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2301962574876553507
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4720683414761640584}
+  m_Layer: 0
+  m_Name: jumpVFXPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4720683414761640584
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2301962574876553507}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -1, z: -0, w: 0}
+  m_LocalPosition: {x: 0, y: -0.75, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4986790702526380331}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2436247579179056350
 GameObject:
   m_ObjectHideFlags: 0
@@ -737,6 +768,7 @@ Transform:
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 1
   m_Children:
+  - {fileID: 4720683414761640584}
   - {fileID: 7075102968864265953}
   - {fileID: 8037023276236385569}
   - {fileID: 6186568776606005327}
@@ -946,6 +978,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 259831
   flashVFX: {fileID: 1429954232896169633, guid: 83036083a4ebcd34f98131bd3cf6f4d2, type: 3}
+  jumpVFX: {fileID: 2354571732057607369, guid: de2f1fc3101d8a14eb66544649cec597, type: 3}
+  jumpVFXPoint: {fileID: 4720683414761640584}
   collisionRadius: 15
   isInAir: 0
   inAirVelocity: {x: 0, y: 0, z: 0}
