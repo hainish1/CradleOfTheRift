@@ -24,17 +24,26 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     // Weapon Parameters
 
-    [Header("Weapon Parameters")] [Space]
-    [SerializeField] private Transform _playerModel;
-    [SerializeField] private Transform _playerCamera;
+    [Header("Player Parameters")] [Space]
+    [SerializeField]
+    [Tooltip("The player camera.")] private Transform _playerCamera;
+    private Transform _playerModel;
     private Entity _playerEntity;
     private PlayerAudioController _audioController;
 
     // Animation Parameters
 
     [Header("Animation Parameters")] [Space]
+    [SerializeField]
+    [Tooltip("How quickly attacks pitch up and down in degrees per second.")] private float _attackPitchSpeed;
+    [SerializeField]
+    [Tooltip("The upward pitch limit of attacks in degrees.")] private float _upwardDegreesLimit;
+    [SerializeField]
+    [Tooltip("The downward pitch limit of attacks in degrees.")] private float _downwardDegreesLimit;
     [SerializeField] List<AttackInfo> _attacks = new List<AttackInfo>();
     private Animator _weaponAnim;
+    private float _degreesPerSecond;
+    private bool _isModelHorizontal;
 
     // Hit Registration Parameters
 
@@ -61,21 +70,23 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private float MeleeDamage => _playerEntity.Stats.MeleeDamage;
     private float AttackCooldown => GetAttackCooldown();
     [Header("Attack Parameters")] [Space]
-    [SerializeField] private float _comboInputSecondsBuffer;
-    [SerializeField] private float knockbackForce;
-    private float _currAttackDuration;
-    private float _currBufferedAttackDuration;
+    [SerializeField]
+    [Tooltip("Knockback force of attacks.")] private float _knockbackForce;
+    [SerializeField]
+    [Tooltip("The buffer time for inputting attack combos.")] private float _comboInputSecondsBuffer;
     private bool _isAttacking;
     private bool _isRegistering;
     public bool CanAttack { get; set; }
+    private bool _comboInputted;
     private int _maxComboCount;
     private int _currComboCount;
 
     void Awake()
     {
+        _playerModel = gameObject.transform;
         _playerEntity = GetComponentInParent<Entity>();
         _weaponAnim = _playerModel.GetComponent<Animator>();
-        _audioController = GetComponent<PlayerAudioController>();
+        _audioController = GetComponentInParent<PlayerAudioController>();
         _playerInput = new InputSystem_Actions();
         _playerActions = _playerInput.Player;
     }
@@ -96,7 +107,9 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         if (_playerEntity == null) return;
 
         // Animation Parameters
-        RecalculateAttackSpeed();
+        _degreesPerSecond = Mathf.Deg2Rad * _attackPitchSpeed;
+        _isModelHorizontal = true;
+        RecalculateAnimationSpeed();
 
         // Hit Registration Parameters
         _objectsHitThisCast = new RaycastHit[32];
@@ -112,37 +125,36 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _isAttacking = false;
         _isRegistering = false;
         CanAttack = true;
+        _comboInputted = false;
         _maxComboCount = _attacks.Count;
         _currComboCount = 0;
     }
 
     void Update()
     {
-        RecalculateAttackSpeed();
+        RecalculateAnimationSpeed();
 
-        // Activate an attack when inputted.
-        if (_attackActions.IsPressed() && CanAttack) PerformAttack();
+        // Trigger an attack when inputted.
+        if ((_attackActions.IsPressed() || _comboInputted) && CanAttack) TriggerAttack();
 
-        //// Gradually align player model with camera direction.
-        //if (_isAttacking)
-        //{
-        //    float degreesPerSecond = Time.deltaTime * Mathf.Deg2Rad * 120;
-        //    Vector3 rotateIncrement = Vector3.RotateTowards(_playerModel.forward, _playerCamera.forward, degreesPerSecond, 0);
-        //    _playerModel.forward = rotateIncrement;
+        // Gradually align player model with camera direction while attacking.
+        if (_isAttacking)
+        {
+            // Constrain vertical rotation of player character to the pitch limits.
+            Vector3 rotationIncrement = Vector3.RotateTowards(_playerModel.forward, _playerCamera.forward, Time.deltaTime * _degreesPerSecond, 0);
+            float pitch = GetPitchDegrees(rotationIncrement);
+            if (pitch >= -_downwardDegreesLimit && pitch <= _upwardDegreesLimit)
+                _playerModel.forward = rotationIncrement;
 
-        //    _playerModel.transform.rotation = Quaternion.Euler(_playerCamera.rotation.eulerAngles.x, _playerCamera.rotation.eulerAngles.y, 0);
-        //}
-        //else
-        //{
-        //    Vector3 cameraForward = _playerCamera.forward;
-        //    cameraForward.y = 0;
-        //    cameraForward.Normalize();
-
-        //    if (_playerModel.forward != cameraForward)
-        //    {
-        //        _playerModel.transform.rotation = Quaternion.LookRotation(cameraForward, Vector3.up);
-        //    }
-        //}
+            _isModelHorizontal = false;
+        }
+        // Gradually reset player model alignment while not attacking.
+        else if (!_isModelHorizontal)
+        {
+            Vector3 worldHorizontal = new Vector3(_playerCamera.forward.x, 0, _playerCamera.forward.z).normalized;
+            _playerModel.forward = Vector3.RotateTowards(_playerModel.forward, worldHorizontal, Time.deltaTime * _degreesPerSecond, 0);
+            if (Vector3.Angle(_playerModel.forward, worldHorizontal) < 1e-3f) _isModelHorizontal = true;
+        }
 
         // Continually register targets while an attack is active.
         if (_isRegistering) ExecuteHitRegistrationCast();
@@ -150,10 +162,10 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Recalculates the attack durations and animation speed multiplier on any frame this method is called.
+    ///     Recalculates the attack animation durations and speed multiplier on any frame this method is called.
     ///   </para>
     /// </summary>
-    private void RecalculateAttackSpeed()
+    private void RecalculateAnimationSpeed()
     {
         float currAttackSpeed = _playerEntity.Stats.MeleeAttackSpeed;
         foreach (AttackInfo info in _attacks)
@@ -180,20 +192,28 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     /// <summary>
     ///   <para>
+    ///     Gets the pitch of a given vector.
+    ///   </para>
+    /// </summary>
+    /// <param name="vector"> The vector. </param>
+    /// <returns> Pitch of the vector. </returns>
+    private float GetPitchDegrees(Vector3 vector)
+    {
+        return Mathf.Rad2Deg * Mathf.Atan2(vector.y, Mathf.Sqrt((vector.x * vector.x) + (vector.z * vector.z)));
+    }
+
+    /// <summary>
+    ///   <para>
     ///     Makes the player character perform an attack on any frame this method is called.
     ///   </para>
     /// </summary>
-    private void PerformAttack()
+    private void TriggerAttack()
     {
         _isAttacking = true;
         CanAttack = false;
-        
+        _comboInputted = false;
         _currComboCount++;
-        _weaponAnim.SetTrigger("Attack" + _currComboCount);
-        print($"_currComboCount: {_currComboCount}");
-        
-        _currAttackDuration = _attacks[_currComboCount - 1].AttackDuration;
-        _currBufferedAttackDuration = _attacks[_currComboCount - 1].BufferedAttackDuration;
+        _weaponAnim.SetTrigger("Attack");
         StartCoroutine(DelayAttack());
     }
 
@@ -205,52 +225,48 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// <returns> IEnumerator object. </returns>
     private IEnumerator DelayAttack()
     {
-        // Wait for a combo input if max combo count was not reached.
+        // Get the current attack duration and buffered duration.
+        float currAttackDuration = _attacks[_currComboCount - 1].AttackDuration;
+        float currBufferedAttackDuration = _attacks[_currComboCount - 1].BufferedAttackDuration;
+
+        // Wait for a combo input if max combo count is not reached.
         if (_currComboCount < _maxComboCount)
         {
-            yield return new WaitForSeconds(_currBufferedAttackDuration);
+            yield return new WaitForSeconds(currBufferedAttackDuration);
 
-            // Wait for another attack if a combo is still possible.
-            float timer = _currBufferedAttackDuration;
-            while (timer < _currAttackDuration)
+            // Wait for another attack if a combo input is still possible.
+            float timer = currBufferedAttackDuration;
+            while (timer < currAttackDuration)
             {
                 timer += Time.deltaTime;
 
-                // Register a pending combo and exit coroutine.
+                // Register a pending combo input and exit coroutine.
                 if (_attackActions.IsPressed())
                 {
                     // Wait remaining time until current attack ends before allowing the next.
-                    yield return new WaitForSeconds(_currAttackDuration - timer);
-                    AllowNextAttack();
+                    yield return new WaitForSeconds(currAttackDuration - timer);
+                    _comboInputted = true;
+                    CanAttack = true;
                     yield break;
                 }
 
                 yield return null;
             }
 
-            // Leave attack animations if the combo time window was missed.
+            // Leave attack animation sequence if the combo input time window was missed.
             _weaponAnim.SetTrigger("ComboMiss");
         }
+        // Wait for full attack duration if max combo count is reached.
+        else
+            yield return new WaitForSeconds(currAttackDuration);
 
-        // Wait for a full delay if max combo count was reached or a combo was missed.
-        yield return new WaitForSeconds(AttackCooldown);
-        print(AttackCooldown);
-        _currComboCount = 0;
-        AllowNextAttack();
-        yield break;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Resets necessary conditions to prepare for the next attack.
-    ///   </para>
-    /// </summary>
-    private void AllowNextAttack()
-    {
         _isAttacking = false;
+
+        // Wait for attack cooldown if max combo count was reached or a combo input was missed.
+        yield return new WaitForSeconds(AttackCooldown);
+        _currComboCount = 0;
         CanAttack = true;
-        _prevHitCapsuleTempPointsInitialized = false;
-        _objectsHitThisAttack.Clear();
+        yield break;
     }
 
     /// <summary>
@@ -370,7 +386,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         if (enemyKbScript != null)
         {
             Vector3 impulseDirection = (enemyScript.transform.position - transform.position).normalized;
-            enemyKbScript.ApplyImpulse(knockbackForce * impulseDirection);
+            enemyKbScript.ApplyImpulse(_knockbackForce * impulseDirection);
         }
     }
 
@@ -392,6 +408,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private void StopRegistering()
     {
         _isRegistering = false;
+        _prevHitCapsuleTempPointsInitialized = false;
+        _objectsHitThisAttack.Clear();
     }
 
     /// <summary>

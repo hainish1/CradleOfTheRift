@@ -372,21 +372,15 @@ public class PlayerMovement : MonoBehaviour
 
             // Check DashDistance.
             if (DashDistance != _playerEntity.Stats.DashDistance)
-            {
                 DashDistance = _playerEntity.Stats.DashDistance;
-            }
 
             // Check DashSpeed.
             if (DashSpeed != _playerEntity.Stats.DashSpeed)
-            {
                 DashSpeed = _playerEntity.Stats.DashSpeed;
-            }
 
             // Check DashCooldown.
             if (DashCooldown != _playerEntity.Stats.DashCooldown)
-            {
                 DashCooldown = _playerEntity.Stats.DashCooldown;
-            }
 
             // Check DashCharges.
             if (DashMaxCharges != _playerEntity.Stats.DashCharges)
@@ -396,9 +390,7 @@ public class PlayerMovement : MonoBehaviour
 
                 // Add positive difference to current charge count, even while regenerating.
                 if (changeDifference > 0)
-                {
                     _currDashCharges += changeDifference;
-                }
                 // Ensure negative difference is not affected by regeneration.
                 else
                 {
@@ -412,27 +404,19 @@ public class PlayerMovement : MonoBehaviour
 
             // Check flight speed.
             if (_flightMaxSpeed != _playerEntity.Stats.FlightMaxSpeed)
-            {
                 _flightMaxSpeed = _playerEntity.Stats.FlightMaxSpeed;
-            }
 
             // Check flight energy.
             if (_flightMaxEnergy != _playerEntity.Stats.FlightMaxEnergy)
-            {
                 _flightMaxEnergy = _playerEntity.Stats.FlightMaxEnergy;
-            }
 
             // Check flight regeneration rate.
             if (_flightRegenerationRate != _playerEntity.Stats.FlightRegenerationRate)
-            {
                 _flightRegenerationRate = _playerEntity.Stats.FlightRegenerationRate;
-            }
 
             // Check flight depletion rate.
             if (_flightDepletionRate != _playerEntity.Stats.FlightDepletionRate)
-            {
                 _flightDepletionRate = _playerEntity.Stats.FlightDepletionRate;
-            }
         }
     }
 
@@ -464,10 +448,7 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="hit"> The collision point. </param>
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (!IsGrounded)
-        {
-            _groundPointColliding = hit;
-        }
+        if (!IsGrounded) _groundPointColliding = hit;
 
         if (hit.gameObject.layer == LayerMask.NameToLayer("TutorialEvent"))
         {
@@ -500,10 +481,7 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             // If sliding on a steep slope, ensure gravity is always sliding the player character.
-            if (_verticalVelocityVector.y > -1)
-            {
-                _verticalVelocityVector.y = -1;
-            }
+            if (_verticalVelocityVector.y > -1) _verticalVelocityVector.y = -1;
 
             gravityVelocityVector = _verticalVelocityVector.magnitude * new Vector3(_groundPointColliding.normal.x,
                                                                                     _verticalVelocityVector.y,
@@ -565,14 +543,9 @@ public class PlayerMovement : MonoBehaviour
 
         // Accelerate if movement is being inputted and sprint has not been canceled.
         if (_moveActions.ReadValue<Vector2>() != Vector2.zero && _lateralVelocityVector.magnitude <= MoveMaxSpeed)
-        {
             MoveAccelerate(moveDirectionUnitVector);
-        }
-        // Otherwise, decelerate.
         else
-        {
             MoveDecelerate();
-        }
 
         _characterController.Move(Time.deltaTime * _lateralVelocityVector);
 
@@ -634,9 +607,7 @@ public class PlayerMovement : MonoBehaviour
                 Vector3 groundPlaneMoveUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundPointHovering.normal);
 
                 if (_moveInputTemp == Vector2.zero)
-                {
                     moveDirectionUnitVector = CopyVectorAngles(groundPlaneMoveUnitVector, moveDirectionUnitVector);
-                }
                 else
                 {
                     moveDirectionUnitVector = CopyVectorAngles(_lateralVelocityVector, moveDirectionUnitVector);
@@ -696,9 +667,7 @@ public class PlayerMovement : MonoBehaviour
             _lateralVelocityVector = newVelocityMagnitude * moveDirectionUnitVector;
         }
         else
-        {
             _lateralVelocityVector = MoveMaxSpeed * moveDirectionUnitVector;
-        }
     }
 
     /// <summary>
@@ -789,17 +758,13 @@ public class PlayerMovement : MonoBehaviour
 
             // If not moving, default dash direction is forward.
             if (_dashDirectionUnitVector.x == 0 && _dashDirectionUnitVector.z == 0)
-            {
                 _dashDirectionUnitVector = GetComponentInParent<Transform>().forward;
-            }
 
             _currDashCharges--;
 
             // Only initialize regeneration routine if not already regenerating.
             if (_currDashCharges == DashMaxCharges - 1)
-            {
                 StartCoroutine(DashChargesRegeneration());
-            }
 
             float dashDuration = DashDistance / DashSpeed;
             StartCoroutine(InitiateDashDuration(dashDuration));
@@ -822,15 +787,8 @@ public class PlayerMovement : MonoBehaviour
     private void DashConditions()
     {
         Vector3 dashVelocityVector = _dashDirectionUnitVector;
-
-        if (IsGrounded)
-        {
-            GroundClampSnap(ref dashVelocityVector);
-        }
-        if (_isFlying)
-        {
-            FlightConditions();
-        }
+        if (IsGrounded) GroundClampSnap(ref dashVelocityVector);
+        if (_isFlying) FlightConditions();
 
         _characterController.Move(Time.deltaTime * DashSpeed * dashVelocityVector);
     }
@@ -844,9 +802,7 @@ public class PlayerMovement : MonoBehaviour
     private void GroundClampSnap(ref Vector3 moveDirectionUnitVector)
     {
         if (IsGrounded)
-        {
             moveDirectionUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundPointHovering.normal);
-        }
     }
 
     /// <summary>
@@ -876,7 +832,6 @@ public class PlayerMovement : MonoBehaviour
         }
 
         _currDashCharges = Mathf.Min(_currDashCharges, DashMaxCharges); // In case DashMaxCharges is decreased during routine execution.
-
         _isRegeneratingDash = false;
     }
 
@@ -908,15 +863,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_kbControlsLockTimer > 0) return;
 
-        if (!_isDashing)
-        {
-            _jumpBufferTimer = _jumpBufferWindow;
-        }
-
-        if (!_isFlying && !IsGrounded && !_isDashing)
-        {
-            EnableDrift();
-        }
+        if (!_isDashing) _jumpBufferTimer = _jumpBufferWindow;
+        if (!_isFlying && !IsGrounded && !_isDashing) EnableDrift();
     }
 
     /// <summary>
@@ -929,9 +877,7 @@ public class PlayerMovement : MonoBehaviour
     {
         // If on the ground and jump was inputted and jump buffer window is valid, or if walked off an edge and coyote time window is valid, then jump.
         if ((IsGrounded && IsWithinJumpBufferWindow()) || (_jumpActions.WasPressedThisFrame() && !IsGrounded && IsWithinCoyoteTimeWindow()))
-        {
             PerformJump(_jumpForce);
-        }
         // Otherwise, reset coyote time and jump buffer time to original states
         // because player charater is on the ground.
         else if (IsGrounded)
@@ -994,23 +940,16 @@ public class PlayerMovement : MonoBehaviour
     {
         // Cease drifting if the player character landed.
         if ((_isDrifting && (!_jumpActions.IsPressed() || IsGrounded)) || _isFlying)
-        {
             DisableDrift();
-        }
 
         // Only modify gravity for drifting while falling and while the coyote time and jump buffer windows are invalid.
         if (AreDriftRequirementsValid() && _verticalVelocityVector.y <= 0)
         {
             float timeRatio = _driftDelayTimer / _driftDelay;
-
             if (timeRatio > 0)
-            {
                 _currDriftDescentDivisor = _driftDescentDivisor + (timeRatio * (1 - _driftDescentDivisor));
-            }
             else
-            {
                 _currDriftDescentDivisor = _driftDescentDivisor;
-            }
         }
     }
 
@@ -1062,9 +1001,7 @@ public class PlayerMovement : MonoBehaviour
         {
             // Toggle flight.
             if (_isFlying)
-            {
                 DisableFlight();
-            }
             else
             {
                 EnableFlight();
@@ -1072,9 +1009,7 @@ public class PlayerMovement : MonoBehaviour
                 // Make the player character jump if on the
                 // ground to prevent flight from exiting early.
                 if (IsGrounded)
-                {
                     PerformJump(_flightJumpForce);
-                }
             }
         }
     }
@@ -1091,7 +1026,6 @@ public class PlayerMovement : MonoBehaviour
         if (!_isFlying || _isRegeneratingFlight) return;
 
         float depletionDecrement = Time.deltaTime * _flightDepletionRate;
-
         _currFlightEnergy = Mathf.Clamp(_currFlightEnergy - depletionDecrement, 0, _flightMaxEnergy);
 
         // If flight energy decrement for the current frame reaches zero, then
@@ -1121,14 +1055,10 @@ public class PlayerMovement : MonoBehaviour
         {
             // Accelerate if jump or descend are being inputted.
             if (flightInputValue != 0 && _verticalVelocityVector.magnitude <= _flightMaxSpeed)
-            {
                 FlightAccelerate(flightInputValue);
-            }
             // Otherwise, decelerate.
             else
-            {
                 FlightDecelerate();
-            }
 
             _characterController.Move(Time.deltaTime * _verticalVelocityVector);
         }
@@ -1147,9 +1077,7 @@ public class PlayerMovement : MonoBehaviour
         // If flightAccelIncrement is pushing against the direction of _verticalVelocityVector,
         // then accelerate faster than normal for snappier counter-acceleration.
         if (_verticalVelocityVector.y * accelIncrement < 0)
-        {
             accelIncrement *= _flightCounterAccelerationMultiplier;
-        }
 
         float newVelocityMagnitude = Mathf.Clamp(_verticalVelocityVector.magnitude + accelIncrement, 0, _flightMaxSpeed);
         _verticalVelocityVector = newVelocityMagnitude * new Vector3(0, flightInputValue, 0);
@@ -1179,10 +1107,7 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator FlightRegeneration()
     {
         // Only begin regenerating when on the ground.
-        while (!IsGrounded)
-        {
-            yield return null;
-        }
+        while (!IsGrounded) yield return null;
         
         _isRegeneratingFlight = true;
         GetFlightCooldownRatio();
@@ -1192,7 +1117,6 @@ public class PlayerMovement : MonoBehaviour
             float regenIncrement = Time.deltaTime * _flightRegenerationRate;
             _currFlightEnergy = Mathf.Clamp(_currFlightEnergy + regenIncrement, 0, _flightMaxEnergy);
             GetFlightCooldownRatio();
-
             yield return null;
         }
 
@@ -1234,9 +1158,7 @@ public class PlayerMovement : MonoBehaviour
         _isFlying = false;
 
         if (_playerEntity != null)
-        {
             MoveMaxSpeed = _playerEntity.Stats.MoveSpeed;
-        }
 
         RecalculateMoveAccelDecel();
     }

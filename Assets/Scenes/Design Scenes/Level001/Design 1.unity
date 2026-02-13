@@ -98893,6 +98893,14 @@ PrefabInstance:
       propertyPath: _playerCamera
       value: 
       objectReference: {fileID: 2109972189}
+    - target: {fileID: 3514723634665387732, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: _upwardPitchLimit
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514723634665387732, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: _downwardPitchLimit
+      value: 90
+      objectReference: {fileID: 0}
     - target: {fileID: 7406825927314750401, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: playerSpawnPoint
       value: 
