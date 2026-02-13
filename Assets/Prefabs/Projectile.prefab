@@ -126,13 +126,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletImpactFX: {fileID: 8296457393497080562, guid: 83ff99043eb56d54099c28f25d33f0ab, type: 3}
   trail: {fileID: -8502030724956538082}
-  lifeTime: 5
+  lifeTime: 2
   gravity: 0
   hitForce: 5
   knockBackImpulse: 8
   hitMask:
     serializedVersion: 2
-    m_Bits: 7633
+    m_Bits: 7377
   rb: {fileID: 729833330588080243}
 --- !u!54 &729833330588080243
 Rigidbody:
@@ -340,6 +340,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 5dc790861fa740f4fb3395a6d87ed205, type: 3}
       propertyPath: m_Name
       value: M_Spear_CO
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5dc790861fa740f4fb3395a6d87ed205, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5dc790861fa740f4fb3395a6d87ed205, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
