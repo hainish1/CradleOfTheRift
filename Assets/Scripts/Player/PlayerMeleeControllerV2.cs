@@ -107,6 +107,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         if (_playerEntity == null) return;
 
         // Animation Parameters
+        _upwardDegreesLimit = Mathf.Abs(_upwardDegreesLimit);
+        _downwardDegreesLimit = -Mathf.Abs(_downwardDegreesLimit);
         _degreesPerSecond = Mathf.Deg2Rad * _attackPitchSpeed;
         _isModelHorizontal = true;
         RecalculateAnimationSpeed();
@@ -143,7 +145,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
             // Constrain vertical rotation of player character to the pitch limits.
             Vector3 rotationIncrement = Vector3.RotateTowards(_playerModel.forward, _playerCamera.forward, Time.deltaTime * _degreesPerSecond, 0);
             float pitch = GetPitchDegrees(rotationIncrement);
-            if (pitch >= -_downwardDegreesLimit && pitch <= _upwardDegreesLimit)
+            if (pitch >= _downwardDegreesLimit && pitch <= _upwardDegreesLimit)
                 _playerModel.forward = rotationIncrement;
 
             _isModelHorizontal = false;
