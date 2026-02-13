@@ -16,6 +16,20 @@ public class PlayerGoldUI : MonoBehaviour
 
         this.goldLabel = root.Q<Label>(name: labelName);
 
+        // find the player
+        if(playerGold == null)
+        {
+            playerGold = PlayerLocator.FindPlayerComponent<PlayerGold>();
+        }
+
+
+        // if its still null then something pupu going on
+        if(playerGold == null)
+        {
+            Debug.Log("PLayerGold UI is not assigned, or player not found or sum");
+            return;
+        }
+
         this.playerGold.goldChanged += this.OnGoldChanged;
     }
 
