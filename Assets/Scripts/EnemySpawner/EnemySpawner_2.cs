@@ -49,6 +49,7 @@ public class EnemySpawner_2 : MonoBehaviour
     private struct SpawnDebugInfo
     {
         public Vector3 position;
+        public Vector3 originPosition;
         public bool isSuccess; 
         public bool isFallback;
     }
@@ -274,6 +275,7 @@ public class EnemySpawner_2 : MonoBehaviour
             recentSpawns.Add(new SpawnDebugInfo 
             { 
                 position = spawnPos, 
+                originPosition = playerLocation.position,
                 isSuccess = true, 
                 isFallback = isFallback 
             });
@@ -306,21 +308,28 @@ public class EnemySpawner_2 : MonoBehaviour
         {
             if (spawn.isSuccess)
             {
-                // Use Cyan for fallback, Dark Red for regular
-                Gizmos.color = spawn.isFallback ? Color.cyan : new Color(0.6f, 0.0f, 0.0f, 1.0f); 
+                // Red for successful spawns
+                // Cyan for fallback spawns
+                Color debugColor = spawn.isFallback ? Color.cyan : new Color(0.6f, 0.0f, 0.0f, 1.0f); 
+                Gizmos.color = debugColor;
                 
-                Gizmos.DrawSphere(spawn.position, 2.0f);
-                Gizmos.color = Color.black;
-                Gizmos.DrawLine(spawn.position, spawn.position + Vector3.up * 10f);
+                // Draw the spawn point and a vertical marker
+                Gizmos.DrawSphere(spawn.position, 1.5f);
+                Gizmos.DrawLine(spawn.position, spawn.position + Vector3.up * 5f);
+                
+                // Draw the path from the player's old position
+                Gizmos.color = new Color(debugColor.r, debugColor.g, debugColor.b, 1f); // 25% Opacity
+                Gizmos.DrawLine(spawn.originPosition, spawn.position);
             }
             else
             {
-                // Purple for absolute failure (no nodes found within 40m at all)
+                // Purple for absolute failure (no nodes found)
                 Gizmos.color = new Color(0.3f, 0.0f, 0.3f, 1.0f);
                 Gizmos.DrawSphere(spawn.position, 1.5f);
             }
         }
     }
+
     private void HandleEnemySpawned(GameObject enemyObj)
     {
         ScaleEnemyHealth(enemyObj);
