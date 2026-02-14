@@ -118,6 +118,7 @@ public class UpgradeLevelManager : MonoBehaviour
         Debug.Log($"Player selected upgrade #{indexChoice}.");
 
         // TOOD: Apply the actual upgrade effect here, prolly gonna do this later
+        // HEY YK WHAT, maybe the inventory rules i made earlier might help here in case I wanna add sum directly to the inventory.
         UpgradeSelected?.Invoke(indexChoice);
 
         // consume the level up
