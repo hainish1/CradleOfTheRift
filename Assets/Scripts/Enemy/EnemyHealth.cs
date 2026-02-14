@@ -12,6 +12,11 @@ public class EnemyHealth : HealthController
     public event Action<EnemyHealth> EnemyDied;
     public float baseHealth = 3;
 
+    [Header("XP Reward")]
+    [Tooltip("Ammount of XP player gains after this enemy dies")]
+    [SerializeField] private int xpReward = 10;
+
+
     [Header("Visuals")]
     [SerializeField] private EnemyDamageVisuals damageVisuals;
     [SerializeField] private GameObject deathVFX;
@@ -48,6 +53,12 @@ public class EnemyHealth : HealthController
 
         EnemyDied?.Invoke(this);
         PlayerGold.Instance.AddGold(3); // Set it to 3 for now
+
+        // add XP to player
+        if(PlayerXP.Instance != null)
+        {
+            PlayerXP.Instance.AddXP(xpReward);
+        }
 
         PlayDeathSFX();
         PlayPSVFX(deathVFX, deathVFXSpawnPoint != null ? deathVFXSpawnPoint : transform);

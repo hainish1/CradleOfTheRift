@@ -85,6 +85,9 @@ public class EffectSpec
     // Dash Damage
     public float dashDamage = 10f;
     public float dashDamageRange = 5f;
+
+    // Pass Through Spear
+    [Min(0)] public int passThroughEnemyCount = 1;
 }
 
 public enum ItemRarity

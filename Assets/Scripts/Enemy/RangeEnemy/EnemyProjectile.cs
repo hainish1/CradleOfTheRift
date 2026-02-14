@@ -20,12 +20,25 @@ public class EnemyProjectile : MonoBehaviour
 
     Rigidbody rb;
     private float age;
+    private bool hasHit;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+    }
+
+    void OnEnable()
+    {
+        age = 0f;
+        hasHit = false;
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
     }
 
     /// <summary>
@@ -36,11 +49,11 @@ public class EnemyProjectile : MonoBehaviour
     /// <param name="newDamage"></param>
     public void Init(Vector3 velocity, LayerMask mask, float newDamage)
     {
+        if (rb == null) rb = GetComponent<Rigidbody>();
         rb.linearVelocity = velocity;
         hitMask = mask;
         age = 0f;
-
-
+        hasHit = false;
         this.damage = newDamage;
     }
 
@@ -52,7 +65,7 @@ public class EnemyProjectile : MonoBehaviour
         age += Time.deltaTime;
         if (age >= lifeTime)
         {
-            Destroy(gameObject);
+            ReturnToPool();
             return;
         }
         if (gravity != 0f)
@@ -67,8 +80,11 @@ public class EnemyProjectile : MonoBehaviour
     /// <param name="collision"></param>
     void OnCollisionEnter(Collision collision)
     {
+        if (hasHit) return;
         if (((1 << collision.gameObject.layer) & hitMask) == 0)
             return;
+
+        hasHit = true;
 
         // check if collided with enemy and if yes then damage it
         var pm = collision.collider.GetComponentInParent<PlayerMovement>();
@@ -101,7 +117,19 @@ public class EnemyProjectile : MonoBehaviour
 
         // plkace to add impact effects later
 
-        Destroy(gameObject); // its done its job now
+        ReturnToPool();
+    }
+
+    void ReturnToPool()
+    {
+        if (ObjectPool.instance != null)
+        {
+            ObjectPool.instance.ReturnObject(gameObject, 0.01f);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
 
