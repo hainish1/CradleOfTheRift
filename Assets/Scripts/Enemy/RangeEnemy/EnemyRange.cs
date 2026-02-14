@@ -226,10 +226,9 @@ public class EnemyRange : Enemy
         Quaternion rotation = Quaternion.LookRotation(direction);
         Vector3 spawnPoint = firePoint.position + direction * spawnOffset;
 
-        // I could probably use Object Pooling here
-        EnemyProjectile projectile = Instantiate(projectilePrefab, spawnPoint, rotation);
+        GameObject projObj = GetPooledProjectile(spawnPoint, rotation);
+        EnemyProjectile projectile = projObj.GetComponent<EnemyProjectile>();
         projectile.Init(direction * projectileSpeed, projectileMask, projectileDamage);
-
 
         shootSFX.Post(gameObject);
 
@@ -285,7 +284,8 @@ public class EnemyRange : Enemy
         Vector3 spawnPoint = firePoint.position + direction * spawnOffset;
         Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
 
-        EnemyProjectile projectile = Instantiate(projectilePrefab, spawnPoint, rotation);
+        GameObject projObj = GetPooledProjectile(spawnPoint, rotation);
+        EnemyProjectile projectile = projObj.GetComponent<EnemyProjectile>();
         projectile.Init(direction * projectileSpeed, projectileMask, this.projectileDamage);
 
         shootSFX.Post(gameObject);
@@ -297,10 +297,23 @@ public class EnemyRange : Enemy
             {
                 orbitVisuals.HideOrb(orbIndex);
             }
-            else
-            {
-                // no orbs left,maybe i can go to recovery
-            }
+        }
+    }
+
+    private GameObject GetPooledProjectile(Vector3 position, Quaternion rotation)
+    {
+        if (ObjectPool.instance != null)
+        {
+            
+            GameObject obj = ObjectPool.instance.GetObject(projectilePrefab.gameObject, firePoint);
+            obj.transform.position = position;
+            obj.transform.rotation = rotation;
+            return obj;
+        }
+        else
+        {
+            GameObject obj = Instantiate(projectilePrefab.gameObject, position, rotation);
+            return obj;
         }
     }
 
