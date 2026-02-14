@@ -167109,17 +167109,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 387d2b1a00bda40488a597a10c250d7c, type: 3}
---- !u!114 &938829793 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4574844188995543741, guid: 387d2b1a00bda40488a597a10c250d7c, type: 3}
-  m_PrefabInstance: {fileID: 938829792}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 368ec5540764147d38dcf85232ebd520, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &938829794 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 376240431271649937, guid: 387d2b1a00bda40488a597a10c250d7c, type: 3}
@@ -189441,6 +189430,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: ae692d0ac8d39644589b225de79b7f73, type: 3}
+--- !u!114 &1006703884 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 183193264435491579, guid: 177ae1a4dbff84524bb5910db7c9fcbd, type: 3}
+  m_PrefabInstance: {fileID: 681411172039978865}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3da6976cb88cf9145bbbf7dcfe0121d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1010537803
 GameObject:
   m_ObjectHideFlags: 0
@@ -364583,7 +364583,11 @@ PrefabInstance:
     - target: {fileID: 5504009049952780630, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
       propertyPath: spawner
       value: 
-      objectReference: {fileID: 938829793}
+      objectReference: {fileID: 0}
+    - target: {fileID: 5504009049952780630, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
+      propertyPath: spawner_2
+      value: 
+      objectReference: {fileID: 1006703884}
     - target: {fileID: 6171083751830730270, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
       propertyPath: m_Name
       value: UIDocument
@@ -394675,7 +394679,7 @@ PrefabInstance:
     - target: {fileID: 183193264435491579, guid: 177ae1a4dbff84524bb5910db7c9fcbd, type: 3}
       propertyPath: playerLocation
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1761052729}
     - target: {fileID: 183193264435491579, guid: 177ae1a4dbff84524bb5910db7c9fcbd, type: 3}
       propertyPath: spawnVFXPrefab
       value: 

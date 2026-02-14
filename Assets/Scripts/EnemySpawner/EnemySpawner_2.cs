@@ -17,6 +17,7 @@ public class EnemySpawner_2 : MonoBehaviour
     [SerializeField] private LayerMask spawnNodeLayer;
     [SerializeField] private float spawnRadius = 40f;
     [SerializeField] private float minSpawnDist = 10f;
+    [SerializeField] private float expandedSearchRadius = 100f; // For fallback spawning when no valid nodes are found within spawnRadius
     
     [Header("Optional Features")]
     [SerializeField] private bool isSpawning = true; 
@@ -42,6 +43,7 @@ public class EnemySpawner_2 : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool showSpawnDebug = true;
     [SerializeField] private bool isDevModeEnabled = false; 
+    [SerializeField] private int maxDebugHistory = 50; // Keep only the last 50 spawns
     private List<SpawnDebugInfo> recentSpawns = new List<SpawnDebugInfo>();
 
     private struct SpawnDebugInfo
@@ -141,7 +143,9 @@ public class EnemySpawner_2 : MonoBehaviour
             this.enemySpawnCountdown -= Time.deltaTime;
             if (this.enemySpawnCountdown <= 0f)
             {
-                SpawnEnemyFromNode(this.enemiesToSpawn.Dequeue());
+                EnemyType enemy = this.enemiesToSpawn.Dequeue();
+                SpawnEnemyProcess(enemy);
+                
                 this.enemySpawnCountdown = this.currentTimeBetweenEnemySpawns;
             }
         }
@@ -178,10 +182,26 @@ public class EnemySpawner_2 : MonoBehaviour
         GenerateWave();
     }
 
-    private void SpawnEnemyFromNode(EnemyType enemy)
+    private void SpawnEnemyProcess(EnemyType enemy)
+    {
+        // Try the standard radius
+        if (TryExecuteSpawn(enemy, spawnRadius)) return;
+
+        // Try the expanded radius
+        if (TryExecuteSpawn(enemy, expandedSearchRadius))
+        {
+            if (showSpawnDebug) Debug.Log("Standard nodes blocked; used expanded radius.");
+            return;
+        }
+
+        // Nothing found in either
+        if (showSpawnDebug) Debug.LogWarning($"No valid nodes found for {enemy.prefab.name} even in expanded range!");
+    }
+
+    private bool TryExecuteSpawn(EnemyType enemy, float currentSearchRadius)
     {
         // Find all objects on the spawn node layer within the spawnRadius
-        int nodesFound = Physics.OverlapSphereNonAlloc(playerLocation.position, spawnRadius, nodeResults, spawnNodeLayer);
+        int nodesFound = Physics.OverlapSphereNonAlloc(playerLocation.position, currentSearchRadius, nodeResults, spawnNodeLayer);
         List<SpawnNode> candidates = new List<SpawnNode>();
 
         for (int i = 0; i < nodesFound; i++)
@@ -190,17 +210,18 @@ public class EnemySpawner_2 : MonoBehaviour
             if (nodeResults[i].TryGetComponent(out SpawnNode node))
             {
                 float dist = Vector3.Distance(playerLocation.position, node.transform.position);
-
+                
+                // Get node radius for edge calculation
                 float nodeRadius = 0f;
                 if (nodeResults[i] is SphereCollider sphere) {
                     nodeRadius = sphere.radius * node.transform.lossyScale.x;
-                }
+                }                
                 float distanceToNearEdge = dist - nodeRadius;
 
                 // Match enemy type (Flying/Ground) to node settings
                 bool correctType = enemy.isFlying ? node.isForFlyingEnemies : node.isForGroundEnemies;
 
-                // Ensure edge is far enough away and not visible (if LOS enabled)
+                // Must be outside min distance and correct type
                 if (distanceToNearEdge >= minSpawnDist && correctType)
                 {
                     candidates.Add(node);
@@ -212,44 +233,59 @@ public class EnemySpawner_2 : MonoBehaviour
         {
             // Pick one valid node from the list of candidates
             SpawnNode selectedNode = candidates[UnityEngine.Random.Range(0, candidates.Count)];
-            
-            float radius = 1f; 
-            if (selectedNode.TryGetComponent(out SphereCollider sphere))
-            {
-                radius = sphere.radius * selectedNode.transform.lossyScale.x;
-            }
 
-            // Pick a random X/Z point in a circle. Y stays at 0 (flat offset)
-            Vector2 randomCircle = UnityEngine.Random.insideUnitCircle * radius;
-            Vector3 randomOffset = new Vector3(randomCircle.x, 0, randomCircle.y);
-
-            // Final position starts at the Node's altitude (Y)
-            Vector3 spawnPos = selectedNode.transform.position + randomOffset;
-
-            // Search a sphere (radius + 2) for the closest walkable surface.
-            // If found (like the ground beneath a sky node), Y is updated to the ground height.
-            if (NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, radius + 2f, NavMesh.AllAreas))
-            {
-                spawnPos = hit.position;
-            }
-
-            // Play spawn VFX
-            PlaySpawnVFX(spawnPos, Quaternion.identity);
-
-            // Spawn Enemy
-            GameObject enemyObj = Instantiate(enemy.prefab, spawnPos, Quaternion.identity);
-
-            if (showSpawnDebug)
-            {
-                recentSpawns.Add(new SpawnDebugInfo { position = spawnPos, isSuccess = true, isFallback= false });
-            }
-
-            HandleEnemySpawned(enemyObj);
+            bool isFallback = currentSearchRadius > spawnRadius;
+            ExecuteActualSpawn(selectedNode, enemy, isFallback);
+            return true;
         }
-        else
+
+        return false;
+    }
+
+    private void ExecuteActualSpawn(SpawnNode selectedNode, EnemyType enemy, bool isFallback)
+    {
+        // Calculate the actual spawn point within the node's radius
+        float radius = 1f; 
+        if (selectedNode.TryGetComponent(out SphereCollider sphere))
         {
-            SpawnFromAnyValidNode(enemy);
+            radius = sphere.radius * selectedNode.transform.lossyScale.x;
         }
+
+        // Pick a random X/Z point within the circle
+        Vector2 randomCircle = UnityEngine.Random.insideUnitCircle * radius;
+        Vector3 randomOffset = new Vector3(randomCircle.x, 0, randomCircle.y);
+
+        // Final position starts at the Node's altitude (Y)
+        Vector3 spawnPos = selectedNode.transform.position + randomOffset;
+
+        // Snap the position to the ground using the NavMesh
+        if (NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, radius + 2f, NavMesh.AllAreas))
+        {
+            spawnPos = hit.position;
+        }
+
+        // Play visual effects and instantiate the enemy
+        PlaySpawnVFX(spawnPos, Quaternion.identity);
+        GameObject enemyObj = Instantiate(enemy.prefab, spawnPos, Quaternion.identity);
+
+        // Log the spawn for Gizmo debugging
+        if (showSpawnDebug)
+        {
+            recentSpawns.Add(new SpawnDebugInfo 
+            { 
+                position = spawnPos, 
+                isSuccess = true, 
+                isFallback = isFallback 
+            });
+
+            // Prune the list if it exceeds our limit
+            if (recentSpawns.Count > maxDebugHistory)
+            {
+                recentSpawns.RemoveAt(0); // Remove the oldest entry
+            }
+        }
+
+        HandleEnemySpawned(enemyObj);
     }
 
     private void OnDrawGizmos()
@@ -354,73 +390,6 @@ public class EnemySpawner_2 : MonoBehaviour
     {
         this.currentEnemyCount = Math.Max(0, this.currentEnemyCount - 1); 
         CurrentEnemyCountChanged?.Invoke(this.currentEnemyCount); 
-    }
-
-    private void SpawnFromAnyValidNode(EnemyType enemy)
-    {
-        // Find any nodes in the radius
-        int nodesFound = Physics.OverlapSphereNonAlloc(playerLocation.position, spawnRadius, nodeResults, spawnNodeLayer);
-        
-        // Still try to match Ground/Flying types for a "soft" filter
-        List<SpawnNode> validFallbackNodes = new List<SpawnNode>();
-        for (int i = 0; i < nodesFound; i++)
-        {
-            if (nodeResults[i].TryGetComponent(out SpawnNode node))
-            {
-                bool correctType = enemy.isFlying ? node.isForFlyingEnemies : node.isForGroundEnemies;
-                if (correctType)
-                {
-                    validFallbackNodes.Add(node);
-                }
-            }
-        }
-
-        // Pick from type-matched nodes first; if none exist, pick any node found
-        SpawnNode selectedNode = null;
-        if (validFallbackNodes.Count > 0)
-        {
-            selectedNode = validFallbackNodes[UnityEngine.Random.Range(0, validFallbackNodes.Count)];
-        }
-        else if (nodesFound > 0)
-        {
-            selectedNode = nodeResults[0].GetComponent<SpawnNode>();
-        }
-
-        if (selectedNode != null)
-        {
-            // Get the node size and pick a random point (Same as main method)
-            float radius = 1f; 
-            if (selectedNode.TryGetComponent(out SphereCollider sphere))
-            {
-                radius = sphere.radius * selectedNode.transform.lossyScale.x;
-            }
-
-            Vector2 randomCircle = UnityEngine.Random.insideUnitCircle * radius;
-            Vector3 randomOffset = new Vector3(randomCircle.x, 0, randomCircle.y);
-            Vector3 spawnPos = selectedNode.transform.position + randomOffset;
-
-            // Update height to snap location to ground level
-            if (NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, radius + 2f, NavMesh.AllAreas))
-            {
-                spawnPos = hit.position;
-            }
-
-            // Play spawn VFX
-            PlaySpawnVFX(spawnPos, Quaternion.identity);
-
-            // Spawn Enemy
-            GameObject obj = Instantiate(enemy.prefab, spawnPos, Quaternion.identity);
-
-            if (showSpawnDebug)
-            {
-                recentSpawns.Add(new SpawnDebugInfo { 
-                    position = spawnPos, 
-                    isSuccess = true, 
-                    isFallback = true 
-                });
-            }
-            HandleEnemySpawned(obj);
-        }
     }
 
     private void PlaySpawnVFX(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation)
