@@ -49,13 +49,15 @@ public class EnemyRange : Enemy
 
     [SerializeField]
     private AK.Wwise.Event shootSFX;
-
+    
+    [SerializeField]
+    public GameObject shootVFX;
     public LayerMask projectileMask = ~0;
     public LayerMask obstacleMask = 1; // to detect walls
 
     [Space]
 
-    [Header("Reccovery")]
+    [Header("Recovery")]
     [Tooltip("After all orbs are finished, how much time to start again, basically reload time")]
     public float recoveryTime = 0.4f;
 
@@ -231,6 +233,10 @@ public class EnemyRange : Enemy
         projectile.Init(direction * projectileSpeed, projectileMask, projectileDamage);
 
         shootSFX.Post(gameObject);
+        if (shootVFX != null)
+        {
+            PlayPSVFX(shootVFX, firePoint);
+        }
 
         // Handle Visuals
         if (orbitVisuals != null)
@@ -289,6 +295,10 @@ public class EnemyRange : Enemy
         projectile.Init(direction * projectileSpeed, projectileMask, this.projectileDamage);
 
         shootSFX.Post(gameObject);
+        if (shootVFX != null)
+        {
+            PlayPSVFX(shootVFX, firePoint);
+        }
 
         if (orbitVisuals != null)
         {
@@ -488,5 +498,50 @@ public class EnemyRange : Enemy
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 
+    public void PlayPSVFX(GameObject vfxPrefab, Transform spawnPos)
+    {
+        if (vfxPrefab == null) return;
 
+        spawnPos = spawnPos != null ? spawnPos : transform;
+
+        GameObject fx;
+        if (ObjectPool.instance != null)
+        {
+            fx = ObjectPool.instance.GetObject(vfxPrefab, spawnPos);
+        }
+        else
+        {
+            fx = Instantiate(vfxPrefab, spawnPos.position, Quaternion.identity, spawnPos);
+        }
+
+        float lifetime = EstimateParticleLifetime(fx);
+
+        if (ObjectPool.instance != null)
+        {
+            ObjectPool.instance.ReturnObject(fx, lifetime);
+        }
+        else
+        {
+            Destroy(fx, lifetime);
+        }
+    }
+
+    private float EstimateParticleLifetime(GameObject fx)
+    {
+        float max = 0.25f;
+
+        var systems = fx.GetComponentsInChildren<ParticleSystem>(true);
+        foreach (var ps in systems)
+        {
+            var main = ps.main;
+            float startDelay = main.startDelay.constantMax;
+            float duration = main.duration;
+            float startLifetime = main.startLifetime.constantMax;
+
+            float total = startDelay + duration + startLifetime;
+            if (total > max) max = total;
+        }
+
+        return max;
+    }
 }
