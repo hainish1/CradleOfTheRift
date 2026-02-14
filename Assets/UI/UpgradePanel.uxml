@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/UpgradePanel.uss?fileID=7433441132597879392&amp;guid=2070847e45a66e84889e9a052e7ae101&amp;type=3#UpgradePanel" />
+    <ui:VisualElement name="UpgradeOverlay" class="overlay">
+        <ui:VisualElement name="UpgradePanel" class="panel" style="border-left-color: rgb(131, 255, 80); border-right-color: rgb(131, 255, 80); border-top-color: rgb(131, 255, 80); border-bottom-color: rgb(131, 255, 80);">
+            <ui:Label name="UpgradeTitle" text="DAMNNN! Choose an Upgrade" enable-rich-text="true" class="title" style="background-color: rgba(14, 14, 14, 0);" />
+            <ui:VisualElement name="ChoicesContainer" class="choices-container">
+                <ui:Button name="Choice0" text="FAST AS F" class="choice-btn" style="border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255);" />
+                <ui:Button name="Choice1" text="BASICALLY GOD" class="choice-btn" style="border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255);" />
+                <ui:Button name="Choice2" text="67" class="choice-btn" style="border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255);" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

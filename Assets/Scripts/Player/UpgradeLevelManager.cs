@@ -11,9 +11,9 @@ public class UpgradeLevelManager : MonoBehaviour
 
     public static UpgradeLevelManager Instance { get; private set; }
 
-    [Header("UI")]
-    [Tooltip("upgrade selection panel placeholder")]
-    [SerializeField] private GameObject upgradePanelUI;
+    // [Header("UI")]
+    // [Tooltip("upgrade selection panel placeholder")]
+    // [SerializeField] private GameObject upgradePanelUI;
 
     [Header("Input")]
     [SerializeField] private Key activateKey = Key.U;
@@ -46,10 +46,10 @@ public class UpgradeLevelManager : MonoBehaviour
 
     void Start()
     {
-        if (upgradePanelUI != null)
-        {
-            upgradePanelUI.SetActive(false);
-        }
+        // if (upgradePanelUI != null)
+        // {
+        //     upgradePanelUI.SetActive(false);
+        // }
         playerXP = PlayerXP.Instance;
 
         if (playerXP != null)
@@ -101,10 +101,10 @@ public class UpgradeLevelManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        if(upgradePanelUI != null)
-        {
-            upgradePanelUI.SetActive(true);
-        }
+        // if(upgradePanelUI != null)
+        // {
+        //     upgradePanelUI.SetActive(true);
+        // }
 
         UpgradePanelOpened?.Invoke();
         Debug.Log("Upgrade Panel was opened");
@@ -127,10 +127,10 @@ public class UpgradeLevelManager : MonoBehaviour
         }
 
         // resume
-        if(upgradePanelUI != null)
-        {
-            upgradePanelUI.SetActive(false);
-        }
+        // if(upgradePanelUI != null)
+        // {
+        //     upgradePanelUI.SetActive(false);
+        // }
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

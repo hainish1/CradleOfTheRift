@@ -73,14 +73,15 @@ public class PlayerXP : MonoBehaviour
         currentXP -= xpToLevelUp;
         if (currentXP < 0) currentXP = 0;
 
-        currentLevel++; // LEVEL UP
-        levelUpReady = true; // upgrade can be selected now
+        currentLevel++;
+        levelUpReady = false; // consumed — must re-earn
 
         LeveledUp?.Invoke(currentLevel);
         XPChanged?.Invoke(currentXP, xpToLevelUp);
         Debug.Log($"[PlayerXP] Leveled up! Now level {currentLevel} (overflow XP: {currentXP})");
 
-        if(currentXP >= xpToLevelUp)
+        // if overflow XP already meets threshold, immediately re-enable
+        if (currentXP >= xpToLevelUp)
         {
             levelUpReady = true;
             LevelUpAvailable?.Invoke();
