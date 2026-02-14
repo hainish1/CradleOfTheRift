@@ -28,6 +28,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [SerializeField]
     [Tooltip("The player camera.")] private Transform _playerCamera;
     private Transform _playerModel;
+    private PlayerMovement _playerMovement;
     private Entity _playerEntity;
     private PlayerAudioController _audioController;
 
@@ -73,8 +74,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [SerializeField]
     [Tooltip("Knockback force of attacks.")] private float _knockbackForce;
     [SerializeField]
-    [Tooltip("The buffer time for inputting attack combos.")] private float _comboInputSecondsBuffer;
-    private bool _isAttacking;
+    [Tooltip("The buffer time for inputting attack combos in seconds.")] private float _comboInputBuffer;
+    public bool IsAttacking { get; private set; }
     private bool _isRegistering;
     public bool CanAttack { get; set; }
     private bool _comboInputted;
@@ -84,6 +85,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     void Awake()
     {
         _playerModel = gameObject.transform;
+        _playerMovement = GetComponentInParent<PlayerMovement>();
         _playerEntity = GetComponentInParent<Entity>();
         _weaponAnim = _playerModel.GetComponent<Animator>();
         _audioController = GetComponentInParent<PlayerAudioController>();
@@ -122,9 +124,9 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         foreach (AttackInfo info in _attacks)
         {
             info.AttackDuration = info.PreTransitionAnim.length + info.AttackAnim.length;
-            info.BufferedAttackDuration = info.AttackDuration - _comboInputSecondsBuffer;
+            info.BufferedAttackDuration = info.AttackDuration - _comboInputBuffer;
         }
-        _isAttacking = false;
+        IsAttacking = false;
         _isRegistering = false;
         CanAttack = true;
         _comboInputted = false;
@@ -134,13 +136,16 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     void Update()
     {
+        // Do not allow attacks while dashing.
+        if (_playerMovement.IsDashing) return;
+
         RecalculateAnimationSpeed();
 
         // Trigger an attack when inputted.
         if ((_attackActions.IsPressed() || _comboInputted) && CanAttack) TriggerAttack();
 
         // Gradually align player model with camera direction while attacking.
-        if (_isAttacking)
+        if (IsAttacking)
         {
             // Constrain vertical rotation of player character to the pitch limits.
             Vector3 rotationIncrement = Vector3.RotateTowards(_playerModel.forward, _playerCamera.forward, Time.deltaTime * _degreesPerSecond, 0);
@@ -174,7 +179,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         {
             float duration = info.PreTransitionAnim.length + info.AttackAnim.length;
             info.AttackDuration = Mathf.Clamp(duration / currAttackSpeed, 1e-3f, float.MaxValue);
-            info.BufferedAttackDuration = Mathf.Clamp(info.AttackDuration - _comboInputSecondsBuffer, 0, float.MaxValue);
+            info.BufferedAttackDuration = Mathf.Clamp(info.AttackDuration - _comboInputBuffer, 0, float.MaxValue);
         }
 
         _weaponAnim.SetFloat("AttackSpeedMultiplier", currAttackSpeed);
@@ -211,11 +216,11 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// </summary>
     private void TriggerAttack()
     {
-        _isAttacking = true;
+        IsAttacking = true;
         CanAttack = false;
         _comboInputted = false;
         _currComboCount++;
-        _weaponAnim.SetTrigger("Attack");
+        _weaponAnim.SetTrigger("Attack" + _currComboCount);
         StartCoroutine(DelayAttack());
     }
 
@@ -262,7 +267,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         else
             yield return new WaitForSeconds(currAttackDuration);
 
-        _isAttacking = false;
+        IsAttacking = false;
 
         // Wait for attack cooldown if max combo count was reached or a combo input was missed.
         yield return new WaitForSeconds(AttackCooldown);

@@ -729,6 +729,8 @@ MonoBehaviour:
   _gravityAirDrag: 1
   _moveAccelerationSeconds: 0.4
   _moveDecelerationSeconds: 0.2
+  _moveTurnDampingFloor: 0.2
+  _moveBlendSpeed: 0.03
   _characterRotationDamping: 0.25
   _hoverHeight: 1
   _hoverPullStrength: 100
@@ -3105,7 +3107,7 @@ MonoBehaviour:
     m_Bits: 7168
   _debug: 1
   _knockbackForce: 18
-  _comboInputSecondsBuffer: 0.1
+  _comboInputBuffer: 0.1
 --- !u!4 &7116722707824478082 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1090353731994783751, guid: a7607df6067c9f94a93f4b7f10196277, type: 3}

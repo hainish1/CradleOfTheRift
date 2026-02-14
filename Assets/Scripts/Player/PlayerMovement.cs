@@ -40,6 +40,7 @@ public class PlayerMovement : MonoBehaviour
     private Entity _playerEntity;
     private Animator _playerAnim;
     private CharacterController _characterController;
+    private PlayerMeleeControllerV2 _meleeController;
     private float _playerHalfHeight;
     private float _playerRadius;
 
@@ -59,6 +60,10 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("Seconds needed to reach Max Speed.")] private float _moveAccelerationSeconds;
     [SerializeField]
     [Tooltip("Seconds needed to fully stop after moving at Max Speed.")] private float _moveDecelerationSeconds;
+    [SerializeField]
+    [Tooltip("The lowest percent in units per second which player velocity can be reduced to when turning.")] private float _moveTurnDampingFloor;
+    [SerializeField]
+    [Tooltip("How quickly in seconds the player character move animations blend when turning.")] private float _moveBlendSpeed;
     [SerializeField]
     [Tooltip("How quickly the player character aligns with the camera direction in units per second.")] private float _characterRotationDamping;
     private float _moveAcceleration;
@@ -106,7 +111,7 @@ public class PlayerMovement : MonoBehaviour
     private float DashCooldown { get; set; }
     private int DashMaxCharges { get; set; }
     private int _currDashCharges;
-    private bool _isDashing;
+    public bool IsDashing { get; private set; }
     private bool _isRegeneratingDash;
     public event System.Action<float> DashCooldownStarted;
     private Vector3 _dashDirectionUnitVector;
@@ -171,6 +176,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _playerEntity = GetComponent<Entity>();
         _characterController = GetComponent<CharacterController>();
+        _meleeController = GetComponentInChildren<PlayerMeleeControllerV2>();
         _playerAnim = _playerModel.GetComponent<Animator>();
         _playerInput = new InputSystem_Actions();
         _playerActions = _playerInput.Player;
@@ -244,7 +250,7 @@ public class PlayerMovement : MonoBehaviour
         DashCooldown = _playerEntity.Stats.DashCooldown;
         DashMaxCharges = _playerEntity.Stats.DashCharges;
         _currDashCharges = DashMaxCharges;
-        _isDashing = false;
+        IsDashing = false;
         _isRegeneratingDash = false;
 
         // Jump Parameters
@@ -287,7 +293,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (_kbControlsLockTimer > 0) return;
 
-        if (_isDashing)
+        if (IsDashing)
         {
             GetIsGrounded();
             DashConditions();
@@ -351,7 +357,7 @@ public class PlayerMovement : MonoBehaviour
         _kbControlsLockTimer = Mathf.Max(_kbControlsLockTimer, _kbControlsLockTime);
         _kbDashLockTimer = Mathf.Max(_kbDashLockTimer, _kbControlsLockTime + _kbDashLockTime);
 
-        _isDashing = false; // Cancel dashing immediately.
+        IsDashing = false; // Cancel dashing immediately.
     }
 
     /// <summary>
@@ -535,11 +541,28 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void MoveConditions()
     {
+        // Trigger corresponding move animations.
+        Vector2 inputDirection = _moveActions.ReadValue<Vector2>().normalized;
+        float moveBlendX = inputDirection.x * (_lateralVelocityVector.magnitude / MoveMaxSpeed);
+        float moveBlendY = inputDirection.y * (_lateralVelocityVector.magnitude / MoveMaxSpeed);
+        _playerAnim.SetFloat("MoveVector_X", moveBlendX, _moveBlendSpeed, Time.deltaTime);
+        _playerAnim.SetFloat("MoveVector_Y", moveBlendY, _moveBlendSpeed, Time.deltaTime);
+
         // Because move speed right before moment of knockback must be preserved for correct calculations,
         // simply stop recording new movement values instead of completely skipping the MoveCase method.
         Vector3 moveDirectionUnitVector = (_kbControlsLockTimer > 0) ? Vector3.zero : GetMoveInputDirection();
 
         GroundClampInterpolate(ref moveDirectionUnitVector);
+
+        // Lose velocity proportional to the severity of the angle of direction change.
+        if (_lateralVelocityVector.magnitude > 1e-3f && moveDirectionUnitVector != Vector3.zero)
+        {
+            float dot = Vector3.Dot(_lateralVelocityVector.normalized, moveDirectionUnitVector);
+            
+            // Never reset velocity below the turn damping floor.
+            float turnDamp = Mathf.Lerp(_moveTurnDampingFloor, 1, (dot + 1) / 2);
+            _lateralVelocityVector *= turnDamp;
+        }
 
         // Accelerate if movement is being inputted and sprint has not been canceled.
         if (_moveActions.ReadValue<Vector2>() != Vector2.zero && _lateralVelocityVector.magnitude <= MoveMaxSpeed)
@@ -559,7 +582,7 @@ public class PlayerMovement : MonoBehaviour
         // Turn the player character toward the input direction.
         // COUPLED : Aim decides where player faces
         // COUPLED WHEN MOVING : Aim + Input decide where player faces, but Aim has higher priority
-        // DECOUPLED : Aim does not do shit
+        // DECOUPLED : Aim does nothing
         if (_kbControlsLockTimer <= 0 && !strafe && _lateralVelocityVector.sqrMagnitude > 0.0001f)
         {
            Quaternion qa = transform.rotation;
@@ -635,7 +658,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     /// <param name="copyVectorPitch"> The vector pitch to copy. </param>
     /// <param name="copyVectorYaw"> The vector yaw to copy. </param>
-    /// <returns>  </returns>
+    /// <returns> Composite vector from the pitch and yaw. </returns>
     private Vector3 CopyVectorAngles(Vector3 copyVectorPitch, Vector3 copyVectorYaw)
     {
         // Get copied pitch and yaw in radians.
@@ -752,7 +775,10 @@ public class PlayerMovement : MonoBehaviour
         // Check if the player character is being knocked back.
         if (_kbDashLockTimer > 0) return;
 
-        if (_currDashCharges != 0 && !_isDashing)
+        // Do not allow dashes while attacking.
+        if (_meleeController.IsAttacking) return;
+
+        if (_currDashCharges != 0 && !IsDashing)
         {
             _dashDirectionUnitVector = GetMoveInputDirection();
 
@@ -844,12 +870,20 @@ public class PlayerMovement : MonoBehaviour
     /// <returns> IEnumerator object. </returns>
     private IEnumerator InitiateDashDuration(float seconds)
     {
-        _isDashing = true;
+        IsDashing = true;
+
+        Vector2 inputDirection = _moveActions.ReadValue<Vector2>().normalized;
+        if (inputDirection == new Vector2(0, 0)) inputDirection = new Vector2(0, 1);
+
+        _playerAnim.SetFloat("DashVector_X", inputDirection.x);
+        _playerAnim.SetFloat("DashVector_Y", inputDirection.y);
         _playerAnim.SetTrigger("Dash");
 
         yield return new WaitForSeconds(seconds);
 
-        _isDashing = false;
+        IsDashing = false;
+        _playerAnim.SetFloat("DashVector_X", 0);
+        _playerAnim.SetFloat("DashVector_Y", 0);
         _playerAnim.SetTrigger("DashExit");
     }
 
@@ -863,8 +897,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_kbControlsLockTimer > 0) return;
 
-        if (!_isDashing) _jumpBufferTimer = _jumpBufferWindow;
-        if (!_isFlying && !IsGrounded && !_isDashing) EnableDrift();
+        if (!IsDashing) _jumpBufferTimer = _jumpBufferWindow;
+        if (!_isFlying && !IsGrounded && !IsDashing) EnableDrift();
     }
 
     /// <summary>
