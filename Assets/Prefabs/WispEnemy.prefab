@@ -6005,6 +6005,8 @@ MonoBehaviour:
   flyHeight: 3
   verticalSmoothTime: 2.5
   horizontalSmoothTime: 2.5
+  maxHorizontalSpeed: 12
+  maxVerticalSpeed: 10
   chaseSpeed: 5
   attackRange: 15
   desiredDistance: 6
@@ -6017,12 +6019,13 @@ MonoBehaviour:
   agentAcceleration: 100
   spreadInterval: 0.2
   spreadRadiusJitter: 2
-  wispSeparationRadius: 4
-  wispSeparationStrength: 1.2
-  navSampleDistance: 2
+  wispSeparationRadius: 20
+  wispSeparationStrength: 2
+  navSampleDistance: 6
+  angleAdaptSpeed: 1.5
   projectileSpeed: 30
   fireCooldown: 0.9
-  recoveryDuration: 1
+  recoveryDuration: 2
   firePoint: {fileID: 7588448968403286001}
   projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
   spawnOffset: 0.1
@@ -6036,7 +6039,7 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 1
-  recoveryTime: 0.4
+  recoveryTime: 2
   orbitVisuals: {fileID: 0}
 --- !u!114 &204557455612082024
 MonoBehaviour:
