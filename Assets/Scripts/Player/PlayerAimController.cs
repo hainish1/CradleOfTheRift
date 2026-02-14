@@ -123,7 +123,7 @@ public class PlayerAimController : MonoBehaviour
     void Update()
     {
         if (PlayerHealth.GameIsOver) return;
-        if (IsPaused) return;
+        if (IsPaused || PauseManager.GameIsPaused) return;
         if (forceCoupleTimer > 0f) forceCoupleTimer -= Time.unscaledDeltaTime;
 
         lookChangedThisFrame = ReadLook(); // did my mouse move
@@ -182,6 +182,8 @@ public class PlayerAimController : MonoBehaviour
     }
     void LateUpdate()
     {
+        if (IsPaused || PauseManager.GameIsPaused) return;
+
         if (playerRoot)
         {
             float currentYaw = playerRoot.eulerAngles.y;
