@@ -10,20 +10,20 @@ public class PlayerGoldUI : MonoBehaviour
 
     private void OnEnable()
     {
-        // 1. Setup UI References
+        // Setup UI References
         if (goldLabel == null)
         {
             VisualElement root = GetComponent<UIDocument>().rootVisualElement;
             goldLabel = root.Q<Label>(name: "GoldLabel");
         }
 
-        // 2. Find the player if not assigned
+        // Find the player if not assigned
         if (playerGold == null)
         {
             playerGold = PlayerLocator.FindPlayerComponent<PlayerGold>();
         }
 
-        // 3. Subscribe and initialize
+        // Subscribe and initialize
         if (playerGold != null)
         {
             playerGold.goldChanged += OnGoldChanged;
