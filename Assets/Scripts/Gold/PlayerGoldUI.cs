@@ -31,7 +31,7 @@ public class PlayerGoldUI : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("PlayerGold UI: PlayerGold component not found!");
+            Debug.LogWarning("PLayerGold UI is not assigned, or player not found or sum");
         }
     }
 
