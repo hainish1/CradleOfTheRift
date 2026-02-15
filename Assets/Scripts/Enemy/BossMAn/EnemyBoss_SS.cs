@@ -42,17 +42,20 @@ public class EnemyBoss_SS : Enemy
     [Tooltip("Max height to player allowed for leap attack")]
     public float maxAttackHeightDiff = 4f;
     public LayerMask groundMask = ~0;
-    
+
     [Header("VFX")]
     public GameObject flashVFX;
     public GameObject jumpVFX;
     public Transform jumpVFXPoint;
+    public Transform height; // the animator component is under here
 
     [Header("Sweep Collision")]
     public float collisionRadius = 0.5f;
 
     [HideInInspector] public bool isInAir;
     [HideInInspector] public Vector3 inAirVelocity;
+
+    private Animator heightAnimator;
 
     private IdleState_Boss idle;
     private SpawnBombState_Boss bombState;
@@ -64,6 +67,10 @@ public class EnemyBoss_SS : Enemy
     public override void Start()
     {
         base.Start();
+
+        if (height != null)
+            heightAnimator = height.GetComponent<Animator>();
+
         idle = new IdleState_Boss(this, stateMachine);
         bombState = new SpawnBombState_Boss(this, stateMachine);
         recovery = new RecoveryState_Boss(this, stateMachine);
@@ -82,6 +89,8 @@ public class EnemyBoss_SS : Enemy
     public EnemyState GetRecoveryState() => recovery;
     public EnemyState GetExploisionState() => ringAttack;
     public EnemyState GetLeapAttackState() => leapAttack;
+
+
 
     public void CreatePoofVFX(Vector3 spawnPosition)
     {
@@ -324,6 +333,28 @@ public class EnemyBoss_SS : Enemy
         agent.updateRotation = true;
         agent.isStopped = true;
         agent.ResetPath();
+    }
+
+
+
+    // Animator thigns 
+
+    public void TriggerSquish()
+    {
+        if (heightAnimator != null)
+            heightAnimator.SetTrigger("squish");
+    }
+
+    public void TriggerStretch()
+    {
+        if (heightAnimator != null)
+            heightAnimator.SetTrigger("stretch");
+    }
+
+    public void SetIsJumping(bool value)
+    {
+        if (heightAnimator != null)
+            heightAnimator.SetBool("isJumping", value);
     }
 
     void OnDrawGizmos()
