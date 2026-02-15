@@ -30,9 +30,8 @@ public class CompassManager : MonoBehaviour
 
     private Dictionary<CompassMarker, VisualElement> markerMap = new Dictionary<CompassMarker, VisualElement>();
 
-    // Quick lookup to map MarkerType -> USS Class name
-    private Dictionary<MarkerType, string> typeToClassMap = new Dictionary<MarkerType, string>();
-    private Dictionary<MarkerType, float> typeToRadiusMap = new Dictionary<MarkerType, float>();
+    // Quick lookup to map MarkerType
+    private Dictionary<MarkerType, CompassMarkerData> markerDataLookup = new Dictionary<MarkerType, CompassMarkerData>();
     private float stackTimer;
 
     void OnEnable()
@@ -49,6 +48,22 @@ public class CompassManager : MonoBehaviour
 
     void Awake()
     {
+        // Find the player
+        if (playerTransform == null)
+        {
+            GameObject playerGo = PlayerLocator.FindPlayerGameObject();
+
+            if(playerGo != null)
+            {
+                playerTransform = playerGo.transform;
+            }
+            else
+            {
+                Debug.LogWarning("CompassUI: Could not find player Transform");
+                return;
+            }
+        }
+
         // Get the UI container from UXML where markers will be spawned
         var root = uiDocument.rootVisualElement;
         iconContainer = root.Q<VisualElement>("icon-container");
@@ -56,10 +71,9 @@ public class CompassManager : MonoBehaviour
         // Initialize the dictionary for fast lookups
         foreach (var data in markerDefinitions)
         {
-            if (data != null && !typeToClassMap.ContainsKey(data.markerType))
+            if (data != null && !markerDataLookup.ContainsKey(data.markerType))
             {
-                typeToClassMap.Add(data.markerType, data.ussClass);
-                typeToRadiusMap.Add(data.markerType, data.detectionRadius);
+                markerDataLookup.Add(data.markerType, data);
             }
         }
     }
@@ -81,21 +95,28 @@ public class CompassManager : MonoBehaviour
         var element = new VisualElement();
         element.AddToClassList("marker");
 
+        // Set the specific icon image from the ScriptableObject
+        if (markerDataLookup.TryGetValue(marker.Type, out CompassMarkerData data))
+        {
+            if (data.markerIcon != null)
+            {
+                element.style.backgroundImage = new StyleBackground(data.markerIcon);
+
+                // Remove the default red in the marker uss class
+                element.style.backgroundColor = Color.clear;
+            }
+        }
+
+        // Apply the USS class for extra styling (tints, glows, etc.)
+        if (data != null && !string.IsNullOrEmpty(data.ussClass))
+        {
+            element.AddToClassList(data.ussClass);
+        }
+
         // Add the Distance Label
         var distanceLabel = new Label();
         distanceLabel.AddToClassList("marker-distance-text");
         element.Add(distanceLabel);
-
-        // Dynamic lookup using the ScriptableObject data
-        if (typeToClassMap.TryGetValue(marker.Type, out string className))
-        {
-            element.AddToClassList(className);
-        }
-        else
-        {
-            // Default fallback if no data asset is found for this type
-            element.AddToClassList("marker"); 
-        }
     
         iconContainer.Add(element);
         markerMap.Add(marker, element);
@@ -132,8 +153,10 @@ public class CompassManager : MonoBehaviour
 
             // Retrieve the specific detection range for this marker type
             float maxRadius = 9999f;
-            typeToRadiusMap.TryGetValue(marker.Type, out maxRadius);
-
+            if (markerDataLookup.TryGetValue(marker.Type, out var data))
+            {
+                maxRadius = data.detectionRadius;
+            }
 
             // Calculate horizontal angle between player forward and the target
             Vector3 dirToMarker = offset;

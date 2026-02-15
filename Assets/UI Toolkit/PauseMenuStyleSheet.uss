@@ -115,3 +115,44 @@
     width: 1920px;
     height: 1080px;
 }
+
+#DescriptionScroll {
+    padding-right: 20px;
+}
+
+/* Hide the clunky up/down buttons for a cleaner look */
+.unity-scroller__low-button, 
+.unity-scroller__high-button {
+    display: none;
+}
+
+/* Style the background track */
+.unity-base-slider__tracker {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-width: 0;
+    border-radius: 4px;
+    width: 8px; /* Make it thin */
+}
+
+/* Style the "dragger" (the handle) */
+.unity-base-slider__dragger {
+    background-color: rgb(255, 255, 255); /* White handle to start */
+    border-width: 0;
+    border-radius: 4px;
+    width: 8px;
+    transition-duration: 0.2s;
+}
+
+/* Highlight the handle when hovering */
+.unity-base-slider__dragger:hover {
+    background-color: rgb(228, 0, 255); /* Matches the hover color  */
+    scale: 1.2 1.0; /* Make it slightly wider on hover */
+}
+
+
+/* Adjust the overall scroller width */
+.unity-scroller {
+    width: 12px;
+    background-color: transparent;
+    align-items: center;
+}

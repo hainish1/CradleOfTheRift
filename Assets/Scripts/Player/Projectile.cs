@@ -5,7 +5,7 @@ public class Projectile : MonoBehaviour
 {
     [SerializeField] protected GameObject bulletImpactFX;
     public TrailRenderer trail;
-    
+
     public GameObject BulletImpactFX
     {
         get { return bulletImpactFX; }
@@ -32,10 +32,12 @@ public class Projectile : MonoBehaviour
     public virtual void Awake()
     {
         trail = GetComponent<TrailRenderer>();
-        
+
         rb = GetComponent<Rigidbody>();
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+
+        rb.freezeRotation = true;
 
         // meshRenderer = GetComponent<MeshRenderer>();
     }
@@ -47,6 +49,8 @@ public class Projectile : MonoBehaviour
         actualDamage = damage; // USE DAMAGE FROM STATS SYSTEM
         this.attacker = attacker;
         age = 0f;
+
+        rb.freezeRotation = true;
 
         trail.Clear();
         trail.time = 0.25f;
@@ -82,6 +86,12 @@ public class Projectile : MonoBehaviour
             rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
         }
 
+        // create a natural arc motion
+        if (rb.linearVelocity.sqrMagnitude > 0.1f)
+        {
+            transform.rotation = Quaternion.LookRotation(rb.linearVelocity);
+        }
+
     }
     protected virtual void OnEnable()
     {
@@ -93,8 +103,8 @@ public class Projectile : MonoBehaviour
             trail.Clear();
             trail.time = 0.25f;
         }
-        
-        if(rb != null)
+
+        if (rb != null)
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
@@ -145,16 +155,16 @@ public class Projectile : MonoBehaviour
             {
                 damageable.TakeDamage(actualDamage);
                 CombatEvents.ReportDamage(attacker, enemy, actualDamage);
-                
+
                 if (DelayedProjectiles.IsEnabled)
                 {
                     CreateDelayedDamageMark(enemy, collision.GetContact(0).point);
                 }
-                
+
                 hasHit = true;
 
                 // checking teh event here
-                
+
                 Debug.Log($"Dealt {actualDamage} damage to {collision.gameObject.name}");
             }
         }
@@ -175,7 +185,7 @@ public class Projectile : MonoBehaviour
     protected void CreateImpactFX()
     {
         if (bulletImpactFX == null) return;
-        
+
         GameObject newFX = Instantiate(bulletImpactFX);
         newFX.transform.position = transform.position;
 
@@ -185,7 +195,7 @@ public class Projectile : MonoBehaviour
         // ObjectPool.instance.ReturnObject(newImpacFX, 1f); // return the effect back to the pool after 1 second of delay
 
     }
-    
+
     public virtual void ReturnToSource()
     {
         if (ObjectPool.instance != null)
@@ -202,7 +212,7 @@ public class Projectile : MonoBehaviour
     {
         GameObject markObj = new GameObject("DelayedDamageMark");
         markObj.transform.position = hitPoint;
-        
+
         DelayedDamageMark mark = markObj.AddComponent<DelayedDamageMark>();
         mark.Init(enemy, actualDamage, attacker, DelayedProjectiles.DelayTime, DelayedProjectiles.DamageMultiplier);
 
@@ -222,13 +232,13 @@ public class Projectile : MonoBehaviour
     private void CreateDefaultMarkEffect(GameObject markObj)
     {
         DelayedDamageMark mark = markObj.GetComponent<DelayedDamageMark>();
-        
+
         Light light = markObj.AddComponent<Light>();
         light.type = LightType.Point;
         light.color = new Color(1f, 0.3f, 0f);
         light.range = 3f;
         light.intensity = 2f;
-        
+
         if (mark != null)
         {
             mark.SetLight(light);
@@ -273,21 +283,21 @@ public class Projectile : MonoBehaviour
         color.enabled = true;
         var grad = new Gradient();
         grad.SetKeys(
-            new GradientColorKey[] { 
-                new GradientColorKey(new Color(1f, 0f, 0f), 0f), 
+            new GradientColorKey[] {
+                new GradientColorKey(new Color(1f, 0f, 0f), 0f),
                 new GradientColorKey(new Color(1f, 0f, 0f), 0.5f),
-                new GradientColorKey(new Color(0.8f, 0f, 0f), 1f) 
+                new GradientColorKey(new Color(0.8f, 0f, 0f), 1f)
             },
-            new GradientAlphaKey[] { 
-                new GradientAlphaKey(1f, 0f), 
+            new GradientAlphaKey[] {
+                new GradientAlphaKey(1f, 0f),
                 new GradientAlphaKey(1f, 0.3f),
-                new GradientAlphaKey(0f, 1f) 
+                new GradientAlphaKey(0f, 1f)
             }
         );
         color.color = grad;
 
         ps.Play();
-        
+
         if (mark != null)
         {
             mark.SetParticles(ps);

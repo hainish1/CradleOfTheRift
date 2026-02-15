@@ -35,14 +35,20 @@ public class EnemyMelee : Enemy
     [Header("Leap Attack Settings")]
     public float leapAttackRange = 5f; // distance to start leap
     public float minAttackDistance = 3f; // min safe dist
-    public float leapHeight = 1f; // vertical arc
+    public float leapHeight = 1f; // vertical arc height above start point
     public float leapDuration = .5f; // time for leap
     public float leapOverShootDistance = 4f; // How far past the player to jump
     public float gravityScale = 4f;
+    public float startHeightAboveGround = .05f;
+    [Tooltip("Max height to player allowed for attacking.")]
+    public float maxAttackHeightDiff = 2f;
     public LayerMask groundMask = ~0; // to detect what is ground
 
+    [Header("Sweep Collision")]
+    public float collisionRadius = 0.25f;
 
-
+    [HideInInspector] public bool isInAir;
+    [HideInInspector] public Vector3 inAirVelocity;
 
     IdleState_Melee idle;
     ChaseState_Melee chase;
@@ -56,6 +62,9 @@ public class EnemyMelee : Enemy
     [Header("Jump VFX")]
     public GameObject jumpPoofVFXPrefab;
     public Transform jumpVFXAttackPoint;
+
+    [Header("Jump animation")]
+    public Transform height;
 
     public override void Start()
     {
@@ -135,10 +144,10 @@ public class EnemyMelee : Enemy
     public Vector3 CalculateBallisticVelocity(Vector3 startPoint, Vector3 endPoint, float height, out float duration)
     {
         float gravity = Physics.gravity.y * gravityScale;
-        float displacementY = endPoint.y - startPoint.y;
 
-        // Safety: Peak height must be higher than the target step
-        if (displacementY >= height) height = displacementY + 1f;
+        // Flatten the target to same Y 
+        endPoint.y = startPoint.y;
+        float displacementY = 0f;
 
         Vector3 displacementXZ = new Vector3(endPoint.x - startPoint.x, 0, endPoint.z - startPoint.z);
 
@@ -171,6 +180,105 @@ public class EnemyMelee : Enemy
         }
     }
 
+    /// <summary>
+    /// Move with swept-sphere collision
+    /// </summary>
+    public Vector3 SweepMove(Vector3 vel, float dt)
+    {
+        Vector3 delta = vel * dt;
+        float dist = delta.magnitude;
+        if (dist < 1e-5f) return vel;
+
+        Vector3 origin = transform.position + Vector3.up * (collisionRadius + 0.02f);
+        Vector3 dir = delta.normalized;
+
+        if (Physics.SphereCast(origin, collisionRadius, dir, out RaycastHit sweepHit,
+                dist, groundMask, QueryTriggerInteraction.Ignore))
+        {
+            // Stop just before the hit surface
+            float safeDist = Mathf.Max(0f, sweepHit.distance - 0.01f);
+            transform.position += dir * safeDist;
+
+            // Ground hit, snap center to correct height above surface
+            if (sweepHit.normal.y > 0.6f)
+            {
+                float halfH = agent != null ? agent.height * 0.7f : 0f;
+                Vector3 pos = transform.position;
+                pos.y = sweepHit.point.y + (halfH + startHeightAboveGround);
+                transform.position = pos;
+            }
+
+            // remove the component going into the surface
+            float velIntoSurface = Vector3.Dot(vel, -sweepHit.normal);
+            if (velIntoSurface > 0f)
+                vel += sweepHit.normal * velIntoSurface;
+        }
+        else
+        {
+            transform.position += delta;
+        }
+
+        return vel;
+    }
+
+    /// <summary>
+    /// Check if ground is within depth below the enemy's feet
+    /// </summary>
+    public bool GroundCheck(out Vector3 groundPoint, float probeDepth = 0.15f)
+    {
+        float startHeight = collisionRadius + 0.1f;
+
+        Vector3 origin = transform.position + Vector3.up * startHeight;
+        float castDist = probeDepth + startHeight;
+
+        if (Physics.SphereCast(origin, collisionRadius * 0.4f, Vector3.down, out RaycastHit groundHit,
+                castDist, groundMask, QueryTriggerInteraction.Ignore))
+        {
+            groundPoint = groundHit.point;
+            return true;
+        }
+
+        groundPoint = transform.position;
+        return false;
+    }
+
+    /// <summary>
+    /// Pause NavMeshAgent steering for manual position control (leaps, knockback)
+    /// </summary>
+    public void PauseAgent()
+    {
+        if (agent == null || !agent.isActiveAndEnabled || !agent.isOnNavMesh) return;
+        agent.isStopped = true;
+        agent.velocity = Vector3.zero;
+        agent.ResetPath();
+        agent.updatePosition = false;
+        agent.updateRotation = false;
+    }
+
+    /// <summary>
+    /// Resume NavMeshAgent steering, snapping to the nearest valid NavMesh point.
+    /// </summary>
+    public void ResumeAgent()
+    {
+        if (agent == null || !agent.isActiveAndEnabled) return;
+
+        if (NavMesh.SamplePosition(transform.position, out NavMeshHit navHit, 5f, NavMesh.AllAreas))
+        {
+            transform.position = navHit.position;
+            agent.Warp(navHit.position);
+        }
+        else
+        {
+            agent.Warp(transform.position);
+        }
+
+        agent.nextPosition = transform.position;
+        agent.velocity = Vector3.zero;
+        agent.updatePosition = true;
+        agent.updateRotation = true;
+        agent.isStopped = true;
+        agent.ResetPath();
+    }
 
     //Getters for States that this Melee Enemy has
     public EnemyState GetIdle() => idle;

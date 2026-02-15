@@ -1490,14 +1490,14 @@ MonoBehaviour:
   _attack0: {fileID: 7400000, guid: 975082a0d76614f4f956725dc6b5a9df, type: 2}
   _attack1: {fileID: 7400000, guid: 0ddbfb97c6e8ad348b3510e6eeecf6c5, type: 2}
   _attack2: {fileID: 7400000, guid: beca78283c4d3804795945b1405b46c8, type: 2}
-  _hitSweepStartPoint: {fileID: 8403910430212717989}
-  _hitSweepEndPoint: {fileID: 6515147321210492741}
-  _hitSweepCasts: 10
-  _castRadius: 3
+  _hitCapsuleStartPoint: {fileID: 8403910430212717989}
+  _hitCapsuleEndPoint: {fileID: 6515147321210492741}
+  _hitCapsuleCastRadius: 2
   _damageableLayerMasks:
     serializedVersion: 2
     m_Bits: 7168
-  _comboInputSecondsMargin: 0.2
+  _debug: 0
+  _comboInputSecondsMargin: 0.1
   knockbackForce: 18
 --- !u!114 &1977651671526441334
 MonoBehaviour:

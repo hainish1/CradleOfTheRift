@@ -15,21 +15,24 @@ public class EndScreenUI : MonoBehaviour
     private GameObject activeScreen;
     [SerializeField]
     private PauseManager ManagePause;
+    private bool IsScreenShowing = false;
 
     void OnEnable()
     {
+        if(playerHealth == null)
+        {
+            playerHealth = PlayerLocator.FindPlayerComponent<PlayerHealth>();
+        }
+
         if (ExtractionManager.Instance != null)
             ExtractionManager.Instance.OnGameWon += OnWinScreen;
 
-        if (this.playerHealth != null)
-            this.playerHealth.LoseScreen += OnLoseScreen;
-    }
-
-    void Start()
-    {
-        if (ExtractionManager.Instance != null)
-            ExtractionManager.Instance.OnGameWon += OnWinScreen;
-
+        if(playerHealth == null)
+        {
+            Debug.Log("Player health missing on player, or player missing");
+            return;
+        }
+        
         if (this.playerHealth != null)
             this.playerHealth.LoseScreen += OnLoseScreen;
     }
@@ -45,15 +48,12 @@ public class EndScreenUI : MonoBehaviour
 
     private void OnWinScreen()
     {
+        if (IsScreenShowing) return; // prevent multiple screens if somehow triggered multiple times
+        IsScreenShowing = true;
+
         this.activeScreen = Instantiate(winScreen);
-        HookEndScreenButtons(activeScreen);
-
-        UnityEngine.Cursor.lockState = CursorLockMode.None;
-        UnityEngine.Cursor.visible = true;
-
-        PlayerHealth.GameIsOver = true;
-        ManagePause.PauseForEndGame();
-
+        
+        FinalizeEndGame();
 
         // go back to Start scene
         // StartCoroutine(LoadSceneAfterDelay("Jared", 5f)); // 5 second delay
@@ -61,7 +61,18 @@ public class EndScreenUI : MonoBehaviour
 
     private void OnLoseScreen()
     {
+        if (IsScreenShowing) return; // prevent multiple screens if somehow triggered multiple times
+        IsScreenShowing = true;
+
         this.activeScreen = Instantiate(loseScreen);
+
+        FinalizeEndGame();
+
+        // StartCoroutine(LoadSceneAfterDelay("Jared", 5f)); // 5 second delay
+    }
+
+    private void FinalizeEndGame()
+    {
         HookEndScreenButtons(activeScreen);
 
         UnityEngine.Cursor.lockState = CursorLockMode.None;
@@ -69,7 +80,6 @@ public class EndScreenUI : MonoBehaviour
 
         PlayerHealth.GameIsOver = true;
         ManagePause.PauseForEndGame();
-        // StartCoroutine(LoadSceneAfterDelay("Jared", 5f)); // 5 second delay
     }
 
     private void HookEndScreenButtons(GameObject screen)
