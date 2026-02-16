@@ -196,7 +196,11 @@ public class EnemySpawner_2 : MonoBehaviour
         }
 
         // Nothing found in either
-        if (showSpawnDebug) Debug.LogWarning($"No valid nodes found for {enemy.prefab.name} even in expanded range!");
+        if (showSpawnDebug)
+        {
+            RecordDebugSpawn(playerLocation.position, false, false);
+        }
+        ;
     }
 
     private bool TryExecuteSpawn(EnemyType enemy, float currentSearchRadius)
@@ -272,19 +276,7 @@ public class EnemySpawner_2 : MonoBehaviour
         // Log the spawn for Gizmo debugging
         if (showSpawnDebug)
         {
-            recentSpawns.Add(new SpawnDebugInfo 
-            { 
-                position = spawnPos, 
-                originPosition = playerLocation.position,
-                isSuccess = true, 
-                isFallback = isFallback 
-            });
-
-            // Prune the list if it exceeds our limit
-            if (recentSpawns.Count > maxDebugHistory)
-            {
-                recentSpawns.RemoveAt(0); // Remove the oldest entry
-            }
+            RecordDebugSpawn(spawnPos, true, isFallback);
         }
 
         HandleEnemySpawned(enemyObj);
@@ -416,5 +408,21 @@ public class EnemySpawner_2 : MonoBehaviour
         var playerGo = PlayerLocator.FindPlayerGameObject();
         if (playerGo != null)
             playerLocation = playerGo.transform;
+    }
+
+    private void RecordDebugSpawn(Vector3 pos, bool success, bool fallback)
+    {
+        recentSpawns.Add(new SpawnDebugInfo 
+        { 
+            position = pos, 
+            originPosition = playerLocation.position,
+            isSuccess = success, 
+            isFallback = fallback 
+        });
+
+        if (recentSpawns.Count > maxDebugHistory)
+        {
+            recentSpawns.RemoveAt(0);
+        }
     }
 }
