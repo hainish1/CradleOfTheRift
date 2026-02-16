@@ -88,6 +88,20 @@ public class AttackState_Melee : EnemyState
 
         if (timer <= 0f)
         {
+            // If knockback pushed us too far, abort the leap and chase instead
+            if (enemy.target != null)
+            {
+                float distToTarget = Vector3.Distance(
+                    enemy.transform.position, enemy.target.position);
+
+                if (distToTarget > enemyMelee.leapAttackRange * 1.5f)
+                {
+                    enemyMelee.ResumeAgent();
+                    stateMachine.ChangeState(enemyMelee.GetChase());
+                    return;
+                }
+            }
+
             StartLeap();
         }
     }

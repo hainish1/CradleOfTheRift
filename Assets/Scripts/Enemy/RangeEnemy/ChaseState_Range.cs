@@ -19,15 +19,6 @@ public class ChaseState_Range : EnemyState
     /// </summary>
     public override void Enter()
     {
-        // if (enemy != null)
-        // {
-        //     if (enemy.agent != null && enemy.agent.isOnNavMesh)
-        //     {
-        //         enemy.agent.isStopped = false;
-        //         enemy.agent.speed = enemyRange.chaseSpeed; // set navmesh speed
-        //     }
-
-        // }
         enemyRange.SafeResumeAgent();
         enemyRange.SetHorizontalPosition(false);
         if(enemy.agent != null) enemy.agent.speed = enemyRange.chaseSpeed;
@@ -39,10 +30,6 @@ public class ChaseState_Range : EnemyState
     public override void Update()
     {
         if (PauseManager.GameIsPaused) return;
-        if (enemy.target == null) return;
-
-        float distance = Vector3.Distance(enemy.transform.position, enemy.target.position); // go but keep distance
-        if (distance > enemyRange.stopDistance * .8f)
         if (enemy.target == null)
         {
             stateMachine.ChangeState(enemyRange.GetIdle());
@@ -64,26 +51,6 @@ public class ChaseState_Range : EnemyState
             stateMachine.ChangeState(enemyRange.GetAttack());
         }
 
-        // float distance = Vector3.Distance(enemy.transform.position, enemy.target.position); // go but keep distance
-        // if (distance > enemyRange.stopDistance * .8f)
-        // {
-        //     if (enemy != null) SetAgentDestination(enemy.target.position);
-        // }
-        // else
-        // {
-        //     if (enemy != null)
-        //     {
-        //         if (enemy.agent) enemy.agent.isStopped = true; // too close, stop there
-        //     }
-        // }
-
-        // FaceTarget(enemy.turnSpeed);
-
-        // if (distance <= enemyRange.attackRange && Time.time >= enemy.nextAttackAllowed)
-        // {
-        //     stateMachine.ChangeState(enemyRange.GetAttack());
-        // }
-
     }
 
 
@@ -92,11 +59,11 @@ public class ChaseState_Range : EnemyState
         repathTimer -= Time.deltaTime;
         if(repathTimer > 0) return;
 
-        repathTimer = Mathf.Max(0.05f, enemyRange.spreadInterval); // default ~5x/sec
+        repathTimer = Mathf.Max(0.05f, enemyRange.spreadInterval); // default 5 times/sec
 
         Vector3 desired = enemyRange.GetSpreadoutChasePoint();
 
-        // Keep the movement on the NavMesh even though visuals may "fly".
+        // Keep the movement on the NavMesh 
         if (enemy.agent != null && enemy.agent.isOnNavMesh)
         {
             NavMeshHit hit;

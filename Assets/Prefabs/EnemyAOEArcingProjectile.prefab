@@ -195,11 +195,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4658278565933542675, guid: a8201a802e6fa2f4fb6267778cfaae1e, type: 3}
       propertyPath: InitialModule.maxNumParticles
-      value: 80
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4658278565933542675, guid: a8201a802e6fa2f4fb6267778cfaae1e, type: 3}
       propertyPath: InitialModule.startSize.scalar
       value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4658278565933542675, guid: a8201a802e6fa2f4fb6267778cfaae1e, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4658278565933542675, guid: a8201a802e6fa2f4fb6267778cfaae1e, type: 3}
       propertyPath: InitialModule.startColor.maxColor.a
