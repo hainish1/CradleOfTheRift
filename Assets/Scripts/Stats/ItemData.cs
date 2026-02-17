@@ -16,9 +16,11 @@ public enum ItemEffectKind
 {
     None,
     HealOnDamage,
+    HealOnPoison,
     StompDamage,
     FallDamageBonus,
     DotOnHit,
+    PoisonPoolOnDash,
     BurnOnDamage,
     HomingProjectiles,
     ExplosiveProjectiles,
@@ -26,7 +28,19 @@ public enum ItemEffectKind
     BounceProjectiles,
     DelayedProjectiles,
     DashDamage,
-    PassThroughSpear
+    ElementFusion,
+    ArcStrike,
+    ElementReactionExplosion,
+    LightningStrike,
+    FlyFire,
+    OrbitingFireballs,
+    LightningDash,
+    OrbitingFireballsTest,
+    ChainLightningTest,
+    PassThroughSpear,
+    ToxicAttackSpeed,
+    FlameTrail,
+    FinisherStrike
 }
 
 [Serializable]
@@ -38,6 +52,11 @@ public class EffectSpec
     // HEAL ON DAMAGE
     [Range(0f, 1f)] public float healOnDamagePercentPerStack = .02f;
 
+    // Heal on Poison 
+    public float healOnPoisonRange = 8f;
+    public float healPerPoisonStackPerSecond = 0.5f;
+    public float healOnPoisonTickInterval = 1f;
+
     // Stomp
     public float stompDamagePerStack = 10f;
     public float stompBounceForce = 8f;
@@ -46,14 +65,18 @@ public class EffectSpec
     public float fallDamageBonusPerMeter = 2f;
     public float fallDamageBonusPerStack = 1f;
 
-    // DOT
+    // DOT 
     public float dotDamagePerTick = 2f;
     public float dotTickInterval = 1f;
-    public float dotDuration = 5f;
-    public float dotDamagePerStack = 1f;
+    public float dotDuration = 4f;
+    public float dotDamagePerStack = 2f;
     public bool dotCanStack = true;
     public int dotMaxStacks = 5;
     public bool dotApplyImmediately = false;
+
+    // Poison pool on dash
+    public float poisonPoolRadius = 4f;
+    public float poisonPoolLifetime = 4f;
 
     // Homing Projectiles
     public int numberOfProjectiles = 3;
@@ -86,8 +109,79 @@ public class EffectSpec
     public float dashDamage = 10f;
     public float dashDamageRange = 5f;
 
+    // Element Fusion
+    public ElementType fusionTriggerElement = ElementType.None;
+    public ElementType fusionEffectElement = ElementType.None;
+
+    // Burn Aura (Sunfire-like)
+    public float burnAuraDamagePerSecond = 5f;
+    public float burnAuraRange = 3f;
+    public float burnAuraTickInterval = 1f;
+
+    // Arc Strike (Poisson-based lightning)
+    public float arcStrikeDamage = 10f;
+    public float arcStrikeRange = 10f;
+    public float arcStrikePoissonLambda = 5.5f;
+
+    // Player Lightning Strike
+    public float playerLightningStrikeDamage = 12f;
+    public float playerLightningStrikeRadius = 3f;
+    public float playerLightningStrikeInterval = 5f;
+    public float playerLightningStrikeElectrifyDamage = 4f;
+
+    // Flying Fire Spray
+    public float flyingFireDamage = 8f;
+    public float flyingFireRadius = 3f;
+    public float flyingFireTickInterval = 0.5f;
+    public float flyingFireOffset = 1.5f;
+
+    // Element Reaction Explosion (Lightning + Fire)
+    public float elementReactionExplosionDamage = 20f;
+    public float elementReactionExplosionRadius = 3f;
+    public float elementReactionExplosionCooldown = 1f;
+    public GameObject elementReactionExplosionVFX;
+
+    // Orbiting Fireballs
+    public float orbitingFireballDamage = 10f;
+    public float orbitingFireballRadius = 3f;
+    public float orbitingFireballRotationSpeed = 60f;
+
+    // Lightning Dash
+    public float lightningDashDamage = 20f;
+    public int lightningDashChainCount = 5;
+    public float lightningDashChainRange = 15f;
+
+    // Orbiting Fireballs Test
+    public float orbitingFireballTestDamage = 10f;
+    public float orbitingFireballTestDamageThreshold = 100f;
+    public int orbitingFireballTestMaxCount = 20;
+    public float orbitingFireballTestLifetime = 5f;
+
+    // Chain Lightning Test
+    public float chainLightningTestStrikeInterval = 5f;
+    public float chainLightningTestBuffDuration = 3f;
+    public float chainLightningTestChainDamagePercent = 0.5f;
+    public int chainLightningTestMaxDepth = 2;
+    public int chainLightningTestBranchesPerNode = 2;
+    public float chainLightningTestChainRange = 10f;
+
     // Pass Through Spear
     [Min(0)] public int passThroughEnemyCount = 1;
+
+    // Toxic Attack Speed
+    public float toxicAttackSpeedRange = 10f;
+    [Tooltip("Attack speed multiplier per poison stack (e.g. 0.02 = +2% per stack)")]
+    [Range(0f, 0.2f)] public float toxicAttackSpeedPerStack = 0.02f;
+
+    // Flame Trail
+    public float flameTrailDamage = 15f;
+    public float flameTrailRadius = 2f;
+    public float flameTrailLifetime = 1.5f;
+    public float flameTrailSpawnInterval = 0.2f;
+
+    // Finisher Strike
+    public float finisherDamageMultiplier = 1.5f;
+    public float finisherRangeMultiplier = 1.3f;
 }
 
 public enum ItemRarity
@@ -121,7 +215,7 @@ public class ItemData : ScriptableObject
     public bool canStack = true;
     public int maxStacks = 99;
     public StackingType stackingType = StackingType.Linear;
-    
+
     [Space]
 
     [Header("MULTIPLE Stat Effects")]

@@ -10,6 +10,7 @@
 //   </para>
 // </summary>
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,29 +18,38 @@ using UnityEngine.InputSystem;
 
 public class PlayerMeleeControllerV2 : MonoBehaviour
 {
+    /// <summary>Fired when a combo attack starts. Argument: combo index (1=first, 2=second/finisher for V2).</summary>
+    public event Action<int> OnMeleeComboAttack;
+    /// <summary>Fired when the current melee attack animation ends.</summary>
+    public event Action OnMeleeAttackEnd;
+
     private InputSystem_Actions _playerInput;
     private InputSystem_Actions.PlayerActions _playerActions;
     private InputAction _attackActions;
 
     // Weapon Parameters
 
-    [Header("Weapon Parameters")] [Space]
-    [SerializeField] private Transform _playerModel;
-    [SerializeField] private Transform _playerCamera;
+    [Header("Player Parameters")] [Space]
+    [SerializeField]
+    [Tooltip("The player camera.")] private Transform _playerCamera;
+    private Transform _playerModel;
+    private PlayerMovement _playerMovement;
     private Entity _playerEntity;
     private PlayerAudioController _audioController;
 
     // Animation Parameters
 
     [Header("Animation Parameters")] [Space]
-    [SerializeField] private AnimationClip _attack1;
-    [SerializeField] private AnimationClip _attack2;
-    [SerializeField] private AnimationClip _preTransition1;
-    [SerializeField] private AnimationClip _preTransition2;
-    [SerializeField] private AnimationClip _postTransition1;
-    [SerializeField] private AnimationClip _postTransition2;
+    [SerializeField]
+    [Tooltip("How quickly attacks pitch up and down in degrees per second.")] private float _attackPitchSpeed;
+    [SerializeField]
+    [Tooltip("The upward pitch limit of attacks in degrees.")] private float _upwardDegreesLimit;
+    [SerializeField]
+    [Tooltip("The downward pitch limit of attacks in degrees.")] private float _downwardDegreesLimit;
+    [SerializeField] List<AttackInfo> _attacks = new List<AttackInfo>();
     private Animator _weaponAnim;
-    private float[] _attackDurations;
+    private float _degreesPerSecond;
+    private bool _isModelHorizontal;
 
     // Hit Registration Parameters
 
@@ -64,21 +74,23 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     // Attack Parameters
 
     private float MeleeDamage => _playerEntity.Stats.MeleeDamage;
-    private float AttackCooldown => FindLargestTimeCooldown();
+    private float AttackCooldown => GetAttackCooldown();
     [Header("Attack Parameters")] [Space]
-    [SerializeField] private float _comboInputSecondsBuffer;
-    [SerializeField] private float knockbackForce;
-    private float _currAttackDuration;
-    private bool _attackInputPending;
-    private bool _isAttacking;
+    [SerializeField]
+    [Tooltip("Knockback force of attacks.")] private float _knockbackForce;
+    [SerializeField]
+    [Tooltip("The buffer time for inputting attack combos in seconds.")] private float _comboInputBuffer;
+    public bool IsAttacking { get; private set; }
     private bool _isRegistering;
     public bool CanAttack { get; set; }
+    private bool _comboInputted;
     private int _maxComboCount;
     private int _currComboCount;
-    private float _comboTimer;
 
     void Awake()
     {
+        _playerModel = gameObject.transform;
+        _playerMovement = GetComponentInParent<PlayerMovement>();
         _playerEntity = GetComponentInParent<Entity>();
         _weaponAnim = _playerModel.GetComponent<Animator>();
         _audioController = GetComponentInParent<PlayerAudioController>();
@@ -102,8 +114,11 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         if (_playerEntity == null) return;
 
         // Animation Parameters
-        _attackDurations = new float[2];
-        RecalculateAttackSpeed();
+        _upwardDegreesLimit = Mathf.Abs(_upwardDegreesLimit);
+        _downwardDegreesLimit = -Mathf.Abs(_downwardDegreesLimit);
+        _degreesPerSecond = Mathf.Deg2Rad * _attackPitchSpeed;
+        _isModelHorizontal = true;
+        RecalculateAnimationSpeed();
 
         // Hit Registration Parameters
         _objectsHitThisCast = new RaycastHit[32];
@@ -111,50 +126,46 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _prevHitCapsuleTempPointsInitialized = false;
 
         // Attack Parameters
-        _currAttackDuration = _attackDurations[0];
-        _attackInputPending = false;
-        _isAttacking = false;
+        foreach (AttackInfo info in _attacks)
+        {
+            info.AttackDuration = info.PreTransitionAnim.length + info.AttackAnim.length;
+            info.BufferedAttackDuration = info.AttackDuration - _comboInputBuffer;
+        }
+        IsAttacking = false;
         _isRegistering = false;
         CanAttack = true;
-        _maxComboCount = _attackDurations.Length;
+        _comboInputted = false;
+        _maxComboCount = _attacks.Count;
         _currComboCount = 0;
-        _comboTimer = _currAttackDuration;
     }
 
     void Update()
     {
-        RecalculateAttackSpeed();
+        // Do not allow attacks while dashing.
+        if (_playerMovement.IsDashing) return;
 
-        if (_comboTimer < _currAttackDuration) _comboTimer += Time.deltaTime;
+        RecalculateAnimationSpeed();
 
-        // Check if attack was inputted slightly before the latest attack ends.
-        if (_attackActions.IsPressed() && _comboTimer > GetCooldownMinusBuffer() && _currComboCount < _maxComboCount)
+        // Trigger an attack when inputted.
+        if ((_attackActions.IsPressed() || _comboInputted) && CanAttack) TriggerAttack();
+
+        // Gradually align player model with camera direction while attacking.
+        if (IsAttacking)
         {
-            _attackInputPending = true;
+            // Constrain vertical rotation of player character to the pitch limits.
+            Vector3 rotationIncrement = Vector3.RotateTowards(_playerModel.forward, _playerCamera.forward, Time.deltaTime * _degreesPerSecond, 0);
+            float pitch = GetPitchDegrees(rotationIncrement);
+            if (pitch >= _downwardDegreesLimit && pitch <= _upwardDegreesLimit)
+                _playerModel.forward = rotationIncrement;
+
+            _isModelHorizontal = false;
         }
-
-        // Activate an attack when inputted.
-        if (_attackInputPending && CanAttack) PerformAttack();
-
-        // Gradually align player model with camera direction.
-        if (_isAttacking)
+        // Gradually reset player model alignment while not attacking.
+        else if (!_isModelHorizontal)
         {
-            //float degreesPerSecond = Time.deltaTime * Mathf.Deg2Rad * 120;
-            //Vector3 rotateIncrement = Vector3.RotateTowards(_playerModel.forward, _playerCamera.forward, degreesPerSecond, 0);
-            //_playerModel.forward = rotateIncrement;
-
-            //_playerModel.transform.rotation = Quaternion.Euler(_playerCamera.rotation.eulerAngles.x, _playerCamera.rotation.eulerAngles.y, 0);
-        }
-        else
-        {
-            //Vector3 cameraForward = _playerCamera.forward;
-            //cameraForward.y = 0;
-            //cameraForward.Normalize();
-
-            //if (_playerModel.forward != cameraForward)
-            //{
-            //    _playerModel.transform.rotation = Quaternion.LookRotation(cameraForward, Vector3.up);
-            //}
+            Vector3 worldHorizontal = new Vector3(_playerCamera.forward.x, 0, _playerCamera.forward.z).normalized;
+            _playerModel.forward = Vector3.RotateTowards(_playerModel.forward, worldHorizontal, Time.deltaTime * _degreesPerSecond, 0);
+            if (Vector3.Angle(_playerModel.forward, worldHorizontal) < 1e-3f) _isModelHorizontal = true;
         }
 
         // Continually register targets while an attack is active.
@@ -163,45 +174,44 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Recalculates the attack durations and animation speed multiplier on any frame this method is called.
+    ///     Recalculates the attack animation durations and speed multiplier on any frame this method is called.
     ///   </para>
     /// </summary>
-    private void RecalculateAttackSpeed()
+    private void RecalculateAnimationSpeed()
     {
         float currAttackSpeed = _playerEntity.Stats.MeleeAttackSpeed;
-        float duration1 = Mathf.Clamp((_preTransition1.length + _attack1.length) / currAttackSpeed, 1e-3f, float.MaxValue);
-        float duration2 = Mathf.Clamp((_preTransition2.length + _attack2.length) / currAttackSpeed, 1e-3f, float.MaxValue);
+        foreach (AttackInfo info in _attacks)
+        {
+            float duration = info.PreTransitionAnim.length + info.AttackAnim.length;
+            info.AttackDuration = Mathf.Clamp(duration / currAttackSpeed, 1e-3f, float.MaxValue);
+            info.BufferedAttackDuration = Mathf.Clamp(info.AttackDuration - _comboInputBuffer, 0, float.MaxValue);
+        }
 
-        _attackDurations[0] = duration1;
-        _attackDurations[1] = duration2;
         _weaponAnim.SetFloat("AttackSpeedMultiplier", currAttackSpeed);
     }
 
     /// <summary>
     ///   <para>
-    ///     Finds the largest time value out of the attack cooldown and the combo attack durations and returns it.
-    ///     To avoid unexpected issues, the attack cooldown should always be set to a larger value than the longest
-    ///     attack duration.
+    ///     Gets the current attack cooldown on any frame this method is called.
     ///   </para>
     /// </summary>
-    /// <returns> The largest time value. </returns>
-    private float FindLargestTimeCooldown()
+    /// <returns> The caluclated attack cooldown. </returns>
+    private float GetAttackCooldown()
     {
-        float duration1 = _postTransition1.length;
-        float duration2 = _postTransition2.length;
-        return Mathf.Max(Mathf.Max(duration1, duration2), _playerEntity.Stats.MeleeAttackRate);
+        return _attacks[_currComboCount - 1].PostTransitionAnim.length
+               + _playerEntity.Stats.MeleeAttackRate;
     }
 
     /// <summary>
     ///   <para>
-    ///     The duration of the current attack cooldown in seconds with the input buffer time subtracted from it.
+    ///     Gets the pitch of a given vector.
     ///   </para>
     /// </summary>
-    /// <returns> The cooldown minus the buffer margin. </returns>
-    private float GetCooldownMinusBuffer()
+    /// <param name="vector"> The vector. </param>
+    /// <returns> Pitch of the vector. </returns>
+    private float GetPitchDegrees(Vector3 vector)
     {
-        //print($"CooldownMinusBuffer: {_currAttackDuration - _comboInputSecondsBuffer}");
-        return Mathf.Clamp(_currAttackDuration - _comboInputSecondsBuffer, 0, float.MaxValue);
+        return Mathf.Rad2Deg * Mathf.Atan2(vector.y, Mathf.Sqrt((vector.x * vector.x) + (vector.z * vector.z)));
     }
 
     /// <summary>
@@ -209,30 +219,15 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     ///     Makes the player character perform an attack on any frame this method is called.
     ///   </para>
     /// </summary>
-    private void PerformAttack()
+    private void TriggerAttack()
     {
-        _attackInputPending = false;
+        IsAttacking = true;
         CanAttack = false;
-        
+        _comboInputted = false;
         _currComboCount++;
+        OnMeleeComboAttack?.Invoke(_currComboCount);
         _weaponAnim.SetTrigger("Attack" + _currComboCount);
-        _currAttackDuration = _attackDurations[_currComboCount - 1];
-        print($"_currAttackDuration: {_currAttackDuration}");
-
-        // Wait for cooldown minus buffer if combo attack is still possible.
-        float delaySeconds;
-        if (_currComboCount < _maxComboCount)
-        {
-            _comboTimer = 0;
-            delaySeconds = GetCooldownMinusBuffer();
-        }
-        else
-        {
-            _comboTimer = _currAttackDuration;
-            delaySeconds = AttackCooldown;
-        }
-
-        StartCoroutine(DelayAttack(delaySeconds));
+        StartCoroutine(DelayAttack());
     }
 
     /// <summary>
@@ -240,42 +235,51 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     ///     Coroutine for putting melee attack on cooldown.
     ///   </para>
     /// </summary>
-    /// <param name="delaySeconds"> The seconds to delay the next attack. </param>
     /// <returns> IEnumerator object. </returns>
-    private IEnumerator DelayAttack(float delaySeconds)
+    private IEnumerator DelayAttack()
     {
-        yield return new WaitForSeconds(delaySeconds);
+        // Get the current attack duration and buffered duration.
+        float currAttackDuration = _attacks[_currComboCount - 1].AttackDuration;
+        float currBufferedAttackDuration = _attacks[_currComboCount - 1].BufferedAttackDuration;
 
-        // Return immediately if a full delay was executed.
-        if (delaySeconds == AttackCooldown)
+        // Wait for a combo input if max combo count is not reached.
+        if (_currComboCount < _maxComboCount)
         {
-            CanAttack = true;
-            _currComboCount = 0;
-            print($"AttackCooldown ended: {delaySeconds}");
-            yield break;
-        }
+            yield return new WaitForSeconds(currBufferedAttackDuration);
 
-        //print($"Was Attacking: {_isAttacking}");
-        // Wait for another attack if a combo is still possible.
-        while (_isAttacking)
-        {
-            // Break out of the coroutine if an attack input is pending during the buffer.
-            if (_attackInputPending && _currComboCount < _maxComboCount)
+            // Wait for another attack if a combo input is still possible.
+            float timer = currBufferedAttackDuration;
+            while (timer < currAttackDuration)
             {
-                // Wait until the current attack has ended before allowing the next one.
-                while (_isAttacking) yield return null;
-                CanAttack = true;
-                yield break;
+                timer += Time.deltaTime;
+
+                // Register a pending combo input and exit coroutine.
+                if (_attackActions.IsPressed())
+                {
+                    // Wait remaining time until current attack ends before allowing the next.
+                    yield return new WaitForSeconds(currAttackDuration - timer);
+                    _comboInputted = true;
+                    CanAttack = true;
+                    yield break;
+                }
+
+                yield return null;
             }
 
-            yield return null;
+            // Leave attack animation sequence if the combo input time window was missed.
+            _weaponAnim.SetTrigger("ComboMiss");
         }
+        // Wait for full attack duration if max combo count is reached.
+        else
+            yield return new WaitForSeconds(currAttackDuration);
 
-        // Force a longer delay if the combo time window was missed.
-        _currComboCount = 0;
-        _weaponAnim.SetTrigger("ComboMiss");
+        IsAttacking = false;
+
+        // Wait for attack cooldown if max combo count was reached or a combo input was missed.
         yield return new WaitForSeconds(AttackCooldown);
+        _currComboCount = 0;
         CanAttack = true;
+        yield break;
     }
 
     /// <summary>
@@ -299,19 +303,17 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         Vector3 castDirection = currCenterPoint - _prevHitCapsuleCenterPointTemp;
 
         // Record all valid objects that were hit.
+        float castRadius = _hitCapsuleCastRadius * FinisherStrike.CapsuleRadiusMultiplier;
         int hitCountThisCast = Physics.CapsuleCastNonAlloc(prevStartPoint,
                                                            prevEndPoint,
-                                                           _hitCapsuleCastRadius,
+                                                           castRadius,
                                                            castDirection.normalized,
                                                            _objectsHitThisCast,
                                                            castDirection.magnitude,
                                                            _damageableLayerMasks,
                                                            QueryTriggerInteraction.Ignore);
 
-        if (_debug)
-        {
-            Debug.DrawRay(_prevHitCapsuleCenterPointTemp, castDirection, Color.blue, 2);
-        }
+        if (_debug) Debug.DrawRay(_prevHitCapsuleCenterPointTemp, castDirection, Color.blue, 2);
 
         if (hitCountThisCast > 0)
         {
@@ -368,9 +370,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         lineEndPoints[3] = _hitCapsuleEndPoint.position - _hitCapsuleCastRadius * _hitCapsuleEndPoint.right;
 
         for (int i = 0; i < 4; i++)
-        {
             Gizmos.DrawLine(lineStartPoints[i], lineEndPoints[i]);
-        }
     }
 
     /// <summary>
@@ -382,44 +382,31 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// <param name="enemyScript"> The Enemy script. </param>
     private void ApplyDamageEffects(Enemy enemyScript)
     {
-        // Apply damage.
+        float damage = MeleeDamage * FinisherStrike.DamageMultiplier;
         IDamageable damageable = enemyScript.GetComponent<IDamageable>();
         if (damageable != null && !damageable.IsDead)
         {
-            damageable.TakeDamage(MeleeDamage);
-            CombatEvents.ReportDamage(_playerEntity, enemyScript, MeleeDamage);
-            Debug.Log($"Melee: {MeleeDamage} damage to {enemyScript.name}");
+            damageable.TakeDamage(damage);
+            CombatEvents.ReportDamage(_playerEntity, enemyScript, damage);
+            Debug.Log($"Melee: {damage} damage to {enemyScript.name}");
         }
 
         // Apply flash effect.
         TargetFlash targetFlash = enemyScript.GetComponent<TargetFlash>();
-        if (targetFlash != null)
-        {
-            targetFlash.Flash();
-        }
+        if (targetFlash != null) targetFlash.Flash();
 
         // Apply knockback.
         AgentKnockBack enemyKbScript = enemyScript.GetComponent<AgentKnockBack>();
         if (enemyKbScript != null)
         {
             Vector3 impulseDirection = (enemyScript.transform.position - transform.position).normalized;
-            enemyKbScript.ApplyImpulse(knockbackForce * impulseDirection);
+            enemyKbScript.ApplyImpulse(_knockbackForce * impulseDirection);
         }
     }
 
     /// <summary>
     ///   <para>
-    ///     Animation event to activate attacking condition.
-    ///   </para>
-    /// </summary>
-    private void OnAttackStart()
-    {
-        _isAttacking = true;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Animation event to activate registration condition.
+    ///     Animation event to activate registration.
     ///   </para>
     /// </summary>
     private void StartRegistering()
@@ -429,17 +416,12 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Animation event to deactivate attacking and registration conditions.
+    ///     Animation event to deactivate registration.
     ///   </para>
     /// </summary>
-    private void OnAttackEnd()
+    private void StopRegistering()
     {
-        _isAttacking = false;
         _isRegistering = false;
-
-        //print($"Attack end: {_currComboCount}");
-        if (_currComboCount == _maxComboCount) _currComboCount = 0;
-        
         _prevHitCapsuleTempPointsInitialized = false;
         _objectsHitThisAttack.Clear();
     }
@@ -453,4 +435,20 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     {
         _audioController.PlayMeleeSound();
     }
+}
+
+/// <summary>
+///   <para>
+///     A class to represent information for attack animations. Each attack animation
+///     requires a transition clip from the previous animation to attack, an attack
+///     clip, and a transition clip from attack to idle.
+///   </para>
+/// </summary>
+[Serializable] public class AttackInfo
+{
+    public AnimationClip PreTransitionAnim;
+    public AnimationClip AttackAnim;
+    public AnimationClip PostTransitionAnim;
+    [HideInInspector] public float AttackDuration;
+    [HideInInspector] public float BufferedAttackDuration;
 }

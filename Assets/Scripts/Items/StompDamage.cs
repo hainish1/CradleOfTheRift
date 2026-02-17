@@ -14,7 +14,6 @@ public class StompDamage : IDisposable
     private bool disposed;
 
     private PlayerMovement playerMovement;
-    private PlayerMovement playerMovementV4;
     private CharacterController characterController;
     private SphereCollider stompDetector;
 
@@ -35,7 +34,6 @@ public class StompDamage : IDisposable
         this.timer = durationSec;
 
         playerMovement = owner.GetComponent<PlayerMovement>();
-        playerMovementV4 = owner.GetComponent<PlayerMovement>();
         characterController = owner.GetComponent<CharacterController>();
 
         enemyLayer = LayerMask.GetMask("Enemy");
@@ -122,13 +120,9 @@ public class StompDamage : IDisposable
 
     private void ApplyBounce()
     {
-        if (playerMovementV4 != null)
+        if (playerMovement != null)
         {
-            playerMovementV4.SetVerticalVelocityFactor(bounceForce);
-        }
-        else if (playerMovement != null)
-        {
-            playerMovement.ApplyImpulse(Vector3.up * bounceForce);
+            playerMovement.SetVerticalVelocityFactor(bounceForce);
         }
     }
 

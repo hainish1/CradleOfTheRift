@@ -23,6 +23,7 @@ public class Projectile : MonoBehaviour
     protected float actualDamage; // THIS WILL STORE DAMAGE FROM STATS SYSTEM
 
     public Rigidbody rb;
+    private Collider selfCollider;
     protected float age;
     protected Vector3 startPos;
     protected float flyDistance;
@@ -39,6 +40,7 @@ public class Projectile : MonoBehaviour
         trail = GetComponent<TrailRenderer>();
 
         rb = GetComponent<Rigidbody>();
+        selfCollider = GetComponent<Collider>();
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
 
@@ -61,6 +63,7 @@ public class Projectile : MonoBehaviour
         trail.time = 0.25f;
         startPos = transform.position;
         this.flyDistance = flyDistance + 1;
+        
 
         // Debug.Log($"Projectile initialized with damage: {actualDamage}");
 
@@ -145,7 +148,9 @@ public class Projectile : MonoBehaviour
         if (((1 << collision.gameObject.layer) & hitMask) == 0)
             return;
 
-        // check if collided with enemy
+        CreateImpactFX();
+
+        // check if collided with enemy and if yes then damage it
         var enemy = collision.collider.GetComponentInParent<Enemy>();
 
         // Passthrough spear- pass through enemies, destroy on anything else

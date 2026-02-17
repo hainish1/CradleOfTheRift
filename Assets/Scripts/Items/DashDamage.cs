@@ -18,6 +18,9 @@ public class DashDamage : IDisposable
     private float baseDamageRange;
     
     private HashSet<Collider> ignoredColliders = new HashSet<Collider>();
+    private HashSet<Enemy> hitEnemiesCache = new HashSet<Enemy>();
+    private LayerMask enemyLayerMask;
+    private Coroutine activeDashCoroutine;
     
     private GameObject effectObject;
     private TrailRenderer trailRenderer;
@@ -56,6 +59,8 @@ public class DashDamage : IDisposable
 
         baseDamage = dashDamage;
         baseDamageRange = dashDamageRange;
+        
+        enemyLayerMask = LayerMask.GetMask("Enemy");
 
         IsEnabled = true;
         UpdateValues();
@@ -87,12 +92,19 @@ public class DashDamage : IDisposable
     {
         if (disposed || !IsEnabled) return;
         
+        // Stop previous coroutine if still running
+        if (activeDashCoroutine != null && playerMovement != null)
+        {
+            playerMovement.StopCoroutine(activeDashCoroutine);
+        }
+        
         if (playerCollider != null)
         {
             IgnoreAllEnemyCollisions();
         }
         
-        playerMovement.StartCoroutine(DashDamageCoroutine(dashDuration));
+        // Save coroutine reference to prevent memory leaks
+        activeDashCoroutine = playerMovement.StartCoroutine(DashDamageCoroutine(dashDuration));
     }
 
     private IEnumerator DashDamageCoroutine(float dashDuration)
@@ -103,7 +115,9 @@ public class DashDamage : IDisposable
         float checkInterval = 0.1f;
         float collisionCheckInterval = 0.05f;
         float lastCollisionCheck = 0f;
-        HashSet<Enemy> hitEnemies = new HashSet<Enemy>();
+        
+        // Reuse cached HashSet instead of creating new one
+        hitEnemiesCache.Clear();
 
         while (elapsed < dashDuration)
         {
@@ -124,15 +138,16 @@ public class DashDamage : IDisposable
             Vector3 playerPos = playerMovement.transform.position;
             Vector3 behindDirection = -playerMovement.transform.forward;
 
-            Enemy[] allEnemies = UnityEngine.Object.FindObjectsOfType<Enemy>();
+            // OPTIMIZED: Use Physics.OverlapSphere instead of FindObjectsOfType
+            // This is MUCH faster - only checks within DamageRange instead of scanning entire scene
+            Collider[] nearbyColliders = Physics.OverlapSphere(playerPos, DamageRange, enemyLayerMask);
             
-            foreach (Enemy enemy in allEnemies)
+            foreach (Collider col in nearbyColliders)
             {
-                if (enemy == null || hitEnemies.Contains(enemy)) continue;
+                Enemy enemy = col.GetComponentInParent<Enemy>();
+                if (enemy == null || hitEnemiesCache.Contains(enemy)) continue;
                 
-                float distance = Vector3.Distance(enemy.transform.position, playerPos);
-                if (distance > DamageRange) continue;
-                
+                // Check if enemy is behind player
                 Vector3 toEnemy = (enemy.transform.position - playerPos).normalized;
                 toEnemy.y = 0f;
                 toEnemy.Normalize();
@@ -140,7 +155,7 @@ public class DashDamage : IDisposable
                 float dot = Vector3.Dot(behindDirection, toEnemy);
                 if (dot > 0.3f)
                 {
-                    hitEnemies.Add(enemy);
+                    hitEnemiesCache.Add(enemy);
                     
                     var damageable = enemy.GetComponent<IDamageable>();
                     if (damageable != null && !damageable.IsDead)
@@ -157,6 +172,7 @@ public class DashDamage : IDisposable
 
         RestoreAllEnemyCollisions();
         DestroyDashEffect();
+        activeDashCoroutine = null; // Clear reference when done
     }
 
     private void CreateDashEffect()
@@ -275,10 +291,11 @@ public class DashDamage : IDisposable
     {
         if (playerMovement == null || playerCollider == null) return;
 
+    
         Collider[] enemyColliders = Physics.OverlapSphere(
             playerMovement.transform.position, 
-            100f, 
-            LayerMask.GetMask("Enemy")
+            20f, 
+            enemyLayerMask
         );
 
         foreach (Collider enemyCol in enemyColliders)
@@ -309,6 +326,13 @@ public class DashDamage : IDisposable
     {
         if (disposed) return;
         
+
+        if (activeDashCoroutine != null && playerMovement != null)
+        {
+            playerMovement.StopCoroutine(activeDashCoroutine);
+            activeDashCoroutine = null;
+        }
+        
         RestoreAllEnemyCollisions();
         DestroyDashEffect();
         
@@ -321,6 +345,10 @@ public class DashDamage : IDisposable
         {
             playerMovement.DashCooldownStarted -= OnDashStarted;
         }
+        
+        // Clear cached collections
+        hitEnemiesCache.Clear();
+        ignoredColliders.Clear();
     }
 }
 
