@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: HomingProjectiles
   m_EditorClassIdentifier: 
   itemName: Homing Projectiles
-  description: Periodically fire homing projectile at the player's position
+  description: Occasionally send out 3 (+1 per stack) spears automatically which
+    home to attack enemies
   icon: {fileID: 21300000, guid: 6a87209d1fd51854a834ff8d18a20955, type: 3}
   rarity: 2
   rarityColor: {r: 0.8, g: 0.29803926, b: 0.77914155, a: 1}
@@ -27,3 +28,4 @@ MonoBehaviour:
   operatorType: 0
   value: 1
   duration: -1
+  itemId: b283e82a73f844fb9ec5a85d4ef329f6

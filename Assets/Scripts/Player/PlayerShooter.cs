@@ -107,7 +107,6 @@ public class PlayerShooter : MonoBehaviour
         }
         if (isFiring) TryToFire();
 
-
         // TESTING : Update fire rate with stats
         if (playerEntity != null)
         {
@@ -173,7 +172,8 @@ public class PlayerShooter : MonoBehaviour
 
     private void TryToFire(bool force = false)
     {
-        if (!aim || !muzzle || !projectilePrefab || currFireCharges <= 0) return;
+        if (!aim || !muzzle || currFireCharges <= 0) return;
+        if (!projectilePrefab) return;
         // if (!force && Time.time > nextFireTime) return;
         if (!force && Time.time < nextFireTime) return;
 

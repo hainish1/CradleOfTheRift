@@ -12,8 +12,10 @@ public class PlayerInventory : MonoBehaviour
         public List<StatModifier> activeModifiers = new List<StatModifier>(); // all modifiers created for this item's stacks
 
         public Dictionary<ItemEffectKind, int> contributedEffectStacks = new(); // how many stacks this item contributed into each runtime effect
+        public List<(ElementType, ElementType)> contributedElementFusions = new(); // element fusion rules added by this item
         // public IDisposable activeEffect; 
         public IDisposable runtimeEffect;
+
         public ItemStack(ItemData data)
         {
             itemData = data;
@@ -26,16 +28,31 @@ public class PlayerInventory : MonoBehaviour
 
     // once instance per effect kind on the player
     private HealOnDamage healOnDamageEffect;
+    private HealOnPoison healOnPoisonEffect;
     private StompDamage stompDamageEffect;
     private FallDamageBonus fallDamageBonusEffect;
     private DotOnHit dotOnHitEffect;
+    private PoisonCore poisonCore;
+    private PoisonPoolOnDash poisonPoolOnDashEffect;
     private HomingProjectileEffect homingProjectilesEffect;
     private ExplosiveProjectiles explosiveProjectilesEffect;
     private ChainLightning chainLightningEffect;
     private BounceProjectiles bounceProjectilesEffect;
     private DelayedProjectiles delayedProjectilesEffect;
     private DashDamage dashDamageEffect;
+    private BurnAura burnAuraEffect;
+    private ArcStrike arcStrikeEffect;
+    private PlayerLightningStrike playerLightningStrikeEffect;
+    private FlyingFire flyingFireSprayEffect;
+    private ElementReactionExplosion elementReactionExplosionEffect;
+    private OrbitingFireballs orbitingFireballsEffect;
+    private LightningDash lightningDashEffect;
+    private OrbitingFireballsTest orbitingFireballsTestEffect;
+    private ChainLightningTest chainLightningTestEffect;
     private PassThroughSpear passThroughSpearEffect;
+    private ToxicAttackSpeed toxicAttackSpeedEffect;
+    private FlameTrail flameTrailEffect;
+    private FinisherStrike finisherStrikeEffect;
 
     // if I have time limited effects that need use of Updates, I will keep em here
     private readonly List<IDisposable> tickingEffects = new();
@@ -47,7 +64,7 @@ public class PlayerInventory : MonoBehaviour
     public event Action<ItemData> OnItemRemoved;
 
     public IReadOnlyDictionary<ItemData, ItemStack> Items => items;
-
+    
     void Awake()
     {
         playerEntity = GetComponent<Entity>();
@@ -61,19 +78,33 @@ public class PlayerInventory : MonoBehaviour
     {
         float dt = Time.deltaTime;
         healOnDamageEffect?.Update(dt);
+        healOnPoisonEffect?.Update(dt);
         stompDamageEffect?.Update(dt);
         fallDamageBonusEffect?.Update(dt);
         dotOnHitEffect?.Update(dt);
+        poisonPoolOnDashEffect?.Update(dt);
         explosiveProjectilesEffect?.Update(dt);
         chainLightningEffect?.Update(dt);
         bounceProjectilesEffect?.Update(dt);
         delayedProjectilesEffect?.Update(dt);
         dashDamageEffect?.Update(dt);
+        burnAuraEffect?.Update(dt);
+        arcStrikeEffect?.Update(dt);
+        playerLightningStrikeEffect?.Update(dt);
+        flyingFireSprayEffect?.Update(dt);
+        elementReactionExplosionEffect?.Update(dt);
+        orbitingFireballsEffect?.Update(dt);
+        lightningDashEffect?.Update(dt);
+        orbitingFireballsTestEffect?.Update(dt);
+        chainLightningTestEffect?.Update(dt);
         passThroughSpearEffect?.Update(dt);
+        toxicAttackSpeedEffect?.Update(dt);
+        flameTrailEffect?.Update(dt);
+        finisherStrikeEffect?.Update(dt);
         //homingProjectilesEffect?.Update(dt);
+
         // more runtime effects would be updated here ig
     }
-
 
     public void AddItem(ItemData itemData)
     {
@@ -109,6 +140,18 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+    public void PauseOrbitingFireballs()
+    {
+        orbitingFireballsEffect?.Pause();
+        orbitingFireballsTestEffect?.Pause();
+    }
+
+    public void ResumeOrbitingFireballs()
+    {
+        orbitingFireballsEffect?.Resume();
+        orbitingFireballsTestEffect?.Resume();
+    }
+
     public void RemoveItem(ItemData itemData)
     {
         if (!items.TryGetValue(itemData, out ItemStack stack)) return;
@@ -118,12 +161,20 @@ public class PlayerInventory : MonoBehaviour
             modifier.Dispose();
         }
 
+        RemovePoisonContribution(itemData);
+
         // remove contributed effect stacks
         foreach (var kv in stack.contributedEffectStacks)
         {
             var kind = kv.Key;
             int stacks = kv.Value;
             RemoveEffectStacks(kind, stacks);
+        }
+
+        // remove element fusion rules
+        foreach (var fusionKey in stack.contributedElementFusions)
+        {
+            ElementSystem.RemoveTempRule(fusionKey.Item1, fusionKey.Item2);
         }
 
         items.Remove(itemData);
@@ -134,7 +185,6 @@ public class PlayerInventory : MonoBehaviour
     // some getters
     public int GetItemCount(ItemData itemData) => items.TryGetValue(itemData, out var stck) ? stck.count : 0;
     public bool HasItem(ItemData itemData) => items.ContainsKey(itemData);
-
 
     // --------------------------------------STATS--------------------------------------
 
@@ -178,14 +228,15 @@ public class PlayerInventory : MonoBehaviour
         for (int i = 0; i < stacksAdded; i++)
         {
             StatModifier modifier = spec.operatorType switch
-            {
+        {
                 OperatorType.Add => new BasicStatsModifier(spec.statType, spec.duration, v => v + inc),
                 OperatorType.Multiply => new BasicStatsModifier(spec.statType, spec.duration, v => v * inc),
                 OperatorType.Percentage => new BasicStatsModifier(spec.statType, spec.duration, v => v + baseValue * inc),
-                _ => throw new ArgumentOutOfRangeException()
-            };
-            stack.activeModifiers.Add(modifier);
-            playerEntity.Stats.Mediator.AddModifier(modifier);
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        stack.activeModifiers.Add(modifier);
+        playerEntity.Stats.Mediator.AddModifier(modifier);
             Debug.Log($"Applied {spec.statType} modifier: {inc} ({spec.operatorType})");
         }
     }
@@ -197,6 +248,8 @@ public class PlayerInventory : MonoBehaviour
     {
         if (playerEntity == null) return;
         if (data.effects == null || data.effects.Count == 0) return;
+
+        bool poisonCoreAdded = false;
 
         foreach (var effect in data.effects)
         {
@@ -211,6 +264,9 @@ public class PlayerInventory : MonoBehaviour
                 case ItemEffectKind.HealOnDamage:
                     EnsureHealOnDamage(effect, initialStacks: stacksAdded);
                     break;
+                case ItemEffectKind.HealOnPoison:
+                    EnsureHealOnPoison(effect);
+                    break;
                 case ItemEffectKind.StompDamage:
                     EnsureStomp(effect, initialStacks: stacksAdded);
                     break;
@@ -218,10 +274,24 @@ public class PlayerInventory : MonoBehaviour
                     EnsureFallBonus(effect, initialStacks: stacksAdded);
                     break;
                 case ItemEffectKind.DotOnHit:
-                    EnsureDot(effect, initialStacks: stacksAdded);
+                    if (!poisonCoreAdded)
+                    {
+                        EnsurePoisonCore(data, stacksAdded);
+                        poisonCoreAdded = true;
+                    }
+                    EnsureDot(data, effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.PoisonPoolOnDash:
+                    if (!poisonCoreAdded)
+                    {
+                        EnsurePoisonCore(data, stacksAdded);
+                        poisonCoreAdded = true;
+                    }
+                    EnsurePoisonPoolOnDash(data, effect, initialStacks: stacksAdded);
                     break;
                 case ItemEffectKind.BurnOnDamage:
-                    break; // nothing yet, prolly dont even need it
+                    EnsureBurnAura(effect, initialStacks: stacksAdded);
+                    break;
                 case ItemEffectKind.HomingProjectiles:
                     EnsureHomingProjectiles(effect, initialStacks: stacksAdded);
                     break;
@@ -240,8 +310,44 @@ public class PlayerInventory : MonoBehaviour
                 case ItemEffectKind.DashDamage:
                     EnsureDashDamage(effect, initialStacks: stacksAdded);
                     break;
+                case ItemEffectKind.ElementFusion:
+                    EnsureElementFusion(effect, stack, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.ArcStrike:
+                    EnsureArcStrike(effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.LightningStrike:
+                    EnsurePlayerLightningStrike(effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.FlyFire:
+                    EnsureFlyingFireSpray(effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.ElementReactionExplosion:
+                    EnsureElementReactionExplosion(effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.OrbitingFireballs:
+                    EnsureOrbitingFireballs(effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.LightningDash:
+                    EnsureLightningDash(effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.OrbitingFireballsTest:
+                    EnsureOrbitingFireballsTest(effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.ChainLightningTest:
+                    EnsureChainLightningTest(effect, initialStacks: stacksAdded);
+                    break;
                 case ItemEffectKind.PassThroughSpear:
                     EnsurePassThroughSpear(effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.ToxicAttackSpeed:
+                    EnsureToxicAttackSpeed(effect);
+                    break;
+                case ItemEffectKind.FlameTrail:
+                    EnsureFlameTrail(effect);
+                    break;
+                case ItemEffectKind.FinisherStrike:
+                    EnsureFinisherStrike(effect);
                     break;
             }
         }
@@ -269,6 +375,69 @@ public class PlayerInventory : MonoBehaviour
             Debug.Log($"[Effect] Heal on Damage : Stacks {initialStacks}");
         }
     }
+
+    private void EnsureHealOnPoison(EffectSpec effect)
+    {
+        if (healOnPoisonEffect == null || healOnPoisonEffect.IsDisposed)
+        {
+            healOnPoisonEffect = new HealOnPoison(
+                owner: playerEntity,
+                range: effect.healOnPoisonRange,
+                healPerPoisonStackPerSecond: effect.healPerPoisonStackPerSecond,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(healOnPoisonEffect);
+            Debug.Log($"[Effect] HealOnPoison created");
+        }
+    }
+
+    private void EnsureToxicAttackSpeed(EffectSpec effect)
+    {
+        if (toxicAttackSpeedEffect == null || toxicAttackSpeedEffect.IsDisposed)
+        {
+            toxicAttackSpeedEffect = new ToxicAttackSpeed(
+                owner: playerEntity,
+                range: effect.toxicAttackSpeedRange,
+                attackSpeedPerStack: effect.toxicAttackSpeedPerStack,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(toxicAttackSpeedEffect);
+            Debug.Log($"[Effect] ToxicAttackSpeed created");
+        }
+    }
+
+    private void EnsureFlameTrail(EffectSpec effect)
+    {
+        if (flameTrailEffect == null || flameTrailEffect.IsDisposed)
+        {
+            flameTrailEffect = new FlameTrail(
+                owner: playerEntity,
+                damage: effect.flameTrailDamage,
+                radius: effect.flameTrailRadius,
+                poolLifetime: effect.flameTrailLifetime,
+                spawnInterval: effect.flameTrailSpawnInterval,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(flameTrailEffect);
+            Debug.Log($"[Effect] FlameTrail created");
+        }
+    }
+
+    private void EnsureFinisherStrike(EffectSpec effect)
+    {
+        if (finisherStrikeEffect == null || finisherStrikeEffect.IsDisposed)
+        {
+            finisherStrikeEffect = new FinisherStrike(
+                owner: playerEntity,
+                damageMultiplier: effect.finisherDamageMultiplier,
+                rangeMultiplier: effect.finisherRangeMultiplier,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(finisherStrikeEffect);
+            Debug.Log($"[Effect] FinisherStrike created");
+        }
+    }
+
     private void EnsureStomp(EffectSpec effect, int initialStacks)
     {
         if (stompDamageEffect == null)
@@ -282,7 +451,7 @@ public class PlayerInventory : MonoBehaviour
             );
             if (effect.duration > 0f) tickingEffects.Add(stompDamageEffect);
             Debug.Log($"[Effect] Stomp created : Stacks{initialStacks}");
-        }
+    }
         else
         {
             for (int i = 0; i < initialStacks; i++)
@@ -299,7 +468,7 @@ public class PlayerInventory : MonoBehaviour
         {
             fallDamageBonusEffect = new FallDamageBonus(
             owner: playerEntity,
-            damagePerMeter: effect.fallDamageBonusPerMeter * effect.fallDamageBonusPerStack,
+            damagePerMeter: effect.fallDamageBonusPerMeter + (effect.fallDamageBonusPerStack * (initialStacks - 1)),
             initialStacks: initialStacks,
             durationSec: effect.duration
             );
@@ -315,21 +484,13 @@ public class PlayerInventory : MonoBehaviour
             Debug.Log($"[Effect] FallBonus : Stacks {initialStacks}");
         }
     }
-    private void EnsureDot(EffectSpec effect, int initialStacks)
+    private void EnsureDot(ItemData data, EffectSpec effect, int initialStacks)
     {
         if (dotOnHitEffect == null)
         {
             dotOnHitEffect = new DotOnHit(
                 owner: playerEntity,
-                dotDamagePerTick: effect.dotDamagePerTick,
-                dotTickInterval: effect.dotTickInterval,
-                dotDuration: effect.dotDuration,
-                dotDamagePerStack: effect.dotDamagePerStack,
-                initialStacks: initialStacks,
-                durationSec: effect.duration,
-                dotCanStack: effect.dotCanStack,
-                dotMaxStacks: effect.dotMaxStacks,
-                dotApplyImmediately: effect.dotApplyImmediately
+                durationSec: effect.duration
             );
             if (effect.duration > 0f) tickingEffects.Add(dotOnHitEffect);
             Debug.Log($"[Effect] DOT created : Stacks {initialStacks}");
@@ -342,6 +503,43 @@ public class PlayerInventory : MonoBehaviour
             }
             Debug.Log($"[Effect] DOT : Stacks {initialStacks}");
         }
+        poisonCore?.SetDotParams(
+            effect.dotDamagePerTick, effect.dotDamagePerStack, effect.dotTickInterval,
+            effect.dotDuration, effect.dotCanStack, Mathf.Max(1, effect.dotMaxStacks), effect.dotApplyImmediately
+        );
+    }
+
+    private void EnsurePoisonPoolOnDash(ItemData data, EffectSpec effect, int initialStacks)
+    {
+        if (poisonPoolOnDashEffect == null)
+        {
+            poisonPoolOnDashEffect = new PoisonPoolOnDash(
+                owner: playerEntity,
+                radius: effect.poisonPoolRadius,
+                poolLifetime: effect.poisonPoolLifetime,
+                initialStacks: initialStacks,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(poisonPoolOnDashEffect);
+            Debug.Log($"[Effect] Poison Pool On Dash created : Stacks {initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                poisonPoolOnDashEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Poison Pool On Dash : Stacks {initialStacks}");
+        }
+    }
+
+    private void EnsurePoisonCore(ItemData data, int initialStacks)
+    {
+        if (poisonCore == null)
+        {
+            poisonCore = new PoisonCore();
+        }
+        poisonCore.AddContribution(data, initialStacks);
     }
 
     private void EnsureHomingProjectiles(EffectSpec effect, int initialStacks)
@@ -374,7 +572,7 @@ public class PlayerInventory : MonoBehaviour
             Debug.Log($"[Effect] Explosive Projectiles : Stacks {initialStacks}");
         }
     }
-
+    
     private void EnsureChainLightning(EffectSpec effect, int initialStacks)
     {
         if (chainLightningEffect == null)
@@ -426,7 +624,7 @@ public class PlayerInventory : MonoBehaviour
             Debug.Log($"[Effect] Bounce Projectiles : Stacks {initialStacks}");
         }
     }
-
+    
     private void EnsureDelayedProjectiles(EffectSpec effect, int initialStacks)
     {
         if (delayedProjectilesEffect == null)
@@ -475,6 +673,257 @@ public class PlayerInventory : MonoBehaviour
             Debug.Log($"[Effect] Dash Damage : Stacks {initialStacks}");
         }
     }
+    
+    private void EnsureBurnAura(EffectSpec effect, int initialStacks)
+    {
+        if (burnAuraEffect == null)
+        {
+            burnAuraEffect = new BurnAura(
+                owner: playerEntity,
+                damagePerSecond: effect.burnAuraDamagePerSecond,
+                range: effect.burnAuraRange,
+                initialStacks: initialStacks,
+                durationSec: effect.duration,
+                tickInterval: effect.burnAuraTickInterval
+            );
+            if (effect.duration > 0f) tickingEffects.Add(burnAuraEffect);
+            Debug.Log($"[Effect] Burn Aura created, stacks {initialStacks}");
+        }
+        else
+        {
+            Debug.LogWarning("Burn Aura already exists, stacking.");
+            for (int i = 0; i < initialStacks; i++)
+            {
+                burnAuraEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Burn Aura : Stacks {initialStacks}");
+        }
+    }
+    
+    private void EnsureArcStrike(EffectSpec effect, int initialStacks)
+    {
+        if (arcStrikeEffect == null)
+        {
+            arcStrikeEffect = new ArcStrike(
+                owner: playerEntity,
+                damage: effect.arcStrikeDamage,
+                range: effect.arcStrikeRange,
+                poissonLambda: effect.arcStrikePoissonLambda,
+                initialStacks: initialStacks,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(arcStrikeEffect);
+            Debug.Log($"[Effect] Arc Strike created : {effect.arcStrikeDamage} damage, {effect.arcStrikeRange}m range, {effect.arcStrikePoissonLambda} lambda, Stacks{initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                arcStrikeEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Arc Strike : Stacks {initialStacks}");
+        }
+    }
+
+    private void EnsurePlayerLightningStrike(EffectSpec effect, int initialStacks)
+    {
+        if (playerLightningStrikeEffect == null)
+        {
+            playerLightningStrikeEffect = new PlayerLightningStrike(
+                owner: playerEntity,
+                damage: effect.playerLightningStrikeDamage,
+                radius: effect.playerLightningStrikeRadius,
+                interval: effect.playerLightningStrikeInterval,
+                electrifyDamage: effect.playerLightningStrikeElectrifyDamage,
+                initialStacks: initialStacks,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(playerLightningStrikeEffect);
+            Debug.Log($"[Effect] Player Lightning Strike created : Stacks {initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                playerLightningStrikeEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Player Lightning Strike : Stacks {initialStacks}");
+        }
+    }
+
+    private void EnsureFlyingFireSpray(EffectSpec effect, int initialStacks)
+    {
+        if (flyingFireSprayEffect == null)
+        {
+            flyingFireSprayEffect = new FlyingFire(
+                owner: playerEntity,
+                damage: effect.flyingFireDamage,
+                radius: effect.flyingFireRadius,
+                tickInterval: effect.flyingFireTickInterval,
+                offset: effect.flyingFireOffset,
+                initialStacks: initialStacks,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(flyingFireSprayEffect);
+            Debug.Log($"[Effect] Flying Fire Spray created : Stacks {initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                flyingFireSprayEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Flying Fire Spray : Stacks {initialStacks}");
+        }
+    }
+
+    private void EnsureElementFusion(EffectSpec effect, ItemStack stack, int initialStacks)
+    {
+        if (effect.fusionTriggerElement == ElementType.None || effect.fusionEffectElement == ElementType.None)
+        {
+            Debug.LogWarning("[Effect] ElementFusion: Invalid element types");
+            return;
+        }
+
+        var key = (effect.fusionTriggerElement, effect.fusionEffectElement);
+        
+        for (int i = 0; i < initialStacks; i++)
+        {
+            ElementSystem.AddTempRule(effect.fusionTriggerElement, effect.fusionEffectElement);
+            stack.contributedElementFusions.Add(key);
+        }
+    }
+
+    private void EnsureElementReactionExplosion(EffectSpec effect, int initialStacks)
+    {
+        if (elementReactionExplosionEffect == null)
+        {
+            elementReactionExplosionEffect = new ElementReactionExplosion(
+                owner: playerEntity,
+                explosionDamage: effect.elementReactionExplosionDamage,
+                explosionRadius: effect.elementReactionExplosionRadius,
+                initialStacks: initialStacks,
+                durationSec: effect.duration,
+                explosionVFX: effect.elementReactionExplosionVFX
+            );
+            if (effect.duration > 0f) tickingEffects.Add(elementReactionExplosionEffect);
+            Debug.Log($"[Effect] Element Reaction Explosion created : {effect.elementReactionExplosionDamage} damage, {effect.elementReactionExplosionRadius}m radius, Stacks{initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                elementReactionExplosionEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Element Reaction Explosion : Stacks {initialStacks}");
+        }
+    }
+
+    private void EnsureOrbitingFireballs(EffectSpec effect, int initialStacks)
+    {
+        if (orbitingFireballsEffect == null)
+        {
+            orbitingFireballsEffect = new OrbitingFireballs(
+                owner: playerEntity,
+                damage: effect.orbitingFireballDamage,
+                orbitRadius: effect.orbitingFireballRadius,
+                rotationSpeed: effect.orbitingFireballRotationSpeed,
+                initialStacks: initialStacks,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(orbitingFireballsEffect);
+            Debug.Log($"[Effect] Orbiting Fireballs created : {effect.orbitingFireballDamage} damage, {effect.orbitingFireballRadius}m radius, Stacks {initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                orbitingFireballsEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Orbiting Fireballs : Stacks {initialStacks}");
+        }
+    }
+
+    private void EnsureLightningDash(EffectSpec effect, int initialStacks)
+    {
+        if (lightningDashEffect == null)
+        {
+            lightningDashEffect = new LightningDash(
+                owner: playerEntity,
+                damage: effect.lightningDashDamage,
+                chainCount: effect.lightningDashChainCount,
+                range: effect.lightningDashChainRange,
+                initialStacks: initialStacks,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(lightningDashEffect);
+            Debug.Log($"[Effect] Lightning Dash created : {effect.lightningDashDamage} damage, {effect.lightningDashChainCount} chains, Stacks {initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                lightningDashEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Lightning Dash : Stacks {initialStacks}");
+        }
+    }
+
+    private void EnsureOrbitingFireballsTest(EffectSpec effect, int initialStacks)
+    {
+        if (orbitingFireballsTestEffect == null)
+        {
+            orbitingFireballsTestEffect = new OrbitingFireballsTest(
+                owner: playerEntity,
+                damage: effect.orbitingFireballTestDamage,
+                orbitRadius: effect.orbitingFireballRadius,
+                rotationSpeed: effect.orbitingFireballRotationSpeed,
+                damageThreshold: effect.orbitingFireballTestDamageThreshold,
+                maxCount: effect.orbitingFireballTestMaxCount,
+                ballLifetime: effect.orbitingFireballTestLifetime,
+                initialStacks: initialStacks,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(orbitingFireballsTestEffect);
+            Debug.Log($"[Effect] Orbiting Fireballs Test created : {effect.orbitingFireballTestDamage} dmg/ball, {effect.orbitingFireballTestDamageThreshold} dmg threshold, Max {effect.orbitingFireballTestMaxCount} balls, {effect.orbitingFireballTestLifetime}s lifetime, Stacks {initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                orbitingFireballsTestEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] Orbiting Fireballs Test : Stacks {initialStacks}");
+        }
+    }
+
+    private void EnsureChainLightningTest(EffectSpec effect, int initialStacks)
+    {
+        if (chainLightningTestEffect == null)
+        {
+            chainLightningTestEffect = new ChainLightningTest(
+                owner: playerEntity,
+                strikeInterval: effect.chainLightningTestStrikeInterval,
+                buffDuration: effect.chainLightningTestBuffDuration,
+                chainDamagePercent: effect.chainLightningTestChainDamagePercent,
+                maxDepth: effect.chainLightningTestMaxDepth,
+                branchesPerNode: effect.chainLightningTestBranchesPerNode,
+                chainRange: effect.chainLightningTestChainRange,
+                initialStacks: initialStacks,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(chainLightningTestEffect);
+            Debug.Log($"[Effect] ChainLightningTest created : Stacks {initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+            {
+                chainLightningTestEffect.AddStack(1);
+            }
+            Debug.Log($"[Effect] ChainLightningTest : Stacks {initialStacks}");
+        }
+    }
 
     private void EnsurePassThroughSpear(EffectSpec effect, int initialStacks)
     {
@@ -482,19 +931,23 @@ public class PlayerInventory : MonoBehaviour
         {
             passThroughSpearEffect = new PassThroughSpear(
                 owner: playerEntity,
+                passThroughEnemyCount: effect.passThroughEnemyCount,
                 initialStacks: initialStacks,
                 durationSec: effect.duration
             );
 
             if (effect.duration > 0f) tickingEffects.Add(passThroughSpearEffect);
-            Debug.Log($"[Effect] Pass Through Spear created : Stacks{initialStacks}");
+            Debug.Log($"[Effect] Pass Through Spear created : passThrough={effect.passThroughEnemyCount}, Stacks={initialStacks}");
         }
         else
         {
             for (int i = 0; i < initialStacks; i++)
                 passThroughSpearEffect.AddStack(1);
 
-            Debug.Log($"[Effect] Pass Through Spear : Stacks {initialStacks}");
+            // Update the count in case the new item stack has a different value
+            passThroughSpearEffect.SetPassThroughEnemyCount(effect.passThroughEnemyCount);
+
+            Debug.Log($"[Effect] Pass Through Spear : passThrough={effect.passThroughEnemyCount}, Stacks={initialStacks}");
         }
     }
 
@@ -508,7 +961,13 @@ public class PlayerInventory : MonoBehaviour
                 if (healOnDamageEffect != null)
                 {
                     healOnDamageEffect.AddStack(-stacks);
-                    // if it reaches 0 it'll dispose itself
+                }
+                break;
+            case ItemEffectKind.HealOnPoison:
+                if (healOnPoisonEffect != null && !healOnPoisonEffect.IsDisposed)
+                {
+                    healOnPoisonEffect.Dispose();
+                    healOnPoisonEffect = null;
                 }
                 break;
             case ItemEffectKind.StompDamage:
@@ -529,7 +988,13 @@ public class PlayerInventory : MonoBehaviour
                 if (dotOnHitEffect != null)
                 {
                     dotOnHitEffect.AddStack(-stacks);
-                    // if it reaches 0 it'll dispose itself
+                    if (GetTotalDotOnHitContributed() <= stacks) poisonCore?.ClearDotParams();
+                }
+                break;
+            case ItemEffectKind.PoisonPoolOnDash:
+                if (poisonPoolOnDashEffect != null)
+                {
+                    poisonPoolOnDashEffect.AddStack(-stacks);
                 }
                 break;
             case ItemEffectKind.ExplosiveProjectiles:
@@ -563,14 +1028,120 @@ public class PlayerInventory : MonoBehaviour
                     dashDamageEffect.AddStack(-stacks);
                 }
                 break;
+            case ItemEffectKind.BurnOnDamage:
+                if (burnAuraEffect != null)
+                {
+                    burnAuraEffect.AddStack(-stacks);
+                }
+                break;
+            case ItemEffectKind.ArcStrike:
+                if (arcStrikeEffect != null)
+                {
+                    arcStrikeEffect.AddStack(-stacks);
+                }
+                break;
+            case ItemEffectKind.LightningStrike:
+                if (playerLightningStrikeEffect != null)
+                {
+                    playerLightningStrikeEffect.AddStack(-stacks);
+                }
+                break;
+            case ItemEffectKind.FlyFire:
+                if (flyingFireSprayEffect != null)
+                {
+                    flyingFireSprayEffect.AddStack(-stacks);
+                }
+                break;
+            case ItemEffectKind.ElementReactionExplosion:
+                if (elementReactionExplosionEffect != null)
+                {
+                    elementReactionExplosionEffect.AddStack(-stacks);
+                }
+                break;
+            case ItemEffectKind.OrbitingFireballs:
+                if (orbitingFireballsEffect != null)
+                {
+                    orbitingFireballsEffect.AddStack(-stacks);
+                }
+                break;
+            case ItemEffectKind.LightningDash:
+                if (lightningDashEffect != null)
+                {
+                    lightningDashEffect.AddStack(-stacks);
+                }
+                break;
+            case ItemEffectKind.OrbitingFireballsTest:
+                if (orbitingFireballsTestEffect != null)
+                {
+                    orbitingFireballsTestEffect.AddStack(-stacks);
+                }
+                break;
             case ItemEffectKind.PassThroughSpear:
                 if (passThroughSpearEffect != null)
+                {
                     passThroughSpearEffect.AddStack(-stacks);
+                }
+                break;
+            case ItemEffectKind.ToxicAttackSpeed:
+                if (toxicAttackSpeedEffect != null && !toxicAttackSpeedEffect.IsDisposed)
+                {
+                    toxicAttackSpeedEffect.Dispose();
+                    toxicAttackSpeedEffect = null;
+                }
+                break;
+            case ItemEffectKind.FlameTrail:
+                if (flameTrailEffect != null && !flameTrailEffect.IsDisposed)
+                {
+                    flameTrailEffect.Dispose();
+                    flameTrailEffect = null;
+                }
+                break;
+            case ItemEffectKind.FinisherStrike:
+                if (finisherStrikeEffect != null && !finisherStrikeEffect.IsDisposed)
+                {
+                    finisherStrikeEffect.Dispose();
+                    finisherStrikeEffect = null;
+                }
                 break;
 
         }
     }
 
+    private int GetTotalDotOnHitContributed()
+    {
+        int total = 0;
+        foreach (var kv in items)
+        {
+            if (kv.Value.contributedEffectStacks.TryGetValue(ItemEffectKind.DotOnHit, out int c))
+                total += c;
+        }
+        return total;
+    }
+
+    private void RemovePoisonContribution(ItemData data)
+    {
+        if (poisonCore == null || data == null || data.effects == null) return;
+
+        bool hasPoisonEffect = false;
+        foreach (var effect in data.effects)
+        {
+            if (effect.kind == ItemEffectKind.DotOnHit || effect.kind == ItemEffectKind.PoisonPoolOnDash)
+            {
+                hasPoisonEffect = true;
+                break;
+            }
+        }
+
+        if (!hasPoisonEffect) return;
+
+        poisonCore.RemoveContribution(data);
+        if (poisonCore.IsEmpty)
+        {
+            poisonCore.Dispose();
+            poisonCore = null;
+        }
+    }
+    
     public bool TryRemoveStacks(ItemData itemData, int stacksToRemove)
     {
         if (itemData == null) return false;
@@ -683,23 +1254,34 @@ public class PlayerInventory : MonoBehaviour
         passThroughSpearEffect?.Dispose(); passThroughSpearEffect = null;
 
         tickingEffects.Clear();
-    }
-
-
-
-    void OnDestroy()
+    }    void OnDestroy()
     {
+        tickingEffects.Clear();
+
         healOnDamageEffect?.Dispose();
+        healOnPoisonEffect?.Dispose();
         stompDamageEffect?.Dispose();
         fallDamageBonusEffect?.Dispose();
         dotOnHitEffect?.Dispose();
+        poisonPoolOnDashEffect?.Dispose();
+        poisonCore?.Dispose();
         explosiveProjectilesEffect?.Dispose();
         chainLightningEffect?.Dispose();
         bounceProjectilesEffect?.Dispose();
         delayedProjectilesEffect?.Dispose();
         dashDamageEffect?.Dispose();
+        burnAuraEffect?.Dispose();
+        arcStrikeEffect?.Dispose();
+        playerLightningStrikeEffect?.Dispose();
+        flyingFireSprayEffect?.Dispose();
+        elementReactionExplosionEffect?.Dispose();
+        orbitingFireballsEffect?.Dispose();
+        lightningDashEffect?.Dispose();
+        orbitingFireballsTestEffect?.Dispose();
         passThroughSpearEffect?.Dispose();
+        toxicAttackSpeedEffect?.Dispose();
         //homingProjectilesEffect?.Dispose();
+        ElementSystem.ClearTempRules();
 
         // any other dispose handle
     }

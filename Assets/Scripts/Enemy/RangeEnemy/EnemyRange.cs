@@ -12,7 +12,9 @@ public class EnemyRange : Enemy
     [Header("Flight Settings")]
     public float flyHeight = 3f;
     public float verticalSmoothTime = 0.3f; // how fast I adjust height
-    public float horizontalSmoothTime = 0.1f; // sync with agent speed
+    public float horizontalSmoothTime = 0.15f; // sync with agent speed
+    public float maxHorizontalSpeed = 12f; // cap prevents runaway drift
+    public float maxVerticalSpeed = 10f; // cap vertical speed
 
     [Header("Hover and movement")]
     public float chaseSpeed = 3.5f;
@@ -29,9 +31,10 @@ public class EnemyRange : Enemy
     [Header("Spacing / Anti-clump")]
     public float spreadInterval = 0.2f;
     public float spreadRadiusJitter = 2f;
-    public float wispSeparationRadius = 4f;
-    public float wispSeparationStrength = 1.2f;
+    public float wispSeparationRadius = 5f;
+    public float wispSeparationStrength = 1.5f;
     public float navSampleDistance = 2f;
+    public float angleAdaptSpeed = 1.5f;
 
     [Space]
 
@@ -43,16 +46,18 @@ public class EnemyRange : Enemy
     public Transform firePoint; // where bullet come from
     public EnemyProjectile projectilePrefab;
     public float spawnOffset = 0.1f; // a little away fro fire point, safety
-	
+
     [SerializeField]
     private AK.Wwise.Event shootSFX;
-
+    
+    [SerializeField]
+    public GameObject shootVFX;
     public LayerMask projectileMask = ~0;
     public LayerMask obstacleMask = 1; // to detect walls
 
     [Space]
 
-    [Header("Reccovery")]
+    [Header("Recovery")]
     [Tooltip("After all orbs are finished, how much time to start again, basically reload time")]
     public float recoveryTime = 0.4f;
 
@@ -75,6 +80,7 @@ public class EnemyRange : Enemy
     private Vector3 cachedSpreadPoint;
     private Vector3 cachedSeparation;
     private bool holdHorizontalPosition;
+    private bool wasUsingDirectFlight;
 
 
     public override void Start()
@@ -124,62 +130,88 @@ public class EnemyRange : Enemy
     void UpdateFlightMovement()
     {
         if (PauseManager.GameIsPaused) return;
-
         if (agent == null) return;
 
+        // --- Vertical target ---
         float baseTargetY = transform.position.y;
         if (target != null)
         {
             baseTargetY = target.position.y + flyHeight;
         }
-        // if (target == null) return;
 
-        // Add Bobbing
         bobPhase += Time.deltaTime * hoverBobSpeed;
         float bobOffset = Mathf.Sin(bobPhase) * hoverBobAmplitude;
         float finalTargetY = baseTargetY + bobOffset;
 
-        // // find the target height
-        // float targetY = target.position.y + flyHeight;
-
-        // find horizontal target
+        // --- Horizontal target ---
         Vector3 desiredHorizontalPos = transform.position;
+        bool usingDirectFlight = false;
 
-        if (agent.isOnNavMesh)
+        if (target != null)
+        {
+            Vector3 dirToTarget = target.position - transform.position;
+            float distToTarget = dirToTarget.magnitude;
+            bool hasLineOfSight = !Physics.Raycast(transform.position, dirToTarget.normalized,
+                                                    distToTarget, obstacleMask);
+
+            if (hasLineOfSight)
+            {
+                usingDirectFlight = true;
+                desiredHorizontalPos = GetSpreadoutChasePoint();
+            }
+            else if (agent.isOnNavMesh)
+            {
+                desiredHorizontalPos = agent.nextPosition;
+            }
+        }
+        else if (agent.isOnNavMesh)
         {
             desiredHorizontalPos = agent.nextPosition;
         }
 
-        if (target != null)
+        // reset SmoothDamp velocity when switching from navmesh and flight
+        if (usingDirectFlight != wasUsingDirectFlight)
         {
-            // check for line of sight to target
-            Vector3 dirToTarget = target.position - transform.position;
-            float distToTarget = dirToTarget.magnitude;
-
-            // raycast check
-            bool hasLineOfSight = !Physics.Raycast(transform.position, dirToTarget.normalized, distToTarget, obstacleMask); // check if no wall in between
-
-            if (hasLineOfSight)
-            {
-                // DO TRUE FLIGHT, IGNORE SHITTY NAVMESH
-                desiredHorizontalPos = GetSpreadoutChasePoint();
-                if (agent.isOnNavMesh)
-                {
-                    agent.nextPosition = transform.position;
-                }
-            }
+            currentHorizontalVelocity = Vector3.zero;
+            wasUsingDirectFlight = usingDirectFlight;
         }
 
-        // Apply Smoothing
+        // Always keep the agent synced to our actual position so there is
+        if (agent.isOnNavMesh)
+        {
+            agent.nextPosition = new Vector3(transform.position.x, agent.nextPosition.y, transform.position.z);
+        }
+
         Vector3 nextPos = transform.position;
 
-        nextPos.x = Mathf.SmoothDamp(transform.position.x, desiredHorizontalPos.x, ref currentHorizontalVelocity.x, horizontalSmoothTime);
-        nextPos.z = Mathf.SmoothDamp(transform.position.z, desiredHorizontalPos.z, ref currentHorizontalVelocity.z, horizontalSmoothTime);
+        nextPos.x = Mathf.SmoothDamp(transform.position.x, desiredHorizontalPos.x,
+                                      ref currentHorizontalVelocity.x, horizontalSmoothTime);
+        nextPos.z = Mathf.SmoothDamp(transform.position.z, desiredHorizontalPos.z,
+                                      ref currentHorizontalVelocity.z, horizontalSmoothTime);
 
-        // vertical move, try to match the target's height
+        // Cap horizontal speed to prevent runaway drift
+        Vector3 hDelta = new Vector3(nextPos.x - transform.position.x, 0f, nextPos.z - transform.position.z);
+        float maxStep = maxHorizontalSpeed * Time.deltaTime;
+        if (hDelta.sqrMagnitude > maxStep * maxStep)
+        {
+            hDelta = hDelta.normalized * maxStep;
+            nextPos.x = transform.position.x + hDelta.x;
+            nextPos.z = transform.position.z + hDelta.z;
+            currentHorizontalVelocity = Vector3.ClampMagnitude(currentHorizontalVelocity, maxHorizontalSpeed);
+        }
+
+        // Vertical move
         nextPos.y = Mathf.SmoothDamp(transform.position.y, finalTargetY, ref currentYVelocity, verticalSmoothTime);
 
-        // Apply
+        float vDelta = nextPos.y - transform.position.y;
+        float maxVStep = maxVerticalSpeed * Time.deltaTime;
+        if (Mathf.Abs(vDelta) > maxVStep)
+        {
+            nextPos.y = transform.position.y + Mathf.Sign(vDelta) * maxVStep;
+            currentYVelocity = Mathf.Clamp(currentYVelocity, -maxVerticalSpeed, maxVerticalSpeed);
+        }
+
+        // apply all 
         transform.position = nextPos;
     }
 
@@ -196,11 +228,15 @@ public class EnemyRange : Enemy
         Quaternion rotation = Quaternion.LookRotation(direction);
         Vector3 spawnPoint = firePoint.position + direction * spawnOffset;
 
-        // I could probably use Object Pooling here
-        EnemyProjectile projectile = Instantiate(projectilePrefab, spawnPoint, rotation);
+        GameObject projObj = GetPooledProjectile(spawnPoint, rotation);
+        EnemyProjectile projectile = projObj.GetComponent<EnemyProjectile>();
         projectile.Init(direction * projectileSpeed, projectileMask, projectileDamage);
-        
+		
         shootSFX.Post(gameObject);
+        if (shootVFX != null)
+        {
+            PlayPSVFX(shootVFX, firePoint);
+        }
 
         // Handle Visuals
         if (orbitVisuals != null)
@@ -231,10 +267,11 @@ public class EnemyRange : Enemy
     public void FaceTargetSmooth(float speed)
     {
         if (target == null) return;
-        Vector3 dir = (target.position - transform.position).normalized;
+        Vector3 dir = (target.position - transform.position);
         dir.y = 0; // Keep rotation upright
-        if (dir == Vector3.zero) return;
+        if (dir.sqrMagnitude < 0.0001f) return;
 
+        dir.Normalize();
         Quaternion lookRot = Quaternion.LookRotation(dir);
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * speed);
     }
@@ -253,10 +290,15 @@ public class EnemyRange : Enemy
         Vector3 spawnPoint = firePoint.position + direction * spawnOffset;
         Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
 
-        EnemyProjectile projectile = Instantiate(projectilePrefab, spawnPoint, rotation);
+        GameObject projObj = GetPooledProjectile(spawnPoint, rotation);
+        EnemyProjectile projectile = projObj.GetComponent<EnemyProjectile>();
         projectile.Init(direction * projectileSpeed, projectileMask, this.projectileDamage);
-        
+
         shootSFX.Post(gameObject);
+        if (shootVFX != null)
+        {
+            PlayPSVFX(shootVFX, firePoint);
+        }
 
         if (orbitVisuals != null)
         {
@@ -265,10 +307,23 @@ public class EnemyRange : Enemy
             {
                 orbitVisuals.HideOrb(orbIndex);
             }
-            else
-            {
-                // no orbs left,maybe i can go to recovery
-            }
+        }
+    }
+
+    private GameObject GetPooledProjectile(Vector3 position, Quaternion rotation)
+    {
+        if (ObjectPool.instance != null)
+        {
+            
+            GameObject obj = ObjectPool.instance.GetObject(projectilePrefab.gameObject, firePoint);
+            obj.transform.position = position;
+            obj.transform.rotation = rotation;
+            return obj;
+        }
+        else
+        {
+            GameObject obj = Instantiate(projectilePrefab.gameObject, position, rotation);
+            return obj;
         }
     }
 
@@ -285,12 +340,17 @@ public class EnemyRange : Enemy
         if (holdHorizontalPosition)
         {
             Vector3 here = transform.position;
+            Vector3 seperation = ComputeWispSeparation();
+            here.x += seperation.x;
+            here.z += seperation.z;
             here.y = target.position.y;
             return here;
         }
 
         if (Time.time < nextSpreadUpdateTime) return cachedSpreadPoint;
         nextSpreadUpdateTime = Time.time + Mathf.Max(0.05f, spreadInterval);
+
+        AdaptSpreadAngle();
 
         Vector3 targetPos = target.position;
         float radius = Mathf.Max(0.25f, desiredDistance + spreadRadiusOffset);
@@ -301,6 +361,50 @@ public class EnemyRange : Enemy
         cachedSpreadPoint.y = targetPos.y;
 
         return cachedSpreadPoint;
+    }
+
+    void AdaptSpreadAngle()
+    {
+        if (target == null || angleAdaptSpeed <= 0f) return;
+
+        Collider[] hits = Physics.OverlapSphere(transform.position, wispSeparationRadius);
+        if (hits == null || hits.Length == 0) return;
+
+        Vector3 targetPos = target.position;
+        float myAngle = Mathf.Atan2(transform.position.z - targetPos.z, transform.position.x - targetPos.x);
+
+        float angularPush = 0f;
+        int count = 0;
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            Collider c = hits[i];
+            if (c == null) continue;
+            if (c.gameObject == gameObject) continue;
+            if (c.attachedRigidbody != null && c.attachedRigidbody.gameObject == gameObject) continue;
+
+            EnemyRange other = c.GetComponentInParent<EnemyRange>();
+            if (other == null) continue;
+
+            float otherAngle = Mathf.Atan2(other.transform.position.z - targetPos.z,
+                                            other.transform.position.x - targetPos.x);
+
+            float diff = Mathf.DeltaAngle(otherAngle * Mathf.Rad2Deg, myAngle * Mathf.Rad2Deg) * Mathf.Deg2Rad;
+            float threshold = Mathf.PI / 3f;
+            if (Mathf.Abs(diff) < threshold)
+            {
+                float pushDir = diff >= 0f ? 1f : -1f;
+                float strength = 1f - Mathf.Clamp01(Mathf.Abs(diff) / threshold);
+                angularPush += pushDir * strength;
+                count++;
+            }
+        }
+
+        if (count > 0)
+        {
+            angularPush /= count;
+            spreadAngleRad += angularPush * angleAdaptSpeed * spreadInterval;
+        }
     }
 
     Vector3 ComputeWispSeparation()
@@ -338,6 +442,9 @@ public class EnemyRange : Enemy
         push /= count;
         push *= wispSeparationStrength;
         push.y = 0f;
+
+        // Clamp separation so it can't cause explosive pushignb
+        push = Vector3.ClampMagnitude(push, wispSeparationStrength * 2f);
         return push;
     }
 
@@ -391,5 +498,50 @@ public class EnemyRange : Enemy
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 
+    public void PlayPSVFX(GameObject vfxPrefab, Transform spawnPos)
+    {
+        if (vfxPrefab == null) return;
 
+        spawnPos = spawnPos != null ? spawnPos : transform;
+
+        GameObject fx;
+        if (ObjectPool.instance != null)
+        {
+            fx = ObjectPool.instance.GetObject(vfxPrefab, spawnPos);
+        }
+        else
+        {
+            fx = Instantiate(vfxPrefab, spawnPos.position, Quaternion.identity, spawnPos);
+        }
+
+        float lifetime = EstimateParticleLifetime(fx);
+
+        if (ObjectPool.instance != null)
+        {
+            ObjectPool.instance.ReturnObject(fx, lifetime);
+        }
+        else
+        {
+            Destroy(fx, lifetime);
+        }
+    }
+
+    private float EstimateParticleLifetime(GameObject fx)
+    {
+        float max = 0.25f;
+
+        var systems = fx.GetComponentsInChildren<ParticleSystem>(true);
+        foreach (var ps in systems)
+        {
+            var main = ps.main;
+            float startDelay = main.startDelay.constantMax;
+            float duration = main.duration;
+            float startLifetime = main.startLifetime.constantMax;
+
+            float total = startDelay + duration + startLifetime;
+            if (total > max) max = total;
+        }
+
+        return max;
+    }
 }

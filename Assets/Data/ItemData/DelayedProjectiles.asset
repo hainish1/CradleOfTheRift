@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: DelayedProjectiles
   m_EditorClassIdentifier: 
   itemName: New Item
-  description: Item Description Here
+  description: Targets hit by your spear throw take additional delayed damage equal
+    to 2x (+1x per stack) your spear damage
   icon: {fileID: 21300066, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
   rarity: 1
   rarityColor: {r: 0.29803923, g: 0.8, b: 0.29803923, a: 1}
@@ -23,20 +24,15 @@ MonoBehaviour:
   useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 10
+  - kind: 11
     duration: -1
     healOnDamagePercentPerStack: 0
     stompDamagePerStack: 0
     stompBounceForce: 0
     fallDamageBonusPerMeter: 0
     fallDamageBonusPerStack: 0
-    dotDamagePerTick: 0
-    dotTickInterval: 0
-    dotDuration: 0
-    dotDamagePerStack: 0
-    dotCanStack: 0
-    dotMaxStacks: 0
-    dotApplyImmediately: 0
+    poisonPoolRadius: 4
+    poisonPoolLifetime: 4
     numberOfProjectiles: 0
     projectileDamageMultiplier: 0
     explosiveAoeRadius: 0
@@ -52,11 +48,48 @@ MonoBehaviour:
     damageMultiplierPerBounce: 0
     bounceVFX: {fileID: 0}
     delayedDamageTime: 1
-    delayedDamageMultiplier: 2
+    delayedDamageMultiplier: 0.01
     delayedMarkVFX: {fileID: 0}
     dashDamage: 0
     dashDamageRange: 0
+    fusionTriggerElement: 0
+    fusionEffectElement: 0
+    burnAuraDamagePerSecond: 5
+    burnAuraRange: 3
+    burnAuraTickInterval: 1
+    arcStrikeDamage: 10
+    arcStrikeRange: 10
+    arcStrikePoissonLambda: 5.5
+    playerLightningStrikeDamage: 12
+    playerLightningStrikeRadius: 3
+    playerLightningStrikeInterval: 5
+    playerLightningStrikeElectrifyDamage: 4
+    flyingFireDamage: 8
+    flyingFireRadius: 3
+    flyingFireTickInterval: 0.5
+    flyingFireOffset: 1.5
+    elementReactionExplosionDamage: 20
+    elementReactionExplosionRadius: 3
+    elementReactionExplosionCooldown: 1
+    elementReactionExplosionVFX: {fileID: 0}
+    orbitingFireballDamage: 10
+    orbitingFireballRadius: 3
+    orbitingFireballRotationSpeed: 60
+    lightningDashDamage: 20
+    lightningDashChainCount: 5
+    lightningDashChainRange: 15
+    orbitingFireballTestDamage: 10
+    orbitingFireballTestDamageThreshold: 100
+    orbitingFireballTestMaxCount: 20
+    orbitingFireballTestLifetime: 5
+    chainLightningTestStrikeInterval: 5
+    chainLightningTestBuffDuration: 3
+    chainLightningTestChainDamagePercent: 0.5
+    chainLightningTestMaxDepth: 2
+    chainLightningTestBranchesPerNode: 2
+    chainLightningTestChainRange: 10
   statType: 9
   operatorType: 0
   value: 1
   duration: -1
+  itemId: d5ba353abda345e5a4de4e50efeb2ac7

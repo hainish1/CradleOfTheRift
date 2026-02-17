@@ -65,21 +65,9 @@ public class Interactor : MonoBehaviour
                 {
                     interactionPromptUI.ShowPrompt(interactable.InteractionPrompt);
                 }
-
-                //Debug.Log(interactable.InteractionPrompt);
-                //if (Input.GetKeyDown(KeyCode.E))    // Again, replace with interaction key
-                //{
-                //    interactable.Interact(this);
-
-                //    if (interactable.SingleActivation)
-                //    {
-                //        //interactable = null;
-                //        interactionPromptUI.HidePrompt();
-                //    }
-                //}
             }
         }
-        else
+        else 
         {
             if (interactable != null) interactable = null;
             if (interactionPromptUI.isDisplayed)
