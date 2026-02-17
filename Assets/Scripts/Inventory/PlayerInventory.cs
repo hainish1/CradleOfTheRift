@@ -50,6 +50,9 @@ public class PlayerInventory : MonoBehaviour
     private OrbitingFireballsTest orbitingFireballsTestEffect;
     private ChainLightningTest chainLightningTestEffect;
     private PassThroughSpear passThroughSpearEffect;
+    private ToxicAttackSpeed toxicAttackSpeedEffect;
+    private FlameTrail flameTrailEffect;
+    private FinisherStrike finisherStrikeEffect;
 
     // if I have time limited effects that need use of Updates, I will keep em here
     private readonly List<IDisposable> tickingEffects = new();
@@ -95,6 +98,9 @@ public class PlayerInventory : MonoBehaviour
         orbitingFireballsTestEffect?.Update(dt);
         chainLightningTestEffect?.Update(dt);
         passThroughSpearEffect?.Update(dt);
+        toxicAttackSpeedEffect?.Update(dt);
+        flameTrailEffect?.Update(dt);
+        finisherStrikeEffect?.Update(dt);
         //homingProjectilesEffect?.Update(dt);
 
         // more runtime effects would be updated here ig
@@ -334,6 +340,15 @@ public class PlayerInventory : MonoBehaviour
                 case ItemEffectKind.PassThroughSpear:
                     EnsurePassThroughSpear(effect, initialStacks: stacksAdded);
                     break;
+                case ItemEffectKind.ToxicAttackSpeed:
+                    EnsureToxicAttackSpeed(effect);
+                    break;
+                case ItemEffectKind.FlameTrail:
+                    EnsureFlameTrail(effect);
+                    break;
+                case ItemEffectKind.FinisherStrike:
+                    EnsureFinisherStrike(effect);
+                    break;
             }
         }
 
@@ -373,6 +388,53 @@ public class PlayerInventory : MonoBehaviour
             );
             if (effect.duration > 0f) tickingEffects.Add(healOnPoisonEffect);
             Debug.Log($"[Effect] HealOnPoison created");
+        }
+    }
+
+    private void EnsureToxicAttackSpeed(EffectSpec effect)
+    {
+        if (toxicAttackSpeedEffect == null || toxicAttackSpeedEffect.IsDisposed)
+        {
+            toxicAttackSpeedEffect = new ToxicAttackSpeed(
+                owner: playerEntity,
+                range: effect.toxicAttackSpeedRange,
+                attackSpeedPerStack: effect.toxicAttackSpeedPerStack,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(toxicAttackSpeedEffect);
+            Debug.Log($"[Effect] ToxicAttackSpeed created");
+        }
+    }
+
+    private void EnsureFlameTrail(EffectSpec effect)
+    {
+        if (flameTrailEffect == null || flameTrailEffect.IsDisposed)
+        {
+            flameTrailEffect = new FlameTrail(
+                owner: playerEntity,
+                damage: effect.flameTrailDamage,
+                radius: effect.flameTrailRadius,
+                poolLifetime: effect.flameTrailLifetime,
+                spawnInterval: effect.flameTrailSpawnInterval,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(flameTrailEffect);
+            Debug.Log($"[Effect] FlameTrail created");
+        }
+    }
+
+    private void EnsureFinisherStrike(EffectSpec effect)
+    {
+        if (finisherStrikeEffect == null || finisherStrikeEffect.IsDisposed)
+        {
+            finisherStrikeEffect = new FinisherStrike(
+                owner: playerEntity,
+                damageMultiplier: effect.finisherDamageMultiplier,
+                rangeMultiplier: effect.finisherRangeMultiplier,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(finisherStrikeEffect);
+            Debug.Log($"[Effect] FinisherStrike created");
         }
     }
 
@@ -436,11 +498,15 @@ public class PlayerInventory : MonoBehaviour
         else
         {
             for (int i = 0; i < initialStacks; i++)
-        {
+            {
                 dotOnHitEffect.AddStack(1);
             }
             Debug.Log($"[Effect] DOT : Stacks {initialStacks}");
         }
+        poisonCore?.SetDotParams(
+            effect.dotDamagePerTick, effect.dotDamagePerStack, effect.dotTickInterval,
+            effect.dotDuration, effect.dotCanStack, Mathf.Max(1, effect.dotMaxStacks), effect.dotApplyImmediately
+        );
     }
 
     private void EnsurePoisonPoolOnDash(ItemData data, EffectSpec effect, int initialStacks)
@@ -922,7 +988,7 @@ public class PlayerInventory : MonoBehaviour
                 if (dotOnHitEffect != null)
                 {
                     dotOnHitEffect.AddStack(-stacks);
-                    // if it reaches 0 it'll dispose itself
+                    if (GetTotalDotOnHitContributed() <= stacks) poisonCore?.ClearDotParams();
                 }
                 break;
             case ItemEffectKind.PoisonPoolOnDash:
@@ -1016,8 +1082,40 @@ public class PlayerInventory : MonoBehaviour
                     passThroughSpearEffect.AddStack(-stacks);
                 }
                 break;
+            case ItemEffectKind.ToxicAttackSpeed:
+                if (toxicAttackSpeedEffect != null && !toxicAttackSpeedEffect.IsDisposed)
+                {
+                    toxicAttackSpeedEffect.Dispose();
+                    toxicAttackSpeedEffect = null;
+                }
+                break;
+            case ItemEffectKind.FlameTrail:
+                if (flameTrailEffect != null && !flameTrailEffect.IsDisposed)
+                {
+                    flameTrailEffect.Dispose();
+                    flameTrailEffect = null;
+                }
+                break;
+            case ItemEffectKind.FinisherStrike:
+                if (finisherStrikeEffect != null && !finisherStrikeEffect.IsDisposed)
+                {
+                    finisherStrikeEffect.Dispose();
+                    finisherStrikeEffect = null;
+                }
+                break;
 
         }
+    }
+
+    private int GetTotalDotOnHitContributed()
+    {
+        int total = 0;
+        foreach (var kv in items)
+        {
+            if (kv.Value.contributedEffectStacks.TryGetValue(ItemEffectKind.DotOnHit, out int c))
+                total += c;
+        }
+        return total;
     }
 
     private void RemovePoisonContribution(ItemData data)
@@ -1181,6 +1279,7 @@ public class PlayerInventory : MonoBehaviour
         lightningDashEffect?.Dispose();
         orbitingFireballsTestEffect?.Dispose();
         passThroughSpearEffect?.Dispose();
+        toxicAttackSpeedEffect?.Dispose();
         //homingProjectilesEffect?.Dispose();
         ElementSystem.ClearTempRules();
 

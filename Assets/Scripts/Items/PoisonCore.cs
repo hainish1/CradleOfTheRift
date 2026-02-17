@@ -17,6 +17,14 @@ public class PoisonCore : IDisposable
 
     private readonly Dictionary<ItemData, Contribution> contributions = new();
 
+    private float? overrideDamagePerTick;
+    private float? overrideDamagePerStack;
+    private float? overrideTickInterval;
+    private float? overrideDuration;
+    private bool? overrideCanStack;
+    private int? overrideMaxStacks;
+    private bool? overrideApplyImmediately;
+
     private float baseDamagePerTick;
     private float damagePerStack;
     private float tickInterval = TickIntervalValue;
@@ -35,7 +43,7 @@ public class PoisonCore : IDisposable
     public float DamagePerStack => damagePerStack;
     public float TickInterval => tickInterval;
     public float Duration => duration;
-    public int MaxStacks => MaxStacksOnTarget;
+    public int MaxStacks => GetMaxStacks();
     public bool HasData => totalStacks > 0;
     public bool IsEmpty => contributions.Count == 0;
 
@@ -66,6 +74,30 @@ public class PoisonCore : IDisposable
             RecalculateTotals();
     }
 
+    public void SetDotParams(float damagePerTick, float damagePerStack, float tickInterval, float duration, bool canStack, int maxStacks, bool applyImmediately)
+    {
+        overrideDamagePerTick = damagePerTick;
+        overrideDamagePerStack = damagePerStack;
+        overrideTickInterval = tickInterval;
+        overrideDuration = duration;
+        overrideCanStack = canStack;
+        overrideMaxStacks = maxStacks;
+        overrideApplyImmediately = applyImmediately;
+        RecalculateTotals();
+    }
+
+    public void ClearDotParams()
+    {
+        overrideDamagePerTick = null;
+        overrideDamagePerStack = null;
+        overrideTickInterval = null;
+        overrideDuration = null;
+        overrideCanStack = null;
+        overrideMaxStacks = null;
+        overrideApplyImmediately = null;
+        RecalculateTotals();
+    }
+
     private void RecalculateTotals()
     {
         totalStacks = 0;
@@ -80,16 +112,21 @@ public class PoisonCore : IDisposable
         {
             baseDamagePerTick = 0f;
             damagePerStack = 0f;
-            tickInterval = TickIntervalValue;
-            duration = DurationValue;
+            tickInterval = overrideTickInterval ?? TickIntervalValue;
+            duration = overrideDuration ?? DurationValue;
             return;
         }
 
-        baseDamagePerTick = BaseDamagePerTickValue * totalStacks;
-        damagePerStack = DamagePerStackValue * totalStacks;
-        tickInterval = TickIntervalValue;
-        duration = DurationValue;
+        float baseVal = overrideDamagePerTick ?? BaseDamagePerTickValue;
+        float stackVal = overrideDamagePerStack ?? DamagePerStackValue;
+        baseDamagePerTick = baseVal * totalStacks;
+        damagePerStack = stackVal * totalStacks;
+        tickInterval = overrideTickInterval ?? TickIntervalValue;
+        duration = overrideDuration ?? DurationValue;
     }
+
+    private int GetMaxStacks() => overrideMaxStacks ?? MaxStacksOnTarget;
+    private bool GetCanStack() => overrideCanStack ?? true;
 
     public void ApplyTo(Enemy enemy, Entity source, bool applyImmediately)
     {
@@ -100,16 +137,17 @@ public class PoisonCore : IDisposable
         if (!dotDebuff)
             dotDebuff = enemy.gameObject.AddComponent<DotDebuff>();
 
+        bool useApplyImmediately = overrideApplyImmediately ?? applyImmediately;
         dotDebuff.AddDot(
             baseDamagePerTick: baseDamagePerTick,
             damagePerStack: damagePerStack,
             tickInterval: tickInterval,
             duration: duration,
             source: source,
-            canStack: true,
+            canStack: GetCanStack(),
             id: "poison",
-            maxStacks: MaxStacksOnTarget,
-            applyImmediately: applyImmediately
+            maxStacks: GetMaxStacks(),
+            applyImmediately: useApplyImmediately
         );
     }
 

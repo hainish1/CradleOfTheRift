@@ -10,6 +10,7 @@
 //   </para>
 // </summary>
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,6 +18,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerMeleeController : MonoBehaviour
 {
+    /// <summary>Fired when a combo attack starts. Argument: combo index (1=first, 2=second, 3=third/finisher).</summary>
+    public event Action<int> OnMeleeComboAttack;
+    /// <summary>Fired when the current melee attack animation ends.</summary>
+    public event Action OnMeleeAttackEnd;
     private InputSystem_Actions _playerInput;
     private InputSystem_Actions.PlayerActions _playerActions;
     private InputAction _attackActions;
@@ -212,6 +217,7 @@ public class PlayerMeleeController : MonoBehaviour
         _weaponAnim.SetTrigger("Attack" + _currComboCount);
         
         _currComboCount++;
+        OnMeleeComboAttack?.Invoke(_currComboCount);
         _currAttackDuration = _attackDurations[_currComboCount - 1];
         if (_currComboCount < 3)
         {
@@ -296,9 +302,10 @@ public class PlayerMeleeController : MonoBehaviour
         Vector3 castDirection = currCenterPoint - _prevHitCapsuleCenterPointTemp;
 
         // Record all valid objects that were hit.
+        float castRadius = _hitCapsuleCastRadius * FinisherStrike.CapsuleRadiusMultiplier;
         int hitCountThisCast = Physics.CapsuleCastNonAlloc(prevStartPoint,
                                                            prevEndPoint,
-                                                           _hitCapsuleCastRadius,
+                                                           castRadius,
                                                            castDirection.normalized,
                                                            _objectsHitThisCast,
                                                            castDirection.magnitude,
@@ -439,6 +446,7 @@ public class PlayerMeleeController : MonoBehaviour
     private void OnAttackEnd()
     {
         _isAttacking = false;
+        OnMeleeAttackEnd?.Invoke();
         if (_currComboCount == 3) _currComboCount = 0;
         _prevHitCapsuleTempPointsInitialized = false;
         _objectsHitThisAttack.Clear();

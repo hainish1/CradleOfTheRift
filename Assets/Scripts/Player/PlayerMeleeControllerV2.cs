@@ -10,6 +10,7 @@
 //   </para>
 // </summary>
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,6 +18,11 @@ using UnityEngine.InputSystem;
 
 public class PlayerMeleeControllerV2 : MonoBehaviour
 {
+    /// <summary>Fired when a combo attack starts. Argument: combo index (1=first, 2=second/finisher for V2).</summary>
+    public event Action<int> OnMeleeComboAttack;
+    /// <summary>Fired when the current melee attack animation ends.</summary>
+    public event Action OnMeleeAttackEnd;
+
     private InputSystem_Actions _playerInput;
     private InputSystem_Actions.PlayerActions _playerActions;
     private InputAction _attackActions;
@@ -215,6 +221,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         CanAttack = false;
         
         _currComboCount++;
+        OnMeleeComboAttack?.Invoke(_currComboCount);
         _weaponAnim.SetTrigger("Attack" + _currComboCount);
         _currAttackDuration = _attackDurations[_currComboCount - 1];
         print($"_currAttackDuration: {_currAttackDuration}");
@@ -299,9 +306,10 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         Vector3 castDirection = currCenterPoint - _prevHitCapsuleCenterPointTemp;
 
         // Record all valid objects that were hit.
+        float castRadius = _hitCapsuleCastRadius * FinisherStrike.CapsuleRadiusMultiplier;
         int hitCountThisCast = Physics.CapsuleCastNonAlloc(prevStartPoint,
                                                            prevEndPoint,
-                                                           _hitCapsuleCastRadius,
+                                                           castRadius,
                                                            castDirection.normalized,
                                                            _objectsHitThisCast,
                                                            castDirection.magnitude,
@@ -382,13 +390,13 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// <param name="enemyScript"> The Enemy script. </param>
     private void ApplyDamageEffects(Enemy enemyScript)
     {
-        // Apply damage.
+        float damage = MeleeDamage * FinisherStrike.DamageMultiplier;
         IDamageable damageable = enemyScript.GetComponent<IDamageable>();
         if (damageable != null && !damageable.IsDead)
         {
-            damageable.TakeDamage(MeleeDamage);
-            CombatEvents.ReportDamage(_playerEntity, enemyScript, MeleeDamage);
-            Debug.Log($"Melee: {MeleeDamage} damage to {enemyScript.name}");
+            damageable.TakeDamage(damage);
+            CombatEvents.ReportDamage(_playerEntity, enemyScript, damage);
+            Debug.Log($"Melee: {damage} damage to {enemyScript.name}");
         }
 
         // Apply flash effect.
@@ -436,6 +444,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     {
         _isAttacking = false;
         _isRegistering = false;
+        OnMeleeAttackEnd?.Invoke();
 
         //print($"Attack end: {_currComboCount}");
         if (_currComboCount == _maxComboCount) _currComboCount = 0;

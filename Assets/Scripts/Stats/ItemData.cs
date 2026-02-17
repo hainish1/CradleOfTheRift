@@ -37,7 +37,10 @@ public enum ItemEffectKind
     LightningDash,
     OrbitingFireballsTest,
     ChainLightningTest,
-    PassThroughSpear
+    PassThroughSpear,
+    ToxicAttackSpeed,
+    FlameTrail,
+    FinisherStrike
 }
 
 [Serializable]
@@ -62,7 +65,14 @@ public class EffectSpec
     public float fallDamageBonusPerMeter = 2f;
     public float fallDamageBonusPerStack = 1f;
 
-    // DOT
+    // DOT 
+    public float dotDamagePerTick = 2f;
+    public float dotTickInterval = 1f;
+    public float dotDuration = 4f;
+    public float dotDamagePerStack = 2f;
+    public bool dotCanStack = true;
+    public int dotMaxStacks = 5;
+    public bool dotApplyImmediately = false;
 
     // Poison pool on dash
     public float poisonPoolRadius = 4f;
@@ -157,6 +167,21 @@ public class EffectSpec
 
     // Pass Through Spear
     [Min(0)] public int passThroughEnemyCount = 1;
+
+    // Toxic Attack Speed
+    public float toxicAttackSpeedRange = 10f;
+    [Tooltip("Attack speed multiplier per poison stack (e.g. 0.02 = +2% per stack)")]
+    [Range(0f, 0.2f)] public float toxicAttackSpeedPerStack = 0.02f;
+
+    // Flame Trail
+    public float flameTrailDamage = 15f;
+    public float flameTrailRadius = 2f;
+    public float flameTrailLifetime = 1.5f;
+    public float flameTrailSpawnInterval = 0.2f;
+
+    // Finisher Strike
+    public float finisherDamageMultiplier = 1.5f;
+    public float finisherRangeMultiplier = 1.3f;
 }
 
 public enum ItemRarity

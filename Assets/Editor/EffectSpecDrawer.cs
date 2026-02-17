@@ -190,6 +190,23 @@ public class EffectSpecDrawer : PropertyDrawer
         {
             "passThroughEnemyCount",
         },
+
+        ItemEffectKind.ToxicAttackSpeed => new[]
+        {
+            "toxicAttackSpeedRange",
+            "toxicAttackSpeedPerStack",
+        },
+
+        ItemEffectKind.FlameTrail => new[]
+        {
+            "flameTrailDamage", "flameTrailRadius", "flameTrailLifetime", "flameTrailSpawnInterval",
+        },
+
+        ItemEffectKind.FinisherStrike => new[]
+        {
+            "finisherDamageMultiplier", "finisherRangeMultiplier",
+        },
+
         _ => Array.Empty<string>(),
     };
 }
