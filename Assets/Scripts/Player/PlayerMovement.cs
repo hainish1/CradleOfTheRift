@@ -362,6 +362,18 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
+    ///     Locks player movement and actions for a set time.
+    ///   </para>
+    /// </summary>
+    /// <param name="duration"> How long to lock controls in seconds. </param>
+    public void LockMovement(float duration)
+    {
+        _kbControlsLockTimer = Mathf.Max(_kbControlsLockTimer, duration);
+        _kbDashLockTimer = Mathf.Max(_kbDashLockTimer, duration);
+    }
+
+    /// <summary>
+    ///   <para>
     ///     Gets all stat changes from the stats file on any frame this method is called.
     ///   </para>
     /// </summary>
@@ -1209,20 +1221,12 @@ public class PlayerMovement : MonoBehaviour
         return _currFlightEnergy;
     }
 
+    public bool IsFlying => _isFlying;
+
     private IEnumerator EnableDashVFX()
     {
         dashVFXPrefab.SetActive(true);
         yield return new WaitForSeconds(0.15f);
         dashVFXPrefab.SetActive(false);
     }
-
-    // private void PlayDashVFX(Vector3 position, Quaternion rotation)
-    // {
-    //     if(dashVFXPrefab != null)
-    //     {
-    //         GameObject vfx = Instantiate(dashVFXPrefab, position, rotation);
-    //         Debug.Log("Test: Position " + position + " Rotation " + rotation);
-    //         Destroy(vfx, 1.0f);
-    //     }
-    // }
 }
