@@ -48,8 +48,10 @@ public class EnemySpawner_2 : MonoBehaviour
 
     private struct SpawnDebugInfo
     {
-        public Vector3 position;
-        public Vector3 originPosition;
+        public Vector3 position;          // The final snapped position
+        public Vector3 attemptedPosition; // The initial "floating" position
+        public float searchRadius;        // The NavMesh.SamplePosition call
+        public Vector3 originPosition;    // Player location at time of spawn
         public bool isSuccess; 
         public bool isFallback;
     }
@@ -198,9 +200,8 @@ public class EnemySpawner_2 : MonoBehaviour
         // Nothing found in either
         if (showSpawnDebug)
         {
-            RecordDebugSpawn(playerLocation.position, false, false);
+            RecordDebugSpawn(playerLocation.position, playerLocation.position, -1, false, false);
         }
-        ;
     }
 
     private bool TryExecuteSpawn(EnemyType enemy, float currentSearchRadius)
@@ -219,7 +220,7 @@ public class EnemySpawner_2 : MonoBehaviour
                 // Get node radius for edge calculation
                 float nodeRadius = 0f;
                 if (nodeResults[i] is SphereCollider sphere) {
-                    nodeRadius = sphere.radius * node.transform.lossyScale.x;
+                    nodeRadius = sphere.radius * Mathf.Abs(node.transform.lossyScale.x);
                 }                
                 float distanceToNearEdge = dist - nodeRadius;
 
@@ -253,7 +254,11 @@ public class EnemySpawner_2 : MonoBehaviour
         float radius = 1f; 
         if (selectedNode.TryGetComponent(out SphereCollider sphere))
         {
-            radius = sphere.radius * selectedNode.transform.lossyScale.x;
+            float maxScale = Mathf.Max(
+                Mathf.Abs(selectedNode.transform.lossyScale.x), 
+                Mathf.Abs(selectedNode.transform.lossyScale.z)
+            );
+            radius = sphere.radius * maxScale;
         }
 
         // Pick a random X/Z point within the circle
@@ -261,25 +266,36 @@ public class EnemySpawner_2 : MonoBehaviour
         Vector3 randomOffset = new Vector3(randomCircle.x, 0, randomCircle.y);
 
         // Final position starts at the Node's altitude (Y)
-        Vector3 spawnPos = selectedNode.transform.position + randomOffset;
+        Vector3 initialSpawnPos = selectedNode.transform.position + randomOffset;
+        Vector3 finalSpawnPos = initialSpawnPos;
 
         // Snap the position to the ground using the NavMesh
-        if (NavMesh.SamplePosition(spawnPos, out NavMeshHit hit, radius + 2f, NavMesh.AllAreas))
+        float searchRadius = radius + 2f;
+        if (NavMesh.SamplePosition(initialSpawnPos, out NavMeshHit hit, searchRadius, NavMesh.AllAreas))
         {
-            spawnPos = hit.position;
+            finalSpawnPos = hit.position;
+
+            // Play visual effects and instantiate the enemy
+            PlaySpawnVFX(finalSpawnPos, Quaternion.identity);
+            GameObject enemyObj = Instantiate(enemy.prefab, finalSpawnPos, Quaternion.identity);
+
+            // Log the spawn for Gizmo debugging
+            if (showSpawnDebug)
+            {
+                RecordDebugSpawn(finalSpawnPos, initialSpawnPos, searchRadius, true, isFallback);
+            }
+
+            HandleEnemySpawned(enemyObj);
         }
-
-        // Play visual effects and instantiate the enemy
-        PlaySpawnVFX(spawnPos, Quaternion.identity);
-        GameObject enemyObj = Instantiate(enemy.prefab, spawnPos, Quaternion.identity);
-
-        // Log the spawn for Gizmo debugging
-        if (showSpawnDebug)
+        else
         {
-            RecordDebugSpawn(spawnPos, true, isFallback);
+            // Log the failed spawn attempt for Gizmo debugging
+            if (showSpawnDebug)
+            {
+                Debug.LogWarning($"Failed to find NavMesh position for spawn at {initialSpawnPos} with search radius {searchRadius}");
+                RecordDebugSpawn(initialSpawnPos, initialSpawnPos, searchRadius, false, isFallback);
+            }
         }
-
-        HandleEnemySpawned(enemyObj);
     }
 
     private void OnDrawGizmos()
@@ -298,26 +314,30 @@ public class EnemySpawner_2 : MonoBehaviour
 
         foreach (var spawn in recentSpawns)
         {
+            // Draw the search sphere using a faint gray/yellow
+            Gizmos.color = new Color(1f, 0.92f, 0.016f, 0.7f);
+            Gizmos.DrawWireSphere(spawn.attemptedPosition, spawn.searchRadius);
             if (spawn.isSuccess)
             {
-                // Red for successful spawns
-                // Cyan for fallback spawns
-                Color debugColor = spawn.isFallback ? Color.cyan : new Color(0.6f, 0.0f, 0.0f, 1.0f); 
+                // Draw the "Start" point (where the system attempted to spawn before snapping to the NavMesh)
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawSphere(spawn.attemptedPosition, 0.2f);
+
+                // Draw a line to the "Snapped" point
+                Gizmos.color = Color.white;
+                Gizmos.DrawLine(spawn.attemptedPosition, spawn.position);
+
+                // Draw the final spawn point
+                Color debugColor = spawn.isFallback ? Color.cyan : Color.red; 
                 Gizmos.color = debugColor;
-                
-                // Draw the spawn point and a vertical marker
-                Gizmos.DrawSphere(spawn.position, 1.5f);
-                Gizmos.DrawLine(spawn.position, spawn.position + Vector3.up * 5f);
-                
-                // Draw the path from the player's old position
-                Gizmos.color = new Color(debugColor.r, debugColor.g, debugColor.b, 1f); // 25% Opacity
-                Gizmos.DrawLine(spawn.originPosition, spawn.position);
+                Gizmos.DrawSphere(spawn.position, 0.5f);
             }
             else
             {
-                // Purple for absolute failure (no nodes found)
-                Gizmos.color = new Color(0.3f, 0.0f, 0.3f, 1.0f);
-                Gizmos.DrawSphere(spawn.position, 1.5f);
+                // Purple for failure
+                Gizmos.color = Color.magenta;
+                Gizmos.DrawWireSphere(spawn.attemptedPosition, 0.5f);
+                Gizmos.DrawLine(spawn.attemptedPosition, spawn.attemptedPosition + Vector3.up * 2f);
             }
         }
     }
@@ -410,11 +430,13 @@ public class EnemySpawner_2 : MonoBehaviour
             playerLocation = playerGo.transform;
     }
 
-    private void RecordDebugSpawn(Vector3 pos, bool success, bool fallback)
+    private void RecordDebugSpawn(Vector3 finalPos, Vector3 attemptedPos, float searchRadius, bool success, bool fallback)
     {
         recentSpawns.Add(new SpawnDebugInfo 
         { 
-            position = pos, 
+            position = finalPos,
+            attemptedPosition = attemptedPos, 
+            searchRadius = searchRadius,
             originPosition = playerLocation.position,
             isSuccess = success, 
             isFallback = fallback 
