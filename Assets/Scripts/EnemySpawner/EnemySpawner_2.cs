@@ -200,6 +200,7 @@ public class EnemySpawner_2 : MonoBehaviour
         // Nothing found in either
         if (showSpawnDebug)
         {
+            Debug.LogWarning($"Failed to find a NavMesh position");
             RecordDebugSpawn(playerLocation.position, playerLocation.position, -1, false, false);
         }
     }
@@ -292,7 +293,6 @@ public class EnemySpawner_2 : MonoBehaviour
             // Log the failed spawn attempt for Gizmo debugging
             if (showSpawnDebug)
             {
-                Debug.LogWarning($"Failed to find NavMesh position for spawn at {initialSpawnPos} with search radius {searchRadius}");
                 RecordDebugSpawn(initialSpawnPos, initialSpawnPos, searchRadius, false, isFallback);
             }
         }
