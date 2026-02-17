@@ -102,7 +102,7 @@ public class EndScreenUI : MonoBehaviour
         {
             playAgainButton.RegisterCallback<ClickEvent>(evt =>
             {
-                Debug.Log("Play Again clicked!");
+                // Debug.Log("Play Again clicked!");
                 Time.timeScale = 1f; // unpause
                 PauseManager.GameIsPaused = false;
                 PauseManager.CurrentPauseState = PauseManager.PauseState.None;
@@ -111,7 +111,7 @@ public class EndScreenUI : MonoBehaviour
                 UnityEngine.Cursor.lockState = CursorLockMode.Locked;
                 UnityEngine.Cursor.visible = false;
 
-                SceneManager.LoadScene("Design"); // or your current game scene name
+                SceneManager.LoadScene("Design 1");
             });
         }
         if (mainMenuButton != null)
