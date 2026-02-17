@@ -5,6 +5,8 @@ using UnityEngine;
 public class ChainLightning : IDisposable
 {
     public static bool IsProcessingChain = false;
+    public const float DefaultRange = 16f;
+    private const float VFXDuration = 0.5f;
 
     private Entity owner;
     private float baseChainDamagePercent;
@@ -19,8 +21,10 @@ public class ChainLightning : IDisposable
     private float chainDamagePercent;
     private int maxChainCount;
     private float chainRange;
+    
+    private HashSet<Enemy> hitEnemiesCache = new HashSet<Enemy>();
 
-    public static GameObject LightningVFX { get; private set; }
+    public float CurrentRange => chainRange;
 
     public ChainLightning(Entity owner, float chainDamagePercent, int maxChainCount, float chainRange, int initialStacks = 1, float durationSec = -1f, GameObject lightningVFX = null)
     {
@@ -33,7 +37,6 @@ public class ChainLightning : IDisposable
         timer = durationSec;
 
         enemyLayer = LayerMask.GetMask("Enemy");
-        LightningVFX = lightningVFX;
         UpdateValues();
         CombatEvents.DamageDealt += OnDamageDealt;
     }
@@ -59,16 +62,20 @@ public class ChainLightning : IDisposable
         if (timer <= 0f) Dispose();
     }
 
-    private void OnDamageDealt(Entity attacker, Component target, float damage)
+    private void OnDamageDealt(Entity attacker, Component target, float damage, ElementType triggerElement)
     {
         if (disposed || attacker != owner || IsProcessingChain) return;
+
+        if (!ElementSystem.CanTrigger(triggerElement, ElementType.Lightning)) return;
 
         Enemy enemy = target as Enemy;
         if (enemy == null) return;
 
-        HashSet<Enemy> hit = new HashSet<Enemy> { enemy };
+        // reset the hit list and start the chain
+        hitEnemiesCache.Clear();
+        hitEnemiesCache.Add(enemy);
         float chainDamage = damage * chainDamagePercent;
-        ChainFromEnemy(enemy, enemy.transform.position, chainDamage, 0, hit);
+        ChainFromEnemy(enemy, enemy.transform.position, chainDamage, 0, hitEnemiesCache);
     }
 
     private void ChainFromEnemy(Enemy from, Vector3 fromPos, float baseDamage, int chainNum, HashSet<Enemy> hit)
@@ -101,65 +108,20 @@ public class ChainLightning : IDisposable
         {
             hit.Add(closest);
             
-            IDamageable damageable = closest.GetComponent<IDamageable>();
-            if (damageable != null && !damageable.IsDead)
-            {
-                damageable.TakeDamage(baseDamage);
-                CombatEvents.ReportDamage(owner, closest, baseDamage);
-                CreateLightningEffect(fromPos, closest.transform.position);
-                ChainFromEnemy(closest, closest.transform.position, baseDamage, chainNum + 1, hit);
-            }
+            LightningCore.ApplyLightningDamage(owner, closest, baseDamage);
+            LightningCore.CreateLightningVFX(from.transform, closest.transform, chainRange, VFXDuration, null, 0.5f, 0.5f, 0.18f);
+            
+            ChainFromEnemy(closest, closest.transform.position, baseDamage, chainNum + 1, hit);
         }
 
         IsProcessingChain = false;
     }
 
-    private void CreateLightningEffect(Vector3 from, Vector3 to)
-    {
-        if (LightningVFX != null)
-        {
-            GameObject fx = UnityEngine.Object.Instantiate(LightningVFX);
-            fx.transform.position = from;
-            fx.transform.LookAt(to);
-            UnityEngine.Object.Destroy(fx, 1f);
-        }
-        else
-        {
-            GameObject go = new GameObject("Lightning");
-            go.transform.position = from;
-
-            LineRenderer lr = go.AddComponent<LineRenderer>();
-            lr.material = new Material(Shader.Find("Sprites/Default"));
-            lr.startColor = new Color(0.8f, 0.9f, 1f, 1f);
-            lr.endColor = new Color(0.5f, 0.7f, 1f, 0.8f);
-            lr.startWidth = 0.3f;
-            lr.endWidth = 0.15f;
-            lr.positionCount = 8;
-            lr.useWorldSpace = true;
-
-            Vector3 dir = (to - from).normalized;
-            Vector3 right = Vector3.Cross(dir, Vector3.up).normalized;
-            if (right.sqrMagnitude < 0.1f) right = Vector3.Cross(dir, Vector3.right).normalized;
-
-            for (int i = 0; i < 8; i++)
-            {
-                float t = i / 7f;
-                Vector3 pos = Vector3.Lerp(from, to, t);
-                float offset = Mathf.Sin(t * Mathf.PI) * 0.5f;
-                pos += right * UnityEngine.Random.Range(-offset, offset);
-                pos += UnityEngine.Random.insideUnitSphere * 0.2f;
-                lr.SetPosition(i, pos);
-            }
-
-            UnityEngine.Object.Destroy(go, 0.2f);
-        }
-    }
 
     public void Dispose()
     {
         if (disposed) return;
         disposed = true;
-        LightningVFX = null;
         CombatEvents.DamageDealt -= OnDamageDealt;
     }
 }

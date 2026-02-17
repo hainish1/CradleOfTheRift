@@ -31,7 +31,7 @@ public class ExtractionManager : MonoBehaviour
         if (bossPool != null) bossPool.InitializePool();
     }
 
-public void RegisterZone(ExtractionZone zone)
+    public void RegisterZone(ExtractionZone zone)
     {
         allZones.Add(zone);
         zone.ExtractionInteracted += OnZoneStarted; 
@@ -73,8 +73,6 @@ public void RegisterZone(ExtractionZone zone)
     }
     private void TriggerGlobalWin()
     {
-        PlayerHealth.instance.SetCanTakeDamage(false);
-        PlayerHealth.GameIsOver = true; 
         OnGameWon?.Invoke(); // Tell the UI to show the screen
     }
     

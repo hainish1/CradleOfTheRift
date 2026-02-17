@@ -36,10 +36,23 @@ public class AbilityUIController : MonoBehaviour
         var root = GetComponent<UIDocument>().rootVisualElement;
         abilityBar = root.Q<VisualElement>("AbilityBar");
 
-        playerManager = FindFirstObjectByType<PlayerManager>();
-        if (playerManager == null)
+        // playerManager = FindFirstObjectByType<PlayerManager>();
+        // if (playerManager == null)
+        // {
+        //     Debug.LogError("PlayerManager not found!");
+        //     return;
+        // }
+        if(playerManager == null)
         {
-            Debug.LogError("PlayerManager not found!");
+            playerManager = PlayerLocator.FindPlayerComponent<PlayerManager>();
+        }
+        if(playerManager == null)
+        {
+            playerManager = FindFirstObjectByType<PlayerManager>(); // fallback
+        }
+        if(playerManager == null)
+        {
+            Debug.Log("Player manager not found");
             return;
         }
 

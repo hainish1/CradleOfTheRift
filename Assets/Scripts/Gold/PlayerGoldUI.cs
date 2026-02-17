@@ -8,15 +8,39 @@ public class PlayerGoldUI : MonoBehaviour
     [SerializeField]
     private PlayerGold playerGold;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void OnEnable()
     {
-        string labelName = "GoldLabel";
-        VisualElement root = GetComponent<UIDocument>().rootVisualElement;
+        // Setup UI References
+        if (goldLabel == null)
+        {
+            VisualElement root = GetComponent<UIDocument>().rootVisualElement;
+            goldLabel = root.Q<Label>(name: "GoldLabel");
+        }
 
-        this.goldLabel = root.Q<Label>(name: labelName);
+        // Find the player if not assigned
+        if (playerGold == null)
+        {
+            playerGold = PlayerLocator.FindPlayerComponent<PlayerGold>();
+        }
 
-        this.playerGold.goldChanged += this.OnGoldChanged;
+        // Subscribe and initialize
+        if (playerGold != null)
+        {
+            playerGold.goldChanged += OnGoldChanged;
+            OnGoldChanged(playerGold.Gold); // Set initial value
+        }
+        else
+        {
+            Debug.LogWarning("PLayerGold UI is not assigned, or player not found or sum");
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (playerGold != null)
+        {
+            playerGold.goldChanged -= OnGoldChanged;
+        }
     }
 
     private void OnGoldChanged(int gold) {

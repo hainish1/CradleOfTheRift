@@ -20,6 +20,7 @@ public class EnemySpawner : MonoBehaviour
     [Header("Settings")]
     [SerializeField]
     private float timeBetweenWaves = 8f;
+    [SerializeField] private GameObject spawnVFXPrefab;
 
     // This is now controlled by the Difficulty Scaler object.
     [Tooltip("If the DifficultyScaler object is set, this field is ignored!")]
@@ -89,19 +90,20 @@ public class EnemySpawner : MonoBehaviour
     public event Action<int> CurrentWaveChanged;
     [SerializeField]
     private bool isDevModeEnabled = false;
-public bool IsDevModeEnabled
-{
-    get => this.isDevModeEnabled;
-    set
+    public bool IsDevModeEnabled
+    {
+        get => this.isDevModeEnabled;
+        set
         {
             this.isDevModeEnabled = value;
             DevModeChanged?.Invoke(this.isDevModeEnabled);
+        }
     }
-}
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        EnsurePlayerLocation();
         this.extractionZone.ExtractionInteracted += OnExtractionZoneStarted;
         this.extractionZone.ExtractionFinished += OnExtractionZoneFinished;
 
@@ -243,6 +245,10 @@ public bool IsDevModeEnabled
         }
 
         spawnDebugList.Add((location, true));
+
+        // Play spawn VFX
+        PlaySpawnVFX(location, Quaternion.identity);
+
         GameObject enemyObj = Instantiate(enemy.prefab, location, Quaternion.identity);
 
         ScaleEnemyHealth(enemyObj);
@@ -292,7 +298,7 @@ public bool IsDevModeEnabled
     }
 
     private void ScaleEnemyDamage(GameObject enemyObj)
-    {   
+    {
         EnemyMelee enemyMelee = enemyObj.GetComponent<EnemyMelee>();
 
         if (enemyMelee != null)
@@ -462,6 +468,23 @@ public bool IsDevModeEnabled
         Debug.Log("ENEMY SIZE: " + size);
         return size;
     }
+
+    private void PlaySpawnVFX(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation)
+    {
+        if (spawnVFXPrefab == null) return;
+        GameObject vfx = Instantiate(spawnVFXPrefab, position, rotation);
+
+        Destroy(vfx, 2.0f); // Should prob make the VFX auto destroy instead of doing it here.
+    }
+
+    private void EnsurePlayerLocation()
+    {
+        if (playerLocation != null) return;
+
+        var playerGo = PlayerLocator.FindPlayerGameObject();
+        if (playerGo != null)
+            playerLocation = playerGo.transform;
+    }
 }
 
 
@@ -471,5 +494,5 @@ public class EnemyType
     public string name;
     public GameObject prefab;
     public int cost;
-    public bool isFlying;    
+    public bool isFlying;
 }

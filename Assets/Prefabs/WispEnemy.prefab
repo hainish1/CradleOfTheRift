@@ -236,6 +236,37 @@ Transform:
   - {fileID: 6808038407123788678}
   m_Father: {fileID: 6855515103189422601}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1912683562284241504
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2550525461421281247}
+  m_Layer: 0
+  m_Name: deathVFXSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2550525461421281247
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1912683562284241504}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -1, z: -0, w: 0}
+  m_LocalPosition: {x: 0, y: 1.372, z: 0}
+  m_LocalScale: {x: 0.4651163, y: 0.4651163, z: 0.4651163}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9083025586867818779}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2349104357696762519
 GameObject:
   m_ObjectHideFlags: 0
@@ -348,7 +379,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3216849848018920081}
   serializedVersion: 8
-  lengthInSec: 1
+  lengthInSec: 1.5
   simulationSpeed: 2
   stopAction: 0
   cullingMode: 0
@@ -423,7 +454,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 3
+      scalar: 1.5
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -476,7 +507,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.12
+      scalar: 0.5
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -594,7 +625,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.3
+      scalar: 0.5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -911,7 +942,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 200
+    maxNumParticles: 120
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -1864,7 +1895,7 @@ ParticleSystem:
     y:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.6
+      scalar: 1
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -5901,6 +5932,7 @@ Transform:
   - {fileID: 265669369783172808}
   - {fileID: 7588448968403286001}
   - {fileID: 5164896839454679108}
+  - {fileID: 2550525461421281247}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!65 &6702234162762134893
@@ -5943,7 +5975,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 1.5
-  m_BaseOffset: 0
+  m_BaseOffset: -2
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &4412303297756605295
@@ -5973,6 +6005,8 @@ MonoBehaviour:
   flyHeight: 3
   verticalSmoothTime: 2.5
   horizontalSmoothTime: 2.5
+  maxHorizontalSpeed: 12
+  maxVerticalSpeed: 10
   chaseSpeed: 5
   attackRange: 15
   desiredDistance: 6
@@ -5983,27 +6017,31 @@ MonoBehaviour:
   turnSpeedWhileAiming: 20
   agentAngularSpeed: 720
   agentAcceleration: 100
+  spreadInterval: 0.2
+  spreadRadiusJitter: 2
+  wispSeparationRadius: 20
+  wispSeparationStrength: 2
+  navSampleDistance: 6
+  angleAdaptSpeed: 1.5
   projectileSpeed: 30
   fireCooldown: 0.9
-  recoveryDuration: 1
+  recoveryDuration: 2
   firePoint: {fileID: 7588448968403286001}
   projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
   spawnOffset: 0.1
-  projectileMask:
-    serializedVersion: 2
-    m_Bits: 1361
-
   shootSFX:
     idInternal: 0
     valueGuidInternal: 
     WwiseObjectReference: {fileID: 11400000, guid: ea4f29e582160464f8db6eee986250d2, type: 2}
-
+  shootVFX: {fileID: 4658278565933542678, guid: c165dd999cde7aa47b2e85c93cef47f6, type: 3}
+  projectileMask:
+    serializedVersion: 2
+    m_Bits: 1361
   obstacleMask:
     serializedVersion: 2
     m_Bits: 1
-	
-  recoveryTime: 1
-  orbitVisuals: {fileID: -3325380021058808314}
+  recoveryTime: 2
+  orbitVisuals: {fileID: 0}
 --- !u!114 &204557455612082024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6053,7 +6091,10 @@ MonoBehaviour:
   maxHealth: 50
   cleanupDelay: 0
   baseHealth: 50
+  xpReward: 10
   damageVisuals: {fileID: 6516409030888228098}
+  deathVFX: {fileID: 5162910912013668194, guid: cf82839c411151342a7b2337bda9fb34, type: 3}
+  deathVFXSpawnPoint: {fileID: 2550525461421281247}
   deathSFX:
     idInternal: 0
     valueGuidInternal: 

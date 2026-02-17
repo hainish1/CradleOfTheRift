@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: PlayerBaseStats
   m_EditorClassIdentifier: 
   meleeDamage: 10
-  meleeAttackSpeed: 0.7
-  meleeAttackRate: 0.7
+  meleeAttackSpeed: 1.2
+  meleeAttackRate: 0.25
   projectileDamage: 30
   projectileFireRate: 0.5
-  fireCharges: 1
+  fireCharges: 100
   fireChargeCooldown: 4
   projectileSpread: 0.5
   enableHomingProjectiles: 0
@@ -35,7 +35,7 @@ MonoBehaviour:
   dashDistance: 14
   dashSpeed: 100
   dashCooldown: 4
-  dashCharges: 2
+  dashCharges: 3
   jumpForce: 20
   driftDescentDivisor: 0.25
   flightMaxSpeed: 20

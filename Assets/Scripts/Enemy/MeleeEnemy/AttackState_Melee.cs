@@ -1,86 +1,57 @@
 using UnityEngine;
 
 /// <summary>
-/// Class - Represents the Attack State for Melee Enemy
+/// Class - Represents the Attack State for Melee Enemy.
+/// Uses swept-sphere collision during the leap
 /// </summary>
 public class AttackState_Melee : EnemyState
 {
     private EnemyMelee enemyMelee;
+    private AgentKnockBack knockBack;
 
-    private enum Phase { Windup, Leap, Charge }
+    private enum Phase { Windup, Leap }
     private Phase phase;
     private float timer;
-    // private Vector3 chargeDirection;
-    // private Quaternion lockedChargeRot;
-
-    // private Vector3 leapStartPosition;
-    // private Vector3 leapTargetPosition;
-    private float leapTimer;
     private Vector3 velocity;
     private bool hasLanded;
 
-    // safety variables
     private float currentFlightTime;
     private float estimatedFlightDuration;
+    private bool hasReachedPeak;
 
-    // float endTime;
-
-    // Sorry Hainish!!! No Problem MAAAN
-    // This is used to detect when the phase changes from
-    // Windup to leap.
-    // This helps to know when to play the slime jump sfx.
+    // Tracks phase transitions 
     private Phase lastPhase;
 
     public AttackState_Melee(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
         enemyMelee = enemy as EnemyMelee;
-
+        knockBack = enemy.GetComponent<AgentKnockBack>();
     }
 
     /// <summary>
-    /// What to do when Enemy enters the Attack State. Take control from navmeshagent and control physics manually
+    /// Enter: pause agent, reset flags, begin windup freeze.
     /// </summary>
     public override void Enter()
     {
-        // // quick time window to do a hit
-        // endTime = Time.time + 0.15f;
-        if (enemy.agent != null)
-        {
-            enemy.agent.isStopped = true;
-            enemy.agent.velocity = Vector3.zero;
-            enemy.agent.ResetPath();
-            enemy.agent.updateRotation = false;
-        }
+        enemyMelee.PauseAgent();
 
         enemyMelee.hitAppliedThisAttack = false;
         enemyMelee.EnableHitBox(false);
+        enemyMelee.isInAir = false;
 
-        // small windup, basically freeze in place
         phase = Phase.Windup;
         lastPhase = phase;
         timer = enemyMelee.windupTime;
-        leapTimer = 0f;
         hasLanded = false;
-        // TryApplyHit();
+        hasReachedPeak = false;
+
+        // Squash animation as the slime winds up
+        enemyMelee.height.GetComponent<Animator>().SetTrigger("squash");
     }
 
 
-    /// <summary>
-    /// Face the Target, Enable the Attack Hitbox, and Charge towards the player, once done change to Recovery State
-    /// </summary>
     public override void Update()
     {
-
-        // timer -= Time.deltaTime;
-
-        // var kb = enemy.GetComponent<AgentKnockBack>();
-        // if(kb != null && kb.isActiveAndEnabled)
-        // {
-        //     stateMachine.ChangeState(enemyMelee.GetRecovery()); // switch to recovery early
-        //     return;
-        // }
-
-
         switch (phase)
         {
             case Phase.Windup:
@@ -90,11 +61,11 @@ public class AttackState_Melee : EnemyState
                 HandleLeap();
                 break;
         }
-        // If we just phase changed from windup to leap, play slime jump sfx.
+
         if (lastPhase == Phase.Windup && phase == Phase.Leap)
         {
-            // Play the slime jump sound effect.
             enemyMelee.PlayJumpSFX();
+            enemyMelee.PlayMeleePSVFX(enemyMelee.jumpPoofVFXPrefab, enemyMelee.jumpVFXAttackPoint);
         }
 
         lastPhase = phase;
@@ -102,12 +73,52 @@ public class AttackState_Melee : EnemyState
 
     private void HandleWindup()
     {
+        // Wait for any active ground-knockback to finish before leaping
+        if (knockBack != null && knockBack.IsKnockbackActive)
+        {
+            timer = enemyMelee.windupTime;
+            return;
+        }
+
+        // stick to ground every frame during windup 
+        SnapToGround();
+
         FaceTarget(enemy.turnSpeed * 2f);
         timer -= Time.deltaTime;
 
         if (timer <= 0f)
         {
+            // If knockback pushed us too far, abort the leap and chase instead
+            if (enemy.target != null)
+            {
+                float distToTarget = Vector3.Distance(
+                    enemy.transform.position, enemy.target.position);
+
+                if (distToTarget > enemyMelee.leapAttackRange * 1.5f)
+                {
+                    enemyMelee.ResumeAgent();
+                    stateMachine.ChangeState(enemyMelee.GetChase());
+                    return;
+                }
+            }
+
             StartLeap();
+        }
+    }
+
+    /// <summary>
+    /// Raycast from high above straight down to find the physics ground surface
+    /// </summary>
+    private void SnapToGround()
+    {
+        Vector3 origin = enemy.transform.position + Vector3.up * 5f;
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 10f,
+                enemyMelee.groundMask, QueryTriggerInteraction.Ignore))
+        {
+            float halfHeight = enemy.agent != null ? enemy.agent.height * 0.7f : 0f;
+            Vector3 pos = enemy.transform.position;
+            pos.y = hit.point.y + (halfHeight + enemyMelee.startHeightAboveGround);
+            enemy.transform.position = pos;
         }
     }
 
@@ -115,111 +126,123 @@ public class AttackState_Melee : EnemyState
     {
         phase = Phase.Leap;
         enemyMelee.EnableHitBox(true);
-        if (enemy.agent != null) enemy.agent.updatePosition = false;
+        enemyMelee.isInAir = true;
 
+        // Stretch animation as the slime goes up
+        enemyMelee.height.GetComponent<Animator>().SetTrigger("stretch");
 
-        // NEW overshoot logic
         Vector3 startPos = enemy.transform.position;
-        Vector3 targetPos = startPos + enemy.transform.forward * 2f; // fallback
+        Vector3 targetPos = startPos + enemy.transform.forward * 2f;
 
         if (enemy.target != null)
         {
             Vector3 rawTargetPos = enemy.target.position;
+            Vector3 jumpDir = rawTargetPos - startPos;
+            jumpDir.y = 0;
 
-            // calc distance from enemy to player
-            Vector3 jumpDir = (rawTargetPos - startPos).normalized;
-            jumpDir.y = 0; // keep horizontal
+            // Lock the leap distance to where the player is NOW.
+            float distToPlayer = jumpDir.magnitude;
+            jumpDir = jumpDir.normalized;
 
-            targetPos = rawTargetPos + jumpDir * enemyMelee.leapOverShootDistance;
-
+            float overshoot = Mathf.Min(enemyMelee.leapOverShootDistance, distToPlayer * 0.5f);
+            targetPos = startPos + jumpDir * (distToPlayer + overshoot);
         }
 
-        // calculate Physics Trajectory and get duration
         velocity = enemyMelee.CalculateBallisticVelocity(
-            startPos,
-            targetPos,
-            enemyMelee.leapHeight,
-            out estimatedFlightDuration
-        );
+            startPos, targetPos, enemyMelee.leapHeight, out estimatedFlightDuration);
 
-        // look now
-        Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
-        if (horizontalVelocity.sqrMagnitude > 0.001f)
-        {
-            enemy.transform.rotation = Quaternion.LookRotation(horizontalVelocity);
-        }
+        // Face the jump direction
+        Vector3 hVel = new Vector3(velocity.x, 0, velocity.z);
+        if (hVel.sqrMagnitude > 0.001f)
+            enemy.transform.rotation = Quaternion.LookRotation(hVel);
 
-
+        enemyMelee.inAirVelocity = velocity;
         currentFlightTime = 0f;
+        hasReachedPeak = false;
     }
 
+    /// <summary>
+    /// Core leap- gravity -> swept-sphere move -> landing detection
+    /// Mid air knockback impulses are picked up from inAirVelocity
+    /// </summary>
     private void HandleLeap()
     {
+        if (hasLanded) return;
+
         float dt = Time.deltaTime;
         currentFlightTime += dt;
 
-        // apply gravity
+        // Pick up any mid air knockback impulse that was added externally
+        velocity = enemyMelee.inAirVelocity;
+
+        // Gravity
         velocity.y += Physics.gravity.y * enemyMelee.gravityScale * dt;
 
-        // move
-        enemy.transform.position += velocity * dt;
+        // track when the slime has gone up and start descending
+        if (!hasReachedPeak && velocity.y <= 0f)
+            hasReachedPeak = true;
 
-
-        // check landing
-        if (currentFlightTime > estimatedFlightDuration * 0.5f)
+        // only check for landing after the slime has actually risen
+        if (hasReachedPeak)
         {
-            if (velocity.y < 0)
+            if (enemyMelee.GroundCheck(out Vector3 gp))
             {
-                CheckGroundLanding();
+                Land(gp);
+                return;
             }
         }
 
-    }
-    private void CheckGroundLanding()
-    {
-        if (Physics.Raycast(enemy.transform.position + Vector3.up * 0.5f, Vector3.down, out RaycastHit hit, 0.8f, enemyMelee.groundMask))
+        velocity = enemyMelee.SweepMove(velocity, dt);
+        enemyMelee.inAirVelocity = velocity;
+
+        // Keep agent in sync 
+        if (enemy.agent != null && enemy.agent.isOnNavMesh)
+            enemy.agent.nextPosition = enemy.transform.position;
+
+        //prevent infinite flight
+        if (currentFlightTime > estimatedFlightDuration * 2.5f)
         {
-            Land(hit.point);
+            Land(enemy.transform.position);
         }
     }
 
+    /// <summary>
+    /// Snap to ground, clear in air state, resume agent, go to recovery
+    /// </summary>
     private void Land(Vector3 groundPoint)
     {
-        enemy.transform.position = groundPoint;
         if (hasLanded) return;
         hasLanded = true;
 
+        float halfHeight = enemy.agent != null ? enemy.agent.height * 0.7f : 0f;
+        enemy.transform.position = groundPoint + Vector3.up * (halfHeight + enemyMelee.startHeightAboveGround);
+        enemyMelee.isInAir = false;
+        enemyMelee.inAirVelocity = Vector3.zero;
         enemyMelee.EnableHitBox(false);
 
-        if (enemy.agent != null)
-        {
-            enemy.agent.ResetPath();
-            enemy.agent.Warp(groundPoint);
-            enemy.agent.nextPosition = enemy.transform.position;
-            enemy.agent.velocity = Vector3.zero;
+        // Squash animation on landing impact
+        enemyMelee.height.GetComponent<Animator>().SetTrigger("squash");
 
-            enemy.agent.updatePosition = true;
-            enemy.agent.updateRotation = true;
-            enemy.agent.isStopped = true;
-        }
+        // Always enforce cooldown on landing so the slime
+        // can never immediately leap again after missing once
+        enemy.nextAttackAllowed = Time.time + enemy.attackCooldown;
+
+        // Snap back onto NavMesh  
+        enemyMelee.ResumeAgent();
 
         stateMachine.ChangeState(enemyMelee.GetRecovery());
     }
 
-
-    /// <summary>
-    /// When exiting the Attack State, disable hitbox, and give control back to navmeshagent
-    /// </summary>
     public override void Exit()
     {
         enemyMelee.EnableHitBox(false);
-        if (enemy.agent != null)
+        enemyMelee.isInAir = false;
+        enemyMelee.inAirVelocity = Vector3.zero;
+
+        // Safety- resume agent if Land() was never called
+        if (enemy.agent != null && !enemy.agent.updatePosition)
         {
-            // enemy.agent.nextPosition = enemy.transform.position;
-            enemy.agent.updateRotation = true; // give control back to agent
-            enemy.agent.updatePosition = true;
-            // enemy.agent.Warp(enemy.transform.position);
-            enemy.agent.isStopped = false;
+            enemyMelee.ResumeAgent();
         }
     }
 }

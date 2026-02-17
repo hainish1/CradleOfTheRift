@@ -1,0 +1,48 @@
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+}
+
+.panel {
+    width: 600px;
+    padding: 30px;
+    background-color: rgb(30, 30, 30);
+    border-radius: 12px;
+    border-color: rgb(80, 180, 255);
+    border-width: 2px;
+    align-items: center;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.choices-container {
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+}
+
+.choice-btn {
+    width: 160px;
+    height: 80px;
+    font-size: 18px;
+    color: white;
+    background-color: rgb(60, 60, 60);
+    border-color: rgb(80, 180, 255);
+    border-width: 1px;
+    border-radius: 8px;
+}
+
+.choice-btn:hover {
+    background-color: rgb(80, 120, 180);
+}
