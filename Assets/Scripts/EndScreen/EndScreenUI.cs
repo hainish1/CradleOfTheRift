@@ -131,7 +131,7 @@ public class EndScreenUI : MonoBehaviour
         {
             quitButton.RegisterCallback<ClickEvent>(evt =>
             {
-                Debug.Log("Quit clicked!");
+                // Debug.Log("Quit clicked!");
                 Application.Quit();
 
 #if UNITY_EDITOR
