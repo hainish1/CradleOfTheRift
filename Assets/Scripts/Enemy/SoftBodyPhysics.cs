@@ -62,7 +62,15 @@ public class SoftBodyPhysics : MonoBehaviour
     {
         if (!visual) return;
 
-        float deltaTime = Mathf.Max(Time.deltaTime, 1e-5f);
+        float deltaTime = Time.deltaTime;
+
+        // Game is paused -skip physics entirely
+        if (deltaTime < 1e-4f)
+        {
+            lastPos = transform.position;
+            return;
+        }
+
         Vector3 rawVel = (transform.position - lastPos) / deltaTime; // get raw vel to maintain the jellyness positions
         lastPos = transform.position;
 

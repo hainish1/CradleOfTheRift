@@ -126,7 +126,6 @@ public class EffectSpecDrawer : PropertyDrawer
         {
             "dashDamage", "dashDamageRange",
         },
-
         ItemEffectKind.PoisonPoolOnDash => new[]
         {
             "poisonPoolRadius", "poisonPoolLifetime",
@@ -187,6 +186,10 @@ public class EffectSpecDrawer : PropertyDrawer
             "chainLightningTestBranchesPerNode", "chainLightningTestChainRange",
         },
 
+        ItemEffectKind.PassThroughSpear => new[]
+        {
+            "passThroughEnemyCount",
+        },
         _ => Array.Empty<string>(),
     };
 }

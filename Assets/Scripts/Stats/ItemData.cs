@@ -36,7 +36,8 @@ public enum ItemEffectKind
     OrbitingFireballs,
     LightningDash,
     OrbitingFireballsTest,
-    ChainLightningTest
+    ChainLightningTest,
+    PassThroughSpear
 }
 
 [Serializable]
@@ -153,6 +154,9 @@ public class EffectSpec
     public int chainLightningTestMaxDepth = 2;
     public int chainLightningTestBranchesPerNode = 2;
     public float chainLightningTestChainRange = 10f;
+
+    // Pass Through Spear
+    [Min(0)] public int passThroughEnemyCount = 1;
 }
 
 public enum ItemRarity

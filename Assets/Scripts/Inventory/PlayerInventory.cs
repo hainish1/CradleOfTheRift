@@ -49,6 +49,7 @@ public class PlayerInventory : MonoBehaviour
     private LightningDash lightningDashEffect;
     private OrbitingFireballsTest orbitingFireballsTestEffect;
     private ChainLightningTest chainLightningTestEffect;
+    private PassThroughSpear passThroughSpearEffect;
 
     // if I have time limited effects that need use of Updates, I will keep em here
     private readonly List<IDisposable> tickingEffects = new();
@@ -93,6 +94,7 @@ public class PlayerInventory : MonoBehaviour
         lightningDashEffect?.Update(dt);
         orbitingFireballsTestEffect?.Update(dt);
         chainLightningTestEffect?.Update(dt);
+        passThroughSpearEffect?.Update(dt);
         //homingProjectilesEffect?.Update(dt);
 
         // more runtime effects would be updated here ig
@@ -328,6 +330,9 @@ public class PlayerInventory : MonoBehaviour
                     break;
                 case ItemEffectKind.ChainLightningTest:
                     EnsureChainLightningTest(effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.PassThroughSpear:
+                    EnsurePassThroughSpear(effect, initialStacks: stacksAdded);
                     break;
             }
         }
@@ -854,6 +859,32 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+    private void EnsurePassThroughSpear(EffectSpec effect, int initialStacks)
+    {
+        if (passThroughSpearEffect == null)
+        {
+            passThroughSpearEffect = new PassThroughSpear(
+                owner: playerEntity,
+                passThroughEnemyCount: effect.passThroughEnemyCount,
+                initialStacks: initialStacks,
+                durationSec: effect.duration
+            );
+
+            if (effect.duration > 0f) tickingEffects.Add(passThroughSpearEffect);
+            Debug.Log($"[Effect] Pass Through Spear created : passThrough={effect.passThroughEnemyCount}, Stacks={initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+                passThroughSpearEffect.AddStack(1);
+
+            // Update the count in case the new item stack has a different value
+            passThroughSpearEffect.SetPassThroughEnemyCount(effect.passThroughEnemyCount);
+
+            Debug.Log($"[Effect] Pass Through Spear : passThrough={effect.passThroughEnemyCount}, Stacks={initialStacks}");
+        }
+    }
+
     private void RemoveEffectStacks(ItemEffectKind kind, int stacks)
     {
         if (stacks <= 0) return;
@@ -977,6 +1008,12 @@ public class PlayerInventory : MonoBehaviour
                 if (orbitingFireballsTestEffect != null)
                 {
                     orbitingFireballsTestEffect.AddStack(-stacks);
+                }
+                break;
+            case ItemEffectKind.PassThroughSpear:
+                if (passThroughSpearEffect != null)
+                {
+                    passThroughSpearEffect.AddStack(-stacks);
                 }
                 break;
 
@@ -1116,6 +1153,7 @@ public class PlayerInventory : MonoBehaviour
         bounceProjectilesEffect?.Dispose(); bounceProjectilesEffect = null;
         delayedProjectilesEffect?.Dispose(); delayedProjectilesEffect = null;
         dashDamageEffect?.Dispose(); dashDamageEffect = null;
+        passThroughSpearEffect?.Dispose(); passThroughSpearEffect = null;
 
         tickingEffects.Clear();
     }    void OnDestroy()
@@ -1142,6 +1180,7 @@ public class PlayerInventory : MonoBehaviour
         orbitingFireballsEffect?.Dispose();
         lightningDashEffect?.Dispose();
         orbitingFireballsTestEffect?.Dispose();
+        passThroughSpearEffect?.Dispose();
         //homingProjectilesEffect?.Dispose();
         ElementSystem.ClearTempRules();
 
