@@ -482,19 +482,23 @@ public class PlayerInventory : MonoBehaviour
         {
             passThroughSpearEffect = new PassThroughSpear(
                 owner: playerEntity,
+                passThroughEnemyCount: effect.passThroughEnemyCount,
                 initialStacks: initialStacks,
                 durationSec: effect.duration
             );
 
             if (effect.duration > 0f) tickingEffects.Add(passThroughSpearEffect);
-            Debug.Log($"[Effect] Pass Through Spear created : Stacks{initialStacks}");
+            Debug.Log($"[Effect] Pass Through Spear created : passThrough={effect.passThroughEnemyCount}, Stacks={initialStacks}");
         }
         else
         {
             for (int i = 0; i < initialStacks; i++)
                 passThroughSpearEffect.AddStack(1);
 
-            Debug.Log($"[Effect] Pass Through Spear : Stacks {initialStacks}");
+            // Update the count in case the new item stack has a different value
+            passThroughSpearEffect.SetPassThroughEnemyCount(effect.passThroughEnemyCount);
+
+            Debug.Log($"[Effect] Pass Through Spear : passThrough={effect.passThroughEnemyCount}, Stacks={initialStacks}");
         }
     }
 

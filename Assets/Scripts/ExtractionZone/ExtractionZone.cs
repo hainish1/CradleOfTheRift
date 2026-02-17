@@ -19,6 +19,7 @@ public class ExtractionZone : MonoBehaviour
     public float ChargeTime => this.chargeTime;
 
     [SerializeField] private GameObject extractionBeam;
+    [SerializeField] private GameObject extractionAmbienceVFX;
 
     [Header("Beam Grow Settings")]
     [SerializeField] private float beamHeight = 10f;
@@ -93,6 +94,8 @@ public class ExtractionZone : MonoBehaviour
                     hasSpawnedBoss = true;
                     BossSpawnRequested?.Invoke();
                 }
+
+                extractionAmbienceVFX.SetActive(false);
             }
             // 2. If the zone was already activated/interacted with, just resume extracting
             else if (this.isInteracted) 

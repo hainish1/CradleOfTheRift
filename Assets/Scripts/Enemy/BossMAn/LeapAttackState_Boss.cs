@@ -43,6 +43,10 @@ public class LeapAttackState_Boss : EnemyState
         boss.EnableHitBox(false);
         boss.isInAir = false;
 
+        // Start squish animation, stay in squishIdle until jump
+        boss.SetIsJumping(false);
+        boss.TriggerSquish();
+
         phase = Phase.Windup;
         timer = boss.windupTime;
         hasLanded = false;
@@ -93,8 +97,15 @@ public class LeapAttackState_Boss : EnemyState
         boss.EnableHitBox(true);
         boss.isInAir = true;
 
+        // Transition from squishIdle to default, then go to stretch
+        boss.SetIsJumping(true);
+        boss.TriggerStretch();
+
         Vector3 startPos = enemy.transform.position;
         Vector3 targetPos = startPos + enemy.transform.forward * 2f;
+
+        // Play jump VFX
+        boss.PlayPSVFX(boss.jumpVFX, boss.jumpVFXPoint);
 
         if (enemy.target != null)
         {
@@ -173,6 +184,9 @@ public class LeapAttackState_Boss : EnemyState
         boss.isInAir = false;
         boss.inAirVelocity = Vector3.zero;
         boss.EnableHitBox(false);
+
+        // Landing squish 
+        boss.TriggerSquish();
 
         boss.nextAttackAllowed = Time.time + boss.attackCooldown;
 
