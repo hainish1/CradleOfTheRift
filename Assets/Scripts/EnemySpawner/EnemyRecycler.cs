@@ -73,34 +73,29 @@ public class EnemyRecycler : MonoBehaviour
         
         if (bestNode != null)
         {
-            // Calculate random point within node radius (Matching Spawner logic)
+            // Calculate random point within node radius
             float radius = 1f;
             if (bestNode.TryGetComponent(out SphereCollider sphere))
             {
-                float maxScale = Mathf.Max(Mathf.Abs(bestNode.transform.lossyScale.x), Mathf.Abs(bestNode.transform.lossyScale.z));
+                float maxScale = Mathf.Max(
+                    Mathf.Abs(bestNode.transform.lossyScale.x), 
+                    Mathf.Abs(bestNode.transform.lossyScale.z)
+                );
                 radius = sphere.radius * maxScale;
             }
 
+            // Pick a random X/Z point within the circle
             Vector2 randomCircle = Random.insideUnitCircle * radius;
             Vector3 finalPos = bestNode.transform.position + new Vector3(randomCircle.x, 0, randomCircle.y);
 
             // Apply teleportation
-            if (!isFlying && enemyObj.TryGetComponent(out NavMeshAgent agent))
+            if (enemyObj.TryGetComponent(out NavMeshAgent agent))
             {
-                // Snap to NavMesh if ground-based
                 if (NavMesh.SamplePosition(finalPos, out NavMeshHit hit, radius + 2f, NavMesh.AllAreas))
                 {
                     agent.Warp(hit.position);
                 }
             }
-            else
-            {
-                enemyObj.transform.position = finalPos;
-            }
-
-            // Reset AI targets/cooldowns
-            // if (isFlying) enemyObj.GetComponent<EnemyRange>().ResetAIState();
-            // else enemyObj.GetComponent<EnemyMelee>().ResetAIState();
         }
     }
 
