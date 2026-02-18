@@ -9,7 +9,7 @@ public class EnemyRecycler : MonoBehaviour
     [SerializeField] private Transform playerTransform;
 
     [Header("Recycle Thresholds")]
-    [SerializeField] private float recycleDistance = 100f; 
+    [SerializeField] private float recycleDistance = 100f; // 
     [SerializeField] private float checkInterval = 5.0f;
 
     [Header("Search Settings")]
@@ -59,7 +59,7 @@ public class EnemyRecycler : MonoBehaviour
             for (int i = walkers.Count - 1; i >= 0; i--)
             {
                 if (walkers[i] != null)
-                    ProcessRecycle(walkers[i].gameObject, true);
+                    ProcessRecycle(walkers[i].gameObject, false);
             }
         }
     }
