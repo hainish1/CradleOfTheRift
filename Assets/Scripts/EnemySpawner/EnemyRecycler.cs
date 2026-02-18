@@ -6,18 +6,20 @@ using UnityEngine.AI;
 public class EnemyRecycler : MonoBehaviour
 {
     [Header("References")]
-    public Transform playerTransform;
+    [SerializeField] private Transform playerTransform;
 
     [Header("Recycle Thresholds")]
-    public float recycleDistance = 100f; 
-    public float checkInterval = 2.0f;
+    [SerializeField] private float recycleDistance = 100f; 
+    [SerializeField] private float checkInterval = 5.0f;
 
     [Header("Search Settings")]
-    public float minDistance = 35f;      
-    public float initialMaxDistance = 60f;
-    public float searchExpansionStep = 20f;
-    public int maxExpansionAttempts = 3;
+    [SerializeField] private float minDistance = 15f;      
+    [SerializeField] private float initialMaxDistance = 60f;
+    [SerializeField] private float searchExpansionStep = 20f;
+    [SerializeField] private int maxExpansionAttempts = 3;
 
+    [Header("Advanced Settings")]
+    [SerializeField] private float forceRecycleDistance = 150f; // Overrides visibility check if they are this far
     private List<SpawnNode> allNodes = new List<SpawnNode>();
 
     void Start()
@@ -55,11 +57,19 @@ public class EnemyRecycler : MonoBehaviour
 
     void ProcessRecycle(GameObject enemyObj, bool isFlying)
     {
-        float distSqr = (enemyObj.transform.position - playerTransform.position).sqrMagnitude;
+        float dist = Vector3.Distance(enemyObj.transform.position, playerTransform.position);
 
-        // Only recycle if out of range and not visible
-        if (distSqr > (recycleDistance * recycleDistance))
+        // Must be beyond the initial recycle threshold (100m)
+        if (dist > recycleDistance)
         {
+            // If they are EXTREMELY far (150m), just recycle them regardless of visibility
+            if (dist > forceRecycleDistance)
+            {
+                TeleportToNode(enemyObj, isFlying);
+                return;
+            }
+
+            // Check visibility (only if they aren't forced by Rule 2)
             if (!IsVisibleToPlayer(enemyObj))
             {
                 TeleportToNode(enemyObj, isFlying);
@@ -142,10 +152,13 @@ public class EnemyRecycler : MonoBehaviour
     bool IsVisibleToPlayer(GameObject enemyObj)
     {
         Plane[] planes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
-        if (enemyObj.TryGetComponent(out Renderer rend))
+        Renderer rend = enemyObj.GetComponentInChildren<Renderer>();
+
+        if (rend != null)
         {
             return GeometryUtility.TestPlanesAABB(planes, rend.bounds);
         }
+
         return false;
     }
 }
