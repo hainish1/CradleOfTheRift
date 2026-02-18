@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.AI;
 
 public class EnemyRecycler : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class EnemyRecycler : MonoBehaviour
 
     void Start()
     {
+        // Cache all nodes in the scene
         allNodes = new List<SpawnNode>(FindObjectsByType<SpawnNode>(FindObjectsSortMode.None));
         
         if (playerTransform == null)
@@ -35,14 +37,14 @@ public class EnemyRecycler : MonoBehaviour
         {
             yield return new WaitForSeconds(checkInterval);
 
-            // Handle flying enemies 
+            // Handle flying enemies (EnemyRange)
             EnemyRange[] flyers = Object.FindObjectsByType<EnemyRange>(FindObjectsSortMode.None);
             foreach (EnemyRange enemy in flyers)
             {
                 ProcessRecycle(enemy.gameObject, true);
             }
 
-            // Handle ground enemies
+            // Handle ground enemies (EnemyMelee)
             EnemyMelee[] walkers = Object.FindObjectsByType<EnemyMelee>(FindObjectsSortMode.None);
             foreach (EnemyMelee enemy in walkers)
             {
@@ -55,9 +57,9 @@ public class EnemyRecycler : MonoBehaviour
     {
         float distSqr = (enemyObj.transform.position - playerTransform.position).sqrMagnitude;
 
+        // Only recycle if out of range and not visible
         if (distSqr > (recycleDistance * recycleDistance))
         {
-
             if (!IsVisibleToPlayer(enemyObj))
             {
                 TeleportToNode(enemyObj, isFlying);
@@ -71,14 +73,34 @@ public class EnemyRecycler : MonoBehaviour
         
         if (bestNode != null)
         {
-            if (!isFlying && enemyObj.TryGetComponent(out UnityEngine.AI.NavMeshAgent agent))
+            // Calculate random point within node radius (Matching Spawner logic)
+            float radius = 1f;
+            if (bestNode.TryGetComponent(out SphereCollider sphere))
             {
-                agent.Warp(bestNode.transform.position);
+                float maxScale = Mathf.Max(Mathf.Abs(bestNode.transform.lossyScale.x), Mathf.Abs(bestNode.transform.lossyScale.z));
+                radius = sphere.radius * maxScale;
+            }
+
+            Vector2 randomCircle = Random.insideUnitCircle * radius;
+            Vector3 finalPos = bestNode.transform.position + new Vector3(randomCircle.x, 0, randomCircle.y);
+
+            // Apply teleportation
+            if (!isFlying && enemyObj.TryGetComponent(out NavMeshAgent agent))
+            {
+                // Snap to NavMesh if ground-based
+                if (NavMesh.SamplePosition(finalPos, out NavMeshHit hit, radius + 2f, NavMesh.AllAreas))
+                {
+                    agent.Warp(hit.position);
+                }
             }
             else
             {
-                enemyObj.transform.position = bestNode.transform.position;
+                enemyObj.transform.position = finalPos;
             }
+
+            // Reset AI targets/cooldowns
+            // if (isFlying) enemyObj.GetComponent<EnemyRange>().ResetAIState();
+            // else enemyObj.GetComponent<EnemyMelee>().ResetAIState();
         }
     }
 
@@ -92,12 +114,22 @@ public class EnemyRecycler : MonoBehaviour
 
             foreach (SpawnNode node in allNodes)
             {
+                // Match type based on SpawnNode flags
                 bool typeMatch = enemyIsFlying ? node.isForFlyingEnemies : node.isForGroundEnemies;
 
                 if (typeMatch)
                 {
-                    float dSqr = (node.transform.position - playerTransform.position).sqrMagnitude;
-                    if (dSqr >= (minDistance * minDistance) && dSqr <= (currentMax * currentMax))
+                    float dist = Vector3.Distance(playerTransform.position, node.transform.position);
+                    
+                    // Get node radius for edge calculation
+                    float nodeRadius = 0f;
+                    if (node.TryGetComponent(out SphereCollider sphere)) {
+                        nodeRadius = sphere.radius * Mathf.Abs(node.transform.lossyScale.x);
+                    }                
+                    float distanceToNearEdge = dist - nodeRadius;
+
+                    // Consistent "Donut" search logic
+                    if (distanceToNearEdge >= minDistance && distanceToNearEdge <= currentMax)
                     {
                         validNodes.Add(node);
                     }
