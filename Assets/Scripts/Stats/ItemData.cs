@@ -47,6 +47,8 @@ public enum ItemEffectKind
 public class EffectSpec
 {
     public ItemEffectKind kind = ItemEffectKind.None;
+    [Tooltip("description shown on the upgrade thing for this effect")]
+    public string description = "";
     public float duration = -1f; // -1 : Perm
 
     // HEAL ON DAMAGE
