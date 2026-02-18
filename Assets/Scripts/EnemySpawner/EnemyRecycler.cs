@@ -24,6 +24,12 @@ public class EnemyRecycler : MonoBehaviour
 
     void Start()
     {
+        if (playerTransform != null) return;
+
+        var playerGo = PlayerLocator.FindPlayerGameObject();
+        if (playerGo != null)
+            playerTransform = playerGo.transform;
+
         // Cache all nodes in the scene
         allNodes = new List<SpawnNode>(FindObjectsByType<SpawnNode>(FindObjectsSortMode.None));
         
