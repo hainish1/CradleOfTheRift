@@ -28,9 +28,6 @@ public class EnemyRecycler : MonoBehaviour
 
         // Cache all nodes in the scene
         allNodes = new List<SpawnNode>(FindObjectsByType<SpawnNode>(FindObjectsSortMode.None));
-        
-        if (playerTransform == null)
-            playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
 
         StartCoroutine(RecycleRoutine());
     }
@@ -50,18 +47,19 @@ public class EnemyRecycler : MonoBehaviour
         {
             yield return new WaitForSeconds(checkInterval);
 
-            // Handle flying enemies (EnemyRange)
-            EnemyRange[] flyers = Object.FindObjectsByType<EnemyRange>(FindObjectsSortMode.None);
-            foreach (EnemyRange enemy in flyers)
+            // Iterate backwards so we can safely skip null entries if an enemy was destroyed mid-frame 
+            var flyers = EnemyRegistry.Flyers;
+            for (int i = flyers.Count - 1; i >= 0; i--)
             {
-                ProcessRecycle(enemy.gameObject, true);
+                if (flyers[i] != null)
+                    ProcessRecycle(flyers[i].gameObject, true);
             }
 
-            // Handle ground enemies (EnemyMelee)
-            EnemyMelee[] walkers = Object.FindObjectsByType<EnemyMelee>(FindObjectsSortMode.None);
-            foreach (EnemyMelee enemy in walkers)
+            var walkers = EnemyRegistry.Walkers;
+            for (int i = walkers.Count - 1; i >= 0; i--)
             {
-                ProcessRecycle(enemy.gameObject, false); 
+                if (walkers[i] != null)
+                    ProcessRecycle(walkers[i].gameObject, true);
             }
         }
     }
