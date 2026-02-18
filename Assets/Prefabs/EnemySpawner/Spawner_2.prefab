@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2571862994984526756}
   - component: {fileID: 183193264435491579}
+  - component: {fileID: 2528064290946679985}
   m_Layer: 0
   m_Name: Spawner_2
   m_TagString: Untagged
@@ -55,11 +56,13 @@ MonoBehaviour:
     isFlying: 1
   playerLocation: {fileID: 0}
   difficultyScaler: {fileID: 0}
+  spawnVFXPrefab: {fileID: 0}
   spawnNodeLayer:
     serializedVersion: 2
     m_Bits: 65536
   spawnRadius: 40
   minSpawnDist: 10
+  expandedSearchRadius: 100
   isSpawning: 1
   timeBetweenWaves: 20
   difficultyScale: 1.03
@@ -74,3 +77,24 @@ MonoBehaviour:
   damageGrowth: 1.2
   showSpawnDebug: 1
   isDevModeEnabled: 1
+  maxDebugHistory: 50
+--- !u!114 &2528064290946679985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 22583567468248984}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a783cea9081846b792810b3d8e65efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerTransform: {fileID: 0}
+  recycleDistance: 100
+  checkInterval: 5
+  minDistance: 15
+  initialMaxDistance: 60
+  searchExpansionStep: 20
+  maxExpansionAttempts: 3
+  forceRecycleDistance: 150
