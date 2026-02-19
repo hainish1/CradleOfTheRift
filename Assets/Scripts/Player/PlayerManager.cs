@@ -13,7 +13,7 @@ public class PlayerManager : Entity
     void Start()
     {
         playerHealth = GetComponent<PlayerHealth>();
-        playerShooter = GetComponent<PlayerShooter>();
+        playerShooter = GetComponentInChildren<PlayerShooter>();
         playerMovement = GetComponent<PlayerMovement>();
         baseScale = transform.localScale;
 

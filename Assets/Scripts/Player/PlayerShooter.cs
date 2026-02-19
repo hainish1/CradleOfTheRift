@@ -1,3 +1,14 @@
+// <summary>
+//   <authors>
+//     Hainish Acharya, Samuel Rigby
+//   </authors>
+//   <para>
+//     Written by Hainish Acharya for GAMES 4500, University of Utah.
+//     Contributed to by Samuel Rigby.
+//          -Added compatability with spear throw animation.
+//   </para>
+// </summary>
+
 using System;
 using System.Collections;
 using Unity.Cinemachine.Samples;
@@ -32,6 +43,7 @@ public class PlayerShooter : MonoBehaviour
     private InputAction fireAction;
 
     private Entity playerEntity; // REF FOR STATS
+    private Animator shooterAnim;
 
     private bool isFiring;
     private float nextFireTime;
@@ -47,13 +59,13 @@ public class PlayerShooter : MonoBehaviour
 
     void Start()
     {
-        playerEntity = GetComponent<Entity>();
+        playerEntity = GetComponentInParent<Entity>();
 
         var input = new InputAction("Toggle Spawning", binding: "<Keyboard>/b");
         input.performed += _ => ToggleFullAuto();
         input.Enable();
 
-        audioController = GetComponent<PlayerAudioController>();
+        audioController = GetComponentInParent<PlayerAudioController>();
 
         fireMaxCharges = playerEntity.Stats.FireCharges;
         fireChargeCooldown = playerEntity.Stats.FireChargeCooldown;
@@ -148,7 +160,7 @@ public class PlayerShooter : MonoBehaviour
         }
         else
         {
-            TryToFire();
+            shooterAnim.SetTrigger("SpearThrow");
         }
     }
 
@@ -168,6 +180,11 @@ public class PlayerShooter : MonoBehaviour
     public Transform GetMuzzleTransform()
     {
         return muzzle;
+    }
+
+    public void OnSpearThrow()
+    {
+        TryToFire(true);
     }
 
     private void TryToFire(bool force = false)

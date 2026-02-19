@@ -62,7 +62,7 @@ public class LightningDash : IDisposable
         enemyLayer = LayerMask.GetMask("Enemy");
         playerRenderers = owner.GetComponentsInChildren<Renderer>();
         
-        shooter = owner.GetComponent<PlayerShooter>();
+        shooter = owner.GetComponentInChildren<PlayerShooter>();
         melee = owner.GetComponentInChildren<PlayerMeleeController>();
         slam = owner.GetComponent<PlayerGroundSlam>();
         shockwave = owner.GetComponent<PlayerShockwave>();
