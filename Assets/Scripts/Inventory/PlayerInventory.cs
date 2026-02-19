@@ -349,6 +349,10 @@ public class PlayerInventory : MonoBehaviour
                 case ItemEffectKind.FinisherStrike:
                     EnsureFinisherStrike(effect);
                     break;
+                case ItemEffectKind.XPGrant:
+                    if (PlayerXP.Instance != null)
+                        PlayerXP.Instance.AddXP(effect.xpGrantAmount * stacksAdded);
+                    break;
             }
         }
 
@@ -556,6 +560,7 @@ public class PlayerInventory : MonoBehaviour
                 effect.explosiveAoeRadius,
                 effect.explosiveAoeDamageMultiplier,
                 effect.explosiveMaxRange,
+                effect.explosiveFireballSize,
                 initialStacks,
                 effect.duration,
                 effect.explosiveVFX
@@ -1102,6 +1107,9 @@ public class PlayerInventory : MonoBehaviour
                     finisherStrikeEffect.Dispose();
                     finisherStrikeEffect = null;
                 }
+                break;
+            case ItemEffectKind.XPGrant:
+                // XP is permanent, nothing to remove
                 break;
 
         }

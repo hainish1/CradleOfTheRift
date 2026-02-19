@@ -16,10 +16,11 @@ public class ExplosiveProjectiles : IDisposable
     public static float AoeRadius { get; private set; }
     public static float AoeDamageMultiplier { get; private set; }
     public static float MaxRange { get; private set; }
+    public static float FireballVisualScale { get; private set; }
     public static bool IsEnabled { get; private set; }
     public static GameObject ExplosionVFX { get; private set; }
 
-    public ExplosiveProjectiles(Entity owner, float aoeRadius, float aoeDamageMultiplier, float maxRange, int initialStacks, float durationSec = -1f, GameObject explosionVFX = null)
+    public ExplosiveProjectiles(Entity owner, float aoeRadius, float aoeDamageMultiplier, float maxRange, float fireballSize, int initialStacks, float durationSec = -1f, GameObject explosionVFX = null)
     {
         this.owner = owner;
         stacks = Mathf.Max(1, initialStacks);
@@ -29,6 +30,7 @@ public class ExplosiveProjectiles : IDisposable
         baseAoeRadius = aoeRadius;
         baseAoeDamageMultiplier = aoeDamageMultiplier;
         baseMaxRange = maxRange;
+        FireballVisualScale = fireballSize;
         ExplosionVFX = explosionVFX;
         IsEnabled = true;
         UpdateValues();
@@ -63,6 +65,7 @@ public class ExplosiveProjectiles : IDisposable
         AoeRadius = 0f;
         AoeDamageMultiplier = 0f;
         MaxRange = 0f;
+        FireballVisualScale = 0f;
         ExplosionVFX = null;
     }
 }

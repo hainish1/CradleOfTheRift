@@ -100,6 +100,7 @@ public class EffectSpecDrawer : PropertyDrawer
             "explosiveAoeRadius",
             "explosiveAoeDamageMultiplier",
             "explosiveMaxRange",
+            "explosiveFireballSize",
             "explosiveVFX",
         },
 
@@ -209,6 +210,11 @@ public class EffectSpecDrawer : PropertyDrawer
         ItemEffectKind.FinisherStrike => new[]
         {
             "finisherDamageMultiplier", "finisherRangeMultiplier",
+        },
+
+        ItemEffectKind.XPGrant => new[]
+        {
+            "xpGrantAmount",
         },
 
         _ => Array.Empty<string>(),

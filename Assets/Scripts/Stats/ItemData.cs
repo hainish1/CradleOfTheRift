@@ -40,7 +40,8 @@ public enum ItemEffectKind
     PassThroughSpear,
     ToxicAttackSpeed,
     FlameTrail,
-    FinisherStrike
+    FinisherStrike,
+    XPGrant
 }
 
 [Serializable]
@@ -88,6 +89,7 @@ public class EffectSpec
     public float explosiveAoeRadius = 3f;
     public float explosiveAoeDamageMultiplier = 0.5f;
     public float explosiveMaxRange = 0f;
+    public float explosiveFireballSize = 7.5f;
     public GameObject explosiveVFX;
 
     // Chain Lightning
@@ -184,6 +186,9 @@ public class EffectSpec
     // Finisher Strike
     public float finisherDamageMultiplier = 1.5f;
     public float finisherRangeMultiplier = 1.3f;
+
+    // XP Grant
+    public int xpGrantAmount = 50;
 }
 
 public enum ItemRarity

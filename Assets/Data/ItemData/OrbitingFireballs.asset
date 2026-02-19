@@ -23,13 +23,24 @@ MonoBehaviour:
   useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 20
+  - kind: 27
+    description: 
     duration: -1
     healOnDamagePercentPerStack: 0
+    healOnPoisonRange: 8
+    healPerPoisonStackPerSecond: 0.5
+    healOnPoisonTickInterval: 1
     stompDamagePerStack: 0
     stompBounceForce: 0
     fallDamageBonusPerMeter: 0
     fallDamageBonusPerStack: 0
+    dotDamagePerTick: 2
+    dotTickInterval: 1
+    dotDuration: 4
+    dotDamagePerStack: 2
+    dotCanStack: 1
+    dotMaxStacks: 5
+    dotApplyImmediately: 0
     poisonPoolRadius: 10
     poisonPoolLifetime: 8
     numberOfProjectiles: 0
@@ -81,7 +92,24 @@ MonoBehaviour:
     orbitingFireballTestDamageThreshold: 100
     orbitingFireballTestMaxCount: 20
     orbitingFireballTestLifetime: 5
+    chainLightningTestStrikeInterval: 5
+    chainLightningTestBuffDuration: 3
+    chainLightningTestChainDamagePercent: 0.5
+    chainLightningTestMaxDepth: 2
+    chainLightningTestBranchesPerNode: 2
+    chainLightningTestChainRange: 10
+    passThroughEnemyCount: 1
+    toxicAttackSpeedRange: 10
+    toxicAttackSpeedPerStack: 0.02
+    flameTrailDamage: 15
+    flameTrailRadius: 2
+    flameTrailLifetime: 1.5
+    flameTrailSpawnInterval: 0.2
+    finisherDamageMultiplier: 1.5
+    finisherRangeMultiplier: 1.3
+    xpGrantAmount: 5000
   statType: 9
   operatorType: 0
   value: 1
   duration: -1
+  itemId: 78d0aa2bb139405aaf64ebf906e9fa78
