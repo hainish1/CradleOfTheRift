@@ -3,17 +3,25 @@ using System;
 
 public class DifficultyScaler : MonoBehaviour
 {
-    [Header("Difficulty Settings")]
-    public float timePerDifficultyTier = 180f; // 3 minutes per tier
+    public enum ScalingMode { Linear, NonLinear }
+
+    [Header("General Settings")]
+    [SerializeField] private ScalingMode scalingMode = ScalingMode.Linear;
     [SerializeField] private float baseDifficulty = 1.0f;
     [SerializeField] private float difficultyGrowthRate = 0.05f;
 
+    [Header("Non-Linear Settings")]
+    [Tooltip("Higher values make the difficulty ramp up faster toward the end of the run.")]
+    [SerializeField] private float exponentialRamp = 1.5f;
+
+    [Header("UI / Tiers")]
+    public float timePerDifficultyTier = 180f;
+    public readonly string[] difficultyNames = { "EASY", "NORMAL", "HARD", "VERY HARD", "INSANE", "HAHAHA" };
+    
     public float elapsedTime = 0f;
     private bool isRunning = true;
 
     public event Action<float, string> OnDifficultyUIUpdate;
-
-    public readonly string[] difficultyNames = { "EASY", "NORMAL", "HARD", "VERY HARD", "INSANE", "HAHAHA" };
 
     void Update()
     {
@@ -21,21 +29,25 @@ public class DifficultyScaler : MonoBehaviour
 
         elapsedTime += Time.deltaTime;
         
-        // Calculate UI values
         float currentTierFloat = elapsedTime / timePerDifficultyTier;
         int currentTierIndex = Mathf.Min(Mathf.FloorToInt(currentTierFloat), difficultyNames.Length - 1);
-        
-        // Calculate percentage to the next tier for the progress bar (0.0 to 1.0)
-        float progressToNextTier = currentTierFloat % 1.0f; 
+        float progressToNextTier = currentTierFloat % 1.0f;
 
-        // Fire event to update UI
         OnDifficultyUIUpdate?.Invoke(progressToNextTier, difficultyNames[currentTierIndex]);
     }
 
     public float GetDifficultyScale()
     {
-        // Difficulty increases slightly every second
-        return baseDifficulty + (elapsedTime * difficultyGrowthRate); 
+        if (scalingMode == ScalingMode.Linear)
+        {
+            // Linear Formula: 1 + (time * rate)
+            return baseDifficulty + (elapsedTime * difficultyGrowthRate);
+        }
+        else
+        {
+            // Non-Linear Formula: 1 + (time * rate)^ramp
+            return baseDifficulty + Mathf.Pow(elapsedTime * difficultyGrowthRate, exponentialRamp);
+        }
     }
 
     public void SetRunning(bool run) => isRunning = run;
