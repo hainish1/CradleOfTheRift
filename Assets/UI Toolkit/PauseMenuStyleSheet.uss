@@ -95,6 +95,7 @@
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
     -unity-background-image-tint-color: rgb(255, 255, 255);
+    background-image: url("project://database/Assets/Art%20Assets/2D/UI%20assets/Inventory/Inventory_Full.png?fileID=2800000&guid=bbfb2f9547c994b0aba7992d3f82027d&type=3#Inventory_Full");
 }
 
 .description {
@@ -107,6 +108,7 @@
     transition-duration: 0.25s;
     transition-property: scale;
     scale: 1.1 1.1;
+    background-image: url("project://database/Assets/Art%20Assets/2D/UI%20assets/Inventory/Inventory_Select(Glow).png?fileID=2800000&guid=5d4ed8b2e62e94c7db9f0718890a0cee&type=3#Inventory_Select(Glow)");
 }
 
 .Background {
@@ -120,37 +122,34 @@
     padding-right: 20px;
 }
 
-/* Hide the clunky up/down buttons for a cleaner look */
-.unity-scroller__low-button, 
+.unity-scroller__low-button {
+    display: none;
+}
+
 .unity-scroller__high-button {
     display: none;
 }
 
-/* Style the background track */
 .unity-base-slider__tracker {
     background-color: rgba(0, 0, 0, 0.3);
     border-width: 0;
     border-radius: 4px;
-    width: 8px; /* Make it thin */
+    width: 8px;
 }
 
-/* Style the "dragger" (the handle) */
 .unity-base-slider__dragger {
-    background-color: rgb(255, 255, 255); /* White handle to start */
+    background-color: rgb(255, 255, 255);
     border-width: 0;
     border-radius: 4px;
     width: 8px;
     transition-duration: 0.2s;
 }
 
-/* Highlight the handle when hovering */
 .unity-base-slider__dragger:hover {
-    background-color: rgb(228, 0, 255); /* Matches the hover color  */
-    scale: 1.2 1.0; /* Make it slightly wider on hover */
+    background-color: rgb(228, 0, 255);
+    scale: 1.2 1;
 }
 
-
-/* Adjust the overall scroller width */
 .unity-scroller {
     width: 12px;
     background-color: transparent;
