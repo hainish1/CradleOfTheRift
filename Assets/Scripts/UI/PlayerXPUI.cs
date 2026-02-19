@@ -63,8 +63,7 @@ public class PlayerXPUI : MonoBehaviour
     {
         if (levelLabel != null)
         {
-            bool levelUpReady = PlayerXP.Instance != null && PlayerXP.Instance.IsLevelUpReady;
-            levelLabel.text = levelUpReady ? $"Level: {level}  Press U to Upgrade!" : $"Level: {level}";
+            levelLabel.text = $"Level: {level}";
         }
 
         if (levelUpHint != null)
