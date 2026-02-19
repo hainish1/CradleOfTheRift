@@ -677,18 +677,18 @@ PrefabInstance:
     - target: {fileID: 3514723634665387732, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: _playerCamera
       value: 
-      objectReference: {fileID: 1368949958}
+      objectReference: {fileID: 889140529}
     - target: {fileID: 3514723634665387732, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: knockbackForce
       value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 3932950717491979509, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: fireRate
-      value: 10
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 3932950717491979509, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: fullAuto
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3932950717491979509, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: aimTargetManager
@@ -1395,10 +1395,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   upgradePool:
-  - {fileID: 11400000, guid: 0a9877534ecebca4abafb326c7d12f3c, type: 2}
-  - {fileID: 11400000, guid: 65f9cdf96c435994d934cbd990a392c8, type: 2}
-  - {fileID: 11400000, guid: fd8c6956e41a64e48b99ecba27b00933, type: 2}
-  - {fileID: 11400000, guid: 1c0b6dc6a9393d748b63b065114ee0c4, type: 2}
+  - {fileID: 11400000, guid: 5bad36504ce3a41e59137750c4a82030, type: 2}
+  - {fileID: 11400000, guid: ed35b3182df01bd4fa656b10ed7d8b73, type: 2}
+  - {fileID: 11400000, guid: 5810275253c88b341b8fb8843d3ea1f1, type: 2}
+  - {fileID: 11400000, guid: a564b122921296847866b0fbefda1689, type: 2}
+  - {fileID: 11400000, guid: 9a256af6866d85f4bba018f951107d63, type: 2}
+  - {fileID: 11400000, guid: 5a5687a4d7b594c93abe7484410e4043, type: 2}
+  - {fileID: 11400000, guid: 9968856aaa4e19b4b8cf86e16a294a04, type: 2}
+  - {fileID: 11400000, guid: 02592b1eaa16a294b97e9c509e48bd01, type: 2}
+  - {fileID: 11400000, guid: c94a44301ae4e7445bc99bcc53ea7976, type: 2}
+  - {fileID: 11400000, guid: 375c2cd8cfe9bfc43b4ac28dbb3e360b, type: 2}
+  - {fileID: 11400000, guid: b00571471b15f1f4485d9f4bce60953a, type: 2}
+  - {fileID: 11400000, guid: 3c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f, type: 2}
+  - {fileID: 11400000, guid: 9ace29bc5dece224b93f4202a3c85cdb, type: 2}
+  - {fileID: 11400000, guid: 7bc1f9ebc143ab94f826c88339db5a5e, type: 2}
+  - {fileID: 11400000, guid: 7349ab712ab7d524ab7440eb5495466f, type: 2}
   activateKey: 35
   maxChoices: 3
 --- !u!1 &498271333
@@ -1695,7 +1706,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8068391143491128734, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: m_BaseOffset
@@ -2382,6 +2393,14 @@ PrefabInstance:
       propertyPath: xpReward
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: maxHealth
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: baseHealth
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: m_Name
       value: SlimeEnemyWobble (14)
@@ -2956,6 +2975,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   xpToLevelUp: 100
+--- !u!4 &889140529 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2692208781826445233, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+  m_PrefabInstance: {fileID: 310781420}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &903792483
 GameObject:
   m_ObjectHideFlags: 0
@@ -3041,6 +3065,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: xpReward
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: maxHealth
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: baseHealth
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
@@ -3138,6 +3170,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: xpReward
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: maxHealth
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: baseHealth
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
@@ -4024,6 +4064,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: xpReward
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: maxHealth
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: baseHealth
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
@@ -5195,11 +5243,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5bb8c481a621a0b468cfca3557b3e743, type: 3}
---- !u!4 &1368949958 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3222700164973113527, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
-  m_PrefabInstance: {fileID: 310781420}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1369774700 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6171083751830730270, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
@@ -5547,6 +5590,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: xpReward
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: maxHealth
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: baseHealth
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
@@ -6164,6 +6215,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: xpReward
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: maxHealth
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: baseHealth
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
@@ -6889,6 +6948,14 @@ PrefabInstance:
       propertyPath: xpReward
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: maxHealth
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: baseHealth
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: m_Name
       value: SlimeEnemyWobble (11)
@@ -7127,13 +7194,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3349805392606994707, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
+      propertyPath: xpReward
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 8841140246284276385, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
       propertyPath: m_Name
       value: WispEnemy (2)
       objectReference: {fileID: 0}
     - target: {fileID: 8841140246284276385, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9083025586867818779, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -7903,6 +7974,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: xpReward
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: maxHealth
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: baseHealth
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}

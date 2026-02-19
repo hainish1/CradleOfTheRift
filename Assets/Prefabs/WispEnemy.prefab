@@ -6001,14 +6001,14 @@ MonoBehaviour:
   gizosOn: 1
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
   nextAttackAllowed: 1
-  projectileDamage: 20
-  flyHeight: 3
+  projectileDamage: 25
+  flyHeight: 5.5
   verticalSmoothTime: 2.5
   horizontalSmoothTime: 2.5
-  maxHorizontalSpeed: 12
+  maxHorizontalSpeed: 15
   maxVerticalSpeed: 10
   chaseSpeed: 5
-  attackRange: 15
+  attackRange: 35
   desiredDistance: 6
   stopDistance: 9
   hoverHeight: 2
@@ -6023,7 +6023,7 @@ MonoBehaviour:
   wispSeparationStrength: 2
   navSampleDistance: 6
   angleAdaptSpeed: 1.5
-  projectileSpeed: 30
+  projectileSpeed: 40
   fireCooldown: 0.9
   recoveryDuration: 2
   firePoint: {fileID: 7588448968403286001}
@@ -6040,7 +6040,7 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 1
-  recoveryTime: 2
+  recoveryTime: 20
   orbitVisuals: {fileID: 0}
 --- !u!114 &204557455612082024
 MonoBehaviour:
@@ -6088,9 +6088,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 50
+  maxHealth: 35
   cleanupDelay: 0
-  baseHealth: 50
+  baseHealth: 35
   xpReward: 10
   damageVisuals: {fileID: 6516409030888228098}
   deathVFX: {fileID: 5162910912013668194, guid: cf82839c411151342a7b2337bda9fb34, type: 3}

@@ -2940,6 +2940,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -17.259499
       objectReference: {fileID: 0}
+    - target: {fileID: -132554305716376216, guid: a7607df6067c9f94a93f4b7f10196277, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -4961167413633696113, guid: b196b9d950097574a9cbb06b02559352, type: 3}
+    - target: {fileID: -132554305716376216, guid: a7607df6067c9f94a93f4b7f10196277, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 170ad0863161d494fb41ce85c296f9f9, type: 2}
+    - target: {fileID: -132554305716376216, guid: a7607df6067c9f94a93f4b7f10196277, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 170ad0863161d494fb41ce85c296f9f9, type: 2}
     - target: {fileID: 591846515099303729, guid: a7607df6067c9f94a93f4b7f10196277, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 18.29443
@@ -2959,6 +2971,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: a7607df6067c9f94a93f4b7f10196277, type: 3}
       propertyPath: m_Name
       value: FairyCharacterIdleAnimXP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a7607df6067c9f94a93f4b7f10196277, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1090353731994783751, guid: a7607df6067c9f94a93f4b7f10196277, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
