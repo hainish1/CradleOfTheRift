@@ -14,7 +14,11 @@ public enum InventoryRuleActionType
 
     // loot state changes
     UnlockLootItem,
-    BlockLootItem
+    BlockLootItem,
+
+    // upgrade pool changes
+    AddToUpgradePool,
+    RemoveFromUpgradePool
 }
 
 [Serializable]
@@ -44,26 +48,43 @@ public class InventoryRule : ScriptableObject
 
     public List<Requirement> requirements = new();
 
-
-
+    [Header("Condition Logic")]
+    [Tooltip("AND: all requirements must be met (default). OR: any one requirement is enough.")]
+    public bool useOrLogic = false;
 
     [Header("Actions")]
     public List<InventoryRuleActionSpec> actions = new();
 
     [Header("Behavior")]
+    [Tooltip("If true, this rule fires only once per run and won't repeat even if conditions stay met.")]
     public bool oneWayUnlock = true;
 
     public bool IsMet(PlayerInventory inventory)
     {
-        if (inventory == null) return false;
+        if (inventory == null || requirements.Count == 0) return false;
 
-        foreach (var req in requirements)
+        if (useOrLogic)
         {
-            if (req.item == null) return false;
-            int have = inventory.GetItemCount(req.item);
-            if (have < Mathf.Max(1, req.minCount)) return false;
+            // OR: at least one requirement must be satisfied
+            foreach (var req in requirements)
+            {
+                if (req.item == null) continue;
+                if (inventory.GetItemCount(req.item) >= Mathf.Max(1, req.minCount))
+                    return true;
+            }
+            return false;
         }
-        return true;
+        else
+        {
+            // AND: every requirement must be satisfied
+            foreach (var req in requirements)
+            {
+                if (req.item == null) return false;
+                if (inventory.GetItemCount(req.item) < Mathf.Max(1, req.minCount))
+                    return false;
+            }
+            return true;
+        }
     }
 }
 

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
   m_Name: PoisonUpgrade
   m_EditorClassIdentifier: 
-  itemName: Poison
+  itemName: PoisonUpgrade
   description: Im gonna write a big ass decription here just cause I wanna test things
     our like idk man I think the phase 4 of marvel was so shit
   icon: {fileID: 21300000, guid: 24d36e96c0661c04f822f6935419e712, type: 3}
@@ -49,6 +49,7 @@ MonoBehaviour:
     explosiveAoeRadius: 0
     explosiveAoeDamageMultiplier: 0
     explosiveMaxRange: 0
+    explosiveFireballSize: 7.5
     explosiveVFX: {fileID: 0}
     chainDamagePercent: 0
     maxChainCount: 0
@@ -108,6 +109,7 @@ MonoBehaviour:
     flameTrailSpawnInterval: 0
     finisherDamageMultiplier: 0
     finisherRangeMultiplier: 0
+    xpGrantAmount: 50
   - kind: 2
     description: Your poison damage heals you
     duration: -1
@@ -133,6 +135,7 @@ MonoBehaviour:
     explosiveAoeRadius: 0
     explosiveAoeDamageMultiplier: 0
     explosiveMaxRange: 0
+    explosiveFireballSize: 7.5
     explosiveVFX: {fileID: 0}
     chainDamagePercent: 0
     maxChainCount: 0
@@ -192,6 +195,7 @@ MonoBehaviour:
     flameTrailSpawnInterval: 0
     finisherDamageMultiplier: 0
     finisherRangeMultiplier: 0
+    xpGrantAmount: 50
   - kind: 6
     description: when dashing leave a pool of poison on the ground
     duration: -1
@@ -217,6 +221,7 @@ MonoBehaviour:
     explosiveAoeRadius: 0
     explosiveAoeDamageMultiplier: 0
     explosiveMaxRange: 0
+    explosiveFireballSize: 7.5
     explosiveVFX: {fileID: 0}
     chainDamagePercent: 0
     maxChainCount: 0
@@ -276,6 +281,7 @@ MonoBehaviour:
     flameTrailSpawnInterval: 0
     finisherDamageMultiplier: 0
     finisherRangeMultiplier: 0
+    xpGrantAmount: 50
   - kind: 24
     description: Nearby poison stacks increase your melee attack speed
     duration: -1
@@ -301,6 +307,7 @@ MonoBehaviour:
     explosiveAoeRadius: 0
     explosiveAoeDamageMultiplier: 0
     explosiveMaxRange: 0
+    explosiveFireballSize: 7.5
     explosiveVFX: {fileID: 0}
     chainDamagePercent: 0
     maxChainCount: 0
@@ -360,6 +367,7 @@ MonoBehaviour:
     flameTrailSpawnInterval: 0
     finisherDamageMultiplier: 0
     finisherRangeMultiplier: 0
+    xpGrantAmount: 50
   statType: 13
   operatorType: 0
   value: 1

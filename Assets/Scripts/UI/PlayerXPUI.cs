@@ -25,6 +25,7 @@ public class PlayerXPUI : MonoBehaviour
         // subscribe
         xp.XPChanged += OnXPChanged;
         xp.LeveledUp += OnLeveledUp;
+        xp.LevelUpAvailable += OnLevelUpAvailable;
 
         // initialize
         Refresh(xp.CurrentXP, xp.XPToLevelUp, xp.CurrentLevel);
@@ -36,12 +37,19 @@ public class PlayerXPUI : MonoBehaviour
         {
             PlayerXP.Instance.XPChanged -= OnXPChanged;
             PlayerXP.Instance.LeveledUp -= OnLeveledUp;
+            PlayerXP.Instance.LevelUpAvailable -= OnLevelUpAvailable;
         }
     }
 
     private void OnXPChanged(int currentXP, int xpToLevelUp)
     {
         Refresh(currentXP, xpToLevelUp, PlayerXP.Instance.CurrentLevel);
+    }
+
+    private void OnLevelUpAvailable()
+    {
+        var xp = PlayerXP.Instance;
+        Refresh(xp.CurrentXP, xp.XPToLevelUp, xp.CurrentLevel);
     }
 
     private void OnLeveledUp(int newLevel)
@@ -52,7 +60,10 @@ public class PlayerXPUI : MonoBehaviour
     private void Refresh(int currentXP, int xpToLevelUp, int level)
     {
         if (levelLabel != null)
-            levelLabel.text = $"Level: {level}";
+        {
+            bool levelUpReady = PlayerXP.Instance != null && PlayerXP.Instance.IsLevelUpReady;
+            levelLabel.text = levelUpReady ? $"Level: {level}  Press U to Upgrade!" : $"Level: {level}";
+        }
 
         if (xpLabel != null)
             xpLabel.text = $"XP: {currentXP} / {xpToLevelUp}";
