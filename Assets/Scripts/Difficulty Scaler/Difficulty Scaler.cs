@@ -1,50 +1,43 @@
 using UnityEngine;
+using System;
 
 public class DifficultyScaler : MonoBehaviour
 {
-    [Header("Difficulty Scaler")]
-    // I did this so you can have customizable difficulty names.
-    // This should make it easy to update the UI!
-    public string[] difficulties;
-    // How many seconds it takes to transition to the next difficulty.
-    public float timePerDifficulty = 5;
-    // How many times the scale should be updated over the previously mentioned interval.
-    // This doesn't really matter and I guess will only ever be used to make the UI possibly smoother.
-    public int updatesPerDifficulty = 20;
-    // The actual scale.
-    // This can be used for boosting loot
-    // Or boosting enemy spawn rates!
-    private float difficultyScale = 1f;
-    private float difficultyPerUpdate;
-    private float updateRate;
+    [Header("Difficulty Settings")]
+    [SerializeField] private float timePerDifficultyTier = 180f; // 3 minutes per tier
+    [SerializeField] private float baseDifficulty = 1.0f;
+    [SerializeField] private float difficultyGrowthRate = 0.05f;
 
+    private float elapsedTime = 0f;
+    private bool isRunning = true;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public event Action<float, string> OnDifficultyUIUpdate;
+
+    private readonly string[] difficultyNames = { "EASY", "NORMAL", "HARD", "VERY HARD", "INSANE", "HAHAHA" };
+
+    void Update()
     {
-        difficultyPerUpdate = 1f / updatesPerDifficulty;
-        updateRate = timePerDifficulty / updatesPerDifficulty;
-        InvokeRepeating(nameof(IncreaseDifficultyScale), updateRate, updateRate);
+        if (!isRunning) return;
+
+        elapsedTime += Time.deltaTime;
+        
+        // Calculate UI values
+        float currentTierFloat = elapsedTime / timePerDifficultyTier;
+        int currentTierIndex = Mathf.Min(Mathf.FloorToInt(currentTierFloat), difficultyNames.Length - 1);
+        
+        // Calculate percentage to the next tier for the progress bar (0.0 to 1.0)
+        float progressToNextTier = currentTierFloat % 1.0f; 
+
+        // Fire event to update UI
+        OnDifficultyUIUpdate?.Invoke(progressToNextTier, difficultyNames[currentTierIndex]);
     }
 
-    private void IncreaseDifficultyScale()
-    {
-        difficultyScale += difficultyPerUpdate;
-    }
-
-    public string GetCurrentDifficultyName()
-    {
-        int difficultyIndex = (int) (difficultyScale - 1);
-        // If we are over max difficulty, clamp to the max difficulty.
-        if (difficultyIndex > difficulties.Length - 1)
-        {
-            difficultyIndex = difficulties.Length - 1;
-        }
-        return difficulties[difficultyIndex];
-    }
-
+    // This is the method your EnemySpawner_2 expects!
     public float GetDifficultyScale()
     {
-        return difficultyScale;
+        // Difficulty increases slightly every second
+        return baseDifficulty + (elapsedTime * difficultyGrowthRate); 
     }
+
+    public void SetRunning(bool run) => isRunning = run;
 }
