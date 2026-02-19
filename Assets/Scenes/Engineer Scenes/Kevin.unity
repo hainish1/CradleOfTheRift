@@ -359606,6 +359606,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   difficultyScaler: {fileID: 1916174444}
+  segmentWidth: 250
+  tierColors:
+  - {r: 0, g: 1, b: 0, a: 1}
+  - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  - {r: 1, g: 0.5, b: 0, a: 1}
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0.5, g: 0, b: 0, a: 1}
+  - {r: 0.2, g: 0, b: 0, a: 1}
 --- !u!114 &1916174444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -359618,9 +359626,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85e4547d15680df47a78f20895f5c2ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timePerDifficultyTier: 60
+  timePerDifficultyTier: 30
   baseDifficulty: 1
   difficultyGrowthRate: 0.05
+  elapsedTime: 0
 --- !u!4 &1916174445
 Transform:
   m_ObjectHideFlags: 0

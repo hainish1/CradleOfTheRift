@@ -4,16 +4,16 @@ using System;
 public class DifficultyScaler : MonoBehaviour
 {
     [Header("Difficulty Settings")]
-    [SerializeField] private float timePerDifficultyTier = 180f; // 3 minutes per tier
+    public float timePerDifficultyTier = 180f; // 3 minutes per tier
     [SerializeField] private float baseDifficulty = 1.0f;
     [SerializeField] private float difficultyGrowthRate = 0.05f;
 
-    private float elapsedTime = 0f;
+    public float elapsedTime = 0f;
     private bool isRunning = true;
 
     public event Action<float, string> OnDifficultyUIUpdate;
 
-    private readonly string[] difficultyNames = { "EASY", "NORMAL", "HARD", "VERY HARD", "INSANE", "HAHAHA" };
+    public readonly string[] difficultyNames = { "EASY", "NORMAL", "HARD", "VERY HARD", "INSANE", "HAHAHA" };
 
     void Update()
     {
@@ -32,7 +32,6 @@ public class DifficultyScaler : MonoBehaviour
         OnDifficultyUIUpdate?.Invoke(progressToNextTier, difficultyNames[currentTierIndex]);
     }
 
-    // This is the method your EnemySpawner_2 expects!
     public float GetDifficultyScale()
     {
         // Difficulty increases slightly every second
