@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,28 +12,29 @@ public class UpgradeLevelManager : MonoBehaviour
 
     public static UpgradeLevelManager Instance { get; private set; }
 
-    // [Header("UI")]
-    // [Tooltip("upgrade selection panel placeholder")]
-    // [SerializeField] private GameObject upgradePanelUI;
+    [Header("Upgrade Pool")]
+    [Tooltip("All possible upgrade ItemData")]
+    [SerializeField] private List<ItemData> upgradePool = new();
 
     [Header("Input")]
     [SerializeField] private Key activateKey = Key.U;
 
-    [Header("Upgrade options")]
-    [Tooltip("Number of upgrade choices shown to the player")]
-    [SerializeField] private int choiceCount = 3;
+    [Header("Upgrade Options")]
+    [Tooltip("Max number of upgrade choices shown each time panel open")]
+    [SerializeField] private int maxChoices = 3;
 
     private bool levelUpPending;
     private PlayerXP playerXP;
 
-    // UI events
+    // track which upgrades have already been chosen 
+    private readonly HashSet<ItemData> chosenUpgrades = new();
 
-    // fires when upgrade panel is opened
-    public event Action UpgradePanelOpened;
+    // the choices offered to the player currently
+    private List<ItemData> currentChoices = new();
 
-    // fires when player selects an upgrade, 0 - 1st choice, 1 - 2nd choice, 2 - 3rd choice
+    // Events
+    public event Action<List<ItemData>> UpgradePanelOpened;   // pass the choices to UI
     public event Action<int> UpgradeSelected;
-
 
     void Awake()
     {
@@ -46,54 +48,52 @@ public class UpgradeLevelManager : MonoBehaviour
 
     void Start()
     {
-        // if (upgradePanelUI != null)
-        // {
-        //     upgradePanelUI.SetActive(false);
-        // }
         playerXP = PlayerXP.Instance;
 
         if (playerXP != null)
-        {
             playerXP.LevelUpAvailable += OnLevelUpAvailable;
-        }
         else
-        {
-            Debug.Log("Level up thing not founds");
-        }
+            Debug.LogWarning("PlayerXP not found.");
     }
 
     void OnDestroy()
     {
         if (playerXP != null)
-        {
             playerXP.LevelUpAvailable -= OnLevelUpAvailable;
-        }
     }
 
     void Update()
     {
         if (!levelUpPending) return;
 
-        // Wait for the player to press the keybind
         if (Keyboard.current != null && Keyboard.current[activateKey].wasPressedThisFrame)
         {
             OpenUpgradePanel();
         }
     }
 
-    // when threshold is reached
     private void OnLevelUpAvailable()
     {
         levelUpPending = true;
-        Debug.Log($"Level Up available! Press '{activateKey}' to choose an upgrade");
+        Debug.Log($"Level Up available. Press '{activateKey}'");
     }
 
-    // opens the panel and pause 
     private void OpenUpgradePanel()
     {
+        //random choices from remaining pool
+        currentChoices = PickRandomUpgrades();
+
+        if (currentChoices.Count == 0)
+        {
+            // auto consume level up, no upgrades since no choices
+            if (PlayerXP.Instance != null)
+                PlayerXP.Instance.ConsumeLevelUp();
+            levelUpPending = false;
+            return;
+        }
+
         levelUpPending = false;
 
-        // Pause logic, ehhh Simple 
         Time.timeScale = 0f;
         PauseManager.GameIsPaused = true;
         PauseManager.CurrentPauseState = PauseManager.PauseState.Inventory; // im gonna reuse this for a bit
@@ -101,45 +101,79 @@ public class UpgradeLevelManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // if(upgradePanelUI != null)
-        // {
-        //     upgradePanelUI.SetActive(true);
-        // }
-
-        UpgradePanelOpened?.Invoke();
-        Debug.Log("Upgrade Panel was opened");
+        UpgradePanelOpened?.Invoke(currentChoices);
+        Debug.Log($"Upgrade panel opened with {currentChoices.Count} choices.");
     }
 
-    /// <summary>
-    /// Called when player presses a UI button to select an upgrade, 0,1,2,3....
-    /// </summary>
-    public void SelectUpgrade(int indexChoice)
+
+    // Called by the UI when the player clicks a choice button.
+    public void SelectUpgrade(int choiceIndex)
     {
-        Debug.Log($"Player selected upgrade #{indexChoice}.");
-
-        // TOOD: Apply the actual upgrade effect here, prolly gonna do this later
-        // HEY YK WHAT, maybe the inventory rules i made earlier might help here in case I wanna add sum directly to the inventory.
-        UpgradeSelected?.Invoke(indexChoice);
-
-        // consume the level up
-        if(PlayerXP.Instance != null)
+        if (choiceIndex < 0 || choiceIndex >= currentChoices.Count)
         {
-            PlayerXP.Instance.ConsumeLevelUp();
+            return;
         }
 
-        // resume
-        // if(upgradePanelUI != null)
-        // {
-        //     upgradePanelUI.SetActive(false);
-        // }
+        ItemData chosen = currentChoices[choiceIndex];
+        Debug.Log($"Player selected upgrade: {chosen.itemName}");
 
+        // mark as chosen so it does not appear again
+        chosenUpgrades.Add(chosen);
+
+        // apply the item to the player's inventory effects ans stats
+        PlayerInventory inventory = PlayerLocator.FindPlayerComponent<PlayerInventory>();
+        if (inventory != null)
+        {
+            inventory.AddItem(chosen);
+            Debug.Log($"Applied upgrade '{chosen.itemName}' to inventory.");
+        }
+        else
+        {
+            Debug.LogWarning("PlayerInventory not found");
+        }
+
+        UpgradeSelected?.Invoke(choiceIndex);
+
+        // Consume the level up
+        if (PlayerXP.Instance != null)
+            PlayerXP.Instance.ConsumeLevelUp();
+
+        // Resume game
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
         PauseManager.CurrentPauseState = PauseManager.PauseState.None;
         PauseManager.GameIsPaused = false;
         Time.timeScale = 1f;
+    }
 
-        Debug.Log(" Upgrade selected, game resumed");
+    // picks random choices from pool that have not been chosen yet
+    private List<ItemData> PickRandomUpgrades()
+    {
+        List<ItemData> available = new();
+        foreach (var item in upgradePool)
+        {
+            if (item != null && !chosenUpgrades.Contains(item))
+                available.Add(item);
+        }
+
+        // Shuffle
+        for (int i = available.Count - 1; i > 0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            (available[i], available[j]) = (available[j], available[i]);
+        }
+
+        int count = Mathf.Min(maxChoices, available.Count);
+        return available.GetRange(0, count);
+    }
+
+
+
+    public void ResetForNewRun()
+    {
+        chosenUpgrades.Clear();
+        currentChoices.Clear();
+        levelUpPending = false;
     }
 }
