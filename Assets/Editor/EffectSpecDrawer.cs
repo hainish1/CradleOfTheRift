@@ -217,6 +217,12 @@ public class EffectSpecDrawer : PropertyDrawer
             "xpGrantAmount",
         },
 
+        ItemEffectKind.PureCore => new[]
+        {
+            "pureCoreDamageMultiplier",
+            "pureCoreHealthMultiplier",
+        },
+
         _ => Array.Empty<string>(),
     };
 }

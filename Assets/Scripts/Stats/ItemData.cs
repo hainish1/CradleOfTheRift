@@ -41,7 +41,8 @@ public enum ItemEffectKind
     ToxicAttackSpeed,
     FlameTrail,
     FinisherStrike,
-    XPGrant
+    XPGrant,
+    PureCore
 }
 
 [Serializable]
@@ -189,6 +190,12 @@ public class EffectSpec
 
     // XP Grant
     public int xpGrantAmount = 50;
+
+    // Pure Core (no elemental items = damage + health multiplier)
+    [Tooltip("Damage multiplier when player has no elemental items (e.g. 1.15 = +15%)")]
+    public float pureCoreDamageMultiplier = 1.15f;
+    [Tooltip("Health multiplier when player has no elemental items (e.g. 1.2 = +20%)")]
+    public float pureCoreHealthMultiplier = 1.2f;
 }
 
 public enum ItemRarity

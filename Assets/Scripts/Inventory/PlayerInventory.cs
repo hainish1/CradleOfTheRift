@@ -53,6 +53,7 @@ public class PlayerInventory : MonoBehaviour
     private ToxicAttackSpeed toxicAttackSpeedEffect;
     private FlameTrail flameTrailEffect;
     private FinisherStrike finisherStrikeEffect;
+    private PureCore pureCoreEffect;
 
     // if I have time limited effects that need use of Updates, I will keep em here
     private readonly List<IDisposable> tickingEffects = new();
@@ -102,6 +103,7 @@ public class PlayerInventory : MonoBehaviour
         flameTrailEffect?.Update(dt);
         finisherStrikeEffect?.Update(dt);
         //homingProjectilesEffect?.Update(dt);
+        // pureCoreEffect is event-driven, no Update
 
         // more runtime effects would be updated here ig
     }
@@ -353,9 +355,26 @@ public class PlayerInventory : MonoBehaviour
                     if (PlayerXP.Instance != null)
                         PlayerXP.Instance.AddXP(effect.xpGrantAmount * stacksAdded);
                     break;
+                case ItemEffectKind.PureCore:
+                    EnsurePureCore(effect);
+                    break;
             }
         }
 
+    }
+
+    private void EnsurePureCore(EffectSpec effect)
+    {
+        if (pureCoreEffect == null || pureCoreEffect.IsDisposed)
+        {
+            pureCoreEffect = new PureCore(
+                owner: playerEntity,
+                inventory: this,
+                damageMultiplier: effect.pureCoreDamageMultiplier,
+                healthMultiplier: effect.pureCoreHealthMultiplier
+            );
+            Debug.Log("[Effect] PureCore created");
+        }
     }
     private void EnsureHealOnDamage(EffectSpec effect, int initialStacks)
     {
@@ -1111,6 +1130,13 @@ public class PlayerInventory : MonoBehaviour
             case ItemEffectKind.XPGrant:
                 // XP is permanent, nothing to remove
                 break;
+            case ItemEffectKind.PureCore:
+                if (pureCoreEffect != null && !pureCoreEffect.IsDisposed)
+                {
+                    pureCoreEffect.Dispose();
+                    pureCoreEffect = null;
+                }
+                break;
 
         }
     }
@@ -1288,6 +1314,9 @@ public class PlayerInventory : MonoBehaviour
         orbitingFireballsTestEffect?.Dispose();
         passThroughSpearEffect?.Dispose();
         toxicAttackSpeedEffect?.Dispose();
+        flameTrailEffect?.Dispose();
+        finisherStrikeEffect?.Dispose();
+        pureCoreEffect?.Dispose();
         //homingProjectilesEffect?.Dispose();
         ElementSystem.ClearTempRules();
 
