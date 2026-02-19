@@ -96,12 +96,12 @@ MonoBehaviour:
     orbitingFireballTestDamageThreshold: 0
     orbitingFireballTestMaxCount: 0
     orbitingFireballTestLifetime: 0
-    chainLightningTestStrikeInterval: 0
-    chainLightningTestBuffDuration: 0
-    chainLightningTestChainDamagePercent: 0
-    chainLightningTestMaxDepth: 0
-    chainLightningTestBranchesPerNode: 0
-    chainLightningTestChainRange: 0
+    chainLightningTestStrikeInterval: 6
+    chainLightningTestBuffDuration: 5
+    chainLightningTestChainDamagePercent: 2
+    chainLightningTestMaxDepth: 3
+    chainLightningTestBranchesPerNode: 2
+    chainLightningTestChainRange: 10
     passThroughEnemyCount: 0
     toxicAttackSpeedRange: 0
     toxicAttackSpeedPerStack: 0
