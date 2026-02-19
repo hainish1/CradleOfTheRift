@@ -4,6 +4,7 @@ using UnityEngine.UIElements;
 public class PlayerXPUI : MonoBehaviour
 {
     private Label levelLabel;
+    private Label levelUpHint;
     private Label xpLabel;
     private ProgressBar xpBar;
 
@@ -12,6 +13,7 @@ public class PlayerXPUI : MonoBehaviour
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
         levelLabel = root.Q<Label>("LevelLabel");
+        levelUpHint = root.Q<Label>("LevelUpHint");
         xpLabel = root.Q<Label>("XPLabel");
         xpBar = root.Q<ProgressBar>("XPBar");
 
@@ -53,6 +55,12 @@ public class PlayerXPUI : MonoBehaviour
     {
         if (levelLabel != null)
             levelLabel.text = $"Level: {level}";
+
+        if (levelUpHint != null)
+        {
+            bool showHint = PlayerXP.Instance != null && PlayerXP.Instance.IsLevelUpReady;
+            levelUpHint.style.display = showHint ? DisplayStyle.Flex : DisplayStyle.None;
+        }
 
         if (xpLabel != null)
             xpLabel.text = $"XP: {currentXP} / {xpToLevelUp}";

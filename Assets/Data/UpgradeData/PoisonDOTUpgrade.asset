@@ -12,14 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
   m_Name: PoisonDOTUpgrade
   m_EditorClassIdentifier: 
-  itemName: PoisonDOT
-  description: Your attacks apply up to 10 stacks of poison each dealing 2 (+1 per
-    stack) damage per second
+  itemName: Dot on Hit
+  description: All your attacks apply a poison damage over time
   icon: {fileID: 21300000, guid: 24d36e96c0661c04f822f6935419e712, type: 3}
   rarity: 1
   rarityColor: {r: 0, g: 0.6431373, b: 0, a: 1}
-  canStack: 1
-  maxStacks: 10
+  canStack: 0
+  maxStacks: 1
   stackingType: 0
   useMultipleStats: 1
   statMods: []
