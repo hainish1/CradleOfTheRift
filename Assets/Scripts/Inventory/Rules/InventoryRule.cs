@@ -44,13 +44,11 @@ public class InventoryRule : ScriptableObject
     {
         public ItemData item;
         public int minCount = 1;
+        [Tooltip("Items in the same group use OR logic. AND logic is applied across different groups.\nExample: Group 0 = A/B/C, Group 1 = D/E → (A OR B OR C) AND (D OR E)")]
+        public int groupId = 0;
     }
 
     public List<Requirement> requirements = new();
-
-    [Header("Condition Logic")]
-    [Tooltip("AND: all requirements must be met (default). OR: any one requirement is enough.")]
-    public bool useOrLogic = false;
 
     [Header("Actions")]
     public List<InventoryRuleActionSpec> actions = new();
@@ -63,28 +61,33 @@ public class InventoryRule : ScriptableObject
     {
         if (inventory == null || requirements.Count == 0) return false;
 
-        if (useOrLogic)
+        // group requirements by groupId; within each group use OR, across groups use AND
+        var groups = new Dictionary<int, List<Requirement>>();
+        foreach (var req in requirements)
         {
-            // OR: at least one requirement must be satisfied
-            foreach (var req in requirements)
+            if (req.item == null) continue;
+            if (!groups.ContainsKey(req.groupId))
+                groups[req.groupId] = new List<Requirement>();
+            groups[req.groupId].Add(req);
+        }
+
+        if (groups.Count == 0) return false;
+
+        foreach (var group in groups.Values)
+        {
+            bool groupMet = false;
+            foreach (var req in group)
             {
-                if (req.item == null) continue;
                 if (inventory.GetItemCount(req.item) >= Mathf.Max(1, req.minCount))
-                    return true;
+                {
+                    groupMet = true;
+                    break;
+                }
             }
-            return false;
+            if (!groupMet) return false;
         }
-        else
-        {
-            // AND: every requirement must be satisfied
-            foreach (var req in requirements)
-            {
-                if (req.item == null) return false;
-                if (inventory.GetItemCount(req.item) < Mathf.Max(1, req.minCount))
-                    return false;
-            }
-            return true;
-        }
+
+        return true;
     }
 }
 
