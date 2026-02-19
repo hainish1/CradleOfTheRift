@@ -55,6 +55,42 @@
 						</Event>
 					</ChildrenList>
 				</Folder>
+				<Event Name="Enemy_Lightning_Damaged" ID="{AD0B93AC-D87A-4C64-AD94-1A5D7408B5BC}">
+					<PropertyList>
+						<Property Name="LimitScope" Type="int16">
+							<ValueList>
+								<Value>1</Value>
+							</ValueList>
+						</Property>
+					</PropertyList>
+					<ChildrenList>
+						<Action Name="" ID="{EA9F35D7-8DD7-4BF4-9684-56002115C7A1}" ShortID="790674044">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="LASRMisc_Beam Transient_04_SFRMS_SCIWPNS" ID="{4C115E24-B0F3-48B2-9CF4-78DF2F953F84}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{4BD70518-CA87-4330-9F87-3C5D7E68F1C8}" ShortID="924607239">
+							<PropertyList>
+								<Property Name="ActionType" Type="int16" Value="13"/>
+								<Property Name="Pitch" Type="int32" Value="-750"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="ELECZap_Bug zapper zapping, electricity, crackle,_RogueWaves_DruidMagic_37" ID="{24724A59-E8DF-4669-AE69-BDA17E3371CD}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{F1A8C156-6B70-40D1-88C8-B506960D52CA}" ShortID="912561566">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="ELECZap_Bug zapper zapping, electricity, crackle,_RogueWaves_DruidMagic_37" ID="{24724A59-E8DF-4669-AE69-BDA17E3371CD}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>
