@@ -94,42 +94,12 @@ public class UpgradePanelUI : MonoBehaviour
         divider.style.backgroundColor = rarityCol;
         card.Add(divider);
 
-        // effects list, shows name and its own description
-        if (item.effects != null && item.effects.Count > 0)
+        // Description
+        if (!string.IsNullOrEmpty(item.description))
         {
-            foreach (var effect in item.effects)
-            {
-                if (effect.kind == ItemEffectKind.None) continue;
-
-                // effect name
-                var effectName = new Label(FormatEffectName(effect.kind));
-                effectName.AddToClassList("upgrade-effect-name");
-                effectName.style.color = rarityCol; // smae color as rarity
-                card.Add(effectName);
-
-                // effect description
-                if (!string.IsNullOrEmpty(effect.description))
-                {
-                    var effectDesc = new Label(effect.description);
-                    effectDesc.AddToClassList("upgrade-effect-desc");
-                    card.Add(effectDesc);
-                }
-            }
-        }
-
-        // stat mods list
-        if (item.statMods != null && item.statMods.Count > 0)
-        {
-            foreach (var mod in item.statMods)
-            {
-                string sign = mod.operatorType == OperatorType.Add ? "+" : "×";
-                string value = mod.operatorType == OperatorType.Percentage
-                    ? $"{mod.value * 100f:F0}%"
-                    : $"{sign}{mod.value:F1}";
-                var modLabel = new Label($"• {mod.statType} {value}");
-                modLabel.AddToClassList("upgrade-effect-desc");
-                card.Add(modLabel);
-            }
+            var desc = new Label(item.GetFormattedDescription(1, false));
+            desc.AddToClassList("upgrade-description");
+            card.Add(desc);
         }
 
         // click handle
@@ -143,16 +113,16 @@ public class UpgradePanelUI : MonoBehaviour
         return card;
     }
 
-    private string FormatEffectName(ItemEffectKind kind)
-    {
-        string nameStr = kind.ToString();
-        var nameStringBuilder = new System.Text.StringBuilder(nameStr.Length + 8);
-        for (int i = 0; i < nameStr.Length; i++)
-        {
-            if (i > 0 && char.IsUpper(nameStr[i]))
-                nameStringBuilder.Append(' ');
-            nameStringBuilder.Append(nameStr[i]);
-        }
-        return nameStringBuilder.ToString();
-    }
+    // private string FormatEffectName(ItemEffectKind kind)
+    // {
+    //     string nameStr = kind.ToString();
+    //     var nameStringBuilder = new System.Text.StringBuilder(nameStr.Length + 8);
+    //     for (int i = 0; i < nameStr.Length; i++)
+    //     {
+    //         if (i > 0 && char.IsUpper(nameStr[i]))
+    //             nameStringBuilder.Append(' ');
+    //         nameStringBuilder.Append(nameStr[i]);
+    //     }
+    //     return nameStringBuilder.ToString();
+    // }
 }

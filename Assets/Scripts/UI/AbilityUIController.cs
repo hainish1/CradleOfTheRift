@@ -84,7 +84,7 @@ public class AbilityUIController : MonoBehaviour
         AbilityInfo flyAbility = new AbilityInfo
         {
             abilityName = "Fly",
-            key = KeyCode.LeftAlt,
+            key = KeyCode.F,
             icon = this.images.Count > 1 ? this.images[1] : null,
             maxCharges = 1,
             currentCharges = 1,
