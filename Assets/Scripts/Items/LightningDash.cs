@@ -306,6 +306,11 @@ public class LightningDash : IDisposable
         
         yield return DashToTarget(fromPos, targetPos, DashDuration);
 
+        if (target == null)
+        {
+            yield break;
+        }
+
         lastHitEnemy = target;
 
         LightningCore.ApplyLightningDamage(owner, target, damage);
@@ -316,6 +321,11 @@ public class LightningDash : IDisposable
         hitEnemiesBuffer.Add(target);
         
         yield return new WaitForSeconds(DashInterval);
+
+        if (target == null)
+        {
+            yield break;
+        }
 
         Enemy nextTarget = FindNearestEnemy(target.transform.position, hitEnemiesBuffer);
 

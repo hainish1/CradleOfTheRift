@@ -92,4 +92,18 @@ public class EnemyRangeOrbitVisuals : MonoBehaviour
                 return i;
         return -1; // None available
     }
+
+    /// <summary>
+    /// re enable all orbs when reloading
+    /// </summary>
+    public void ResetAllOrbs()
+    {
+        StopAllCoroutines(); // cancel any pending 
+        for (int i = 0; i < transforms.Length; i++)
+        {
+            if (transforms[i] != null)
+                transforms[i].gameObject.SetActive(true);
+        }
+        hiddenOrbs = 0;
+    }
 }

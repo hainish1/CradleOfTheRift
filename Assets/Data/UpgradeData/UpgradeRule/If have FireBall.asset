@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 455cc073b78904049852d83eb49d3ebe, type: 3}
+  m_Name: If have FireBall
+  m_EditorClassIdentifier: 
+  requirements:
+  - item: {fileID: 11400000, guid: 2e21aecdab5b3bc4389ce0ffc881d2c8, type: 2}
+    minCount: 1
+  useOrLogic: 0
+  actions:
+  - type: 9
+    item: {fileID: 11400000, guid: bba22a3cb52a4ec4dae4c88b2ae26152, type: 2}
+    amount: 1
+    otherItem: {fileID: 0}
+  - type: 9
+    item: {fileID: 11400000, guid: e98e3c8ef67d7d74db06c840028d0beb, type: 2}
+    amount: 1
+    otherItem: {fileID: 0}
+  oneWayUnlock: 1

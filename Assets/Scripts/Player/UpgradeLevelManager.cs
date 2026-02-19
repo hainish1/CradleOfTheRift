@@ -13,8 +13,14 @@ public class UpgradeLevelManager : MonoBehaviour
     public static UpgradeLevelManager Instance { get; private set; }
 
     [Header("Upgrade Pool")]
-    [Tooltip("All possible upgrade ItemData")]
+    [Tooltip("Base upgrade pool, always available from the start.")]
     [SerializeField] private List<ItemData> upgradePool = new();
+
+    // items unlocked at runtime via InventoryRule (AddToUpgradePool action)
+    private readonly List<ItemData> runtimePool = new();
+
+    // items blocked at runtime via InventoryRule (RemoveFromUpgradePool action)
+    private readonly HashSet<ItemData> blockedFromPool = new();
 
     [Header("Input")]
     [SerializeField] private Key activateKey = Key.U;
@@ -147,33 +153,85 @@ public class UpgradeLevelManager : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    // picks random choices from pool that have not been chosen yet
+    // added weight per rarity tier 
+    private static int RarityWeight(ItemRarity r) => r switch
+    {
+        ItemRarity.Common    => 60,
+        ItemRarity.Uncommon  => 25,
+        ItemRarity.Rare      => 12,
+        ItemRarity.Legendary =>  3,
+        _                    =>  1,
+    };
+
+    // picks weighted-random choices from pool that have not been chosen yet
     private List<ItemData> PickRandomUpgrades()
     {
-        List<ItemData> available = new();
-        foreach (var item in upgradePool)
+        var available = new List<ItemData>();
+        int totalWeight = 0;
+
+        // combine pool(do we need this?)
+        var combined = new List<ItemData>(upgradePool);
+        foreach (var item in runtimePool)
+            if (!combined.Contains(item)) combined.Add(item);
+
+        foreach (var item in combined)
         {
-            if (item != null && !chosenUpgrades.Contains(item))
+            if (item != null && !chosenUpgrades.Contains(item) && !blockedFromPool.Contains(item))
+            {
                 available.Add(item);
+                totalWeight += RarityWeight(item.rarity);
+            }
         }
 
-        // Shuffle
-        for (int i = available.Count - 1; i > 0; i--)
-        {
-            int j = UnityEngine.Random.Range(0, i + 1);
-            (available[i], available[j]) = (available[j], available[i]);
-        }
-
+        var result = new List<ItemData>();
         int count = Mathf.Min(maxChoices, available.Count);
-        return available.GetRange(0, count);
+
+        while (result.Count < count && available.Count > 0)
+        {
+            int roll = UnityEngine.Random.Range(0, totalWeight);
+            int bucket = 0;
+            for (int i = 0; i < available.Count; i++)
+            {
+                bucket += RarityWeight(available[i].rarity);
+                if (roll < bucket)
+                {
+                    result.Add(available[i]);
+                    totalWeight -= RarityWeight(available[i].rarity);
+                    available.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 
 
+
+    public void UnlockForUpgrade(ItemData item)
+    {
+        if (item == null) return;
+        if (!upgradePool.Contains(item) && !runtimePool.Contains(item))
+        {
+            runtimePool.Add(item);
+            Debug.Log($"[UpgradeLevelManager] '{item.itemName}' unlocked into upgrade pool.");
+        }
+    }
+
+    public void LockFromUpgrade(ItemData item)
+    {
+        if (item == null) return;
+        runtimePool.Remove(item);
+        blockedFromPool.Add(item);
+        Debug.Log($"[UpgradeLevelManager] '{item.itemName}' blocked from upgrade pool.");
+    }
 
     public void ResetForNewRun()
     {
         chosenUpgrades.Clear();
         currentChoices.Clear();
+        runtimePool.Clear();
+        blockedFromPool.Clear();
         levelUpPending = false;
     }
 }
