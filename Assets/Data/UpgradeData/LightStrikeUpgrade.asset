@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
   m_Name: LightStrikeUpgrade
   m_EditorClassIdentifier: 
-  itemName: LightStrikeUpgrade
+  itemName: LightStrike
   description: Item Description Here
   icon: {fileID: 21300000, guid: 54c2e0e1f98cc18448b731de7d4b8117, type: 3}
   rarity: 0
-  rarityColor: {r: 0.29803923, g: 0.8, b: 0.29803923, a: 1}
-  canStack: 1
-  maxStacks: 99
+  rarityColor: {r: 1, g: 1, b: 1, a: 1}
+  canStack: 0
+  maxStacks: 1
   stackingType: 0
   useMultipleStats: 0
   statMods: []

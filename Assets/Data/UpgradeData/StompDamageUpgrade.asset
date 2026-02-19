@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
   m_Name: StompDamageUpgrade
   m_EditorClassIdentifier: 
-  itemName: StompDamageUpgrade
+  itemName: StompDamage
   description: 
   icon: {fileID: 21300000, guid: 30aeadb44f5f44941a98d6ecf73c5366, type: 3}
   rarity: 1
-  rarityColor: {r: 0.3, g: 1, b: 0.3, a: 1}
+  rarityColor: {r: 0, g: 0.6431373, b: 0, a: 1}
   canStack: 1
   maxStacks: 10
   stackingType: 0
