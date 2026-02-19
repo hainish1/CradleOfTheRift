@@ -95,7 +95,7 @@
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
     -unity-background-image-tint-color: rgb(255, 255, 255);
-    background-image: url("project://database/Assets/Art%20Assets/2D/UI%20assets/Inventory/Inventory_Full.png?fileID=2800000&guid=bbfb2f9547c994b0aba7992d3f82027d&type=3#Inventory_Full");
+    background-image: url("project://database/Assets/Art%20Assets/2D/UI%20assets/Inventory/Inventory_Base%201.png?fileID=2800000&guid=daafc9d1e666c4591b0277636f428d42&type=3#Inventory_Base 1");
 }
 
 .description {
@@ -107,8 +107,8 @@
 .item:hover {
     transition-duration: 0.25s;
     transition-property: scale;
-    scale: 1.1 1.1;
-    background-image: url("project://database/Assets/Art%20Assets/2D/UI%20assets/Inventory/Inventory_Select(Glow).png?fileID=2800000&guid=5d4ed8b2e62e94c7db9f0718890a0cee&type=3#Inventory_Select(Glow)");
+    scale: 1.2 1.2;
+    background-image: url("project://database/Assets/Art%20Assets/2D/UI%20assets/Inventory/Inventory_Full.png?fileID=2800000&guid=bbfb2f9547c994b0aba7992d3f82027d&type=3#Inventory_Full");
 }
 
 .Background {
