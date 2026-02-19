@@ -35,7 +35,7 @@ public class ExplosiveProjectile : Projectile
         fireballVisual.name = "FireballVisual";
         fireballVisual.transform.SetParent(transform);
         fireballVisual.transform.localPosition = Vector3.zero;
-        fireballVisual.transform.localScale = Vector3.one * 7.5f;
+        fireballVisual.transform.localScale = Vector3.one * ExplosiveProjectiles.FireballVisualScale;
         
         var col = fireballVisual.GetComponent<Collider>();
         if (col != null) Destroy(col);

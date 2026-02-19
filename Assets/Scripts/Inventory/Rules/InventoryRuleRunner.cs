@@ -47,7 +47,7 @@ public class InventoryRuleRunner : MonoBehaviour
 
     private void EvaluateAll()
     {
-        if (inventory == null || runLootState == null) return;
+        if (inventory == null) return;
 
         foreach (var rule in rules)
         {
@@ -56,7 +56,10 @@ public class InventoryRuleRunner : MonoBehaviour
             bool met = rule.IsMet(inventory);
             bool isApplied = applied.Contains(rule);
 
-            if (met && !isApplied)
+            // skip if one way rule already fired
+            if (rule.oneWayUnlock && isApplied) continue;
+
+            if (met)
             {
                 ApplyActions(rule);
             }
@@ -80,6 +83,7 @@ public class InventoryRuleRunner : MonoBehaviour
                         for (int i = 0; i < n; i++) inventory.AddItem(action.item);
                     }
                     break;
+
                 case InventoryRuleActionType.RemoveStacks:
                     if (action.item != null)
                         inventory.TryRemoveStacks(action.item, action.SafeAmount);
@@ -105,14 +109,31 @@ public class InventoryRuleRunner : MonoBehaviour
                     break;
 
                 case InventoryRuleActionType.UnlockLootItem:
-                    if (action.item != null) runLootState.Unlock(action.item);
+                    if (action.item != null && runLootState != null)
+                        runLootState.Unlock(action.item);
                     break;
 
                 case InventoryRuleActionType.BlockLootItem:
-                    if (action.item != null) runLootState.Block(action.item);
+                    if (action.item != null && runLootState != null)
+                        runLootState.Block(action.item);
+                    break;
+
+                case InventoryRuleActionType.AddToUpgradePool:
+                    if (action.item != null && UpgradeLevelManager.Instance != null)
+                        UpgradeLevelManager.Instance.UnlockForUpgrade(action.item);
+                    break;
+
+                case InventoryRuleActionType.RemoveFromUpgradePool:
+                    if (action.item != null && UpgradeLevelManager.Instance != null)
+                        UpgradeLevelManager.Instance.LockFromUpgrade(action.item);
                     break;
             }
         }
+
+        // mark as applied so one-way rules don't fire again
+        if (rule.oneWayUnlock)
+            applied.Add(rule);
+
         isApplying = false;
     }
 

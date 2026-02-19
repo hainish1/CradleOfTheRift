@@ -274,6 +274,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
             yield return new WaitForSeconds(currAttackDuration);
 
         IsAttacking = false;
+        OnMeleeAttackEnd?.Invoke();
 
         // Wait for attack cooldown if max combo count was reached or a combo input was missed.
         yield return new WaitForSeconds(AttackCooldown);

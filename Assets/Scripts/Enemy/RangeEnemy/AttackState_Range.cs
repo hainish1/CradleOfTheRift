@@ -2,17 +2,13 @@ using UnityEngine;
 
 
 /// <summary>
-/// Class - Represents the Attack State for Range Enemy
+/// Class - Represents the Attack State for Range Enemy.
 /// </summary>
 public class AttackState_Range : EnemyState
 {
     EnemyRange enemyRange;
 
-    float delayTimer;
-    bool hasFired;
-
-    private float nextShootTime;
-    private float endTime;
+    float timer;
 
     public AttackState_Range(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
@@ -20,23 +16,25 @@ public class AttackState_Range : EnemyState
     }
 
     /// <summary>
-    /// When entering Attack State, take control from navmeshagent and control it manually
+    /// when enter, hold position, reset ammo, start with attackDelay
     /// </summary>
     public override void Enter()
     {
-        enemyRange.SafeStopAgent();
+        // holdHorizontalPosition keeps the enemy in place via flight logic;
         enemyRange.SetHorizontalPosition(true);
-        hasFired = false;
-        delayTimer = 0.5f; // tiny delay before shooting
+        enemyRange.currentShotsRemaining = enemyRange.shotsPerSet;
+        timer = enemyRange.attackDelay;
     }
 
     public override void Exit()
     {
         enemyRange.SetHorizontalPosition(false);
+        // brief cooldown so Chase doesn't re-enter Attack immediately
+        enemyRange.nextAttackTime = Time.time + enemyRange.attackDelay;
     }
 
     /// <summary>
-    /// While inside attack state, look towards the player and try shooting if fireCooldown allows. Else switch to recovery state
+    /// after each shot, wait recoveryDuration before next shot
     /// </summary>
     public override void Update()
     {
@@ -47,14 +45,31 @@ public class AttackState_Range : EnemyState
         }
 
         enemyRange.FaceTargetSmooth(enemyRange.turnSpeedWhileAiming);
-        delayTimer -= Time.deltaTime;
 
-        if(delayTimer <= 0f && !hasFired)
+
+        float distSqr = (enemy.target.position - enemy.transform.position).sqrMagnitude;
+        float rangeSqr = enemyRange.attackRange * enemyRange.attackRange;
+        if (distSqr > rangeSqr * 1.2f) 
+        {
+            stateMachine.ChangeState(enemyRange.GetChase());
+            return;
+        }
+
+        timer -= Time.deltaTime;
+
+        if (timer <= 0f)
         {
             enemyRange.FireAtTarget();
-            hasFired = true;
+            enemyRange.currentShotsRemaining--;
 
-            stateMachine.ChangeState(enemyRange.GetRecovery());
+            if (enemyRange.currentShotsRemaining > 0)
+            {
+                timer = enemyRange.recoveryDuration; 
+            }
+            else
+            {
+                stateMachine.ChangeState(enemyRange.GetRecovery()); // out of ammo so reload
+            }
         }
     }
 }

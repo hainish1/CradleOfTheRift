@@ -4,6 +4,7 @@ using UnityEngine.UIElements;
 public class PlayerXPUI : MonoBehaviour
 {
     private Label levelLabel;
+    private Label levelUpHint;
     private Label xpLabel;
     private ProgressBar xpBar;
 
@@ -12,6 +13,7 @@ public class PlayerXPUI : MonoBehaviour
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
         levelLabel = root.Q<Label>("LevelLabel");
+        levelUpHint = root.Q<Label>("LevelUpHint");
         xpLabel = root.Q<Label>("XPLabel");
         xpBar = root.Q<ProgressBar>("XPBar");
 
@@ -25,6 +27,7 @@ public class PlayerXPUI : MonoBehaviour
         // subscribe
         xp.XPChanged += OnXPChanged;
         xp.LeveledUp += OnLeveledUp;
+        xp.LevelUpAvailable += OnLevelUpAvailable;
 
         // initialize
         Refresh(xp.CurrentXP, xp.XPToLevelUp, xp.CurrentLevel);
@@ -36,12 +39,19 @@ public class PlayerXPUI : MonoBehaviour
         {
             PlayerXP.Instance.XPChanged -= OnXPChanged;
             PlayerXP.Instance.LeveledUp -= OnLeveledUp;
+            PlayerXP.Instance.LevelUpAvailable -= OnLevelUpAvailable;
         }
     }
 
     private void OnXPChanged(int currentXP, int xpToLevelUp)
     {
         Refresh(currentXP, xpToLevelUp, PlayerXP.Instance.CurrentLevel);
+    }
+
+    private void OnLevelUpAvailable()
+    {
+        var xp = PlayerXP.Instance;
+        Refresh(xp.CurrentXP, xp.XPToLevelUp, xp.CurrentLevel);
     }
 
     private void OnLeveledUp(int newLevel)
@@ -52,7 +62,15 @@ public class PlayerXPUI : MonoBehaviour
     private void Refresh(int currentXP, int xpToLevelUp, int level)
     {
         if (levelLabel != null)
+        {
             levelLabel.text = $"Level: {level}";
+        }
+
+        if (levelUpHint != null)
+        {
+            bool showHint = PlayerXP.Instance != null && PlayerXP.Instance.IsLevelUpReady;
+            levelUpHint.style.display = showHint ? DisplayStyle.Flex : DisplayStyle.None;
+        }
 
         if (xpLabel != null)
             xpLabel.text = $"XP: {currentXP} / {xpToLevelUp}";

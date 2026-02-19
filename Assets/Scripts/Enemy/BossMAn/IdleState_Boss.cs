@@ -33,20 +33,20 @@ public class IdleState_Boss : EnemyState
             // stateMachine.ChangeState(boss.GetLeapAttackState());
 
             // alrgith now here I am keeping it pretty random, which attack is chosen, but we can like mess with it if we want
-            // float random = Random.value;
-            // if (random < 0.5f)
-            // {
-            //     stateMachine.ChangeState(boss.GetBombState());
-            // }
-            // else if (random < 0.8f && !boss.IsPlayerTooFar() && !boss.IsPlayerTooClose() && !boss.IsPlayerTooHighOrLow()) // ensure player is not too far, too close, or too high to leap
-            // {
-            //     stateMachine.ChangeState(boss.GetLeapAttackState());
-            // }
-            // else
-            // {
-            //     stateMachine.ChangeState(boss.GetExploisionState());
-            // }
-            stateMachine.ChangeState(boss.GetLeapAttackState());
+            float random = Random.value;
+            if (random < 0.5f)
+            {
+                stateMachine.ChangeState(boss.GetBombState());
+            }
+            else if (random < 0.8f && !boss.IsPlayerTooFar() && !boss.IsPlayerTooClose() && !boss.IsPlayerTooHighOrLow()) // ensure player is not too far, too close, or too high to leap
+            {
+                stateMachine.ChangeState(boss.GetLeapAttackState());
+            }
+            else
+            {
+                stateMachine.ChangeState(boss.GetExploisionState());
+            }
+            // stateMachine.ChangeState(boss.GetLeapAttackState());
             return;
         }
     }

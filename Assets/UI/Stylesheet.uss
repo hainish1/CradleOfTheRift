@@ -144,6 +144,14 @@ unity-content {
     margin-bottom: 2px;
 }
 
+#LevelUpHint {
+    font-size: 14px;
+    font-weight: bold;
+    color: rgb(255, 220, 50);
+    margin-bottom: 2px;
+    display: none;
+}
+
 #XPLabel {
     font-size: 14px;
     color: rgb(200, 200, 200);

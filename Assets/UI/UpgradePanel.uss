@@ -36,7 +36,7 @@
 
 /* ── card ── */
 .upgrade-card {
-    width: 220px;
+    width: 280px;
     min-height: 280px;
     padding: 16px;
     background-color: rgb(45, 45, 45);
@@ -93,26 +93,13 @@
     background-color: rgb(100, 100, 100);
 }
 
-/* ── effect name ── */
-.upgrade-effect-name {
-    font-size: 14px;
-    font-weight: bold;
-    color: white;
-    margin-top: 6px;
-    margin-bottom: 1px;
-    -unity-text-align: middle-left;
+/* ── description ── */
+.upgrade-description {
+    font-size: 13px;
+    color: rgb(200, 200, 200);
+    margin-top: 4px;
+    -unity-text-align: middle-center;
     white-space: normal;
-    align-self: flex-start;
     padding-left: 4px;
-}
-
-/* ── effect description ── */
-.upgrade-effect-desc {
-    font-size: 12px;
-    color: rgb(180, 180, 180);
-    margin-bottom: 4px;
-    -unity-text-align: middle-left;
-    white-space: normal;
-    align-self: flex-start;
-    padding-left: 12px;
+    padding-right: 4px;
 }
