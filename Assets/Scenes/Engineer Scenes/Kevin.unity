@@ -359607,6 +359607,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyScaler: {fileID: 1916174444}
   pixelsPerSecond: 2
+  minSegmentWidth: 80
 --- !u!114 &1916174444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -359624,13 +359625,17 @@ MonoBehaviour:
   exponentialRamp: 1.5
   tiers:
   - tierName: EASY
-    duration: 10
+    duration: 5
     tierGrowthRate: 0.005
     tierColor: {r: 0.7846269, g: 0.8207547, b: 0, a: 1}
   - tierName: MEDIUM
-    duration: 30
+    duration: 10
     tierGrowthRate: 0.005
     tierColor: {r: 0, g: 0.81960785, b: 0.016541434, a: 1}
+  - tierName: HARD
+    duration: 15
+    tierGrowthRate: 0.005
+    tierColor: {r: 0.745283, g: 0.0035154943, b: 0.0035154943, a: 1}
   elapsedTime: 0
 --- !u!4 &1916174445
 Transform:
