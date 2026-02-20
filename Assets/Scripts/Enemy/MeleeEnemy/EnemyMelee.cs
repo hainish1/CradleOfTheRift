@@ -66,6 +66,16 @@ public class EnemyMelee : Enemy
     [Header("Jump animation")]
     public Transform height;
 
+    private void OnEnable()
+    {
+        EnemyRegistry.RegisterWalker(this);
+    }
+
+    private void OnDisable()
+    {
+        EnemyRegistry.UnregisterWalker(this);
+    }
+
     public override void Start()
     {
         base.Start(); // run stuff that we wrote in base enemy class first

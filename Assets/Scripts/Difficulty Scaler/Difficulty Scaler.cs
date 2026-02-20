@@ -1,53 +1,83 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 public class DifficultyScaler : MonoBehaviour
 {
-    public enum ScalingMode { Linear, NonLinear }
+    [Serializable]
+    public struct TierSettings
+    {
+        public string tierName;
+        public float duration;
+        public float tierGrowthRate; 
+        public Color tierColor;
+    }
 
-    [Header("General Settings")]
+    public enum ScalingMode { Linear, Exponential }
+
+    [Header("Global Settings")]
     [SerializeField] private ScalingMode scalingMode = ScalingMode.Linear;
-    [SerializeField] private float baseDifficulty = 1.0f;
-    [SerializeField] private float difficultyGrowthRate = 0.05f;
-
-    [Header("Non-Linear Settings")]
-    [Tooltip("Higher values make the difficulty ramp up faster toward the end of the run.")]
+    [SerializeField] private float baseDifficulty = 1.0f; 
+    
+    [Header("Exponential Settings")]
     [SerializeField] private float exponentialRamp = 1.5f;
 
-    [Header("UI / Tiers")]
-    public float timePerDifficultyTier = 180f;
-    public readonly string[] difficultyNames = { "EASY", "NORMAL", "HARD", "VERY HARD", "INSANE", "HAHAHA" };
-    
+    [Header("Tier Configuration")]
+    [SerializeField] private List<TierSettings> tiers = new List<TierSettings>();
+
     public float elapsedTime = 0f;
+    private float totalGrowthAccumulated;
     private bool isRunning = true;
 
     public event Action<float, string> OnDifficultyUIUpdate;
+    public List<TierSettings> GetTiers() => tiers;
+
+    void Start()
+    {
+        totalGrowthAccumulated = 0f; 
+    }
 
     void Update()
     {
-        if (!isRunning) return;
+        if (!isRunning || tiers.Count == 0) return;
 
         elapsedTime += Time.deltaTime;
+        TierSettings currentTier = GetCurrentTier(out float tierProgress);
         
-        float currentTierFloat = elapsedTime / timePerDifficultyTier;
-        int currentTierIndex = Mathf.Min(Mathf.FloorToInt(currentTierFloat), difficultyNames.Length - 1);
-        float progressToNextTier = currentTierFloat % 1.0f;
+        totalGrowthAccumulated += currentTier.tierGrowthRate * Time.deltaTime;
 
-        OnDifficultyUIUpdate?.Invoke(progressToNextTier, difficultyNames[currentTierIndex]);
+        OnDifficultyUIUpdate?.Invoke(tierProgress, currentTier.tierName);
     }
 
     public float GetDifficultyScale()
     {
         if (scalingMode == ScalingMode.Linear)
         {
-            // Linear Formula: 1 + (time * rate)
-            return baseDifficulty + (elapsedTime * difficultyGrowthRate);
+            // Formula: Base + (Growth * Time)
+            return baseDifficulty + totalGrowthAccumulated;
         }
         else
         {
-            // Non-Linear Formula: 1 + (time * rate)^ramp
-            return baseDifficulty + Mathf.Pow(elapsedTime * difficultyGrowthRate, exponentialRamp);
+            // Corrected Formula: Base + ((Growth * Time) ^ Ramp)
+            return baseDifficulty + Mathf.Pow(totalGrowthAccumulated, exponentialRamp);
         }
+    }
+
+    private TierSettings GetCurrentTier(out float tierProgress)
+    {
+        float cumulativeTime = 0f;
+        foreach (var tier in tiers)
+        {
+            float tierEndTime = cumulativeTime + tier.duration;
+            if (elapsedTime < tierEndTime)
+            {
+                tierProgress = (elapsedTime - cumulativeTime) / tier.duration;
+                return tier;
+            }
+            cumulativeTime = tierEndTime;
+        }
+        tierProgress = 1f; 
+        return tiers[tiers.Count - 1];
     }
 
     public void SetRunning(bool run) => isRunning = run;

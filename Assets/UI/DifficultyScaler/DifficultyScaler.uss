@@ -22,11 +22,11 @@
 }
 
 .difficulty-segment {
-    width: 250px;
     height: 100%;
     flex-shrink: 0;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
 /* The actual text label - CHANGED TO CLASS (.) */

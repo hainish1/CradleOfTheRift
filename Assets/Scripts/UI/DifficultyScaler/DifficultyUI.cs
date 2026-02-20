@@ -1,81 +1,76 @@
 using UnityEngine;
 using UnityEngine.UIElements;
-using System.Collections.Generic;
 
 public class DifficultyUI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private DifficultyScaler difficultyScaler;
-    
-    [Header("UI Settings")]
-    [SerializeField] private float segmentWidth = 250f;
 
-    [Header("Tier Colors")]
-    [SerializeField] private List<Color> tierColors = new List<Color> {
-        Color.green,              // EASY
-        Color.yellow,             // NORMAL
-        new Color(1f, 0.5f, 0f),  // HARD
-        Color.red,                // VERY HARD
-        new Color(0.5f, 0f, 0f),  // INSANE
-        new Color(0.2f, 0f, 0f)   // HAHAHA
-    };
+    [Header("UI Settings")]
+    [Tooltip("How many pixels represent 1 second of time")]
+    [SerializeField] private float pixelsPerSecond = 5f;
 
     private VisualElement difficultyStrip;
-    private int segmentsCreated = 0;
+    private VisualElement marker;
 
-void Start()
-{
-    VisualElement root = GetComponent<UIDocument>().rootVisualElement;
-    difficultyStrip = root.Q<VisualElement>("DifficultyStrip");
-    difficultyStrip.Clear();
-
-    for (int i = 0; i < tierColors.Count; i++)
+    void Start()
     {
-        string name = (i < difficultyScaler.difficultyNames.Length)
-            ? difficultyScaler.difficultyNames[i]
-            : "???";
-        AddColoredSegment(tierColors[i], name);
+        VisualElement root = GetComponent<UIDocument>().rootVisualElement;
+        difficultyStrip = root.Q<VisualElement>("DifficultyStrip");
+        marker = root.Q<VisualElement>("DifficultyMarker");
+        difficultyStrip.Clear();
+
+        var tiers = difficultyScaler.GetTiers();
+        for (int i = 0; i < tiers.Count; i++)
+        {
+            AddColoredSegment(tiers[i].tierColor, tiers[i].tierName, tiers[i].duration);
+        }
+
+        marker.RegisterCallback<GeometryChangedEvent>(evt =>
+        {
+            if (difficultyScaler != null)
+                difficultyScaler.OnDifficultyUIUpdate += HandleUIUpdate;
+        });
     }
 
-    difficultyStrip.style.left = 0f;
+private float totalStripWidth = 0f;
 
-    if (difficultyScaler != null)
-        difficultyScaler.OnDifficultyUIUpdate += HandleUIUpdate;
-}
-
-private void HandleUIUpdate(float progressToNextTier, string currentTierName)
+private void HandleUIUpdate(float tierProgress, string currentTierName)
 {
-    float timePerTier = difficultyScaler.timePerDifficultyTier;
-    float totalProgress = difficultyScaler.elapsedTime / timePerTier;
-
-    // Calculate the marker's offset. 
-    // Since the marker is at (middle), it is at exactly half the segmentWidth.
-    float markerOffset = segmentWidth / 2f; 
-
-    // Add the offset to the translation math.
-    // At t=0, translation is +125px (Start of segment aligns with marker).
-    // At t=30s, translation is -125px (End of first segment aligns with marker).
-    float translation = markerOffset - (totalProgress * segmentWidth);
+    float markerOffset = marker.layout.x;
+    float translation = markerOffset - (difficultyScaler.elapsedTime * pixelsPerSecond);
     difficultyStrip.style.translate = new Translate(translation, 0, 0);
 
-    // Generate new segments infinitely as you progress
-    if (totalProgress + 2 > segmentsCreated)
+    // The visible right edge of the window in strip-space
+    float visibleRightEdge = difficultyScaler.elapsedTime * pixelsPerSecond + markerOffset;
+
+    // Keep generating last-tier segments when we're within 2 segment-widths of the end
+    var tiers = difficultyScaler.GetTiers();
+    var lastTier = tiers[tiers.Count - 1];
+    float lastSegmentWidth = lastTier.duration * pixelsPerSecond;
+
+    while (visibleRightEdge + lastSegmentWidth * 2f > totalStripWidth)
     {
-        string lastName = difficultyScaler.difficultyNames[difficultyScaler.difficultyNames.Length - 1];
-        AddColoredSegment(tierColors[tierColors.Count - 1], lastName);
+        AddColoredSegment(lastTier.tierColor, lastTier.tierName, lastTier.duration);
     }
 }
-    private void AddColoredSegment(Color color, string tierName)
-    {
-        VisualElement segment = new VisualElement();
-        segment.AddToClassList("difficulty-segment");
-        segment.style.backgroundColor = color;
 
-        Label label = new Label(tierName);
-        label.AddToClassList("difficulty-text");
-        segment.Add(label);
+private void AddColoredSegment(Color color, string tierName, float duration)
+{
+    float minWidth = 125;
+    float naturalWidth = duration * pixelsPerSecond;
+    float segmentWidth = Mathf.Max(naturalWidth, minWidth);
 
-        difficultyStrip.Add(segment);
-        segmentsCreated++;
-    }
+    VisualElement segment = new VisualElement();
+    segment.AddToClassList("difficulty-segment");
+    segment.style.width = segmentWidth;
+    segment.style.backgroundColor = color;
+
+    Label label = new Label(tierName);
+    label.AddToClassList("difficulty-text");
+    segment.Add(label);
+
+    difficultyStrip.Add(segment);
+    totalStripWidth += segmentWidth;
+}
 }
