@@ -87,6 +87,12 @@ public class EnemyBoss_SS : Enemy
         base.Die();
     }
 
+    private void OnDestroy()
+    {
+        // also do cleanup here
+        stateMachine?.currentState?.Exit();
+    }
+
     public EnemyState GetIdle() => idle;
     public EnemyState GetBombState() => bombState;
     public EnemyState GetRecoveryState() => recovery;
