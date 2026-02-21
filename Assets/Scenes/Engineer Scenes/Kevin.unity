@@ -100514,6 +100514,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6570580707735254837, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 24.53661
+      objectReference: {fileID: 0}
+    - target: {fileID: 6570580707735254837, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 24.53661
+      objectReference: {fileID: 0}
+    - target: {fileID: 6570580707735254837, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 24.53661
+      objectReference: {fileID: 0}
+    - target: {fileID: 6570580707735254837, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6.767
+      objectReference: {fileID: 0}
     - target: {fileID: 7463639161683059228, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
       propertyPath: m_Name
       value: ExtractionZone
@@ -117087,6 +117103,10 @@ PrefabInstance:
     - target: {fileID: 4115437183826139628, guid: 03ca77b5a536d8840862258aa7f559ae, type: 3}
       propertyPath: m_Name
       value: ExtractionPointPlacement
+      objectReference: {fileID: 0}
+    - target: {fileID: 4115437183826139628, guid: 03ca77b5a536d8840862258aa7f559ae, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
