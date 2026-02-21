@@ -10,27 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
-  m_Name: Fire Fly
+  m_Name: DashDamage Upgrade
   m_EditorClassIdentifier: 
-  itemName: NEED A BETTER NAME
-  description: 'Explosive Projectile - Your spear throw becomes a Fireball Spell
-
-    Orbiting
-    Fireballs - Gain three fireballs that orbit you and deal damage
-
-    Fly Fire
-    - When flying enemies below you take damage'
-  icon: {fileID: 21300000, guid: 8fa2a36f5f130804cbc7f3b7f28df1f3, type: 3}
-  rarity: 2
-  rarityColor: {r: 0.51096773, g: 0.07843137, b: 1, a: 1}
-  canStack: 1
-  maxStacks: 99
+  itemName: DashDamage
+  description: Man Japan would be a nice place to visit someday ngl
+  icon: {fileID: 21300000, guid: 30aeadb44f5f44941a98d6ecf73c5366, type: 3}
+  rarity: 0
+  rarityColor: {r: 1, g: 1, b: 1, a: 1}
+  canStack: 0
+  maxStacks: 1
   stackingType: 0
   useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 18
-    description: When flying enemies below you take damage
+  - kind: 13
+    description: Dashing through enemies deals damage
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0
@@ -67,8 +61,8 @@ MonoBehaviour:
     delayedDamageTime: 0
     delayedDamageMultiplier: 0
     delayedMarkVFX: {fileID: 0}
-    dashDamage: 0
-    dashDamageRange: 0
+    dashDamage: 15
+    dashDamageRange: 10
     fusionTriggerElement: 0
     fusionEffectElement: 0
     burnAuraDamagePerSecond: 0
@@ -81,10 +75,10 @@ MonoBehaviour:
     playerLightningStrikeRadius: 0
     playerLightningStrikeInterval: 0
     playerLightningStrikeElectrifyDamage: 0
-    flyingFireDamage: 20
-    flyingFireRadius: 6
-    flyingFireTickInterval: 1
-    flyingFireOffset: 1
+    flyingFireDamage: 0
+    flyingFireRadius: 0
+    flyingFireTickInterval: 0
+    flyingFireOffset: 0
     elementReactionExplosionDamage: 0
     elementReactionExplosionRadius: 0
     elementReactionExplosionCooldown: 0
@@ -105,7 +99,7 @@ MonoBehaviour:
     chainLightningTestMaxDepth: 0
     chainLightningTestBranchesPerNode: 0
     chainLightningTestChainRange: 0
-    passThroughEnemyCount: 0
+    passThroughEnemyCount: 10
     toxicAttackSpeedRange: 0
     toxicAttackSpeedPerStack: 0
     flameTrailDamage: 0
@@ -119,4 +113,4 @@ MonoBehaviour:
   operatorType: 0
   value: 1
   duration: -1
-  itemId: 607f985c3b1e45beb674ddd1dbec494c
+  itemId: 673fa430bf624ad093066d6e280da7ba

@@ -10,21 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
-  m_Name: DashDamage
+  m_Name: FireBall Orbiting Upgrade
   m_EditorClassIdentifier: 
-  itemName: DashDamage
-  description: Man Japan would be a nice place to visit someday ngl
-  icon: {fileID: 21300000, guid: 30aeadb44f5f44941a98d6ecf73c5366, type: 3}
-  rarity: 0
-  rarityColor: {r: 1, g: 1, b: 1, a: 1}
-  canStack: 0
-  maxStacks: 1
+  itemName: Oribiting Fireball
+  description: Orbiting Fireballs - Gain three fireballs that orbit you and deal
+    damage
+  icon: {fileID: 21300000, guid: 8fa2a36f5f130804cbc7f3b7f28df1f3, type: 3}
+  rarity: 2
+  rarityColor: {r: 0.6392157, g: 0.15686275, b: 1, a: 1}
+  canStack: 1
+  maxStacks: 99
   stackingType: 0
   useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 13
-    description: Dashing through enemies deals damage
+  - kind: 19
+    description: Gain three fireballs that orbit you
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0
@@ -61,8 +62,8 @@ MonoBehaviour:
     delayedDamageTime: 0
     delayedDamageMultiplier: 0
     delayedMarkVFX: {fileID: 0}
-    dashDamage: 15
-    dashDamageRange: 10
+    dashDamage: 0
+    dashDamageRange: 0
     fusionTriggerElement: 0
     fusionEffectElement: 0
     burnAuraDamagePerSecond: 0
@@ -83,9 +84,9 @@ MonoBehaviour:
     elementReactionExplosionRadius: 0
     elementReactionExplosionCooldown: 0
     elementReactionExplosionVFX: {fileID: 0}
-    orbitingFireballDamage: 0
-    orbitingFireballRadius: 0
-    orbitingFireballRotationSpeed: 0
+    orbitingFireballDamage: 10
+    orbitingFireballRadius: 4
+    orbitingFireballRotationSpeed: 50
     lightningDashDamage: 0
     lightningDashChainCount: 0
     lightningDashChainRange: 0
@@ -99,7 +100,7 @@ MonoBehaviour:
     chainLightningTestMaxDepth: 0
     chainLightningTestBranchesPerNode: 0
     chainLightningTestChainRange: 0
-    passThroughEnemyCount: 10
+    passThroughEnemyCount: 0
     toxicAttackSpeedRange: 0
     toxicAttackSpeedPerStack: 0
     flameTrailDamage: 0
@@ -108,9 +109,9 @@ MonoBehaviour:
     flameTrailSpawnInterval: 0
     finisherDamageMultiplier: 0
     finisherRangeMultiplier: 0
-    xpGrantAmount: 50
+    xpGrantAmount: 0
   statType: 13
   operatorType: 0
   value: 1
   duration: -1
-  itemId: 673fa430bf624ad093066d6e280da7ba
+  itemId: 607f985c3b1e45beb674ddd1dbec494c
