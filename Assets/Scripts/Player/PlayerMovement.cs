@@ -37,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("The player camera object.")] private Transform _cameraTransform;
     [SerializeField]
     [Tooltip("The player model object.")] private GameObject _playerModel;
-    private Entity _playerEntity;
+    public Entity _playerEntity;
     private Animator _playerAnim;
     private CharacterController _characterController;
     private PlayerMeleeControllerV2 _meleeController;
@@ -68,7 +68,7 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("How quickly the player character aligns with the camera direction in units per second.")] private float _characterRotationDamping;
     private float _moveAcceleration;
     private float _moveDeceleration;
-    private Vector3 _lateralVelocityVector;
+    public Vector3 _lateralVelocityVector;
     private Vector2 _moveInputTemp;
     public bool isSlowed = false;
 
@@ -309,6 +309,8 @@ public class PlayerMovement : MonoBehaviour
             DriftConditions();
             FlightConditions();
         }
+
+        //Debug.Log("Player lateral velocity: " + _lateralVelocityVector.magnitude + ". Player max speed: " + MoveMaxSpeed);
     }
 
 
@@ -716,16 +718,6 @@ public class PlayerMovement : MonoBehaviour
         // Skip deceleration calculations if not moving.
         if (_lateralVelocityVector.magnitude == 0) return;
 
-        float decelDecrement = Time.deltaTime * _moveDeceleration;
-        float newVelocityMagnitude = Mathf.Clamp(_lateralVelocityVector.magnitude - decelDecrement, 0, float.MaxValue);
-        _lateralVelocityVector = newVelocityMagnitude * _lateralVelocityVector.normalized;
-    }
-
-    /// <summary>
-    /// Immediately decelerates the player character without checking if currently moving
-    /// </summary>
-    public void MoveDecelerateImmediate()
-    {
         float decelDecrement = Time.deltaTime * _moveDeceleration;
         float newVelocityMagnitude = Mathf.Clamp(_lateralVelocityVector.magnitude - decelDecrement, 0, float.MaxValue);
         _lateralVelocityVector = newVelocityMagnitude * _lateralVelocityVector.normalized;
