@@ -37,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("The player camera object.")] private Transform _cameraTransform;
     [SerializeField]
     [Tooltip("The player model object.")] private GameObject _playerModel;
-    private Entity _playerEntity;
+    public Entity _playerEntity;
     private Animator _playerAnim;
     private CharacterController _characterController;
     private PlayerMeleeControllerV2 _meleeController;
@@ -54,7 +54,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Movement Parameters
 
-    private float MoveMaxSpeed { get; set; }
+    public float MoveMaxSpeed { get; set; }
     [Header("Movement Parameters")] [Space]
     [SerializeField]
     [Tooltip("Seconds needed to reach Max Speed.")] private float _moveAccelerationSeconds;
@@ -68,8 +68,9 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("How quickly the player character aligns with the camera direction in units per second.")] private float _characterRotationDamping;
     private float _moveAcceleration;
     private float _moveDeceleration;
-    private Vector3 _lateralVelocityVector;
+    public Vector3 _lateralVelocityVector;
     private Vector2 _moveInputTemp;
+    public bool isSlowed = false;
 
     // Hover Parameters
 
@@ -308,6 +309,8 @@ public class PlayerMovement : MonoBehaviour
             DriftConditions();
             FlightConditions();
         }
+
+        //Debug.Log("Player lateral velocity: " + _lateralVelocityVector.magnitude + ". Player max speed: " + MoveMaxSpeed);
     }
 
 

@@ -66,8 +66,6 @@ public class Projectile : MonoBehaviour
         
 
         // Debug.Log($"Projectile initialized with damage: {actualDamage}");
-
-        //Debug.Log("This belongs to the parent");
     }
 
     public virtual void InitializeTrailVisuals()
