@@ -13,13 +13,7 @@ MonoBehaviour:
   m_Name: Fire+Lightning Explosion Upgrade
   m_EditorClassIdentifier: 
   itemName: Element explosion
-  description: 'Explosive Projectile - Your spear throw becomes a Fireball Spell
-
-    Orbiting
-    Fireballs - Gain three fireballs that orbit you and deal damage
-
-    Fly Fire
-    - When flying enemies below you take damage'
+  description: Dealing both Lightning and Fire damage to an enemy triggers an explosion.
   icon: {fileID: 21300000, guid: 8fa2a36f5f130804cbc7f3b7f28df1f3, type: 3}
   rarity: 3
   rarityColor: {r: 1, g: 0.2374646, b: 0.08018869, a: 1}
@@ -30,7 +24,7 @@ MonoBehaviour:
   statMods: []
   effects:
   - kind: 16
-    description: When flying enemies below you take damage
+    description: Dealing both Lightning and Fire damage to an enemy triggers an explosion.
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0
