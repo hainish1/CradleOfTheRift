@@ -54,7 +54,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Movement Parameters
 
-    private float MoveMaxSpeed { get; set; }
+    public float MoveMaxSpeed { get; set; }
     [Header("Movement Parameters")] [Space]
     [SerializeField]
     [Tooltip("Seconds needed to reach Max Speed.")] private float _moveAccelerationSeconds;
@@ -70,6 +70,7 @@ public class PlayerMovement : MonoBehaviour
     private float _moveDeceleration;
     private Vector3 _lateralVelocityVector;
     private Vector2 _moveInputTemp;
+    public bool isSlowed = false;
 
     // Hover Parameters
 
@@ -715,6 +716,16 @@ public class PlayerMovement : MonoBehaviour
         // Skip deceleration calculations if not moving.
         if (_lateralVelocityVector.magnitude == 0) return;
 
+        float decelDecrement = Time.deltaTime * _moveDeceleration;
+        float newVelocityMagnitude = Mathf.Clamp(_lateralVelocityVector.magnitude - decelDecrement, 0, float.MaxValue);
+        _lateralVelocityVector = newVelocityMagnitude * _lateralVelocityVector.normalized;
+    }
+
+    /// <summary>
+    /// Immediately decelerates the player character without checking if currently moving
+    /// </summary>
+    public void MoveDecelerateImmediate()
+    {
         float decelDecrement = Time.deltaTime * _moveDeceleration;
         float newVelocityMagnitude = Mathf.Clamp(_lateralVelocityVector.magnitude - decelDecrement, 0, float.MaxValue);
         _lateralVelocityVector = newVelocityMagnitude * _lateralVelocityVector.normalized;
