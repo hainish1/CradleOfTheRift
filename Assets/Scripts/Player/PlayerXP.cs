@@ -50,13 +50,21 @@ public class PlayerXP : MonoBehaviour
         if (amount <= 0) return;
 
         currentXP += amount;
+
+        // set levelUpReady BEFORE so UI sees 
+        bool justBecameReady = false;
+        if (!levelUpReady && currentXP >= xpToLevelUp)
+        {
+            levelUpReady = true;
+            justBecameReady = true;
+        }
+
         XPChanged?.Invoke(currentXP, xpToLevelUp);
 
         Debug.Log($"[PlayerXP] +{amount} XP  ({currentXP}/{xpToLevelUp})");
 
-        if (!levelUpReady && currentXP >= xpToLevelUp)
+        if (justBecameReady)
         {
-            levelUpReady = true;
             LevelUpAvailable?.Invoke();
             Debug.Log("Player Level Up now ready");
         }
