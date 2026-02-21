@@ -23941,6 +23941,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InputActions: {fileID: -944628639613478452, guid: d6a7529352e2d456dbbdcbac11e7d337, type: 3}
   pauseManager: {fileID: 1645519322}
+  creditsUI: {fileID: 0}
+  mainMenuUI: {fileID: 0}
 --- !u!43 &112631376
 Mesh:
   m_ObjectHideFlags: 0
@@ -410662,6 +410664,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InputActions: {fileID: -944628639613478452, guid: d6a7529352e2d456dbbdcbac11e7d337, type: 3}
   pauseManager: {fileID: 1645519322}
+  creditsUI: {fileID: 0}
+  mainMenuUI: {fileID: 0}
 --- !u!4 &1988271205
 Transform:
   m_ObjectHideFlags: 0
@@ -436490,6 +436494,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerInventory: {fileID: 1154955906}
   uiDocument: {fileID: 2124910233}
+  pauseManager: {fileID: 1645519322}
   toggleKey: 9
   useDynamicDescriptions: 1
 --- !u!1 &2128468047
