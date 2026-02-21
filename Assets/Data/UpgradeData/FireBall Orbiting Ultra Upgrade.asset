@@ -10,21 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
-  m_Name: ToxicAttackSpeedUpgrade
+  m_Name: FireBall Orbiting Ultra Upgrade
   m_EditorClassIdentifier: 
-  itemName: Toxic Attack Speed
-  description: Nearby poison stacks increase your melee attack speed
-  icon: {fileID: 21300000, guid: 24d36e96c0661c04f822f6935419e712, type: 3}
-  rarity: 1
-  rarityColor: {r: 0, g: 0.6431373, b: 0, a: 1}
-  canStack: 0
-  maxStacks: 1
+  itemName: Oribiting Fireball Ultra
+  description: Orbiting Fireballs - Gain three fireballs that orbit you and deal
+    damage
+  icon: {fileID: 21300000, guid: 8fa2a36f5f130804cbc7f3b7f28df1f3, type: 3}
+  rarity: 3
+  rarityColor: {r: 1, g: 0.92156863, b: 0.16470589, a: 1}
+  canStack: 1
+  maxStacks: 99
   stackingType: 0
   useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 24
-    description: 
+  - kind: 21
+    description: Gain a fireball that orbit you after you done 30 lighnting damage
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0
@@ -48,6 +49,7 @@ MonoBehaviour:
     explosiveAoeRadius: 0
     explosiveAoeDamageMultiplier: 0
     explosiveMaxRange: 0
+    explosiveFireballSize: 7.5
     explosiveVFX: {fileID: 0}
     chainDamagePercent: 0
     maxChainCount: 0
@@ -82,16 +84,16 @@ MonoBehaviour:
     elementReactionExplosionRadius: 0
     elementReactionExplosionCooldown: 0
     elementReactionExplosionVFX: {fileID: 0}
-    orbitingFireballDamage: 0
-    orbitingFireballRadius: 0
-    orbitingFireballRotationSpeed: 0
+    orbitingFireballDamage: 10
+    orbitingFireballRadius: 4
+    orbitingFireballRotationSpeed: 50
     lightningDashDamage: 0
     lightningDashChainCount: 0
     lightningDashChainRange: 0
-    orbitingFireballTestDamage: 0
-    orbitingFireballTestDamageThreshold: 0
-    orbitingFireballTestMaxCount: 0
-    orbitingFireballTestLifetime: 0
+    orbitingFireballTestDamage: 10
+    orbitingFireballTestDamageThreshold: 30
+    orbitingFireballTestMaxCount: 20
+    orbitingFireballTestLifetime: 6
     chainLightningTestStrikeInterval: 0
     chainLightningTestBuffDuration: 0
     chainLightningTestChainDamagePercent: 0
@@ -99,16 +101,17 @@ MonoBehaviour:
     chainLightningTestBranchesPerNode: 0
     chainLightningTestChainRange: 0
     passThroughEnemyCount: 0
-    toxicAttackSpeedRange: 20
-    toxicAttackSpeedPerStack: 0.2
+    toxicAttackSpeedRange: 0
+    toxicAttackSpeedPerStack: 0
     flameTrailDamage: 0
     flameTrailRadius: 0
     flameTrailLifetime: 0
     flameTrailSpawnInterval: 0
     finisherDamageMultiplier: 0
     finisherRangeMultiplier: 0
+    xpGrantAmount: 0
   statType: 13
   operatorType: 0
   value: 1
   duration: -1
-  itemId: 49c3a1f3e09c40b78339495afe5976ff
+  itemId: 607f985c3b1e45beb674ddd1dbec494c

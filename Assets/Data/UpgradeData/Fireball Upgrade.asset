@@ -10,22 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
-  m_Name: Poison Pool On Dash
+  m_Name: Fireball Upgrade
   m_EditorClassIdentifier: 
-  itemName: Poison Pool On Dash
-  description: Im gonna write a big ass decription here just cause I wanna test things
-    our like idk man I think the phase 4 of marvel was so shit
-  icon: {fileID: 21300000, guid: 24d36e96c0661c04f822f6935419e712, type: 3}
-  rarity: 2
-  rarityColor: {r: 0.6392157, g: 0.15686275, b: 1, a: 1}
-  canStack: 0
-  maxStacks: 1
+  itemName: Fireball
+  description: 'Explosive Projectile - Your spear throw becomes a Fireball Spell
+
+'
+  icon: {fileID: 21300000, guid: 8fa2a36f5f130804cbc7f3b7f28df1f3, type: 3}
+  rarity: 1
+  rarityColor: {r: 0, g: 0.735849, b: 0.09301324, a: 1}
+  canStack: 1
+  maxStacks: 99
   stackingType: 0
   useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 6
-    description: when dashing leave a pool of poison on the ground
+  - kind: 9
+    description: Your spear throw becomes a Fireball!
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0
@@ -42,14 +43,14 @@ MonoBehaviour:
     dotCanStack: 0
     dotMaxStacks: 0
     dotApplyImmediately: 0
-    poisonPoolRadius: 10
-    poisonPoolLifetime: 6
+    poisonPoolRadius: 0
+    poisonPoolLifetime: 0
     numberOfProjectiles: 0
     projectileDamageMultiplier: 0
-    explosiveAoeRadius: 0
-    explosiveAoeDamageMultiplier: 0
-    explosiveMaxRange: 0
-    explosiveFireballSize: 7.5
+    explosiveAoeRadius: 10
+    explosiveAoeDamageMultiplier: 2
+    explosiveMaxRange: 100
+    explosiveFireballSize: 3
     explosiveVFX: {fileID: 0}
     chainDamagePercent: 0
     maxChainCount: 0
@@ -114,4 +115,4 @@ MonoBehaviour:
   operatorType: 0
   value: 1
   duration: -1
-  itemId: 7e809300be9e4ac7bc0c98e6847171dc
+  itemId: 607f985c3b1e45beb674ddd1dbec494c

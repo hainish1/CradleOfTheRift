@@ -10,27 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
-  m_Name: LightningDash
+  m_Name: PosionHeal Upgrade
   m_EditorClassIdentifier: 
-  itemName: Lightning Dash
-  description: kinda crazy how salt lake had snow for like 2 mins before disappearing
-    into nothingness. Also I could not find the lightning spear for some reason
-  icon: {fileID: 21300000, guid: 54c2e0e1f98cc18448b731de7d4b8117, type: 3}
+  itemName: PoisonHeal
+  description: Im gonna write a big ass decription here just cause I wanna test things
+    our like idk man I think the phase 4 of marvel was so shit
+  icon: {fileID: 21300000, guid: 24d36e96c0661c04f822f6935419e712, type: 3}
   rarity: 1
-  rarityColor: {r: 0, g: 0.7372549, b: 0.09411765, a: 1}
+  rarityColor: {r: 0, g: 0.5283019, b: 0.06516498, a: 1}
   canStack: 0
   maxStacks: 1
   stackingType: 0
   useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 20
-    description: When dashing you become pure energy and dash between enemies damaging
-      them
+  - kind: 2
+    description: Your poison damage heals you
     duration: -1
     healOnDamagePercentPerStack: 0
-    healOnPoisonRange: 0
-    healPerPoisonStackPerSecond: 0
+    healOnPoisonRange: 15
+    healPerPoisonStackPerSecond: 0.5
     healOnPoisonTickInterval: 0
     stompDamagePerStack: 0
     stompBounceForce: 0
@@ -88,9 +87,9 @@ MonoBehaviour:
     orbitingFireballDamage: 0
     orbitingFireballRadius: 0
     orbitingFireballRotationSpeed: 0
-    lightningDashDamage: 15
-    lightningDashChainCount: 5
-    lightningDashChainRange: 10
+    lightningDashDamage: 0
+    lightningDashChainCount: 0
+    lightningDashChainRange: 0
     orbitingFireballTestDamage: 0
     orbitingFireballTestDamageThreshold: 0
     orbitingFireballTestMaxCount: 0
@@ -115,4 +114,4 @@ MonoBehaviour:
   operatorType: 0
   value: 1
   duration: -1
-  itemId: c0d642db795f46a1a21a27104b303344
+  itemId: 7e809300be9e4ac7bc0c98e6847171dc

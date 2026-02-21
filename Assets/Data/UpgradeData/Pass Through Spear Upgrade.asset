@@ -10,22 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
-  m_Name: Poison Dot
+  m_Name: Pass Through Spear Upgrade
   m_EditorClassIdentifier: 
-  itemName: Poison Dot
-  description: Im gonna write a big ass decription here just cause I wanna test things
-    our like idk man I think the phase 4 of marvel was so shit
-  icon: {fileID: 21300000, guid: 24d36e96c0661c04f822f6935419e712, type: 3}
-  rarity: 1
-  rarityColor: {r: 0, g: 0.5283019, b: 0.06516498, a: 1}
+  itemName: Pass Through Spear
+  description: Man Japan would be a nice place to visit someday ngl
+  icon: {fileID: 21300000, guid: 30aeadb44f5f44941a98d6ecf73c5366, type: 3}
+  rarity: 0
+  rarityColor: {r: 1, g: 1, b: 1, a: 1}
   canStack: 0
   maxStacks: 1
   stackingType: 0
   useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 5
-    description: All your attacks apply a poison damage over time
+  - kind: 23
+    description: Your spear pierced through enemies
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0
@@ -35,12 +34,12 @@ MonoBehaviour:
     stompBounceForce: 0
     fallDamageBonusPerMeter: 0
     fallDamageBonusPerStack: 0
-    dotDamagePerTick: 2
-    dotTickInterval: 1
-    dotDuration: 4
-    dotDamagePerStack: 2
-    dotCanStack: 1
-    dotMaxStacks: 5
+    dotDamagePerTick: 0
+    dotTickInterval: 0
+    dotDuration: 0
+    dotDamagePerStack: 0
+    dotCanStack: 0
+    dotMaxStacks: 0
     dotApplyImmediately: 0
     poisonPoolRadius: 0
     poisonPoolLifetime: 0
@@ -100,7 +99,7 @@ MonoBehaviour:
     chainLightningTestMaxDepth: 0
     chainLightningTestBranchesPerNode: 0
     chainLightningTestChainRange: 0
-    passThroughEnemyCount: 0
+    passThroughEnemyCount: 10
     toxicAttackSpeedRange: 0
     toxicAttackSpeedPerStack: 0
     flameTrailDamage: 0
@@ -114,4 +113,4 @@ MonoBehaviour:
   operatorType: 0
   value: 1
   duration: -1
-  itemId: 7e809300be9e4ac7bc0c98e6847171dc
+  itemId: 673fa430bf624ad093066d6e280da7ba

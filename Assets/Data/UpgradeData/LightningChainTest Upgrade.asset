@@ -10,22 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
-  m_Name: LightningArc
+  m_Name: LightningChainTest Upgrade
   m_EditorClassIdentifier: 
-  itemName: Arc Lightning
+  itemName: Chain Lighting Strike
   description: kinda crazy how salt lake had snow for like 2 mins before disappearing
     into nothingness. Also I could not find the lightning spear for some reason
   icon: {fileID: 21300000, guid: 54c2e0e1f98cc18448b731de7d4b8117, type: 3}
-  rarity: 3
-  rarityColor: {r: 1, g: 0.973505, b: 0.15686274, a: 1}
+  rarity: 2
+  rarityColor: {r: 0.63941544, g: 0.15566039, b: 1, a: 1}
   canStack: 0
   maxStacks: 1
   stackingType: 0
   useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 15
-    description: Lightning chains from you to damage nearby enemies
+  - kind: 22
+    description: Lightning strikes your location periodically If you are hit you
+      will take damage however your attacks will be enchanted with lightning for
+      a short duration
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0
@@ -49,7 +51,7 @@ MonoBehaviour:
     explosiveAoeRadius: 0
     explosiveAoeDamageMultiplier: 0
     explosiveMaxRange: 0
-    explosiveFireballSize: 7.5
+    explosiveFireballSize: 0
     explosiveVFX: {fileID: 0}
     chainDamagePercent: 0
     maxChainCount: 0
@@ -69,9 +71,9 @@ MonoBehaviour:
     burnAuraDamagePerSecond: 0
     burnAuraRange: 0
     burnAuraTickInterval: 0
-    arcStrikeDamage: 5
-    arcStrikeRange: 13
-    arcStrikePoissonLambda: 5
+    arcStrikeDamage: 0
+    arcStrikeRange: 0
+    arcStrikePoissonLambda: 0
     playerLightningStrikeDamage: 0
     playerLightningStrikeRadius: 0
     playerLightningStrikeInterval: 0
@@ -94,12 +96,12 @@ MonoBehaviour:
     orbitingFireballTestDamageThreshold: 0
     orbitingFireballTestMaxCount: 0
     orbitingFireballTestLifetime: 0
-    chainLightningTestStrikeInterval: 0
-    chainLightningTestBuffDuration: 0
-    chainLightningTestChainDamagePercent: 0
-    chainLightningTestMaxDepth: 0
-    chainLightningTestBranchesPerNode: 0
-    chainLightningTestChainRange: 0
+    chainLightningTestStrikeInterval: 6
+    chainLightningTestBuffDuration: 5
+    chainLightningTestChainDamagePercent: 2
+    chainLightningTestMaxDepth: 3
+    chainLightningTestBranchesPerNode: 2
+    chainLightningTestChainRange: 10
     passThroughEnemyCount: 0
     toxicAttackSpeedRange: 0
     toxicAttackSpeedPerStack: 0
@@ -109,7 +111,7 @@ MonoBehaviour:
     flameTrailSpawnInterval: 0
     finisherDamageMultiplier: 0
     finisherRangeMultiplier: 0
-    xpGrantAmount: 50
+    xpGrantAmount: 0
   statType: 13
   operatorType: 0
   value: 1
