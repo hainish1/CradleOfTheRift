@@ -972,24 +972,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 964013e5c9de7c64aa1095091cc144bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rockRenderers:
-  - {fileID: 916160866008417097}
-  - {fileID: 1935023436557106178}
-  - {fileID: 6306354976429447174}
-  - {fileID: 8896150501083925138}
-  - {fileID: 1957165802797492934}
-  - {fileID: 57708413071010609}
-  - {fileID: 9076069967938418724}
-  - {fileID: 1868945613541677373}
-  - {fileID: 1710594368280690122}
-  - {fileID: 8619494948913739803}
-  - {fileID: 830424432533953406}
-  - {fileID: 5562557922133202970}
-  - {fileID: 2398887449944841795}
-  - {fileID: 8775534179837116153}
-  - {fileID: 3973178759667644885}
+  rockEvents:
+  - rockRenderer: {fileID: 916160866008417097}
+    eventFrame: 134
+  - rockRenderer: {fileID: 1935023436557106178}
+    eventFrame: 234
+  - rockRenderer: {fileID: 6306354976429447174}
+    eventFrame: 266
+  - rockRenderer: {fileID: 8896150501083925138}
+    eventFrame: 311
+  - rockRenderer: {fileID: 1957165802797492934}
+    eventFrame: 378
+  - rockRenderer: {fileID: 57708413071010609}
+    eventFrame: 445
+  - rockRenderer: {fileID: 9076069967938418724}
+    eventFrame: 470
+  - rockRenderer: {fileID: 1868945613541677373}
+    eventFrame: 485
+  - rockRenderer: {fileID: 1710594368280690122}
+    eventFrame: 456
+  - rockRenderer: {fileID: 8619494948913739803}
+    eventFrame: 423
+  - rockRenderer: {fileID: 830424432533953406}
+    eventFrame: 356
+  - rockRenderer: {fileID: 5562557922133202970}
+    eventFrame: 322
+  - rockRenderer: {fileID: 2398887449944841795}
+    eventFrame: 300
+  - rockRenderer: {fileID: 8775534179837116153}
+    eventFrame: 256
+  - rockRenderer: {fileID: 3973178759667644885}
+    eventFrame: 167
   finishedMaterial: {fileID: 2100000, guid: 08f1c7c0101d4409cb925e01882247c4, type: 2}
   resetMaterial: {fileID: 2100000, guid: eb6fb8593f616e04da8d1be461c64530, type: 2}
+  totalFrames: 500
 --- !u!137 &6306354976429447174 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: -8421325195104663336, guid: c340acc7c90d5f540afec6f9b8a37ce3, type: 3}
