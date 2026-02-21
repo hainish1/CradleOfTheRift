@@ -127,7 +127,7 @@ public class HomingProjectile : Projectile
                 IDamageable damageable = enemy.GetComponent<IDamageable>();
                 if (damageable != null && damageable.IsDead)
                 {
-                    continue; // Skip, this one is already dead
+                    continue; // Skip if already dead
                 }
                 
                 float distance = (transform.position - enemy.transform.position).sqrMagnitude;
@@ -136,6 +136,8 @@ public class HomingProjectile : Projectile
                     minDistance = distance;
                     closestTarget = enemy.transform;
                     closestDamageable = damageable;
+
+                    //Debug.Log("Target found");
                 }
             }
         }
