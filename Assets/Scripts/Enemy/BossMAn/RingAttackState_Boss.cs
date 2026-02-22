@@ -12,7 +12,6 @@ public class RingAttackState_Boss : EnemyState
     private HashSet<IDamageable> alreadyDamaged = new HashSet<IDamageable>();
     private GameObject explosionVFXObj;
     private BossRingVFX bossRingVFX;
-    private GameObject shockwaveVFX;
 
     public RingAttackState_Boss(Enemy enemy, EnemyStateMachine stateMachine, float maxRadius, float duration, float damage, LayerMask mask) : base(enemy, stateMachine)
     {
@@ -31,12 +30,39 @@ public class RingAttackState_Boss : EnemyState
 
         if(boss.explosionVFXPrefab != null)
         {
-            explosionVFXObj = GameObject.Instantiate(boss.explosionVFXPrefab);
-            explosionVFXObj.transform.position = boss.transform.position - new Vector3(0, 0, 0);
+            if (ObjectPool.instance != null)
+            {
+                explosionVFXObj = ObjectPool.instance.GetObject(boss.explosionVFXPrefab, boss.transform);
+            }
+            else
+            {
+                explosionVFXObj = GameObject.Instantiate(boss.explosionVFXPrefab);
+            }
+            explosionVFXObj.transform.position = boss.transform.position;
             explosionVFXObj.transform.rotation = Quaternion.identity;
 
             bossRingVFX = explosionVFXObj.GetComponent<BossRingVFX>();
+            if (bossRingVFX != null) bossRingVFX.SetRadius(0.5f);
         }
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+
+        // Clean up VFX so they dont say after boss ded
+        ReturnOrDestroy(explosionVFXObj);
+        explosionVFXObj = null;
+        bossRingVFX = null;
+    }
+
+    private void ReturnOrDestroy(GameObject obj)
+    {
+        if (obj == null) return;
+        if (ObjectPool.instance != null && obj.GetComponent<PooledObject>() != null)
+            ObjectPool.instance.ReturnObject(obj);
+        else
+            GameObject.Destroy(obj);
     }
 
 
@@ -73,15 +99,12 @@ public class RingAttackState_Boss : EnemyState
             }
 
 
-            if (explosionVFXObj != null) GameObject.Destroy(explosionVFXObj);
-            if(boss.shockwaveVFXPrefab != null)
-            {
-                shockwaveVFX = GameObject.Instantiate(boss.shockwaveVFXPrefab);
-                shockwaveVFX.transform.position = boss.transform.position - new Vector3(0, 0, 0);
-                shockwaveVFX.transform.rotation = Quaternion.identity;
-            }
+            ReturnOrDestroy(explosionVFXObj);
+            explosionVFXObj = null;
+            bossRingVFX = null;
 
-            if(shockwaveVFX != null) GameObject.Destroy(shockwaveVFX, 2);
+            // Shockwave is a fire-and-forget particle system, use PlayPSVFX
+            boss.PlayPSVFX(boss.shockwaveVFXPrefab, boss.transform.position);
             stateMachine.ChangeState(boss.GetRecoveryState());
         }
     }

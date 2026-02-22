@@ -37,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("The player camera object.")] private Transform _cameraTransform;
     [SerializeField]
     [Tooltip("The player model object.")] private GameObject _playerModel;
-    private Entity _playerEntity;
+    public Entity _playerEntity;
     private Animator _playerAnim;
     private CharacterController _characterController;
     private PlayerMeleeControllerV2 _meleeController;
@@ -69,8 +69,9 @@ public class PlayerMovement : MonoBehaviour
     private float _moveMaxSpeed;
     private float _moveAcceleration;
     private float _moveDeceleration;
-    private Vector3 _lateralVelocityVector;
+    public Vector3 _lateralVelocityVector;
     private Vector2 _moveInputTemp;
+    public bool isSlowed = false;
 
     // Hover Parameters
 
@@ -303,6 +304,8 @@ public class PlayerMovement : MonoBehaviour
             DriftConditions();
             FlightConditions();
         }
+
+        //Debug.Log("Player lateral velocity: " + _lateralVelocityVector.magnitude + ". Player max speed: " + MoveMaxSpeed);
     }
 
     public void SetPlayerIsGrounded(bool set)
