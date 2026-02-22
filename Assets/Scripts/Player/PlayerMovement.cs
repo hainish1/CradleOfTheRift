@@ -55,7 +55,6 @@ public class PlayerMovement : MonoBehaviour
 
     // Movement Parameters
 
-    private float MoveMaxSpeed { get; set; }
     [Header("Movement Parameters")] [Space]
     [SerializeField]
     [Tooltip("Seconds needed to reach Max Speed.")] private float _moveAccelerationSeconds;
@@ -67,6 +66,7 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("How quickly in seconds the player character move animations blend when turning.")] private float _moveBlendSpeed;
     [SerializeField]
     [Tooltip("How quickly the player character aligns with the camera direction in units per second.")] private float _characterRotationDamping;
+    private float _moveMaxSpeed;
     private float _moveAcceleration;
     private float _moveDeceleration;
     private Vector3 _lateralVelocityVector;
@@ -106,13 +106,13 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 _externalKnockbackVelocity;
 
     // Dash Parameters
-    
-    private float DashDistance { get; set; }
-    private float DashSpeed { get; set; }
-    private float DashCooldown { get; set; }
-    private int DashMaxCharges { get; set; }
-    private int _currDashCharges;
+
+    private float DashDistance => _playerEntity.Stats.DashDistance;
+    private float DashSpeed => _playerEntity.Stats.DashSpeed;
     public bool IsDashing { get; private set; }
+    private float DashCooldown => _playerEntity.Stats.DashCooldown;
+    private int _dashMaxCharges;
+    private int _currDashCharges;
     private bool _isRegeneratingDash;
     public event System.Action<float> DashCooldownStarted;
     private Vector3 _dashDirectionUnitVector;
@@ -141,10 +141,6 @@ public class PlayerMovement : MonoBehaviour
 
     // Flight Parameters
     
-    private float _flightMaxSpeed;
-    private int _flightMaxEnergy;
-    private float _flightRegenerationRate;
-    private float _flightDepletionRate;
     [Header("Flight Parameters")] [Space]
     [SerializeField]
     [Tooltip("Seconds needed to reach Max Flight Speed.")] private float _flightAccelerationSeconds;
@@ -154,14 +150,17 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("The multiplier strength of flight counter-acceleration in units per second.")] private float _flightCounterAccelerationMultiplier;
     [SerializeField]
     [Tooltip("Vertical strength of the jump right before flight in units per second.")] private float _flightJumpForce;
+    private float _flightMaxSpeed => _playerEntity.Stats.FlightMaxSpeed;
     private float _flightAcceleration;
     private float _flightDeceleration;
-    public bool IsFlying;
+    public bool IsFlying { get; private set; }
+    private int _flightMaxEnergy => _playerEntity.Stats.FlightMaxEnergy;
     private float _currFlightEnergy;
-    private bool _isRegeneratingFlight;
+    private float _flightRegenerationRate => _playerEntity.Stats.FlightRegenerationRate;
+    private float _flightDepletionRate => _playerEntity.Stats.FlightDepletionRate;
+    public bool IsRegeneratingFlight { get; private set; }
     private Coroutine _flightRegenerationCoroutine;
     public float FlightEnergyRatio { get { return _currFlightEnergy / _flightMaxEnergy; } }
-    
 
     private bool strafe = false; // Set by AimController.
 
@@ -229,9 +228,9 @@ public class PlayerMovement : MonoBehaviour
         _gravityAirDrag += Mathf.Abs(Physics.gravity.y) * _gravityMultiplier;
 
         // Movement Parameters
-        MoveMaxSpeed = _playerEntity.Stats.MoveSpeed;
-        _moveAcceleration = MoveMaxSpeed / _moveAccelerationSeconds;
-        _moveDeceleration = MoveMaxSpeed / _moveDecelerationSeconds;
+        _moveMaxSpeed = _playerEntity.Stats.MoveSpeed;
+        _moveAcceleration = _moveMaxSpeed / _moveAccelerationSeconds;
+        _moveDeceleration = _moveMaxSpeed / _moveDecelerationSeconds;
         _moveInputTemp = Vector2.zero;
 
         // Hover Parameters
@@ -248,11 +247,8 @@ public class PlayerMovement : MonoBehaviour
         _kbDashLockTimer = 0;
 
         // Dash Parameters
-        DashDistance = _playerEntity.Stats.DashDistance;
-        DashSpeed = _playerEntity.Stats.DashSpeed;
-        DashCooldown = _playerEntity.Stats.DashCooldown;
-        DashMaxCharges = _playerEntity.Stats.DashCharges;
-        _currDashCharges = DashMaxCharges;
+        _dashMaxCharges = _playerEntity.Stats.DashCharges;
+        _currDashCharges = _dashMaxCharges;
         IsDashing = false;
         _isRegeneratingDash = false;
 
@@ -270,25 +266,21 @@ public class PlayerMovement : MonoBehaviour
         _isDrifting = false;
 
         // Flight Parameters
-        _flightMaxSpeed = _playerEntity.Stats.FlightMaxSpeed;
         _flightAcceleration = _flightMaxSpeed / _flightAccelerationSeconds;
         _flightDeceleration = _flightMaxSpeed / _flightDecelerationSeconds;
         IsFlying = false;
-        _flightMaxEnergy = _playerEntity.Stats.FlightMaxEnergy;
         _currFlightEnergy = _flightMaxEnergy;
-        _flightRegenerationRate = _playerEntity.Stats.FlightRegenerationRate;
-        _flightDepletionRate = _playerEntity.Stats.FlightDepletionRate;
-        _isRegeneratingFlight = false;
+        IsRegeneratingFlight = false;
         _flightRegenerationCoroutine = null;
 
         // VFX
-        if(dashVFXPrefab != null)
+        if (dashVFXPrefab != null)
             dashVFXPrefab.SetActive(false);
     }
 
     void Update()
     {
-        TryGetStatChanges();
+        TryGetComplicatedStatChanges();
 
         GetIsGrounded();
         GravityConditions();
@@ -313,7 +305,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-
     public void SetPlayerIsGrounded(bool set)
     {
         IsGrounded = set;
@@ -326,7 +317,6 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     /// <param name="on"> Strafe mode status. </param>
     public void SetStrafeMode(bool on) => strafe = on;
-
 
     public void SnapToHoverAfterSlam()
     {
@@ -380,64 +370,34 @@ public class PlayerMovement : MonoBehaviour
     ///     Gets all stat changes from the stats file on any frame this method is called.
     ///   </para>
     /// </summary>
-    private void TryGetStatChanges()
+    private void TryGetComplicatedStatChanges()
     {
-        if (_playerEntity != null)
+        if (_playerEntity == null) return;
+        
+        // Check MoveSpeed.
+        if (_moveMaxSpeed != _playerEntity.Stats.MoveSpeed)
         {
-            // Check MoveSpeed.
-            if (MoveMaxSpeed != _playerEntity.Stats.MoveSpeed)
+            _moveMaxSpeed = _playerEntity.Stats.MoveSpeed;
+            RecalculateMoveAccelDecel();
+        }
+
+        // Check DashCharges.
+        if (_dashMaxCharges != _playerEntity.Stats.DashCharges)
+        {
+            int changeDifference = _playerEntity.Stats.DashCharges - _dashMaxCharges;
+            _dashMaxCharges = _playerEntity.Stats.DashCharges;
+
+            // Add positive difference to current charge count, even while regenerating.
+            if (changeDifference > 0)
+                _currDashCharges += changeDifference;
+            else // Ensure negative difference is not affected by regeneration.
             {
-                MoveMaxSpeed = _playerEntity.Stats.MoveSpeed;
-                RecalculateMoveAccelDecel();
-            }
-
-            // Check DashDistance.
-            if (DashDistance != _playerEntity.Stats.DashDistance)
-                DashDistance = _playerEntity.Stats.DashDistance;
-
-            // Check DashSpeed.
-            if (DashSpeed != _playerEntity.Stats.DashSpeed)
-                DashSpeed = _playerEntity.Stats.DashSpeed;
-
-            // Check DashCooldown.
-            if (DashCooldown != _playerEntity.Stats.DashCooldown)
-                DashCooldown = _playerEntity.Stats.DashCooldown;
-
-            // Check DashCharges.
-            if (DashMaxCharges != _playerEntity.Stats.DashCharges)
-            {
-                int changeDifference = _playerEntity.Stats.DashCharges - DashMaxCharges;
-                DashMaxCharges = _playerEntity.Stats.DashCharges;
-
-                // Add positive difference to current charge count, even while regenerating.
-                if (changeDifference > 0)
-                    _currDashCharges += changeDifference;
-                // Ensure negative difference is not affected by regeneration.
-                else
+                if (_currDashCharges >= _dashMaxCharges)
                 {
-                    if (_currDashCharges >= DashMaxCharges)
-                    {
-                        _currDashCharges = DashMaxCharges;
-                        _isRegeneratingDash = false;
-                    }
+                    _currDashCharges = _dashMaxCharges;
+                    _isRegeneratingDash = false;
                 }
             }
-
-            // Check flight speed.
-            if (_flightMaxSpeed != _playerEntity.Stats.FlightMaxSpeed)
-                _flightMaxSpeed = _playerEntity.Stats.FlightMaxSpeed;
-
-            // Check flight energy.
-            if (_flightMaxEnergy != _playerEntity.Stats.FlightMaxEnergy)
-                _flightMaxEnergy = _playerEntity.Stats.FlightMaxEnergy;
-
-            // Check flight regeneration rate.
-            if (_flightRegenerationRate != _playerEntity.Stats.FlightRegenerationRate)
-                _flightRegenerationRate = _playerEntity.Stats.FlightRegenerationRate;
-
-            // Check flight depletion rate.
-            if (_flightDepletionRate != _playerEntity.Stats.FlightDepletionRate)
-                _flightDepletionRate = _playerEntity.Stats.FlightDepletionRate;
         }
     }
 
@@ -558,8 +518,8 @@ public class PlayerMovement : MonoBehaviour
     {
         // Trigger corresponding move animations.
         Vector2 inputDirection = _moveActions.ReadValue<Vector2>().normalized;
-        float moveBlendX = inputDirection.x * (_lateralVelocityVector.magnitude / MoveMaxSpeed);
-        float moveBlendY = inputDirection.y * (_lateralVelocityVector.magnitude / MoveMaxSpeed);
+        float moveBlendX = inputDirection.x * (_lateralVelocityVector.magnitude / _moveMaxSpeed);
+        float moveBlendY = inputDirection.y * (_lateralVelocityVector.magnitude / _moveMaxSpeed);
         _playerAnim.SetFloat("MoveVector_X", moveBlendX, _moveBlendSpeed, Time.deltaTime);
         _playerAnim.SetFloat("MoveVector_Y", moveBlendY, _moveBlendSpeed, Time.deltaTime);
 
@@ -580,7 +540,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Accelerate if movement is being inputted and sprint has not been canceled.
-        if (_moveActions.ReadValue<Vector2>() != Vector2.zero && _lateralVelocityVector.magnitude <= MoveMaxSpeed)
+        if (_moveActions.ReadValue<Vector2>() != Vector2.zero && _lateralVelocityVector.magnitude <= _moveMaxSpeed)
             MoveAccelerate(moveDirectionUnitVector);
         else
             MoveDecelerate();
@@ -698,14 +658,14 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="moveDirectionUnitVector"> The world direction of the most recent move input. </param>
     private void MoveAccelerate(Vector3 moveDirectionUnitVector)
     {
-        if (_lateralVelocityVector.magnitude < MoveMaxSpeed)
+        if (_lateralVelocityVector.magnitude < _moveMaxSpeed)
         {
             float aggregateAccelIncrement = Time.deltaTime * _moveAcceleration;
-            float newVelocityMagnitude = Mathf.Clamp(_lateralVelocityVector.magnitude + aggregateAccelIncrement, 0, MoveMaxSpeed);
+            float newVelocityMagnitude = Mathf.Clamp(_lateralVelocityVector.magnitude + aggregateAccelIncrement, 0, _moveMaxSpeed);
             _lateralVelocityVector = newVelocityMagnitude * moveDirectionUnitVector;
         }
         else
-            _lateralVelocityVector = MoveMaxSpeed * moveDirectionUnitVector;
+            _lateralVelocityVector = _moveMaxSpeed * moveDirectionUnitVector;
     }
 
     /// <summary>
@@ -731,8 +691,8 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void RecalculateMoveAccelDecel()
     {
-        _moveAcceleration = MoveMaxSpeed / _moveAccelerationSeconds;
-        _moveDeceleration = MoveMaxSpeed / _moveDecelerationSeconds;
+        _moveAcceleration = _moveMaxSpeed / _moveAccelerationSeconds;
+        _moveDeceleration = _moveMaxSpeed / _moveDecelerationSeconds;
     }
 
     /// <summary>
@@ -804,7 +764,7 @@ public class PlayerMovement : MonoBehaviour
             _currDashCharges--;
 
             // Only initialize regeneration routine if not already regenerating.
-            if (_currDashCharges == DashMaxCharges - 1)
+            if (_currDashCharges == _dashMaxCharges - 1)
                 StartCoroutine(DashChargesRegeneration());
 
             float dashDuration = DashDistance / DashSpeed;
@@ -857,22 +817,21 @@ public class PlayerMovement : MonoBehaviour
         _isRegeneratingDash = true;
 
         float timer = 0;
-        while (_currDashCharges < DashMaxCharges && _isRegeneratingDash)
+        while (_currDashCharges < _dashMaxCharges && _isRegeneratingDash)
         {
-            timer += Time.deltaTime;
-
             if (timer >= DashCooldown)
             {
                 timer = 0;
                 _currDashCharges++;
             }
 
-            if (_currDashCharges >= DashMaxCharges) break;
+            if (_currDashCharges >= _dashMaxCharges) break;
 
+            timer += Time.deltaTime;
             yield return null;
         }
 
-        _currDashCharges = Mathf.Min(_currDashCharges, DashMaxCharges); // In case DashMaxCharges is decreased during routine execution.
+        _currDashCharges = Mathf.Min(_currDashCharges, _dashMaxCharges); // In case DashMaxCharges is decreased during routine execution.
         _isRegeneratingDash = false;
     }
 
@@ -1046,7 +1005,7 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="context"> The flight input context. </param>
     private void FlightInputActionStarted(InputAction.CallbackContext context)
     {
-        if (_currFlightEnergy > 0 && !_isRegeneratingFlight)
+        if (_currFlightEnergy > 0 && !IsRegeneratingFlight)
         {
             // Toggle flight.
             if (!IsFlying)
@@ -1071,7 +1030,7 @@ public class PlayerMovement : MonoBehaviour
     private void FlightConditions()
     {
         // Skip calculations if not flying or still regenerating.
-        if (!IsFlying || _isRegeneratingFlight) return;
+        if (!IsFlying || IsRegeneratingFlight) return;
 
         float depletionDecrement = Time.deltaTime * _flightDepletionRate;
         _currFlightEnergy = Mathf.Clamp(_currFlightEnergy - depletionDecrement, 0, _flightMaxEnergy);
@@ -1153,7 +1112,7 @@ public class PlayerMovement : MonoBehaviour
     private void EnableFlight()
     {
         IsFlying = true;
-        MoveMaxSpeed = _flightMaxSpeed;
+        _moveMaxSpeed = _flightMaxSpeed;
         _moveAcceleration = _flightAcceleration;
         _moveDeceleration = _flightDeceleration;
     }
@@ -1168,7 +1127,7 @@ public class PlayerMovement : MonoBehaviour
     private void DisableFlight()
     {
         IsFlying = false;
-        if (_playerEntity != null) MoveMaxSpeed = _playerEntity.Stats.MoveSpeed;
+        if (_playerEntity != null) _moveMaxSpeed = _playerEntity.Stats.MoveSpeed;
         RecalculateMoveAccelDecel();
 
         // Regeneration only begins after reaching the ground.
@@ -1187,7 +1146,7 @@ public class PlayerMovement : MonoBehaviour
         // Only begin regenerating when on the ground.
         while (!IsGrounded) yield return null;
 
-        _isRegeneratingFlight = true;
+        IsRegeneratingFlight = true;
         while (_currFlightEnergy < _flightMaxEnergy)
         {
             float regenIncrement = Time.deltaTime * _flightRegenerationRate;
@@ -1195,7 +1154,7 @@ public class PlayerMovement : MonoBehaviour
             yield return null;
         }
 
-        _isRegeneratingFlight = false;
+        IsRegeneratingFlight = false;
         _flightRegenerationCoroutine = null;
     }
 
