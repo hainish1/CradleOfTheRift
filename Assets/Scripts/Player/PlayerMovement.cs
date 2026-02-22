@@ -118,29 +118,29 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 _dashDirectionUnitVector;
 
     // Jump Parameters
-
-    private float _jumpForce;
+    
     [Header("Jump Parameters")] [Space]
     [SerializeField]
     [Tooltip("Seconds that jump can still be registered after walking off an edge.")] private float _coyoteTimeWindow;
     [SerializeField]
     [Tooltip("Seconds that jump can still be registered before reaching the ground.")] private float _jumpBufferWindow;
+    private float _jumpForce;
     private float _coyoteTimer;
     private float _jumpBufferTimer;
     private Vector3 _verticalVelocityVector;
 
     // Drift Parameters
-
-    private float _driftDescentDivisor;
+    
     [Header("Drift Parameters")] [Space]
     [SerializeField]
     [Tooltip("Seconds before Drift Descent Divisor gradually reaches full effect.")] private float _driftDelay;
     private bool _isDrifting;
+    private float _driftDescentDivisor;
     private float _currDriftDescentDivisor;
     private float _driftDelayTimer;
 
     // Flight Parameters
-
+    
     private float _flightMaxSpeed;
     private int _flightMaxEnergy;
     private float _flightRegenerationRate;
@@ -154,12 +154,14 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("The multiplier strength of flight counter-acceleration in units per second.")] private float _flightCounterAccelerationMultiplier;
     [SerializeField]
     [Tooltip("Vertical strength of the jump right before flight in units per second.")] private float _flightJumpForce;
-    private bool _isFlying;
-    private bool _isRegeneratingFlight;
-    public float FlightCooldownRatio { get; private set; }
-    private float _currFlightEnergy;
     private float _flightAcceleration;
     private float _flightDeceleration;
+    public bool IsFlying;
+    private float _currFlightEnergy;
+    private bool _isRegeneratingFlight;
+    private Coroutine _flightRegenerationCoroutine;
+    public float FlightEnergyRatio { get { return _currFlightEnergy / _flightMaxEnergy; } }
+    
 
     private bool strafe = false; // Set by AimController.
 
@@ -269,15 +271,15 @@ public class PlayerMovement : MonoBehaviour
 
         // Flight Parameters
         _flightMaxSpeed = _playerEntity.Stats.FlightMaxSpeed;
-        _flightMaxEnergy = _playerEntity.Stats.FlightMaxEnergy;
-        _flightRegenerationRate = _playerEntity.Stats.FlightRegenerationRate;
-        _flightDepletionRate = _playerEntity.Stats.FlightDepletionRate;
-        _isFlying = false;
-        _isRegeneratingFlight = false;
-        FlightCooldownRatio = 1;
         _flightAcceleration = _flightMaxSpeed / _flightAccelerationSeconds;
         _flightDeceleration = _flightMaxSpeed / _flightDecelerationSeconds;
+        IsFlying = false;
+        _flightMaxEnergy = _playerEntity.Stats.FlightMaxEnergy;
         _currFlightEnergy = _flightMaxEnergy;
+        _flightRegenerationRate = _playerEntity.Stats.FlightRegenerationRate;
+        _flightDepletionRate = _playerEntity.Stats.FlightDepletionRate;
+        _isRegeneratingFlight = false;
+        _flightRegenerationCoroutine = null;
 
         // VFX
         if(dashVFXPrefab != null)
@@ -484,7 +486,7 @@ public class PlayerMovement : MonoBehaviour
     private void GravityConditions()
     {
         // Do not apply gravity while on the ground or flying.
-        if (IsGrounded || _isFlying) return;
+        if (IsGrounded || IsFlying) return;
 
         float aggregateGravityStrength = Physics.gravity.y * _gravityMultiplier * _currDriftDescentDivisor;
         Vector3 gravityVelocityVector;
@@ -827,7 +829,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 dashVelocityVector = _dashDirectionUnitVector;
         if (IsGrounded) GroundClampSnap(ref dashVelocityVector);
-        if (_isFlying) FlightConditions();
+        if (IsFlying) FlightConditions();
 
         _characterController.Move(Time.deltaTime * DashSpeed * dashVelocityVector);
     }
@@ -911,7 +913,7 @@ public class PlayerMovement : MonoBehaviour
         if (_kbControlsLockTimer > 0) return;
 
         if (!IsDashing) _jumpBufferTimer = _jumpBufferWindow;
-        if (!_isFlying && !IsGrounded && !IsDashing) EnableDrift();
+        if (!IsFlying && !IsGrounded && !IsDashing) EnableDrift();
     }
 
     /// <summary>
@@ -986,7 +988,7 @@ public class PlayerMovement : MonoBehaviour
     private void DriftConditions()
     {
         // Cease drifting if the player character landed.
-        if ((_isDrifting && (!_jumpActions.IsPressed() || IsGrounded)) || _isFlying)
+        if ((_isDrifting && (!_jumpActions.IsPressed() || IsGrounded)) || IsFlying)
             DisableDrift();
 
         // Only modify gravity for drifting while falling and while the coyote time and jump buffer windows are invalid.
@@ -1047,17 +1049,16 @@ public class PlayerMovement : MonoBehaviour
         if (_currFlightEnergy > 0 && !_isRegeneratingFlight)
         {
             // Toggle flight.
-            if (_isFlying)
-                DisableFlight();
-            else
+            if (!IsFlying)
             {
-                EnableFlight();
-
-                // Make the player character jump if on the
-                // ground to prevent flight from exiting early.
+                // Make the player character jump if on the ground to prevent flight from exiting early.
                 if (IsGrounded)
                     PerformJump(_flightJumpForce);
+
+                EnableFlight();
             }
+            else
+                DisableFlight();
         }
     }
 
@@ -1070,7 +1071,7 @@ public class PlayerMovement : MonoBehaviour
     private void FlightConditions()
     {
         // Skip calculations if not flying or still regenerating.
-        if (!_isFlying || _isRegeneratingFlight) return;
+        if (!IsFlying || _isRegeneratingFlight) return;
 
         float depletionDecrement = Time.deltaTime * _flightDepletionRate;
         _currFlightEnergy = Mathf.Clamp(_currFlightEnergy - depletionDecrement, 0, _flightMaxEnergy);
@@ -1080,7 +1081,6 @@ public class PlayerMovement : MonoBehaviour
         if (_currFlightEnergy == 0)
         {
             DisableFlight();
-            StartCoroutine(FlightRegeneration());
             EnableDrift();
             return;
         }
@@ -1089,7 +1089,6 @@ public class PlayerMovement : MonoBehaviour
         if (IsGrounded)
         {
             DisableFlight();
-            StartCoroutine(FlightRegeneration());
             return;
         }
 
@@ -1147,6 +1146,38 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
+    ///     Sets flying status to true, sets max movement speed to max flight speed, and sets movement acceleration
+    ///     and deceleration to flight acceleration and deceleration on any frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void EnableFlight()
+    {
+        IsFlying = true;
+        MoveMaxSpeed = _flightMaxSpeed;
+        _moveAcceleration = _flightAcceleration;
+        _moveDeceleration = _flightDeceleration;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Sets flying status to false, resets max movement speed to its original value, resets movement
+    ///     acceleration and deceleration back to their original values and starts a flight regeneration
+    ///     coroutine on any frame this method is called.
+    ///   </para>
+    /// </summary>
+    private void DisableFlight()
+    {
+        IsFlying = false;
+        if (_playerEntity != null) MoveMaxSpeed = _playerEntity.Stats.MoveSpeed;
+        RecalculateMoveAccelDecel();
+
+        // Regeneration only begins after reaching the ground.
+        if (_flightRegenerationCoroutine == null)
+            _flightRegenerationCoroutine = StartCoroutine(FlightRegeneration());
+    }
+
+    /// <summary>
+    ///   <para>
     ///     Coroutine for regenerating flight energy to full capacity over time.
     ///   </para>
     /// </summary>
@@ -1155,79 +1186,33 @@ public class PlayerMovement : MonoBehaviour
     {
         // Only begin regenerating when on the ground.
         while (!IsGrounded) yield return null;
-        
-        _isRegeneratingFlight = true;
-        GetFlightCooldownRatio();
 
+        _isRegeneratingFlight = true;
         while (_currFlightEnergy < _flightMaxEnergy)
         {
             float regenIncrement = Time.deltaTime * _flightRegenerationRate;
             _currFlightEnergy = Mathf.Clamp(_currFlightEnergy + regenIncrement, 0, _flightMaxEnergy);
-            GetFlightCooldownRatio();
             yield return null;
         }
 
         _isRegeneratingFlight = false;
+        _flightRegenerationCoroutine = null;
     }
-
-    /// <summary>
-    ///   <para>
-    ///     Gets the remaining seconds needed before flight energy fully regenerates to max.
-    ///   </para>
-    /// </summary>
-    private void GetFlightCooldownRatio()
-    {
-        FlightCooldownRatio = _currFlightEnergy / _flightMaxEnergy;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Sets flying status to true, sets max movement speed to max flight speed, and sets movement acceleration
-    ///     and deceleration to flight acceleration and deceleration on any frame this method is called.
-    ///   </para>
-    /// </summary>
-    private void EnableFlight()
-    {
-        _isFlying = true;
-        MoveMaxSpeed = _flightMaxSpeed;
-        _moveAcceleration = _flightAcceleration;
-        _moveDeceleration = _flightDeceleration;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Sets flying status to false, resets max movement speed to its original value, and resets movement
-    ///     acceleration and deceleration back to their original values on any frame this method is called.
-    ///   </para>
-    /// </summary>
-    private void DisableFlight()
-    {
-        _isFlying = false;
-
-        if (_playerEntity != null)
-            MoveMaxSpeed = _playerEntity.Stats.MoveSpeed;
-
-        RecalculateMoveAccelDecel();
-    }
-    
-
-    public void SetVerticalVelocityFactor(float factor)
-    {
-        _verticalVelocityVector.y = factor;
-    }
-
 
     public float GetCurrentFlightEnergy()
     {
         return _currFlightEnergy;
     }
 
-    public bool IsFlying => _isFlying;
-
     private IEnumerator EnableDashVFX()
     {
         dashVFXPrefab.SetActive(true);
         yield return new WaitForSeconds(0.15f);
         dashVFXPrefab.SetActive(false);
+    }
+
+    public void SetVerticalVelocityFactor(float factor)
+    {
+        _verticalVelocityVector.y = factor;
     }
 }

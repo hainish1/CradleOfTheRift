@@ -788,6 +788,7 @@ MonoBehaviour:
   postTransitionAnim: {fileID: 0}
   flipAnimCompletionTime: 0
   regainAnimCompletionSeconds: 0
+  regainDelaySeconds: 0
   fireEvent:
     idInternal: 0
     valueGuidInternal: 
@@ -3784,7 +3785,8 @@ MonoBehaviour:
   throwAnim: {fileID: 7400000, guid: e978f387e5849b641a38ddd58676ddca, type: 2}
   postTransitionAnim: {fileID: 7400000, guid: bf94268e1f8204e43beea29bc8c7ccd6, type: 2}
   flipAnimCompletionTime: 0.8
-  regainAnimCompletionSeconds: 0.4
+  regainAnimCompletionSeconds: 0.1
+  regainDelaySeconds: 0.3
   fireEvent:
     idInternal: 0
     valueGuidInternal: 
