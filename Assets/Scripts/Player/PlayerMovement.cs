@@ -41,6 +41,7 @@ public class PlayerMovement : MonoBehaviour
     private Animator _playerAnim;
     private CharacterController _characterController;
     private PlayerMeleeControllerV2 _meleeController;
+    private PlayerShooter _playerShooter;
     private float _playerHalfHeight;
     private float _playerRadius;
 
@@ -149,8 +150,7 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("Seconds needed to reach Max Flight Speed.")] private float _flightAccelerationSeconds;
     [SerializeField]
     [Tooltip("Seconds needed to fully stop after moving at Max Flight Speed.")] private float _flightDecelerationSeconds;
-    [SerializeField]
-    [Range(1, 3)]
+    [SerializeField, Range(1, 3)]
     [Tooltip("The multiplier strength of flight counter-acceleration in units per second.")] private float _flightCounterAccelerationMultiplier;
     [SerializeField]
     [Tooltip("Vertical strength of the jump right before flight in units per second.")] private float _flightJumpForce;
@@ -177,6 +177,7 @@ public class PlayerMovement : MonoBehaviour
         _playerEntity = GetComponent<Entity>();
         _characterController = GetComponent<CharacterController>();
         _meleeController = GetComponentInChildren<PlayerMeleeControllerV2>();
+        _playerShooter = GetComponentInChildren<PlayerShooter>();
         _playerAnim = _playerModel.GetComponent<Animator>();
         _playerInput = new InputSystem_Actions();
         _playerActions = _playerInput.Player;
@@ -787,8 +788,8 @@ public class PlayerMovement : MonoBehaviour
         // Check if the player character is being knocked back.
         if (_kbDashLockTimer > 0) return;
 
-        // Do not allow dashes while attacking.
-        if (_meleeController.IsAttacking) return;
+        // Do not allow dashes while attacking or throwing.
+        if (_meleeController.IsAttacking || _playerShooter.IsThrowing) return;
 
         if (_currDashCharges != 0 && !IsDashing)
         {
