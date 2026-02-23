@@ -6,6 +6,71 @@ using UnityEngine.InputSystem;
 
 public class EnemySpawner_2 : MonoBehaviour
 {
+    // =========================================================================
+    //  STAT SCALER STRUCT
+    //  A self-contained scaling definition for any numeric stat.
+    //  Each instance lives in the Inspector as its own foldout group.
+    //
+    //  baseValue       → the starting value at wave 1 (no scaling applied yet)
+    //  minIncreasePerWave → guaranteed flat increase added every wave BEFORE scaling.
+    //                       Ensures no two waves ever feel identical.
+    //  scaler          → the growth multiplier applied on top of the floor.
+    //                       1.0  = no extra curve (pure flat floor only)
+    //                       1.2  = 20% stronger per wave
+    //                      <1.0  = stat shrinks over time (useful for testing)
+    //  scalingMode     → how scaler is applied each wave:
+    //                       Linear:      1 + (scaler - 1) * (wave - 1)   — steady, additive
+    //                       Exponential: scaler ^ (wave - 1)             — compounds, accelerates
+    //
+    //  Formula:  floor = baseValue + (minIncreasePerWave * wave)
+    //            result = floor * Calculate(wave)
+    //
+    //  NOTE: baseValue means different things per stat — read each stat's comment.
+    // =========================================================================
+    [Serializable]
+    public struct StatScaler
+    {
+        public enum ScalingMode { Linear, Exponential }
+
+        [Tooltip("Starting value at wave 1, before any growth is applied.")]
+        public float baseValue;
+
+        [Tooltip("This amount is added to the base every wave, guaranteed, before the scaler curve is applied.")]
+        public float minIncreasePerWave;
+
+        [Tooltip("Growth multiplier per wave. 1.0 = no curve. 1.2 = 20% stronger per wave. <1 = weaker.")]
+        public float scaler;
+
+        [Tooltip("Linear grows additively each wave. Exponential compounds (accelerates) each wave.")]
+        public ScalingMode scalingMode;
+
+        /// <summary>
+        /// Returns the final computed value for the given wave number.
+        ///
+        /// Floor = baseValue + (minIncreasePerWave * wave)
+        ///   → Guarantees a minimum increase each wave regardless of scaler.
+        ///
+        /// Multiplier (Linear):      1 + (scaler - 1) * (wave - 1)
+        ///   → Wave 1 is always 1.0x. Each wave adds (scaler - 1) additively.
+        ///
+        /// Multiplier (Exponential): scaler ^ (wave - 1)
+        ///   → Wave 1 is always 1.0x. Each wave compounds by scaler.
+        ///
+        /// Result = floor * multiplier
+        /// </summary>
+        public float Calculate(int wave)
+        {
+            int w = Mathf.Max(wave - 1, 0); // Ensure wave 1 starts at baseValue with no multiplier
+            float floor = baseValue + minIncreasePerWave * wave;
+            float multiplier = scalingMode == ScalingMode.Linear
+                ? 1f + (scaler - 1f) * w
+                : Mathf.Pow(scaler, w);
+            return floor * multiplier;
+        }
+    }
+
+
+
     [Header("References")]
     [SerializeField] private List<EnemyType> enemies;
     [SerializeField] private Transform playerLocation;
@@ -23,22 +88,62 @@ public class EnemySpawner_2 : MonoBehaviour
     [SerializeField] private bool isSpawning = true; 
 
     [Header("Wave Settings")]
-    [SerializeField] private float timeBetweenWaves = 8f;
-    [Tooltip("If the DifficultyScaler object is set, this field is ignored!")]
-    [SerializeField] private float difficultyScale = 1.03f; 
-    [SerializeField] private float baseWaveCredits = 10f;
-    [SerializeField] private int startingEnemyCap = 10;
-    [SerializeField] private float enemyCapGrowth = 10f;
-    [SerializeField] private float baseTimeBetweenEnemySpawns = 1f;
-    [SerializeField] private int globalMaxEnemies = 200;
+    [Header("Wave Credits")]
+    [SerializeField] private StatScaler credits = new StatScaler
+    {
+        baseValue = 10f, 
+        minIncreasePerWave = 5f, 
+        scaler = 1.1f,
+        scalingMode = StatScaler.ScalingMode.Linear
+    };
 
-    [Header("Extraction Wave Settings")]
+    [Header("Enemy Cap")]
+    [SerializeField] private int globalMaxEnemies = 200;
+    [SerializeField] private StatScaler enemyCap = new StatScaler
+    {
+        baseValue = 10f, 
+        minIncreasePerWave = 2f, 
+        scaler = 1.05f,
+        scalingMode = StatScaler.ScalingMode.Linear
+    };
+
+    [Header("Health Scaling")]
+    [Tooltip("baseValue should be 1.0. minIncreasePerWave typically 0. scaler > 1 = tankier enemies per wave.")]
+    [SerializeField] private StatScaler health = new StatScaler
+    {
+        baseValue = 1f, 
+        minIncreasePerWave = 0f, 
+        scaler = 1.15f,
+        scalingMode = StatScaler.ScalingMode.Exponential
+    };
+
+    
+    [Header("Damage Scaling")]
+    [Tooltip("baseValue should be 1.0. minIncreasePerWave typically 0. scaler > 1 = more damage per wave.")]
+    [SerializeField] private StatScaler damage = new StatScaler
+    {
+        baseValue = 1f,
+        minIncreasePerWave = 0f, 
+        scaler = 1.1f,
+        scalingMode = StatScaler.ScalingMode.Exponential
+    };
+
+
+    [Header("Wave Timing")]
+    [SerializeField] private float timeBetweenWaves = 8f;
+    [SerializeField] private float baseTimeBetweenEnemySpawns = 1f;
+
+    [Tooltip("Fallback difficulty value if no DifficulterScaler is assigned.")]
+    [SerializeField] private float fallbackDifficultyScale = 1.03f; 
+
+
+    [Header("Extraction Modifiers")]
+    [Tooltip("Credit multiplier when extraction is active. 2.0 = double enemy budget this wave.")]
     [SerializeField] private float extractionCreditMultiplier = 2f;
+
+    [Tooltip("Enemy cap multiplier when extraction is active.")]
     [SerializeField] private float extractionEnemyCapMultiplier = 1.5f; 
 
-    [Header("Enemy Stat Multipliers")]
-    [SerializeField] private float healthGrowth = 0.07f;
-    [SerializeField] private float damageGrowth = 0.05f;
 
     [Header("Debug")]
     [SerializeField] private bool showSpawnDebug = true;
@@ -56,7 +161,10 @@ public class EnemySpawner_2 : MonoBehaviour
         public bool isFallback;
     }
 
-    // Internal State
+    // =========================================================================
+    //  INTERNAL STATE
+    // =========================================================================
+
     private int currentEnemyCount = 0;
     private float currentCredits;
     private int currentMaxEnemyCap;
@@ -70,7 +178,10 @@ public class EnemySpawner_2 : MonoBehaviour
     
     private Collider[] nodeResults = new Collider[50];
 
-    // Events
+    // =========================================================================
+    //  EVENTS
+    // =========================================================================
+
     public event Action<bool> DevModeChanged;
     public event Action<int> CurrentEnemyCountChanged;
     public event Action<float> CurrentCreditsChanged;
@@ -166,14 +277,14 @@ public class EnemySpawner_2 : MonoBehaviour
         this.currentWave++;
         CurrentWaveChanged?.Invoke(this.currentWave);
 
-        float diff = GetDifficulty();
-        float waveCredits = this.baseWaveCredits * Mathf.Pow(diff, this.currentWave);
-        int waveCap = Mathf.Min(Mathf.CeilToInt(this.startingEnemyCap + this.enemyCapGrowth * Mathf.Pow(diff, this.currentWave)), this.globalMaxEnemies);
+
+        float waveCredits = credits.Calculate(this.currentWave);
+        int waveCap = Mathf.Min(Mathf.CeilToInt(enemyCap.Calculate(this.currentWave)), globalMaxEnemies);
 
         if (isExtractionActive)
         {
             waveCredits *= this.extractionCreditMultiplier;
-            waveCap = Mathf.Min(Mathf.CeilToInt(waveCap * this.extractionEnemyCapMultiplier), this.globalMaxEnemies);
+            waveCap = Mathf.Min(Mathf.CeilToInt(waveCap * this.extractionEnemyCapMultiplier), globalMaxEnemies);
         }
 
         this.currentCredits = waveCredits;
@@ -182,6 +293,9 @@ public class EnemySpawner_2 : MonoBehaviour
 
         CurrentCreditsChanged?.Invoke(this.currentCredits);
         CurrentMaxEnemyCapChanged?.Invoke(this.currentMaxEnemyCap);
+
+        Debug.Log($"[Wave {currentWave}] Credits: {waveCredits:F1} | Cap: {waveCap} | Extraction: {isExtractionActive}");
+
         GenerateWave();
     }
 
@@ -351,16 +465,11 @@ public class EnemySpawner_2 : MonoBehaviour
     }
 
     private void ScaleEnemyHealth(GameObject enemyObj)
-    {
-        //     // 3 * (1 + (0.5) * (2 - 1)) = 4.5
-        //     // 3 * (1 + (0.5) * (3 - 1)) = 6
-        //     // 3 * (1 + (0,5) * (6 - 1)) = 10.5 rounded
-
-        // 3 * (1 + (0.5) * (0))
+    {        
         EnemyHealth enemyHealth = enemyObj.GetComponent<EnemyHealth>();
         if (enemyHealth != null)
         {
-            float newHealth = enemyHealth.GetMaxHealth() * (1 + (this.healthGrowth - 1) * (currentWave - 1));
+            float newHealth = enemyHealth.GetMaxHealth() * health.Calculate(currentWave);
             enemyHealth.InitializeHealth(newHealth);
             enemyHealth.EnemyDied += OnEnemyDied;
         }
@@ -368,10 +477,12 @@ public class EnemySpawner_2 : MonoBehaviour
 
     private void ScaleEnemyDamage(GameObject enemyObj)
     {
+        float multiplier = damage.Calculate(currentWave);
+
         EnemyMelee melee = enemyObj.GetComponent<EnemyMelee>();
         if (melee != null)
         {
-            float newDmg = melee.GetBaseDamage() * (1 + (this.damageGrowth - 1) * (currentWave - 1));
+            float newDmg = melee.GetBaseDamage() * multiplier;
             melee.InitializeSlamDamage(newDmg);
             return;
         }
@@ -379,7 +490,7 @@ public class EnemySpawner_2 : MonoBehaviour
         EnemyRange range = enemyObj.GetComponent<EnemyRange>();
         if (range != null)
         {
-            float newDmg = range.GetBaseDamage() * (1 + (this.damageGrowth - 1) * (currentWave - 1));
+            float newDmg = range.GetBaseDamage() * multiplier;
             range.InitializeDamage(newDmg);
         }
     }
@@ -404,7 +515,7 @@ public class EnemySpawner_2 : MonoBehaviour
         this.waveCountdown = this.timeBetweenWaves; 
     }
 
-    private float GetDifficulty() => difficultyScaler ? difficultyScaler.GetDifficultyScale() : difficultyScale;
+    private float GetDifficulty() => difficultyScaler ? difficultyScaler.GetDifficultyScale() : fallbackDifficultyScale;
     private void OnExtractionZoneStarted(ExtractionZone zone) => this.isExtractionActive = true;
     private void OnExtractionZoneFinished() => this.isExtractionActive = false;
     private void OnEnemyDied(EnemyHealth enemy) 
