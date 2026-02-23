@@ -33,7 +33,16 @@ public class SpawnBombState_Boss : EnemyState
             Vector3 spawnPoint = boss.firePoint.position + direction * 0.1f;
             Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
 
-            GameObject slimeObj = GameObject.Instantiate(boss.expEnemyPrefab, spawnPoint, rotation);
+            GameObject slimeObj;
+            if (ObjectPool.instance != null)
+            {
+                slimeObj = ObjectPool.instance.GetObject(boss.expEnemyPrefab, boss.firePoint);
+                slimeObj.transform.SetPositionAndRotation(spawnPoint, rotation);
+            }
+            else
+            {
+                slimeObj = GameObject.Instantiate(boss.expEnemyPrefab, spawnPoint, rotation);
+            }
 
             var arcScript = slimeObj.GetComponent<EnemyExploding>();
             if (arcScript != null)

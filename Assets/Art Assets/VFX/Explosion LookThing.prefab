@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2559750604488758510}
   - component: {fileID: 2964592280004274073}
   - component: {fileID: 3092888665997641677}
-  - component: {fileID: 5906303780191615926}
   - component: {fileID: 745086952202881866}
   m_Layer: 0
   m_Name: MagicOrb
@@ -122,18 +121,6 @@ VFXRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
---- !u!114 &5906303780191615926
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5689789310747618206}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab5f897bfb920424f8ba352eeb1011a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!135 &745086952202881866
 SphereCollider:
   m_ObjectHideFlags: 0
