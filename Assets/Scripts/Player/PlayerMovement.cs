@@ -1,6 +1,6 @@
 // <summary>
 //   <authors>
-//     Samuel Rigby, Hainish Acharya
+//     Samuel Rigby, Hainish Acharya, Jiedi Mo
 //   </authors>
 //   <para>
 //     Written by Samuel Rigby for GAMES 4500, University of Utah, August 2025.
@@ -9,6 +9,8 @@
 //          -Added knockback functionality.
 //          -Added support for stat data modification.
 //          -Added slam attack movement assistance for hovering.
+//     Contributed to by Jiedi Mo.
+//          -Added compatability with SlowZoneEffect system.
 //   </para>
 // </summary>
 
@@ -37,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("The player camera object.")] private Transform _cameraTransform;
     [SerializeField]
     [Tooltip("The player model object.")] private GameObject _playerModel;
-    public Entity _playerEntity;
+    public Entity PlayerEntity { get; private set; }
     private Animator _playerAnim;
     private CharacterController _characterController;
     private PlayerMeleeControllerV2 _meleeController;
@@ -69,9 +71,9 @@ public class PlayerMovement : MonoBehaviour
     private float _moveMaxSpeed;
     private float _moveAcceleration;
     private float _moveDeceleration;
+    public bool IsSlowed { get; set; }
     public Vector3 _lateralVelocityVector;
     private Vector2 _moveInputTemp;
-    public bool isSlowed = false;
 
     // Hover Parameters
 
@@ -108,10 +110,10 @@ public class PlayerMovement : MonoBehaviour
 
     // Dash Parameters
 
-    private float DashDistance => _playerEntity.Stats.DashDistance;
-    private float DashSpeed => _playerEntity.Stats.DashSpeed;
+    private float _dashDistance => PlayerEntity.Stats.DashDistance;
+    private float _dashSpeed => PlayerEntity.Stats.DashSpeed;
     public bool IsDashing { get; private set; }
-    private float DashCooldown => _playerEntity.Stats.DashCooldown;
+    private float _dashCooldown => PlayerEntity.Stats.DashCooldown;
     private int _dashMaxCharges;
     private int _currDashCharges;
     private bool _isRegeneratingDash;
@@ -151,14 +153,14 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("The multiplier strength of flight counter-acceleration in units per second.")] private float _flightCounterAccelerationMultiplier;
     [SerializeField]
     [Tooltip("Vertical strength of the jump right before flight in units per second.")] private float _flightJumpForce;
-    private float _flightMaxSpeed => _playerEntity.Stats.FlightMaxSpeed;
+    private float _flightMaxSpeed => PlayerEntity.Stats.FlightMaxSpeed;
     private float _flightAcceleration;
     private float _flightDeceleration;
     public bool IsFlying { get; private set; }
-    private int _flightMaxEnergy => _playerEntity.Stats.FlightMaxEnergy;
+    private int _flightMaxEnergy => PlayerEntity.Stats.FlightMaxEnergy;
     private float _currFlightEnergy;
-    private float _flightRegenerationRate => _playerEntity.Stats.FlightRegenerationRate;
-    private float _flightDepletionRate => _playerEntity.Stats.FlightDepletionRate;
+    private float _flightRegenerationRate => PlayerEntity.Stats.FlightRegenerationRate;
+    private float _flightDepletionRate => PlayerEntity.Stats.FlightDepletionRate;
     public bool IsRegeneratingFlight { get; private set; }
     private Coroutine _flightRegenerationCoroutine;
     public float FlightEnergyRatio { get { return _currFlightEnergy / _flightMaxEnergy; } }
@@ -176,7 +178,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Awake()
     {
-        _playerEntity = GetComponent<Entity>();
+        PlayerEntity = GetComponent<Entity>();
         _characterController = GetComponent<CharacterController>();
         _meleeController = GetComponentInChildren<PlayerMeleeControllerV2>();
         _playerShooter = GetComponentInChildren<PlayerShooter>();
@@ -219,7 +221,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        if (_playerEntity == null) return;
+        if (PlayerEntity == null) return;
 
         // Player Parameters
         _playerHalfHeight = GetComponent<CharacterController>().height / 2;
@@ -229,9 +231,10 @@ public class PlayerMovement : MonoBehaviour
         _gravityAirDrag += Mathf.Abs(Physics.gravity.y) * _gravityMultiplier;
 
         // Movement Parameters
-        _moveMaxSpeed = _playerEntity.Stats.MoveSpeed;
+        _moveMaxSpeed = PlayerEntity.Stats.MoveSpeed;
         _moveAcceleration = _moveMaxSpeed / _moveAccelerationSeconds;
         _moveDeceleration = _moveMaxSpeed / _moveDecelerationSeconds;
+        IsSlowed = false;
         _moveInputTemp = Vector2.zero;
 
         // Hover Parameters
@@ -241,27 +244,27 @@ public class PlayerMovement : MonoBehaviour
         _groundPointColliding = null;
 
         // KnockBack Parameters
-        _kbDamping = _playerEntity.Stats.KbDamping;
-        _kbControlsLockTime = _playerEntity.Stats.KbControlsLockTime;
-        _kbDashLockTime = _playerEntity.Stats.KbDashLockTime;
+        _kbDamping = PlayerEntity.Stats.KbDamping;
+        _kbControlsLockTime = PlayerEntity.Stats.KbControlsLockTime;
+        _kbDashLockTime = PlayerEntity.Stats.KbDashLockTime;
         _kbControlsLockTimer = 0;
         _kbDashLockTimer = 0;
 
         // Dash Parameters
-        _dashMaxCharges = _playerEntity.Stats.DashCharges;
+        _dashMaxCharges = PlayerEntity.Stats.DashCharges;
         _currDashCharges = _dashMaxCharges;
         IsDashing = false;
         _isRegeneratingDash = false;
 
         // Jump Parameters
-        _jumpForce = _playerEntity.Stats.JumpForce;
+        _jumpForce = PlayerEntity.Stats.JumpForce;
 
         // Coyote Time Parameters
         _coyoteTimer = _coyoteTimeWindow;
         _jumpBufferTimer = 0;
 
         // Drift Parameters
-        _driftDescentDivisor = _playerEntity.Stats.DriftDescentDivisor;
+        _driftDescentDivisor = PlayerEntity.Stats.DriftDescentDivisor;
         _currDriftDescentDivisor = 1;
         _driftDelayTimer = 0;
         _isDrifting = false;
@@ -304,8 +307,6 @@ public class PlayerMovement : MonoBehaviour
             DriftConditions();
             FlightConditions();
         }
-
-        //Debug.Log("Player lateral velocity: " + _lateralVelocityVector.magnitude + ". Player max speed: " + MoveMaxSpeed);
     }
 
     public void SetPlayerIsGrounded(bool set)
@@ -375,20 +376,20 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void TryGetComplicatedStatChanges()
     {
-        if (_playerEntity == null) return;
+        if (PlayerEntity == null) return;
         
         // Check MoveSpeed.
-        if (_moveMaxSpeed != _playerEntity.Stats.MoveSpeed)
+        if (_moveMaxSpeed != PlayerEntity.Stats.MoveSpeed)
         {
-            _moveMaxSpeed = _playerEntity.Stats.MoveSpeed;
+            _moveMaxSpeed = PlayerEntity.Stats.MoveSpeed;
             RecalculateMoveAccelDecel();
         }
 
         // Check DashCharges.
-        if (_dashMaxCharges != _playerEntity.Stats.DashCharges)
+        if (_dashMaxCharges != PlayerEntity.Stats.DashCharges)
         {
-            int changeDifference = _playerEntity.Stats.DashCharges - _dashMaxCharges;
-            _dashMaxCharges = _playerEntity.Stats.DashCharges;
+            int changeDifference = PlayerEntity.Stats.DashCharges - _dashMaxCharges;
+            _dashMaxCharges = PlayerEntity.Stats.DashCharges;
 
             // Add positive difference to current charge count, even while regenerating.
             if (changeDifference > 0)
@@ -770,7 +771,7 @@ public class PlayerMovement : MonoBehaviour
             if (_currDashCharges == _dashMaxCharges - 1)
                 StartCoroutine(DashChargesRegeneration());
 
-            float dashDuration = DashDistance / DashSpeed;
+            float dashDuration = _dashDistance / _dashSpeed;
             StartCoroutine(InitiateDashDuration(dashDuration));
             DashCooldownStarted?.Invoke(dashDuration); // Notify listener to start the dash fade visual effect.
             // Play the dash audio effect here?
@@ -794,7 +795,7 @@ public class PlayerMovement : MonoBehaviour
         if (IsGrounded) GroundClampSnap(ref dashVelocityVector);
         if (IsFlying) FlightConditions();
 
-        _characterController.Move(Time.deltaTime * DashSpeed * dashVelocityVector);
+        _characterController.Move(Time.deltaTime * _dashSpeed * dashVelocityVector);
     }
 
     /// <summary>
@@ -822,7 +823,7 @@ public class PlayerMovement : MonoBehaviour
         float timer = 0;
         while (_currDashCharges < _dashMaxCharges && _isRegeneratingDash)
         {
-            if (timer >= DashCooldown)
+            if (timer >= _dashCooldown)
             {
                 timer = 0;
                 _currDashCharges++;
@@ -1130,7 +1131,7 @@ public class PlayerMovement : MonoBehaviour
     private void DisableFlight()
     {
         IsFlying = false;
-        if (_playerEntity != null) _moveMaxSpeed = _playerEntity.Stats.MoveSpeed;
+        if (PlayerEntity != null) _moveMaxSpeed = PlayerEntity.Stats.MoveSpeed;
         RecalculateMoveAccelDecel();
 
         // Regeneration only begins after reaching the ground.

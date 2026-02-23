@@ -41,9 +41,10 @@ public class PlayerShooter : MonoBehaviour
     private float fireChargeCooldown;
     private float currFireCharges;
     private bool isFiring;
-    public bool IsThrowing { get; private set; }
     private float nextFireTime;
     private bool isRegeneratingFireCharges;
+    public bool IsThrowing { get; private set; }
+    private Coroutine spearRegainCoroutine;
 
     [Header("Projectiles")] [Space]
     [SerializeField] private Projectile projectilePrefab;
@@ -91,6 +92,8 @@ public class PlayerShooter : MonoBehaviour
         fireChargeCooldown = playerEntity.Stats.FireChargeCooldown;
         currFireCharges = fireMaxCharges;
         isRegeneratingFireCharges = false;
+        IsThrowing = false;
+        spearRegainCoroutine = null;
 
         weaponOriginalRotation = weaponHandMount.localRotation;
         weaponFlippedRotation = Quaternion.Euler(weaponOriginalRotation.eulerAngles + new Vector3(0, 0, 180));
@@ -241,6 +244,9 @@ public class PlayerShooter : MonoBehaviour
         // Trigger spear throw animation.
         SetCurrentAnimationSpeed();
         shooterAnim.SetTrigger("SpearThrow");
+        
+        // Stop the current SpearRegain coroutine if a new throw was performed in the middle of it.
+        if (spearRegainCoroutine != null) StopCoroutine(spearRegainCoroutine);
         IsThrowing = true;
     }
 
@@ -546,6 +552,10 @@ public class PlayerShooter : MonoBehaviour
     /// <returns> IEnumerator object. </returns>
     private IEnumerator SpearFlip()
     {
+        // Ensure spear is visible and oriented correctly in the case of multiple quick consecutive throws.
+        weaponHandMount.localRotation = weaponOriginalRotation;
+        weaponHandMount.localScale = weaponOriginalScale;
+        
         float timer = 0;
         while (timer < flipAnimMaxSeconds)
         {
@@ -579,7 +589,7 @@ public class PlayerShooter : MonoBehaviour
     /// </summary>
     public void OnSpearThrowAnimEnd()
     {
-        StartCoroutine(SpearRegain());
+        spearRegainCoroutine = StartCoroutine(SpearRegain());
     }
 
     /// <summary>
@@ -598,7 +608,7 @@ public class PlayerShooter : MonoBehaviour
 
         float timer = 0;
         while (timer < regainAnimCompletionSeconds)
-        {
+        {  
             float completion = timer / regainAnimCompletionSeconds;
             weaponHandMount.localScale = Vector3.Lerp(weaponShrunkScale, weaponOriginalScale, completion);
 

@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af0b452f2c11613468bfbe10a80ddeaa, type: 3}
   m_Name: PlayerBaseStats
   m_EditorClassIdentifier: 
-  meleeDamage: 10
+  meleeDamage: 25
   meleeAttackRate: 0.25
-  meleeAnimationSpeed: 1.3
-  projectileDamage: 30
-  projectileFireRate: 0.5
+  meleeAnimationSpeed: 1.2
+  projectileDamage: 40
+  projectileFireRate: 2
   projectileAnimationSpeed: 2
-  fireCharges: 1
+  fireCharges: 2
   fireChargeCooldown: 4
   projectileSpread: 0.5
   enableHomingProjectiles: 0
