@@ -58,14 +58,14 @@ public class EnemySpawner_2 : MonoBehaviour
         ///
         /// Result = floor * multiplier
         /// </summary>
-        public float Calculate(int wave)
+        public float Calculate(int wave, float difficultyScale = 1f)
         {
             int w = Mathf.Max(wave - 1, 0); // Ensure wave 1 starts at baseValue with no multiplier
-            float floor = baseValue + minIncreasePerWave * wave;
+            float floor = baseValue + minIncreasePerWave * w;
             float multiplier = scalingMode == ScalingMode.Linear
                 ? 1f + (scaler - 1f) * w
                 : Mathf.Pow(scaler, w);
-            return floor * multiplier;
+            return floor * multiplier * difficultyScale;
         }
     }
 
@@ -277,9 +277,9 @@ public class EnemySpawner_2 : MonoBehaviour
         this.currentWave++;
         CurrentWaveChanged?.Invoke(this.currentWave);
 
-
-        float waveCredits = credits.Calculate(this.currentWave);
-        int waveCap = Mathf.Min(Mathf.CeilToInt(enemyCap.Calculate(this.currentWave)), globalMaxEnemies);
+        float diff = GetDifficulty();
+        float waveCredits = credits.Calculate(this.currentWave, diff);
+        int waveCap = Mathf.Min(Mathf.CeilToInt(enemyCap.Calculate(this.currentWave, diff)), globalMaxEnemies);
 
         if (isExtractionActive)
         {
