@@ -30,7 +30,7 @@ public class EnemySpawner_2 : MonoBehaviour
     [Serializable]
     public struct StatScaler
     {
-        public enum ScalingMode { Linear, Exponential }
+        public enum ScalingMode { Linear, SoftExponential, Exponential }
 
         [Tooltip("Starting value at wave 1, before any growth is applied.")]
         public float baseValue;
@@ -44,27 +44,56 @@ public class EnemySpawner_2 : MonoBehaviour
         [Tooltip("Linear grows additively each wave. Exponential compounds (accelerates) each wave.")]
         public ScalingMode scalingMode;
 
+        [Tooltip("Only used by SoftExponential. Stretches the curve over more waves.\n1 = identical to Exponential.\n2 = takes twice as many waves to reach the same value.\nHigher = gentler ramp.")]
+        public float softness;
+
         /// <summary>
         /// Returns the final computed value for the given wave number.
         ///
-        /// Floor = baseValue + (minIncreasePerWave * wave)
-        ///   → Guarantees a minimum increase each wave regardless of scaler.
+        /// Floor = baseValue + (minIncreasePerWave * (wave - 1))
+        ///   Wave 1 always equals baseValue exactly — no increase yet.
+        ///   Wave 2 onwards adds minIncreasePerWave each wave, guaranteed.
         ///
-        /// Multiplier (Linear):      1 + (scaler - 1) * (wave - 1)
-        ///   → Wave 1 is always 1.0x. Each wave adds (scaler - 1) additively.
+        /// Multiplier (Linear):         1 + (scaler - 1) * (wave - 1)
+        ///   Grows additively. Easy to predict. Wave 1 = 1.0x always.
+        ///   e.g. scaler=1.2 → Wave 1: 1.0x  Wave 3: 1.4x  Wave 5: 1.8x
         ///
-        /// Multiplier (Exponential): scaler ^ (wave - 1)
-        ///   → Wave 1 is always 1.0x. Each wave compounds by scaler.
+        /// Multiplier (Exponential):    scaler ^ (wave - 1)
+        ///   Compounds each wave. Creates a steep late-game spike.
+        ///   e.g. scaler=1.2 → Wave 1: 1.0x  Wave 3: 1.44x  Wave 5: 2.07x
         ///
-        /// Result = floor * multiplier
+        /// Multiplier (SoftExponential): scaler ^ ((wave - 1) / softness)
+        ///   Same as Exponential but the exponent is divided by softness,
+        ///   stretching the curve over more waves. softness=1 = pure Exponential.
+        ///   e.g. scaler=1.2, softness=2 → Wave 1: 1.0x  Wave 3: 1.2x  Wave 5: 1.44x
+        ///
+        /// Result = floor * multiplier * difficultyScale
         /// </summary>
         public float Calculate(int wave, float difficultyScale = 1f)
         {
             int w = Mathf.Max(wave - 1, 0); // Ensure wave 1 starts at baseValue with no multiplier
             float floor = baseValue + minIncreasePerWave * w;
-            float multiplier = scalingMode == ScalingMode.Linear
-                ? 1f + (scaler - 1f) * w
-                : Mathf.Pow(scaler, w);
+
+            float multiplier;
+            switch (scalingMode)
+            {
+                case ScalingMode.Linear:
+                    multiplier = 1f + (scaler - 1f) * w;
+                    break;
+                case ScalingMode.Exponential:
+                    multiplier = Mathf.Pow(scaler, w);
+                    break;
+
+                case ScalingMode.SoftExponential:
+                    float s = Mathf.Max(softness, 0.01f); // Guard against divide-by-zero
+                    multiplier = Mathf.Pow(scaler, w / s);
+                    break;
+
+                default:
+                    multiplier = 1f;
+                    break;
+            }
+
             return floor * multiplier * difficultyScale;
         }
     }
@@ -87,14 +116,14 @@ public class EnemySpawner_2 : MonoBehaviour
     [Header("Optional Features")]
     [SerializeField] private bool isSpawning = true; 
 
-    [Header("Wave Settings")]
     [Header("Wave Credits")]
     [SerializeField] private StatScaler credits = new StatScaler
     {
         baseValue = 10f, 
         minIncreasePerWave = 5f, 
         scaler = 1.1f,
-        scalingMode = StatScaler.ScalingMode.Linear
+        scalingMode = StatScaler.ScalingMode.Linear,
+        softness = 2f
     };
 
     [Header("Enemy Cap")]
@@ -104,7 +133,8 @@ public class EnemySpawner_2 : MonoBehaviour
         baseValue = 10f, 
         minIncreasePerWave = 2f, 
         scaler = 1.05f,
-        scalingMode = StatScaler.ScalingMode.Linear
+        scalingMode = StatScaler.ScalingMode.Linear,
+        softness = 2f
     };
 
     [Header("Health Scaling")]
@@ -114,7 +144,8 @@ public class EnemySpawner_2 : MonoBehaviour
         baseValue = 1f, 
         minIncreasePerWave = 0f, 
         scaler = 1.15f,
-        scalingMode = StatScaler.ScalingMode.Exponential
+        scalingMode = StatScaler.ScalingMode.Exponential,
+        softness = 2f
     };
 
     
@@ -125,7 +156,8 @@ public class EnemySpawner_2 : MonoBehaviour
         baseValue = 1f,
         minIncreasePerWave = 0f, 
         scaler = 1.1f,
-        scalingMode = StatScaler.ScalingMode.Exponential
+        scalingMode = StatScaler.ScalingMode.Exponential,
+        softness = 2f
     };
 
 
