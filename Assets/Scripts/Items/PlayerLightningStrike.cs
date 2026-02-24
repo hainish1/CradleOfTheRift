@@ -23,6 +23,8 @@ public class PlayerLightningStrike : IDisposable
     private const float StrikeDelay = 0.5f;
     private const float StrikeHeight = 10f;
     private const float StrikeVfxDuration = 0.25f;
+    /// <summary>Pool electrify search radius - larger than damage radius so projectile-created pools (far from player) can be electrified.</summary>
+    private const float ElectrifyPoolSearchRadius = 25f;
 
     private struct PendingStrike
     {
@@ -135,7 +137,7 @@ public class PlayerLightningStrike : IDisposable
     {
         if (electrifyDamage <= 0f) return;
 
-        Collider[] hits = Physics.OverlapSphere(position, radius);
+        Collider[] hits = Physics.OverlapSphere(position, ElectrifyPoolSearchRadius);
         HashSet<PoisonPool> unique = new HashSet<PoisonPool>();
 
         foreach (var col in hits)

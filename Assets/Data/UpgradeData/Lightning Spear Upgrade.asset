@@ -41,8 +41,9 @@ MonoBehaviour:
     dotCanStack: 0
     dotMaxStacks: 0
     dotApplyImmediately: 0
-    poisonPoolRadius: 0
-    poisonPoolLifetime: 0
+    poisonPoolRadius: 10
+    poisonPoolLifetime: 6
+    poisonPoolProjectileVFX: {fileID: 0}
     numberOfProjectiles: 0
     projectileDamageMultiplier: 0
     explosiveAoeRadius: 0
@@ -60,7 +61,7 @@ MonoBehaviour:
     bounceVFX: {fileID: 0}
     delayedDamageTime: 2
     delayedDamageMultiplier: 2
-    delayedMarkVFX: {fileID: 0}
+    delayedMarkVFX: {fileID: 6887140287331658672, guid: 8bb2142d34f4d2d44800f37f1e768d14, type: 3}
     dashDamage: 0
     dashDamageRange: 0
     fusionTriggerElement: 0
@@ -75,6 +76,7 @@ MonoBehaviour:
     playerLightningStrikeRadius: 0
     playerLightningStrikeInterval: 0
     playerLightningStrikeElectrifyDamage: 0
+    playerLightningStrikeVFX: {fileID: 0}
     flyingFireDamage: 0
     flyingFireRadius: 0
     flyingFireTickInterval: 0
@@ -109,6 +111,8 @@ MonoBehaviour:
     finisherDamageMultiplier: 0
     finisherRangeMultiplier: 0
     xpGrantAmount: 50
+    pureCoreDamageMultiplier: 1.15
+    pureCoreHealthMultiplier: 1.2
   statType: 13
   operatorType: 0
   value: 1

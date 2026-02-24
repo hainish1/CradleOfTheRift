@@ -21,7 +21,6 @@ public enum ItemEffectKind
     FallDamageBonus,
     DotOnHit,
     PoisonPoolOnDash,
-    PoisonPoolProjectile,
     BurnOnDamage,
     HomingProjectiles,
     ExplosiveProjectiles,
@@ -43,7 +42,8 @@ public enum ItemEffectKind
     FlameTrail,
     FinisherStrike,
     XPGrant,
-    PureCore
+    PureCore,
+    PoisonPoolProjectile
 }
 
 [Serializable]
@@ -83,7 +83,7 @@ public class EffectSpec
     public float poisonPoolRadius = 4f;
     public float poisonPoolLifetime = 4f;
 
-    // Poison pool projectile (lobbed bottle)
+    // Poison pool projectile 
     public GameObject poisonPoolProjectileVFX;
 
     // Homing Projectiles

@@ -43,6 +43,7 @@ MonoBehaviour:
     dotApplyImmediately: 0
     poisonPoolRadius: 0
     poisonPoolLifetime: 0
+    poisonPoolProjectileVFX: {fileID: 0}
     numberOfProjectiles: 0
     projectileDamageMultiplier: 0
     explosiveAoeRadius: 0
@@ -75,6 +76,7 @@ MonoBehaviour:
     playerLightningStrikeRadius: 0
     playerLightningStrikeInterval: 0
     playerLightningStrikeElectrifyDamage: 0
+    playerLightningStrikeVFX: {fileID: 0}
     flyingFireDamage: 0
     flyingFireRadius: 0
     flyingFireTickInterval: 0
@@ -109,6 +111,8 @@ MonoBehaviour:
     finisherDamageMultiplier: 0
     finisherRangeMultiplier: 0
     xpGrantAmount: 50
+    pureCoreDamageMultiplier: 1.15
+    pureCoreHealthMultiplier: 1.2
   statType: 13
   operatorType: 0
   value: 1

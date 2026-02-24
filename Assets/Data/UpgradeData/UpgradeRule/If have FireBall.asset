@@ -15,7 +15,7 @@ MonoBehaviour:
   requirements:
   - item: {fileID: 11400000, guid: 2e21aecdab5b3bc4389ce0ffc881d2c8, type: 2}
     minCount: 1
-  useOrLogic: 0
+    groupId: 0
   actions:
   - type: 9
     item: {fileID: 11400000, guid: bba22a3cb52a4ec4dae4c88b2ae26152, type: 2}
@@ -23,6 +23,10 @@ MonoBehaviour:
     otherItem: {fileID: 0}
   - type: 9
     item: {fileID: 11400000, guid: e98e3c8ef67d7d74db06c840028d0beb, type: 2}
+    amount: 1
+    otherItem: {fileID: 0}
+  - type: 9
+    item: {fileID: 11400000, guid: eec4630ddf45d0a4e96d19760687d362, type: 2}
     amount: 1
     otherItem: {fileID: 0}
   oneWayUnlock: 1
