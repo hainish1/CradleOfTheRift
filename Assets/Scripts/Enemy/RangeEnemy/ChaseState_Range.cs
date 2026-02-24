@@ -8,20 +8,19 @@ using UnityEngine.AI;
 public class ChaseState_Range : EnemyState
 {
     EnemyRange enemyRange;
-    float repathTimer; // limit how many times we recalculate path - performance purpose
+
     public ChaseState_Range(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
         enemyRange = enemy as EnemyRange;
     }
 
     /// <summary>
-    /// When entering the chase state, give control to navmeshagent
+    /// When entering the chase state, let the flight move freely without navmesh shit
     /// </summary>
     public override void Enter()
     {
-        enemyRange.SafeResumeAgent();
         enemyRange.SetHorizontalPosition(false);
-        if(enemy.agent != null) enemy.agent.speed = enemyRange.chaseSpeed;
+        enemyRange.SafeResumeAgent();
     }
 
     /// <summary>
@@ -30,51 +29,32 @@ public class ChaseState_Range : EnemyState
     public override void Update()
     {
         if (PauseManager.GameIsPaused) return;
+
         if (enemy.target == null)
         {
             stateMachine.ChangeState(enemyRange.GetIdle());
             return;
         }
 
-        //Handle Movement
-        ManageMovement();
-
         // Handle Rotation
         enemyRange.FaceTargetSmooth(enemyRange.turnSpeed);
 
         float distSqr = (enemy.target.position - enemy.transform.position).sqrMagnitude;
-        float attackRangeSqr = enemyRange.attackRange * enemyRange.attackRange;
 
-        // if in range and cooldown expired -> ATTACK
-        if(distSqr <= attackRangeSqr && Time.time >= enemyRange.nextAttackTime)
+        // if player far out of aggression range go back to idle
+        float outOfRange = enemy.playerOutOfRange > 0f ? enemy.playerOutOfRange : enemy.aggressionRange * 1.5f;
+        if (distSqr > outOfRange * outOfRange)
         {
-            stateMachine.ChangeState(enemyRange.GetAttack());
+            stateMachine.ChangeState(enemyRange.GetIdle());
+            return;
         }
 
-    }
+        float attackRangeSqr = enemyRange.attackRange * enemyRange.attackRange;
 
-
-    void ManageMovement()
-    {
-        repathTimer -= Time.deltaTime;
-        if(repathTimer > 0) return;
-
-        repathTimer = Mathf.Max(0.05f, enemyRange.spreadInterval); // default 5 times/sec
-
-        Vector3 desired = enemyRange.GetSpreadoutChasePoint();
-
-        // Keep the movement on the NavMesh 
-        if (enemy.agent != null && enemy.agent.isOnNavMesh)
+        // if in range and cooldown expired only then ATTACK
+        if (distSqr <= attackRangeSqr && Time.time >= enemyRange.nextAttackTime)
         {
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(desired, out hit, enemyRange.navSampleDistance, NavMesh.AllAreas))
-            {
-                enemy.agent.SetDestination(hit.position);
-            }
-            else
-            {
-                enemy.agent.SetDestination(desired);
-            }
+            stateMachine.ChangeState(enemyRange.GetAttack());
         }
     }
 
@@ -83,6 +63,6 @@ public class ChaseState_Range : EnemyState
     /// </summary>
     public override void Exit()
     {
-        if (enemy.agent != null && enemy.agent.isActiveAndEnabled) enemy.agent.isStopped = false; // free him again
+        // nothing special flight, just let flight do its thing
     }
 }

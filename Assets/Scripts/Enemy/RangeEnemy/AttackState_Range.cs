@@ -16,12 +16,13 @@ public class AttackState_Range : EnemyState
     }
 
     /// <summary>
-    /// when enter, hold position, reset ammo, start with attackDelay
+    /// when enter, hold position, stop agent, reset ammo, start with attackDelay
     /// </summary>
     public override void Enter()
     {
         // holdHorizontalPosition keeps the enemy in place via flight logic;
         enemyRange.SetHorizontalPosition(true);
+        enemyRange.SafeStopAgent();
         enemyRange.currentShotsRemaining = enemyRange.shotsPerSet;
         timer = enemyRange.attackDelay;
     }

@@ -6024,8 +6024,9 @@ MonoBehaviour:
   navSampleDistance: 6
   angleAdaptSpeed: 1.5
   projectileSpeed: 30
-  fireCooldown: 0.9
+  attackDelay: 0.5
   recoveryDuration: 2
+  shotsPerSet: 4
   firePoint: {fileID: 7588448968403286001}
   projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
   spawnOffset: 0.1
@@ -6040,8 +6041,10 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 1
-  recoveryTime: 2
+  reloadTime: 1.5
   orbitVisuals: {fileID: 0}
+  currentShotsRemaining: 0
+  nextAttackTime: 0
 --- !u!114 &204557455612082024
 MonoBehaviour:
   m_ObjectHideFlags: 0
