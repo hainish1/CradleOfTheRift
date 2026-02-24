@@ -30,8 +30,8 @@ public class FinisherStrike : IDisposable
         meleeControllerV2 = owner != null
             ? (owner.GetComponentInChildren<PlayerMeleeControllerV2>()
                ?? (owner.transform.root != null ? owner.transform.root.GetComponentInChildren<PlayerMeleeControllerV2>() : null)
-               ?? UnityEngine.Object.FindObjectOfType<PlayerMeleeControllerV2>())
-            : UnityEngine.Object.FindObjectOfType<PlayerMeleeControllerV2>();
+               ?? UnityEngine.Object.FindFirstObjectByType<PlayerMeleeControllerV2>())
+            : UnityEngine.Object.FindFirstObjectByType<PlayerMeleeControllerV2>();
         meleeController = (meleeControllerV2 == null && owner != null) ? owner.GetComponentInChildren<PlayerMeleeController>() : null;
         finisherComboIndex = meleeControllerV2 != null ? 2 : (meleeController != null ? 3 : 0);
         if (meleeControllerV2 != null)

@@ -196,7 +196,32 @@ public class PlayerShooter : MonoBehaviour
         {
             GameObject pooled = ObjectPool.instance.GetObject(projectilePrefab.gameObject, muzzle);
             
-            if (BounceProjectiles.IsEnabled)
+            if (PoisonPoolProjectiles.IsEnabled)
+            {
+                proj = pooled.GetComponent<PoisonPoolBottleProjectile>();
+                if (proj == null)
+                {
+                    var oldProj = pooled.GetComponent<Projectile>();
+                    if (oldProj != null)
+                    {
+                        var bulletFX = oldProj.BulletImpactFX;
+                        var trail = oldProj.trail;
+                        Destroy(oldProj);
+                        proj = pooled.AddComponent<PoisonPoolBottleProjectile>();
+                        proj.BulletImpactFX = bulletFX;
+                        proj.trail = trail;
+                    }
+                    else
+                    {
+                        var oldExpProj = pooled.GetComponent<ExplosiveProjectile>();
+                        var oldBounceProj = pooled.GetComponent<BounceProjectile>();
+                        if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); proj = pooled.AddComponent<PoisonPoolBottleProjectile>(); proj.BulletImpactFX = b; proj.trail = t; }
+                        else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); proj = pooled.AddComponent<PoisonPoolBottleProjectile>(); proj.BulletImpactFX = b; proj.trail = t; }
+                        else proj = pooled.AddComponent<PoisonPoolBottleProjectile>();
+                    }
+                }
+            }
+            else if (BounceProjectiles.IsEnabled)
             {
                 proj = pooled.GetComponent<BounceProjectile>();
                 if (proj == null)
@@ -306,7 +331,28 @@ public class PlayerShooter : MonoBehaviour
         {
             GameObject go = Instantiate(projectilePrefab.gameObject, spawnPos, spawnRot);
             
-            if (BounceProjectiles.IsEnabled)
+            if (PoisonPoolProjectiles.IsEnabled)
+            {
+                var oldProj = go.GetComponent<Projectile>();
+                if (oldProj != null)
+                {
+                    var bulletFX = oldProj.BulletImpactFX;
+                    var trail = oldProj.trail;
+                    Destroy(oldProj);
+                    proj = go.AddComponent<PoisonPoolBottleProjectile>();
+                    proj.BulletImpactFX = bulletFX;
+                    proj.trail = trail;
+                }
+                else
+                {
+                    var oldExpProj = go.GetComponent<ExplosiveProjectile>();
+                    var oldBounceProj = go.GetComponent<BounceProjectile>();
+                    if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); proj = go.AddComponent<PoisonPoolBottleProjectile>(); proj.BulletImpactFX = b; proj.trail = t; }
+                    else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); proj = go.AddComponent<PoisonPoolBottleProjectile>(); proj.BulletImpactFX = b; proj.trail = t; }
+                    else proj = go.AddComponent<PoisonPoolBottleProjectile>();
+                }
+            }
+            else if (BounceProjectiles.IsEnabled)
             {
                 var oldProj = go.GetComponent<Projectile>();
                 if (oldProj != null)
@@ -402,12 +448,25 @@ public class PlayerShooter : MonoBehaviour
         }
 
         float speed = projectileSpeed;
-        if (ExplosiveProjectiles.IsEnabled && proj is ExplosiveProjectile)
+        Vector3 velocity;
+        if (PoisonPoolProjectiles.IsEnabled && proj is PoisonPoolBottleProjectile)
+        {
+            Vector3 dirXZ = direction;
+            dirXZ.y = 0f;
+            if (dirXZ.sqrMagnitude < 0.01f) dirXZ = Vector3.forward;
+            else dirXZ.Normalize();
+            velocity = dirXZ * 20f + Vector3.up * 15f;
+        }
+        else if (ExplosiveProjectiles.IsEnabled && proj is ExplosiveProjectile)
         {
             speed *= 0.2f;
+            velocity = direction * speed;
         }
-        // 弹射投射物保持正常速度
-        proj?.Init(direction * speed, shootMask, currentDamage, 100, playerEntity);
+        else
+        {
+            velocity = direction * speed;
+        }
+        proj?.Init(velocity, shootMask, currentDamage, 100, playerEntity);
 
         // Debug.Log($"Fired projectile with {currentDamage} damage");
         // Play firing sound

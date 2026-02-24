@@ -38,6 +38,7 @@ public class LightningDash : IDisposable
     private PlayerMeleeController melee;
     private PlayerGroundSlam slam;
     private PlayerShockwave shockwave;
+    private PlayerHealth playerHealth;
 
     public LightningDash(Entity owner, float damage, int chainCount, float range, int initialStacks = 1, float durationSec = -1f)
     {
@@ -66,6 +67,7 @@ public class LightningDash : IDisposable
         melee = owner.GetComponentInChildren<PlayerMeleeController>();
         slam = owner.GetComponent<PlayerGroundSlam>();
         shockwave = owner.GetComponent<PlayerShockwave>();
+        playerHealth = owner.GetComponent<PlayerHealth>();
 
         SetupLightningTrail();
         
@@ -153,6 +155,9 @@ public class LightningDash : IDisposable
     {
         if (renderersHidden) return;
         
+        if (playerHealth != null)
+            playerHealth.SetCanTakeDamage(false);
+        
         foreach (var renderer in playerRenderers)
         {
             if (renderer != null)
@@ -170,6 +175,9 @@ public class LightningDash : IDisposable
     private void DisableLightningForm()
     {
         if (!renderersHidden) return;
+        
+        if (playerHealth != null)
+            playerHealth.SetCanTakeDamage(true);
         
         foreach (var renderer in playerRenderers)
         {

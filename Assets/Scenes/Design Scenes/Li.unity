@@ -7276,7 +7276,7 @@ PrefabInstance:
     - target: {fileID: 1845844544276222190, guid: 2ecc2bdd371bf01429d2dcdd695764ce, type: 3}
       propertyPath: itemData
       value: 
-      objectReference: {fileID: 11400000, guid: 375c2cd8cfe9bfc43b4ac28dbb3e360b, type: 2}
+      objectReference: {fileID: 11400000, guid: 729d6d36b4390447fac12174d9c07323, type: 2}
     - target: {fileID: 5514351028250213520, guid: 2ecc2bdd371bf01429d2dcdd695764ce, type: 3}
       propertyPath: m_text
       value: 'FIRE BALL
@@ -13844,6 +13844,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3755004808247737315, guid: 9f5ff792f00ba0b4899ff655f51dbcdd, type: 3}
+      propertyPath: itemData
+      value: 
+      objectReference: {fileID: 11400000, guid: 7afb0aa16fb19584c83740d0cca36980, type: 2}
     - target: {fileID: 5450332928034572956, guid: 9f5ff792f00ba0b4899ff655f51dbcdd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 20.3
@@ -13964,6 +13968,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1030230283423003884, guid: 1f8a199581aef5040aadbcd2e018904d, type: 3}
+      propertyPath: itemData
+      value: 
+      objectReference: {fileID: 11400000, guid: ce6d3cffddbd395459f9b7eda101661a, type: 2}
     - target: {fileID: 5431954425584228344, guid: 1f8a199581aef5040aadbcd2e018904d, type: 3}
       propertyPath: m_Name
       value: Lighnting Strike

@@ -34,6 +34,7 @@ public class PlayerInventory : MonoBehaviour
     private DotOnHit dotOnHitEffect;
     private PoisonCore poisonCore;
     private PoisonPoolOnDash poisonPoolOnDashEffect;
+    private PoisonPoolProjectiles poisonPoolProjectilesEffect;
     private HomingProjectileEffect homingProjectilesEffect;
     private ExplosiveProjectiles explosiveProjectilesEffect;
     private ChainLightning chainLightningEffect;
@@ -84,6 +85,7 @@ public class PlayerInventory : MonoBehaviour
         fallDamageBonusEffect?.Update(dt);
         dotOnHitEffect?.Update(dt);
         poisonPoolOnDashEffect?.Update(dt);
+        poisonPoolProjectilesEffect?.Update(dt);
         explosiveProjectilesEffect?.Update(dt);
         chainLightningEffect?.Update(dt);
         bounceProjectilesEffect?.Update(dt);
@@ -103,7 +105,7 @@ public class PlayerInventory : MonoBehaviour
         flameTrailEffect?.Update(dt);
         finisherStrikeEffect?.Update(dt);
         //homingProjectilesEffect?.Update(dt);
-        // pureCoreEffect is event-driven, no Update
+
 
         // more runtime effects would be updated here ig
     }
@@ -290,6 +292,14 @@ public class PlayerInventory : MonoBehaviour
                         poisonCoreAdded = true;
                     }
                     EnsurePoisonPoolOnDash(data, effect, initialStacks: stacksAdded);
+                    break;
+                case ItemEffectKind.PoisonPoolProjectile:
+                    if (!poisonCoreAdded)
+                    {
+                        EnsurePoisonCore(data, stacksAdded);
+                        poisonCoreAdded = true;
+                    }
+                    EnsurePoisonPoolProjectiles(effect, initialStacks: stacksAdded);
                     break;
                 case ItemEffectKind.BurnOnDamage:
                     EnsureBurnAura(effect, initialStacks: stacksAdded);
@@ -556,6 +566,29 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+    private void EnsurePoisonPoolProjectiles(EffectSpec effect, int initialStacks)
+    {
+        if (poisonPoolProjectilesEffect == null)
+        {
+            poisonPoolProjectilesEffect = new PoisonPoolProjectiles(
+                owner: playerEntity,
+                radius: effect.poisonPoolRadius,
+                poolLifetime: effect.poisonPoolLifetime,
+                initialStacks: initialStacks,
+                durationSec: effect.duration,
+                bottleVFX: effect.poisonPoolProjectileVFX
+            );
+            if (effect.duration > 0f) tickingEffects.Add(poisonPoolProjectilesEffect);
+            Debug.Log($"[Effect] Poison Pool Projectile created : Stacks {initialStacks}");
+        }
+        else
+        {
+            for (int i = 0; i < initialStacks; i++)
+                poisonPoolProjectilesEffect.AddStack(1);
+            Debug.Log($"[Effect] Poison Pool Projectile stacked : +{initialStacks}");
+        }
+    }
+
     private void EnsurePoisonCore(ItemData data, int initialStacks)
     {
         if (poisonCore == null)
@@ -760,7 +793,8 @@ public class PlayerInventory : MonoBehaviour
                 interval: effect.playerLightningStrikeInterval,
                 electrifyDamage: effect.playerLightningStrikeElectrifyDamage,
                 initialStacks: initialStacks,
-                durationSec: effect.duration
+                durationSec: effect.duration,
+                strikeVFX: effect.playerLightningStrikeVFX
             );
             if (effect.duration > 0f) tickingEffects.Add(playerLightningStrikeEffect);
             Debug.Log($"[Effect] Player Lightning Strike created : Stacks {initialStacks}");
@@ -1021,6 +1055,12 @@ public class PlayerInventory : MonoBehaviour
                     poisonPoolOnDashEffect.AddStack(-stacks);
                 }
                 break;
+            case ItemEffectKind.PoisonPoolProjectile:
+                if (poisonPoolProjectilesEffect != null)
+                {
+                    poisonPoolProjectilesEffect.AddStack(-stacks);
+                }
+                break;
             case ItemEffectKind.ExplosiveProjectiles:
                 if (explosiveProjectilesEffect != null)
                 {
@@ -1159,7 +1199,7 @@ public class PlayerInventory : MonoBehaviour
         bool hasPoisonEffect = false;
         foreach (var effect in data.effects)
         {
-            if (effect.kind == ItemEffectKind.DotOnHit || effect.kind == ItemEffectKind.PoisonPoolOnDash)
+            if (effect.kind == ItemEffectKind.DotOnHit || effect.kind == ItemEffectKind.PoisonPoolOnDash || effect.kind == ItemEffectKind.PoisonPoolProjectile)
             {
                 hasPoisonEffect = true;
                 break;
@@ -1298,6 +1338,7 @@ public class PlayerInventory : MonoBehaviour
         fallDamageBonusEffect?.Dispose();
         dotOnHitEffect?.Dispose();
         poisonPoolOnDashEffect?.Dispose();
+        poisonPoolProjectilesEffect?.Dispose();
         poisonCore?.Dispose();
         explosiveProjectilesEffect?.Dispose();
         chainLightningEffect?.Dispose();

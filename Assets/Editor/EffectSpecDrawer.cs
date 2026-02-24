@@ -136,6 +136,11 @@ public class EffectSpecDrawer : PropertyDrawer
             "poisonPoolRadius", "poisonPoolLifetime",
         },
 
+        ItemEffectKind.PoisonPoolProjectile => new[]
+        {
+            "poisonPoolRadius", "poisonPoolLifetime", "poisonPoolProjectileVFX",
+        },
+
         ItemEffectKind.BurnOnDamage => new[]
         {
             "burnAuraDamagePerSecond", "burnAuraRange", "burnAuraTickInterval",
@@ -161,6 +166,7 @@ public class EffectSpecDrawer : PropertyDrawer
         {
             "playerLightningStrikeDamage", "playerLightningStrikeRadius",
             "playerLightningStrikeInterval", "playerLightningStrikeElectrifyDamage",
+            "playerLightningStrikeVFX",
         },
 
         ItemEffectKind.FlyFire => new[]

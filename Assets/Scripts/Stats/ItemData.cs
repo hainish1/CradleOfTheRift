@@ -21,6 +21,7 @@ public enum ItemEffectKind
     FallDamageBonus,
     DotOnHit,
     PoisonPoolOnDash,
+    PoisonPoolProjectile,
     BurnOnDamage,
     HomingProjectiles,
     ExplosiveProjectiles,
@@ -82,6 +83,9 @@ public class EffectSpec
     public float poisonPoolRadius = 4f;
     public float poisonPoolLifetime = 4f;
 
+    // Poison pool projectile (lobbed bottle)
+    public GameObject poisonPoolProjectileVFX;
+
     // Homing Projectiles
     public int numberOfProjectiles = 3;
     public float projectileDamageMultiplier = 1.5f;
@@ -133,6 +137,7 @@ public class EffectSpec
     public float playerLightningStrikeRadius = 3f;
     public float playerLightningStrikeInterval = 5f;
     public float playerLightningStrikeElectrifyDamage = 4f;
+    public GameObject playerLightningStrikeVFX;
 
     // Flying Fire Spray
     public float flyingFireDamage = 8f;
@@ -191,7 +196,7 @@ public class EffectSpec
     // XP Grant
     public int xpGrantAmount = 50;
 
-    // Pure Core (no elemental items = damage + health multiplier)
+    // Pure Core 
     [Tooltip("Damage multiplier when player has no elemental items (e.g. 1.15 = +15%)")]
     public float pureCoreDamageMultiplier = 1.15f;
     [Tooltip("Health multiplier when player has no elemental items (e.g. 1.2 = +20%)")]

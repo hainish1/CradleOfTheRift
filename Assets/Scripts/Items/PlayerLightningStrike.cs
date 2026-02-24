@@ -9,6 +9,7 @@ public class PlayerLightningStrike : IDisposable
     private readonly float radius;
     private readonly float interval;
     private readonly float electrifyDamage;
+    private readonly GameObject strikeVFX;
     private readonly LayerMask enemyLayer;
     private int stacks;
     private float duration;
@@ -38,13 +39,15 @@ public class PlayerLightningStrike : IDisposable
         float interval,
         float electrifyDamage,
         int initialStacks = 1,
-        float durationSec = -1f)
+        float durationSec = -1f,
+        GameObject strikeVFX = null)
     {
         this.owner = owner;
         this.baseDamage = damage;
         this.radius = radius;
         this.interval = Mathf.Max(0.1f, interval);
         this.electrifyDamage = Mathf.Max(0f, electrifyDamage);
+        this.strikeVFX = strikeVFX;
         this.stacks = initialStacks > 0 ? initialStacks : 1;
         this.duration = durationSec;
         this.timer = durationSec;
@@ -84,7 +87,6 @@ public class PlayerLightningStrike : IDisposable
     private void QueueStrike()
     {
         Vector3 groundPoint = GetGroundPoint(owner.transform.position);
-        CreateWarningVfx(groundPoint);
 
         pending.Add(new PendingStrike
         {
@@ -196,30 +198,15 @@ public class PlayerLightningStrike : IDisposable
         return origin;
     }
 
-    private void CreateWarningVfx(Vector3 groundPoint)
-    {
-        Vector3 startPos = groundPoint + Vector3.up * StrikeHeight;
-        GameObject warningObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        warningObj.name = "LightningWarning";
-        warningObj.transform.position = startPos;
-        warningObj.transform.localScale = Vector3.one * 0.4f;
-
-        var warningCollider = warningObj.GetComponent<Collider>();
-        if (warningCollider != null) UnityEngine.Object.Destroy(warningCollider);
-
-        var renderer = warningObj.GetComponent<Renderer>();
-        if (renderer != null)
-        {
-            var mat = new Material(Shader.Find("Sprites/Default"));
-            mat.color = LightningCore.CalculateLightningColor();
-            renderer.material = mat;
-        }
-
-        UnityEngine.Object.Destroy(warningObj, StrikeDelay);
-    }
-
     private void CreateStrikeVfx(Vector3 position)
     {
+        if (strikeVFX != null)
+        {
+            var instance = UnityEngine.Object.Instantiate(strikeVFX, position, strikeVFX.transform.rotation);
+            UnityEngine.Object.Destroy(instance, StrikeVfxDuration + 0.1f);
+            return;
+        }
+
         Vector3 startPos = position + Vector3.up * StrikeHeight;
         Vector3 endPos = position;
 

@@ -66,8 +66,8 @@ public class LightningVFX : MonoBehaviour
         if (isExtending && elapsedTime < extendDuration)
         {
             float extendProgress = elapsedTime / extendDuration;
-            int visiblePoints = Mathf.CeilToInt(16 * extendProgress);
-            lr.positionCount = Mathf.Clamp(visiblePoints, 1, 16);
+            int visiblePoints = Mathf.Clamp(Mathf.CeilToInt(16 * extendProgress), 1, 16);
+            lr.positionCount = visiblePoints;
         }
         else if (isExtending && elapsedTime >= extendDuration)
         {
@@ -158,15 +158,14 @@ public class LightningVFX : MonoBehaviour
             float jitterY = (Mathf.PerlinNoise(perlinX + 300f, perlinY + 300f) * 2f - 1f) * 0.15f;
             float jitterZ = (Mathf.PerlinNoise(perlinX + 400f, perlinY + 400f) * 2f - 1f) * 0.15f;
             offset += new Vector3(jitterX, jitterY, jitterZ) * curveIntensity;
-            
+
             lr.SetPosition(i, basePos + offset);
         }
     }
     
     void OnDestroy()
     {
-        if (lightningMaterial != null)
-            Destroy(lightningMaterial);
+        if (lightningMaterial != null) Destroy(lightningMaterial);
     }
 }
 
