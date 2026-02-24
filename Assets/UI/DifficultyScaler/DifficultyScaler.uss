@@ -1,0 +1,60 @@
+#DifficultyContainer {
+    width: 250px;
+    height: 30px;
+    overflow: hidden;
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+#DifficultyStrip {
+    flex-direction: row;
+    /* Ensure the strip is tall enough to match the container */
+    height: 100%;
+    /* Let it expand horizontally as segments are added */
+    flex-grow: 1;
+    transition-property: translate;
+    transition-duration: 0s; 
+}
+
+.difficulty-segment {
+    height: 100%;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* The actual text label - CHANGED TO CLASS (.) */
+.difficulty-text {
+    color: white;
+    -unity-font-style: bold;
+    font-size: 18px;
+    letter-spacing: 4px;
+    -unity-text-align: middle-center;
+    white-space: nowrap; 
+}
+
+/* Fixed Marker logic */
+#DifficultyMarker {
+    position: absolute;
+    left: 50%; /* Puts the line at 125px */
+    height: 100%;
+    width: 3px;
+    background-color: rgb(255, 0, 0);
+    translate: -50% 0;
+}
+
+#MarkerArrow {
+    position: absolute;
+    bottom: -5px;
+    left: -4px;
+    width: 11px;
+    height: 11px;
+    background-color: rgb(255, 0, 0);
+    rotate: 45deg;
+}

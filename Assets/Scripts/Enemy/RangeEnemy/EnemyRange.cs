@@ -90,6 +90,15 @@ public class EnemyRange : Enemy
     private AgentKnockBack knockBackRef;
     private bool wasKnockedBack;
 
+    private void OnEnable()
+    {
+        EnemyRegistry.RegisterFlyer(this);
+    }
+
+    private void OnDisable()
+    {
+        EnemyRegistry.UnregisterFlyer(this);
+    }
 
     public override void Start()
     {
@@ -118,9 +127,7 @@ public class EnemyRange : Enemy
         stateMachine.Initialize(idle); // enter idle first
 
     }
-
-
-
+    
     public override void Update()
     {
         if (PauseManager.GameIsPaused) return;

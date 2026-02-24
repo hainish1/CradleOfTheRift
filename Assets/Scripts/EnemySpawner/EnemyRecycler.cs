@@ -9,7 +9,7 @@ public class EnemyRecycler : MonoBehaviour
     [SerializeField] private Transform playerTransform;
 
     [Header("Recycle Thresholds")]
-    [SerializeField] private float recycleDistance = 100f; 
+    [SerializeField] private float recycleDistance = 100f; // 
     [SerializeField] private float checkInterval = 5.0f;
 
     [Header("Search Settings")]
@@ -24,44 +24,47 @@ public class EnemyRecycler : MonoBehaviour
 
     void Start()
     {
+        EnsurePlayerLocation();
+
+        // Cache all nodes in the scene
+        allNodes = new List<SpawnNode>(FindObjectsByType<SpawnNode>(FindObjectsSortMode.None));
+
+        StartCoroutine(RecycleRoutine());
+    }
+
+    private void EnsurePlayerLocation()
+    {
         if (playerTransform != null) return;
 
         var playerGo = PlayerLocator.FindPlayerGameObject();
         if (playerGo != null)
             playerTransform = playerGo.transform;
-
-        // Cache all nodes in the scene
-        allNodes = new List<SpawnNode>(FindObjectsByType<SpawnNode>(FindObjectsSortMode.None));
-        
-        if (playerTransform == null)
-            playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-
-        StartCoroutine(RecycleRoutine());
     }
 
-    IEnumerator RecycleRoutine()
+    private IEnumerator RecycleRoutine()
     {
         while (true)
         {
             yield return new WaitForSeconds(checkInterval);
 
-            // Handle flying enemies (EnemyRange)
-            EnemyRange[] flyers = Object.FindObjectsByType<EnemyRange>(FindObjectsSortMode.None);
-            foreach (EnemyRange enemy in flyers)
+            // Iterate backwards so we can safely skip null entries if an enemy was destroyed mid-frame 
+            var flyers = EnemyRegistry.Flyers;
+            for (int i = flyers.Count - 1; i >= 0; i--)
             {
-                ProcessRecycle(enemy.gameObject, true);
+                if (flyers[i] != null)
+                    ProcessRecycle(flyers[i].gameObject, true);
             }
 
-            // Handle ground enemies (EnemyMelee)
-            EnemyMelee[] walkers = Object.FindObjectsByType<EnemyMelee>(FindObjectsSortMode.None);
-            foreach (EnemyMelee enemy in walkers)
+            var walkers = EnemyRegistry.Walkers;
+            for (int i = walkers.Count - 1; i >= 0; i--)
             {
-                ProcessRecycle(enemy.gameObject, false); 
+                if (walkers[i] != null)
+                    ProcessRecycle(walkers[i].gameObject, false);
             }
         }
     }
 
-    void ProcessRecycle(GameObject enemyObj, bool isFlying)
+    private void ProcessRecycle(GameObject enemyObj, bool isFlying)
     {
         float dist = Vector3.Distance(enemyObj.transform.position, playerTransform.position);
 
@@ -83,7 +86,7 @@ public class EnemyRecycler : MonoBehaviour
         }
     }
 
-    void TeleportToNode(GameObject enemyObj, bool isFlying)
+    private void TeleportToNode(GameObject enemyObj, bool isFlying)
     {
         SpawnNode bestNode = FindNodeWithExpandingSearch(isFlying);
         
@@ -115,7 +118,7 @@ public class EnemyRecycler : MonoBehaviour
         }
     }
 
-    SpawnNode FindNodeWithExpandingSearch(bool enemyIsFlying)
+    private SpawnNode FindNodeWithExpandingSearch(bool enemyIsFlying)
     {
         float currentMax = initialMaxDistance;
 
@@ -155,7 +158,7 @@ public class EnemyRecycler : MonoBehaviour
         return null;
     }
 
-    bool IsVisibleToPlayer(GameObject enemyObj)
+    private bool IsVisibleToPlayer(GameObject enemyObj)
     {
         Plane[] planes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
         Renderer rend = enemyObj.GetComponentInChildren<Renderer>();
