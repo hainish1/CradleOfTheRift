@@ -15,10 +15,13 @@ MonoBehaviour:
   requirements:
   - item: {fileID: 11400000, guid: 022c7e9ca83e2c74fabd7023d6f26d47, type: 2}
     minCount: 1
-  useOrLogic: 0
+    groupId: 0
+  - item: {fileID: 11400000, guid: eec4630ddf45d0a4e96d19760687d362, type: 2}
+    minCount: 1
+    groupId: 0
   actions:
   - type: 8
-    item: {fileID: 11400000, guid: 2b13b9a23dd7b9c4f8a445b2c0100fed, type: 2}
+    item: {fileID: 11400000, guid: 3c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f, type: 2}
     amount: 1
     otherItem: {fileID: 0}
   - type: 8

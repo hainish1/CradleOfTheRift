@@ -13,7 +13,7 @@ public class PlayerManager : Entity
     void Start()
     {
         playerHealth = GetComponent<PlayerHealth>();
-        playerShooter = GetComponent<PlayerShooter>();
+        playerShooter = GetComponentInChildren<PlayerShooter>();
         playerMovement = GetComponent<PlayerMovement>();
         baseScale = transform.localScale;
 
@@ -48,7 +48,7 @@ public class PlayerManager : Entity
                 float currentEnergy = playerMovement.GetCurrentFlightEnergy();
                 flightInfo = $", Flight Energy: {currentEnergy:F0}";
             }
-            Debug.Log($"Health: {Stats.Health}, MoveSpeed: {Stats.MoveSpeed}, MeleeAttackCooldown: {Stats.MeleeAttackSpeed}, ProjectileFireRate: {Stats.ProjectileFireRate}, FireChargeCooldown: {Stats.FireChargeCooldown} , Projectile Damage: {Stats.ProjectileDamage}, Melee Damage: {Stats.MeleeDamage}, Slam Damage: {Stats.ShockwaveDamage}{flightInfo}");
+            Debug.Log($"Health: {Stats.Health}, MoveSpeed: {Stats.MoveSpeed}, MeleeAttackCooldown: {Stats.MeleeAnimationSpeed}, ProjectileFireRate: {Stats.ProjectileFireRate}, FireChargeCooldown: {Stats.FireChargeCooldown} , Projectile Damage: {Stats.ProjectileDamage}, Melee Damage: {Stats.MeleeDamage}, Slam Damage: {Stats.ShockwaveDamage}{flightInfo}");
         }
     }
 

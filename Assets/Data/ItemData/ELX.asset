@@ -23,7 +23,7 @@ MonoBehaviour:
   useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 26
+  - kind: 9
     description: 
     duration: -1
     healOnDamagePercentPerStack: 0
@@ -109,6 +109,8 @@ MonoBehaviour:
     finisherDamageMultiplier: 1.5
     finisherRangeMultiplier: 2
     xpGrantAmount: 50
+    pureCoreDamageMultiplier: 2
+    pureCoreHealthMultiplier: 2
   statType: 9
   operatorType: 0
   value: 1

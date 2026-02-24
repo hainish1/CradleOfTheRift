@@ -162,7 +162,7 @@ public class PlayerMeleeController : MonoBehaviour
     /// </summary>
     private void RecalculateAttackSpeed()
     {
-        float currAttackSpeed = _playerEntity.Stats.MeleeAttackSpeed;
+        float currAttackSpeed = _playerEntity.Stats.MeleeAnimationSpeed;
         float attackSpeedMultiplier = Mathf.Clamp(1 / currAttackSpeed, 1e-3f, float.MaxValue);
         _attackDurations[0] = _attack0.length * attackSpeedMultiplier;
         _attackDurations[1] = _attack1.length * attackSpeedMultiplier;
