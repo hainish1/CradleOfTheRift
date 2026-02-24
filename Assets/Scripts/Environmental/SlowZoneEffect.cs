@@ -15,15 +15,15 @@ public class SlowZoneEffect : MonoBehaviour
         {
             Debug.Log("Player entered slow zone");
             // Check if already slowed, if not then slow the player
-            if (playerMovement.isSlowed) return;
+            if (playerMovement.IsSlowed) return;
 
-            originalSpeed = playerMovement.MoveMaxSpeed;
+            originalSpeed = playerMovement.PlayerEntity.Stats.MoveSpeed;
             originalLateralVelocityVector = playerMovement._lateralVelocityVector;
 
             // reduce player speed
             var modifier = new BasicStatsModifier(StatType.MoveSpeed, -1f, v => originalSpeed * (1f - speedReduction));
-            playerMovement._playerEntity.Stats.Mediator.AddModifier(modifier);      
-            playerMovement.isSlowed = true;
+            playerMovement.PlayerEntity.Stats.Mediator.AddModifier(modifier);      
+            playerMovement.IsSlowed = true;
             //Debug.Log("Player speed reduced to: " + playerMovement.MoveMaxSpeed + ". Original speed was: " + originalSpeed);
         }
         
@@ -37,12 +37,12 @@ public class SlowZoneEffect : MonoBehaviour
         if (playerMovement != null)
         {
             // Check if the player is currently slowed, if yes then restore the player's speed
-            if (!playerMovement.isSlowed) return;
+            if (!playerMovement.IsSlowed) return;
 
              // restore player speed (maybe should add a duration instead of applying another modifier)
             var modifier = new BasicStatsModifier(StatType.MoveSpeed, -1f, v => originalSpeed);
-            playerMovement._playerEntity.Stats.Mediator.AddModifier(modifier);
-            playerMovement.isSlowed = false;
+            playerMovement.PlayerEntity.Stats.Mediator.AddModifier(modifier);
+            playerMovement.IsSlowed = false;
         }
     }
 

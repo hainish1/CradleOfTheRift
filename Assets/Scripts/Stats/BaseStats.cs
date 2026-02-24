@@ -16,14 +16,15 @@ public class BaseStats : ScriptableObject
 {
     [Header("Melee Attack Parameters")]
     public float meleeDamage = 1;
-    public float meleeAttackSpeed = 5.0f;
     public float meleeAttackRate = 1;
+    public float meleeAnimationSpeed = 1;
 
     [Space]
 
     [Header("Ranged Attack Parameters")]
     public float projectileDamage = 1;
     public float projectileFireRate = 1; 
+    public float projectileAnimationSpeed = 1;
     public int fireCharges;
     public float fireChargeCooldown;
     public float projectileSpread = 0.1f; // in radians
