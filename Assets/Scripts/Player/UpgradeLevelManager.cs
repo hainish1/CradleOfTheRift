@@ -16,10 +16,10 @@ public class UpgradeLevelManager : MonoBehaviour
     [Tooltip("Base upgrade pool, always available from the start.")]
     [SerializeField] private List<ItemData> upgradePool = new();
 
-    // items unlocked at runtime via InventoryRule (AddToUpgradePool action)
+    // items unlocked at runtime via InventoryRule (AddToUpgradePool )
     private readonly List<ItemData> runtimePool = new();
 
-    // items blocked at runtime via InventoryRule (RemoveFromUpgradePool action)
+    // items blocked at runtime via InventoryRule (RemoveFromUpgradePool)
     private readonly HashSet<ItemData> blockedFromPool = new();
 
     [Header("Input")]

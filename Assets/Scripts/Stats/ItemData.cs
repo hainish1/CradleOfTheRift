@@ -41,7 +41,9 @@ public enum ItemEffectKind
     ToxicAttackSpeed,
     FlameTrail,
     FinisherStrike,
-    XPGrant
+    XPGrant,
+    PureCore,
+    PoisonPoolProjectile
 }
 
 [Serializable]
@@ -80,6 +82,9 @@ public class EffectSpec
     // Poison pool on dash
     public float poisonPoolRadius = 4f;
     public float poisonPoolLifetime = 4f;
+
+    // Poison pool projectile 
+    public GameObject poisonPoolProjectileVFX;
 
     // Homing Projectiles
     public int numberOfProjectiles = 3;
@@ -132,6 +137,7 @@ public class EffectSpec
     public float playerLightningStrikeRadius = 3f;
     public float playerLightningStrikeInterval = 5f;
     public float playerLightningStrikeElectrifyDamage = 4f;
+    public GameObject playerLightningStrikeVFX;
 
     // Flying Fire Spray
     public float flyingFireDamage = 8f;
@@ -189,6 +195,12 @@ public class EffectSpec
 
     // XP Grant
     public int xpGrantAmount = 50;
+
+    // Pure Core 
+    [Tooltip("Damage multiplier when player has no elemental items (e.g. 1.15 = +15%)")]
+    public float pureCoreDamageMultiplier = 1.15f;
+    [Tooltip("Health multiplier when player has no elemental items (e.g. 1.2 = +20%)")]
+    public float pureCoreHealthMultiplier = 1.2f;
 }
 
 public enum ItemRarity
