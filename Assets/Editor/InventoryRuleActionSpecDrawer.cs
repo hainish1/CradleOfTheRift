@@ -36,7 +36,9 @@ public class InventoryRuleActionSpecDrawer : PropertyDrawer
             InventoryRuleActionType.SetCount or
             InventoryRuleActionType.TransformItem or
             InventoryRuleActionType.UnlockLootItem or
-            InventoryRuleActionType.BlockLootItem;
+            InventoryRuleActionType.BlockLootItem or
+            InventoryRuleActionType.AddToUpgradePool or
+            InventoryRuleActionType.RemoveFromUpgradePool;
 
         bool needsAmount = actionType is
             InventoryRuleActionType.AddStacks or

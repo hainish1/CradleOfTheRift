@@ -3,10 +3,9 @@ using UnityEngine;
 public class EnemyDamageVisuals : MonoBehaviour
 {
     [Header("Visuals")]
-    [SerializeField] private Color damageColor = Color.red;
     [SerializeField] private Material hitFlashMaterial;
     [SerializeField] private float flashDuration = 0.1f;
-    [SerializeField] private int fontSize = 50;
+    [SerializeField] private int fontSize = 36;
     [SerializeField] private float textDuration = 1.5f;
     [SerializeField] private float riseSpeed = 1.5f;
     [SerializeField] private GameObject takeDamageVFXPrefab;
@@ -26,7 +25,16 @@ public class EnemyDamageVisuals : MonoBehaviour
         {
             originalMaterial = meshRenderer.material;
         }
+        CombatEvents.DamageDealt += OnDamageDealt;
     }
+
+    private void OnDamageDealt(Entity attacker, Component target, float damage, ElementType elementType)
+    {
+        if (isDead) return;
+        if (target == null || target.gameObject != gameObject) return;
+        ShowDamageNumber(damage, elementType);
+    }
+
     private void PlayTakeDamageVFX()
     {
         if(takeDamageVFXPrefab == null) return;
@@ -39,21 +47,30 @@ public class EnemyDamageVisuals : MonoBehaviour
     public void ShowDamageVisuals(float damage)
     {
         if (isDead) return;
-        ShowDamageNumber(damage);
         PlayTakeDamageVFX();
         StartCoroutine(FlashHit());
     }
 
-    private void ShowDamageNumber(float damage)
+    private void ShowDamageNumber(float damage, ElementType elementType)
     {
-        // GameObject damageText = new GameObject("DamageText");
-
-        // random spread so numbers dont overlap
         float randomX = Random.Range(-0.5f, 0.5f);
         float randomZ = Random.Range(-0.5f, 0.5f);
         Vector3 pos = transform.position + Vector3.up * 2f + new Vector3(randomX, 0, randomZ);
 
-        DamageNumbers.Spawn(transform, pos, damage, damageColor, fontSize, textDuration, riseSpeed);
+        DamageNumbers.Spawn(transform, pos, damage, GetElementColor(elementType), fontSize, textDuration, riseSpeed);
+    }
+
+    private Color GetElementColor(ElementType elementType)
+    {
+        return elementType switch
+        {
+            ElementType.None      => Color.white,
+            ElementType.Fire      => Color.red,
+            ElementType.Lightning => Color.yellow,
+            ElementType.Poison    => Color.green,
+            ElementType.Ice       => new Color(0.5f, 0.8f, 1f),
+            _                     => Color.white
+        };
     }
 
     private System.Collections.IEnumerator FlashHit()
@@ -88,4 +105,8 @@ public class EnemyDamageVisuals : MonoBehaviour
         }       
     }
 
+    void OnDestroy()
+    {
+        CombatEvents.DamageDealt -= OnDamageDealt;
+    }
 }

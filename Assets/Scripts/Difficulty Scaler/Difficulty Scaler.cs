@@ -1,50 +1,84 @@
 using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 public class DifficultyScaler : MonoBehaviour
 {
-    [Header("Difficulty Scaler")]
-    // I did this so you can have customizable difficulty names.
-    // This should make it easy to update the UI!
-    public string[] difficulties;
-    // How many seconds it takes to transition to the next difficulty.
-    public float timePerDifficulty = 5;
-    // How many times the scale should be updated over the previously mentioned interval.
-    // This doesn't really matter and I guess will only ever be used to make the UI possibly smoother.
-    public int updatesPerDifficulty = 20;
-    // The actual scale.
-    // This can be used for boosting loot
-    // Or boosting enemy spawn rates!
-    private float difficultyScale = 1f;
-    private float difficultyPerUpdate;
-    private float updateRate;
+    [Serializable]
+    public struct TierSettings
+    {
+        public string tierName;
+        public float duration;
+        public float tierGrowthRate; 
+        public Color tierColor;
+    }
 
+    public enum ScalingMode { Linear, Exponential }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("Global Settings")]
+    [SerializeField] private ScalingMode scalingMode = ScalingMode.Linear;
+    [SerializeField] private float baseDifficulty = 1.0f; 
+    
+    [Header("Exponential Settings")]
+    [SerializeField] private float exponentialRamp = 1.5f;
+
+    [Header("Tier Configuration")]
+    [SerializeField] private List<TierSettings> tiers = new List<TierSettings>();
+
+    public float elapsedTime = 0f;
+    private float totalGrowthAccumulated;
+    private bool isRunning = true;
+
+    public event Action<float, string> OnDifficultyUIUpdate;
+    public List<TierSettings> GetTiers() => tiers;
+
     void Start()
     {
-        difficultyPerUpdate = 1f / updatesPerDifficulty;
-        updateRate = timePerDifficulty / updatesPerDifficulty;
-        InvokeRepeating(nameof(IncreaseDifficultyScale), updateRate, updateRate);
+        totalGrowthAccumulated = 0f; 
     }
 
-    private void IncreaseDifficultyScale()
+    void Update()
     {
-        difficultyScale += difficultyPerUpdate;
-    }
+        if (!isRunning || tiers.Count == 0) return;
 
-    public string GetCurrentDifficultyName()
-    {
-        int difficultyIndex = (int) (difficultyScale - 1);
-        // If we are over max difficulty, clamp to the max difficulty.
-        if (difficultyIndex > difficulties.Length - 1)
-        {
-            difficultyIndex = difficulties.Length - 1;
-        }
-        return difficulties[difficultyIndex];
+        elapsedTime += Time.deltaTime;
+        TierSettings currentTier = GetCurrentTier(out float tierProgress);
+        
+        totalGrowthAccumulated += currentTier.tierGrowthRate * Time.deltaTime;
+
+        OnDifficultyUIUpdate?.Invoke(tierProgress, currentTier.tierName);
     }
 
     public float GetDifficultyScale()
     {
-        return difficultyScale;
+        if (scalingMode == ScalingMode.Linear)
+        {
+            // Formula: Base + (Growth * Time)
+            return baseDifficulty + totalGrowthAccumulated;
+        }
+        else
+        {
+            // Corrected Formula: Base + ((Growth * Time) ^ Ramp)
+            return baseDifficulty + Mathf.Pow(totalGrowthAccumulated, exponentialRamp);
+        }
     }
+
+    private TierSettings GetCurrentTier(out float tierProgress)
+    {
+        float cumulativeTime = 0f;
+        foreach (var tier in tiers)
+        {
+            float tierEndTime = cumulativeTime + tier.duration;
+            if (elapsedTime < tierEndTime)
+            {
+                tierProgress = (elapsedTime - cumulativeTime) / tier.duration;
+                return tier;
+            }
+            cumulativeTime = tierEndTime;
+        }
+        tierProgress = 1f; 
+        return tiers[tiers.Count - 1];
+    }
+
+    public void SetRunning(bool run) => isRunning = run;
 }

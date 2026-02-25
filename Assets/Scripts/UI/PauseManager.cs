@@ -9,8 +9,16 @@ public class PauseManager : MonoBehaviour
         Inventory,
         EndGame
     }
-    public static bool GameIsPaused; // Global Pause Var
+    public static bool GameIsPaused; 
     public static PauseState CurrentPauseState = PauseState.None;
+
+    // Reset statics when entering play mode 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStatics()
+    {
+        GameIsPaused = false;
+        CurrentPauseState = PauseState.None;
+    }
 
     private bool isPaused = false;
     private PauseAction action;
@@ -109,7 +117,7 @@ public class PauseManager : MonoBehaviour
         }
 
         if (CurrentPauseState != PauseState.None)
-            return; // inventory open → ignore ESC
+            return; 
 
         CurrentPauseState = PauseState.PauseMenu;
         ApplyPause();
@@ -127,7 +135,7 @@ public class PauseManager : MonoBehaviour
         }
 
         if (CurrentPauseState != PauseState.None)
-            return; // pause menu open → ignore inventory
+            return; 
 
         CurrentPauseState = PauseState.Inventory;
         ApplyPause();
@@ -145,7 +153,7 @@ public class PauseManager : MonoBehaviour
             playerAim.IsPaused = true;
         }
 
-        // Safety disable gameplay menus
+        
         pauseMenuUI.SetActive(false);
         inventoryMenuUI.SetActive(false);
     }

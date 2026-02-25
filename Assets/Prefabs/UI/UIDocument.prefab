@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 129042964921982419}
   - component: {fileID: 899406527227418699}
   - component: {fileID: 1557612151386117096}
+  - component: {fileID: 6992090332529582486}
   m_Layer: 5
   m_Name: UIDocument
   m_TagString: Untagged
@@ -84,7 +85,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32bd53254f7414dd99c05cf5c2d5d0e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  extractionZone: {fileID: 0}
 --- !u!114 &8070210690962360478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,10 +110,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cdbc4f3ec387f04298244d6998b470e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  extractionZone: {fileID: 0}
   playerHealth: {fileID: 0}
   winScreen: {fileID: 8088326504577411643, guid: 890f432691395444c95c60774c7e59c5, type: 3}
   loseScreen: {fileID: 1740390286872208996, guid: 247f4cd2a1ef1754bae0212d89a70f9c, type: 3}
+  ManagePause: {fileID: 0}
 --- !u!114 &5504009049952780630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,6 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawner: {fileID: 0}
+  spawner_2: {fileID: 0}
 --- !u!114 &129042964921982419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,3 +174,15 @@ MonoBehaviour:
   playerManager: {fileID: 0}
   images:
   - {fileID: 2800000, guid: 60543084556cda8439f8d4834475dbaa, type: 3}
+--- !u!114 &6992090332529582486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6171083751830730270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e6b99ff1ad9a25478f7aa93f67df3c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

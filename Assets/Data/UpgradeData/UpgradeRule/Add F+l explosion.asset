@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 455cc073b78904049852d83eb49d3ebe, type: 3}
+  m_Name: Add F+l explosion
+  m_EditorClassIdentifier: 
+  requirements:
+  - item: {fileID: 11400000, guid: e98e3c8ef67d7d74db06c840028d0beb, type: 2}
+    minCount: 1
+    groupId: 0
+  - item: {fileID: 11400000, guid: 7afb0aa16fb19584c83740d0cca36980, type: 2}
+    minCount: 1
+    groupId: 0
+  - item: {fileID: 11400000, guid: c2dd55d67c457d24d818a33006244d8c, type: 2}
+    minCount: 1
+    groupId: 0
+  - item: {fileID: 11400000, guid: c12de57ccf5472940b033904e566fa20, type: 2}
+    minCount: 1
+    groupId: 0
+  - item: {fileID: 11400000, guid: ce6d3cffddbd395459f9b7eda101661a, type: 2}
+    minCount: 1
+    groupId: 0
+  - item: {fileID: 11400000, guid: 160e38e5fa6da0b428f22eef3f166697, type: 2}
+    minCount: 1
+    groupId: 1
+  - item: {fileID: 11400000, guid: 2e21aecdab5b3bc4389ce0ffc881d2c8, type: 2}
+    minCount: 1
+    groupId: 1
+  - item: {fileID: 11400000, guid: f223ef6a917f26544b0776dad932d885, type: 2}
+    minCount: 1
+    groupId: 1
+  - item: {fileID: 11400000, guid: fc45d4c91877a4b4fa7ee12f0fffa49c, type: 2}
+    minCount: 1
+    groupId: 1
+  actions:
+  - type: 8
+    item: {fileID: 11400000, guid: 87e524d890a9c3b4b9b35162b103552a, type: 2}
+    amount: 1
+    otherItem: {fileID: 0}
+  oneWayUnlock: 1

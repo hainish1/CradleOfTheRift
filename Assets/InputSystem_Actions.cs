@@ -546,6 +546,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""71cc8fb2-f8c1-457a-9372-bf847daf8765"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Flight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""39dfcd7d-82e0-4403-859f-6efe84d29707"",
                     ""path"": ""<Keyboard>/x"",
                     ""interactions"": """",

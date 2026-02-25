@@ -23,9 +23,13 @@ MonoBehaviour:
   useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 14
+  - kind: 9
+    description: 
     duration: -1
     healOnDamagePercentPerStack: 0
+    healOnPoisonRange: 8
+    healPerPoisonStackPerSecond: 0.5
+    healOnPoisonTickInterval: 1
     stompDamagePerStack: 0
     stompBounceForce: 0
     fallDamageBonusPerMeter: 0
@@ -37,11 +41,14 @@ MonoBehaviour:
     dotCanStack: 0
     dotMaxStacks: 0
     dotApplyImmediately: 0
+    poisonPoolRadius: 4
+    poisonPoolLifetime: 4
     numberOfProjectiles: 0
     projectileDamageMultiplier: 0
     explosiveAoeRadius: 0
     explosiveAoeDamageMultiplier: 0
     explosiveMaxRange: 0
+    explosiveFireballSize: 7.5
     explosiveVFX: {fileID: 0}
     chainDamagePercent: 0.2
     maxChainCount: 3
@@ -64,11 +71,48 @@ MonoBehaviour:
     arcStrikeDamage: 10
     arcStrikeRange: 10
     arcStrikePoissonLambda: 5.5
+    playerLightningStrikeDamage: 12
+    playerLightningStrikeRadius: 3
+    playerLightningStrikeInterval: 5
+    playerLightningStrikeElectrifyDamage: 4
+    flyingFireDamage: 8
+    flyingFireRadius: 3
+    flyingFireTickInterval: 0.5
+    flyingFireOffset: 1.5
     elementReactionExplosionDamage: 50
     elementReactionExplosionRadius: 10
     elementReactionExplosionCooldown: 1
     elementReactionExplosionVFX: {fileID: 0}
+    orbitingFireballDamage: 10
+    orbitingFireballRadius: 3
+    orbitingFireballRotationSpeed: 60
+    lightningDashDamage: 20
+    lightningDashChainCount: 5
+    lightningDashChainRange: 15
+    orbitingFireballTestDamage: 10
+    orbitingFireballTestDamageThreshold: 100
+    orbitingFireballTestMaxCount: 20
+    orbitingFireballTestLifetime: 5
+    chainLightningTestStrikeInterval: 5
+    chainLightningTestBuffDuration: 3
+    chainLightningTestChainDamagePercent: 0.5
+    chainLightningTestMaxDepth: 2
+    chainLightningTestBranchesPerNode: 2
+    chainLightningTestChainRange: 10
+    passThroughEnemyCount: 1
+    toxicAttackSpeedRange: 10
+    toxicAttackSpeedPerStack: 0.02
+    flameTrailDamage: 15
+    flameTrailRadius: 2
+    flameTrailLifetime: 1.5
+    flameTrailSpawnInterval: 0.2
+    finisherDamageMultiplier: 1.5
+    finisherRangeMultiplier: 2
+    xpGrantAmount: 50
+    pureCoreDamageMultiplier: 2
+    pureCoreHealthMultiplier: 2
   statType: 9
   operatorType: 0
   value: 1
   duration: -1
+  itemId: d344be6cb11e443691d39cbb85d77c3b

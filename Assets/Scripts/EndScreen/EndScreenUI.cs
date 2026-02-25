@@ -111,7 +111,7 @@ public class EndScreenUI : MonoBehaviour
                 UnityEngine.Cursor.lockState = CursorLockMode.Locked;
                 UnityEngine.Cursor.visible = false;
 
-                SceneManager.LoadScene("Design"); // or your current game scene name
+                SceneManager.LoadScene("Design 1"); // or your current game scene name
             });
         }
         if (mainMenuButton != null)

@@ -45,8 +45,8 @@ public class ChaseState_Range : EnemyState
         float distSqr = (enemy.target.position - enemy.transform.position).sqrMagnitude;
         float attackRangeSqr = enemyRange.attackRange * enemyRange.attackRange;
 
-        // if in range and cooldown ready -> ATTACK
-        if(distSqr <= attackRangeSqr && Time.time >= enemyRange.nextShootTime)
+        // if in range and cooldown expired -> ATTACK
+        if(distSqr <= attackRangeSqr && Time.time >= enemyRange.nextAttackTime)
         {
             stateMachine.ChangeState(enemyRange.GetAttack());
         }

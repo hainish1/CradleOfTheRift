@@ -61,6 +61,7 @@
 					<ChildrenList>
 						<Sound Name="SkullBreak" ID="{8F9013A0-8435-4BAD-99F5-9EDCCE8AB5D0}" ShortID="272321459">
 							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
 								<Property Name="Pitch" Type="int32">
 									<ModifierList>
 										<ModifierInfo>

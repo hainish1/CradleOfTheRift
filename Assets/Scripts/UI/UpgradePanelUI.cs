@@ -1,14 +1,12 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-/// <summary>
-/// Manages the UI for upgrade selection panel
-/// </summary>
 public class UpgradePanelUI : MonoBehaviour
 {
     private UIDocument document;
     private VisualElement overlay;
-    private Button[] choiceButtons;
+    private VisualElement choicesContainer;
 
     void Awake()
     {
@@ -16,41 +14,41 @@ public class UpgradePanelUI : MonoBehaviour
         var root = document.rootVisualElement;
 
         overlay = root.Q<VisualElement>("UpgradeOverlay");
-        
-        choiceButtons = new Button[3];
-        for (int i = 0; i < 3; i++)
-        {
-            int index = i; // capture for closure
-            choiceButtons[i] = root.Q<Button>($"Choice{i}");
-            choiceButtons[i].RegisterCallback<ClickEvent>(evt => OnChoiceClicked(index));
-        }
+        choicesContainer = root.Q<VisualElement>("ChoicesContainer");
 
-        // start hidden
         Hide();
     }
 
-    void OnEnable()
+    void Start()
     {
+        // upgrade level manager runs first
         if (UpgradeLevelManager.Instance != null)
-        {
             UpgradeLevelManager.Instance.UpgradePanelOpened += Show;
-        }
+        else
+            Debug.LogWarning("UpgradeLevelManager.Instance is null");
     }
 
-    void OnDisable()
+    void OnDestroy()
     {
         if (UpgradeLevelManager.Instance != null)
-        {
             UpgradeLevelManager.Instance.UpgradePanelOpened -= Show;
-        }
     }
 
-    public void Show()
+    public void Show(List<ItemData> choices)
     {
+        // clear old cards
+        choicesContainer.Clear();
+
+        // make a card for each choice
+        for (int i = 0; i < choices.Count; i++)
+        {
+            int index = i; 
+            ItemData item = choices[i];
+            VisualElement card = BuildCard(item, index);
+            choicesContainer.Add(card);
+        }
+
         overlay.style.display = DisplayStyle.Flex;
-
-        // TODO: show actual upgrade names here
-
     }
 
     public void Hide()
@@ -58,14 +56,73 @@ public class UpgradePanelUI : MonoBehaviour
         overlay.style.display = DisplayStyle.None;
     }
 
-    private void OnChoiceClicked(int index)
+    private VisualElement BuildCard(ItemData item, int choiceIndex)
     {
-        Debug.Log($"Player clicked choice {index}");
-        Hide();
+        var card = new VisualElement();
+        card.AddToClassList("upgrade-card");
 
-        if (UpgradeLevelManager.Instance != null)
+        // border color
+        Color rarityCol = item.rarityColor;
+        card.style.borderTopColor = rarityCol;
+        card.style.borderBottomColor = rarityCol;
+        card.style.borderLeftColor = rarityCol;
+        card.style.borderRightColor = rarityCol;
+
+        // icon
+        if (item.icon != null)
         {
-            UpgradeLevelManager.Instance.SelectUpgrade(index);
+            var icon = new VisualElement();
+            icon.AddToClassList("upgrade-icon");
+            icon.style.backgroundImage = new StyleBackground(item.icon);
+            card.Add(icon);
         }
+
+        // item name
+        var nameLabel = new Label(item.itemName);
+        nameLabel.AddToClassList("upgrade-name");
+        nameLabel.style.color = rarityCol;
+        card.Add(nameLabel);
+
+        // rarity 
+        var rarityLabel = new Label(item.rarity.ToString());
+        rarityLabel.AddToClassList("upgrade-rarity");
+        rarityLabel.style.color = rarityCol;
+        card.Add(rarityLabel);
+
+        var divider = new VisualElement();
+        divider.AddToClassList("upgrade-divider");
+        divider.style.backgroundColor = rarityCol;
+        card.Add(divider);
+
+        // Description
+        if (!string.IsNullOrEmpty(item.description))
+        {
+            var desc = new Label(item.GetFormattedDescription(1, false));
+            desc.AddToClassList("upgrade-description");
+            card.Add(desc);
+        }
+
+        // click handle
+        card.RegisterCallback<ClickEvent>(evt =>
+        {
+            Hide();
+            if (UpgradeLevelManager.Instance != null)
+                UpgradeLevelManager.Instance.SelectUpgrade(choiceIndex);
+        });
+
+        return card;
     }
+
+    // private string FormatEffectName(ItemEffectKind kind)
+    // {
+    //     string nameStr = kind.ToString();
+    //     var nameStringBuilder = new System.Text.StringBuilder(nameStr.Length + 8);
+    //     for (int i = 0; i < nameStr.Length; i++)
+    //     {
+    //         if (i > 0 && char.IsUpper(nameStr[i]))
+    //             nameStringBuilder.Append(' ');
+    //         nameStringBuilder.Append(nameStr[i]);
+    //     }
+    //     return nameStringBuilder.ToString();
+    // }
 }
