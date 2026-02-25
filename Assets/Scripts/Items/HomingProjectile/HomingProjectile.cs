@@ -27,6 +27,7 @@ public class HomingProjectile : Projectile
     public override void Awake()
     {
         base.Awake();
+        if (rb != null) rb.freezeRotation = false;  // Unfreeze rotation
     }
 
     protected override void OnEnable()
@@ -47,15 +48,29 @@ public class HomingProjectile : Projectile
     public void Init(LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
     {
         base.Init(Vector3.zero, mask, damage, flyDistance, attacker);
+        if (rb != null) rb.freezeRotation = false;
     }
 
     public override void Update()
     {
-        base.Update();
+        // Duplicate base code minus the forced rotation
+        FadeTrailVisuals();
+        age += Time.deltaTime;
+        if (age >= lifeTime && rb != null)
+        {
+            // Destroy(gameObject);
+            ReturnToSource();
+            return;
+        }
+        if (gravity != 0f && rb != null)
+        {
+            rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
+        }
 
         // Handle movement logic
         if (targetLocation != null && following)
         {
+            //Debug.Log("Homing in on target: " + targetLocation.name);
             // If target exists, home in on it
             Vector3 direction = targetLocation.position - transform.position;
             direction.Normalize();
@@ -127,7 +142,7 @@ public class HomingProjectile : Projectile
                 IDamageable damageable = enemy.GetComponent<IDamageable>();
                 if (damageable != null && damageable.IsDead)
                 {
-                    continue; // Skip, this one is already dead
+                    continue; // Skip if already dead
                 }
                 
                 float distance = (transform.position - enemy.transform.position).sqrMagnitude;
@@ -136,6 +151,8 @@ public class HomingProjectile : Projectile
                     minDistance = distance;
                     closestTarget = enemy.transform;
                     closestDamageable = damageable;
+
+                    //Debug.Log("New target acquired: " + enemy.name + " at distance: " + Mathf.Sqrt(distance).ToString("F2") + " units");
                 }
             }
         }

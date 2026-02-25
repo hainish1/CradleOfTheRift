@@ -34,6 +34,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [Tooltip("The player camera.")] private Transform _playerCamera;
     private Transform _playerModel;
     private PlayerMovement _playerMovement;
+    private PlayerShooter _playerShooter;
     private Entity _playerEntity;
     private PlayerAudioController _audioController;
 
@@ -91,6 +92,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     {
         _playerModel = gameObject.transform;
         _playerMovement = GetComponentInParent<PlayerMovement>();
+        _playerShooter = GetComponentInParent<PlayerShooter>();
         _playerEntity = GetComponentInParent<Entity>();
         _weaponAnim = _playerModel.GetComponent<Animator>();
         _audioController = GetComponentInParent<PlayerAudioController>();
@@ -141,8 +143,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     void Update()
     {
-        // Do not allow attacks while dashing.
-        if (_playerMovement.IsDashing) return;
+        // Do not allow attacks while dashing or throwing.
+        if (_playerMovement.IsDashing || _playerShooter.IsThrowing) return;
 
         RecalculateAnimationSpeed();
 
@@ -150,23 +152,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         if ((_attackActions.IsPressed() || _comboInputted) && CanAttack) TriggerAttack();
 
         // Gradually align player model with camera direction while attacking.
-        if (IsAttacking)
-        {
-            // Constrain vertical rotation of player character to the pitch limits.
-            Vector3 rotationIncrement = Vector3.RotateTowards(_playerModel.forward, _playerCamera.forward, Time.deltaTime * _degreesPerSecond, 0);
-            float pitch = GetPitchDegrees(rotationIncrement);
-            if (pitch >= _downwardDegreesLimit && pitch <= _upwardDegreesLimit)
-                _playerModel.forward = rotationIncrement;
-
-            _isModelHorizontal = false;
-        }
-        // Gradually reset player model alignment while not attacking.
-        else if (!_isModelHorizontal)
-        {
-            Vector3 worldHorizontal = new Vector3(_playerCamera.forward.x, 0, _playerCamera.forward.z).normalized;
-            _playerModel.forward = Vector3.RotateTowards(_playerModel.forward, worldHorizontal, Time.deltaTime * _degreesPerSecond, 0);
-            if (Vector3.Angle(_playerModel.forward, worldHorizontal) < 1e-3f) _isModelHorizontal = true;
-        }
+        AlignPlayerCharacter();
 
         // Continually register targets while an attack is active.
         if (_isRegistering) ExecuteHitRegistrationCast();
@@ -179,15 +165,15 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// </summary>
     private void RecalculateAnimationSpeed()
     {
-        float currAttackSpeed = _playerEntity.Stats.MeleeAttackSpeed;
+        float currAnimationSpeed = _playerEntity.Stats.MeleeAnimationSpeed;
         foreach (AttackInfo info in _attacks)
         {
             float duration = info.PreTransitionAnim.length + info.AttackAnim.length;
-            info.AttackDuration = Mathf.Clamp(duration / currAttackSpeed, 1e-3f, float.MaxValue);
+            info.AttackDuration = Mathf.Clamp(duration / currAnimationSpeed, 1e-3f, float.MaxValue);
             info.BufferedAttackDuration = Mathf.Clamp(info.AttackDuration - _comboInputBuffer, 0, float.MaxValue);
         }
 
-        _weaponAnim.SetFloat("AttackSpeedMultiplier", currAttackSpeed);
+        _weaponAnim.SetFloat("AttackAnimSpeedMultiplier", currAnimationSpeed);
     }
 
     /// <summary>
@@ -200,18 +186,6 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     {
         return _attacks[_currComboCount - 1].PostTransitionAnim.length
                + _playerEntity.Stats.MeleeAttackRate;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Gets the pitch of a given vector.
-    ///   </para>
-    /// </summary>
-    /// <param name="vector"> The vector. </param>
-    /// <returns> Pitch of the vector. </returns>
-    private float GetPitchDegrees(Vector3 vector)
-    {
-        return Mathf.Rad2Deg * Mathf.Atan2(vector.y, Mathf.Sqrt((vector.x * vector.x) + (vector.z * vector.z)));
     }
 
     /// <summary>
@@ -251,8 +225,6 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
             float timer = currBufferedAttackDuration;
             while (timer < currAttackDuration)
             {
-                timer += Time.deltaTime;
-
                 // Register a pending combo input and exit coroutine.
                 if (_attackActions.IsPressed())
                 {
@@ -263,6 +235,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
                     yield break;
                 }
 
+                timer += Time.deltaTime;
                 yield return null;
             }
 
@@ -281,6 +254,45 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _currComboCount = 0;
         CanAttack = true;
         yield break;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Gradually rotates the player's character to be either vertically aligned with the camera
+    ///     while attacking or perfectly level with the world horizontal while not attacking.
+    ///   </para>
+    /// </summary>
+    private void AlignPlayerCharacter()
+    {
+        if (IsAttacking)
+        {
+            // Constrain vertical rotation of player character to the pitch limits.
+            Vector3 rotationIncrement = Vector3.RotateTowards(_playerModel.forward, _playerCamera.forward, Time.deltaTime * _degreesPerSecond, 0);
+            float pitch = GetPitchDegrees(rotationIncrement);
+            if (pitch >= _downwardDegreesLimit && pitch <= _upwardDegreesLimit)
+                _playerModel.forward = rotationIncrement;
+
+            _isModelHorizontal = false;
+        }
+        // Gradually reset player model alignment while not attacking.
+        else if (!_isModelHorizontal)
+        {
+            Vector3 worldHorizontal = new Vector3(_playerCamera.forward.x, 0, _playerCamera.forward.z).normalized;
+            _playerModel.forward = Vector3.RotateTowards(_playerModel.forward, worldHorizontal, Time.deltaTime * _degreesPerSecond, 0);
+            if (Vector3.Angle(_playerModel.forward, worldHorizontal) < 1e-3f) _isModelHorizontal = true;
+        }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Gets the pitch of a given vector.
+    ///   </para>
+    /// </summary>
+    /// <param name="vector"> The vector. </param>
+    /// <returns> Pitch of the vector. </returns>
+    private float GetPitchDegrees(Vector3 vector)
+    {
+        return Mathf.Rad2Deg * Mathf.Atan2(vector.y, Mathf.Sqrt((vector.x * vector.x) + (vector.z * vector.z)));
     }
 
     /// <summary>
