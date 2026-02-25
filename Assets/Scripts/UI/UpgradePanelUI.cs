@@ -125,12 +125,11 @@ public class UpgradePanelUI : MonoBehaviour
     private void OnRerollClicked(ClickEvent evt)
     {
         // TODO: reroll logic here
-        Debug.Log("REROLL PRESSED");
     }
 
     private void OnCloseClicked(ClickEvent evt)
     {
-        Debug.Log("Close clicked");   
+        // idk man ill have jared do that
     }
 
     // private string FormatEffectName(ItemEffectKind kind)
