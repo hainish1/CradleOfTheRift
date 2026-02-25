@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
   m_Name: PlayerSpeed
   m_EditorClassIdentifier: 
-  itemName: New Item
-  description: Item Description Here
+  itemName: Player speed
+  description: Increase movement speed
   icon: {fileID: 21300000, guid: 0ccad3a79cfc7bf4fa6aedbd90253255, type: 3}
   rarity: 0
   rarityColor: {r: 1, g: 1, b: 1, a: 1}
@@ -21,7 +21,11 @@ MonoBehaviour:
   maxStacks: 99
   stackingType: 0
   useMultipleStats: 1
-  statMods: []
+  statMods:
+  - statType: 15
+    operatorType: 0
+    value: 10
+    duration: -1
   effects: []
   statType: 14
   operatorType: 1
