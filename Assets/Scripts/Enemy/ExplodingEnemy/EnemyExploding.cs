@@ -66,11 +66,23 @@ public class EnemyExploding : Enemy
     public void CreateExplosionVFX()
     {
         if (explosionVFX == null) return;
-        GameObject newFx = Instantiate(explosionVFX);
+
+        GameObject newFx;
+        if (ObjectPool.instance != null)
+        {
+            newFx = ObjectPool.instance.GetObject(explosionVFX, transform);
+        }
+        else
+        {
+            newFx = Instantiate(explosionVFX);
+        }
         newFx.transform.position = transform.position;
         newFx.transform.rotation = Quaternion.identity;
 
-        Destroy(newFx, 1); // destroy after one second
+        if (ObjectPool.instance != null)
+            ObjectPool.instance.ReturnObject(newFx, 1f);
+        else
+            Destroy(newFx, 1);
     }
 
 

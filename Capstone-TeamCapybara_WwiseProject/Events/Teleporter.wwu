@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{8117528D-6145-4D0B-B2C6-4A1695CC8D8F}" SchemaVersion="133" RootDocumentID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}" ParentDocumentID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}">
+	<Events>
+		<WorkUnit Name="Teleporter" ID="{8117528D-6145-4D0B-B2C6-4A1695CC8D8F}" OwnerID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}" PersistMode="Nested">
+			<ChildrenList>
+				<Event Name="Play_Teleporter_Ambience" ID="{6CC0AE86-55C5-4E31-9565-55AAF808CC27}">
+					<ChildrenList>
+						<Action Name="" ID="{A301686C-C186-4B04-B54E-4B8505F75CE3}" ShortID="119087608">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="TeleporterThrum" ID="{8031F236-B365-4A21-AA8E-3F056A58EC3A}" WorkUnitID="{EC381AB7-06D5-4C30-99D5-7FE62023AD2F}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+			</ChildrenList>
+		</WorkUnit>
+	</Events>
+</WwiseDocument>

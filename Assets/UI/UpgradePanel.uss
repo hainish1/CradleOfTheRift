@@ -10,7 +10,8 @@
 }
 
 .panel {
-    width: 600px;
+    width: auto;
+    max-width: 90%;
     padding: 30px;
     background-color: rgb(30, 30, 30);
     border-radius: 12px;
@@ -20,29 +21,85 @@
 }
 
 .title {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: bold;
     color: white;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .choices-container {
     flex-direction: row;
     justify-content: center;
+    align-items: stretch;
     gap: 20px;
 }
 
-.choice-btn {
-    width: 160px;
-    height: 80px;
-    font-size: 18px;
-    color: white;
-    background-color: rgb(60, 60, 60);
-    border-color: rgb(80, 180, 255);
-    border-width: 1px;
-    border-radius: 8px;
+/* ── card ── */
+.upgrade-card {
+    width: 280px;
+    min-height: 280px;
+    padding: 16px;
+    background-color: rgb(45, 45, 45);
+    border-width: 2px;
+    border-radius: 10px;
+    border-color: rgb(100, 100, 100);
+    align-items: center;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    transition-property: background-color;
+    transition-duration: 0.15s;
 }
 
-.choice-btn:hover {
-    background-color: rgb(80, 120, 180);
+.upgrade-card:hover {
+    background-color: rgb(60, 65, 75);
+    scale: 1.03;
+}
+
+/* ── icons that ray made ── */
+.upgrade-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    -unity-background-scale-mode: scale-to-fit;
+    background-color: rgb(35, 35, 35);
+}
+
+/* ── name of the Item (upgrade basically) ── */
+.upgrade-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 2px;
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+/* ── rarity ── */
+.upgrade-rarity {
+    font-size: 13px;
+    font-weight: bold;
+    color: rgb(180, 180, 180);
+    margin-bottom: 8px;
+    -unity-text-align: middle-center;
+    -unity-font-style: italic;
+}
+
+/* ── divider ── */
+.upgrade-divider {
+    width: 80%;
+    height: 1px;
+    margin-bottom: 8px;
+    background-color: rgb(100, 100, 100);
+}
+
+/* ── description ── */
+.upgrade-description {
+    font-size: 13px;
+    color: rgb(200, 200, 200);
+    margin-top: 4px;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    padding-left: 4px;
+    padding-right: 4px;
 }

@@ -81,7 +81,16 @@ public class EnemyBoss_SS : Enemy
 
     public override void Die()
     {
+        // exit the current state so clean up happen, destroy the Ring VFX thing
+        stateMachine.currentState?.Exit();
+
         base.Die();
+    }
+
+    private void OnDestroy()
+    {
+        // also do cleanup here
+        stateMachine?.currentState?.Exit();
     }
 
     public EnemyState GetIdle() => idle;
@@ -94,21 +103,12 @@ public class EnemyBoss_SS : Enemy
 
     public void CreatePoofVFX(Vector3 spawnPosition)
     {
-        if (poofVFX == null) return;
-        GameObject newFx = Instantiate(poofVFX);
-        newFx.transform.position = spawnPosition;
-        newFx.transform.rotation = Quaternion.identity;
-
-        Destroy(newFx, 1); // destroy after one second
+        PlayPSVFX(poofVFX, spawnPosition);
     }
 
     public void CreateVFX(GameObject vfxPrefab, Vector3 spawnPosition, float destroyAfter)
     {
-        if (vfxPrefab == null) return;
-        GameObject newFx = Instantiate(vfxPrefab);
-        newFx.transform.position = spawnPosition;
-        newFx.transform.rotation = Quaternion.identity;
-        Destroy(newFx, destroyAfter); // destroy after one second
+        PlayPSVFX(vfxPrefab, spawnPosition);
     }
 
 
@@ -156,19 +156,32 @@ public class EnemyBoss_SS : Enemy
     {
         if (vfxPrefab == null) return;
 
-        Debug.Log("Playing VFX: " + vfxPrefab.name);
-
         spawnPos = spawnPos != null ? spawnPos : transform;
+        PlayPSVFXInternal(vfxPrefab, spawnPos.position);
+    }
 
+    /// <summary>
+    /// takes a world position directly.
+    /// </summary>
+    public void PlayPSVFX(GameObject vfxPrefab, Vector3 position)
+    {
+        if (vfxPrefab == null) return;
+        PlayPSVFXInternal(vfxPrefab, position);
+    }
+
+    private void PlayPSVFXInternal(GameObject vfxPrefab, Vector3 position)
+    {
         GameObject fx;
         if (ObjectPool.instance != null)
         {
-            fx = ObjectPool.instance.GetObject(vfxPrefab, spawnPos);
+            fx = ObjectPool.instance.GetObject(vfxPrefab, transform);
         }
         else
         {
-            fx = Instantiate(vfxPrefab, spawnPos.position, Quaternion.identity, spawnPos);
+            fx = Instantiate(vfxPrefab);
         }
+        fx.transform.position = position;
+        fx.transform.rotation = Quaternion.identity;
 
         float lifetime = EstimateParticleLifetime(fx);
 

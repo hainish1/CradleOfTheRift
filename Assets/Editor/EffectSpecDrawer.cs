@@ -11,7 +11,7 @@ public class EffectSpecDrawer : PropertyDrawer
         float space = EditorGUIUtility.standardVerticalSpacing;
         if (!property.isExpanded)
             return line;
-        int extraLines = 2 + FieldsFor(GetKind(property)).Length;
+        int extraLines = 3 + FieldsFor(GetKind(property)).Length;
         return line + extraLines * (line + space);
     }
 
@@ -21,6 +21,8 @@ public class EffectSpecDrawer : PropertyDrawer
         float space = EditorGUIUtility.standardVerticalSpacing;
         var kindProp = property.FindPropertyRelative("kind");
         var durationProp = property.FindPropertyRelative("duration");
+        var descriptionProp = property.FindPropertyRelative("description");
+        
 
         // make list element show the selected kind
         var kind = (ItemEffectKind)kindProp.enumValueIndex;
@@ -35,6 +37,8 @@ public class EffectSpecDrawer : PropertyDrawer
         EditorGUI.PropertyField(r, kindProp);
         r.y += line + space;
         EditorGUI.PropertyField(r, durationProp);
+        r.y += line + space;
+        EditorGUI.PropertyField(r, descriptionProp);
 
         foreach (string fieldName in FieldsFor(kind))
         {
@@ -96,6 +100,7 @@ public class EffectSpecDrawer : PropertyDrawer
             "explosiveAoeRadius",
             "explosiveAoeDamageMultiplier",
             "explosiveMaxRange",
+            "explosiveFireballSize",
             "explosiveVFX",
         },
 
@@ -131,6 +136,11 @@ public class EffectSpecDrawer : PropertyDrawer
             "poisonPoolRadius", "poisonPoolLifetime",
         },
 
+        ItemEffectKind.PoisonPoolProjectile => new[]
+        {
+            "poisonPoolRadius", "poisonPoolLifetime", "poisonPoolProjectileVFX",
+        },
+
         ItemEffectKind.BurnOnDamage => new[]
         {
             "burnAuraDamagePerSecond", "burnAuraRange", "burnAuraTickInterval",
@@ -156,6 +166,7 @@ public class EffectSpecDrawer : PropertyDrawer
         {
             "playerLightningStrikeDamage", "playerLightningStrikeRadius",
             "playerLightningStrikeInterval", "playerLightningStrikeElectrifyDamage",
+            "playerLightningStrikeVFX",
         },
 
         ItemEffectKind.FlyFire => new[]
@@ -205,6 +216,17 @@ public class EffectSpecDrawer : PropertyDrawer
         ItemEffectKind.FinisherStrike => new[]
         {
             "finisherDamageMultiplier", "finisherRangeMultiplier",
+        },
+
+        ItemEffectKind.XPGrant => new[]
+        {
+            "xpGrantAmount",
+        },
+
+        ItemEffectKind.PureCore => new[]
+        {
+            "pureCoreDamageMultiplier",
+            "pureCoreHealthMultiplier",
         },
 
         _ => Array.Empty<string>(),

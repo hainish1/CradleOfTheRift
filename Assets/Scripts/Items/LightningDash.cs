@@ -38,6 +38,7 @@ public class LightningDash : IDisposable
     private PlayerMeleeController melee;
     private PlayerGroundSlam slam;
     private PlayerShockwave shockwave;
+    private PlayerHealth playerHealth;
 
     public LightningDash(Entity owner, float damage, int chainCount, float range, int initialStacks = 1, float durationSec = -1f)
     {
@@ -62,10 +63,11 @@ public class LightningDash : IDisposable
         enemyLayer = LayerMask.GetMask("Enemy");
         playerRenderers = owner.GetComponentsInChildren<Renderer>();
         
-        shooter = owner.GetComponent<PlayerShooter>();
+        shooter = owner.GetComponentInChildren<PlayerShooter>();
         melee = owner.GetComponentInChildren<PlayerMeleeController>();
         slam = owner.GetComponent<PlayerGroundSlam>();
         shockwave = owner.GetComponent<PlayerShockwave>();
+        playerHealth = owner.GetComponent<PlayerHealth>();
 
         SetupLightningTrail();
         
@@ -153,6 +155,9 @@ public class LightningDash : IDisposable
     {
         if (renderersHidden) return;
         
+        if (playerHealth != null)
+            playerHealth.SetCanTakeDamage(false);
+        
         foreach (var renderer in playerRenderers)
         {
             if (renderer != null)
@@ -170,6 +175,9 @@ public class LightningDash : IDisposable
     private void DisableLightningForm()
     {
         if (!renderersHidden) return;
+        
+        if (playerHealth != null)
+            playerHealth.SetCanTakeDamage(true);
         
         foreach (var renderer in playerRenderers)
         {
@@ -306,6 +314,11 @@ public class LightningDash : IDisposable
         
         yield return DashToTarget(fromPos, targetPos, DashDuration);
 
+        if (target == null)
+        {
+            yield break;
+        }
+
         lastHitEnemy = target;
 
         LightningCore.ApplyLightningDamage(owner, target, damage);
@@ -316,6 +329,11 @@ public class LightningDash : IDisposable
         hitEnemiesBuffer.Add(target);
         
         yield return new WaitForSeconds(DashInterval);
+
+        if (target == null)
+        {
+            yield break;
+        }
 
         Enemy nextTarget = FindNearestEnemy(target.transform.position, hitEnemiesBuffer);
 

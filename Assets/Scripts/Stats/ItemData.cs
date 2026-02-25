@@ -40,13 +40,18 @@ public enum ItemEffectKind
     PassThroughSpear,
     ToxicAttackSpeed,
     FlameTrail,
-    FinisherStrike
+    FinisherStrike,
+    XPGrant,
+    PureCore,
+    PoisonPoolProjectile
 }
 
 [Serializable]
 public class EffectSpec
 {
     public ItemEffectKind kind = ItemEffectKind.None;
+    [Tooltip("description shown on the upgrade thing for this effect")]
+    public string description = "";
     public float duration = -1f; // -1 : Perm
 
     // HEAL ON DAMAGE
@@ -78,6 +83,9 @@ public class EffectSpec
     public float poisonPoolRadius = 4f;
     public float poisonPoolLifetime = 4f;
 
+    // Poison pool projectile 
+    public GameObject poisonPoolProjectileVFX;
+
     // Homing Projectiles
     public int numberOfProjectiles = 3;
     public float projectileDamageMultiplier = 1.5f;
@@ -86,6 +94,7 @@ public class EffectSpec
     public float explosiveAoeRadius = 3f;
     public float explosiveAoeDamageMultiplier = 0.5f;
     public float explosiveMaxRange = 0f;
+    public float explosiveFireballSize = 7.5f;
     public GameObject explosiveVFX;
 
     // Chain Lightning
@@ -128,6 +137,7 @@ public class EffectSpec
     public float playerLightningStrikeRadius = 3f;
     public float playerLightningStrikeInterval = 5f;
     public float playerLightningStrikeElectrifyDamage = 4f;
+    public GameObject playerLightningStrikeVFX;
 
     // Flying Fire Spray
     public float flyingFireDamage = 8f;
@@ -182,6 +192,15 @@ public class EffectSpec
     // Finisher Strike
     public float finisherDamageMultiplier = 1.5f;
     public float finisherRangeMultiplier = 1.3f;
+
+    // XP Grant
+    public int xpGrantAmount = 50;
+
+    // Pure Core 
+    [Tooltip("Damage multiplier when player has no elemental items (e.g. 1.15 = +15%)")]
+    public float pureCoreDamageMultiplier = 1.15f;
+    [Tooltip("Health multiplier when player has no elemental items (e.g. 1.2 = +20%)")]
+    public float pureCoreHealthMultiplier = 1.2f;
 }
 
 public enum ItemRarity
