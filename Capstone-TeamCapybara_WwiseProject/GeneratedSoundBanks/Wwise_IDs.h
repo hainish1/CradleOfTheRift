@@ -14,6 +14,7 @@ namespace AK
     namespace EVENTS
     {
         static const AkUniqueID CHEST_AMBIENT = 3464756077U;
+        static const AkUniqueID CHEST_LOCKED = 895085565U;
         static const AkUniqueID CHEST_OPEN = 2728948375U;
         static const AkUniqueID PLAY_AMBIENCE = 278617630U;
         static const AkUniqueID PLAY_MUSIC = 2932040671U;

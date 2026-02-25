@@ -1,0 +1,108 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "895085565",
+    "Type": "Event",
+    "GUID": "{45515A68-3C88-4BE3-9E9F-1CEF6A8B5019}",
+    "Language": "SFX",
+    "Hash": "{FA1A5AEA-C1A1-F30C-478D-5E073D969B74}",
+    "ObjectPath": "Chest_Locked",
+    "ShortName": "Chest_Locked",
+    "Path": "Event/Chest_Locked.bnk",
+    "Media": [
+     {
+      "Id": "8435904",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Toolbox.wav",
+      "Path": "Media/8435904.wem",
+      "CachePath": "15/{15441C3D-F5FA-9490-EBC6-6687FD3E3786}.wem"
+     },
+     {
+      "Id": "120070202",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Chain3.wav",
+      "Path": "Media/120070202.wem",
+      "CachePath": "FA/{FA63F2CA-95B5-50BD-8619-1A3A621E79DC}.wem"
+     },
+     {
+      "Id": "628491481",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Toolbox.wav",
+      "Path": "Media/628491481.wem",
+      "CachePath": "01/{01BA13DA-6226-01BB-6475-0FDACA75BA72}.wem"
+     },
+     {
+      "Id": "773593140",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Chain2.wav",
+      "Path": "Media/773593140.wem",
+      "CachePath": "04/{04B1B06A-6AE6-BDCF-FFD5-9E220B86BEA8}.wem"
+     },
+     {
+      "Id": "895161331",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Toolbox.wav",
+      "Path": "Media/895161331.wem",
+      "CachePath": "8A/{8A8132CB-9FA3-594E-6322-5206484932F3}.wem"
+     },
+     {
+      "Id": "908695156",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Chain1.wav",
+      "Path": "Media/908695156.wem",
+      "CachePath": "A0/{A0AAFAB0-5EA7-9A9A-81E1-9CF350B8C8AB}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "895085565",
+      "Name": "Chest_Locked",
+      "ObjectPath": "\\Events\\Default Work Unit\\Environment\\Chest\\Chest_Locked",
+      "GUID": "{45515A68-3C88-4BE3-9E9F-1CEF6A8B5019}",
+      "DurationType": "OneShot",
+      "DurationMin": "1.5730963",
+      "DurationMax": "2.1677182",
+      "MediaRefs": [
+       {
+        "Id": "8435904"
+       },
+       {
+        "Id": "120070202"
+       },
+       {
+        "Id": "628491481"
+       },
+       {
+        "Id": "773593140"
+       },
+       {
+        "Id": "895161331"
+       },
+       {
+        "Id": "908695156"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{1C49F496-90D5-0309-EBC2-23CA4FDF41F4}"
+ }
+}
