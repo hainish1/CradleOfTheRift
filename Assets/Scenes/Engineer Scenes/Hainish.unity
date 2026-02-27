@@ -281,6 +281,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SlimeEnemyWobble (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -603,6 +607,10 @@ PrefabInstance:
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: m_Name
       value: SlimeEnemyWobble (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3801,6 +3809,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SlimeEnemyWobble (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4470,7 +4482,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1313228829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4483,7 +4495,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c6fcaf45670f349947eda9c014cfc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poolSize: 10
+  poolSize: 20
 --- !u!4 &1313228830
 Transform:
   m_ObjectHideFlags: 0
@@ -6346,11 +6358,84 @@ PrefabInstance:
       propertyPath: m_Name
       value: SlimeEnemyWobble (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+--- !u!1001 &1803485824
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4986790702526380331, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 115.60892
+      objectReference: {fileID: 0}
+    - target: {fileID: 4986790702526380331, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 8.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 4986790702526380331, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -305.10205
+      objectReference: {fileID: 0}
+    - target: {fileID: 4986790702526380331, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4986790702526380331, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4986790702526380331, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4986790702526380331, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4986790702526380331, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4986790702526380331, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 4986790702526380331, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5038527764505416237, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
+      propertyPath: m_Name
+      value: BOSS (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5391762884062940174, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
+      propertyPath: duration
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5391762884062940174, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
+      propertyPath: explosionDamage
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 5391762884062940174, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
+      propertyPath: postExplosionVulnerableTime
+      value: 3
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
 --- !u!1001 &1803551036
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6402,6 +6487,10 @@ PrefabInstance:
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: m_Name
       value: SlimeEnemyWobble (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6459,6 +6548,10 @@ PrefabInstance:
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: m_Name
       value: SlimeEnemyWobble (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6936,6 +7029,10 @@ PrefabInstance:
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: m_Name
       value: SlimeEnemyWobble (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10282,3 +10379,4 @@ SceneRoots:
   - {fileID: 1162095145}
   - {fileID: 252618099}
   - {fileID: 1806612088}
+  - {fileID: 1803485824}
