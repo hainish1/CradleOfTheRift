@@ -24,14 +24,14 @@ public class AttackState_Range : EnemyState
         enemyRange.SetHorizontalPosition(true);
         enemyRange.SafeStopAgent();
         enemyRange.currentShotsRemaining = enemyRange.shotsPerSet;
-        timer = enemyRange.attackDelay;
+        timer = Random.Range(enemyRange.attackDelayMin, enemyRange.attackDelayMax);
     }
 
     public override void Exit()
     {
         enemyRange.SetHorizontalPosition(false);
         // brief cooldown so Chase doesn't re-enter Attack immediately
-        enemyRange.nextAttackTime = Time.time + enemyRange.attackDelay;
+        enemyRange.nextAttackTime = Time.time + Random.Range(enemyRange.attackDelayMin, enemyRange.attackDelayMax);
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ public class AttackState_Range : EnemyState
 
             if (enemyRange.currentShotsRemaining > 0)
             {
-                timer = enemyRange.recoveryDuration; 
+                timer = Random.Range(enemyRange.recoveryDurationMin, enemyRange.recoveryDurationMax); 
             }
             else
             {

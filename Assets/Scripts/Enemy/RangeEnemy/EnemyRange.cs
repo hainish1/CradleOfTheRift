@@ -40,10 +40,14 @@ public class EnemyRange : Enemy
 
     [Header("Shooting")]
     public float projectileSpeed = 50f;
-    [Tooltip("delay before the first shot after entering attack range")]
-    public float attackDelay = 0.5f;
-    [Tooltip("Pause between individual shots in a set")]
-    public float recoveryDuration = 0.6f;
+    [Tooltip("Min delay before the first shot after entering attack range")]
+    public float attackDelayMin = 0.3f;
+    [Tooltip("Max delay before the first shot after entering attack range")]
+    public float attackDelayMax = 0.8f;
+    [Tooltip("Min pause between individual shots in a set")]
+    public float recoveryDurationMin = 0.4f;
+    [Tooltip("Max pause between individual shots in a set")]
+    public float recoveryDurationMax = 0.8f;
     [Tooltip("How many shots per set before needing to reload")]
     public int shotsPerSet = 4;
     [Space]
