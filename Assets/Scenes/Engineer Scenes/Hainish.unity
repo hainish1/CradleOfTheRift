@@ -2427,6 +2427,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ecf10c79f67c53e4385cb77aef3a68fe, type: 2}
   - {fileID: 11400000, guid: cdfd3c155daacdf4db6438d25fa95746, type: 2}
   activateKey: 31
+  autoOpenOnLevelUp: 0
   maxChoices: 3
 --- !u!114 &779646439
 MonoBehaviour:
@@ -6216,7 +6217,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: xpReward
-      value: 100
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 1162765825911862605, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: maxHealth
