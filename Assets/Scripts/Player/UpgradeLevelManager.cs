@@ -46,6 +46,7 @@ public class UpgradeLevelManager : MonoBehaviour
     // Events
     public event Action<List<ItemData>> UpgradePanelOpened;   // pass the choices to UI
     public event Action<int> UpgradeSelected;
+    public event Action UpgradePanelClosed; // call when you wanna clas the panel or sum
 
     void Awake()
     {
@@ -75,8 +76,17 @@ public class UpgradeLevelManager : MonoBehaviour
 
     void Update()
     {
+        bool keyPressed = Keyboard.current != null && Keyboard.current[activateKey].wasPressedThisFrame;
+
+        // if panel is open, Q closes it
+        if (panelIsOpen)
+        {
+            if (keyPressed) 
+                CloseUpgradePanel();
+            return;
+        }
+
         if (!levelUpPending) return;
-        if (panelIsOpen) return;
 
         // don't open if the game is paused for pause menu, inventory, or sum else
         if (PauseManager.GameIsPaused) return;
@@ -87,7 +97,7 @@ public class UpgradeLevelManager : MonoBehaviour
             return;
         }
 
-        if (Keyboard.current != null && Keyboard.current[activateKey].wasPressedThisFrame)
+        if (keyPressed)
         {
             OpenUpgradePanel();
         }
@@ -127,6 +137,25 @@ public class UpgradeLevelManager : MonoBehaviour
 
         UpgradePanelOpened?.Invoke(currentChoices);
         Debug.Log($"Upgrade panel opened with {currentChoices.Count} choices.");
+    }
+
+    // close the upgrade panel
+    public void CloseUpgradePanel()
+    {
+        if (!panelIsOpen) return;
+
+        panelIsOpen = false;
+        levelUpPending = true; // keep the level up, but no rerun
+
+        UpgradePanelClosed?.Invoke();
+
+        // resume
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        PauseManager.CurrentPauseState = PauseManager.PauseState.None;
+        PauseManager.GameIsPaused = false;
+        Time.timeScale = 1f;
     }
 
 

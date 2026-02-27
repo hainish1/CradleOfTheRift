@@ -23,7 +23,10 @@ public class UpgradePanelUI : MonoBehaviour
     {
         // upgrade level manager runs first
         if (UpgradeLevelManager.Instance != null)
+        {
             UpgradeLevelManager.Instance.UpgradePanelOpened += Show;
+            UpgradeLevelManager.Instance.UpgradePanelClosed += Hide;
+        }
         else
             Debug.LogWarning("UpgradeLevelManager.Instance is null");
     }
@@ -31,7 +34,10 @@ public class UpgradePanelUI : MonoBehaviour
     void OnDestroy()
     {
         if (UpgradeLevelManager.Instance != null)
+        {
             UpgradeLevelManager.Instance.UpgradePanelOpened -= Show;
+            UpgradeLevelManager.Instance.UpgradePanelClosed -= Hide;
+        }
     }
 
     public void Show(List<ItemData> choices)
