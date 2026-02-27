@@ -4482,7 +4482,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1313228829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6420,16 +6420,8 @@ PrefabInstance:
       value: BOSS (1)
       objectReference: {fileID: 0}
     - target: {fileID: 5391762884062940174, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
-      propertyPath: duration
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5391762884062940174, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
-      propertyPath: explosionDamage
-      value: 75
-      objectReference: {fileID: 0}
-    - target: {fileID: 5391762884062940174, guid: e3fcb859a24f323458475c0c51e95955, type: 3}
-      propertyPath: postExplosionVulnerableTime
-      value: 3
+      propertyPath: slamDamage
+      value: 25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -955,14 +955,15 @@ MonoBehaviour:
   slimeArcDuration: 0.7
   maxRadius: 40
   duration: 3
-  explosionDamage: 5
+  explosionDamage: 75
   explosionCameraShakeForce: 5
   poofVFX: {fileID: 141433446842962269, guid: 9fe8f8b3288e45a44af36ff8aa04486e, type: 3}
   explosionVFXPrefab: {fileID: 8276740080782940022, guid: a734952d6eee1584694f0543e79543e1, type: 3}
   shockwaveVFXPrefab: {fileID: 9080140021571130472, guid: 82066d902ed0dd6488ddfd32eb994801, type: 3}
+  postExplosionVulnerableTime: 3
   hitbox: {fileID: 6458449840784157983}
   hitAppliedThisAttack: 0
-  slamDamage: 15
+  slamDamage: 25
   minRequiredPlayerDistance: 90
   playerTooClose: 15
   knockbackPower: 100
