@@ -1,0 +1,15 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/ItemPickupTooltip.uss?fileID=7433441132597879392&amp;guid=e40a49e41eb0c6947b62bfdf6e264063&amp;type=3#ItemPickupTooltip" />
+    <ui:VisualElement name="TooltipRoot" picking-mode="Ignore" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0;">
+        <ui:VisualElement name="TooltipBox" class="tooltip-box">
+            <ui:VisualElement name="TooltipHeader" class="tooltip-header">
+                <ui:Label name="PickupAction" text="PICK UP" class="pickup-action" />
+            </ui:VisualElement>
+            <ui:VisualElement name="TooltipBody" class="tooltip-body">
+                <ui:Label name="RarityLabel" text="Rare" class="rarity-label" />
+                <ui:Label name="ItemName" text="ITEM NAME" class="item-name" />
+                <ui:Label name="ItemDescription" text="Item description goes here" class="item-description" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
