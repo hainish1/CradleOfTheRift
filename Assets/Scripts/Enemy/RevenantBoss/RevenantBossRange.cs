@@ -160,11 +160,11 @@ public class RevenantBossRange : Enemy
         // projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
 
         // Use pooling for projectiles if available, else instantiate as fallback.
-        GameObject projObj1 = GetPooledProjectile(projectilePrefab.gameObject, spawnPoint1, rotation1);
+        GameObject projObj1 = GetPooledProjectile(projectilePrefab.gameObject, spawnPoint1, rotation1, firePoint);
         EnemyProjectile projectile1 = projObj1.GetComponent<EnemyProjectile>();
         projectile1.Init(direction1 * projectileSpeed, projectileMask, this.projectileDamage);
 
-        GameObject projObj2 = GetPooledProjectile(projectilePrefab.gameObject, spawnPoint2, rotation2);
+        GameObject projObj2 = GetPooledProjectile(projectilePrefab.gameObject, spawnPoint2, rotation2, firePoint2);
         EnemyProjectile projectile2 = projObj2.GetComponent<EnemyProjectile>();
         projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
 
@@ -225,11 +225,11 @@ public class RevenantBossRange : Enemy
         // projectile2.Init(direction2 * projectileSpeed, projectileMask, this.AOEProjectileDamage);
 
         // Use pooling for projectiles if available, else instantiate as fallback.
-        GameObject projObj1 = GetPooledProjectile(AOEProjectilePrefab.gameObject, spawnPoint1, rotation1);
+        GameObject projObj1 = GetPooledProjectile(AOEProjectilePrefab.gameObject, spawnPoint1, rotation1, AOEPoint);
         EnemyAOEProjectile projectile1 = projObj1.GetComponent<EnemyAOEProjectile>();
         projectile1.Init(direction1 * projectileSpeed, projectileMask, this.AOEProjectileDamage);
 
-        GameObject projObj2 = GetPooledProjectile(AOEProjectilePrefab.gameObject, spawnPoint2, rotation2);
+        GameObject projObj2 = GetPooledProjectile(AOEProjectilePrefab.gameObject, spawnPoint2, rotation2, AOEPoint2);
         EnemyAOEProjectile projectile2 = projObj2.GetComponent<EnemyAOEProjectile>();
         projectile2.Init(direction2 * projectileSpeed, projectileMask, this.AOEProjectileDamage);
 
@@ -272,7 +272,7 @@ public class RevenantBossRange : Enemy
             // projectile.Init(finalVelocity, projectileMask, AOEProjectileDamage);
 
             // Use pooling for projectiles if available, else instantiate as fallback.
-            GameObject projObj = GetPooledProjectile(AOEArcingProjectilePrefab.gameObject, spawnPoint, Quaternion.LookRotation(firingVector));
+            GameObject projObj = GetPooledProjectile(AOEArcingProjectilePrefab.gameObject, spawnPoint, Quaternion.LookRotation(firingVector), arcFiringPoint);
             EnemyAOEArcingProjectile projectile = projObj.GetComponent<EnemyAOEArcingProjectile>();
             projectile.Init(finalVelocity, projectileMask, this.AOEProjectileDamage);
 
@@ -290,11 +290,12 @@ public class RevenantBossRange : Enemy
     /// <param name="position"></param>
     /// <param name="rotation"></param>
     /// <returns></returns>
-    private GameObject GetPooledProjectile(GameObject prefabToSpawn, Vector3 position, Quaternion rotation)
+    private GameObject GetPooledProjectile(GameObject prefabToSpawn, Vector3 position, Quaternion rotation, Transform spawnTransform)
     {
         if (ObjectPool.instance != null)
         {
-            GameObject obj = ObjectPool.instance.GetObject(prefabToSpawn, transform); 
+            // Pass the specific firing point to the Object Pool instead of the base transform
+            GameObject obj = ObjectPool.instance.GetObject(prefabToSpawn, spawnTransform); 
             obj.transform.position = position;
             obj.transform.rotation = rotation;
             return obj;
