@@ -8,7 +8,7 @@ public class ItemPickup : MonoBehaviour
 
     [Header("Tooltip")]
     [Tooltip("How close the player needs to be for tooltip to show")]
-    [SerializeField] private float tooltipRange = 13f;
+    [SerializeField] private float tooltipRange = 20f;
 
     private Vector3 startPosition;
     private Transform playerTransform;
@@ -74,6 +74,11 @@ public class ItemPickup : MonoBehaviour
             }
 
             inventory.AddItem(itemData);
+
+            // show pickup banner after pickupin up item
+            if (ItemPickupBannerUI.Instance != null)
+                ItemPickupBannerUI.Instance.Show(itemData);
+
             if (destroyOnPickup)
             {
                 Destroy(gameObject, 0.05f);

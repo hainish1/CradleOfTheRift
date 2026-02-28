@@ -1,0 +1,25 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements"
+         editor-extension-mode="False">
+
+    <Style src="ItemPickupBanner.uss" />
+
+    <!-- full screen overlay, banner at centre bottom -->
+    <ui:VisualElement name="BannerOverlay" class="banner-overlay">
+
+        <ui:VisualElement name="BannerBox" class="banner-box">
+
+            <!-- item icon on the left -->
+            <ui:VisualElement name="BannerIcon" class="banner-icon" />
+
+            <!-- text on right: rarity, name, description -->
+            <ui:VisualElement name="BannerTextColumn" class="banner-text-column">
+                <ui:Label name="BannerRarity"      class="banner-rarity"      text="RARE" />
+                <ui:Label name="BannerItemName"     class="banner-item-name"   text="ITEM NAME" />
+                <ui:Label name="BannerDescription"  class="banner-description" text="Item description goes here." />
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+
+</ui:UXML>
