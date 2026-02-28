@@ -1,0 +1,47 @@
+#ObjectivesPanel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 260px;
+    background-color: rgba(0, 0, 0, 0.55);
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+    padding: 10px 14px 12px 14px;
+    flex-direction: column;
+}
+
+#ObjectivesHeader {
+    font-size: 11px;
+    -unity-font-style: bold;
+    color: rgba(255, 200, 60, 1);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.objective-row {
+    flex-direction: row;
+    align-items: center;
+    padding: 3px 0;
+}
+
+.objective-label {
+    font-size: 13px;
+    flex-wrap: wrap;
+    white-space: normal;
+}
+
+.objective-active .objective-label {
+    color: rgba(255, 255, 255, 1);
+    -unity-font-style: bold;
+}
+
+.objective-complete .objective-label {
+    color: rgba(100, 200, 100, 0.85);
+    -unity-font-style: normal;
+}
+
+.objective-inactive .objective-label {
+    color: rgba(160, 160, 160, 0.6);
+    -unity-font-style: normal;
+}
