@@ -4,17 +4,37 @@ using UnityEngine.UIElements;
 
 public class ObjectiveUI : MonoBehaviour
 {
+    // ── USS class names ───────────────────────────────────────────────────────
     private const string CLASS_ACTIVE   = "objective-active";
     private const string CLASS_COMPLETE = "objective-complete";
+    private const string CLASS_FLASH    = "objective-flash";
+
+
+    private const int   FADE_MS        = 350;
+    private const int   TICK_MS        = 16;
+    private const float SLIDE_PX       = 14f;
+    private const int   FLASH_MS       = 550;
+    private const int   ROW_STAGGER_MS = 180;
+    private const float HOLD_SECONDS   = 1.4f;
+    private const int   PANEL_FADE_MS  = 400;
+
 
     private VisualElement objectivesPanel;
     private VisualElement locateRow;
     private VisualElement chargeRow;
     private VisualElement killRow;
-    private Label locateLabel;
-    private Label chargeLabel;
-    private Label killLabel;
+    private Label         locateLabel;
+    private Label         chargeLabel;
+    private Label         killLabel;
+
+
     private ExtractionZone activeZone;
+    private bool           isResetting;
+
+    // Track whether each sub-objective has already been individually completed
+    // so CompleteAndReset doesn't re-flash rows the player already saw tick off.
+    private bool chargeRowComplete;
+    private bool killRowComplete;
 
 
     private void Start()
@@ -22,74 +42,207 @@ public class ObjectiveUI : MonoBehaviour
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
         objectivesPanel = root.Q<VisualElement>("ObjectivesPanel");
-        locateRow = root.Q<VisualElement>("LocateRow");
-        chargeRow = root.Q<VisualElement>("ChargeRow");
-        killRow = root.Q<VisualElement>("KillRow");
-        locateLabel = root.Q<Label>("LocateLabel");
-        chargeLabel = root.Q<Label>("ChargeLabel");
-        killLabel = root.Q<Label>("KillLabel");
+        locateRow       = root.Q<VisualElement>("LocateRow");
+        chargeRow       = root.Q<VisualElement>("ChargeRow");
+        killRow         = root.Q<VisualElement>("KillRow");
+        locateLabel     = root.Q<Label>("LocateLabel");
+        chargeLabel     = root.Q<Label>("ChargeLabel");
+        killLabel       = root.Q<Label>("KillLabel");
 
         if (ExtractionManager.Instance != null)
         {
-            ExtractionManager.Instance.ExtractionStarted += OnExtractionStarted;
+            ExtractionManager.Instance.ExtractionStarted      += OnExtractionStarted;
             ExtractionManager.Instance.AllExtractionsFinished += OnAllZonesFinished;
+            ExtractionManager.Instance.OnGameWon              += OnGameWon;
         }
 
-        ShowLocatePhase();
+        objectivesPanel.style.opacity = 0f;
+        InitLocatePhase();
+        FadePanel(0f, 1f, PANEL_FADE_MS * 2);
     }
 
     private void OnDestroy()
     {
         if (ExtractionManager.Instance != null)
         {
-            ExtractionManager.Instance.ExtractionStarted -= OnExtractionStarted;
+            ExtractionManager.Instance.ExtractionStarted      -= OnExtractionStarted;
             ExtractionManager.Instance.AllExtractionsFinished -= OnAllZonesFinished;
+            ExtractionManager.Instance.OnGameWon              -= OnGameWon;
         }
-
         UnsubscribeFromZone();
     }
 
-    private void ShowLocatePhase()
+
+    private void InitLocatePhase()
     {
+        chargeRowComplete = false;
+        killRowComplete   = false;
+
         SetRowState(locateRow, locateLabel, "Locate Extraction Site", RowState.Active);
 
+        locateRow.style.opacity   = 1f;
+        locateRow.style.display   = DisplayStyle.Flex;
+        locateRow.style.translate = new Translate(0f, 0f);
+
         chargeRow.style.display = DisplayStyle.None;
-        killRow.style.display = DisplayStyle.None;
-        locateRow.style.display = DisplayStyle.Flex;
+        chargeRow.style.opacity = 0f;
+
+        killRow.style.display   = DisplayStyle.None;
+        killRow.style.opacity   = 0f;
     }
 
     private void OnExtractionStarted(ExtractionZone zone)
     {
+        if (isResetting) return;
+
         activeZone = zone;
         SubscribeToZone(zone);
 
-        // Cross off Locate
-        SetRowState(locateRow, locateLabel, "Locate Extraction Site", RowState.Complete);
-
-        // Reveal active objectives
-        chargeRow.style.display = DisplayStyle.Flex;
-        killRow.style.display   = DisplayStyle.Flex;
-        SetRowState(chargeRow, chargeLabel, "Charge the Extraction Site", RowState.Active);
-        SetRowState(killRow, killLabel, "Eliminate the Boss", RowState.Active);
+        TickOffRow(locateRow, locateLabel, "Locate Extraction Site", delayMs: 0, onComplete: () =>
+        {
+            RevealRow(chargeRow, chargeLabel, "Charge the Extraction Site", delayMs: 0, onComplete: () =>
+            {
+                RevealRow(killRow, killLabel, "Eliminate the Boss", delayMs: ROW_STAGGER_MS);
+            });
+        });
     }
 
     private void OnAllZonesFinished()
     {
+        if (isResetting) return;
         StartCoroutine(CompleteAndReset());
     }
 
     private IEnumerator CompleteAndReset()
     {
-        // Briefly show both ticked before resetting for the next zone
-        SetRowState(chargeRow, chargeLabel, "Charge the Extraction Site", RowState.Complete);
-        SetRowState(killRow, killLabel, "Eliminate the Boss", RowState.Complete);
+        isResetting = true;
 
-        yield return new WaitForSeconds(1.5f);
+        // Only tick off rows that haven't already been completed by their
+        // individual events (OnZoneChargeFinished / OnBossDied).
+        // This prevents rows the player already saw complete from flashing again.
+        if (!chargeRowComplete)
+            TickOffRow(chargeRow, chargeLabel, "Charge the Extraction Site");
 
+        yield return new WaitForSeconds(ROW_STAGGER_MS / 1000f);
+
+        if (!killRowComplete)
+            TickOffRow(killRow, killLabel, "Eliminate the Boss");
+
+        // Hold so the player can read the completed state
+        yield return new WaitForSeconds(HOLD_SECONDS);
+
+        // Fade panel out
+        bool done = false;
+        FadePanel(1f, 0f, PANEL_FADE_MS, () => done = true);
+        yield return new WaitUntil(() => done);
+
+        // Reset silently while invisible
         UnsubscribeFromZone();
         activeZone = null;
-        ShowLocatePhase();
+        InitLocatePhase();
+
+        yield return new WaitForSeconds(0.1f);
+
+        // Fade back in, flash Locate to signal the reset
+        FadePanel(0f, 1f, PANEL_FADE_MS, () => FlashRow(locateRow));
+
+        isResetting = false;
     }
+
+    private void OnGameWon()
+    {
+        StopAllCoroutines();
+        FadePanel(objectivesPanel.style.opacity.value, 0f, PANEL_FADE_MS);
+    }
+
+
+    private void OnZoneChargeFinished()
+    {
+        chargeRowComplete = true;
+        TickOffRow(chargeRow, chargeLabel, "Charge the Extraction Site");
+    }
+
+    private void OnBossDied()
+    {
+        killRowComplete = true;
+        TickOffRow(killRow, killLabel, "Eliminate the Boss");
+    }
+
+
+    private void RevealRow(VisualElement row, Label label, string text,
+                           int delayMs = 0, System.Action onComplete = null)
+    {
+        SetRowState(row, label, text, RowState.Active);
+        row.style.display   = DisplayStyle.Flex;
+        row.style.opacity   = 0f;
+        row.style.translate = new Translate(SLIDE_PX, 0f);
+
+        row.schedule.Execute(() =>
+        {
+            TweenFloat(row, 0f, 1f,       FADE_MS, t => row.style.opacity   = t);
+            TweenFloat(row, SLIDE_PX, 0f, FADE_MS, t => row.style.translate = new Translate(t, 0f));
+
+            row.schedule.Execute(() =>
+            {
+                FlashRow(row);
+                onComplete?.Invoke();
+            }).StartingIn(FADE_MS);
+
+        }).StartingIn(delayMs);
+    }
+
+    private void TickOffRow(VisualElement row, Label label, string text,
+                            int delayMs = 0, System.Action onComplete = null)
+    {
+        row.schedule.Execute(() =>
+        {
+            SetRowState(row, label, text, RowState.Complete);
+            FlashRow(row);
+            onComplete?.Invoke();
+        }).StartingIn(delayMs);
+    }
+
+    private void FlashRow(VisualElement row)
+    {
+        row.AddToClassList(CLASS_FLASH);
+        row.schedule.Execute(() =>
+            row.RemoveFromClassList(CLASS_FLASH)
+        ).StartingIn(FLASH_MS);
+    }
+
+
+    private void FadePanel(float from, float to, int durationMs,
+                           System.Action onComplete = null)
+    {
+        TweenFloat(objectivesPanel, from, to, durationMs,
+            t => objectivesPanel.style.opacity = t,
+            onComplete);
+    }
+
+
+    private void TweenFloat(VisualElement context, float from, float to, int durationMs,
+                            System.Action<float> onTick, System.Action onComplete = null)
+    {
+        float elapsed  = 0f;
+        float duration = Mathf.Max(durationMs, 1) / 1000f;
+
+        IVisualElementScheduledItem handle = null;
+        handle = context.schedule.Execute(() =>
+        {
+            elapsed += TICK_MS / 1000f;
+            float t  = Mathf.Clamp01(elapsed / duration);
+            onTick(Mathf.Lerp(from, to, EaseOutCubic(t)));
+
+            if (t >= 1f)
+            {
+                handle?.Pause();
+                onComplete?.Invoke();
+            }
+        }).Every(TICK_MS);
+    }
+
+    private static float EaseOutCubic(float t) => 1f - Mathf.Pow(1f - t, 3f);
+
 
     private void SubscribeToZone(ExtractionZone zone)
     {
@@ -111,15 +264,6 @@ public class ObjectiveUI : MonoBehaviour
             spawner.BossDied -= OnBossDied;
     }
 
-    private void OnZoneChargeFinished()
-    {
-        SetRowState(chargeRow, chargeLabel, "Charge the Extraction Site", RowState.Complete);
-    }
-
-    private void OnBossDied()
-    {
-        SetRowState(killRow, killLabel, "Eliminate the Boss", RowState.Complete);
-    }
 
     private enum RowState { Active, Complete }
 
@@ -127,12 +271,13 @@ public class ObjectiveUI : MonoBehaviour
     {
         row.RemoveFromClassList(CLASS_ACTIVE);
         row.RemoveFromClassList(CLASS_COMPLETE);
+        row.RemoveFromClassList(CLASS_FLASH);
 
         label.text = state == RowState.Complete ? $"✓  {text}" : $"•  {text}";
 
         switch (state)
         {
-            case RowState.Active: row.AddToClassList(CLASS_ACTIVE); break;
+            case RowState.Active:   row.AddToClassList(CLASS_ACTIVE);   break;
             case RowState.Complete: row.AddToClassList(CLASS_COMPLETE); break;
         }
     }
