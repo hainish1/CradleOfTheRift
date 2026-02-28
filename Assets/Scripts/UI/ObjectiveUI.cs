@@ -9,16 +9,21 @@ public class ObjectiveUI : MonoBehaviour
     private const string CLASS_COMPLETE = "objective-complete";
     private const string CLASS_FLASH    = "objective-flash";
 
-
+    // ── Timing constants ──────────────────────────────────────────────────────
     private const int   FADE_MS        = 350;
     private const int   TICK_MS        = 16;
     private const float SLIDE_PX       = 14f;
-    private const int   FLASH_MS       = 550;
+    private const int   FLASH_MS       = 550;   // how long the gold + big text holds
+    private const int   SHRINK_MS      = 300;   // how long the text eases back to normal
     private const int   ROW_STAGGER_MS = 180;
     private const float HOLD_SECONDS   = 1.4f;
     private const int   PANEL_FADE_MS  = 400;
 
+    // ── Font sizes ────────────────────────────────────────────────────────────
+    private const float FONT_NORMAL = 13f;
+    private const float FONT_PUNCH  = 16f;   // size during the gold flash
 
+    // ── UI references ─────────────────────────────────────────────────────────
     private VisualElement objectivesPanel;
     private VisualElement locateRow;
     private VisualElement chargeRow;
@@ -27,15 +32,13 @@ public class ObjectiveUI : MonoBehaviour
     private Label         chargeLabel;
     private Label         killLabel;
 
-
+    // ── State ─────────────────────────────────────────────────────────────────
     private ExtractionZone activeZone;
     private bool           isResetting;
+    private bool           chargeRowComplete;
+    private bool           killRowComplete;
 
-    // Track whether each sub-objective has already been individually completed
-    // so CompleteAndReset doesn't re-flash rows the player already saw tick off.
-    private bool chargeRowComplete;
-    private bool killRowComplete;
-
+    // ─────────────────────────────────────────────────────────────────────────
 
     private void Start()
     {
@@ -72,6 +75,7 @@ public class ObjectiveUI : MonoBehaviour
         UnsubscribeFromZone();
     }
 
+    // ── Phase transitions ─────────────────────────────────────────────────────
 
     private void InitLocatePhase()
     {
@@ -83,6 +87,11 @@ public class ObjectiveUI : MonoBehaviour
         locateRow.style.opacity   = 1f;
         locateRow.style.display   = DisplayStyle.Flex;
         locateRow.style.translate = new Translate(0f, 0f);
+
+        // Reset font sizes in case a tween was interrupted mid-punch
+        locateLabel.style.fontSize = FONT_NORMAL;
+        chargeLabel.style.fontSize = FONT_NORMAL;
+        killLabel.style.fontSize   = FONT_NORMAL;
 
         chargeRow.style.display = DisplayStyle.None;
         chargeRow.style.opacity = 0f;
@@ -117,9 +126,6 @@ public class ObjectiveUI : MonoBehaviour
     {
         isResetting = true;
 
-        // Only tick off rows that haven't already been completed by their
-        // individual events (OnZoneChargeFinished / OnBossDied).
-        // This prevents rows the player already saw complete from flashing again.
         if (!chargeRowComplete)
             TickOffRow(chargeRow, chargeLabel, "Charge the Extraction Site");
 
@@ -128,23 +134,19 @@ public class ObjectiveUI : MonoBehaviour
         if (!killRowComplete)
             TickOffRow(killRow, killLabel, "Eliminate the Boss");
 
-        // Hold so the player can read the completed state
         yield return new WaitForSeconds(HOLD_SECONDS);
 
-        // Fade panel out
         bool done = false;
         FadePanel(1f, 0f, PANEL_FADE_MS, () => done = true);
         yield return new WaitUntil(() => done);
 
-        // Reset silently while invisible
         UnsubscribeFromZone();
         activeZone = null;
         InitLocatePhase();
 
         yield return new WaitForSeconds(0.1f);
 
-        // Fade back in, flash Locate to signal the reset
-        FadePanel(0f, 1f, PANEL_FADE_MS, () => FlashRow(locateRow));
+        FadePanel(0f, 1f, PANEL_FADE_MS, () => FlashRow(locateRow, locateLabel));
 
         isResetting = false;
     }
@@ -155,6 +157,7 @@ public class ObjectiveUI : MonoBehaviour
         FadePanel(objectivesPanel.style.opacity.value, 0f, PANEL_FADE_MS);
     }
 
+    // ── Individual objective events ───────────────────────────────────────────
 
     private void OnZoneChargeFinished()
     {
@@ -168,23 +171,26 @@ public class ObjectiveUI : MonoBehaviour
         TickOffRow(killRow, killLabel, "Eliminate the Boss");
     }
 
+    // ── Row animations ────────────────────────────────────────────────────────
 
     private void RevealRow(VisualElement row, Label label, string text,
                            int delayMs = 0, System.Action onComplete = null)
     {
         SetRowState(row, label, text, RowState.Active);
-        row.style.display   = DisplayStyle.Flex;
-        row.style.opacity   = 0f;
-        row.style.translate = new Translate(SLIDE_PX, 0f);
+        label.style.fontSize = FONT_NORMAL;
+        row.style.display    = DisplayStyle.Flex;
+        row.style.opacity    = 0f;
+        row.style.translate  = new Translate(SLIDE_PX, 0f);
 
         row.schedule.Execute(() =>
         {
             TweenFloat(row, 0f, 1f,       FADE_MS, t => row.style.opacity   = t);
             TweenFloat(row, SLIDE_PX, 0f, FADE_MS, t => row.style.translate = new Translate(t, 0f));
 
+            // Once the slide lands, punch the text
             row.schedule.Execute(() =>
             {
-                FlashRow(row);
+                FlashRow(row, label);
                 onComplete?.Invoke();
             }).StartingIn(FADE_MS);
 
@@ -197,19 +203,32 @@ public class ObjectiveUI : MonoBehaviour
         row.schedule.Execute(() =>
         {
             SetRowState(row, label, text, RowState.Complete);
-            FlashRow(row);
+            FlashRow(row, label);
             onComplete?.Invoke();
         }).StartingIn(delayMs);
     }
 
-    private void FlashRow(VisualElement row)
+    /// <summary>
+    /// Applies the gold flash class and punches the font size up, then eases
+    /// both back to normal once the hold duration expires.
+    /// </summary>
+    private void FlashRow(VisualElement row, Label label)
     {
+        // Snap up to punch size immediately
+        label.style.fontSize = FONT_PUNCH;
         row.AddToClassList(CLASS_FLASH);
+
+        // After the hold, remove flash class (colour transitions via USS) and
+        // tween the font back down to normal
         row.schedule.Execute(() =>
-            row.RemoveFromClassList(CLASS_FLASH)
-        ).StartingIn(FLASH_MS);
+        {
+            row.RemoveFromClassList(CLASS_FLASH);
+            TweenFloat(row, FONT_PUNCH, FONT_NORMAL, SHRINK_MS,
+                t => label.style.fontSize = t);
+        }).StartingIn(FLASH_MS);
     }
 
+    // ── Panel fade ────────────────────────────────────────────────────────────
 
     private void FadePanel(float from, float to, int durationMs,
                            System.Action onComplete = null)
@@ -219,6 +238,7 @@ public class ObjectiveUI : MonoBehaviour
             onComplete);
     }
 
+    // ── Generic UIElements float tweener ─────────────────────────────────────
 
     private void TweenFloat(VisualElement context, float from, float to, int durationMs,
                             System.Action<float> onTick, System.Action onComplete = null)
@@ -243,6 +263,7 @@ public class ObjectiveUI : MonoBehaviour
 
     private static float EaseOutCubic(float t) => 1f - Mathf.Pow(1f - t, 3f);
 
+    // ── Zone subscriptions ────────────────────────────────────────────────────
 
     private void SubscribeToZone(ExtractionZone zone)
     {
@@ -264,6 +285,7 @@ public class ObjectiveUI : MonoBehaviour
             spawner.BossDied -= OnBossDied;
     }
 
+    // ── Row state helper ──────────────────────────────────────────────────────
 
     private enum RowState { Active, Complete }
 
