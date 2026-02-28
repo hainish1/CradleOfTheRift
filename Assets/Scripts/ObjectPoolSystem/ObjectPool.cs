@@ -45,14 +45,16 @@ public class ObjectPool : MonoBehaviour
     }
 
     public void ReturnObject(GameObject objectToReturn, float delayTime = 0.001f)
-    { // THIS METHOD WILL BE CALLED BY OTHER METHODS
+    {
+        if (objectToReturn == null) return;
         StartCoroutine(DelayReturn(objectToReturn, delayTime));
     }
 
     private IEnumerator DelayReturn(GameObject objectToReturn, float delayTime)
     {
         yield return new WaitForSeconds(delayTime);
-        ReturnToPool(objectToReturn);
+        if (objectToReturn != null)
+            ReturnToPool(objectToReturn);
     }
     
     private void ReturnToPool(GameObject objectToReturn){
