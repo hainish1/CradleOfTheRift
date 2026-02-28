@@ -10,14 +10,14 @@ public class ObjectiveUI : MonoBehaviour
     private const string CLASS_FLASH    = "objective-flash";
 
     // ── Timing constants ──────────────────────────────────────────────────────
-    private const int   FADE_MS        = 350;
+    private const int   FADE_MS        = 600;
     private const int   TICK_MS        = 16;
     private const float SLIDE_PX       = 14f;
-    private const int   FLASH_MS       = 550;   // how long the gold + big text holds
-    private const int   SHRINK_MS      = 300;   // how long the text eases back to normal
-    private const int   ROW_STAGGER_MS = 180;
-    private const float HOLD_SECONDS   = 1.4f;
-    private const int   PANEL_FADE_MS  = 400;
+    private const int   FLASH_MS       = 900;   // how long the gold + big text holds
+    private const int   SHRINK_MS      = 500;   // how long the text eases back to normal
+    private const int   ROW_STAGGER_MS = 300;
+    private const float HOLD_SECONDS   = 2.0f;
+    private const int   PANEL_FADE_MS  = 600;
 
     // ── Font sizes ────────────────────────────────────────────────────────────
     private const float FONT_NORMAL = 13f;
