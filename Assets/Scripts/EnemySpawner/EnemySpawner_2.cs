@@ -165,6 +165,23 @@ public class EnemySpawner_2 : MonoBehaviour
     [SerializeField] private float timeBetweenWaves = 8f;
     [SerializeField] private float baseTimeBetweenEnemySpawns = 1f;
 
+
+
+    [Header("Wave Pacing")]
+    [Tooltip("If true, the between-wave countdown only begins once ALL enemies are dead. " +
+             "If false, the countdown begins once living enemies drop to or below the straggler threshold.")]
+    [SerializeField] private bool requireFullClear = false;
+
+    [Tooltip("Only used when requireFullClear is false. " +
+             "The countdown starts once currentEnemyCount reaches this value or below. " +
+             "e.g. 3 = timer starts when 3 or fewer enemies remain.")]
+    [SerializeField] private int stragglerThreshold = 3;
+
+    [Tooltip("Safety net. If the wave has been waiting for a clear condition for longer than this " +
+             "many seconds, it force-ends regardless. Prevents softlocks from stuck or unreachable enemies.")]
+    [SerializeField] private float stragglerTimeout = 45f;
+
+
     [Tooltip("Fallback difficulty value if no DifficulterScaler is assigned.")]
     [SerializeField] private float fallbackDifficultyScale = 1.03f; 
 
@@ -207,7 +224,16 @@ public class EnemySpawner_2 : MonoBehaviour
     private float waveCountdown;
     private bool isWaveInProgress = false;
     private Queue<EnemyType> enemiesToSpawn = new Queue<EnemyType>();
-    
+
+    // Hybrid pacing state.
+    // True once the spawn queue empties. Waiting for the clear condition before
+    // starting the between-wave countdown.
+    private bool isWaitingForClear = false;
+
+    // Tracks how long we've been in the waiting-for-clear state.
+    // If it exceeds stragglerTimeout, the wave is force-ended to prevent softlocks.
+    private float clearWaitTimer = 0f;
+
     private Collider[] nodeResults = new Collider[50];
 
     // =========================================================================
@@ -281,6 +307,7 @@ public class EnemySpawner_2 : MonoBehaviour
             {
                 StartWave(); 
             } 
+            return;
         }
 
         // Spawn enemies until queue is empty
@@ -294,10 +321,32 @@ public class EnemySpawner_2 : MonoBehaviour
                 
                 this.enemySpawnCountdown = this.currentTimeBetweenEnemySpawns;
             }
+            return;
         }
-        // Reset properties when finishing a wave
-        else if (this.isWaveInProgress)
+
+        // Once the spawn queue is empty, wait until the clear condition is met (or timeout fires),
+        // THEN start the between-wave countdown
+        if (!this.isWaitingForClear)
         {
+            this.isWaitingForClear = true;
+            this.clearWaitTimer = 0f;
+            if (showSpawnDebug)
+                Debug.Log($"[Wave {currentWave}] Queue empty — waiting for clear condition.");
+        }
+
+        this.clearWaitTimer += Time.deltaTime;
+
+        bool clearConditionMet = requireFullClear
+            ? this.currentEnemyCount <= 0                        // Full clear: every enemy must be dead
+            : this.currentEnemyCount <= this.stragglerThreshold; // Threshold: enough enemies are dead
+
+        bool timedOut = this.clearWaitTimer >= this.stragglerTimeout;
+
+        if (clearConditionMet || timedOut)
+        {
+            if (timedOut && !clearConditionMet && showSpawnDebug)
+                Debug.LogWarning($"[Wave {currentWave}] Straggler timeout hit ({stragglerTimeout}s). " +
+                                 $"{currentEnemyCount} enemies still alive. Force-ending wave.");
             EndWave();
         }
     }
@@ -543,8 +592,13 @@ public class EnemySpawner_2 : MonoBehaviour
 
     private void EndWave() 
     { 
-        this.isWaveInProgress = false; 
-        this.waveCountdown = this.timeBetweenWaves; 
+        this.isWaveInProgress = false;
+        this.isWaitingForClear = false;
+        this.clearWaitTimer = 0f;
+        this.waveCountdown = this.timeBetweenWaves;
+
+        if (showSpawnDebug)
+            Debug.Log($"[Wave {currentWave}] Ended. Next wave in {timeBetweenWaves}s.");
     }
 
     private float GetDifficulty() => difficultyScaler ? difficultyScaler.GetDifficultyScale() : fallbackDifficultyScale;
