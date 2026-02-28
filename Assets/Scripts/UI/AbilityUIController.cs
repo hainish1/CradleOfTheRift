@@ -80,6 +80,8 @@ public class AbilityUIController : MonoBehaviour
         };
         this.abilities.Add(dashAbility);
         CreateAbility(dashAbility);
+        if (playerMovement != null)
+            playerMovement.DashCooldownStarted += OnDashCooldownStarted;
 
         AbilityInfo flyAbility = new AbilityInfo
         {
@@ -189,6 +191,12 @@ public class AbilityUIController : MonoBehaviour
     {
         UpdateFlightAbilityUI();
 
+        if (playerMovement != null && abilities.Count > 0)
+        {
+            abilities[0].currentCharges = playerMovement.CurrentDashCharges;
+            abilitySlots[0].chargeLabel.text = abilities[0].currentCharges.ToString();
+        }
+
         for (int i = 0; i < abilities.Count; i++)
         {
             if (i == flyAbilityIndex) continue;
@@ -217,6 +225,22 @@ public class AbilityUIController : MonoBehaviour
         }
     }
 
+    void OnDashCooldownStarted(float duration)
+    {
+        if (abilities.Count == 0) return;
+        var ability = abilities[0];
+        var slot = abilitySlots[0];
+        ability.pendingCooldowns++;
+        if (!ability.isCooldownRunning)
+            StartCoroutine(ProcessCooldownQueue(ability, slot));
+    }
+
+    void OnDestroy()
+    {
+        if (playerMovement != null)
+            playerMovement.DashCooldownStarted -= OnDashCooldownStarted;
+    }
+
     void UpdateFlightAbilityUI()
     {
         if (flyAbilityIndex < 0 || playerMovement == null || playerStats == null) return;
@@ -242,6 +266,8 @@ public class AbilityUIController : MonoBehaviour
 
     public void OnAbilityPressed(int abilityIndex)
 {
+    if (abilityIndex == 0) return;
+
     var ability = abilities[abilityIndex];
     var slot = abilitySlots[abilityIndex];
 
