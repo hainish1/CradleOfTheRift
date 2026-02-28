@@ -20,11 +20,19 @@ MonoBehaviour:
   canStack: 1
   maxStacks: 99
   stackingType: 0
-  useMultipleStats: 0
-  statMods: []
+  useMultipleStats: 1
+  statMods:
+  - statType: 2
+    operatorType: 1
+    value: 1.2
+    duration: -1
+  - statType: 1
+    operatorType: 1
+    value: 0.5
+    duration: -1
   effects: []
   statType: 2
   operatorType: 1
-  value: 0.6
+  value: 1.2
   duration: -1
   itemId: 14f91f6eb05c4b27bb21ee90a1028fef
