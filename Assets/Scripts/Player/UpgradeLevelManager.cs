@@ -13,23 +13,28 @@ public class UpgradeLevelManager : MonoBehaviour
     public static UpgradeLevelManager Instance { get; private set; }
 
     [Header("Upgrade Pool")]
-    [Tooltip("Base upgrade pool, always available from the start.")]
+    [Tooltip("All possible upgrade ItemData")]
     [SerializeField] private List<ItemData> upgradePool = new();
 
-    // items unlocked at runtime via InventoryRule (AddToUpgradePool )
+    // items unlocked at runtime from InventoryRule
     private readonly List<ItemData> runtimePool = new();
 
-    // items blocked at runtime via InventoryRule (RemoveFromUpgradePool)
+    // items blocked at runtime from InventoryRule
     private readonly HashSet<ItemData> blockedFromPool = new();
 
     [Header("Input")]
-    [SerializeField] private Key activateKey = Key.U;
+    [SerializeField] private Key activateKey = Key.Q;
+
+    [Header("AutoOpen?")]
+    [Tooltip("If true, the upgrade panel opens automatically when a level up is available")]
+    [SerializeField] private bool autoOpenOnLevelUp = false;
 
     [Header("Upgrade Options")]
     [Tooltip("Max number of upgrade choices shown each time panel open")]
     [SerializeField] private int maxChoices = 3;
 
     private bool levelUpPending;
+    private bool panelIsOpen;
     private PlayerXP playerXP;
 
     // track which upgrades have already been chosen 
@@ -41,6 +46,7 @@ public class UpgradeLevelManager : MonoBehaviour
     // Events
     public event Action<List<ItemData>> UpgradePanelOpened;   // pass the choices to UI
     public event Action<int> UpgradeSelected;
+    public event Action UpgradePanelClosed; // call when you wanna clas the panel or sum
 
     void Awake()
     {
@@ -70,9 +76,28 @@ public class UpgradeLevelManager : MonoBehaviour
 
     void Update()
     {
+        bool keyPressed = Keyboard.current != null && Keyboard.current[activateKey].wasPressedThisFrame;
+
+        // if panel is open, Q closes it
+        if (panelIsOpen)
+        {
+            if (keyPressed) 
+                CloseUpgradePanel();
+            return;
+        }
+
         if (!levelUpPending) return;
 
-        if (Keyboard.current != null && Keyboard.current[activateKey].wasPressedThisFrame)
+        // don't open if the game is paused for pause menu, inventory, or sum else
+        if (PauseManager.GameIsPaused) return;
+
+        if (autoOpenOnLevelUp)
+        {
+            OpenUpgradePanel();
+            return;
+        }
+
+        if (keyPressed)
         {
             OpenUpgradePanel();
         }
@@ -86,6 +111,8 @@ public class UpgradeLevelManager : MonoBehaviour
 
     private void OpenUpgradePanel()
     {
+        if (panelIsOpen) return;
+
         //random choices from remaining pool
         currentChoices = PickRandomUpgrades();
 
@@ -99,6 +126,7 @@ public class UpgradeLevelManager : MonoBehaviour
         }
 
         levelUpPending = false;
+        panelIsOpen = true;
 
         Time.timeScale = 0f;
         PauseManager.GameIsPaused = true;
@@ -109,6 +137,25 @@ public class UpgradeLevelManager : MonoBehaviour
 
         UpgradePanelOpened?.Invoke(currentChoices);
         Debug.Log($"Upgrade panel opened with {currentChoices.Count} choices.");
+    }
+
+    // close the upgrade panel
+    public void CloseUpgradePanel()
+    {
+        if (!panelIsOpen) return;
+
+        panelIsOpen = false;
+        levelUpPending = true; // keep the level up, but no rerun
+
+        UpgradePanelClosed?.Invoke();
+
+        // resume
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        PauseManager.CurrentPauseState = PauseManager.PauseState.None;
+        PauseManager.GameIsPaused = false;
+        Time.timeScale = 1f;
     }
 
 
@@ -143,6 +190,9 @@ public class UpgradeLevelManager : MonoBehaviour
         // Consume the level up
         if (PlayerXP.Instance != null)
             PlayerXP.Instance.ConsumeLevelUp();
+
+        // Close panel
+        panelIsOpen = false;
 
         // Resume game
         Cursor.lockState = CursorLockMode.Locked;
@@ -233,5 +283,6 @@ public class UpgradeLevelManager : MonoBehaviour
         runtimePool.Clear();
         blockedFromPool.Clear();
         levelUpPending = false;
+        panelIsOpen = false;
     }
 }

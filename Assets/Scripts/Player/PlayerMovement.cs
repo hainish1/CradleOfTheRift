@@ -117,6 +117,7 @@ public class PlayerMovement : MonoBehaviour
     private int _dashMaxCharges;
     private int _currDashCharges;
     private bool _isRegeneratingDash;
+    public int CurrentDashCharges => _currDashCharges;
     public event System.Action<float> DashCooldownStarted;
     private Vector3 _dashDirectionUnitVector;
 

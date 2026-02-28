@@ -33,7 +33,7 @@ public class LightningDash : IDisposable
     
     private const float DashDuration = 0.15f;
     private const float DashInterval = 0.1f;
-    
+
     private PlayerShooter shooter;
     private PlayerMeleeController melee;
     private PlayerGroundSlam slam;
@@ -94,19 +94,21 @@ public class LightningDash : IDisposable
     private void OnDashStarted(float dashDuration)
     {
         if (disposed || isDashActive) return;
-        
+
         if (activeDashCoroutine != null)
         {
             playerMovement.StopCoroutine(activeDashCoroutine);
             CleanupDashState();
         }
-        
+
         activeDashCoroutine = playerMovement.StartCoroutine(CheckAndExecuteLightningDash());
     }
     
     private void CleanupDashState()
     {
         isDashActive = false;
+        if (characterController != null)
+            characterController.enabled = true;
         DisableLightningForm();
         activeDashCoroutine = null;
     }
@@ -210,11 +212,11 @@ public class LightningDash : IDisposable
 
         EnableLightningForm();
         playerInventory?.PauseOrbitingFireballs();
-        
+
         int chainCount = CalculateActualChainCount(firstTarget);
         float lockDuration = chainCount * (DashDuration + DashInterval);
         playerMovement.LockMovement(lockDuration);
-        
+
         lastHitEnemy = null;
 
         yield return playerMovement.StartCoroutine(ChainToEnemyCoroutine(firstTarget, owner.transform.position, chainDamage * stacks, 0));

@@ -22,6 +22,8 @@ public class EnemyBoss_SS : Enemy
 
     public GameObject explosionVFXPrefab;
     public GameObject shockwaveVFXPrefab;
+    [Tooltip("How long does the boss stay still after the explosion")]
+    public float postExplosionVulnerableTime = 3f;
 
     [Space]
 
@@ -62,6 +64,7 @@ public class EnemyBoss_SS : Enemy
     private RecoveryState_Boss recovery;
     private RingAttackState_Boss ringAttack;
     private LeapAttackState_Boss leapAttack;
+    private VulnerableState_Boss vulnerable;
 
 
     public override void Start()
@@ -76,6 +79,7 @@ public class EnemyBoss_SS : Enemy
         recovery = new RecoveryState_Boss(this, stateMachine);
         ringAttack = new RingAttackState_Boss(this, stateMachine, maxRadius, duration, explosionDamage, playerMask);
         leapAttack = new LeapAttackState_Boss(this, stateMachine);
+        vulnerable = new VulnerableState_Boss(this, stateMachine);
         stateMachine.Initialize(idle);
     }
 
@@ -98,6 +102,7 @@ public class EnemyBoss_SS : Enemy
     public EnemyState GetRecoveryState() => recovery;
     public EnemyState GetExploisionState() => ringAttack;
     public EnemyState GetLeapAttackState() => leapAttack;
+    public EnemyState GetVulnerableState() => vulnerable;
 
 
 
@@ -172,6 +177,7 @@ public class EnemyBoss_SS : Enemy
     private void PlayPSVFXInternal(GameObject vfxPrefab, Vector3 position)
     {
         GameObject fx;
+        
         if (ObjectPool.instance != null)
         {
             fx = ObjectPool.instance.GetObject(vfxPrefab, transform);
