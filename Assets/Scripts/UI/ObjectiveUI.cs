@@ -13,15 +13,10 @@ public class ObjectiveUI : MonoBehaviour
     private const int   FADE_MS        = 600;
     private const int   TICK_MS        = 16;
     private const float SLIDE_PX       = 14f;
-    private const int   FLASH_MS       = 900;   // how long the gold + big text holds
-    private const int   SHRINK_MS      = 500;   // how long the text eases back to normal
+    private const int   FLASH_MS       = 900;
     private const int   ROW_STAGGER_MS = 300;
     private const float HOLD_SECONDS   = 2.0f;
     private const int   PANEL_FADE_MS  = 600;
-
-    // ── Font sizes ────────────────────────────────────────────────────────────
-    private const float FONT_NORMAL = 13f;
-    private const float FONT_PUNCH  = 16f;   // size during the gold flash
 
     // ── UI references ─────────────────────────────────────────────────────────
     private VisualElement objectivesPanel;
@@ -88,11 +83,6 @@ public class ObjectiveUI : MonoBehaviour
         locateRow.style.display   = DisplayStyle.Flex;
         locateRow.style.translate = new Translate(0f, 0f);
 
-        // Reset font sizes in case a tween was interrupted mid-punch
-        locateLabel.style.fontSize = FONT_NORMAL;
-        chargeLabel.style.fontSize = FONT_NORMAL;
-        killLabel.style.fontSize   = FONT_NORMAL;
-
         chargeRow.style.display = DisplayStyle.None;
         chargeRow.style.opacity = 0f;
 
@@ -146,7 +136,7 @@ public class ObjectiveUI : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
 
-        FadePanel(0f, 1f, PANEL_FADE_MS, () => FlashRow(locateRow, locateLabel));
+        FadePanel(0f, 1f, PANEL_FADE_MS, () => FlashRow(locateRow));
 
         isResetting = false;
     }
@@ -177,20 +167,18 @@ public class ObjectiveUI : MonoBehaviour
                            int delayMs = 0, System.Action onComplete = null)
     {
         SetRowState(row, label, text, RowState.Active);
-        label.style.fontSize = FONT_NORMAL;
-        row.style.display    = DisplayStyle.Flex;
-        row.style.opacity    = 0f;
-        row.style.translate  = new Translate(SLIDE_PX, 0f);
+        row.style.display   = DisplayStyle.Flex;
+        row.style.opacity   = 0f;
+        row.style.translate = new Translate(SLIDE_PX, 0f);
 
         row.schedule.Execute(() =>
         {
             TweenFloat(row, 0f, 1f,       FADE_MS, t => row.style.opacity   = t);
             TweenFloat(row, SLIDE_PX, 0f, FADE_MS, t => row.style.translate = new Translate(t, 0f));
 
-            // Once the slide lands, punch the text
             row.schedule.Execute(() =>
             {
-                FlashRow(row, label);
+                FlashRow(row);
                 onComplete?.Invoke();
             }).StartingIn(FADE_MS);
 
@@ -203,29 +191,18 @@ public class ObjectiveUI : MonoBehaviour
         row.schedule.Execute(() =>
         {
             SetRowState(row, label, text, RowState.Complete);
-            FlashRow(row, label);
+            FlashRow(row);
             onComplete?.Invoke();
         }).StartingIn(delayMs);
     }
 
-    /// <summary>
-    /// Applies the gold flash class and punches the font size up, then eases
-    /// both back to normal once the hold duration expires.
-    /// </summary>
-    private void FlashRow(VisualElement row, Label label)
+    /// <summary>Briefly tints the row gold then lets USS transition it back.</summary>
+    private void FlashRow(VisualElement row)
     {
-        // Snap up to punch size immediately
-        label.style.fontSize = FONT_PUNCH;
         row.AddToClassList(CLASS_FLASH);
-
-        // After the hold, remove flash class (colour transitions via USS) and
-        // tween the font back down to normal
         row.schedule.Execute(() =>
-        {
-            row.RemoveFromClassList(CLASS_FLASH);
-            TweenFloat(row, FONT_PUNCH, FONT_NORMAL, SHRINK_MS,
-                t => label.style.fontSize = t);
-        }).StartingIn(FLASH_MS);
+            row.RemoveFromClassList(CLASS_FLASH)
+        ).StartingIn(FLASH_MS);
     }
 
     // ── Panel fade ────────────────────────────────────────────────────────────
