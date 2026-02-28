@@ -7,6 +7,7 @@
 					<ChildrenList>
 						<Sound Name="Slime" ID="{F468D715-9549-4314-98C5-A7BEA258295B}" ShortID="581225961">
 							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
 								<Property Name="Pitch" Type="int32">
 									<ModifierList>
 										<ModifierInfo>
@@ -115,6 +116,7 @@
 						</Sound>
 						<Sound Name="WispFireball" ID="{1F242EEF-E08F-453D-B75F-9AE25F37F05D}" ShortID="389389405">
 							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
 								<Property Name="Pitch" Type="int32">
 									<ModifierList>
 										<ModifierInfo>

@@ -14,12 +14,15 @@ namespace AK
     namespace EVENTS
     {
         static const AkUniqueID CHEST_AMBIENT = 3464756077U;
+        static const AkUniqueID CHEST_LOCKED = 895085565U;
         static const AkUniqueID CHEST_OPEN = 2728948375U;
+        static const AkUniqueID ENEMY_LIGHTNING_DAMAGED = 608341856U;
         static const AkUniqueID PLAY_AMBIENCE = 278617630U;
         static const AkUniqueID PLAY_MUSIC = 2932040671U;
         static const AkUniqueID PLAY_PLAYER_DASH = 2175711460U;
         static const AkUniqueID PLAY_PLAYER_FIRE = 1408288908U;
         static const AkUniqueID PLAY_PLAYER_JUMP = 562256996U;
+        static const AkUniqueID PLAY_PLAYER_MAJOR_LIGHTNING_ATTACK = 865153475U;
         static const AkUniqueID PLAY_PLAYER_MELEE = 3619611380U;
         static const AkUniqueID PLAY_RIVER1 = 2332603225U;
         static const AkUniqueID PLAY_RIVER2 = 2332603226U;
@@ -27,6 +30,7 @@ namespace AK
         static const AkUniqueID PLAY_SONG_ICEY = 3808693238U;
         static const AkUniqueID PLAY_SONG_PERCUSSIANORCHESTRA = 920721062U;
         static const AkUniqueID PLAY_TELEPORTER_AMBIENCE = 1203559441U;
+        static const AkUniqueID PLAY_UI_BUTTON_CLICK = 1661558166U;
         static const AkUniqueID SKULL_DEATH = 2252982343U;
         static const AkUniqueID SLIME_DEATH = 510073564U;
         static const AkUniqueID SLIME_JUMP = 2006797914U;

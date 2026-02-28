@@ -4,6 +4,9 @@
 		<WorkUnit Name="Player" ID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}" OwnerID="{08864F24-BF33-4CEF-B914-3138B5E77E57}" PersistMode="Nested">
 			<ChildrenList>
 				<Sound Name="magefiresound" ID="{AB18AAB6-B1BA-4D4A-A1E1-9961D0809C74}" ShortID="733803102">
+					<PropertyList>
+						<Property Name="3DSpatialization" Type="int16" Value="2"/>
+					</PropertyList>
 					<ReferenceList>
 						<Reference Name="Conversion">
 							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
@@ -26,6 +29,9 @@
 					</ActiveSourceList>
 				</Sound>
 				<Sound Name="magic_explosion" ID="{23FA0231-DAAC-4825-96AD-725D51A28A82}" ShortID="537924831">
+					<PropertyList>
+						<Property Name="3DSpatialization" Type="int16" Value="2"/>
+					</PropertyList>
 					<ReferenceList>
 						<Reference Name="Conversion">
 							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
@@ -48,6 +54,9 @@
 					</ActiveSourceList>
 				</Sound>
 				<Sound Name="player_dash" ID="{7FBAB5D7-8069-445C-B565-E24D7DF4842E}" ShortID="760540771">
+					<PropertyList>
+						<Property Name="3DSpatialization" Type="int16" Value="2"/>
+					</PropertyList>
 					<ReferenceList>
 						<Reference Name="Conversion">
 							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
@@ -71,6 +80,7 @@
 				</Sound>
 				<Sound Name="player_fire" ID="{1888B20C-BBC0-4924-84A6-1C23F5E1FF8D}" ShortID="44946536">
 					<PropertyList>
+						<Property Name="3DSpatialization" Type="int16" Value="2"/>
 						<Property Name="Pitch" Type="int32">
 							<ModifierList>
 								<ModifierInfo>
@@ -108,6 +118,7 @@
 				</Sound>
 				<Sound Name="player_melee" ID="{9543637D-19CD-4664-BCD2-8FD78E9815F3}" ShortID="143564123">
 					<PropertyList>
+						<Property Name="3DSpatialization" Type="int16" Value="2"/>
 						<Property Name="Pitch" Type="int32">
 							<ModifierList>
 								<ModifierInfo>
@@ -163,6 +174,7 @@
 					<ChildrenList>
 						<Sound Name="Weapon Swoosh" ID="{2AE8E6C6-4232-46A7-A956-8CDA05C20061}" ShortID="823999341">
 							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
 								<Property Name="Highpass" Type="int16">
 									<ValueList>
 										<Value>30</Value>
@@ -240,6 +252,7 @@
 						</Sound>
 						<Sound Name="Weapon Bell" ID="{92A289F7-4E7F-4813-A35F-009A3BF5B92D}" ShortID="895456896">
 							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
 								<Property Name="Lowpass" Type="int16">
 									<ValueList>
 										<Value>22</Value>
@@ -305,6 +318,9 @@
 							</ActiveSourceList>
 						</Sound>
 						<Sound Name="Weapon Sparkle" ID="{6EDCDA07-581F-4FB5-9AF8-1F8E58E01748}" ShortID="219584584">
+							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
+							</PropertyList>
 							<ReferenceList>
 								<Reference Name="Conversion">
 									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
@@ -330,6 +346,7 @@
 				</Folder>
 				<Sound Name="player_jump" ID="{A14AA23A-33DC-480B-8E86-CABEB2366C64}" ShortID="654693844">
 					<PropertyList>
+						<Property Name="3DSpatialization" Type="int16" Value="2"/>
 						<Property Name="Pitch" Type="int32">
 							<ModifierList>
 								<ModifierInfo>
@@ -381,6 +398,9 @@
 				<Folder Name="Electricity" ID="{8D39C887-D617-4B9B-A586-CE5C202FE3F6}" ShortID="448631691">
 					<ChildrenList>
 						<Sound Name="ELECZap_Bug zapper zapping, electricity, crackle,_RogueWaves_DruidMagic_37" ID="{24724A59-E8DF-4669-AE69-BDA17E3371CD}" ShortID="720957243">
+							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
+							</PropertyList>
 							<ReferenceList>
 								<Reference Name="Conversion">
 									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
@@ -408,6 +428,7 @@
 						</Sound>
 						<Sound Name="LASRMisc_Beam Transient_04_SFRMS_SCIWPNS" ID="{4C115E24-B0F3-48B2-9CF4-78DF2F953F84}" ShortID="548034703">
 							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
 								<Property Name="Pitch" Type="int32">
 									<ModifierList>
 										<ModifierInfo>
@@ -457,6 +478,7 @@
 						</Sound>
 						<RandomSequenceContainer Name="ThunderRandom" ID="{0E0F1B66-38CF-4D74-A61A-70BA6349356C}" ShortID="832026410">
 							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
 								<Property Name="Pitch" Type="int32">
 									<ModifierList>
 										<ModifierInfo>
@@ -555,6 +577,7 @@
 						</RandomSequenceContainer>
 						<RandomSequenceContainer Name="LaunchRandom" ID="{F0BFD6FA-6C62-4F79-9CEA-2D6C024DB58D}" ShortID="931805814">
 							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
 								<Property Name="Pitch" Type="int32">
 									<ModifierList>
 										<ModifierInfo>
