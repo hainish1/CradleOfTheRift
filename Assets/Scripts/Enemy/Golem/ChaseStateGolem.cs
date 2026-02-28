@@ -13,7 +13,7 @@ public class ChaseStateGolem : EnemyState
 
     public ChaseStateGolem(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
-        enemyGolem = enemy as enemyGolem;
+        enemyGolem = enemy as EnemyGolem;
         knockBack = enemy.GetComponent<AgentKnockBack>();
     }
 

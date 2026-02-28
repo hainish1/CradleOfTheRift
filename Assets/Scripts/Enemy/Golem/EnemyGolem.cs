@@ -68,12 +68,12 @@ public class EnemyGolem : Enemy
 
     private void OnEnable()
     {
-        EnemyRegistry.RegisterWalker(this);
+        EnemyRegistry.RegisterGolem(this);
     }
 
     private void OnDisable()
     {
-        EnemyRegistry.UnregisterWalker(this);
+        EnemyRegistry.UnregisterGolem(this);
     }
 
     public override void Start()
