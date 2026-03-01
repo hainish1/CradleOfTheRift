@@ -65,12 +65,12 @@ public class UpgradeLevelManager : MonoBehaviour
     void OnEnable()
     {
         _upgradeAction.Enable();
-        _upgradeAction.started += OnUpgradePressed;
+        _upgradeAction.performed += OnUpgradePressed;
     }
 
     void OnDisable()
     {
-        _upgradeAction.started -= OnUpgradePressed;
+        _upgradeAction.performed -= OnUpgradePressed;
         _upgradeAction.Disable();
     }
 
@@ -109,8 +109,17 @@ public class UpgradeLevelManager : MonoBehaviour
             return;
         }
 
+        // if the flag isnt set yet,then  re check XP directly so Im not limited to just one way of opening the panel
+        if (!levelUpPending && playerXP != null && playerXP.IsLevelUpReady)
+        {
+            levelUpPending = true;
+        }
+
         if (!levelUpPending) return;
-        if (PauseManager.GameIsPaused) return;
+
+        // only block when actually in pause menu or end game, not in other between states
+        var ps = PauseManager.CurrentPauseState;
+        if (ps == PauseManager.PauseState.PauseMenu || ps == PauseManager.PauseState.EndGame) return;
 
         OpenUpgradePanel();
     }
