@@ -153,10 +153,27 @@ public class RevenantBossRange : Enemy
         direction2 += Random.insideUnitSphere * projectileSpread;
         direction2.Normalize();
 
-        EnemyProjectile projectile1 = Instantiate(projectilePrefab, spawnPoint1, rotation1);
+        GameObject projObj1, projObj2;
+
+        // use ObjectPooling here
+        if (ObjectPool.instance != null)
+        {
+            projObj1 = ObjectPool.instance.GetObject(projectilePrefab.gameObject, firePoint);
+            projObj1.transform.SetPositionAndRotation(spawnPoint1, rotation1);
+
+            projObj2 = ObjectPool.instance.GetObject(projectilePrefab.gameObject, firePoint2);
+            projObj2.transform.SetPositionAndRotation(spawnPoint2, rotation2);
+        }
+        else // do the normal instantiating route
+        {
+            projObj1 = Instantiate(projectilePrefab.gameObject, spawnPoint1, rotation1);
+            projObj2 = Instantiate(projectilePrefab.gameObject, spawnPoint2, rotation2);
+        }
+
+        EnemyProjectile projectile1 = projObj1.GetComponent<EnemyProjectile>();
         projectile1.Init(direction1 * projectileSpeed, projectileMask, this.projectileDamage);
 
-        EnemyProjectile projectile2 = Instantiate(projectilePrefab, spawnPoint2, rotation2);
+        EnemyProjectile projectile2 = projObj2.GetComponent<EnemyProjectile>();
         projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
 
         audioController?.PlayFireProjectileSound();
