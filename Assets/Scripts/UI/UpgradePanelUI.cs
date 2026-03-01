@@ -136,6 +136,7 @@ public class UpgradePanelUI : MonoBehaviour
     private void OnCloseClicked(ClickEvent evt)
     {
         // idk man ill have jared do that
+        UpgradeLevelManager.Instance.CloseUpgradePanel();
     }
 
     // private string FormatEffectName(ItemEffectKind kind)
