@@ -18,7 +18,7 @@ MonoBehaviour:
   rarity: 0
   rarityColor: {r: 1, g: 1, b: 1, a: 1}
   canStack: 1
-  maxStacks: 6
+  maxStacks: 5
   stackingType: 0
   useMultipleStats: 1
   statMods:
@@ -28,7 +28,7 @@ MonoBehaviour:
     duration: -1
   - statType: 1
     operatorType: 1
-    value: 0.5
+    value: 0.3
     duration: -1
   effects: []
   statType: 2
