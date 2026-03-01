@@ -1,0 +1,129 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/PauseMenuStyleSheet.uss?fileID=7433441132597879392&amp;guid=e780f1131c06d4602ab181ccec82676f&amp;type=3#PauseMenuStyleSheet" />
+    <Style src="project://database/Assets/UI%20Toolkit/SettingsStyleSheet.uss" />
+    <engine:VisualElement name="Canvas" class="Background" style="flex-grow: 1; width: 1920px; height: 1080px;">
+
+        <!-- Header -->
+        <engine:Label text="Settings" name="LabelSettings" class="header" style="font-size: 120px; margin-top: 20px;" />
+
+        <!-- Tab Bar -->
+        <engine:VisualElement name="TabBar" style="flex-direction: row; align-self: center; margin-top: 10px; margin-bottom: 0;">
+            <engine:Button text="Audio" name="TabAudio" class="settings-tab settings-tab--active unityButtonHover" />
+            <engine:Button text="Video" name="TabVideo" class="settings-tab unityButtonHover" />
+            <engine:Button text="Controls" name="TabControls" class="settings-tab unityButtonHover" />
+        </engine:VisualElement>
+
+        <!-- Tab Divider Line -->
+        <engine:VisualElement name="TabDivider" style="height: 3px; background-color: rgba(228, 0, 255, 0.6); margin-left: 200px; margin-right: 200px;" />
+
+        <!-- Pages Container -->
+        <engine:VisualElement name="PagesContainer" style="flex-grow: 1; margin-left: 200px; margin-right: 200px; margin-top: 30px; margin-bottom: 120px;">
+
+            <!-- ═══════════════════════════════════ -->
+            <!--           AUDIO PAGE                -->
+            <!-- ═══════════════════════════════════ -->
+            <engine:VisualElement name="PageAudio" class="settings-page">
+
+                <engine:VisualElement class="settings-row">
+                    <engine:Label text="Master Volume" class="settings-label" />
+                    <engine:Slider name="SliderMasterVolume" class="settings-slider" low-value="0" high-value="1" value="1" />
+                    <engine:Label text="100" name="LabelMasterVolume" class="settings-value-label" />
+                </engine:VisualElement>
+
+                <engine:VisualElement class="settings-row">
+                    <engine:Label text="Music Volume" class="settings-label" />
+                    <engine:Slider name="SliderMusicVolume" class="settings-slider" low-value="0" high-value="1" value="0.75" />
+                    <engine:Label text="75" name="LabelMusicVolume" class="settings-value-label" />
+                </engine:VisualElement>
+
+                <engine:VisualElement class="settings-row">
+                    <engine:Label text="SFX Volume" class="settings-label" />
+                    <engine:Slider name="SliderSFXVolume" class="settings-slider" low-value="0" high-value="1" value="1" />
+                    <engine:Label text="100" name="LabelSFXVolume" class="settings-value-label" />
+                </engine:VisualElement>
+
+                <engine:VisualElement class="settings-row">
+                    <engine:Label text="Ambient Volume" class="settings-label" />
+                    <engine:Slider name="SliderAmbientVolume" class="settings-slider" low-value="0" high-value="1" value="0.5" />
+                    <engine:Label text="50" name="LabelAmbientVolume" class="settings-value-label" />
+                </engine:VisualElement>
+
+                <engine:VisualElement class="settings-row">
+                    <engine:Label text="Dialogue Volume" class="settings-label" />
+                    <engine:Slider name="SliderDialogueVolume" class="settings-slider" low-value="0" high-value="1" value="1" />
+                    <engine:Label text="100" name="LabelDialogueVolume" class="settings-value-label" />
+                </engine:VisualElement>
+
+                <engine:VisualElement class="settings-row">
+                    <engine:Label text="Mute All" class="settings-label" />
+                    <engine:Toggle name="ToggleMuteAll" class="settings-toggle" />
+                </engine:VisualElement>
+
+            </engine:VisualElement>
+
+            <!-- ═══════════════════════════════════ -->
+            <!--           VIDEO PAGE                -->
+            <!-- ═══════════════════════════════════ -->
+            <engine:VisualElement name="PageVideo" class="settings-page" style="display: none;">
+
+                <engine:VisualElement class="settings-row">
+                    <engine:Label text="Resolution" class="settings-label" />
+                    <engine:DropdownField name="DropdownResolution" class="settings-dropdown" />
+                </engine:VisualElement>
+
+                <engine:VisualElement class="settings-row">
+                    <engine:Label text="Display Mode" class="settings-label" />
+                    <engine:DropdownField name="DropdownDisplayMode" class="settings-dropdown" />
+                </engine:VisualElement>
+
+                <engine:VisualElement class="settings-row">
+                    <engine:Label text="VSync" class="settings-label" />
+                    <engine:Toggle name="ToggleVSync" class="settings-toggle" value="true" />
+                </engine:VisualElement>
+
+                <engine:VisualElement class="settings-row">
+                    <engine:Label text="Render Quality" class="settings-label" />
+                    <engine:DropdownField name="DropdownQuality" class="settings-dropdown" />
+                </engine:VisualElement>
+
+                <engine:VisualElement class="settings-row">
+                    <engine:Label text="Brightness" class="settings-label" />
+                    <engine:Slider name="SliderBrightness" class="settings-slider" low-value="0" high-value="1" value="0.5" />
+                    <engine:Label text="50" name="LabelBrightness" class="settings-value-label" />
+                </engine:VisualElement>
+
+            </engine:VisualElement>
+
+            <!-- ═══════════════════════════════════ -->
+            <!--         CONTROLS PAGE               -->
+            <!-- ═══════════════════════════════════ -->
+            <engine:VisualElement name="PageControls" class="settings-page" style="display: none;">
+
+                <engine:VisualElement class="settings-row">
+                    <engine:Label text="Mouse Sensitivity" class="settings-label" />
+                    <engine:Slider name="SliderMouseSensitivity" class="settings-slider" low-value="0.1" high-value="5" value="1" />
+                    <engine:Label text="1.0" name="LabelMouseSensitivity" class="settings-value-label" />
+                </engine:VisualElement>
+
+                <engine:VisualElement class="settings-row">
+                    <engine:Label text="Invert Y Axis" class="settings-label" />
+                    <engine:Toggle name="ToggleInvertY" class="settings-toggle" />
+                </engine:VisualElement>
+
+                <engine:VisualElement class="settings-row">
+                    <engine:Label text="Controller Vibration" class="settings-label" />
+                    <engine:Toggle name="ToggleVibration" class="settings-toggle" value="true" />
+                </engine:VisualElement>
+
+            </engine:VisualElement>
+
+        </engine:VisualElement>
+
+        <!-- Bottom Buttons -->
+        <engine:VisualElement name="BottomBar" style="flex-direction: row; align-self: center; position: absolute; bottom: 30px;">
+            <engine:Button text="Apply" name="ButtonApply" class="button unityButtonHover" style="width: 300px; font-size: 60px; margin-right: 40px;" />
+            <engine:Button text="Back" name="ButtonBack" class="button unityButtonHover" style="width: 300px; font-size: 60px;" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

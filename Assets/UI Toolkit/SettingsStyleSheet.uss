@@ -1,0 +1,140 @@
+/* ─────────────────────────────────────────
+   SettingsStyleSheet.uss
+   Extends PauseMenuStyleSheet for settings UI
+───────────────────────────────────────── */
+
+/* ── Tab Buttons ── */
+.settings-tab {
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-radius: 0;
+    background-color: rgba(21, 7, 34, 0);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 70px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    width: 380px;
+    height: 90px;
+    padding-bottom: 8px;
+    -unity-text-align: lower-center;
+    transition-duration: 0.2s;
+    transition-property: color, border-bottom-width, border-bottom-color;
+    border-bottom-width: 0;
+    border-bottom-color: rgba(228, 0, 255, 0);
+}
+
+.settings-tab:hover {
+    color: rgba(255, 255, 255, 0.85);
+    background-color: rgba(21, 7, 34, 0);
+    scale: 1 1; /* override the global hover scale for tabs */
+}
+
+/* Active tab gets full white text and a purple underline */
+.settings-tab--active {
+    color: rgb(255, 255, 255);
+    border-bottom-width: 4px;
+    border-bottom-color: rgb(228, 0, 255);
+}
+
+/* ── Settings Page ── */
+.settings-page {
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+/* ── Row (label + control) ── */
+.settings-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 28px;
+    padding-left: 20px;
+    padding-right: 20px;
+    height: 90px;
+    background-color: rgba(255, 255, 255, 0.04);
+    border-radius: 6px;
+    transition-duration: 0.2s;
+    transition-property: background-color;
+}
+
+.settings-row:hover {
+    background-color: rgba(228, 0, 255, 0.08);
+}
+
+/* ── Label on the left ── */
+.settings-label {
+    flex-grow: 1;
+    font-size: 60px;
+    color: rgb(255, 255, 255);
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    -unity-text-align: middle-left;
+}
+
+/* ── Slider ── */
+.settings-slider {
+    width: 600px;
+    margin-right: 20px;
+}
+
+.settings-slider > .unity-base-slider__dragger {
+    background-color: rgb(228, 0, 255);
+    width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    border-width: 0;
+    margin-top: -8px;
+}
+
+.settings-slider > .unity-base-slider__tracker {
+    background-color: rgba(255, 255, 255, 0.25);
+    height: 6px;
+    border-radius: 3px;
+    border-width: 0;
+}
+
+.settings-slider > .unity-base-slider__dragger:hover {
+    background-color: rgb(255, 100, 255);
+    scale: 1.2 1.2;
+}
+
+/* ── Numeric value label on the right of a slider ── */
+.settings-value-label {
+    width: 80px;
+    font-size: 55px;
+    color: rgb(228, 0, 255);
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    -unity-text-align: middle-right;
+}
+
+/* ── Toggle ── */
+.settings-toggle {
+    margin-right: 10px;
+}
+
+.settings-toggle > .unity-toggle__checkmark {
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.4);
+    transition-duration: 0.2s;
+}
+
+.settings-toggle:checked > .unity-toggle__checkmark {
+    background-color: rgb(228, 0, 255);
+    border-color: rgb(228, 0, 255);
+}
+
+/* ── Dropdown ── */
+.settings-dropdown {
+    width: 500px;
+    height: 65px;
+    font-size: 50px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    color: rgb(255, 255, 255);
+    background-color: rgba(21, 7, 34, 0.9);
+    border-width: 2px;
+    border-color: rgba(228, 0, 255, 0.5);
+    border-radius: 4px;
+}
