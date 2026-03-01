@@ -1,0 +1,59 @@
+#ObjectivesPanel {
+    position: absolute;
+    top: 124px;
+    right: 40px;
+    width: 260px;
+    background-color: rgba(0, 0, 0, 0.55);
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+    padding: 10px 14px 12px 14px;
+    flex-direction: column;
+}
+
+#ObjectivesHeader {
+    font-size: 11px;
+    -unity-font-style: bold;
+    color: rgba(255, 200, 60, 1);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+/* ── Shared row ──────────────────────────────────────────────── */
+.objective-row {
+    flex-direction: row;
+    align-items: center;
+    padding: 3px 0;
+    /* Smooth colour transitions between states */
+    transition-property: opacity;
+    transition-duration: 300ms;
+}
+
+.objective-label {
+    font-size: 13px;
+    flex-wrap: wrap;
+    white-space: normal;
+    /* Colour transitions between active / complete / flash */
+    transition-property: color;
+    transition-duration: 300ms;
+}
+
+/* ── Active: bright white + bold ─────────────────────────────── */
+.objective-active .objective-label {
+    color: rgba(255, 255, 255, 1);
+    -unity-font-style: bold;
+}
+
+/* ── Complete: green, regular weight ─────────────────────────── */
+.objective-complete .objective-label {
+    color: rgba(100, 200, 100, 0.85);
+    -unity-font-style: normal;
+}
+
+/* ── Flash: gold burst applied momentarily by C#,
+         then removed so the transition animates back
+         to whatever the current state colour is.    ─────────── */
+.objective-flash .objective-label {
+    color: rgba(255, 255, 255, 1);
+    -unity-font-style: bold;
+}

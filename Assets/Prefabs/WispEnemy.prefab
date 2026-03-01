@@ -6017,12 +6017,12 @@ MonoBehaviour:
   turnSpeedWhileAiming: 20
   agentAngularSpeed: 720
   agentAcceleration: 100
-  spreadInterval: 0.2
-  spreadRadiusJitter: 2
-  wispSeparationRadius: 20
-  wispSeparationStrength: 2
-  navSampleDistance: 6
-  angleAdaptSpeed: 1.5
+  spreadInterval: 2
+  spreadRadiusJitter: 0.1
+  wispSeparationRadius: 1
+  wispSeparationStrength: 0.05
+  navSampleDistance: 1
+  angleAdaptSpeed: 0.05
   projectileSpeed: 50
   attackDelayMin: 0.3
   attackDelayMax: 0.8
@@ -6042,7 +6042,7 @@ MonoBehaviour:
     m_Bits: 1361
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 65
+    m_Bits: 1
   reloadTime: 1.5
   orbitVisuals: {fileID: 0}
   currentShotsRemaining: 0

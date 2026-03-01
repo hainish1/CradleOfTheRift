@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3809615221376158281
 RectTransform:
   m_ObjectHideFlags: 0
@@ -536,3 +536,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: 8fe9e66cc0957b54aa8da80b596068ff, type: 2}
   destroyOnPickup: 1
+  tooltipRange: 20

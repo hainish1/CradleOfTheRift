@@ -16,6 +16,15 @@ public class UpgradePanelUI : MonoBehaviour
         overlay = root.Q<VisualElement>("UpgradeOverlay");
         choicesContainer = root.Q<VisualElement>("ChoicesContainer");
 
+        var closeButton = root.Q<Button>("CloseButton");
+        var rerollButton = root.Q<Button>("RerollButton");
+
+        if (closeButton != null)
+            closeButton.RegisterCallback<ClickEvent>(OnCloseClicked);
+
+        if (rerollButton != null)
+            rerollButton.RegisterCallback<ClickEvent>(OnRerollClicked);
+
         Hide();
     }
 
@@ -117,6 +126,17 @@ public class UpgradePanelUI : MonoBehaviour
         });
 
         return card;
+    }
+
+    private void OnRerollClicked(ClickEvent evt)
+    {
+        // TODO: reroll logic here
+    }
+
+    private void OnCloseClicked(ClickEvent evt)
+    {
+        // idk man ill have jared do that
+        UpgradeLevelManager.Instance.CloseUpgradePanel();
     }
 
     // private string FormatEffectName(ItemEffectKind kind)

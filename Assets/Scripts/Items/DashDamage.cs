@@ -271,7 +271,7 @@ public class DashDamage : IDisposable
         if (particleEffect != null) particleEffect.Stop();
         
         float waitTime = trailRenderer != null ? trailRenderer.time : 2f;
-        playerMovement.StartCoroutine(DestroyEffectDelayed(waitTime));
+        playerMovement?.StartCoroutine(DestroyEffectDelayed(waitTime));
     }
 
     private IEnumerator DestroyEffectDelayed(float waitTime)
