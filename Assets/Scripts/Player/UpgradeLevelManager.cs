@@ -22,9 +22,6 @@ public class UpgradeLevelManager : MonoBehaviour
     // items blocked at runtime from InventoryRule
     private readonly HashSet<ItemData> blockedFromPool = new();
 
-    [Header("Input")]
-    [SerializeField] private Key activateKey = Key.Q;
-
     [Header("AutoOpen?")]
     [Tooltip("If true, the upgrade panel opens automatically when a level up is available")]
     [SerializeField] private bool autoOpenOnLevelUp = false;
@@ -36,6 +33,10 @@ public class UpgradeLevelManager : MonoBehaviour
     private bool levelUpPending;
     private bool panelIsOpen;
     private PlayerXP playerXP;
+
+    // Input System
+    private InputSystem_Actions _inputActions;
+    private InputAction _upgradeAction;
 
     // track which upgrades have already been chosen 
     private readonly HashSet<ItemData> chosenUpgrades = new();
@@ -56,6 +57,21 @@ public class UpgradeLevelManager : MonoBehaviour
             return;
         }
         Instance = this;
+
+        _inputActions = new InputSystem_Actions();
+        _upgradeAction = _inputActions.Player.Upgrade;
+    }
+
+    void OnEnable()
+    {
+        _upgradeAction.Enable();
+        _upgradeAction.started += OnUpgradePressed;
+    }
+
+    void OnDisable()
+    {
+        _upgradeAction.started -= OnUpgradePressed;
+        _upgradeAction.Disable();
     }
 
     void Start()
@@ -76,37 +92,33 @@ public class UpgradeLevelManager : MonoBehaviour
 
     void Update()
     {
-        bool keyPressed = Keyboard.current != null && Keyboard.current[activateKey].wasPressedThisFrame;
-
-        // if panel is open, Q closes it
-        if (panelIsOpen)
-        {
-            if (keyPressed) 
-                CloseUpgradePanel();
-            return;
-        }
-
-        if (!levelUpPending) return;
-
-        // don't open if the game is paused for pause menu, inventory, or sum else
-        if (PauseManager.GameIsPaused) return;
-
-        if (autoOpenOnLevelUp)
-        {
-            OpenUpgradePanel();
-            return;
-        }
-
-        if (keyPressed)
+        // auto-open path (no key press needed)
+        if (!panelIsOpen && levelUpPending && !PauseManager.GameIsPaused && autoOpenOnLevelUp)
         {
             OpenUpgradePanel();
         }
     }
 
+    /// <summary>Called by InputSystem Upgrade action (Q by default).</summary>
+    private void OnUpgradePressed(InputAction.CallbackContext ctx)
+    {
+        // if panel is open, Q closes it
+        if (panelIsOpen)
+        {
+            CloseUpgradePanel();
+            return;
+        }
+
+        if (!levelUpPending) return;
+        if (PauseManager.GameIsPaused) return;
+
+        OpenUpgradePanel();
+    }
+
     private void OnLevelUpAvailable()
     {
         levelUpPending = true;
-        Debug.Log($"Level Up available. Press '{activateKey}'");
+        Debug.Log("Level Up available. Press the Upgrade key.");
     }
 
     private void OpenUpgradePanel()
