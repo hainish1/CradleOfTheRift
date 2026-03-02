@@ -54,7 +54,7 @@
 
         <!-- Bottom Buttons -->
         <engine:VisualElement name="BottomBar" style="flex-direction: row; align-self: center; position: absolute; bottom: 30px;">
-            <!-- <engine:Button text="Revert" name="ButtonRevert" class="button unityButtonHover" style="width: 300px; font-size: 60px; margin-right: 40px;" /> -->
+            <engine:Button text="Revert" name="ButtonRevert" class="button unityButtonHover" style="width: 300px; font-size: 60px; margin-right: 40px;" />
             <engine:Button text="Back" name="ButtonBack" class="button unityButtonHover" style="width: 300px; font-size: 60px;" />
         </engine:VisualElement>
 

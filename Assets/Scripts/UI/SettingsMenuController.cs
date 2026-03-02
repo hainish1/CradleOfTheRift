@@ -42,6 +42,7 @@ public class SettingsMenuController : MonoBehaviour
     private Label labelAmbient;
 
     // Bottom bar
+    private Button buttonRevert;
     private Button buttonBack;
 
     // Current settings and written to disk on close, applied to Wwise immediately on change
@@ -149,8 +150,11 @@ public class SettingsMenuController : MonoBehaviour
         RegisterSliderLabel(sliderAmbient, labelAmbient, v => { settings.ambientVolume = v; AkUnitySoundEngine.SetRTPCValue(ambientVolumeRTPC, v); });
 
         // Wire bottom bar button
+        buttonRevert = root.Q<Button>("ButtonRevert");
         buttonBack  = root.Q<Button>("ButtonBack");
+        buttonRevert?.RegisterCallback<ClickEvent>(_ => LoadSettings());
         buttonBack?.RegisterCallback<ClickEvent>(_ => OnBackPressed?.Invoke());
+
 
         LoadSettings();
         SwitchToTab(tabAudio, snap: true);
