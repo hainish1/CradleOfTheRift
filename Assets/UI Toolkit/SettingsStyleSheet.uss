@@ -1,8 +1,3 @@
-/* ─────────────────────────────────────────
-   SettingsStyleSheet.uss
-   Extends PauseMenuStyleSheet for settings UI
-───────────────────────────────────────── */
-
 /* ── Tab Buttons ── */
 .settings-tab {
     border-top-width: 0;
@@ -101,7 +96,7 @@
 .settings-value-label {
     width: 80px;
     font-size: 55px;
-    color: rgb(228, 0, 255);
+    color: rgb(255, 255, 255);
     -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
     -unity-text-align: middle-right;
 }
