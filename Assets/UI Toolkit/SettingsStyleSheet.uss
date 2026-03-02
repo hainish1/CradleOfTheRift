@@ -2,6 +2,52 @@
     background-color: rgba(14, 0, 29, 1);
 }
 
+/* ── Shared Base (self-contained, no PauseMenuStyleSheet dependency) ── */
+.Background {
+    flex-grow: 1;
+    background-color: rgba(14, 0, 29, 1);
+    width: 1920px;
+    height: 1080px;
+}
+
+.header {
+    font-size: 200px;
+    -unity-text-align: upper-center;
+    background-color: rgba(255, 255, 255, 0);
+    color: rgb(255, 255, 255);
+    justify-content: flex-start;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerLight-aGnx-Font.ttf?fileID=12800000&guid=353234806b51d43e58d9161acf6d5b78&type=3#CocobikerLight-aGnx-Font");
+}
+
+.button {
+    width: 300px;
+    height: 100px;
+    align-items: center;
+    align-self: center;
+    justify-content: center;
+    font-size: 60px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    color: rgb(255, 255, 255);
+    background-color: rgba(228, 0, 255, 0.2);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-color: rgba(228, 0, 255, 0.7);
+    border-radius: 8px;
+    transition-duration: 0.2s;
+    transition-property: background-color, border-color;
+}
+
+.unityButtonHover:hover {
+    background-color: rgba(228, 0, 255, 0.45);
+    border-color: rgb(228, 0, 255);
+    color: rgb(255, 255, 255);
+    scale: 1.05 1.05;
+    transition-property: scale, background-color, border-color;
+    transition-duration: 0.25s;
+}
+
 /* ── Tab Buttons ── */
 .settings-tab {
     border-top-width: 0;
