@@ -35,7 +35,7 @@ public class SettingsMenuController : MonoBehaviour
     private Slider sliderSFX;
     private Slider sliderAmbient;
 
-    // Numeric labels that display each slider's current value as a percentage
+    // Numeric labels that display each slider's current value
     private Label labelMaster;
     private Label labelMusic;
     private Label labelSFX;
@@ -204,7 +204,6 @@ public class SettingsMenuController : MonoBehaviour
             SaveToDisk();
         }
 
-        // (convert int back to float)
         SetSliderSilently(sliderMaster,  labelMaster,  pending.masterVolume);
         SetSliderSilently(sliderMusic,   labelMusic,   pending.musicVolume);
         SetSliderSilently(sliderSFX,     labelSFX,     pending.sfxVolume);
@@ -220,7 +219,7 @@ public class SettingsMenuController : MonoBehaviour
     {
         SaveToDisk();
 
-        // Wwise RTPCs expect a 0–100 scale
+        // Wwise RTPCs expect a 0–100 scale [TODO: marshall I believe this finds the RTPC by name and sets it globally? IDK]
         AkSoundEngine.SetRTPCValue(masterVolumeRTPC,  pending.masterVolume);
         AkSoundEngine.SetRTPCValue(musicVolumeRTPC,   pending.musicVolume);
         AkSoundEngine.SetRTPCValue(sfxVolumeRTPC,     pending.sfxVolume);
@@ -231,7 +230,6 @@ public class SettingsMenuController : MonoBehaviour
                   $"Master={pending.masterVolume}, Music={pending.musicVolume}, SFX={pending.sfxVolume}, Ambient={pending.ambientVolume}");
     }
 
-    // ── Helpers ───────────────────────────────────────────
 
     /// <summary>
     /// Serializes the pending settings to JSON and writes them to disk at a known path.
@@ -251,8 +249,8 @@ public class SettingsMenuController : MonoBehaviour
         if (slider == null) return;
         slider.RegisterValueChangedCallback(evt =>
         {
-            int v = (int)evt.newValue; // Snap to nearest step
-            slider.SetValueWithoutNotify(v); // Update slider to snapped value 
+            int v = (int)evt.newValue;
+            slider.SetValueWithoutNotify(v);
 
             onChanged(v);
             if (label != null) label.text = v.ToString();
