@@ -116,26 +116,6 @@
     -unity-text-align: middle-right;
 }
 
-/* ── Toggle ── */
-.settings-toggle {
-    margin-right: 10px;
-}
-
-.settings-toggle > .unity-toggle__checkmark {
-    width: 60px;
-    height: 60px;
-    border-radius: 4px;
-    background-color: rgba(255, 255, 255, 0.15);
-    border-width: 2px;
-    border-color: rgba(255, 255, 255, 0.4);
-    transition-duration: 0.2s;
-}
-
-.settings-toggle:checked > .unity-toggle__checkmark {
-    background-color: rgb(228, 0, 255);
-    border-color: rgb(228, 0, 255);
-}
-
 /* ── Dropdown ── */
 .settings-dropdown {
     width: 500px;

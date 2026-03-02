@@ -48,11 +48,6 @@
                     <engine:Label text="50" name="LabelAmbientVolume" class="settings-value-label" />
                 </engine:VisualElement>
 
-                <engine:VisualElement class="settings-row">
-                    <engine:Label text="Mute All" class="settings-label" />
-                    <engine:Toggle name="ToggleMuteAll" class="settings-toggle" />
-                </engine:VisualElement>
-
             </engine:VisualElement>
 
             <!-- ═══════════════════════════════════ -->
