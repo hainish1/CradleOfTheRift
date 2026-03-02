@@ -5,31 +5,41 @@
     border-bottom-width: 0;
     border-left-width: 0;
     border-radius: 0;
-    background-color: rgba(21, 7, 34, 0);
-    color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0);
+    color: rgba(255, 255, 255, 0.3);
     font-size: 70px;
     -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
     width: 380px;
     height: 90px;
     padding-bottom: 8px;
     -unity-text-align: lower-center;
-    transition-duration: 0.2s;
+
+    /* Animate color and underline */
+    transition-duration: 0.25s;
     transition-property: color, border-bottom-width, border-bottom-color;
+
     border-bottom-width: 0;
     border-bottom-color: rgba(255, 255, 255, 0);
 }
 
+/* Hovering an inactive tab lifts it to mid-brightness */
 .settings-tab:hover {
-    color: rgba(255, 255, 255, 0.85);
-    background-color: rgba(21, 7, 34, 0);
-    scale: 1 1;
+    color: rgba(255, 255, 255, 0.65);
+    background-color: rgba(255, 255, 255, 0);
+    scale: 1 1; /* prevent the global unityButtonHover scale from firing */
 }
 
-/* Active tab — white underline */
+/* Active tab — full white text and underline grows in */
 .settings-tab--active {
     color: rgb(255, 255, 255);
     border-bottom-width: 4px;
     border-bottom-color: rgb(255, 255, 255);
+}
+
+/* Active tab hover — stay bright, no scale */
+.settings-tab--active:hover {
+    color: rgb(255, 255, 255);
+    background-color: rgba(255, 255, 255, 0);
 }
 
 /* ── Settings Page ── */
@@ -65,37 +75,31 @@
     -unity-text-align: middle-left;
 }
 
-/* ── Slider ──
-   Uses .settings-slider as a parent class on every rule to be more specific
-   than the global rules in PauseMenuStyleSheet.uss which set width: 8px
-   on .unity-base-slider__tracker and .unity-base-slider__dragger.
-   More specific selector = wins the cascade. */
+/* ── Slider ── */
 .settings-slider {
     width: 600px;
-    height: 40px;           /* Give the slider enough height to be clickable */
+    height: 40px;
     margin-right: 20px;
     justify-content: center;
 }
 
-/* Full background track */
 .settings-slider .unity-base-slider__tracker {
     background-color: rgba(255, 255, 255, 0.2);
     height: 8px;
-    width: 100%;            /* Override the global 8px width */
+    width: 100%;
     border-radius: 4px;
     border-width: 0;
 }
 
-/* Dragger (the round handle) */
 .settings-slider .unity-base-slider__dragger {
     background-color: rgb(255, 255, 255);
-    width: 28px;            /* Override the global 8px width */
+    width: 28px;
     height: 28px;
     border-radius: 14px;
     border-width: 0;
     margin-top: -10px;
     transition-duration: 0.15s;
-    transition-property: scale;
+    transition-property: scale, background-color;
 }
 
 .settings-slider .unity-base-slider__dragger:hover {
@@ -103,7 +107,7 @@
     scale: 1.2 1.2;
 }
 
-/* ── Numeric value label on the right of a slider ── */
+/* ── Numeric value label ── */
 .settings-value-label {
     width: 80px;
     font-size: 55px;
