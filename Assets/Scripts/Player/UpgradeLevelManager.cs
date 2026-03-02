@@ -64,12 +64,14 @@ public class UpgradeLevelManager : MonoBehaviour
 
     void OnEnable()
     {
+        if (_upgradeAction == null) return;
         _upgradeAction.Enable();
         _upgradeAction.performed += OnUpgradePressed;
     }
 
     void OnDisable()
     {
+        if (_upgradeAction == null) return;
         _upgradeAction.performed -= OnUpgradePressed;
         _upgradeAction.Disable();
     }
