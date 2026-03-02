@@ -155,14 +155,6 @@ public class SettingsMenuController : MonoBehaviour
 
         // Modal 
         modalOverlay = root.Q<VisualElement>("ModalInstance");
-        if(modalOverlay != null)
-        {
-            Debug.Log("Got something");
-        }
-        else
-        {
-            Debug.Log("Didnt get modal");
-        }
 
         root.Q<Button>("ModalButtonYes")?.RegisterCallback<ClickEvent>(_ =>
         {
@@ -225,13 +217,7 @@ public class SettingsMenuController : MonoBehaviour
     /// <summary>
     /// Returns true if the current pending values differ from the last applied snapshot.
     /// </summary>
-    private bool HasUnsavedChanges()
-    {
-        return pending.masterVolume  != applied.masterVolume  ||
-               pending.musicVolume   != applied.musicVolume   ||
-               pending.sfxVolume     != applied.sfxVolume     ||
-               pending.ambientVolume != applied.ambientVolume;
-    }
+    private bool HasUnsavedChanges() => !pending.Equals(applied);
 
     private void ShowModal() 
     {
