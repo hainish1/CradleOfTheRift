@@ -105,7 +105,8 @@ public class RingAttackState_Boss : EnemyState
 
             // Shockwave is a fire-and-forget particle system, use PlayPSVFX
             boss.PlayPSVFX(boss.shockwaveVFXPrefab, boss.transform.position);
-            stateMachine.ChangeState(boss.GetRecoveryState());
+            // stateMachine.ChangeState(boss.GetRecoveryState());
+            stateMachine.ChangeState(boss.GetVulnerableState());
         }
     }
     

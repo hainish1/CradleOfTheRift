@@ -9,9 +9,11 @@ public static class EnemyRegistry
 {
     private static readonly List<EnemyRange> _flyers = new List<EnemyRange>();
     private static readonly List<EnemyMelee> _walkers = new List<EnemyMelee>();
+    private static readonly List<EnemyGolem> _golems = new List<EnemyGolem>();
 
     public static IReadOnlyList<EnemyRange> Flyers => _flyers;
     public static IReadOnlyList<EnemyMelee> Walkers => _walkers;
+    public static IReadOnlyList<EnemyGolem> Golems => _golems;
 
     public static void RegisterFlyer(EnemyRange enemy)
     {
@@ -33,5 +35,15 @@ public static class EnemyRegistry
     public static void UnregisterWalker(EnemyMelee enemy)
     {
         _walkers.Remove(enemy);
+    }
+    public static void RegisterGolem(EnemyGolem enemy)
+    {
+        if (!_golems.Contains(enemy))
+            _golems.Add(enemy);
+    }
+
+    public static void UnregisterGolem(EnemyGolem enemy)
+    {
+        _golems.Remove(enemy);
     }
 }

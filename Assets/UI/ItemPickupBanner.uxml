@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/ItemPickupBanner.uss?fileID=7433441132597879392&amp;guid=b32b58659dbfcbe45abffe025a99c5f6&amp;type=3#ItemPickupBanner" />
+    <ui:VisualElement name="BannerOverlay" picking-mode="Ignore" class="banner-overlay">
+        <ui:VisualElement name="BannerBox" picking-mode="Ignore" class="banner-box">
+            <ui:VisualElement name="BannerIcon" picking-mode="Ignore" class="banner-icon" />
+            <ui:VisualElement name="BannerTextColumn" picking-mode="Ignore" class="banner-text-column">
+                <ui:Label name="BannerRarity" text="RARE" picking-mode="Ignore" class="banner-rarity" />
+                <ui:Label name="BannerItemName" text="ITEM NAME" picking-mode="Ignore" class="banner-item-name" />
+                <ui:Label name="BannerDescription" text="Item description goes here." picking-mode="Ignore" class="banner-description" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -4,6 +4,10 @@
         <ui:VisualElement name="UpgradePanel" class="panel">
             <ui:Label name="UpgradeTitle" text="LEVEL UP! Choose an Upgrade" class="title" style="width: 441px;" />
             <ui:VisualElement name="ChoicesContainer" class="choices-container" />
+            <ui:VisualElement name="ActionButtons" class="action-buttons-container">
+                <ui:Button name="RerollButton" text="Reroll" class="action-button reroll" />
+                <ui:Button name="CloseButton" text="Close" class="action-button close" />
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

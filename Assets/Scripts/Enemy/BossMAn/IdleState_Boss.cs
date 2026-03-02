@@ -46,7 +46,6 @@ public class IdleState_Boss : EnemyState
             {
                 stateMachine.ChangeState(boss.GetExploisionState());
             }
-            // stateMachine.ChangeState(boss.GetLeapAttackState());
             return;
         }
     }

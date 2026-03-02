@@ -67,7 +67,7 @@ public class ToxicAttackSpeed : IDisposable
         if (totalPoisonStacks > 0 && attackSpeedPerStack > 0f)
         {
             float mult = 1f + totalPoisonStacks * attackSpeedPerStack;
-            meleeSpeedModifier = new BasicStatsModifier(StatType.MeleeAttackSpeed, -1f, v => v * mult);
+            meleeSpeedModifier = new BasicStatsModifier(StatType.MeleeAnimationSpeed, -1f, v => v * mult);
             stats.Mediator.AddModifier(meleeSpeedModifier);
         }
     }

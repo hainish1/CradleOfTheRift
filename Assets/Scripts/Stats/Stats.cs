@@ -18,12 +18,13 @@ public enum StatType
 {
     // Melee Attack Enums
     MeleeDamage,
-    MeleeAttackSpeed,
     MeleeAttackRate,
+    MeleeAnimationSpeed,
 
     // Ranged Attack Enums
     ProjectileDamage,
     ProjectileFireRate,
+    ProjectileAnimationSpeed,
     FireCharges,
     FireChargeCooldown,
     ProjectileSpread,
@@ -79,15 +80,17 @@ public class Stats
     
     public float MeleeDamage { get { return FloatStatQuery(StatType.MeleeDamage, baseStats.meleeDamage); } }
 
-    public float MeleeAttackSpeed { get { return FloatStatQuery(StatType.MeleeAttackSpeed, baseStats.meleeAttackSpeed); } }
-
     public float MeleeAttackRate { get { return FloatStatQuery(StatType.MeleeAttackRate, baseStats.meleeAttackRate); } }
+
+    public float MeleeAnimationSpeed { get { return FloatStatQuery(StatType.MeleeAnimationSpeed, baseStats.meleeAnimationSpeed); } }
 
     // Ranged Attack Properties
 
     public float ProjectileDamage { get { return FloatStatQuery(StatType.ProjectileDamage, baseStats.projectileDamage); } }
 
     public float ProjectileFireRate { get { return FloatStatQuery(StatType.ProjectileFireRate, baseStats.projectileFireRate); } }
+
+    public float ProjectileAnimationSpeed { get { return FloatStatQuery(StatType.ProjectileAnimationSpeed, baseStats.projectileAnimationSpeed); } }
 
     public int FireCharges { get { return IntStatQuery(StatType.FireCharges, baseStats.fireCharges); } }
 
@@ -178,10 +181,11 @@ public class Stats
         return type switch
         {
             StatType.MeleeDamage => baseStats.meleeDamage,
-            StatType.MeleeAttackSpeed => baseStats.meleeAttackSpeed,
             StatType.MeleeAttackRate => baseStats.meleeAttackRate,
+            StatType.MeleeAnimationSpeed => baseStats.meleeAnimationSpeed,
             StatType.ProjectileDamage => baseStats.projectileDamage,
             StatType.ProjectileFireRate => baseStats.projectileFireRate,
+            StatType.ProjectileAnimationSpeed => baseStats.projectileAnimationSpeed,
             StatType.FireCharges => baseStats.fireCharges,
             StatType.FireChargeCooldown => baseStats.fireChargeCooldown,
             StatType.ProjectileSpread => baseStats.projectileSpread,
@@ -212,7 +216,7 @@ public class Stats
 
     public override string ToString()
     {
-        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, AttackSpeed: {MeleeAttackSpeed}, FireChargeCooldown: {FireChargeCooldown} ,Projectile Damage: {ProjectileDamage}, Melee Damage: {MeleeDamage}, Slam Damage: {ShockwaveDamage}";
+        return $"Health: {Health}, MoveSpeed: {MoveSpeed:F1}, AttackSpeed: {MeleeAnimationSpeed}, FireChargeCooldown: {FireChargeCooldown} ,Projectile Damage: {ProjectileDamage}, Melee Damage: {MeleeDamage}, Slam Damage: {ShockwaveDamage}";
     }
 
     /// <summary>

@@ -7,6 +7,7 @@ public class UpgradePanelUI : MonoBehaviour
     private UIDocument document;
     private VisualElement overlay;
     private VisualElement choicesContainer;
+    private Button rerollButton;
 
     void Awake()
     {
@@ -15,6 +16,14 @@ public class UpgradePanelUI : MonoBehaviour
 
         overlay = root.Q<VisualElement>("UpgradeOverlay");
         choicesContainer = root.Q<VisualElement>("ChoicesContainer");
+        rerollButton = root.Q<Button>("RerollButton");
+
+        var closeButton = root.Q<Button>("CloseButton");
+        if (closeButton != null)
+            closeButton.RegisterCallback<ClickEvent>(OnCloseClicked);
+
+        if (rerollButton != null)
+            rerollButton.RegisterCallback<ClickEvent>(OnRerollClicked);
 
         Hide();
     }
@@ -23,7 +32,10 @@ public class UpgradePanelUI : MonoBehaviour
     {
         // upgrade level manager runs first
         if (UpgradeLevelManager.Instance != null)
+        {
             UpgradeLevelManager.Instance.UpgradePanelOpened += Show;
+            UpgradeLevelManager.Instance.UpgradePanelClosed += Hide;
+        }
         else
             Debug.LogWarning("UpgradeLevelManager.Instance is null");
     }
@@ -31,7 +43,10 @@ public class UpgradePanelUI : MonoBehaviour
     void OnDestroy()
     {
         if (UpgradeLevelManager.Instance != null)
+        {
             UpgradeLevelManager.Instance.UpgradePanelOpened -= Show;
+            UpgradeLevelManager.Instance.UpgradePanelClosed -= Hide;
+        }
     }
 
     public void Show(List<ItemData> choices)
@@ -48,6 +63,7 @@ public class UpgradePanelUI : MonoBehaviour
             choicesContainer.Add(card);
         }
 
+        UpdateRerollButtonText();
         overlay.style.display = DisplayStyle.Flex;
     }
 
@@ -111,6 +127,26 @@ public class UpgradePanelUI : MonoBehaviour
         });
 
         return card;
+    }
+
+    private void OnRerollClicked(ClickEvent evt)
+    {
+        UpgradeLevelManager.Instance.RerollChoices();
+        UpdateRerollButtonText();
+    }
+
+    private void UpdateRerollButtonText()
+    {
+        if (rerollButton == null || UpgradeLevelManager.Instance == null) return;
+        int n = UpgradeLevelManager.Instance.RerollCountRemaining;
+        rerollButton.text = $"Reroll ({n})";
+        rerollButton.SetEnabled(n > 0);
+    }
+
+    private void OnCloseClicked(ClickEvent evt)
+    {
+        // idk man ill have jared do that
+        UpgradeLevelManager.Instance.CloseUpgradePanel();
     }
 
     // private string FormatEffectName(ItemEffectKind kind)

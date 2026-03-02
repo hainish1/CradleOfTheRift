@@ -26,6 +26,7 @@ public class AgentKnockBack : MonoBehaviour
     bool prevIsStopped;
 
     EnemyMelee melee; // cached for airborne knockback redirect
+    bool isFlyer; // wisp get different knockback 
 
     [Header("SoftBody")]
     public SoftBodyPhysics softBody;
@@ -35,6 +36,7 @@ public class AgentKnockBack : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         softBody = GetComponentInChildren<SoftBodyPhysics>();
         melee = GetComponent<EnemyMelee>();
+        isFlyer = GetComponent<EnemyRange>() != null;
     }
 
     void Update()
@@ -54,7 +56,7 @@ public class AgentKnockBack : MonoBehaviour
         transform.position += delta;
 
         // snap to ground surface during knockback to prevent floating
-        if (manageAgentPosition)
+        if (manageAgentPosition && melee != null)
         {
             if (Physics.Raycast(transform.position + Vector3.up * 1f, Vector3.down,
                     out var groundHit, 3f, collisionMask, QueryTriggerInteraction.Ignore))
@@ -119,7 +121,7 @@ public class AgentKnockBack : MonoBehaviour
             }
         }
         externalVelocity += impulse;
-        externalVelocity.y = 0f; // keep knockback horizontal
+        if (!isFlyer) externalVelocity.y = 0f; // keep knockback horizontal for ground enemies only
 
         if (softBody != null)
         {
@@ -138,7 +140,7 @@ public class AgentKnockBack : MonoBehaviour
 
         if (agent == null || !agent.isActiveAndEnabled) return;
 
-        if (manageAgentPosition)
+        if (manageAgentPosition && melee != null)
         {
             // first find the true physics ground 
             Vector3 correctedPos = transform.position;
@@ -165,6 +167,17 @@ public class AgentKnockBack : MonoBehaviour
             {
                 transform.position = correctedPos;
                 agent.nextPosition = correctedPos;
+            }
+        }
+        else if (!manageAgentPosition)
+        {
+            // For Flying enemy, warp agent back to navmesh without moving actual transform
+            NavMeshHit navHit;
+            if (NavMesh.SamplePosition(transform.position, out navHit, 80f, NavMesh.AllAreas))
+            {
+                Vector3 savedPos = transform.position;
+                agent.Warp(navHit.position);
+                transform.position = savedPos; // restore the actual flight position
             }
         }
 

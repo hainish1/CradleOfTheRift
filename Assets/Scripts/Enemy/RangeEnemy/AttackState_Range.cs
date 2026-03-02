@@ -16,21 +16,22 @@ public class AttackState_Range : EnemyState
     }
 
     /// <summary>
-    /// when enter, hold position, reset ammo, start with attackDelay
+    /// when enter, hold position, stop agent, reset ammo, start with attackDelay
     /// </summary>
     public override void Enter()
     {
         // holdHorizontalPosition keeps the enemy in place via flight logic;
         enemyRange.SetHorizontalPosition(true);
+        enemyRange.SafeStopAgent();
         enemyRange.currentShotsRemaining = enemyRange.shotsPerSet;
-        timer = enemyRange.attackDelay;
+        timer = Random.Range(enemyRange.attackDelayMin, enemyRange.attackDelayMax);
     }
 
     public override void Exit()
     {
         enemyRange.SetHorizontalPosition(false);
         // brief cooldown so Chase doesn't re-enter Attack immediately
-        enemyRange.nextAttackTime = Time.time + enemyRange.attackDelay;
+        enemyRange.nextAttackTime = Time.time + Random.Range(enemyRange.attackDelayMin, enemyRange.attackDelayMax);
     }
 
     /// <summary>
@@ -64,7 +65,7 @@ public class AttackState_Range : EnemyState
 
             if (enemyRange.currentShotsRemaining > 0)
             {
-                timer = enemyRange.recoveryDuration; 
+                timer = Random.Range(enemyRange.recoveryDurationMin, enemyRange.recoveryDurationMax); 
             }
             else
             {

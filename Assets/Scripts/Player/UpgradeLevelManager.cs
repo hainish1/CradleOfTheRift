@@ -13,24 +13,33 @@ public class UpgradeLevelManager : MonoBehaviour
     public static UpgradeLevelManager Instance { get; private set; }
 
     [Header("Upgrade Pool")]
-    [Tooltip("Base upgrade pool, always available from the start.")]
+    [Tooltip("All possible upgrade ItemData")]
     [SerializeField] private List<ItemData> upgradePool = new();
 
-    // items unlocked at runtime via InventoryRule (AddToUpgradePool action)
+    // items unlocked at runtime from InventoryRule
     private readonly List<ItemData> runtimePool = new();
 
-    // items blocked at runtime via InventoryRule (RemoveFromUpgradePool action)
+    // items blocked at runtime from InventoryRule
     private readonly HashSet<ItemData> blockedFromPool = new();
 
-    [Header("Input")]
-    [SerializeField] private Key activateKey = Key.U;
+    [Header("AutoOpen?")]
+    [Tooltip("If true, the upgrade panel opens automatically when a level up is available")]
+    [SerializeField] private bool autoOpenOnLevelUp = false;
 
     [Header("Upgrade Options")]
     [Tooltip("Max number of upgrade choices shown each time panel open")]
     [SerializeField] private int maxChoices = 3;
 
+    private int _rerollCountRemaining = 3;
+    public int RerollCountRemaining => _rerollCountRemaining;
+
     private bool levelUpPending;
+    private bool panelIsOpen;
     private PlayerXP playerXP;
+
+    // Input System
+    private InputSystem_Actions _inputActions;
+    private InputAction _upgradeAction;
 
     // track which upgrades have already been chosen 
     private readonly HashSet<ItemData> chosenUpgrades = new();
@@ -41,6 +50,7 @@ public class UpgradeLevelManager : MonoBehaviour
     // Events
     public event Action<List<ItemData>> UpgradePanelOpened;   // pass the choices to UI
     public event Action<int> UpgradeSelected;
+    public event Action UpgradePanelClosed; // call when you wanna clas the panel or sum
 
     void Awake()
     {
@@ -50,6 +60,21 @@ public class UpgradeLevelManager : MonoBehaviour
             return;
         }
         Instance = this;
+
+        _inputActions = new InputSystem_Actions();
+        _upgradeAction = _inputActions.Player.Upgrade;
+    }
+
+    void OnEnable()
+    {
+        _upgradeAction.Enable();
+        _upgradeAction.started += OnUpgradePressed;
+    }
+
+    void OnDisable()
+    {
+        _upgradeAction.started -= OnUpgradePressed;
+        _upgradeAction.Disable();
     }
 
     void Start()
@@ -57,7 +82,10 @@ public class UpgradeLevelManager : MonoBehaviour
         playerXP = PlayerXP.Instance;
 
         if (playerXP != null)
+        {
             playerXP.LevelUpAvailable += OnLevelUpAvailable;
+            playerXP.LeveledUp += OnLeveledUp;
+        }
         else
             Debug.LogWarning("PlayerXP not found.");
     }
@@ -65,27 +93,53 @@ public class UpgradeLevelManager : MonoBehaviour
     void OnDestroy()
     {
         if (playerXP != null)
+        {
             playerXP.LevelUpAvailable -= OnLevelUpAvailable;
+            playerXP.LeveledUp -= OnLeveledUp;
+        }
+    }
+
+    private void OnLeveledUp(int newLevel)
+    {
+        if (newLevel > 0 && newLevel % 5 == 0)
+            _rerollCountRemaining++;
     }
 
     void Update()
     {
-        if (!levelUpPending) return;
-
-        if (Keyboard.current != null && Keyboard.current[activateKey].wasPressedThisFrame)
+        // auto-open path (no key press needed)
+        if (!panelIsOpen && levelUpPending && !PauseManager.GameIsPaused && autoOpenOnLevelUp)
         {
             OpenUpgradePanel();
         }
     }
 
+    /// <summary>Called by InputSystem Upgrade action (Q by default).</summary>
+    private void OnUpgradePressed(InputAction.CallbackContext ctx)
+    {
+        // if panel is open, Q closes it
+        if (panelIsOpen)
+        {
+            CloseUpgradePanel();
+            return;
+        }
+
+        if (!levelUpPending) return;
+        if (PauseManager.GameIsPaused) return;
+
+        OpenUpgradePanel();
+    }
+
     private void OnLevelUpAvailable()
     {
         levelUpPending = true;
-        Debug.Log($"Level Up available. Press '{activateKey}'");
+        Debug.Log("Level Up available. Press the Upgrade key.");
     }
 
     private void OpenUpgradePanel()
     {
+        if (panelIsOpen) return;
+
         //random choices from remaining pool
         currentChoices = PickRandomUpgrades();
 
@@ -99,6 +153,7 @@ public class UpgradeLevelManager : MonoBehaviour
         }
 
         levelUpPending = false;
+        panelIsOpen = true;
 
         Time.timeScale = 0f;
         PauseManager.GameIsPaused = true;
@@ -109,6 +164,33 @@ public class UpgradeLevelManager : MonoBehaviour
 
         UpgradePanelOpened?.Invoke(currentChoices);
         Debug.Log($"Upgrade panel opened with {currentChoices.Count} choices.");
+    }
+    // Reroll
+    public void RerollChoices()
+    {
+        if (!panelIsOpen || _rerollCountRemaining <= 0) return;
+        _rerollCountRemaining--;
+        currentChoices = PickRandomUpgrades();
+        if (currentChoices.Count == 0) return;
+        UpgradePanelOpened?.Invoke(currentChoices);
+    }
+    // close the upgrade panel
+    public void CloseUpgradePanel()
+    {
+        if (!panelIsOpen) return;
+
+        panelIsOpen = false;
+        levelUpPending = true; // keep the level up, but no rerun
+
+        UpgradePanelClosed?.Invoke();
+
+        // resume
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        PauseManager.CurrentPauseState = PauseManager.PauseState.None;
+        PauseManager.GameIsPaused = false;
+        Time.timeScale = 1f;
     }
 
 
@@ -143,6 +225,9 @@ public class UpgradeLevelManager : MonoBehaviour
         // Consume the level up
         if (PlayerXP.Instance != null)
             PlayerXP.Instance.ConsumeLevelUp();
+
+        // Close panel
+        panelIsOpen = false;
 
         // Resume game
         Cursor.lockState = CursorLockMode.Locked;
@@ -233,5 +318,7 @@ public class UpgradeLevelManager : MonoBehaviour
         runtimePool.Clear();
         blockedFromPool.Clear();
         levelUpPending = false;
+        panelIsOpen = false;
+        _rerollCountRemaining = 3;
     }
 }

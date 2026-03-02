@@ -9,7 +9,6 @@ public class InventoryController : MonoBehaviour
     [SerializeField] private UIDocument uiDocument;
     [SerializeField] private PauseManager pauseManager;
 
-
     [Header("Settings")]
     [Tooltip("Key to open/close inventory")]
     [SerializeField] private KeyCode toggleKey = KeyCode.I; 
@@ -53,7 +52,6 @@ public class InventoryController : MonoBehaviour
             backButton.RegisterCallback<ClickEvent>(OnBackButtonClick);
         }
 
-
         RefreshInventoryDisplay();
 
 
@@ -66,9 +64,9 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    
     private void OnBackButtonClick(ClickEvent evt)
     {
-        Debug.Log("backClicked");
         this.gameObject.SetActive(false);
         pauseManager.ResumeGame();
     }
