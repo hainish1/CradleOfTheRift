@@ -1,8 +1,8 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/Compass.uss?fileID=7433441132597879392&amp;guid=d29b1642c11154b49916333ed8f81e2e&amp;type=3#Compass" />
     <engine:VisualElement name="compass-root" picking-mode="Ignore" class="compass-root">
-        <engine:VisualElement name="compass-mask" class="compass-mask">
-            <engine:VisualElement name="icon-container" class="icon-container" />
+        <engine:VisualElement name="compass-mask" class="compass-mask" style="background-color: rgba(0, 0, 0, 0); scale: 1.2 1.2; border-left-color: rgba(255, 255, 255, 0); border-right-color: rgba(255, 255, 255, 0); border-top-color: rgba(255, 255, 255, 0); border-bottom-color: rgba(255, 255, 255, 0);">
+            <engine:VisualElement name="icon-container" class="icon-container" style="background-image: url(&quot;project://database/Assets/Art%20Assets/2D/UI%20assets%202/Compass/Compass_Full.png?fileID=2800000&amp;guid=21a9c61980a544c5e93a99f6109edbec&amp;type=3#Compass_Full&quot;);" />
             <engine:VisualElement name="center-notch" class="center-notch" />
         </engine:VisualElement>
     </engine:VisualElement>

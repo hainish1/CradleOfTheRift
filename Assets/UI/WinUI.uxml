@@ -3,8 +3,8 @@
     <Style src="project://database/Assets/UI%20Toolkit/PauseMenuStyleSheet.uss?fileID=7433441132597879392&amp;guid=e780f1131c06d4602ab181ccec82676f&amp;type=3#PauseMenuStyleSheet" />
     <engine:VisualElement name="WinContainer" class="Background" style="flex-grow: 1; align-items: stretch; background-image: url(&quot;project://database/Assets/Art%20Assets/2D/Concept%20art%202/Win.png?fileID=2800000&amp;guid=abb09647016804cb09f456587d0b77d6&amp;type=3#Win&quot;);">
         <engine:Label text="You Win" name="WinLabel" class="header" style="color: rgb(122, 0, 255);" />
-        <engine:Button text="Play Again" name="playAgainButton" class="button unityButtonHover" style="align-items: center; scale: 1.5 1.5; position: absolute; top: 380px; left: 119px; background-color: rgba(21, 7, 34, 0.26);" />
-        <engine:Button text="Main Menu" name="mainMenuButton" class="button unityButtonHover" style="scale: 1.5 1.5; position: absolute; top: 560px; left: 123px; background-color: rgba(21, 7, 34, 0.26);" />
-        <engine:Button text="Quit Game" name="quitButton" class="button unityButtonHover" style="scale: 1.5 1.5; position: absolute; top: 744px; left: 127px; background-color: rgba(21, 7, 34, 0.26);" />
+        <engine:Button text="Play Again" name="playAgainButton" class="button unityButtonHover" style="align-items: center; scale: 1.5 1.5; position: absolute; top: 380px; left: 119px; background-color: rgba(21, 7, 34, 0);" />
+        <engine:Button text="Main Menu" name="mainMenuButton" class="button unityButtonHover" style="scale: 1.5 1.5; position: absolute; top: 560px; left: 123px; background-color: rgba(21, 7, 34, 0);" />
+        <engine:Button text="Quit Game" name="quitButton" class="button unityButtonHover" style="scale: 1.5 1.5; position: absolute; top: 744px; left: 127px; background-color: rgba(21, 7, 34, 0);" />
     </engine:VisualElement>
 </engine:UXML>
