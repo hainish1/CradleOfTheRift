@@ -16,20 +16,20 @@
     transition-duration: 0.2s;
     transition-property: color, border-bottom-width, border-bottom-color;
     border-bottom-width: 0;
-    border-bottom-color: rgba(228, 0, 255, 0);
+    border-bottom-color: rgba(255, 255, 255, 0);
 }
 
 .settings-tab:hover {
     color: rgba(255, 255, 255, 0.85);
     background-color: rgba(21, 7, 34, 0);
-    scale: 1 1; /* override the global hover scale for tabs */
+    scale: 1 1;
 }
 
-/* Active tab gets full white text and a purple underline */
+/* Active tab — white underline */
 .settings-tab--active {
     color: rgb(255, 255, 255);
     border-bottom-width: 4px;
-    border-bottom-color: rgb(228, 0, 255);
+    border-bottom-color: rgb(255, 255, 255);
 }
 
 /* ── Settings Page ── */
@@ -65,30 +65,41 @@
     -unity-text-align: middle-left;
 }
 
-/* ── Slider ── */
+/* ── Slider ──
+   Uses .settings-slider as a parent class on every rule to be more specific
+   than the global rules in PauseMenuStyleSheet.uss which set width: 8px
+   on .unity-base-slider__tracker and .unity-base-slider__dragger.
+   More specific selector = wins the cascade. */
 .settings-slider {
     width: 600px;
+    height: 40px;           /* Give the slider enough height to be clickable */
     margin-right: 20px;
+    justify-content: center;
 }
 
-.settings-slider > .unity-base-slider__dragger {
+/* Full background track */
+.settings-slider .unity-base-slider__tracker {
+    background-color: rgba(255, 255, 255, 0.2);
+    height: 8px;
+    width: 100%;            /* Override the global 8px width */
+    border-radius: 4px;
+    border-width: 0;
+}
+
+/* Dragger (the round handle) */
+.settings-slider .unity-base-slider__dragger {
+    background-color: rgb(255, 255, 255);
+    width: 28px;            /* Override the global 8px width */
+    height: 28px;
+    border-radius: 14px;
+    border-width: 0;
+    margin-top: -10px;
+    transition-duration: 0.15s;
+    transition-property: scale;
+}
+
+.settings-slider .unity-base-slider__dragger:hover {
     background-color: rgb(228, 0, 255);
-    width: 22px;
-    height: 22px;
-    border-radius: 11px;
-    border-width: 0;
-    margin-top: -8px;
-}
-
-.settings-slider > .unity-base-slider__tracker {
-    background-color: rgba(255, 255, 255, 0.25);
-    height: 6px;
-    border-radius: 3px;
-    border-width: 0;
-}
-
-.settings-slider > .unity-base-slider__dragger:hover {
-    background-color: rgb(255, 100, 255);
     scale: 1.2 1.2;
 }
 
