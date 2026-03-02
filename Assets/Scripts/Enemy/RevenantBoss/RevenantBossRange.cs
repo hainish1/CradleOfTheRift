@@ -153,26 +153,18 @@ public class RevenantBossRange : Enemy
         direction2 += Random.insideUnitSphere * projectileSpread;
         direction2.Normalize();
 
-        GameObject projObj1, projObj2;
+        // EnemyProjectile projectile1 = Instantiate(projectilePrefab, spawnPoint1, rotation1);
+        // projectile1.Init(direction1 * projectileSpeed, projectileMask, this.projectileDamage);
 
-        // use ObjectPooling here
-        if (ObjectPool.instance != null)
-        {
-            projObj1 = ObjectPool.instance.GetObject(projectilePrefab.gameObject, firePoint);
-            projObj1.transform.SetPositionAndRotation(spawnPoint1, rotation1);
+        // EnemyProjectile projectile2 = Instantiate(projectilePrefab, spawnPoint2, rotation2);
+        // projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
 
-            projObj2 = ObjectPool.instance.GetObject(projectilePrefab.gameObject, firePoint2);
-            projObj2.transform.SetPositionAndRotation(spawnPoint2, rotation2);
-        }
-        else // do the normal instantiating route
-        {
-            projObj1 = Instantiate(projectilePrefab.gameObject, spawnPoint1, rotation1);
-            projObj2 = Instantiate(projectilePrefab.gameObject, spawnPoint2, rotation2);
-        }
-
+        // Use pooling for projectiles if available, else instantiate as fallback.
+        GameObject projObj1 = GetPooledProjectile(projectilePrefab.gameObject, spawnPoint1, rotation1, firePoint);
         EnemyProjectile projectile1 = projObj1.GetComponent<EnemyProjectile>();
         projectile1.Init(direction1 * projectileSpeed, projectileMask, this.projectileDamage);
 
+        GameObject projObj2 = GetPooledProjectile(projectilePrefab.gameObject, spawnPoint2, rotation2, firePoint2);
         EnemyProjectile projectile2 = projObj2.GetComponent<EnemyProjectile>();
         projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
 
@@ -226,10 +218,19 @@ public class RevenantBossRange : Enemy
         Vector3 spawnPoint2 = AOEPoint2.position + direction2 * spawnOffset;
         Quaternion rotation2 = Quaternion.LookRotation(direction2, Vector3.up);
 
-        EnemyAOEProjectile projectile1 = Instantiate(AOEProjectilePrefab, spawnPoint1, rotation1);
+        // EnemyAOEProjectile projectile1 = Instantiate(AOEProjectilePrefab, spawnPoint1, rotation1);
+        // projectile1.Init(direction1 * projectileSpeed, projectileMask, this.AOEProjectileDamage);
+
+        // EnemyAOEProjectile projectile2 = Instantiate(AOEProjectilePrefab, spawnPoint2, rotation2);
+        // projectile2.Init(direction2 * projectileSpeed, projectileMask, this.AOEProjectileDamage);
+
+        // Use pooling for projectiles if available, else instantiate as fallback.
+        GameObject projObj1 = GetPooledProjectile(AOEProjectilePrefab.gameObject, spawnPoint1, rotation1, AOEPoint);
+        EnemyAOEProjectile projectile1 = projObj1.GetComponent<EnemyAOEProjectile>();
         projectile1.Init(direction1 * projectileSpeed, projectileMask, this.AOEProjectileDamage);
 
-        EnemyAOEProjectile projectile2 = Instantiate(AOEProjectilePrefab, spawnPoint2, rotation2);
+        GameObject projObj2 = GetPooledProjectile(AOEProjectilePrefab.gameObject, spawnPoint2, rotation2, AOEPoint2);
+        EnemyAOEProjectile projectile2 = projObj2.GetComponent<EnemyAOEProjectile>();
         projectile2.Init(direction2 * projectileSpeed, projectileMask, this.AOEProjectileDamage);
 
         audioController?.PlayFireAOEProjectileSound();
@@ -267,12 +268,43 @@ public class RevenantBossRange : Enemy
             Vector3 finalVelocity = firingVector * recoveryBarrageProjectileSpeed * randomSpeedMod;
             Vector3 spawnPoint = arcFiringPoint.position + finalHorizontalDir * spawnOffset;
             
-            EnemyAOEArcingProjectile projectile = Instantiate(AOEArcingProjectilePrefab, spawnPoint, Quaternion.LookRotation(firingVector));
-            projectile.Init(finalVelocity, projectileMask, AOEProjectileDamage);
+            // EnemyAOEArcingProjectile projectile = Instantiate(AOEArcingProjectilePrefab, spawnPoint, Quaternion.LookRotation(firingVector));
+            // projectile.Init(finalVelocity, projectileMask, AOEProjectileDamage);
+
+            // Use pooling for projectiles if available, else instantiate as fallback.
+            GameObject projObj = GetPooledProjectile(AOEArcingProjectilePrefab.gameObject, spawnPoint, Quaternion.LookRotation(firingVector), arcFiringPoint);
+            EnemyAOEArcingProjectile projectile = projObj.GetComponent<EnemyAOEArcingProjectile>();
+            projectile.Init(finalVelocity, projectileMask, this.AOEProjectileDamage);
+
 
             yield return new WaitForSeconds(recoveryBarrageFiringInterval); // small delay between shots
         }
     }   
+
+    /// <summary>
+    /// Helper function to get projectile from pool or instantiate if pool is not available. Sets position and rotation as well.
+     /// Note: This function does not initialize the projectile, so Init() still needs to be called on the returned projectile.
+     /// Also, this function assumes that the projectile prefab has a Rigidbody component for pooling purposes. If not using pooling, it will simply instantiate the prefab.
+    /// </summary>
+    /// <param name="prefabToSpawn"></param>
+    /// <param name="position"></param>
+    /// <param name="rotation"></param>
+    /// <returns></returns>
+    private GameObject GetPooledProjectile(GameObject prefabToSpawn, Vector3 position, Quaternion rotation, Transform spawnTransform)
+    {
+        if (ObjectPool.instance != null)
+        {
+            // Pass the specific firing point to the Object Pool instead of the base transform
+            GameObject obj = ObjectPool.instance.GetObject(prefabToSpawn, spawnTransform); 
+            obj.transform.position = position;
+            obj.transform.rotation = rotation;
+            return obj;
+        }
+        else
+        {
+            return Instantiate(prefabToSpawn, position, rotation);
+        }
+    }
 
     /// <summary>
     /// Play attack indicator VFX and SFX (we're using WWise later)
