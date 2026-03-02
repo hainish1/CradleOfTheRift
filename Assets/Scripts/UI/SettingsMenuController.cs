@@ -4,14 +4,11 @@ using System.Collections.Generic;
 
 public class SettingsMenuController : MonoBehaviour
 {
-    [Header("Audio Mixer (optional)")]
-    [SerializeField] private UnityEngine.Audio.AudioMixer audioMixer;
-
-    [Tooltip("Exposed parameter names on the AudioMixer.")]
-    [SerializeField] private string masterVolumeParam  = "MasterVolume";
-    [SerializeField] private string musicVolumeParam   = "MusicVolume";
-    [SerializeField] private string sfxVolumeParam     = "SFXVolume";
-    [SerializeField] private string ambientVolumeParam = "AmbientVolume";
+    [Header("Wwise RTPC Names")]
+    [SerializeField] private string masterVolumeRTPC  = "MasterVolume";
+    [SerializeField] private string musicVolumeRTPC   = "MusicVolume";
+    [SerializeField] private string sfxVolumeRTPC     = "SFXVolume";
+    [SerializeField] private string ambientVolumeRTPC = "AmbientVolume";
 
     // ── Internal ──────────────────────────────────────────
     private VisualElement root;
@@ -31,7 +28,6 @@ public class SettingsMenuController : MonoBehaviour
     private Slider sliderMusic;
     private Slider sliderSFX;
     private Slider sliderAmbient;
-    private Toggle toggleMuteAll;
 
     private Label labelMaster;
     private Label labelMusic;
@@ -47,7 +43,6 @@ public class SettingsMenuController : MonoBehaviour
     private float pendingMusic   = 0.75f;
     private float pendingSFX     = 1f;
     private float pendingAmbient = 0.5f;
-    private bool  pendingMute    = false;
 
     private const string ACTIVE_TAB_CLASS = "settings-tab--active";
     private List<(Button tab, VisualElement page)> tabPagePairs;
@@ -97,7 +92,6 @@ public class SettingsMenuController : MonoBehaviour
         sliderMusic   = root.Q<Slider>("SliderMusicVolume");
         sliderSFX     = root.Q<Slider>("SliderSFXVolume");
         sliderAmbient = root.Q<Slider>("SliderAmbientVolume");
-        toggleMuteAll = root.Q<Toggle>("ToggleMuteAll");
 
         labelMaster  = root.Q<Label>("LabelMasterVolume");
         labelMusic   = root.Q<Label>("LabelMusicVolume");
@@ -108,13 +102,6 @@ public class SettingsMenuController : MonoBehaviour
         RegisterSliderLabel(sliderMusic,   labelMusic,   v => pendingMusic   = v);
         RegisterSliderLabel(sliderSFX,     labelSFX,     v => pendingSFX     = v);
         RegisterSliderLabel(sliderAmbient, labelAmbient, v => pendingAmbient = v);
-
-        toggleMuteAll?.RegisterValueChangedCallback(evt =>
-        {
-            pendingMute = evt.newValue;
-            if (audioMixer != null)
-                audioMixer.SetFloat(masterVolumeParam, pendingMute ? -80f : LinearToDecibel(pendingMaster));
-        });
 
         buttonApply = root.Q<Button>("ButtonApply");
         buttonBack  = root.Q<Button>("ButtonBack");
@@ -147,13 +134,11 @@ public class SettingsMenuController : MonoBehaviour
         pendingMusic   = PlayerPrefs.GetFloat("Vol_Music",   0.75f);
         pendingSFX     = PlayerPrefs.GetFloat("Vol_SFX",     1f);
         pendingAmbient = PlayerPrefs.GetFloat("Vol_Ambient", 0.5f);
-        pendingMute    = PlayerPrefs.GetInt  ("Vol_Mute",    0) == 1;
 
         SetSliderSilently(sliderMaster,  labelMaster,  pendingMaster);
         SetSliderSilently(sliderMusic,   labelMusic,   pendingMusic);
         SetSliderSilently(sliderSFX,     labelSFX,     pendingSFX);
         SetSliderSilently(sliderAmbient, labelAmbient, pendingAmbient);
-        if (toggleMuteAll != null) toggleMuteAll.value = pendingMute;
     }
 
     private void ApplySettings()
@@ -162,22 +147,15 @@ public class SettingsMenuController : MonoBehaviour
         PlayerPrefs.SetFloat("Vol_Music",   pendingMusic);
         PlayerPrefs.SetFloat("Vol_SFX",     pendingSFX);
         PlayerPrefs.SetFloat("Vol_Ambient", pendingAmbient);
-        PlayerPrefs.SetInt  ("Vol_Mute",    pendingMute ? 1 : 0);
         PlayerPrefs.Save();
 
-        if (audioMixer != null)
-        {
-            audioMixer.SetFloat(masterVolumeParam,  pendingMute ? -80f : LinearToDecibel(pendingMaster));
-            audioMixer.SetFloat(musicVolumeParam,   LinearToDecibel(pendingMusic));
-            audioMixer.SetFloat(sfxVolumeParam,     LinearToDecibel(pendingSFX));
-            audioMixer.SetFloat(ambientVolumeParam, LinearToDecibel(pendingAmbient));
-        }
+        AkSoundEngine.SetRTPCValue(masterVolumeRTPC,  pendingMaster  * 100f);
+        AkSoundEngine.SetRTPCValue(musicVolumeRTPC,   pendingMusic   * 100f);
+        AkSoundEngine.SetRTPCValue(sfxVolumeRTPC,     pendingSFX     * 100f);
+        AkSoundEngine.SetRTPCValue(ambientVolumeRTPC, pendingAmbient * 100f);
     }
 
     // ── Helpers ───────────────────────────────────────────
-
-    private static float LinearToDecibel(float linear)
-        => linear > 0.0001f ? Mathf.Log10(linear) * 20f : -80f;
 
     private void RegisterSliderLabel(Slider slider, Label label, System.Action<float> onChanged)
     {
