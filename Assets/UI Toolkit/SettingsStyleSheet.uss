@@ -42,6 +42,14 @@
     transition-duration: 0.25s;
 }
 
+.button:active {
+    background-color: rgba(228, 0, 255, 0.75);
+    border-color: rgb(255, 255, 255);
+    scale: 0.95 0.95;
+    transition-property: scale, background-color, border-color;
+    transition-duration: 0.08s;
+}
+
 /* ── Tab Buttons ── */
 .settings-tab {
     border-top-width: 0;
