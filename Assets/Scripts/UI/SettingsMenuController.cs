@@ -29,7 +29,7 @@ public class SettingsMenuController : MonoBehaviour
     private VisualElement pageVideo;
     private VisualElement pageControls;
 
-    // Audio volume sliders (0–1 range)
+    // Audio volume sliders (0–100 range)
     private Slider sliderMaster;
     private Slider sliderMusic;
     private Slider sliderSFX;
@@ -47,6 +47,7 @@ public class SettingsMenuController : MonoBehaviour
 
     // Staging variables to hold pending slider values until "Apply" is pressed
     private SettingsData pending = new SettingsData();
+    private SettingsData applied = new SettingsData(); // last-applied snapshot for dirty checking
     private static string SettingsPath => Path.Combine(Application.persistentDataPath, "settings.json");
 
     // USS class applied to whichever tab button is currently selected
@@ -60,6 +61,7 @@ public class SettingsMenuController : MonoBehaviour
     private float[]  borderWidths;
     private Button   activeTab;
 
+    private VisualElement modalOverlay;
     public System.Action OnBackPressed;
 
 
@@ -149,7 +151,31 @@ public class SettingsMenuController : MonoBehaviour
         buttonBack  = root.Q<Button>("ButtonBack");
 
         buttonApply?.RegisterCallback<ClickEvent>(_ => ApplySettings());
-        buttonBack ?.RegisterCallback<ClickEvent>(_ => OnBackPressed?.Invoke());
+        buttonBack ?.RegisterCallback<ClickEvent>(_ => OnBackClicked());
+
+        // Modal 
+        modalOverlay = root.Q<VisualElement>("ModalInstance");
+        if(modalOverlay != null)
+        {
+            Debug.Log("Got something");
+        }
+        else
+        {
+            Debug.Log("Didnt get modal");
+        }
+
+        root.Q<Button>("ModalButtonYes")?.RegisterCallback<ClickEvent>(_ =>
+        {
+            ApplySettings();
+            CloseModal();
+            OnBackPressed?.Invoke();
+        });
+
+        root.Q<Button>("ModalButtonNo")?.RegisterCallback<ClickEvent>(_ =>
+        {
+            CloseModal();
+            OnBackPressed?.Invoke();
+        });
 
         LoadSettings();
         SwitchToTab(tabAudio, snap: true);
@@ -184,6 +210,41 @@ public class SettingsMenuController : MonoBehaviour
             page.style.display = (tab == targetTab) ? DisplayStyle.Flex : DisplayStyle.None;
     }
 
+    /// <summary>
+    /// Called when the Back button is pressed. Shows the unsaved-changes modal
+    /// if settings have been changed without applying; otherwise navigates back immediately.
+    /// </summary>
+    private void OnBackClicked()
+    {
+        if (HasUnsavedChanges())
+            ShowModal();
+        else
+            OnBackPressed?.Invoke();
+    }
+
+    /// <summary>
+    /// Returns true if the current pending values differ from the last applied snapshot.
+    /// </summary>
+    private bool HasUnsavedChanges()
+    {
+        return pending.masterVolume  != applied.masterVolume  ||
+               pending.musicVolume   != applied.musicVolume   ||
+               pending.sfxVolume     != applied.sfxVolume     ||
+               pending.ambientVolume != applied.ambientVolume;
+    }
+
+    private void ShowModal() 
+    {
+        if (modalOverlay == null) return;
+        modalOverlay.style.display = DisplayStyle.Flex;
+    }
+
+    private void CloseModal()
+    {
+        if (modalOverlay == null) return;
+        modalOverlay.style.display = DisplayStyle.None;
+    }
+
     // ── Settings Persistence ──────────────────────────────
 
     /// <summary>
@@ -204,6 +265,9 @@ public class SettingsMenuController : MonoBehaviour
             SaveToDisk();
         }
 
+        // Snapshot what was loaded so Back doesn't trigger a false-dirty on first open
+        applied = CopySettings(pending);
+
         SetSliderSilently(sliderMaster,  labelMaster,  pending.masterVolume);
         SetSliderSilently(sliderMusic,   labelMusic,   pending.musicVolume);
         SetSliderSilently(sliderSFX,     labelSFX,     pending.sfxVolume);
@@ -218,6 +282,7 @@ public class SettingsMenuController : MonoBehaviour
     private void ApplySettings()
     {
         SaveToDisk();
+        applied = CopySettings(pending);
 
         // Wwise RTPCs expect a 0–100 scale [TODO: marshall I believe this finds the RTPC by name and sets it globally? IDK]
         AkSoundEngine.SetRTPCValue(masterVolumeRTPC,  pending.masterVolume);
@@ -239,6 +304,14 @@ public class SettingsMenuController : MonoBehaviour
         string json = JsonUtility.ToJson(pending, prettyPrint: true);
         File.WriteAllText(SettingsPath, json);
     }
+
+    private static SettingsData CopySettings(SettingsData src) => new SettingsData
+    {
+        masterVolume  = src.masterVolume,
+        musicVolume   = src.musicVolume,
+        sfxVolume     = src.sfxVolume,
+        ambientVolume = src.ambientVolume,
+    };
 
     /// <summary>
     /// Subscribes to a slider's value-changed event to keep its label in sync
