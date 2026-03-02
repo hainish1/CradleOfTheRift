@@ -42,12 +42,10 @@ public class SettingsMenuController : MonoBehaviour
     private Label labelAmbient;
 
     // Bottom bar
-    private Button buttonApply;
     private Button buttonBack;
 
-    // Staging variables to hold pending slider values until "Apply" is pressed
-    private SettingsData pending = new SettingsData();
-    private SettingsData applied = new SettingsData(); // last-applied snapshot for dirty checking
+    // Current settings and written to disk on close, applied to Wwise immediately on change
+    private SettingsData settings = new SettingsData();
     private static string SettingsPath => Path.Combine(Application.persistentDataPath, "settings.json");
 
     // USS class applied to whichever tab button is currently selected
@@ -61,7 +59,6 @@ public class SettingsMenuController : MonoBehaviour
     private float[]  borderWidths;
     private Button   activeTab;
 
-    private VisualElement modalOverlay;
     public System.Action OnBackPressed;
 
 
@@ -75,6 +72,11 @@ public class SettingsMenuController : MonoBehaviour
         }
 
         Initialize(document.rootVisualElement);
+    }
+
+    private void OnDisable()
+    {
+        SaveToDisk();
     }
 
     private void Update()
@@ -140,34 +142,15 @@ public class SettingsMenuController : MonoBehaviour
         labelSFX     = root.Q<Label>("LabelSFXVolume");
         labelAmbient = root.Q<Label>("LabelAmbientVolume");
 
-        // Register each slider to update its label and stage the pending value
-        RegisterSliderLabel(sliderMaster,  labelMaster,  v => pending.masterVolume  = v);
-        RegisterSliderLabel(sliderMusic,   labelMusic,   v => pending.musicVolume   = v);
-        RegisterSliderLabel(sliderSFX,     labelSFX,     v => pending.sfxVolume     = v);
-        RegisterSliderLabel(sliderAmbient, labelAmbient, v => pending.ambientVolume = v);
+        // Each slider immediately updates its label and pushes to Wwise 
+        RegisterSliderLabel(sliderMaster,  labelMaster,  v => { settings.masterVolume  = v; AkUnitySoundEngine.SetRTPCValue(masterVolumeRTPC,  v); });
+        RegisterSliderLabel(sliderMusic,   labelMusic,   v => { settings.musicVolume   = v; AkUnitySoundEngine.SetRTPCValue(musicVolumeRTPC,   v); });
+        RegisterSliderLabel(sliderSFX,     labelSFX,     v => { settings.sfxVolume     = v; AkUnitySoundEngine.SetRTPCValue(sfxVolumeRTPC,     v); });
+        RegisterSliderLabel(sliderAmbient, labelAmbient, v => { settings.ambientVolume = v; AkUnitySoundEngine.SetRTPCValue(ambientVolumeRTPC, v); });
 
-        // Wire bottom bar buttons
-        buttonApply = root.Q<Button>("ButtonApply");
+        // Wire bottom bar button
         buttonBack  = root.Q<Button>("ButtonBack");
-
-        buttonApply?.RegisterCallback<ClickEvent>(_ => ApplySettings());
-        buttonBack ?.RegisterCallback<ClickEvent>(_ => OnBackClicked());
-
-        // Modal 
-        modalOverlay = root.Q<VisualElement>("ModalInstance");
-
-        root.Q<Button>("ModalButtonYes")?.RegisterCallback<ClickEvent>(_ =>
-        {
-            ApplySettings();
-            CloseModal();
-            OnBackPressed?.Invoke();
-        });
-
-        root.Q<Button>("ModalButtonNo")?.RegisterCallback<ClickEvent>(_ =>
-        {
-            CloseModal();
-            OnBackPressed?.Invoke();
-        });
+        buttonBack?.RegisterCallback<ClickEvent>(_ => OnBackPressed?.Invoke());
 
         LoadSettings();
         SwitchToTab(tabAudio, snap: true);
@@ -202,35 +185,6 @@ public class SettingsMenuController : MonoBehaviour
             page.style.display = (tab == targetTab) ? DisplayStyle.Flex : DisplayStyle.None;
     }
 
-    /// <summary>
-    /// Called when the Back button is pressed. Shows the unsaved-changes modal
-    /// if settings have been changed without applying; otherwise navigates back immediately.
-    /// </summary>
-    private void OnBackClicked()
-    {
-        if (HasUnsavedChanges())
-            ShowModal();
-        else
-            OnBackPressed?.Invoke();
-    }
-
-    /// <summary>
-    /// Returns true if the current pending values differ from the last applied snapshot.
-    /// </summary>
-    private bool HasUnsavedChanges() => !pending.Equals(applied);
-
-    private void ShowModal() 
-    {
-        if (modalOverlay == null) return;
-        modalOverlay.style.display = DisplayStyle.Flex;
-    }
-
-    private void CloseModal()
-    {
-        if (modalOverlay == null) return;
-        modalOverlay.style.display = DisplayStyle.None;
-    }
-
     // ── Settings Persistence ──────────────────────────────
 
     /// <summary>
@@ -242,62 +196,39 @@ public class SettingsMenuController : MonoBehaviour
         if(File.Exists(SettingsPath))
         {
             string json = File.ReadAllText(SettingsPath);
-            pending = JsonUtility.FromJson<SettingsData>(json);
+            settings = JsonUtility.FromJson<SettingsData>(json);
         }
         else
         {
             Debug.LogWarning("SettingsMenuController: No saved settings found, using defaults.");
-            pending = new SettingsData(); // Defaults defined in SettingsData class
+            settings = new SettingsData(); // Defaults defined in SettingsData class
             SaveToDisk();
         }
 
-        // Snapshot what was loaded so Back doesn't trigger a false-dirty on first open
-        applied = CopySettings(pending);
+        // Push loaded values to Wwise so audio is correct from the first frame
+        AkUnitySoundEngine.SetRTPCValue(masterVolumeRTPC,  settings.masterVolume);
+        AkUnitySoundEngine.SetRTPCValue(musicVolumeRTPC,   settings.musicVolume);
+        AkUnitySoundEngine.SetRTPCValue(sfxVolumeRTPC,     settings.sfxVolume);
+        AkUnitySoundEngine.SetRTPCValue(ambientVolumeRTPC, settings.ambientVolume);
 
-        SetSliderSilently(sliderMaster,  labelMaster,  pending.masterVolume);
-        SetSliderSilently(sliderMusic,   labelMusic,   pending.musicVolume);
-        SetSliderSilently(sliderSFX,     labelSFX,     pending.sfxVolume);
-        SetSliderSilently(sliderAmbient, labelAmbient, pending.ambientVolume);
+        SetSliderSilently(sliderMaster,  labelMaster,  settings.masterVolume);
+        SetSliderSilently(sliderMusic,   labelMusic,   settings.musicVolume);
+        SetSliderSilently(sliderSFX,     labelSFX,     settings.sfxVolume);
+        SetSliderSilently(sliderAmbient, labelAmbient, settings.ambientVolume);
     }
-
-
-    /// <summary>
-    /// Commits all pending volume values to PlayerPrefs and pushes them
-    /// to Wwise as 0–100 RTPC values.
-    /// </summary>
-    private void ApplySettings()
-    {
-        SaveToDisk();
-        applied = CopySettings(pending);
-
-        // Wwise RTPCs expect a 0–100 scale [TODO: marshall I believe this finds the RTPC by name and sets it globally? IDK]
-        AkSoundEngine.SetRTPCValue(masterVolumeRTPC,  pending.masterVolume);
-        AkSoundEngine.SetRTPCValue(musicVolumeRTPC,   pending.musicVolume);
-        AkSoundEngine.SetRTPCValue(sfxVolumeRTPC,     pending.sfxVolume);
-        AkSoundEngine.SetRTPCValue(ambientVolumeRTPC, pending.ambientVolume);
-
-        Debug.Log($"Settings saved to: {SettingsPath}\n{File.ReadAllText(SettingsPath)}");
-        Debug.Log("SettingsMenuController: Applied audio settings to PlayerPrefs and Wwise.\n" +
-                  $"Master={pending.masterVolume}, Music={pending.musicVolume}, SFX={pending.sfxVolume}, Ambient={pending.ambientVolume}");
-    }
-
 
     /// <summary>
     /// Serializes the pending settings to JSON and writes them to disk at a known path.
     /// </summary>
     private void SaveToDisk()
     {
-        string json = JsonUtility.ToJson(pending, prettyPrint: true);
+        string json = JsonUtility.ToJson(settings, prettyPrint: true);
         File.WriteAllText(SettingsPath, json);
-    }
 
-    private static SettingsData CopySettings(SettingsData src) => new SettingsData
-    {
-        masterVolume  = src.masterVolume,
-        musicVolume   = src.musicVolume,
-        sfxVolume     = src.sfxVolume,
-        ambientVolume = src.ambientVolume,
-    };
+        Debug.Log($"Settings saved to: {SettingsPath}\n{File.ReadAllText(SettingsPath)}");
+        Debug.Log("SettingsMenuController: Applied audio settings to JSON and Wwise.\n" +
+                  $"Master={settings.masterVolume}, Music={settings.musicVolume}, SFX={settings.sfxVolume}, Ambient={settings.ambientVolume}");
+    }
 
     /// <summary>
     /// Subscribes to a slider's value-changed event to keep its label in sync

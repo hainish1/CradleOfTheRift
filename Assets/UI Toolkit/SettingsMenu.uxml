@@ -1,5 +1,4 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <engine:Template name="SettingsModal" src="project://database/Assets/UI%20Toolkit/Settings/SettingsModal.uxml?fileID=9197481963319205126&amp;guid=f0437b850f5a68e4f88f1e9022c698ee&amp;type=3#SettingsModal" />
     <Style src="project://database/Assets/UI%20Toolkit/SettingsStyleSheet.uss?fileID=7433441132597879392&amp;guid=4e331d6e341bfd245aadb0e434e7894e&amp;type=3#SettingsStyleSheet" />
     <engine:VisualElement name="Canvas" class="Background" style="flex-grow: 1; width: 1920px; height: 1080px;">
         <engine:Label text="Settings" name="LabelSettings" class="header" style="font-size: 120px; margin-top: 20px;" />
@@ -55,10 +54,9 @@
 
         <!-- Bottom Buttons -->
         <engine:VisualElement name="BottomBar" style="flex-direction: row; align-self: center; position: absolute; bottom: 30px;">
-            <engine:Button text="Apply" name="ButtonApply" class="button unityButtonHover" style="width: 300px; font-size: 60px; margin-right: 40px;" />
+            <!-- <engine:Button text="Revert" name="ButtonRevert" class="button unityButtonHover" style="width: 300px; font-size: 60px; margin-right: 40px;" /> -->
             <engine:Button text="Back" name="ButtonBack" class="button unityButtonHover" style="width: 300px; font-size: 60px;" />
         </engine:VisualElement>
 
-        <engine:Instance template="SettingsModal" name="ModalInstance" class="modal-instance" />
     </engine:VisualElement>
 </engine:UXML>
