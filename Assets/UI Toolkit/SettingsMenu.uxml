@@ -1,8 +1,7 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI%20Toolkit/SettingsStyleSheet.uss" />
+    <engine:Template name="SettingsModal" src="project://database/Assets/UI%20Toolkit/Settings/SettingsModal.uxml?fileID=9197481963319205126&amp;guid=f0437b850f5a68e4f88f1e9022c698ee&amp;type=3#SettingsModal" />
+    <Style src="project://database/Assets/UI%20Toolkit/SettingsStyleSheet.uss?fileID=7433441132597879392&amp;guid=4e331d6e341bfd245aadb0e434e7894e&amp;type=3#SettingsStyleSheet" />
     <engine:VisualElement name="Canvas" class="Background" style="flex-grow: 1; width: 1920px; height: 1080px;">
-
-        <!-- Header -->
         <engine:Label text="Settings" name="LabelSettings" class="header" style="font-size: 120px; margin-top: 20px;" />
 
         <!-- Tab Bar -->
@@ -11,42 +10,32 @@
             <engine:Button text="Video" name="TabVideo" class="settings-tab unityButtonHover" />
             <engine:Button text="Controls" name="TabControls" class="settings-tab unityButtonHover" />
         </engine:VisualElement>
-
-        <!-- Tab Divider Line -->
-        <!-- <engine:VisualElement name="TabDivider" style="height: 3px; background-color: rgba(255, 255, 255, 0.3); margin-left: 200px; margin-right: 200px;" /> -->
-
-        <!-- Pages Container -->
         <engine:VisualElement name="PagesContainer" style="flex-grow: 1; margin-left: 200px; margin-right: 200px; margin-top: 30px; margin-bottom: 120px;">
 
             <!-- ═══════════════════════════════════ -->
             <!--           AUDIO PAGE                -->
             <!-- ═══════════════════════════════════ -->
             <engine:VisualElement name="PageAudio" class="settings-page">
-
                 <engine:VisualElement class="settings-row">
                     <engine:Label text="Master Volume" class="settings-label" />
-                    <engine:Slider name="SliderMasterVolume" class="settings-slider" low-value="0" high-value="100" value="100" />
+                    <engine:Slider name="SliderMasterVolume" low-value="0" high-value="100" value="100" class="settings-slider" />
                     <engine:Label text="100" name="LabelMasterVolume" class="settings-value-label" />
                 </engine:VisualElement>
-
                 <engine:VisualElement class="settings-row">
                     <engine:Label text="Music Volume" class="settings-label" />
-                    <engine:Slider name="SliderMusicVolume" class="settings-slider" low-value="0" high-value="100" value="75" />
+                    <engine:Slider name="SliderMusicVolume" low-value="0" high-value="100" value="75" class="settings-slider" />
                     <engine:Label text="75" name="LabelMusicVolume" class="settings-value-label" />
                 </engine:VisualElement>
-
                 <engine:VisualElement class="settings-row">
                     <engine:Label text="SFX Volume" class="settings-label" />
-                    <engine:Slider name="SliderSFXVolume" class="settings-slider" low-value="0" high-value="100" value="100" />
+                    <engine:Slider name="SliderSFXVolume" low-value="0" high-value="100" value="100" class="settings-slider" />
                     <engine:Label text="100" name="LabelSFXVolume" class="settings-value-label" />
                 </engine:VisualElement>
-
                 <engine:VisualElement class="settings-row">
                     <engine:Label text="Ambient Volume" class="settings-label" />
-                    <engine:Slider name="SliderAmbientVolume" class="settings-slider" low-value="0" high-value="100" value="50" />
+                    <engine:Slider name="SliderAmbientVolume" low-value="0" high-value="100" value="50" class="settings-slider" />
                     <engine:Label text="50" name="LabelAmbientVolume" class="settings-value-label" />
                 </engine:VisualElement>
-
             </engine:VisualElement>
 
             <!-- ═══════════════════════════════════ -->
@@ -62,7 +51,6 @@
             <engine:VisualElement name="PageControls" class="settings-page" style="display: none;">
                 <engine:Label text="Coming Soon" class="settings-label" style="align-self: center; margin-top: 40px; opacity: 0.4;" />
             </engine:VisualElement>
-
         </engine:VisualElement>
 
         <!-- Bottom Buttons -->
@@ -71,5 +59,6 @@
             <engine:Button text="Back" name="ButtonBack" class="button unityButtonHover" style="width: 300px; font-size: 60px;" />
         </engine:VisualElement>
 
+        <engine:Instance template="SettingsModal" name="ModalInstance" class="modal-instance" />
     </engine:VisualElement>
 </engine:UXML>
