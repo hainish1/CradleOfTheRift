@@ -25,25 +25,25 @@
 
                 <engine:VisualElement class="settings-row">
                     <engine:Label text="Master Volume" class="settings-label" />
-                    <engine:Slider name="SliderMasterVolume" class="settings-slider" low-value="0" high-value="1" value="1" />
+                    <engine:Slider name="SliderMasterVolume" class="settings-slider" low-value="0" high-value="100" value="100" />
                     <engine:Label text="100" name="LabelMasterVolume" class="settings-value-label" />
                 </engine:VisualElement>
 
                 <engine:VisualElement class="settings-row">
                     <engine:Label text="Music Volume" class="settings-label" />
-                    <engine:Slider name="SliderMusicVolume" class="settings-slider" low-value="0" high-value="1" value="0.75" />
+                    <engine:Slider name="SliderMusicVolume" class="settings-slider" low-value="0" high-value="100" value="75" />
                     <engine:Label text="75" name="LabelMusicVolume" class="settings-value-label" />
                 </engine:VisualElement>
 
                 <engine:VisualElement class="settings-row">
                     <engine:Label text="SFX Volume" class="settings-label" />
-                    <engine:Slider name="SliderSFXVolume" class="settings-slider" low-value="0" high-value="1" value="1" />
+                    <engine:Slider name="SliderSFXVolume" class="settings-slider" low-value="0" high-value="100" value="100" />
                     <engine:Label text="100" name="LabelSFXVolume" class="settings-value-label" />
                 </engine:VisualElement>
 
                 <engine:VisualElement class="settings-row">
                     <engine:Label text="Ambient Volume" class="settings-label" />
-                    <engine:Slider name="SliderAmbientVolume" class="settings-slider" low-value="0" high-value="1" value="0.5" />
+                    <engine:Slider name="SliderAmbientVolume" class="settings-slider" low-value="0" high-value="100" value="50" />
                     <engine:Label text="50" name="LabelAmbientVolume" class="settings-value-label" />
                 </engine:VisualElement>
 

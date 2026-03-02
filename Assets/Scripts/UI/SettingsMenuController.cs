@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
+using System.IO;
 
 public class SettingsMenuController : MonoBehaviour
 {
@@ -17,7 +18,6 @@ public class SettingsMenuController : MonoBehaviour
     // ─────────────────────────────────────────────────────────────────
 
     private VisualElement root;
-    private const float sliderStep = 0.01f; // Increment step for slider value changes (1%)
 
     // Tab buttons in the top navigation bar
     private Button tabAudio;
@@ -45,11 +45,9 @@ public class SettingsMenuController : MonoBehaviour
     private Button buttonApply;
     private Button buttonBack;
 
-    // Staged volume values — written to PlayerPrefs/Wwise only when Apply is pressed
-    private float pendingMaster  = 1f;
-    private float pendingMusic   = 0.75f;
-    private float pendingSFX     = 1f;
-    private float pendingAmbient = 0.5f;
+    // Staging variables to hold pending slider values until "Apply" is pressed
+    private SettingsData pending = new SettingsData();
+    private static string SettingsPath => Path.Combine(Application.persistentDataPath, "settings.json");
 
     // USS class applied to whichever tab button is currently selected
     private const string ACTIVE_TAB_CLASS = "settings-tab--active";
@@ -141,10 +139,10 @@ public class SettingsMenuController : MonoBehaviour
         labelAmbient = root.Q<Label>("LabelAmbientVolume");
 
         // Register each slider to update its label and stage the pending value
-        RegisterSliderLabel(sliderMaster,  labelMaster,  v => pendingMaster  = v);
-        RegisterSliderLabel(sliderMusic,   labelMusic,   v => pendingMusic   = v);
-        RegisterSliderLabel(sliderSFX,     labelSFX,     v => pendingSFX     = v);
-        RegisterSliderLabel(sliderAmbient, labelAmbient, v => pendingAmbient = v);
+        RegisterSliderLabel(sliderMaster,  labelMaster,  v => pending.masterVolume  = v);
+        RegisterSliderLabel(sliderMusic,   labelMusic,   v => pending.musicVolume   = v);
+        RegisterSliderLabel(sliderSFX,     labelSFX,     v => pending.sfxVolume     = v);
+        RegisterSliderLabel(sliderAmbient, labelAmbient, v => pending.ambientVolume = v);
 
         // Wire bottom bar buttons
         buttonApply = root.Q<Button>("ButtonApply");
@@ -194,15 +192,23 @@ public class SettingsMenuController : MonoBehaviour
     /// </summary>
     private void LoadSettings()
     {
-        pendingMaster  = PlayerPrefs.GetFloat("Vol_Master",  1f);
-        pendingMusic   = PlayerPrefs.GetFloat("Vol_Music",   0.75f);
-        pendingSFX     = PlayerPrefs.GetFloat("Vol_SFX",     1f);
-        pendingAmbient = PlayerPrefs.GetFloat("Vol_Ambient", 0.5f);
+        if(File.Exists(SettingsPath))
+        {
+            string json = File.ReadAllText(SettingsPath);
+            pending = JsonUtility.FromJson<SettingsData>(json);
+        }
+        else
+        {
+            Debug.LogWarning("SettingsMenuController: No saved settings found, using defaults.");
+            pending = new SettingsData(); // Defaults defined in SettingsData class
+            SaveToDisk();
+        }
 
-        SetSliderSilently(sliderMaster,  labelMaster,  pendingMaster);
-        SetSliderSilently(sliderMusic,   labelMusic,   pendingMusic);
-        SetSliderSilently(sliderSFX,     labelSFX,     pendingSFX);
-        SetSliderSilently(sliderAmbient, labelAmbient, pendingAmbient);
+        // (convert int back to float)
+        SetSliderSilently(sliderMaster,  labelMaster,  pending.masterVolume);
+        SetSliderSilently(sliderMusic,   labelMusic,   pending.musicVolume);
+        SetSliderSilently(sliderSFX,     labelSFX,     pending.sfxVolume);
+        SetSliderSilently(sliderAmbient, labelAmbient, pending.ambientVolume);
     }
 
 
@@ -212,38 +218,44 @@ public class SettingsMenuController : MonoBehaviour
     /// </summary>
     private void ApplySettings()
     {
-        PlayerPrefs.SetFloat("Vol_Master",  pendingMaster);
-        PlayerPrefs.SetFloat("Vol_Music",   pendingMusic);
-        PlayerPrefs.SetFloat("Vol_SFX",     pendingSFX);
-        PlayerPrefs.SetFloat("Vol_Ambient", pendingAmbient);
-        PlayerPrefs.Save();
+        SaveToDisk();
 
-        // Wwise RTPCs expect a 0–100 scale; sliders store normalised 0–1 values
-        AkSoundEngine.SetRTPCValue(masterVolumeRTPC,  pendingMaster  * 100f);
-        AkSoundEngine.SetRTPCValue(musicVolumeRTPC,   pendingMusic   * 100f);
-        AkSoundEngine.SetRTPCValue(sfxVolumeRTPC,     pendingSFX     * 100f);
-        AkSoundEngine.SetRTPCValue(ambientVolumeRTPC, pendingAmbient * 100f);
+        // Wwise RTPCs expect a 0–100 scale
+        AkSoundEngine.SetRTPCValue(masterVolumeRTPC,  pending.masterVolume);
+        AkSoundEngine.SetRTPCValue(musicVolumeRTPC,   pending.musicVolume);
+        AkSoundEngine.SetRTPCValue(sfxVolumeRTPC,     pending.sfxVolume);
+        AkSoundEngine.SetRTPCValue(ambientVolumeRTPC, pending.ambientVolume);
 
+        Debug.Log($"Settings saved to: {SettingsPath}\n{File.ReadAllText(SettingsPath)}");
         Debug.Log("SettingsMenuController: Applied audio settings to PlayerPrefs and Wwise.\n" +
-                  $"Master={pendingMaster}, Music={pendingMusic}, SFX={pendingSFX}, Ambient={pendingAmbient}");
+                  $"Master={pending.masterVolume}, Music={pending.musicVolume}, SFX={pending.sfxVolume}, Ambient={pending.ambientVolume}");
     }
 
     // ── Helpers ───────────────────────────────────────────
 
     /// <summary>
+    /// Serializes the pending settings to JSON and writes them to disk at a known path.
+    /// </summary>
+    private void SaveToDisk()
+    {
+        string json = JsonUtility.ToJson(pending, prettyPrint: true);
+        File.WriteAllText(SettingsPath, json);
+    }
+
+    /// <summary>
     /// Subscribes to a slider's value-changed event to keep its label in sync
     /// and forward the new value to the provided staging callback.
     /// </summary>
-    private void RegisterSliderLabel(Slider slider, Label label, System.Action<float> onChanged)
+    private void RegisterSliderLabel(Slider slider, Label label, System.Action<int> onChanged)
     {
         if (slider == null) return;
         slider.RegisterValueChangedCallback(evt =>
         {
-            float v = Mathf.Round(evt.newValue / sliderStep) * sliderStep; // Snap to nearest step
+            int v = (int)evt.newValue; // Snap to nearest step
             slider.SetValueWithoutNotify(v); // Update slider to snapped value 
 
             onChanged(v);
-            if (label != null) label.text = Mathf.RoundToInt(v * 100).ToString();
+            if (label != null) label.text = v.ToString();
         });
     }
 
@@ -251,10 +263,10 @@ public class SettingsMenuController : MonoBehaviour
     /// Sets a slider's value and updates its label without firing value-changed callbacks,
     /// used during initial load to avoid dirtying pending state.
     /// </summary>
-    private void SetSliderSilently(Slider slider, Label label, float value)
+    private void SetSliderSilently(Slider slider, Label label, int value)
     {
         if (slider == null) return;
         slider.SetValueWithoutNotify(value);
-        if (label != null) label.text = Mathf.RoundToInt(value * 100).ToString();
+        if (label != null) label.text = value.ToString();
     }
 }
