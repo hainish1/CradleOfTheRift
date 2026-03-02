@@ -172,3 +172,53 @@
     border-color: rgba(228, 0, 255, 0.5);
     border-radius: 4px;
 }
+
+/* ── Modal Overlay ── */
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+    background-color: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-box {
+    background-color: rgba(14, 0, 29, 1);
+    border-width: 2px;
+    border-color: rgba(228, 0, 255, 0.7);
+    border-radius: 12px;
+    padding: 60px;
+    align-items: center;
+    min-width: 700px;
+}
+
+.modal-title {
+    font-size: 70px;
+    color: rgb(255, 255, 255);
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    -unity-text-align: upper-center;
+    margin-bottom: 20px;
+}
+
+.modal-body {
+    font-size: 45px;
+    color: rgba(255, 255, 255, 0.6);
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    -unity-text-align: upper-center;
+    margin-bottom: 50px;
+}
+
+.modal-buttons {
+    flex-direction: row;
+}
+
+.modal-button {
+    margin-left: 20px;
+    margin-right: 20px;
+    font-size: 45px;
+    width: 280px;
+    height: 80px;
+}
