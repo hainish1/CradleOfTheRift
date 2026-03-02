@@ -49,12 +49,6 @@
                 </engine:VisualElement>
 
                 <engine:VisualElement class="settings-row">
-                    <engine:Label text="Dialogue Volume" class="settings-label" />
-                    <engine:Slider name="SliderDialogueVolume" class="settings-slider" low-value="0" high-value="1" value="1" />
-                    <engine:Label text="100" name="LabelDialogueVolume" class="settings-value-label" />
-                </engine:VisualElement>
-
-                <engine:VisualElement class="settings-row">
                     <engine:Label text="Mute All" class="settings-label" />
                     <engine:Toggle name="ToggleMuteAll" class="settings-toggle" />
                 </engine:VisualElement>
@@ -62,59 +56,17 @@
             </engine:VisualElement>
 
             <!-- ═══════════════════════════════════ -->
-            <!--           VIDEO PAGE                -->
+            <!--      VIDEO PAGE (coming soon)       -->
             <!-- ═══════════════════════════════════ -->
             <engine:VisualElement name="PageVideo" class="settings-page" style="display: none;">
-
-                <engine:VisualElement class="settings-row">
-                    <engine:Label text="Resolution" class="settings-label" />
-                    <engine:DropdownField name="DropdownResolution" class="settings-dropdown" />
-                </engine:VisualElement>
-
-                <engine:VisualElement class="settings-row">
-                    <engine:Label text="Display Mode" class="settings-label" />
-                    <engine:DropdownField name="DropdownDisplayMode" class="settings-dropdown" />
-                </engine:VisualElement>
-
-                <engine:VisualElement class="settings-row">
-                    <engine:Label text="VSync" class="settings-label" />
-                    <engine:Toggle name="ToggleVSync" class="settings-toggle" value="true" />
-                </engine:VisualElement>
-
-                <engine:VisualElement class="settings-row">
-                    <engine:Label text="Render Quality" class="settings-label" />
-                    <engine:DropdownField name="DropdownQuality" class="settings-dropdown" />
-                </engine:VisualElement>
-
-                <engine:VisualElement class="settings-row">
-                    <engine:Label text="Brightness" class="settings-label" />
-                    <engine:Slider name="SliderBrightness" class="settings-slider" low-value="0" high-value="1" value="0.5" />
-                    <engine:Label text="50" name="LabelBrightness" class="settings-value-label" />
-                </engine:VisualElement>
-
+                <engine:Label text="Coming Soon" class="settings-label" style="align-self: center; margin-top: 40px; opacity: 0.4;" />
             </engine:VisualElement>
 
             <!-- ═══════════════════════════════════ -->
-            <!--         CONTROLS PAGE               -->
+            <!--    CONTROLS PAGE (coming soon)      -->
             <!-- ═══════════════════════════════════ -->
             <engine:VisualElement name="PageControls" class="settings-page" style="display: none;">
-
-                <engine:VisualElement class="settings-row">
-                    <engine:Label text="Mouse Sensitivity" class="settings-label" />
-                    <engine:Slider name="SliderMouseSensitivity" class="settings-slider" low-value="0.1" high-value="5" value="1" />
-                    <engine:Label text="1.0" name="LabelMouseSensitivity" class="settings-value-label" />
-                </engine:VisualElement>
-
-                <engine:VisualElement class="settings-row">
-                    <engine:Label text="Invert Y Axis" class="settings-label" />
-                    <engine:Toggle name="ToggleInvertY" class="settings-toggle" />
-                </engine:VisualElement>
-
-                <engine:VisualElement class="settings-row">
-                    <engine:Label text="Controller Vibration" class="settings-label" />
-                    <engine:Toggle name="ToggleVibration" class="settings-toggle" value="true" />
-                </engine:VisualElement>
-
+                <engine:Label text="Coming Soon" class="settings-label" style="align-self: center; margin-top: 40px; opacity: 0.4;" />
             </engine:VisualElement>
 
         </engine:VisualElement>

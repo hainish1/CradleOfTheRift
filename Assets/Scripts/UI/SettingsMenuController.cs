@@ -7,12 +7,11 @@ public class SettingsMenuController : MonoBehaviour
     [Header("Audio Mixer (optional)")]
     [SerializeField] private UnityEngine.Audio.AudioMixer audioMixer;
 
-    [Tooltip("Exposed parameter name in the AudioMixer for Master volume.")]
-    [SerializeField] private string masterVolumeParam   = "MasterVolume";
-    [SerializeField] private string musicVolumeParam    = "MusicVolume";
-    [SerializeField] private string sfxVolumeParam      = "SFXVolume";
-    [SerializeField] private string ambientVolumeParam  = "AmbientVolume";
-    [SerializeField] private string dialogueVolumeParam = "DialogueVolume";
+    [Tooltip("Exposed parameter names on the AudioMixer.")]
+    [SerializeField] private string masterVolumeParam  = "MasterVolume";
+    [SerializeField] private string musicVolumeParam   = "MusicVolume";
+    [SerializeField] private string sfxVolumeParam     = "SFXVolume";
+    [SerializeField] private string ambientVolumeParam = "AmbientVolume";
 
     // ── Internal ──────────────────────────────────────────
     private VisualElement root;
@@ -32,26 +31,23 @@ public class SettingsMenuController : MonoBehaviour
     private Slider sliderMusic;
     private Slider sliderSFX;
     private Slider sliderAmbient;
-    private Slider sliderDialogue;
     private Toggle toggleMuteAll;
 
     private Label labelMaster;
     private Label labelMusic;
     private Label labelSFX;
     private Label labelAmbient;
-    private Label labelDialogue;
 
     // Bottom bar
     private Button buttonApply;
     private Button buttonBack;
 
-    // Pending values (applied on "Apply")
-    private float pendingMaster   = 1f;
-    private float pendingMusic    = 0.75f;
-    private float pendingSFX      = 1f;
-    private float pendingAmbient  = 0.5f;
-    private float pendingDialogue = 1f;
-    private bool  pendingMute     = false;
+    // Pending values (committed on Apply)
+    private float pendingMaster  = 1f;
+    private float pendingMusic   = 0.75f;
+    private float pendingSFX     = 1f;
+    private float pendingAmbient = 0.5f;
+    private bool  pendingMute    = false;
 
     private const string ACTIVE_TAB_CLASS = "settings-tab--active";
     private List<(Button tab, VisualElement page)> tabPagePairs;
@@ -62,8 +58,6 @@ public class SettingsMenuController : MonoBehaviour
 
     private void OnEnable()
     {
-        // Called every time the GameObject is set active.
-        // Grabs the UIDocument and initializes the UI.
         var document = GetComponent<UIDocument>();
         if (document == null)
         {
@@ -74,7 +68,7 @@ public class SettingsMenuController : MonoBehaviour
         Initialize(document.rootVisualElement);
     }
 
-    // ── Public API ────────────────────────────────────────
+    // ── Setup ─────────────────────────────────────────────
 
     public void Initialize(VisualElement settingsRoot)
     {
@@ -99,24 +93,21 @@ public class SettingsMenuController : MonoBehaviour
         tabVideo   .RegisterCallback<ClickEvent>(_ => SwitchToTab(tabVideo));
         tabControls.RegisterCallback<ClickEvent>(_ => SwitchToTab(tabControls));
 
-        sliderMaster   = root.Q<Slider>("SliderMasterVolume");
-        sliderMusic    = root.Q<Slider>("SliderMusicVolume");
-        sliderSFX      = root.Q<Slider>("SliderSFXVolume");
-        sliderAmbient  = root.Q<Slider>("SliderAmbientVolume");
-        sliderDialogue = root.Q<Slider>("SliderDialogueVolume");
-        toggleMuteAll  = root.Q<Toggle>("ToggleMuteAll");
+        sliderMaster  = root.Q<Slider>("SliderMasterVolume");
+        sliderMusic   = root.Q<Slider>("SliderMusicVolume");
+        sliderSFX     = root.Q<Slider>("SliderSFXVolume");
+        sliderAmbient = root.Q<Slider>("SliderAmbientVolume");
+        toggleMuteAll = root.Q<Toggle>("ToggleMuteAll");
 
-        labelMaster   = root.Q<Label>("LabelMasterVolume");
-        labelMusic    = root.Q<Label>("LabelMusicVolume");
-        labelSFX      = root.Q<Label>("LabelSFXVolume");
-        labelAmbient  = root.Q<Label>("LabelAmbientVolume");
-        labelDialogue = root.Q<Label>("LabelDialogueVolume");
+        labelMaster  = root.Q<Label>("LabelMasterVolume");
+        labelMusic   = root.Q<Label>("LabelMusicVolume");
+        labelSFX     = root.Q<Label>("LabelSFXVolume");
+        labelAmbient = root.Q<Label>("LabelAmbientVolume");
 
-        RegisterSliderLabel(sliderMaster,   labelMaster,   v => pendingMaster   = v);
-        RegisterSliderLabel(sliderMusic,    labelMusic,    v => pendingMusic    = v);
-        RegisterSliderLabel(sliderSFX,      labelSFX,      v => pendingSFX      = v);
-        RegisterSliderLabel(sliderAmbient,  labelAmbient,  v => pendingAmbient  = v);
-        RegisterSliderLabel(sliderDialogue, labelDialogue, v => pendingDialogue = v);
+        RegisterSliderLabel(sliderMaster,  labelMaster,  v => pendingMaster  = v);
+        RegisterSliderLabel(sliderMusic,   labelMusic,   v => pendingMusic   = v);
+        RegisterSliderLabel(sliderSFX,     labelSFX,     v => pendingSFX     = v);
+        RegisterSliderLabel(sliderAmbient, labelAmbient, v => pendingAmbient = v);
 
         toggleMuteAll?.RegisterValueChangedCallback(evt =>
         {
@@ -152,38 +143,34 @@ public class SettingsMenuController : MonoBehaviour
 
     private void LoadSettings()
     {
-        pendingMaster   = PlayerPrefs.GetFloat("Vol_Master",   1f);
-        pendingMusic    = PlayerPrefs.GetFloat("Vol_Music",    0.75f);
-        pendingSFX      = PlayerPrefs.GetFloat("Vol_SFX",      1f);
-        pendingAmbient  = PlayerPrefs.GetFloat("Vol_Ambient",  0.5f);
-        pendingDialogue = PlayerPrefs.GetFloat("Vol_Dialogue", 1f);
-        pendingMute     = PlayerPrefs.GetInt  ("Vol_Mute",     0) == 1;
+        pendingMaster  = PlayerPrefs.GetFloat("Vol_Master",  1f);
+        pendingMusic   = PlayerPrefs.GetFloat("Vol_Music",   0.75f);
+        pendingSFX     = PlayerPrefs.GetFloat("Vol_SFX",     1f);
+        pendingAmbient = PlayerPrefs.GetFloat("Vol_Ambient", 0.5f);
+        pendingMute    = PlayerPrefs.GetInt  ("Vol_Mute",    0) == 1;
 
-        SetSliderSilently(sliderMaster,   labelMaster,   pendingMaster);
-        SetSliderSilently(sliderMusic,    labelMusic,    pendingMusic);
-        SetSliderSilently(sliderSFX,      labelSFX,      pendingSFX);
-        SetSliderSilently(sliderAmbient,  labelAmbient,  pendingAmbient);
-        SetSliderSilently(sliderDialogue, labelDialogue, pendingDialogue);
+        SetSliderSilently(sliderMaster,  labelMaster,  pendingMaster);
+        SetSliderSilently(sliderMusic,   labelMusic,   pendingMusic);
+        SetSliderSilently(sliderSFX,     labelSFX,     pendingSFX);
+        SetSliderSilently(sliderAmbient, labelAmbient, pendingAmbient);
         if (toggleMuteAll != null) toggleMuteAll.value = pendingMute;
     }
 
     private void ApplySettings()
     {
-        PlayerPrefs.SetFloat("Vol_Master",   pendingMaster);
-        PlayerPrefs.SetFloat("Vol_Music",    pendingMusic);
-        PlayerPrefs.SetFloat("Vol_SFX",      pendingSFX);
-        PlayerPrefs.SetFloat("Vol_Ambient",  pendingAmbient);
-        PlayerPrefs.SetFloat("Vol_Dialogue", pendingDialogue);
-        PlayerPrefs.SetInt  ("Vol_Mute",     pendingMute ? 1 : 0);
+        PlayerPrefs.SetFloat("Vol_Master",  pendingMaster);
+        PlayerPrefs.SetFloat("Vol_Music",   pendingMusic);
+        PlayerPrefs.SetFloat("Vol_SFX",     pendingSFX);
+        PlayerPrefs.SetFloat("Vol_Ambient", pendingAmbient);
+        PlayerPrefs.SetInt  ("Vol_Mute",    pendingMute ? 1 : 0);
         PlayerPrefs.Save();
 
         if (audioMixer != null)
         {
-            audioMixer.SetFloat(masterVolumeParam,   pendingMute ? -80f : LinearToDecibel(pendingMaster));
-            audioMixer.SetFloat(musicVolumeParam,    LinearToDecibel(pendingMusic));
-            audioMixer.SetFloat(sfxVolumeParam,      LinearToDecibel(pendingSFX));
-            audioMixer.SetFloat(ambientVolumeParam,  LinearToDecibel(pendingAmbient));
-            audioMixer.SetFloat(dialogueVolumeParam, LinearToDecibel(pendingDialogue));
+            audioMixer.SetFloat(masterVolumeParam,  pendingMute ? -80f : LinearToDecibel(pendingMaster));
+            audioMixer.SetFloat(musicVolumeParam,   LinearToDecibel(pendingMusic));
+            audioMixer.SetFloat(sfxVolumeParam,     LinearToDecibel(pendingSFX));
+            audioMixer.SetFloat(ambientVolumeParam, LinearToDecibel(pendingAmbient));
         }
     }
 
