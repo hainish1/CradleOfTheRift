@@ -10,7 +10,14 @@ public class SettingsMenuController : MonoBehaviour
     [SerializeField] private string sfxVolumeRTPC     = "SFXVolume";
     [SerializeField] private string ambientVolumeRTPC = "AmbientVolume";
 
+    // ── Tab animation config ──────────────────────────────────────────
+    private const float BORDER_MAX  = 4f;   // px when active
+    private const float BORDER_MIN  = 0f;   // px when inactive
+    private const float ANIM_SPEED  = 30f;  // higher = faster (units per second)
+    // ─────────────────────────────────────────────────────────────────
+
     private VisualElement root;
+    private const float sliderStep = 0.01f; // Increment step for slider value changes (1%)
 
     // Tab buttons in the top navigation bar
     private Button tabAudio;
@@ -50,6 +57,11 @@ public class SettingsMenuController : MonoBehaviour
     // Pairs each tab button with its corresponding page for easy iteration
     private List<(Button tab, VisualElement page)> tabPagePairs;
 
+    // Per-frame border animation
+    private Button[] animTabs;
+    private float[]  borderWidths;
+    private Button   activeTab;
+
     public System.Action OnBackPressed;
 
 
@@ -65,6 +77,22 @@ public class SettingsMenuController : MonoBehaviour
         Initialize(document.rootVisualElement);
     }
 
+    private void Update()
+    {
+        if (animTabs == null) return;
+
+        for (int i = 0; i < animTabs.Length; i++)
+        {
+            float target  = (animTabs[i] == activeTab) ? BORDER_MAX : BORDER_MIN;
+            float current = borderWidths[i];
+
+            if (Mathf.Approximately(current, target)) continue;
+
+            float next = Mathf.MoveTowards(current, target, ANIM_SPEED * Time.deltaTime);
+            borderWidths[i] = next;
+            animTabs[i].style.borderBottomWidth = next;
+        }
+    }
 
     /// <summary>
     /// Queries all UI elements from the provided root, registers callbacks,
@@ -91,6 +119,10 @@ public class SettingsMenuController : MonoBehaviour
             (tabVideo,    pageVideo),
             (tabControls, pageControls),
         };
+
+        // Animation arrays and order must match tabPagePairs
+        animTabs     = new[] { tabAudio, tabVideo, tabControls };
+        borderWidths = new float[3];
 
         // Wire tab click events
         tabAudio   .RegisterCallback<ClickEvent>(_ => SwitchToTab(tabAudio));
@@ -122,7 +154,7 @@ public class SettingsMenuController : MonoBehaviour
         buttonBack ?.RegisterCallback<ClickEvent>(_ => OnBackPressed?.Invoke());
 
         LoadSettings();
-        SwitchToTab(tabAudio);
+        SwitchToTab(tabAudio, snap: true);
     }
 
     // ── Tab Switching ─────────────────────────────────────
@@ -131,15 +163,27 @@ public class SettingsMenuController : MonoBehaviour
     /// Activates the target tab's page and marks it with the active CSS class;
     /// all other tabs and pages are hidden/deactivated.
     /// </summary>
-    private void SwitchToTab(Button targetTab)
+    private void SwitchToTab(Button targetTab, bool snap = false)
     {
-        foreach (var (tab, page) in tabPagePairs)
+        activeTab = targetTab;
+
+        for (int i = 0; i < animTabs.Length; i++)
         {
-            bool isTarget = tab == targetTab;
-            if (isTarget) tab.AddToClassList(ACTIVE_TAB_CLASS);
-            else          tab.RemoveFromClassList(ACTIVE_TAB_CLASS);
-            page.style.display = isTarget ? DisplayStyle.Flex : DisplayStyle.None;
+            bool isTarget = animTabs[i] == targetTab;
+
+            if (isTarget) animTabs[i].AddToClassList(ACTIVE_TAB_CLASS);
+            else          animTabs[i].RemoveFromClassList(ACTIVE_TAB_CLASS);
+
+            if (snap)
+            {
+                float snapValue = isTarget ? BORDER_MAX : BORDER_MIN;
+                borderWidths[i] = snapValue;
+                animTabs[i].style.borderBottomWidth = snapValue;
+            }
         }
+
+        foreach (var (tab, page) in tabPagePairs)
+            page.style.display = (tab == targetTab) ? DisplayStyle.Flex : DisplayStyle.None;
     }
 
     // ── Settings Persistence ──────────────────────────────
@@ -179,6 +223,9 @@ public class SettingsMenuController : MonoBehaviour
         AkSoundEngine.SetRTPCValue(musicVolumeRTPC,   pendingMusic   * 100f);
         AkSoundEngine.SetRTPCValue(sfxVolumeRTPC,     pendingSFX     * 100f);
         AkSoundEngine.SetRTPCValue(ambientVolumeRTPC, pendingAmbient * 100f);
+
+        Debug.Log("SettingsMenuController: Applied audio settings to PlayerPrefs and Wwise.\n" +
+                  $"Master={pendingMaster}, Music={pendingMusic}, SFX={pendingSFX}, Ambient={pendingAmbient}");
     }
 
     // ── Helpers ───────────────────────────────────────────
@@ -192,7 +239,9 @@ public class SettingsMenuController : MonoBehaviour
         if (slider == null) return;
         slider.RegisterValueChangedCallback(evt =>
         {
-            float v = evt.newValue;
+            float v = Mathf.Round(evt.newValue / sliderStep) * sliderStep; // Snap to nearest step
+            slider.SetValueWithoutNotify(v); // Update slider to snapped value 
+
             onChanged(v);
             if (label != null) label.text = Mathf.RoundToInt(v * 100).ToString();
         });

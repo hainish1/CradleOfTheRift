@@ -60,7 +60,7 @@
 
     /* Animate color and underline */
     transition-duration: 0.25s;
-    transition-property: color, border-bottom-width, border-bottom-color;
+    transition-property: color;
 
     border-bottom-width: 0;
     border-bottom-color: rgba(255, 255, 255, 0);
