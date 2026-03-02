@@ -7,6 +7,7 @@ public class UpgradePanelUI : MonoBehaviour
     private UIDocument document;
     private VisualElement overlay;
     private VisualElement choicesContainer;
+    private Button rerollButton;
 
     void Awake()
     {
@@ -15,10 +16,9 @@ public class UpgradePanelUI : MonoBehaviour
 
         overlay = root.Q<VisualElement>("UpgradeOverlay");
         choicesContainer = root.Q<VisualElement>("ChoicesContainer");
+        rerollButton = root.Q<Button>("RerollButton");
 
         var closeButton = root.Q<Button>("CloseButton");
-        var rerollButton = root.Q<Button>("RerollButton");
-
         if (closeButton != null)
             closeButton.RegisterCallback<ClickEvent>(OnCloseClicked);
 
@@ -63,6 +63,7 @@ public class UpgradePanelUI : MonoBehaviour
             choicesContainer.Add(card);
         }
 
+        UpdateRerollButtonText();
         overlay.style.display = DisplayStyle.Flex;
     }
 
@@ -130,7 +131,16 @@ public class UpgradePanelUI : MonoBehaviour
 
     private void OnRerollClicked(ClickEvent evt)
     {
-        // TODO: reroll logic here
+        UpgradeLevelManager.Instance.RerollChoices();
+        UpdateRerollButtonText();
+    }
+
+    private void UpdateRerollButtonText()
+    {
+        if (rerollButton == null || UpgradeLevelManager.Instance == null) return;
+        int n = UpgradeLevelManager.Instance.RerollCountRemaining;
+        rerollButton.text = $"Reroll ({n})";
+        rerollButton.SetEnabled(n > 0);
     }
 
     private void OnCloseClicked(ClickEvent evt)

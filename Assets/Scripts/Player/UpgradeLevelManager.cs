@@ -30,6 +30,9 @@ public class UpgradeLevelManager : MonoBehaviour
     [Tooltip("Max number of upgrade choices shown each time panel open")]
     [SerializeField] private int maxChoices = 3;
 
+    private int _rerollCountRemaining = 3;
+    public int RerollCountRemaining => _rerollCountRemaining;
+
     private bool levelUpPending;
     private bool panelIsOpen;
     private PlayerXP playerXP;
@@ -79,7 +82,10 @@ public class UpgradeLevelManager : MonoBehaviour
         playerXP = PlayerXP.Instance;
 
         if (playerXP != null)
+        {
             playerXP.LevelUpAvailable += OnLevelUpAvailable;
+            playerXP.LeveledUp += OnLeveledUp;
+        }
         else
             Debug.LogWarning("PlayerXP not found.");
     }
@@ -87,7 +93,16 @@ public class UpgradeLevelManager : MonoBehaviour
     void OnDestroy()
     {
         if (playerXP != null)
+        {
             playerXP.LevelUpAvailable -= OnLevelUpAvailable;
+            playerXP.LeveledUp -= OnLeveledUp;
+        }
+    }
+
+    private void OnLeveledUp(int newLevel)
+    {
+        if (newLevel > 0 && newLevel % 5 == 0)
+            _rerollCountRemaining++;
     }
 
     void Update()
@@ -150,7 +165,15 @@ public class UpgradeLevelManager : MonoBehaviour
         UpgradePanelOpened?.Invoke(currentChoices);
         Debug.Log($"Upgrade panel opened with {currentChoices.Count} choices.");
     }
-
+    // Reroll
+    public void RerollChoices()
+    {
+        if (!panelIsOpen || _rerollCountRemaining <= 0) return;
+        _rerollCountRemaining--;
+        currentChoices = PickRandomUpgrades();
+        if (currentChoices.Count == 0) return;
+        UpgradePanelOpened?.Invoke(currentChoices);
+    }
     // close the upgrade panel
     public void CloseUpgradePanel()
     {
@@ -296,5 +319,6 @@ public class UpgradeLevelManager : MonoBehaviour
         blockedFromPool.Clear();
         levelUpPending = false;
         panelIsOpen = false;
+        _rerollCountRemaining = 3;
     }
 }
