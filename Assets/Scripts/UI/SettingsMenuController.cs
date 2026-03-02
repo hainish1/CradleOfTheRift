@@ -10,25 +10,25 @@ public class SettingsMenuController : MonoBehaviour
     [SerializeField] private string sfxVolumeRTPC     = "SFXVolume";
     [SerializeField] private string ambientVolumeRTPC = "AmbientVolume";
 
-    // ── Internal ──────────────────────────────────────────
     private VisualElement root;
 
-    // Tabs
+    // Tab buttons in the top navigation bar
     private Button tabAudio;
     private Button tabVideo;
     private Button tabControls;
 
-    // Pages
+    // Content pages shown/hidden when switching tabs
     private VisualElement pageAudio;
     private VisualElement pageVideo;
     private VisualElement pageControls;
 
-    // Audio controls
+    // Audio volume sliders (0–1 range)
     private Slider sliderMaster;
     private Slider sliderMusic;
     private Slider sliderSFX;
     private Slider sliderAmbient;
 
+    // Numeric labels that display each slider's current value as a percentage
     private Label labelMaster;
     private Label labelMusic;
     private Label labelSFX;
@@ -38,18 +38,20 @@ public class SettingsMenuController : MonoBehaviour
     private Button buttonApply;
     private Button buttonBack;
 
-    // Pending values (committed on Apply)
+    // Staged volume values — written to PlayerPrefs/Wwise only when Apply is pressed
     private float pendingMaster  = 1f;
     private float pendingMusic   = 0.75f;
     private float pendingSFX     = 1f;
     private float pendingAmbient = 0.5f;
 
+    // USS class applied to whichever tab button is currently selected
     private const string ACTIVE_TAB_CLASS = "settings-tab--active";
+    
+    // Pairs each tab button with its corresponding page for easy iteration
     private List<(Button tab, VisualElement page)> tabPagePairs;
 
     public System.Action OnBackPressed;
 
-    // ── Lifecycle ─────────────────────────────────────────
 
     private void OnEnable()
     {
@@ -63,20 +65,26 @@ public class SettingsMenuController : MonoBehaviour
         Initialize(document.rootVisualElement);
     }
 
-    // ── Setup ─────────────────────────────────────────────
 
+    /// <summary>
+    /// Queries all UI elements from the provided root, registers callbacks,
+    /// loads saved settings, and defaults to the Audio tab.
+    /// </summary>
     public void Initialize(VisualElement settingsRoot)
     {
         root = settingsRoot;
 
+        // Query tab buttons
         tabAudio    = root.Q<Button>("TabAudio");
         tabVideo    = root.Q<Button>("TabVideo");
         tabControls = root.Q<Button>("TabControls");
 
+        // Query page containers
         pageAudio    = root.Q<VisualElement>("PageAudio");
         pageVideo    = root.Q<VisualElement>("PageVideo");
         pageControls = root.Q<VisualElement>("PageControls");
 
+        // Build pairs list so SwitchToTab can iterate without a chain of if/else
         tabPagePairs = new List<(Button, VisualElement)>
         {
             (tabAudio,    pageAudio),
@@ -84,10 +92,12 @@ public class SettingsMenuController : MonoBehaviour
             (tabControls, pageControls),
         };
 
+        // Wire tab click events
         tabAudio   .RegisterCallback<ClickEvent>(_ => SwitchToTab(tabAudio));
         tabVideo   .RegisterCallback<ClickEvent>(_ => SwitchToTab(tabVideo));
         tabControls.RegisterCallback<ClickEvent>(_ => SwitchToTab(tabControls));
 
+        // Query audio sliders and their paired display labels
         sliderMaster  = root.Q<Slider>("SliderMasterVolume");
         sliderMusic   = root.Q<Slider>("SliderMusicVolume");
         sliderSFX     = root.Q<Slider>("SliderSFXVolume");
@@ -98,11 +108,13 @@ public class SettingsMenuController : MonoBehaviour
         labelSFX     = root.Q<Label>("LabelSFXVolume");
         labelAmbient = root.Q<Label>("LabelAmbientVolume");
 
+        // Register each slider to update its label and stage the pending value
         RegisterSliderLabel(sliderMaster,  labelMaster,  v => pendingMaster  = v);
         RegisterSliderLabel(sliderMusic,   labelMusic,   v => pendingMusic   = v);
         RegisterSliderLabel(sliderSFX,     labelSFX,     v => pendingSFX     = v);
         RegisterSliderLabel(sliderAmbient, labelAmbient, v => pendingAmbient = v);
 
+        // Wire bottom bar buttons
         buttonApply = root.Q<Button>("ButtonApply");
         buttonBack  = root.Q<Button>("ButtonBack");
 
@@ -115,6 +127,10 @@ public class SettingsMenuController : MonoBehaviour
 
     // ── Tab Switching ─────────────────────────────────────
 
+    /// <summary>
+    /// Activates the target tab's page and marks it with the active CSS class;
+    /// all other tabs and pages are hidden/deactivated.
+    /// </summary>
     private void SwitchToTab(Button targetTab)
     {
         foreach (var (tab, page) in tabPagePairs)
@@ -128,6 +144,10 @@ public class SettingsMenuController : MonoBehaviour
 
     // ── Settings Persistence ──────────────────────────────
 
+    /// <summary>
+    /// Loads saved volume values from PlayerPrefs and silently updates
+    /// the sliders and labels without triggering change callbacks.
+    /// </summary>
     private void LoadSettings()
     {
         pendingMaster  = PlayerPrefs.GetFloat("Vol_Master",  1f);
@@ -141,6 +161,11 @@ public class SettingsMenuController : MonoBehaviour
         SetSliderSilently(sliderAmbient, labelAmbient, pendingAmbient);
     }
 
+
+    /// <summary>
+    /// Commits all pending volume values to PlayerPrefs and pushes them
+    /// to Wwise as 0–100 RTPC values.
+    /// </summary>
     private void ApplySettings()
     {
         PlayerPrefs.SetFloat("Vol_Master",  pendingMaster);
@@ -149,6 +174,7 @@ public class SettingsMenuController : MonoBehaviour
         PlayerPrefs.SetFloat("Vol_Ambient", pendingAmbient);
         PlayerPrefs.Save();
 
+        // Wwise RTPCs expect a 0–100 scale; sliders store normalised 0–1 values
         AkSoundEngine.SetRTPCValue(masterVolumeRTPC,  pendingMaster  * 100f);
         AkSoundEngine.SetRTPCValue(musicVolumeRTPC,   pendingMusic   * 100f);
         AkSoundEngine.SetRTPCValue(sfxVolumeRTPC,     pendingSFX     * 100f);
@@ -157,6 +183,10 @@ public class SettingsMenuController : MonoBehaviour
 
     // ── Helpers ───────────────────────────────────────────
 
+    /// <summary>
+    /// Subscribes to a slider's value-changed event to keep its label in sync
+    /// and forward the new value to the provided staging callback.
+    /// </summary>
     private void RegisterSliderLabel(Slider slider, Label label, System.Action<float> onChanged)
     {
         if (slider == null) return;
@@ -168,6 +198,10 @@ public class SettingsMenuController : MonoBehaviour
         });
     }
 
+    /// <summary>
+    /// Sets a slider's value and updates its label without firing value-changed callbacks,
+    /// used during initial load to avoid dirtying pending state.
+    /// </summary>
     private void SetSliderSilently(Slider slider, Label label, float value)
     {
         if (slider == null) return;
