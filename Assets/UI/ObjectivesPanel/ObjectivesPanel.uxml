@@ -1,0 +1,15 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/ObjectivesPanel/ObjectivesStylesheet.uss" />
+    <ui:VisualElement name="ObjectivesPanel" picking-mode="Ignore">
+        <ui:Label text="OBJECTIVES" name="ObjectivesHeader" />
+        <ui:VisualElement name="LocateRow" class="objective-row objective-active">
+            <ui:Label text="•  Locate Extraction Site" name="LocateLabel" class="objective-label" />
+        </ui:VisualElement>
+        <ui:VisualElement name="ChargeRow" class="objective-row objective-inactive" style="display: none;">
+            <ui:Label text="•  Charge the Extraction Site" name="ChargeLabel" class="objective-label" />
+        </ui:VisualElement>
+        <ui:VisualElement name="KillRow" class="objective-row objective-inactive" style="display: none;">
+            <ui:Label text="•  Eliminate the Boss" name="KillLabel" class="objective-label" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

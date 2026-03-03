@@ -95,6 +95,7 @@ public class EffectSpec
     public float explosiveAoeDamageMultiplier = 0.5f;
     public float explosiveMaxRange = 0f;
     public float explosiveFireballSize = 7.5f;
+    public float explosiveProjectileSpeed = 0.7f;
     public GameObject explosiveVFX;
 
     // Chain Lightning

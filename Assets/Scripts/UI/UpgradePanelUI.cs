@@ -7,6 +7,7 @@ public class UpgradePanelUI : MonoBehaviour
     private UIDocument document;
     private VisualElement overlay;
     private VisualElement choicesContainer;
+    private Button rerollButton;
 
     void Awake()
     {
@@ -15,23 +16,61 @@ public class UpgradePanelUI : MonoBehaviour
 
         overlay = root.Q<VisualElement>("UpgradeOverlay");
         choicesContainer = root.Q<VisualElement>("ChoicesContainer");
+        rerollButton = root.Q<Button>("RerollButton");
 
+        var closeButton = root.Q<Button>("CloseButton");
+        if (closeButton != null)
+            closeButton.RegisterCallback<ClickEvent>(OnCloseClicked);
+
+        if (rerollButton != null)
+            rerollButton.RegisterCallback<ClickEvent>(OnRerollClicked);
+
+        // start hidden
         Hide();
+
+        // also make the root ignore picks when overlay is hidden
+        // so this UIDocument does not block our panel
+        root.pickingMode = PickingMode.Ignore;
     }
+
+    private bool subscribedToManager;
 
     void Start()
     {
-        // upgrade level manager runs first
-        if (UpgradeLevelManager.Instance != null)
-            UpgradeLevelManager.Instance.UpgradePanelOpened += Show;
-        else
-            Debug.LogWarning("UpgradeLevelManager.Instance is null");
+        TrySubscribeToManager();
+    }
+
+    void Update()
+    {
+        // retry subscribe if UpgradeLevelManager was not ready at start
+        if (!subscribedToManager)
+            TrySubscribeToManager();
     }
 
     void OnDestroy()
     {
-        if (UpgradeLevelManager.Instance != null)
+        if (subscribedToManager && UpgradeLevelManager.Instance != null)
+        {
             UpgradeLevelManager.Instance.UpgradePanelOpened -= Show;
+            UpgradeLevelManager.Instance.UpgradePanelClosed -= Hide;
+        }
+    }
+
+    private bool TrySubscribeToManager()
+    {
+        if (subscribedToManager) return true;
+
+        if (UpgradeLevelManager.Instance == null)
+        {
+            Debug.LogWarning("[UpgradePanelUI] UpgradeLevelManager.Instance not ready yet, retry");
+            return false;
+        }
+
+        UpgradeLevelManager.Instance.UpgradePanelOpened += Show;
+        UpgradeLevelManager.Instance.UpgradePanelClosed += Hide;
+        subscribedToManager = true;
+        Debug.Log("[UpgradePanelUI] Subscribed to UpgradeLevelManager");
+        return true;
     }
 
     public void Show(List<ItemData> choices)
@@ -48,12 +87,15 @@ public class UpgradePanelUI : MonoBehaviour
             choicesContainer.Add(card);
         }
 
+        UpdateRerollButtonText();
         overlay.style.display = DisplayStyle.Flex;
+        overlay.pickingMode = PickingMode.Position; // accept clicks
     }
 
     public void Hide()
     {
         overlay.style.display = DisplayStyle.None;
+        overlay.pickingMode = PickingMode.Ignore; // let events pass through to panels below
     }
 
     private VisualElement BuildCard(ItemData item, int choiceIndex)
@@ -111,6 +153,26 @@ public class UpgradePanelUI : MonoBehaviour
         });
 
         return card;
+    }
+
+    private void OnRerollClicked(ClickEvent evt)
+    {
+        UpgradeLevelManager.Instance.RerollChoices();
+        UpdateRerollButtonText();
+    }
+
+    private void UpdateRerollButtonText()
+    {
+        if (rerollButton == null || UpgradeLevelManager.Instance == null) return;
+        int n = UpgradeLevelManager.Instance.RerollCountRemaining;
+        rerollButton.text = $"Reroll ({n})";
+        rerollButton.SetEnabled(n > 0);
+    }
+
+    private void OnCloseClicked(ClickEvent evt)
+    {
+        // idk man ill have jared do that
+        UpgradeLevelManager.Instance.CloseUpgradePanel();
     }
 
     // private string FormatEffectName(ItemEffectKind kind)

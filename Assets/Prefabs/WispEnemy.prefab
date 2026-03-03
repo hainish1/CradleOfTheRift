@@ -6001,31 +6001,34 @@ MonoBehaviour:
   gizosOn: 1
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
   nextAttackAllowed: 1
-  projectileDamage: 20
-  flyHeight: 3
-  verticalSmoothTime: 2.5
+  projectileDamage: 10
+  flyHeight: 3.7
+  verticalSmoothTime: 4.5
   horizontalSmoothTime: 2.5
-  maxHorizontalSpeed: 12
+  maxHorizontalSpeed: 20
   maxVerticalSpeed: 10
-  chaseSpeed: 5
-  attackRange: 15
-  desiredDistance: 6
-  stopDistance: 9
-  hoverHeight: 2
+  chaseSpeed: 6
+  attackRange: 75
+  desiredDistance: 60
+  stopDistance: 50
+  hoverHeight: 5
   hoverBobAmplitude: 0.7
   hoverBobSpeed: 4
   turnSpeedWhileAiming: 20
   agentAngularSpeed: 720
   agentAcceleration: 100
-  spreadInterval: 0.2
-  spreadRadiusJitter: 2
-  wispSeparationRadius: 20
-  wispSeparationStrength: 2
-  navSampleDistance: 6
-  angleAdaptSpeed: 1.5
-  projectileSpeed: 30
-  fireCooldown: 0.9
-  recoveryDuration: 2
+  spreadInterval: 2
+  spreadRadiusJitter: 0.1
+  wispSeparationRadius: 1
+  wispSeparationStrength: 0.05
+  navSampleDistance: 1
+  angleAdaptSpeed: 0.05
+  projectileSpeed: 50
+  attackDelayMin: 0.3
+  attackDelayMax: 0.8
+  recoveryDurationMin: 1.5
+  recoveryDurationMax: 2.5
+  shotsPerSet: 4
   firePoint: {fileID: 7588448968403286001}
   projectilePrefab: {fileID: 377849133140131786, guid: 3d4548e435a92d341abe939d6722a9ee, type: 3}
   spawnOffset: 0.1
@@ -6040,8 +6043,10 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 1
-  recoveryTime: 2
+  reloadTime: 1.5
   orbitVisuals: {fileID: 0}
+  currentShotsRemaining: 0
+  nextAttackTime: 0
 --- !u!114 &204557455612082024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6088,10 +6093,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 50
+  maxHealth: 35
   cleanupDelay: 0
-  baseHealth: 50
-  xpReward: 20
+  baseHealth: 35
+  xpReward: 10
   damageVisuals: {fileID: 6516409030888228098}
   deathVFX: {fileID: 5162910912013668194, guid: cf82839c411151342a7b2337bda9fb34, type: 3}
   deathVFXSpawnPoint: {fileID: 2550525461421281247}

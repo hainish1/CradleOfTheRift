@@ -40,10 +40,14 @@ public class EnemyRange : Enemy
 
     [Header("Shooting")]
     public float projectileSpeed = 50f;
-    [Tooltip("delay before the first shot after entering attack range")]
-    public float attackDelay = 0.5f;
-    [Tooltip("Pause between individual shots in a set")]
-    public float recoveryDuration = 0.6f;
+    [Tooltip("Min delay before the first shot after entering attack range")]
+    public float attackDelayMin = 0.3f;
+    [Tooltip("Max delay before the first shot after entering attack range")]
+    public float attackDelayMax = 0.8f;
+    [Tooltip("Min pause between individual shots in a set")]
+    public float recoveryDurationMin = 0.4f;
+    [Tooltip("Max pause between individual shots in a set")]
+    public float recoveryDurationMax = 0.8f;
     [Tooltip("How many shots per set before needing to reload")]
     public int shotsPerSet = 4;
     [Space]
@@ -83,12 +87,11 @@ public class EnemyRange : Enemy
     private float spreadRadiusOffset;
     private float nextSpreadUpdateTime;
     private Vector3 cachedSpreadPoint;
-    private Vector3 cachedSeparation;
     private Vector3 smoothedSeparation; // smooth to prevent jitter
     private bool holdHorizontalPosition;
-    private bool wasUsingDirectFlight;
     private AgentKnockBack knockBackRef;
     private bool wasKnockedBack;
+    private float navMeshSyncTimer;
 
     private void OnEnable()
     {
@@ -110,10 +113,11 @@ public class EnemyRange : Enemy
         if (agent != null)
         {
             agent.speed = chaseSpeed;
-            // agent.stoppingDistance = stopDistance * 0.8f;
-            agent.stoppingDistance = 0f; // control stopping manually
+            agent.stoppingDistance = 0f;
             agent.updatePosition = false;
-            agent.updateRotation = true; // let agent handle the rotation on Y axis for now
+            agent.updateRotation = false; // handle rotation in states using FaceTargetSmooth
+            agent.angularSpeed = agentAngularSpeed;
+            agent.acceleration = agentAcceleration;
         }
 
         knockBackRef = GetComponent<AgentKnockBack>();
@@ -145,7 +149,6 @@ public class EnemyRange : Enemy
     void UpdateFlightMovement()
     {
         if (PauseManager.GameIsPaused) return;
-        if (agent == null) return;
 
         // Don't fight AgentKnockBack for control of transform.position
         if (knockBackRef != null && knockBackRef.IsKnockbackActive)
@@ -154,21 +157,20 @@ public class EnemyRange : Enemy
             return;
         }
 
-        // First frame after knockback: reset SmoothDamp so we don't drift from stale velocity
+        // First frame after knockback: reset velocities so SmoothDamp dont cause no drift
         if (wasKnockedBack)
         {
             wasKnockedBack = false;
             currentHorizontalVelocity = Vector3.zero;
             currentYVelocity = 0f;
-            nextSpreadUpdateTime = 0f; // force recalc of spread point
+            nextSpreadUpdateTime = 0f;
+            SyncAgentToNavMesh();
         }
 
         // --- Vertical target ---
         float baseTargetY = transform.position.y;
         if (target != null)
-        {
             baseTargetY = target.position.y + flyHeight;
-        }
 
         bobPhase += Time.deltaTime * hoverBobSpeed;
         float bobOffset = Mathf.Sin(bobPhase) * hoverBobAmplitude;
@@ -176,58 +178,13 @@ public class EnemyRange : Enemy
 
         // --- Horizontal target ---
         Vector3 desiredHorizontalPos = transform.position;
-        bool usingDirectFlight = false;
-
         if (target != null)
-        {
-            Vector3 dirToTarget = target.position - transform.position;
-            float distToTarget = dirToTarget.magnitude;
-            bool hasLineOfSight = !Physics.Raycast(transform.position, dirToTarget.normalized,
-                                                    distToTarget, obstacleMask);
+            desiredHorizontalPos = GetSpreadoutChasePoint();
 
-            if (hasLineOfSight)
-            {
-                usingDirectFlight = true;
-                desiredHorizontalPos = GetSpreadoutChasePoint();
-            }
-            else if (agent.isOnNavMesh)
-            {
-                desiredHorizontalPos = agent.nextPosition;
-            }
-            else
-            {
-                // No LOS, agent off NavMesh - fly toward player directly
-                usingDirectFlight = true;
-                desiredHorizontalPos = GetSpreadoutChasePoint();
-            }
-        }
-        else if (agent.isOnNavMesh)
-        {
-            desiredHorizontalPos = agent.nextPosition;
-        }
+        // Keep agent on mesh for spawner 
+        SyncAgentToNavMeshPeriodicaly();
 
-        // reset SmoothDamp velocity when switching from navmesh and flight
-        if (usingDirectFlight != wasUsingDirectFlight)
-        {
-            currentHorizontalVelocity = Vector3.zero;
-            wasUsingDirectFlight = usingDirectFlight;
-        }
-
-        // Keep the agent synced to our actual position; try to recover if agent fell off NavMesh
-        if (agent.isOnNavMesh)
-        {
-            agent.nextPosition = new Vector3(transform.position.x, agent.nextPosition.y, transform.position.z);
-        }
-        else
-        {
-            // Agent fell off NavMesh (knockback pushed us off) - try to snap it back
-            UnityEngine.AI.NavMeshHit navHit;
-            if (UnityEngine.AI.NavMesh.SamplePosition(transform.position, out navHit, 10f, UnityEngine.AI.NavMesh.AllAreas))
-            {
-                agent.Warp(navHit.position);
-            }
-        }
-
+        // make next position
         Vector3 nextPos = transform.position;
 
         nextPos.x = Mathf.SmoothDamp(transform.position.x, desiredHorizontalPos.x,
@@ -246,9 +203,8 @@ public class EnemyRange : Enemy
             currentHorizontalVelocity = Vector3.ClampMagnitude(currentHorizontalVelocity, maxHorizontalSpeed);
         }
 
-        // Vertical move
+        // Vertical SmoothDamp
         nextPos.y = Mathf.SmoothDamp(transform.position.y, finalTargetY, ref currentYVelocity, verticalSmoothTime);
-
         float vDelta = nextPos.y - transform.position.y;
         float maxVStep = maxVerticalSpeed * Time.deltaTime;
         if (Mathf.Abs(vDelta) > maxVStep)
@@ -257,8 +213,60 @@ public class EnemyRange : Enemy
             currentYVelocity = Mathf.Clamp(currentYVelocity, -maxVerticalSpeed, maxVerticalSpeed);
         }
 
-        // apply all 
+        // avoid the wall
+        Vector3 moveDelta = nextPos - transform.position;
+        float moveDist = moveDelta.magnitude;
+        if (moveDist > 0.001f)
+        {
+            if (Physics.SphereCast(transform.position, 0.35f, moveDelta.normalized,
+                                   out RaycastHit wallHit, moveDist + 0.1f,
+                                   obstacleMask, QueryTriggerInteraction.Ignore))
+            {
+                float safeDist = Mathf.Max(0f, wallHit.distance - 0.15f);
+                nextPos = transform.position + moveDelta.normalized * safeDist;
+
+                // slide, not stick
+                float velocityIntoWall = Vector3.Dot(currentHorizontalVelocity, -wallHit.normal);
+                if (velocityIntoWall > 0f)
+                    currentHorizontalVelocity += wallHit.normal * velocityIntoWall;
+            }
+        }
+
         transform.position = nextPos;
+    }
+
+
+    /// <summary>
+    /// Keep navmesh agent on mesh without moving the actual transform
+    /// </summary>
+    void SyncAgentToNavMesh()
+    {
+        if (agent == null || !agent.isActiveAndEnabled) return;
+
+        UnityEngine.AI.NavMeshHit hit;
+        if (!UnityEngine.AI.NavMesh.SamplePosition(transform.position, out hit, 30f, UnityEngine.AI.NavMesh.AllAreas))
+            return; 
+
+        if (agent.isOnNavMesh)
+        {
+            // agent still on mesh, don't move it actually
+            agent.nextPosition = hit.position;
+        }
+        else
+        {
+            // fell off 
+            Vector3 savedPos = transform.position;
+            agent.Warp(hit.position);
+            transform.position = savedPos;
+        }
+    }
+
+    void SyncAgentToNavMeshPeriodicaly()
+    {
+        navMeshSyncTimer -= Time.deltaTime;
+        if (navMeshSyncTimer > 0f) return;
+        navMeshSyncTimer = 0.5f;
+        SyncAgentToNavMesh();
     }
 
 
@@ -294,19 +302,29 @@ public class EnemyRange : Enemy
 
     public void SafeStopAgent()
     {
-        if (agent != null && agent.isOnNavMesh && agent.isActiveAndEnabled)
+        if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
         {
             agent.isStopped = true;
+            agent.ResetPath();
             agent.velocity = Vector3.zero;
         }
     }
 
     public void SafeResumeAgent()
     {
-        if (agent != null && agent.isOnNavMesh && agent.isActiveAndEnabled)
+        if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
         {
             agent.isStopped = false;
         }
+    }
+
+    /// <summary>
+    /// zeor SmoothDamp velocities, avoid drift.
+    /// </summary>
+    public void ResetFlightVelocity()
+    {
+        currentHorizontalVelocity = Vector3.zero;
+        currentYVelocity = 0f;
     }
 
 
@@ -383,22 +401,18 @@ public class EnemyRange : Enemy
     {
         if (target == null) return transform.position;
 
-        // Smooth separation to prevent frame-to-frame jitter
-        Vector3 rawSep = ComputeWispSeparation();
-        smoothedSeparation = Vector3.Lerp(smoothedSeparation, rawSep, Time.deltaTime * 4f);
-
+        // while attacking hold XZ position
         if (holdHorizontalPosition)
         {
-            Vector3 here = transform.position;
-            // small nudge only
-            here.x += smoothedSeparation.x * 0.5f;
-            here.z += smoothedSeparation.z * 0.5f;
-            here.y = target.position.y;
-            return here;
+            return transform.position;
         }
 
         if (Time.time < nextSpreadUpdateTime) return cachedSpreadPoint;
         nextSpreadUpdateTime = Time.time + Mathf.Max(0.05f, spreadInterval);
+
+        // compute separation and angle adaptation
+        Vector3 rawSep = ComputeWispSeparation();
+        smoothedSeparation = Vector3.Lerp(smoothedSeparation, rawSep, 0.35f);
 
         AdaptSpreadAngle();
 
@@ -406,8 +420,7 @@ public class EnemyRange : Enemy
         float radius = Mathf.Max(0.25f, desiredDistance + spreadRadiusOffset);
         Vector3 ringOffset = new Vector3(Mathf.Cos(spreadAngleRad), 0f, Mathf.Sin(spreadAngleRad)) * radius;
 
-        cachedSeparation = smoothedSeparation;
-        cachedSpreadPoint = targetPos + ringOffset + cachedSeparation;
+        cachedSpreadPoint = targetPos + ringOffset + smoothedSeparation;
         cachedSpreadPoint.y = targetPos.y;
 
         return cachedSpreadPoint;

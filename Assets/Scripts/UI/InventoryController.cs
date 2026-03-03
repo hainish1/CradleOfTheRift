@@ -7,6 +7,7 @@ public class InventoryController : MonoBehaviour
     [Header("References")]
     [SerializeField] private PlayerInventory playerInventory;
     [SerializeField] private UIDocument uiDocument;
+    [SerializeField] private PauseManager pauseManager;
 
     [Header("Settings")]
     [Tooltip("Key to open/close inventory")]
@@ -18,6 +19,7 @@ public class InventoryController : MonoBehaviour
     private Label descriptionLabel;
     private List<VisualElement> itemSlots = new List<VisualElement>();
     private ItemData currentSelectedItem;
+    private Button backButton;
 
 
     private void OnEnable()
@@ -44,6 +46,11 @@ public class InventoryController : MonoBehaviour
             slot.RegisterCallback<ClickEvent>(evt => OnSlotClicked(slot));
         }
 
+        backButton = root.Q<Button>("ButtonBack");
+        if(backButton != null)
+        {
+            backButton.RegisterCallback<ClickEvent>(OnBackButtonClick);
+        }
 
         RefreshInventoryDisplay();
 
@@ -55,6 +62,13 @@ public class InventoryController : MonoBehaviour
             playerInventory.OnItemStackChanged += HandleInventoryChanged;
             playerInventory.OnItemRemoved += HandleItemRemoved;
         }
+    }
+
+    
+    private void OnBackButtonClick(ClickEvent evt)
+    {
+        this.gameObject.SetActive(false);
+        pauseManager.ResumeGame();
     }
 
     // private void Update()

@@ -42,6 +42,13 @@ public class PlayerXP : MonoBehaviour
         Instance = this;
     }
 
+    void OnDestroy()
+    {
+        // clear Instance so next scenes awake does not see a destroyed reference
+        if (Instance == this)
+            Instance = null;
+    }
+
     /// <summary>
     /// Add XP to player. If threshold is reaches, automatically trigger the level-up-available event
     /// </summary>
