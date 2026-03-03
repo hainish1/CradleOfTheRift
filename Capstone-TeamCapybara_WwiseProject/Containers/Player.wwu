@@ -395,6 +395,28 @@
 						<ActiveSource Name="FairyJump" ID="{A4215296-56DF-43D9-B5A5-028B5B46FE32}" Platform="Linked"/>
 					</ActiveSourceList>
 				</Sound>
+				<Sound Name="Item Pickup" ID="{904BF4B8-3F5C-4045-B2F0-CB304643D46F}" ShortID="126387467">
+					<ReferenceList>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="Item Pickup" ID="{A818E774-05BD-4240-B58C-1A702AF11191}">
+							<Language>SFX</Language>
+							<AudioFile>Item Pickup.wav</AudioFile>
+							<MediaIDList>
+								<MediaID ID="961520638"/>
+							</MediaIDList>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="Item Pickup" ID="{A818E774-05BD-4240-B58C-1A702AF11191}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
 			</ChildrenList>
 		</WorkUnit>
 	</Containers>
