@@ -613,6 +613,7 @@ public class PlayerInventory : MonoBehaviour
                 effect.explosiveAoeDamageMultiplier,
                 effect.explosiveMaxRange,
                 effect.explosiveFireballSize,
+                effect.explosiveProjectileSpeed,
                 initialStacks,
                 effect.duration,
                 effect.explosiveVFX

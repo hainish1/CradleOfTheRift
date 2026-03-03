@@ -77,6 +77,8 @@ GameObject:
   - component: {fileID: 4624131168979302280}
   - component: {fileID: 7167545171542470465}
   - component: {fileID: 5434371461180033734}
+  - component: {fileID: 7836682299466400438}
+  - component: {fileID: 808318185732243230}
   m_Layer: 8
   m_Name: Free Camera
   m_TagString: Untagged
@@ -93,7 +95,7 @@ Transform:
   m_GameObject: {fileID: 812061669707472423}
   serializedVersion: 2
   m_LocalRotation: {x: -0.000000008388448, y: 0.000000009868763, z: 8.278361e-17, w: 1}
-  m_LocalPosition: {x: 0, y: 2.951, z: -13.481}
+  m_LocalPosition: {x: 0, y: 2.9510002, z: -13.480988}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -293,6 +295,47 @@ MonoBehaviour:
     FrequencyGain: 1
     Duration: 1
     m_NoiseOffsets: {x: 441.09436, y: 184.70993, z: -117.08008}
+--- !u!114 &7836682299466400438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812061669707472423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fef1c00004f85949b45bf063f17c55c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_listeners:
+    initialListenerList: []
+    useDefaultListeners: 1
+  isEnvironmentAware: 1
+  isStaticObject: 0
+  usePositionOffsetData: 0
+  m_positionOffsetData:
+    KeepMe: 0
+    positionOffset: {x: 0, y: 0, z: 0}
+  scalingFactor: 1
+  m_posOffsetData: {fileID: 0}
+  listenerMask: 1
+  player: {fileID: 2692208781826445233}
+--- !u!114 &808318185732243230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812061669707472423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25df122349018ee49b29c189f6468ab4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isDefaultListener: 1
+  bOverrideScalingFactor: 0
+  scalingFactor: -1
+  listenerId: 0
 --- !u!1 &1469837195746235065
 GameObject:
   m_ObjectHideFlags: 0
@@ -2003,6 +2046,22 @@ PrefabInstance:
       propertyPath: muzzle
       value: 
       objectReference: {fileID: 3458352867005651776}
+    - target: {fileID: 9056539957143267120, guid: 607539a4845f7fa438ebcc9034794389, type: 3}
+      propertyPath: _playerCamera
+      value: 
+      objectReference: {fileID: 3222700164973113527}
+    - target: {fileID: 9056539957143267120, guid: 607539a4845f7fa438ebcc9034794389, type: 3}
+      propertyPath: _upwardDegreesLimit
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 9056539957143267120, guid: 607539a4845f7fa438ebcc9034794389, type: 3}
+      propertyPath: _playerAimController
+      value: 
+      objectReference: {fileID: 1600938844907053042}
+    - target: {fileID: 9056539957143267120, guid: 607539a4845f7fa438ebcc9034794389, type: 3}
+      propertyPath: _hitCapsuleCastRadius
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3985627967104730043, guid: 607539a4845f7fa438ebcc9034794389, type: 3}
     - {fileID: 8702420870305545248, guid: 607539a4845f7fa438ebcc9034794389, type: 3}

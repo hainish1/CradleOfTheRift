@@ -10,9 +10,13 @@ public class PauseMenu : MonoBehaviour
     private Button settingsButton;
     private Button continueButton;
     private Button mainMenuButton;
+    private Button creditsButton;
+    private Button backButton;
     private Button quitButton;
     public InputActionAsset InputActions;
     public PauseManager pauseManager;
+    [SerializeField]private GameObject creditsUI;
+    [SerializeField]private GameObject mainMenuUI;
 
     [SerializeField] private SettingsMenuController settingsMenuController; 
 
@@ -25,6 +29,8 @@ public class PauseMenu : MonoBehaviour
         settingsButton = root.Q<Button>("ButtonSettings");
         continueButton = root.Q<Button>("ButtonContinue");
         mainMenuButton = root.Q<Button>("ButtonMainMenu");
+        creditsButton = root.Q<Button>("ButtonCredits");
+        backButton = root.Q<Button>("ButtonBack");
         quitButton = root.Q<Button>("ButtonQuitGame");
 
         if (settingsMenuController != null)
@@ -45,6 +51,8 @@ public class PauseMenu : MonoBehaviour
         settingsButton = document.rootVisualElement.Q("ButtonSettings") as Button;
         continueButton = document.rootVisualElement.Q("ButtonContinue") as Button;
         mainMenuButton = document.rootVisualElement.Q("ButtonMainMenu") as Button;
+        creditsButton = document.rootVisualElement.Q("ButtonCredits") as Button;
+        backButton = document.rootVisualElement.Q("ButtonBack") as Button;
         quitButton = document.rootVisualElement.Q("ButtonQuitGame") as Button;
 
         var action = InputActions.FindAction("Pause");
@@ -62,6 +70,12 @@ public class PauseMenu : MonoBehaviour
 
         if (mainMenuButton != null)
             mainMenuButton.RegisterCallback<ClickEvent>(OnMainMenuClick);
+
+        if (creditsButton != null)
+            creditsButton.RegisterCallback<ClickEvent>(OnCreditsClick);
+
+        if (backButton != null)
+            backButton.RegisterCallback<ClickEvent>(OnBackClick);
 
         if (quitButton != null)
             quitButton.RegisterCallback<ClickEvent>(OnQuitGameClick);
@@ -88,6 +102,12 @@ public class PauseMenu : MonoBehaviour
         if (mainMenuButton != null)
             mainMenuButton.UnregisterCallback<ClickEvent>(OnMainMenuClick);
 
+        if (creditsButton != null)
+            creditsButton.UnregisterCallback<ClickEvent>(OnCreditsClick);
+
+        if (backButton != null)
+            backButton.UnregisterCallback<ClickEvent>(OnBackClick);
+
         if (quitButton != null)
             quitButton.UnregisterCallback<ClickEvent>(OnQuitGameClick);
 
@@ -102,11 +122,11 @@ public class PauseMenu : MonoBehaviour
 
     private void OnMainMenuClick(ClickEvent evt)
     {
-        SceneManager.LoadScene("MainMenu");
         Time.timeScale = 1f;
         PauseManager.GameIsPaused = false;
         PauseManager.CurrentPauseState = PauseManager.PauseState.None;
         PlayerHealth.GameIsOver = false;
+        SceneManager.LoadScene("MainMenu");
     }
 
     private void OnStartGameClick(ClickEvent evt)
@@ -140,6 +160,19 @@ public class PauseMenu : MonoBehaviour
 
         pauseManager.ResumeGame();
         // Debug.Log("Continue Button Clicked, should continue.");
+    }
+
+    private void OnCreditsClick(ClickEvent evt)
+    {
+        creditsUI.SetActive(true);
+        mainMenuUI.SetActive(false);
+
+    }
+
+    private void OnBackClick(ClickEvent evt)
+    {
+        creditsUI.SetActive(false);
+        mainMenuUI.SetActive(true);
     }
 
     private void OnQuitGameClick(ClickEvent evt)

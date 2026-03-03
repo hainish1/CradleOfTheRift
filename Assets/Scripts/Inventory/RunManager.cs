@@ -47,6 +47,7 @@ public class RunManager : MonoBehaviour
     private void ResetRunStateAndClearInventoryIfPresent()
     {
         RunLootState.Instance?.ResetForNewRun();
+        UpgradeLevelManager.Instance?.ResetForNewRun();
 
         var inv = FindFirstObjectByType<PlayerInventory>();
         if (inv != null) inv.Clear();
