@@ -12,6 +12,10 @@ public class AudioPageController
         this.service = service;
     }
 
+    /// <summary>
+    /// Queries all audio page elements from the provided root and wires callbacks.
+    /// Call once after the UXML is loaded.
+    /// </summary>
     public void Initialize(VisualElement pageRoot)
     {
         sliderMaster  = pageRoot.Q<Slider>("SliderMasterVolume");
@@ -24,6 +28,8 @@ public class AudioPageController
         labelSFX     = pageRoot.Q<Label>("LabelSFXVolume");
         labelAmbient = pageRoot.Q<Label>("LabelAmbientVolume");
 
+        // Each slider mutates the relevant field on Current then calls Apply,
+        // which pushes all values to Wwise immediately for real-time feedback.
         RegisterSlider(sliderMaster, labelMaster, v =>
         {
             service.Current.masterVolume = v;
@@ -46,7 +52,10 @@ public class AudioPageController
         });
     }
 
-    // Called by SettingsMenuController after Load() or RevertToDefaults()
+    /// <summary>
+    /// Silently pushes data into sliders and labels without firing callbacks.
+    /// Called after Load() or RevertToSnapshot() to sync the UI to current state.
+    /// </summary>
     public void Refresh(SettingsData data)
     {
         SetSilently(sliderMaster,  labelMaster,  data.masterVolume);
@@ -55,6 +64,10 @@ public class AudioPageController
         SetSilently(sliderAmbient, labelAmbient, data.ambientVolume);
     }
 
+    /// <summary>
+    /// Subscribes to a slider's change event, snaps its value to an int,
+    /// keeps its label in sync, and forwards the value to the provided callback.
+    /// </summary>
     private void RegisterSlider(Slider slider, Label label, System.Action<int> onChanged)
     {
         if (slider == null) return;
@@ -67,6 +80,10 @@ public class AudioPageController
         });
     }
 
+    /// <summary>
+    /// Sets a slider's value and updates its label without firing change callbacks.
+    /// Prevents Refresh() from dirtying state or triggering redundant Wwise calls.
+    /// </summary>
     private void SetSilently(Slider slider, Label label, int value)
     {
         if (slider == null) return;

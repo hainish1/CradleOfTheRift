@@ -116,12 +116,12 @@ public class SettingsMenuController : MonoBehaviour
         tabVideo   .RegisterCallback<ClickEvent>(_ => SwitchToTab(tabVideo));
         tabControls.RegisterCallback<ClickEvent>(_ => SwitchToTab(tabControls));
 
-        // Initialise page controllers, passing each its own page root
+        // Initialise page controllers
         audioCtrl    = new AudioPageController(service);
         videoCtrl    = new VideoPageController(service);
         controlsCtrl = new ControlsPageController(service);
 
-        // Initialize respective pages
+        // Initialize respective pages, passing each its own page root
         audioCtrl   .Initialize(pageAudio);
         videoCtrl   .Initialize(pageVideo);
         controlsCtrl.Initialize(pageControls);
