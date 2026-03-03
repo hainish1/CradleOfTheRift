@@ -44,6 +44,13 @@
 								</Reference>
 							</ReferenceList>
 						</Action>
+						<Action Name="" ID="{731FB648-E107-4CC0-BAC9-AFA4F4AD4536}" ShortID="678009033">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="player_melee" ID="{9543637D-19CD-4664-BCD2-8FD78E9815F3}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
 					</ChildrenList>
 				</Event>
 				<Event Name="Play_player_dash" ID="{1300FC1B-85BE-420F-B007-E0C8136BD10D}">
@@ -80,28 +87,120 @@
 						<Action Name="" ID="{7224A17A-F338-475B-8356-CE8BA67D9893}" ShortID="938065366">
 							<ReferenceList>
 								<Reference Name="Target">
-									<ObjectRef Name="ThunderRandom" ID="{0E0F1B66-38CF-4D74-A61A-70BA6349356C}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+									<ObjectRef Name="ThunderRandom" ID="{0E0F1B66-38CF-4D74-A61A-70BA6349356C}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
 								</Reference>
 							</ReferenceList>
 						</Action>
 						<Action Name="" ID="{F0B34F6C-B1C5-47AF-956F-63897B17EBE6}" ShortID="183060012">
 							<ReferenceList>
 								<Reference Name="Target">
-									<ObjectRef Name="LASRMisc_Beam Transient_04_SFRMS_SCIWPNS" ID="{4C115E24-B0F3-48B2-9CF4-78DF2F953F84}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+									<ObjectRef Name="LASRMisc_Beam Transient_04_SFRMS_SCIWPNS" ID="{4C115E24-B0F3-48B2-9CF4-78DF2F953F84}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
 								</Reference>
 							</ReferenceList>
 						</Action>
 						<Action Name="" ID="{60EEDF04-F67A-4DC4-BA29-E2A76CF5C160}" ShortID="525036873">
 							<ReferenceList>
 								<Reference Name="Target">
-									<ObjectRef Name="LaunchRandom" ID="{F0BFD6FA-6C62-4F79-9CEA-2D6C024DB58D}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+									<ObjectRef Name="LaunchRandom" ID="{F0BFD6FA-6C62-4F79-9CEA-2D6C024DB58D}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
 								</Reference>
 							</ReferenceList>
 						</Action>
 						<Action Name="" ID="{E50EBFAE-B1B5-4776-A818-5EE62354F9C5}" ShortID="602116622">
 							<ReferenceList>
 								<Reference Name="Target">
-									<ObjectRef Name="ELECZap_Bug zapper zapping, electricity, crackle,_RogueWaves_DruidMagic_37" ID="{24724A59-E8DF-4669-AE69-BDA17E3371CD}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+									<ObjectRef Name="ELECZap_Bug zapper zapping, electricity, crackle,_RogueWaves_DruidMagic_37" ID="{24724A59-E8DF-4669-AE69-BDA17E3371CD}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{730A63D4-6B99-47FD-9BA8-1C0564BA59F3}" ShortID="809960432">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="ElectricityRandom" ID="{2041EADB-DE08-4DE7-B1E4-998CC5971FEC}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_player_fireball" ID="{1F51F437-6E41-4EAD-9D88-C22303E4B417}">
+					<ChildrenList>
+						<Action Name="" ID="{917493D4-E30B-4FFD-A2D9-B7A7C553D4AE}" ShortID="971960151">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="RandomFireBallLaunch" ID="{7B473101-673E-4E19-842B-39943B868D86}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{36F2F0A9-0C85-476B-8A87-D460B13DF87C}" ShortID="168024677">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="LaunchRandom" ID="{F0BFD6FA-6C62-4F79-9CEA-2D6C024DB58D}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{24D200BE-A399-44D8-891D-F15D49F775B0}" ShortID="875846515">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Campfire[1]" ID="{8609417A-6A8E-4DC3-98F9-5BC512704198}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_player_crown_shoot" ID="{945D0DC3-475C-4642-81E6-4D6E6C4E8A87}">
+					<PropertyList>
+						<Property Name="LimitScope" Type="int16">
+							<ValueList>
+								<Value>1</Value>
+							</ValueList>
+						</Property>
+					</PropertyList>
+					<ChildrenList>
+						<Action Name="" ID="{9BFFFA91-DCB0-41A8-8194-D226CC9BB02B}" ShortID="100398824">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="player_melee" ID="{9543637D-19CD-4664-BCD2-8FD78E9815F3}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{088C414A-D561-4261-8E53-941D795A7247}" ShortID="1057283536">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="player_dash" ID="{7FBAB5D7-8069-445C-B565-E24D7DF4842E}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{6EADE23D-F9B8-45CB-BC6C-1D3BE1634BB0}" ShortID="447070887">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Button_Clicks" ID="{63F94FF3-C338-4D64-9AA9-ECECDE286CA0}" WorkUnitID="{3FAA4224-FAB7-43F5-B297-21191114DE01}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{477E6C0B-A0D9-4B95-91F8-110712680DBC}" ShortID="979930276">
+							<PropertyList>
+								<Property Name="Probability" Type="Real64" Value="45"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Weapon Bell" ID="{92A289F7-4E7F-4813-A35F-009A3BF5B92D}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_player_ground_slam" ID="{EC6399CF-5E5F-46C2-85FA-296F0A88117B}">
+					<ChildrenList>
+						<Action Name="" ID="{DFD31525-3694-4374-B8D6-B2E7416C3B46}" ShortID="618380233">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Crackle" ID="{4A6E340A-F067-449B-9652-AF9049EEA011}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{D2D1F5A3-03D9-48F3-AF4D-6A4BB566B975}" ShortID="873687119">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Bluezone_BC0277_explosion_urban_004_02[1]" ID="{19ACE42F-5202-427B-90D5-C27C34B99CAE}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
 								</Reference>
 							</ReferenceList>
 						</Action>
