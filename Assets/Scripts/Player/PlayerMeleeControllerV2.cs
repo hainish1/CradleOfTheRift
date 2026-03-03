@@ -32,6 +32,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [Header("Player Parameters")] [Space]
     [SerializeField]
     [Tooltip("The player camera.")] private Transform _playerCamera;
+    [SerializeField]
+    [Tooltip("Controller for player aim.")] private PlayerAimController _playerAimController;
     private Transform _playerModel;
     private PlayerMovement _playerMovement;
     private PlayerShooter _playerShooter;
@@ -151,7 +153,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         // Trigger an attack when inputted.
         if ((_attackActions.IsPressed() || _comboInputted) && CanAttack) TriggerAttack();
 
-        // Gradually align player model with camera direction while attacking.
+        // Gradually align player model with the player's crosshair while attacking.
         AlignPlayerCharacter();
 
         // Continually register targets while an attack is active.
@@ -258,8 +260,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Gradually rotates the player's character to be either vertically aligned with the camera
-    ///     while attacking or perfectly level with the world horizontal while not attacking.
+    ///     Gradually rotates the player character to be vertically aligned with the closest point the crosshair
+    ///     is intersecting while attacking, or perfectly level with the world horizontal while not attacking.
     ///   </para>
     /// </summary>
     private void AlignPlayerCharacter()
@@ -267,7 +269,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         if (IsAttacking)
         {
             // Constrain vertical rotation of player character to the pitch limits.
-            Vector3 rotationIncrement = Vector3.RotateTowards(_playerModel.forward, _playerCamera.forward, Time.deltaTime * _degreesPerSecond, 0);
+            Vector3 crosshairIntersect = _playerAimController.GetAimDirection(_playerModel.position, _playerModel.forward);
+            Vector3 rotationIncrement = Vector3.RotateTowards(_playerModel.forward, crosshairIntersect, Time.deltaTime * _degreesPerSecond, 0);
             float pitch = GetPitchDegrees(rotationIncrement);
             if (pitch >= _downwardDegreesLimit && pitch <= _upwardDegreesLimit)
                 _playerModel.forward = rotationIncrement;
