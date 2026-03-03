@@ -5,6 +5,7 @@
 //   <para>
 //     Written by Hainish Acharya for GAMES 4500, University of Utah.
 //     Contributed to by Samuel Rigby.
+//          -Wrote charge regeneration logic.
 //          -Added compatability with spear throw animation.
 //          -Added SpearFlip and SpearRegain animation coroutines.
 //          -Separated try-firing logic from firing logic.
@@ -221,6 +222,7 @@ public class PlayerShooter : MonoBehaviour
 
         nextFireTime = Time.time + (1f / Mathf.Max(0.01f, fireRate));
         Fire();
+        DecrementFireCharges();
     }
 
     /// <summary>
@@ -232,10 +234,10 @@ public class PlayerShooter : MonoBehaviour
     private void TryToSpearThrow(bool force = false)
     {
         if (!aim || !muzzle || !projectilePrefab || currFireCharges <= 0) return;
-
+        print("Reached: !aim || !muzzle || currFireCharges <= 0");
         // Do not allows throws while dashing or attacking.
         if (playerMovement.IsDashing || meleeController.IsAttacking) return;
-
+        print("Reached: playerMovement.IsDashing || meleeController.IsAttacking");
         if (!force) // Force throw regardless of cooldown.
             if (Time.time < nextFireTime) return;
 
@@ -247,6 +249,8 @@ public class PlayerShooter : MonoBehaviour
         
         // Stop the current SpearRegain coroutine if a new throw was performed in the middle of it.
         if (spearRegainCoroutine != null) StopCoroutine(spearRegainCoroutine);
+        
+        DecrementFireCharges();
         IsThrowing = true;
     }
 
@@ -543,14 +547,20 @@ public class PlayerShooter : MonoBehaviour
         // Play firing sound
         audioController?.PlayAttackSound();
         fireEvent.Post(gameObject);
+    }
 
+    /// <summary>
+    ///   <para>
+    ///     Decreases the current amount of fire charges by 1.
+    ///   </para>
+    /// </summary>
+    private void DecrementFireCharges()
+    {
         currFireCharges--;
 
         // Only initialize regeneration routine if not already regenerating.
         if (currFireCharges == fireMaxCharges - 1)
-        {
             StartCoroutine(FireChargeRegeneration());
-        }
     }
 
     private IEnumerator FireChargeRegeneration()

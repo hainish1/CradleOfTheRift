@@ -1,6 +1,6 @@
 // <summary>
 //   <authors>
-//     Samuel Rigby, Hainish Acharya, Jiedi Mo
+//     Samuel Rigby, Hainish Acharya
 //   </authors>
 //   <para>
 //     Written by Samuel Rigby for GAMES 4500, University of Utah, August 2025.
@@ -9,8 +9,6 @@
 //          -Added knockback functionality.
 //          -Added support for stat data modification.
 //          -Added slam attack movement assistance for hovering.
-//     Contributed to by Jiedi Mo.
-//          -Added compatability with SlowZoneEffect system.
 //   </para>
 // </summary>
 
