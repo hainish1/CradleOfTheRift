@@ -25,28 +25,52 @@ public class UpgradePanelUI : MonoBehaviour
         if (rerollButton != null)
             rerollButton.RegisterCallback<ClickEvent>(OnRerollClicked);
 
+        // start hidden
         Hide();
+
+        // also make the root ignore picks when overlay is hidden
+        // so this UIDocument does not block our panel
+        root.pickingMode = PickingMode.Ignore;
     }
+
+    private bool subscribedToManager;
 
     void Start()
     {
-        // upgrade level manager runs first
-        if (UpgradeLevelManager.Instance != null)
-        {
-            UpgradeLevelManager.Instance.UpgradePanelOpened += Show;
-            UpgradeLevelManager.Instance.UpgradePanelClosed += Hide;
-        }
-        else
-            Debug.LogWarning("UpgradeLevelManager.Instance is null");
+        TrySubscribeToManager();
+    }
+
+    void Update()
+    {
+        // retry subscribe if UpgradeLevelManager was not ready at start
+        if (!subscribedToManager)
+            TrySubscribeToManager();
     }
 
     void OnDestroy()
     {
-        if (UpgradeLevelManager.Instance != null)
+        if (subscribedToManager && UpgradeLevelManager.Instance != null)
         {
             UpgradeLevelManager.Instance.UpgradePanelOpened -= Show;
             UpgradeLevelManager.Instance.UpgradePanelClosed -= Hide;
         }
+    }
+
+    private bool TrySubscribeToManager()
+    {
+        if (subscribedToManager) return true;
+
+        if (UpgradeLevelManager.Instance == null)
+        {
+            Debug.LogWarning("[UpgradePanelUI] UpgradeLevelManager.Instance not ready yet, retry");
+            return false;
+        }
+
+        UpgradeLevelManager.Instance.UpgradePanelOpened += Show;
+        UpgradeLevelManager.Instance.UpgradePanelClosed += Hide;
+        subscribedToManager = true;
+        Debug.Log("[UpgradePanelUI] Subscribed to UpgradeLevelManager");
+        return true;
     }
 
     public void Show(List<ItemData> choices)
@@ -65,11 +89,13 @@ public class UpgradePanelUI : MonoBehaviour
 
         UpdateRerollButtonText();
         overlay.style.display = DisplayStyle.Flex;
+        overlay.pickingMode = PickingMode.Position; // accept clicks
     }
 
     public void Hide()
     {
         overlay.style.display = DisplayStyle.None;
+        overlay.pickingMode = PickingMode.Ignore; // let events pass through to panels below
     }
 
     private VisualElement BuildCard(ItemData item, int choiceIndex)

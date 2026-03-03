@@ -35,7 +35,7 @@ public class UpgradeLevelManager : MonoBehaviour
 
     private bool levelUpPending;
     private bool panelIsOpen;
-    private PlayerXP playerXP;
+    private bool subscribedToXP; // track whether we subscribed to PlayerXP events
 
     // Input System
     private InputSystem_Actions _inputActions;
@@ -62,41 +62,57 @@ public class UpgradeLevelManager : MonoBehaviour
         Instance = this;
 
         _inputActions = new InputSystem_Actions();
-        _upgradeAction = _inputActions.Player.Upgrade;
+        _upgradeAction = _inputActions.UI.Upgrade;
     }
 
     void OnEnable()
     {
+        if (_upgradeAction == null) return;
         _upgradeAction.Enable();
-        _upgradeAction.started += OnUpgradePressed;
+        _upgradeAction.performed += OnUpgradePressed;
     }
 
     void OnDisable()
     {
-        _upgradeAction.started -= OnUpgradePressed;
+        if (_upgradeAction == null) return;
+        _upgradeAction.performed -= OnUpgradePressed;
         _upgradeAction.Disable();
     }
 
     void Start()
     {
-        playerXP = PlayerXP.Instance;
-
-        if (playerXP != null)
-        {
-            playerXP.LevelUpAvailable += OnLevelUpAvailable;
-            playerXP.LeveledUp += OnLeveledUp;
-        }
-        else
-            Debug.LogWarning("PlayerXP not found.");
+        TrySubscribeToXP();
     }
 
     void OnDestroy()
     {
-        if (playerXP != null)
+        // Unsubscribe from any live PlayerXP instance
+        if (subscribedToXP && PlayerXP.Instance != null)
         {
-            playerXP.LevelUpAvailable -= OnLevelUpAvailable;
-            playerXP.LeveledUp -= OnLeveledUp;
+            PlayerXP.Instance.LevelUpAvailable -= OnLevelUpAvailable;
+            PlayerXP.Instance.LeveledUp -= OnLeveledUp;
         }
+
+        if (Instance == this)
+            Instance = null;
+    }
+
+    private bool TrySubscribeToXP()
+    {
+        if (subscribedToXP) return true;
+
+        var xp = PlayerXP.Instance;
+        if (xp == null)
+        {
+            Debug.LogWarning("[UpgradeLevelManager] PlayerXP.Instance not ready yet, retry");
+            return false;
+        }
+
+        xp.LevelUpAvailable += OnLevelUpAvailable;
+        xp.LeveledUp += OnLeveledUp;
+        subscribedToXP = true;
+        Debug.Log("[UpgradeLevelManager] Subscribed to PlayerXP.LevelUpAvailable.");
+        return true;
     }
 
     private void OnLeveledUp(int newLevel)
@@ -107,10 +123,21 @@ public class UpgradeLevelManager : MonoBehaviour
 
     void Update()
     {
+        if (!subscribedToXP)
+            TrySubscribeToXP();
+
         // auto-open path (no key press needed)
         if (!panelIsOpen && levelUpPending && !PauseManager.GameIsPaused && autoOpenOnLevelUp)
         {
             OpenUpgradePanel();
+        }
+
+        // ensure upgrade action stays enabled while this component is active
+        // Other systems disabling shared InputActionAssets (other UI i guess) can disable our action
+        if (_upgradeAction != null && !_upgradeAction.enabled)
+        {
+            Debug.LogWarning("[UpgradeLevelManager] Upgrade action was disabled by sum else, re enabling.");
+            _upgradeAction.Enable();
         }
     }
 
@@ -124,8 +151,27 @@ public class UpgradeLevelManager : MonoBehaviour
             return;
         }
 
-        if (!levelUpPending) return;
-        if (PauseManager.GameIsPaused) return;
+        // block when any other panel/state is active like inventory, pause menu, end game
+        var ps = PauseManager.CurrentPauseState;
+        if (ps != PauseManager.PauseState.None)
+        {
+            // blocked by pause state
+            return;
+        }
+
+        if (!levelUpPending)
+        {
+            var xp = PlayerXP.Instance;
+            if (xp != null && xp.IsLevelUpReady)
+            {
+                levelUpPending = true;
+            }
+        }
+
+        if (!levelUpPending)
+        {
+            return;
+        }
 
         OpenUpgradePanel();
     }
@@ -157,7 +203,7 @@ public class UpgradeLevelManager : MonoBehaviour
 
         Time.timeScale = 0f;
         PauseManager.GameIsPaused = true;
-        PauseManager.CurrentPauseState = PauseManager.PauseState.Inventory; // im gonna reuse this for a bit
+        PauseManager.CurrentPauseState = PauseManager.PauseState.Upgrade;
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -228,6 +274,7 @@ public class UpgradeLevelManager : MonoBehaviour
 
         // Close panel
         panelIsOpen = false;
+        UpgradePanelClosed?.Invoke();
 
         // Resume game
         Cursor.lockState = CursorLockMode.Locked;

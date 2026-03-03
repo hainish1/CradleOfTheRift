@@ -118,11 +118,11 @@ public class EndScreenUI : MonoBehaviour
         {
             mainMenuButton.RegisterCallback<ClickEvent>(evt =>
             {
-            SceneManager.LoadScene("MainMenu");
             Time.timeScale = 1f;
             PauseManager.GameIsPaused = false;
             PauseManager.CurrentPauseState = PauseManager.PauseState.None;
             PlayerHealth.GameIsOver = false;
+            SceneManager.LoadScene("MainMenu");
             });
         }
 

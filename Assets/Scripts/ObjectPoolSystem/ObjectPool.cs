@@ -36,6 +36,14 @@ public class ObjectPool : MonoBehaviour
         }
 
         GameObject objectToGet = poolDictionary[prefabName].Dequeue();
+
+        // object may have been destroyed by sum else, if so, create a new one
+        if (objectToGet == null)
+        {
+            CreateNewObject(prefabName);
+            objectToGet = poolDictionary[prefabName].Dequeue();
+        }
+
         // set position of object before I actually enable it
         objectToGet.transform.position = target.position;
         objectToGet.transform.parent = null;
@@ -58,9 +66,22 @@ public class ObjectPool : MonoBehaviour
     }
     
     private void ReturnToPool(GameObject objectToReturn){
-        GameObject originalPrefab = objectToReturn.GetComponent<PooledObject>().originalPrefab;
+        if (objectToReturn == null) return;
+
+        var pooled = objectToReturn.GetComponent<PooledObject>();
+        if (pooled == null || pooled.originalPrefab == null)
+        {
+            // not a pooled object, just destroy it normally, someone mightve created using Instantiate, but destroyed using ReturnToPool which is valid cause ObjectPooling was not null in scene
+            Destroy(objectToReturn);
+            return;
+        }
+
+        GameObject originalPrefab = pooled.originalPrefab;
         objectToReturn.SetActive(false);
-        poolDictionary[originalPrefab].Enqueue(objectToReturn);
+
+        if (poolDictionary.ContainsKey(originalPrefab))
+            poolDictionary[originalPrefab].Enqueue(objectToReturn);
+
         objectToReturn.transform.parent = transform;
     }
 
