@@ -82,22 +82,16 @@ public class UpgradeLevelManager : MonoBehaviour
     void Start()
     {
         TrySubscribeToXP();
-        playerXP = PlayerXP.Instance;
-
-        if (playerXP != null)
-        {
-            playerXP.LevelUpAvailable += OnLevelUpAvailable;
-            playerXP.LeveledUp += OnLeveledUp;
-        }
-        else
-            Debug.LogWarning("PlayerXP not found.");
     }
 
     void OnDestroy()
     {
-        // unsub from any PlayerXP instance
+        // Unsubscribe from any live PlayerXP instance
         if (subscribedToXP && PlayerXP.Instance != null)
+        {
             PlayerXP.Instance.LevelUpAvailable -= OnLevelUpAvailable;
+            PlayerXP.Instance.LeveledUp -= OnLeveledUp;
+        }
 
         if (Instance == this)
             Instance = null;
@@ -115,14 +109,10 @@ public class UpgradeLevelManager : MonoBehaviour
         }
 
         xp.LevelUpAvailable += OnLevelUpAvailable;
+        xp.LeveledUp += OnLeveledUp;
         subscribedToXP = true;
         Debug.Log("[UpgradeLevelManager] Subscribed to PlayerXP.LevelUpAvailable.");
         return true;
-        if (playerXP != null)
-        {
-            playerXP.LevelUpAvailable -= OnLevelUpAvailable;
-            playerXP.LeveledUp -= OnLeveledUp;
-        }
     }
 
     private void OnLeveledUp(int newLevel)
