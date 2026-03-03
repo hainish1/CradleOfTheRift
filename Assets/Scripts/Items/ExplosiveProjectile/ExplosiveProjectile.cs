@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class ExplosiveProjectile : Projectile
 {
-    private float speedDecayRate = 0.3f;
     private GameObject fireballVisual;
     private static Shader cachedShader;
     
@@ -16,7 +15,7 @@ public class ExplosiveProjectile : Projectile
         {
             HideOriginalProjectileModel();
             CreateFireballVisual();
-            SlowDownProjectile();
+            SetProjectileSpeed();
         }
     }
     
@@ -58,11 +57,6 @@ public class ExplosiveProjectile : Projectile
         FadeTrailVisuals();
         age += Time.deltaTime;
         
-        if (ExplosiveProjectiles.IsEnabled && rb != null)
-        {
-            rb.linearVelocity *= Mathf.Exp(-speedDecayRate * Time.deltaTime);
-        }
-        
         if (ExplosiveProjectiles.IsEnabled)
         {
             float maxRange = ExplosiveProjectiles.MaxRange > 0f ? ExplosiveProjectiles.MaxRange : flyDistance;
@@ -91,12 +85,10 @@ public class ExplosiveProjectile : Projectile
         }
     }
     
-    private void SlowDownProjectile()
+    private void SetProjectileSpeed()
     {
         if (rb != null)
-        {
-            rb.linearVelocity *= 0.7f;
-        }
+            rb.linearVelocity *= ExplosiveProjectiles.ProjectileSpeed;
     }
 
     public override void OnCollisionEnter(Collision collision)
@@ -142,6 +134,9 @@ public class ExplosiveProjectile : Projectile
             Vector3 force = rb.linearVelocity.normalized * hitForce;
             collision.rigidbody.AddForceAtPosition(force, collision.contacts[0].point, ForceMode.Impulse);
         }
+
+        if (enemy == null && ExplosiveProjectiles.IsEnabled)
+            SpawnExplosionEffect();
 
         ReturnToSource();
     }

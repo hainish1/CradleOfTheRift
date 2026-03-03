@@ -101,6 +101,7 @@ public class EffectSpecDrawer : PropertyDrawer
             "explosiveAoeDamageMultiplier",
             "explosiveMaxRange",
             "explosiveFireballSize",
+            "explosiveProjectileSpeed",
             "explosiveVFX",
         },
 

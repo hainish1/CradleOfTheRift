@@ -12,15 +12,17 @@ public class ExplosiveProjectiles : IDisposable
     private float baseAoeRadius;
     private float baseAoeDamageMultiplier;
     private float baseMaxRange;
+    private float baseProjectileSpeed;
 
     public static float AoeRadius { get; private set; }
     public static float AoeDamageMultiplier { get; private set; }
     public static float MaxRange { get; private set; }
     public static float FireballVisualScale { get; private set; }
+    public static float ProjectileSpeed { get; private set; }
     public static bool IsEnabled { get; private set; }
     public static GameObject ExplosionVFX { get; private set; }
 
-    public ExplosiveProjectiles(Entity owner, float aoeRadius, float aoeDamageMultiplier, float maxRange, float fireballSize, int initialStacks, float durationSec = -1f, GameObject explosionVFX = null)
+    public ExplosiveProjectiles(Entity owner, float aoeRadius, float aoeDamageMultiplier, float maxRange, float fireballSize, float projectileSpeed, int initialStacks, float durationSec = -1f, GameObject explosionVFX = null)
     {
         this.owner = owner;
         stacks = Mathf.Max(1, initialStacks);
@@ -31,6 +33,7 @@ public class ExplosiveProjectiles : IDisposable
         baseAoeDamageMultiplier = aoeDamageMultiplier;
         baseMaxRange = maxRange;
         FireballVisualScale = fireballSize;
+        baseProjectileSpeed = projectileSpeed;
         ExplosionVFX = explosionVFX;
         IsEnabled = true;
         UpdateValues();
@@ -48,6 +51,7 @@ public class ExplosiveProjectiles : IDisposable
         AoeRadius = baseAoeRadius * (1f + (stacks - 1) * 0.2f);
         AoeDamageMultiplier = baseAoeDamageMultiplier * stacks;
         MaxRange = baseMaxRange > 0f ? baseMaxRange * (1f + (stacks - 1) * 0.2f) : 0f;
+        ProjectileSpeed = baseProjectileSpeed;
     }
 
     public void Update(float dt)
@@ -66,6 +70,7 @@ public class ExplosiveProjectiles : IDisposable
         AoeDamageMultiplier = 0f;
         MaxRange = 0f;
         FireballVisualScale = 0f;
+        ProjectileSpeed = 0.7f;
         ExplosionVFX = null;
     }
 }
