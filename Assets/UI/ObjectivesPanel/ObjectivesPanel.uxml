@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI/ObjectivesPanel/ObjectivesStylesheet.uss" />
-    <ui:VisualElement name="ObjectivesPanel" picking-mode="Ignore">
+    <Style src="project://database/Assets/UI/ObjectivesPanel/ObjectivesStylesheet.uss?fileID=7433441132597879392&amp;guid=9ebd1f1b485800d4481ecd007cd0e000&amp;type=3#ObjectivesStylesheet" />
+    <ui:VisualElement name="ObjectivesPanel" picking-mode="Ignore" style="background-image: url(&quot;project://database/Assets/Art%20Assets/2D/UI%20assets%202/Timer/Timer_Full.png?fileID=2800000&amp;guid=8b998bc8202f546358ba1f8d2aa13fb6&amp;type=3#Timer_Full&quot;);">
         <ui:Label text="OBJECTIVES" name="ObjectivesHeader" />
         <ui:VisualElement name="LocateRow" class="objective-row objective-active">
             <ui:Label text="•  Locate Extraction Site" name="LocateLabel" class="objective-label" />

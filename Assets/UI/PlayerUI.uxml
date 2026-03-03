@@ -13,8 +13,8 @@
                 <ui:Label text="Gold: 0" name="GoldLabel" />
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="TimerContainer" style="flex-grow: 1; top: 7px; right: -1px; height: 149px; width: 351px; background-image: url(&quot;project://database/Assets/Art%20Assets/2D/UI%20assets%202/Timer/Timer_Full.png?fileID=2800000&amp;guid=8b998bc8202f546358ba1f8d2aa13fb6&amp;type=3#Timer_Full&quot;);">
-            <ui:Label text="Label" name="TimerLabel" style="position: absolute; top: 6px; left: 11px;" />
+        <ui:VisualElement name="TimerContainer" style="flex-grow: 1; top: 7px; right: -1px; height: 108px; width: 437px; background-image: url(&quot;project://database/Assets/Art%20Assets/2D/UI%20assets%202/Timer/Timer_Full.png?fileID=2800000&amp;guid=8b998bc8202f546358ba1f8d2aa13fb6&amp;type=3#Timer_Full&quot;);">
+            <ui:Label text="Label" name="TimerLabel" style="position: absolute; top: 6px; left: 26px;" />
         </ui:VisualElement>
         <ui:VisualElement name="HealthContainer" style="flex-grow: 1; align-items: flex-start; justify-content: flex-start;">
             <ui:ProgressBar name="HealthBar" style="visibility: hidden; background-image: url(&quot;project://database/Assets/Art%20Assets/2D/UI%20assets%202/Health%20Bar/Health_Bar_Full.png?fileID=2800000&amp;guid=3af8ac29ca375461bac723b6d002cdcd&amp;type=3#Health_Bar_Full&quot;);" />
