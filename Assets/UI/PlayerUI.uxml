@@ -6,6 +6,7 @@
             <ui:VisualElement name="InventoryContainer" style="flex-grow: 1;">
                 <ui:Instance template="InventoryUI" />
             </ui:VisualElement>
+            <ui:Label text="Tab" name="TabLabel" selectable="true" style="font-size: 50px; position: absolute; top: 21px; left: 34px; color: rgb(255, 244, 244);" />
             <ui:VisualElement enabled="true" name="ExtractionContainer" style="flex-grow: 1; justify-content: flex-start;">
                 <ui:ProgressBar value="22" title="my-progress" name="ExtractionBar" enabled="true" class="extraction-bar" style="display: flex; visibility: visible;" />
             </ui:VisualElement>
