@@ -189,15 +189,6 @@ public class UpgradeLevelManager : MonoBehaviour
         //random choices from remaining pool
         currentChoices = PickRandomUpgrades();
 
-        if (currentChoices.Count == 0)
-        {
-            // auto consume level up, no upgrades since no choices
-            if (PlayerXP.Instance != null)
-                PlayerXP.Instance.ConsumeLevelUp();
-            levelUpPending = false;
-            return;
-        }
-
         levelUpPending = false;
         panelIsOpen = true;
 
