@@ -239,3 +239,70 @@
     transition-duration: 0.05s;
     transition-property: scale, background-color, border-color;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Controls page additions — append these to SettingsStyleSheet.uss
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Section header (e.g. "Movement", "Actions") */
+.controls-section-header {
+    font-size: 48px;
+    color: rgba(228, 0, 255, 0.85);
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    -unity-text-align: middle-left;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    padding-left: 20px;
+    letter-spacing: 4px;
+}
+
+/* Override the shared .settings-row height for controls rows */
+.controls-row {
+    height: 80px;
+    margin-bottom: 16px;
+}
+
+/* Binding button — narrower than the nav .button, right-aligned */
+.controls-bind-button {
+    width: 360px;
+    height: 65px;
+    font-size: 44px;
+    -unity-text-align: middle-center;
+    flex-shrink: 0;
+}
+
+/* Highlight when a rebind is in progress for this row */
+.controls-bind-button--listening {
+    border-color: rgb(228, 0, 255);
+    color: rgb(228, 0, 255);
+    background-color: rgba(228, 0, 255, 0.12);
+}
+
+/* Scroll view chrome */
+.controls-scroll-view {
+    flex-grow: 1;
+}
+
+#ControlsScrollView > .unity-scroll-view__content-and-vertical-scroll-container
+  > .unity-scroll-view__content-viewport
+  > .unity-scroll-view__content-container {
+    padding-right: 12px;
+}
+
+/* Vertical scroll bar */
+#ControlsScrollView .unity-scroller--vertical {
+    width: 12px;
+}
+
+#ControlsScrollView .unity-scroller--vertical .unity-base-slider__tracker {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    border-width: 0;
+}
+
+#ControlsScrollView .unity-scroller--vertical .unity-base-slider__dragger {
+    background-color: rgba(228, 0, 255, 0.6);
+    border-radius: 6px;
+    border-width: 0;
+    min-height: 40px;
+}

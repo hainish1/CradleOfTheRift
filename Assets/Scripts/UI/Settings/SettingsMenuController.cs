@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
+
 
 public class SettingsMenuController : MonoBehaviour
 {
@@ -9,6 +11,10 @@ public class SettingsMenuController : MonoBehaviour
     [SerializeField] private string musicVolumeRTPC   = "MusicVolume";
     [SerializeField] private string sfxVolumeRTPC     = "SFXVolume";
     [SerializeField] private string ambientVolumeRTPC = "AmbientVolume";
+
+    [Header("Controls")]
+    [Tooltip("Assign your project's InputActionAsset here (the .inputactions file).")]
+    [SerializeField] private InputActionAsset inputActions;
 
     // ── Tab animation config ──────────────────────────────────────────
     private const float BORDER_MAX = 4f; // px when active
@@ -119,7 +125,11 @@ public class SettingsMenuController : MonoBehaviour
         // Initialise page controllers
         audioCtrl    = new AudioPageController(service);
         videoCtrl    = new VideoPageController(service);
-        controlsCtrl = new ControlsPageController(service);
+        controlsCtrl = new ControlsPageController(service)
+        {
+            // Wire the Input Action Asset so the controls page can read/rebind
+            InputActions = inputActions 
+        };
 
         // Initialize respective pages, passing each its own page root
         audioCtrl   .Initialize(pageAudio);

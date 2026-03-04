@@ -36,12 +36,17 @@ public class SettingsService
     /// </summary>
     public void Load()
     {
-        if (File.Exists(SavePath))
+        if (File.Exists(SavePath)) {
             Current = JsonUtility.FromJson<SettingsData>(File.ReadAllText(SavePath));
+            // Rebuild the runtime binding-overrides dictionary from the
+            // serialized parallel lists (JsonUtility can't handle Dictionary).
+            Current.BuildOverrideDictionary();
+        }
         else
         {
             Debug.LogWarning("SettingsService: No saved settings found, using defaults.");
             Current = new SettingsData();
+            Current.BuildOverrideDictionary();
             Save();
         }
 
