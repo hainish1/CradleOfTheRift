@@ -138,18 +138,16 @@ public class PauseMenu : MonoBehaviour
     }
     private void OnSettingsClick(ClickEvent evt)
     {
-        // Debug.Log("You Pressed the Settings Button");
         if (settingsMenuController == null) return;
-
-        // Hide this menu and show settings
+        PauseManager.CurrentPauseState = PauseManager.PauseState.Settings;
         gameObject.SetActive(false);
         settingsMenuController.gameObject.SetActive(true);
     }
 
     private void OnSettingsBack()
     {
-        // Settings Back was pressed, hide settings
         settingsMenuController.gameObject.SetActive(false);
+        PauseManager.CurrentPauseState = PauseManager.PauseState.PauseMenu;
         gameObject.SetActive(true);
     }
 
