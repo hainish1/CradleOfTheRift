@@ -5,84 +5,58 @@ using UnityEngine.UIElements;
 
 /// <summary>
 /// Drives the Controls settings page.
-///
-/// Only shows Keyboard & Mouse bindings from the Player action map.
-/// Rows are generated dynamically from the asset — no actions are hardcoded.
-/// Composite actions (e.g. WASD Move) are expanded into one row per part.
-///
-/// To exclude an action entirely, add its name to ExcludedActions.
-/// To exclude a specific binding within an action, add its path to ExcludedBindingPaths.
+/// 
+/// Each row has a Button whose name follows the convention "Bind_<ActionName>".
+/// Clicking a button starts an interactive rebind via InputActionRebindingExtensions.
+/// Overrides are stored in SettingsData.bindingOverrides (a string→string dictionary
+/// keyed by InputBinding.id) and are applied/removed through the Input System's
+/// ApplyBindingOverride / RemoveBindingOverride APIs.
+/// 
+/// Assumptions:
+///   • You have a single InputActionAsset referenced as a [SerializeField] on the
+///     owning MonoBehaviour, or retrieved via Resources/Addressables.
+///   • Action names in the asset exactly match the string keys used here
+///     (e.g. "MoveUp", "Jump").  Composite part bindings (WASD) use the
+///     compositePartName to find the correct binding index.
 /// </summary>
 public class ControlsPageController
 {
-    // ── Filtering ─────────────────────────────────────────────────────────────
-
-    // Only bindings belonging to this control scheme will be shown.
-    private const string TargetScheme  = "Keyboard&Mouse";
-
-    // Action maps to show, in the order they appear on screen.
-    private static readonly string[] ShownMapNames = { "Player", "UI" };
-
-    // Actions to hide entirely. Add action names here as needed.
-    private static readonly HashSet<string> ExcludedActions = new HashSet<string>
-    {
-        // Player map
-        "Look",
-        "Previous",
-        "Next",
-
-        // UI map
-        "Navigate",
-        "Submit",
-        "Cancel",
-        "Point",
-        "Click",
-        "RightClick",
-        "MiddleClick",
-        "ScrollWheel",
-        "TrackedDevicePosition",
-        "TrackedDeviceOrientation",
-    };
-
-    // Specific binding paths to hide within an action. Add paths here as needed.
-    // Example: "<Gamepad>/leftStick" — though those are already filtered by scheme.
-    // Useful for hiding individual keyboard/mouse bindings you don't want exposed.
-    private static readonly HashSet<string> ExcludedBindingPaths = new HashSet<string>
-    {
-        "<Keyboard>/upArrow",
-        "<Keyboard>/downArrow",
-        "<Keyboard>/leftArrow",
-        "<Keyboard>/rightArrow",
-
-        "<Keyboard>/enter",
-        "<Keyboard>/leftCtrl",
-    };
-
-    // ── Dependencies ─────────────────────────────────────────────────────────
+    // ── Data passed in from the menu ─────────────────────────────────────────
     private readonly SettingsService service;
+
+    // Set by SettingsMenuController before Initialize() is called.
     public InputActionAsset InputActions { get; set; }
 
-    // ── UI ───────────────────────────────────────────────────────────────────
+    // ── UI references ────────────────────────────────────────────────────────
     private VisualElement pageRoot;
-    private ScrollView    scrollView;
     private VisualElement rebindModal;
     private Label         rebindModalTitle;
     private Label         rebindModalBody;
     private Button        rebindCancelButton;
 
-    // ── Row cache ────────────────────────────────────────────────────────────
-    private readonly List<RowEntry> rows = new List<RowEntry>();
-
-    private struct RowEntry
-    {
-        public Button      button;
-        public InputAction action;
-        public int         bindingIndex;
-        public string      displayLabel;
-    }
-
     // ── Rebind state ─────────────────────────────────────────────────────────
     private InputActionRebindingExtensions.RebindingOperation activeRebind;
+
+    // Maps each bind-button name suffix → (actionName, compositePartName)
+    // compositePartName is null for simple (non-composite) bindings.
+    private static readonly List<(string buttonSuffix, string actionName, string compositePart)> ActionMap
+        = new List<(string, string, string)>
+    {
+        // Movement – typical composite: one action "Move" with Up/Down/Left/Right parts.
+        // Adjust actionName to match your asset exactly.
+        ("MoveUp",    "Move", "up"),
+        ("MoveDown",  "Move", "down"),
+        ("MoveLeft",  "Move", "left"),
+        ("MoveRight", "Move", "right"),
+
+        // Simple (non-composite) actions
+        ("Jump",      "Jump",     null),
+        ("Interact",  "Interact", null),
+        ("Attack",    "Attack",   null),
+        ("Dodge",     "Dodge",    null),
+        ("Pause",     "Pause",    null),
+        ("Sprint",    "Sprint",   null),
+    };
 
     // ── Constructor ──────────────────────────────────────────────────────────
     public ControlsPageController(SettingsService service)
@@ -91,135 +65,80 @@ public class ControlsPageController
     }
 
     // ── Lifecycle ────────────────────────────────────────────────────────────
-
     public void Initialize(VisualElement root)
     {
         pageRoot = root;
 
-        scrollView         = root.Q<ScrollView>("ControlsScrollView");
-        rebindModal        = root.Q<VisualElement>("RebindModal");
-        rebindModalTitle   = root.Q<Label>("RebindModalTitle");
-        rebindModalBody    = root.Q<Label>("RebindModalBody");
+        // Modal elements
+        rebindModal       = root.Q<VisualElement>("RebindModal");
+        rebindModalTitle  = root.Q<Label>("RebindModalTitle");
+        rebindModalBody   = root.Q<Label>("RebindModalBody");
         rebindCancelButton = root.Q<Button>("RebindCancelButton");
 
         rebindCancelButton?.RegisterCallback<ClickEvent>(_ => CancelRebind());
+
+        // Wire every bind button
+        foreach (var (suffix, _, _) in ActionMap)
+        {
+            string capture = suffix;
+            var btn = root.Q<Button>($"Bind_{capture}");
+            btn?.RegisterCallback<ClickEvent>(_ => OnBindButtonClicked(capture));
+        }
     }
 
     public void Refresh(SettingsData data)
     {
+        if (InputActions == null) return;
+
+        // Re-apply all saved overrides to the asset first
+        ApplyAllOverrides(data);
+
+        // Then update every button label to show the current binding
+        foreach (var (suffix, actionName, compositePart) in ActionMap)
+        {
+            var btn = pageRoot?.Q<Button>($"Bind_{suffix}");
+            if (btn == null) continue;
+            btn.text = GetDisplayString(actionName, compositePart);
+        }
+    }
+
+    // ── Private: rebind flow ─────────────────────────────────────────────────
+
+    private void OnBindButtonClicked(string suffix)
+    {
         if (InputActions == null)
         {
             Debug.LogWarning("ControlsPageController: InputActions is null. " +
-                             "Assign the InputActionAsset in SettingsMenuController.");
+                             "Assign the InputActionAsset before opening the Controls page.");
             return;
         }
 
-        ApplyAllOverrides(data);
-
-        if (rows.Count == 0)
-            BuildRows();
-
-        RefreshButtonLabels();
-    }
-
-    // ── Row generation ───────────────────────────────────────────────────────
-
-    private void BuildRows()
-    {
-        rows.Clear();
-        scrollView.Clear();
-
-        foreach (string mapName in ShownMapNames)
+        // Find action + binding index for this suffix
+        var entry = ActionMap.Find(e => e.buttonSuffix == suffix);
+        var action = InputActions.FindAction(entry.actionName, throwIfNotFound: false);
+        if (action == null)
         {
-            var map = InputActions.FindActionMap(mapName, throwIfNotFound: false);
-            if (map == null)
-            {
-                Debug.LogWarning($"ControlsPageController: Action map '{mapName}' not found.");
-                continue;
-            }
-
-            // Section header for this map
-            var header = new Label(map.name);
-            header.AddToClassList("controls-section-header");
-            scrollView.Add(header);
-
-            bool anyRowAdded = false;
-
-            foreach (var action in map.actions)
-            {
-                if (ExcludedActions.Contains(action.name))
-                    continue;
-
-                var bindings = action.bindings;
-                for (int i = 0; i < bindings.Count; i++)
-                {
-                    var binding = bindings[i];
-
-                    if (binding.isComposite)
-                        continue;
-
-                    if (!binding.groups.Contains(TargetScheme))
-                        continue;
-
-                    if (ExcludedBindingPaths.Contains(binding.effectivePath))
-                        continue;
-
-                    string label = binding.isPartOfComposite
-                        ? $"{action.name} \u2014 {CapitalizeFirst(binding.name)}"
-                        : action.name;
-
-                    int capturedIndex = i;
-
-                    var button = new Button();
-                    button.AddToClassList("button");
-                    button.AddToClassList("controls-bind-button");
-                    button.AddToClassList("unityButtonHover");
-                    button.RegisterCallback<ClickEvent>(_ => OnBindButtonClicked(action, capturedIndex, button));
-
-                    var row = new VisualElement();
-                    row.AddToClassList("settings-row");
-                    row.AddToClassList("controls-row");
-
-                    var rowLabel = new Label(label);
-                    rowLabel.AddToClassList("settings-label");
-
-                    row.Add(rowLabel);
-                    row.Add(button);
-                    scrollView.Add(row);
-
-                    rows.Add(new RowEntry
-                    {
-                        button       = button,
-                        action       = action,
-                        bindingIndex = capturedIndex,
-                        displayLabel = label,
-                    });
-
-                    anyRowAdded = true;
-                }
-            }
-
-            // If all actions in this map were excluded, remove the orphaned header
-            if (!anyRowAdded)
-                scrollView.Remove(header);
+            Debug.LogWarning($"ControlsPageController: Action '{entry.actionName}' not found in asset.");
+            return;
         }
+
+        int bindingIndex = FindBindingIndex(action, entry.compositePart);
+        if (bindingIndex < 0)
+        {
+            Debug.LogWarning($"ControlsPageController: No binding found for '{entry.actionName}' / '{entry.compositePart}'.");
+            return;
+        }
+
+        ShowRebindModal(entry.actionName, entry.compositePart);
+        BeginRebind(action, bindingIndex, suffix);
     }
 
-    // ── Rebind flow ──────────────────────────────────────────────────────────
-
-    private void OnBindButtonClicked(InputAction action, int bindingIndex, Button button)
+    private void BeginRebind(InputAction action, int bindingIndex, string suffix)
     {
-        ShowRebindModal(action, bindingIndex);
-        SetButtonListening(button, listening: true);
-        BeginRebind(action, bindingIndex, button);
-    }
-
-    private void BeginRebind(InputAction action, int bindingIndex, Button button)
-    {
+        // Disable the action so it doesn't fire while we listen for a new key
         action.Disable();
 
-        activeRebind = action
-            .PerformInteractiveRebinding(bindingIndex)
+        activeRebind = action.PerformInteractiveRebinding(bindingIndex)
             .WithControlsExcluding("<Mouse>/position")
             .WithControlsExcluding("<Mouse>/delta")
             .OnMatchWaitForAnother(0.1f)
@@ -229,22 +148,20 @@ public class ControlsPageController
                 activeRebind?.Dispose();
                 activeRebind = null;
 
-                string bindingId    = action.bindings[bindingIndex].id.ToString();
-                string overridePath = action.bindings[bindingIndex].effectivePath;
+                // Persist the override
+                var bindingId = action.bindings[bindingIndex].id.ToString();
+                var overridePath = action.bindings[bindingIndex].effectivePath;
                 service.Current.SetBindingOverride(bindingId, overridePath);
                 service.Save();
 
-                SetButtonListening(button, listening: false);
                 HideRebindModal();
-                RefreshButtonLabels();
+                Refresh(service.Current);
             })
             .OnCancel(op =>
             {
                 action.Enable();
                 activeRebind?.Dispose();
                 activeRebind = null;
-
-                SetButtonListening(button, listening: false);
                 HideRebindModal();
             })
             .Start();
@@ -253,54 +170,86 @@ public class ControlsPageController
     private void CancelRebind()
     {
         if (activeRebind != null)
-            activeRebind.Cancel();
+        {
+            activeRebind.Cancel(); // triggers OnCancel above
+        }
         else
+        {
             HideRebindModal();
+        }
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
+    // ── Private: helpers ─────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Returns the index of the binding to rebind.
+    /// For composite parts (e.g. WASD), finds the child binding whose
+    /// compositePart name matches. For simple actions, returns the first
+    /// non-composite binding.
+    /// </summary>
+    private static int FindBindingIndex(InputAction action, string compositePart)
+    {
+        var bindings = action.bindings;
+        if (compositePart == null)
+        {
+            // First binding that is NOT a composite group header
+            for (int i = 0; i < bindings.Count; i++)
+                if (!bindings[i].isComposite)
+                    return i;
+        }
+        else
+        {
+            for (int i = 0; i < bindings.Count; i++)
+                if (bindings[i].isPartOfComposite &&
+                    bindings[i].name.Equals(compositePart, System.StringComparison.OrdinalIgnoreCase))
+                    return i;
+        }
+        return -1;
+    }
+
+    /// <summary>
+    /// Returns a human-readable display string for the effective binding.
+    /// </summary>
+    private string GetDisplayString(string actionName, string compositePart)
+    {
+        var action = InputActions.FindAction(actionName, throwIfNotFound: false);
+        if (action == null) return "—";
+
+        int idx = FindBindingIndex(action, compositePart);
+        if (idx < 0) return "—";
+
+        return action.GetBindingDisplayString(idx,
+            InputBinding.DisplayStringOptions.DontUseShortDisplayNames);
+    }
+
+    /// <summary>
+    /// Applies saved binding overrides from SettingsData back onto the live asset.
+    /// Called on Refresh so that load-from-disk is reflected in the Input System.
+    /// </summary>
     private void ApplyAllOverrides(SettingsData data)
     {
         if (data.bindingOverrides == null) return;
 
         foreach (var map in InputActions.actionMaps)
+        {
             foreach (var action in map.actions)
+            {
                 for (int i = 0; i < action.bindings.Count; i++)
                 {
                     string id = action.bindings[i].id.ToString();
-                    if (data.bindingOverrides.TryGetValue(id, out string path))
-                        action.ApplyBindingOverride(i, path);
+                    if (data.bindingOverrides.TryGetValue(id, out string overridePath))
+                        action.ApplyBindingOverride(i, overridePath);
                 }
+            }
+        }
     }
 
-    private void RefreshButtonLabels()
-    {
-        foreach (var row in rows)
-            row.button.text = GetDisplayString(row.action, row.bindingIndex);
-    }
-
-    private static string GetDisplayString(InputAction action, int bindingIndex)
-    {
-        if (bindingIndex < 0 || bindingIndex >= action.bindings.Count)
-            return "\u2014";
-
-        return action.GetBindingDisplayString(
-            bindingIndex,
-            InputBinding.DisplayStringOptions.DontUseShortDisplayNames);
-    }
-
-    private void ShowRebindModal(InputAction action, int bindingIndex)
+    private void ShowRebindModal(string actionName, string compositePart)
     {
         if (rebindModal == null) return;
-
-        var binding = action.bindings[bindingIndex];
-        string label = binding.isPartOfComposite
-            ? $"{action.name} \u2014 {CapitalizeFirst(binding.name)}"
-            : action.name;
-
-        rebindModalTitle.text     = $"Rebinding: {label}";
-        rebindModalBody.text      = "Press any key...";
+        string label = compositePart != null ? $"{actionName} ({compositePart})" : actionName;
+        rebindModalTitle.text = $"Rebinding: {label}";
+        rebindModalBody.text  = "Press any key...";
         rebindModal.style.display = DisplayStyle.Flex;
     }
 
@@ -309,20 +258,4 @@ public class ControlsPageController
         if (rebindModal != null)
             rebindModal.style.display = DisplayStyle.None;
     }
-
-    private void SetButtonListening(Button button, bool listening)
-    {
-        if (listening)
-        {
-            button.AddToClassList("controls-bind-button--listening");
-            button.text = "...";
-        }
-        else
-        {
-            button.RemoveFromClassList("controls-bind-button--listening");
-        }
-    }
-
-    private static string CapitalizeFirst(string s) =>
-        string.IsNullOrEmpty(s) ? s : char.ToUpper(s[0]) + s.Substring(1);
 }
