@@ -912,9 +912,9 @@ public class PlayerMovement : MonoBehaviour
         _verticalVelocityVector.y = jumpForce;
 
         _characterController.Move(Time.deltaTime * _verticalVelocityVector);
-        
-        // Play the jump sound effect.
-        jumpSoundEvent.Post(gameObject);
+
+        _playerAnim.SetTrigger("Jump");
+        jumpSoundEvent.Post(gameObject); // Play the jump sound effect.
     }
 
     /// <summary>

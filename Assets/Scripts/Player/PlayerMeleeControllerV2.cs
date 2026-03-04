@@ -198,6 +198,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private void TriggerAttack()
     {
         IsAttacking = true;
+        print("Reached.");
         CanAttack = false;
         _comboInputted = false;
         _currComboCount++;

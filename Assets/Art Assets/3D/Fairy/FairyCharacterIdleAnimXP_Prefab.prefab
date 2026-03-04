@@ -1046,12 +1046,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerCamera: {fileID: 0}
+  _playerAimController: {fileID: 0}
   _attackPitchSpeed: 240
-  _upwardDegreesLimit: 40
+  _upwardDegreesLimit: 80
   _downwardDegreesLimit: 40
   _attacks:
   - PreTransitionAnim: {fileID: 7400000, guid: 0a2f0fcac3bd6344789873b22676d91e, type: 2}
-    AttackAnim: {fileID: 7400000, guid: 15e6dfb76ca55ee4aaca5276755563dd, type: 2}
+    AttackAnim: {fileID: 7400000, guid: 43168a8b8716f1d49953def3ba00e2b0, type: 2}
     PostTransitionAnim: {fileID: 7400000, guid: 8d8882d831a04cf4d8b8f37c8517c541, type: 2}
     AttackDuration: 0
     BufferedAttackDuration: 0
@@ -1062,7 +1063,7 @@ MonoBehaviour:
     BufferedAttackDuration: 0
   _hitCapsuleStartPoint: {fileID: 7269917343812784875}
   _hitCapsuleEndPoint: {fileID: 4877342124702405127}
-  _hitCapsuleCastRadius: 2
+  _hitCapsuleCastRadius: 3
   _damageableLayerMasks:
     serializedVersion: 2
     m_Bits: 7168
