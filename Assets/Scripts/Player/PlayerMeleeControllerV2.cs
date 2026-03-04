@@ -33,8 +33,9 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [SerializeField]
     [Tooltip("The player camera.")] private Transform _playerCamera;
     [SerializeField]
+    [Tooltip("Pivot of the player model.")] private Transform _playerModelPivot;
+    [SerializeField]
     [Tooltip("Controller for player aim.")] private PlayerAimController _playerAimController;
-    private Transform _playerModel;
     private PlayerMovement _playerMovement;
     private PlayerShooter _playerShooter;
     private Entity _playerEntity;
@@ -89,14 +90,14 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private bool _comboInputted;
     private int _maxComboCount;
     private int _currComboCount;
+    private GameObject _currTarget;
 
     void Awake()
-    {
-        _playerModel = gameObject.transform;
+    {;
         _playerMovement = GetComponentInParent<PlayerMovement>();
         _playerShooter = GetComponentInParent<PlayerShooter>();
         _playerEntity = GetComponentInParent<Entity>();
-        _weaponAnim = _playerModel.GetComponent<Animator>();
+        _weaponAnim = GetComponent<Animator>();
         _audioController = GetComponentInParent<PlayerAudioController>();
         _playerInput = new InputSystem_Actions();
         _playerActions = _playerInput.Player;
@@ -141,6 +142,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _comboInputted = false;
         _maxComboCount = _attacks.Count;
         _currComboCount = 0;
+        _currTarget = null;
     }
 
     void Update()
@@ -198,7 +200,6 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private void TriggerAttack()
     {
         IsAttacking = true;
-        print("Reached.");
         CanAttack = false;
         _comboInputted = false;
         _currComboCount++;
@@ -269,22 +270,65 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     {
         if (IsAttacking)
         {
+            Vector3 crosshairIntersect = _playerAimController.GetAimDirection(_playerModelPivot.position, _playerModelPivot.forward, out RaycastHit hit);
+
+            // Check that the object being aimed at is a damageable target.
+            Collider targetCollider = hit.collider;
+            if (targetCollider != null && (1 << targetCollider.gameObject.layer & _damageableLayerMasks) > 0)
+                _currTarget = targetCollider.gameObject;
+            else
+                _currTarget = null;
+
+            if (_currTarget == null) return; // Return early if the target being aimed at is not damageable
+
+
             // Constrain vertical rotation of player character to the pitch limits.
-            Vector3 crosshairIntersect = _playerAimController.GetAimDirection(_playerModel.position, _playerModel.forward);
-            Vector3 rotationIncrement = Vector3.RotateTowards(_playerModel.forward, crosshairIntersect, Time.deltaTime * _degreesPerSecond, 0);
+            Vector3 rotationIncrement = Vector3.RotateTowards(_playerModelPivot.forward, crosshairIntersect, Time.deltaTime * _degreesPerSecond, 0);
+            rotationIncrement = CopyVectorAngles(rotationIncrement, _playerCamera.forward); // Ensure player character is always horizontally aligned with camera.
             float pitch = GetPitchDegrees(rotationIncrement);
             if (pitch >= _downwardDegreesLimit && pitch <= _upwardDegreesLimit)
-                _playerModel.forward = rotationIncrement;
+                _playerModelPivot.forward = rotationIncrement;
 
             _isModelHorizontal = false;
         }
-        // Gradually reset player model alignment while not attacking.
-        else if (!_isModelHorizontal)
+        else
+            _currTarget = null;
+
+        // Gradually reset player model alignment while not attacking or if no damageable target is being aimed at.
+        if ((!IsAttacking || _currTarget == null) && !_isModelHorizontal)
         {
             Vector3 worldHorizontal = new Vector3(_playerCamera.forward.x, 0, _playerCamera.forward.z).normalized;
-            _playerModel.forward = Vector3.RotateTowards(_playerModel.forward, worldHorizontal, Time.deltaTime * _degreesPerSecond, 0);
-            if (Vector3.Angle(_playerModel.forward, worldHorizontal) < 1e-3f) _isModelHorizontal = true;
+            _playerModelPivot.forward = Vector3.RotateTowards(_playerModelPivot.forward, worldHorizontal, Time.deltaTime * _degreesPerSecond, 0);
+            if (Vector3.Angle(_playerModelPivot.forward, worldHorizontal) < 1e-3f)
+            {
+                _playerModelPivot.localRotation = Quaternion.Euler(0, 0, 0); // Zero out pivot rotation for exactness.
+                _isModelHorizontal = true;
+            }
         }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Gets a Vector3 that is composed of the pitch and yaw from two other given vectors.
+    ///   </para>
+    /// </summary>
+    /// <param name="copyVectorPitch"> The vector pitch to copy. </param>
+    /// <param name="copyVectorYaw"> The vector yaw to copy. </param>
+    /// <returns> Composite vector from the pitch and yaw. </returns>
+    private Vector3 CopyVectorAngles(Vector3 copyVectorPitch, Vector3 copyVectorYaw)
+    {
+        // Get copied pitch and yaw in radians.
+        float copiedPitch = Mathf.Atan2(copyVectorPitch.y, Mathf.Sqrt(copyVectorPitch.x * copyVectorPitch.x
+                                                                      + copyVectorPitch.z * copyVectorPitch.z));
+        float copiedYaw = Mathf.Atan2(copyVectorYaw.x, copyVectorYaw.z);
+
+        // Calculate the composite vector using the copied pitch and yaw.
+        float cosPitch = Mathf.Cos(copiedPitch);
+        float vectorX = cosPitch * Mathf.Sin(copiedYaw);
+        float vectorY = Mathf.Sin(copiedPitch);
+        float vectorZ = cosPitch * Mathf.Cos(copiedYaw);
+
+        return new Vector3(vectorX, vectorY, vectorZ);
     }
 
     /// <summary>
@@ -368,26 +412,40 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// </summary>
     void OnDrawGizmos()
     {
-        if (!_isRegistering || !_debug) return;
+        if (!_debug) return;
 
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(_hitCapsuleStartPoint.position, _hitCapsuleCastRadius);
-        Gizmos.DrawWireSphere(_hitCapsuleEndPoint.position, _hitCapsuleCastRadius);
+        // Melee aim debugging.
+        if (IsAttacking)
+        {
+            Vector3 crosshairIntersect = _playerAimController.GetAimDirection(_playerModelPivot.position, _playerModelPivot.forward, out RaycastHit hit);
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireSphere(_playerModelPivot.position, 0.5f);
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(hit.point, 0.5f);
+        }
 
-        Vector3[] lineStartPoints = new Vector3[4];
-        lineStartPoints[0] = _hitCapsuleStartPoint.position + _hitCapsuleCastRadius * _hitCapsuleStartPoint.forward;
-        lineStartPoints[1] = _hitCapsuleStartPoint.position - _hitCapsuleCastRadius * _hitCapsuleStartPoint.forward;
-        lineStartPoints[2] = _hitCapsuleStartPoint.position + _hitCapsuleCastRadius * _hitCapsuleStartPoint.right;
-        lineStartPoints[3] = _hitCapsuleStartPoint.position - _hitCapsuleCastRadius * _hitCapsuleStartPoint.right;
+        // Attack registration debugging.
+        if (_isRegistering)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(_hitCapsuleStartPoint.position, _hitCapsuleCastRadius);
+            Gizmos.DrawWireSphere(_hitCapsuleEndPoint.position, _hitCapsuleCastRadius);
 
-        Vector3[] lineEndPoints = new Vector3[4];
-        lineEndPoints[0] = _hitCapsuleEndPoint.position + _hitCapsuleCastRadius * _hitCapsuleEndPoint.forward;
-        lineEndPoints[1] = _hitCapsuleEndPoint.position - _hitCapsuleCastRadius * _hitCapsuleEndPoint.forward;
-        lineEndPoints[2] = _hitCapsuleEndPoint.position + _hitCapsuleCastRadius * _hitCapsuleEndPoint.right;
-        lineEndPoints[3] = _hitCapsuleEndPoint.position - _hitCapsuleCastRadius * _hitCapsuleEndPoint.right;
+            Vector3[] lineStartPoints = new Vector3[4];
+            lineStartPoints[0] = _hitCapsuleStartPoint.position + _hitCapsuleCastRadius * _hitCapsuleStartPoint.forward;
+            lineStartPoints[1] = _hitCapsuleStartPoint.position - _hitCapsuleCastRadius * _hitCapsuleStartPoint.forward;
+            lineStartPoints[2] = _hitCapsuleStartPoint.position + _hitCapsuleCastRadius * _hitCapsuleStartPoint.right;
+            lineStartPoints[3] = _hitCapsuleStartPoint.position - _hitCapsuleCastRadius * _hitCapsuleStartPoint.right;
 
-        for (int i = 0; i < 4; i++)
-            Gizmos.DrawLine(lineStartPoints[i], lineEndPoints[i]);
+            Vector3[] lineEndPoints = new Vector3[4];
+            lineEndPoints[0] = _hitCapsuleEndPoint.position + _hitCapsuleCastRadius * _hitCapsuleEndPoint.forward;
+            lineEndPoints[1] = _hitCapsuleEndPoint.position - _hitCapsuleCastRadius * _hitCapsuleEndPoint.forward;
+            lineEndPoints[2] = _hitCapsuleEndPoint.position + _hitCapsuleCastRadius * _hitCapsuleEndPoint.right;
+            lineEndPoints[3] = _hitCapsuleEndPoint.position - _hitCapsuleCastRadius * _hitCapsuleEndPoint.right;
+
+            for (int i = 0; i < 4; i++)
+                Gizmos.DrawLine(lineStartPoints[i], lineEndPoints[i]);
+        }
     }
 
     /// <summary>

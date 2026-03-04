@@ -142,7 +142,7 @@ public class PlayerShooter : MonoBehaviour
         if (PauseManager.GameIsPaused) return;
 
         if (!aim || !muzzle) return;
-        Vector3 direction = aim.GetAimDirection(muzzle.position, muzzle.forward);
+        Vector3 direction = aim.GetAimDirection(muzzle.position, muzzle.forward, out RaycastHit _);
         if (direction.sqrMagnitude > 0.0001f)
         {
             Quaternion lookRot = Quaternion.LookRotation(direction, Vector3.up);
@@ -256,7 +256,7 @@ public class PlayerShooter : MonoBehaviour
 
     private void Fire()
     {
-        Vector3 direction = aim.GetAimDirection(muzzle.position, muzzle.forward);
+        Vector3 direction = aim.GetAimDirection(muzzle.position, muzzle.forward, out RaycastHit _);
 
         Vector3 spawnPos = muzzle.position + direction * spawnOffset;
         Quaternion spawnRot = Quaternion.LookRotation(direction, Vector3.up);
