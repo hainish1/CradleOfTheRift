@@ -51,6 +51,9 @@ public class RunManager : MonoBehaviour
 
         var inv = FindFirstObjectByType<PlayerInventory>();
         if (inv != null) inv.Clear();
+
+        var ruleRunner = FindFirstObjectByType<InventoryRuleRunner>();
+        if (ruleRunner != null) ruleRunner.ResetForNewRun();
     }
 
 }

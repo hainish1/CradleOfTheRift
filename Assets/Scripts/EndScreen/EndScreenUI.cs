@@ -108,6 +108,9 @@ public class EndScreenUI : MonoBehaviour
                 PauseManager.CurrentPauseState = PauseManager.PauseState.None;
                 PlayerHealth.GameIsOver = false;
 
+                if (UpgradeLevelManager.Instance != null)
+                    UpgradeLevelManager.Instance.ResetForNewRun();
+
                 UnityEngine.Cursor.lockState = CursorLockMode.Locked;
                 UnityEngine.Cursor.visible = false;
 
