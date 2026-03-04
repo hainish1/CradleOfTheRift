@@ -186,8 +186,10 @@ public class UpgradeLevelManager : MonoBehaviour
     {
         if (panelIsOpen) return;
 
-        //random choices from remaining pool
-        currentChoices = PickRandomUpgrades();
+        if (currentChoices == null || currentChoices.Count == 0)
+        {
+            currentChoices = PickRandomUpgrades();
+        }
 
         levelUpPending = false;
         panelIsOpen = true;
@@ -263,6 +265,7 @@ public class UpgradeLevelManager : MonoBehaviour
         if (PlayerXP.Instance != null)
             PlayerXP.Instance.ConsumeLevelUp();
 
+        currentChoices.Clear();
         // Close panel
         panelIsOpen = false;
         UpgradePanelClosed?.Invoke();
