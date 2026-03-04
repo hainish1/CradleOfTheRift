@@ -71,7 +71,7 @@ public class SettingsMenuController : MonoBehaviour
             float current = borderWidths[i];
             if (Mathf.Approximately(current, target)) continue;
 
-            float next = Mathf.MoveTowards(current, target, ANIM_SPEED * Time.deltaTime);
+            float next = Mathf.MoveTowards(current, target, ANIM_SPEED * Time.unscaledDeltaTime);
             borderWidths[i] = next;
             animTabs[i].style.borderBottomWidth = next;
         }
