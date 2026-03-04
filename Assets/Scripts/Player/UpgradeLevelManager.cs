@@ -30,8 +30,11 @@ public class UpgradeLevelManager : MonoBehaviour
     [Tooltip("Max number of upgrade choices shown each time panel open")]
     [SerializeField] private int maxChoices = 3;
 
-    private int _rerollCountRemaining = 3;
-    public int RerollCountRemaining => _rerollCountRemaining;
+    [Header("Reroll Cost")]
+    [Tooltip("Base cost for the first reroll, then rach reroll adds this amount.")]
+    [SerializeField] private int baseRerollGoldCost = 5;
+    private int _rerollGoldCost;
+    public int CurrentRerollGoldCost => _rerollGoldCost;
 
     private bool levelUpPending;
     private bool panelIsOpen;
@@ -63,6 +66,7 @@ public class UpgradeLevelManager : MonoBehaviour
 
         _inputActions = new InputSystem_Actions();
         _upgradeAction = _inputActions.UI.Upgrade;
+        _rerollGoldCost = baseRerollGoldCost;
     }
 
     void OnEnable()
@@ -117,8 +121,6 @@ public class UpgradeLevelManager : MonoBehaviour
 
     private void OnLeveledUp(int newLevel)
     {
-        if (newLevel > 0 && newLevel % 5 == 0)
-            _rerollCountRemaining++;
     }
 
     void Update()
@@ -207,8 +209,23 @@ public class UpgradeLevelManager : MonoBehaviour
     // Reroll
     public void RerollChoices()
     {
-        if (!panelIsOpen || _rerollCountRemaining <= 0) return;
-        _rerollCountRemaining--;
+        if (!panelIsOpen) return;
+        if (_rerollGoldCost <= 0)
+            _rerollGoldCost = baseRerollGoldCost;
+
+        if (PlayerGold.Instance == null)
+        {
+            return;
+        }
+
+        if (!PlayerGold.Instance.SpendGold(_rerollGoldCost))
+        {
+            return;
+        }
+
+        // Increase cost for the next reroll
+        _rerollGoldCost += baseRerollGoldCost;
+
         currentChoices = PickRandomUpgrades();
         if (currentChoices.Count == 0) return;
         UpgradePanelOpened?.Invoke(currentChoices);
@@ -360,6 +377,6 @@ public class UpgradeLevelManager : MonoBehaviour
         blockedFromPool.Clear();
         levelUpPending = false;
         panelIsOpen = false;
-        _rerollCountRemaining = 3;
+        _rerollGoldCost = baseRerollGoldCost;
     }
 }

@@ -164,9 +164,17 @@ public class UpgradePanelUI : MonoBehaviour
     private void UpdateRerollButtonText()
     {
         if (rerollButton == null || UpgradeLevelManager.Instance == null) return;
-        int n = UpgradeLevelManager.Instance.RerollCountRemaining;
-        rerollButton.text = $"Reroll ({n})";
-        rerollButton.SetEnabled(n > 0);
+        int cost = UpgradeLevelManager.Instance.CurrentRerollGoldCost;
+
+        if (cost > 0)
+            rerollButton.text = $"Reroll ({cost}g)";
+        else
+            rerollButton.text = "Reroll";
+            
+        if (PlayerGold.Instance != null && cost > 0)
+            rerollButton.SetEnabled(PlayerGold.Instance.Gold >= cost);
+        else
+            rerollButton.SetEnabled(true);
     }
 
     private void OnCloseClicked(ClickEvent evt)
