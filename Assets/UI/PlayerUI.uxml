@@ -7,7 +7,7 @@
                 <ui:Instance template="InventoryUI" />
             </ui:VisualElement>
             <ui:VisualElement enabled="true" name="ExtractionContainer" style="flex-grow: 1; justify-content: flex-start;">
-                <ui:ProgressBar value="22" title="my-progress" name="ExtractionBar" enabled="true" class="extraction-bar" style="display: flex; visibility: visible;" />
+                <ui:ProgressBar value="22" title="my-progress" name="ExtractionBar" enabled="true" class="extraction-bar" style="display: flex; visibility: visible; position: absolute; top: 374px; left: 1568px; width: 318px; -unity-font-style: normal; font-size: 20px;" />
             </ui:VisualElement>
             <ui:VisualElement name="GoldContainer" style="flex-grow: 1; position: absolute; top: 174px; left: 12px; background-image: none;">
                 <ui:Label text="Gold: 0" name="GoldLabel" style="color: rgb(255, 255, 255);" />

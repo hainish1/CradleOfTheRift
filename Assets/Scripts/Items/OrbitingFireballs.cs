@@ -95,11 +95,11 @@ public class OrbitingFireballs : IDisposable
         if (disposed || owner == null) return;
 
         GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        obj.transform.localScale = Vector3.one * 1.2f;
+        obj.transform.localScale = Vector3.one * 2.5f;
 
         var col = obj.GetComponent<SphereCollider>();
         col.isTrigger = true;
-        col.radius = 1.0f;
+        col.radius = 2.0f;
 
         var rb = obj.AddComponent<Rigidbody>();
         rb.isKinematic = true;
