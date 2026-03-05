@@ -161,15 +161,7 @@ public class AbilityUIController : MonoBehaviour
         {
             VisualElement overlayInstance = new VisualElement();
             overlayInstance.name = "CooldownOverlay" + i;
-
-            // Match the styling of your original overlay
-            overlayInstance.style.position = Position.Absolute;
-            overlayInstance.style.top = 0;
-            overlayInstance.style.left = 0;
-            overlayInstance.style.width = Length.Percent(100);
-            overlayInstance.style.height = Length.Percent(100);
-            overlayInstance.style.backgroundColor = new Color(0, 0, 0, 0.5f); // semi-transparent black
-            overlayInstance.style.opacity = 0;
+            overlayInstance.AddToClassList("cooldown-overlay");
 
             overlayContainer.Add(overlayInstance);
             overlays.Add(overlayInstance);
