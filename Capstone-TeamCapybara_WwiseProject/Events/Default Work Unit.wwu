@@ -26,7 +26,6 @@
 						</Action>
 					</ChildrenList>
 				</Event>
-				<WorkUnit Name="Player" ID="{691DB035-59FA-42BD-8C22-AF773BE39B09}" PersistMode="Reference"/>
 				<Event Name="Play_Ambience" ID="{CE6BB63A-104F-4DB4-8942-57550847B9DA}">
 					<ChildrenList>
 						<Action Name="" ID="{DC46A79F-1993-4FE6-B5F8-2913546A0C9A}" ShortID="1063254417">
@@ -71,8 +70,21 @@
 						</Action>
 					</ChildrenList>
 				</Event>
-				<WorkUnit Name="Enemy" ID="{518660F2-9329-4177-B1A1-C32439A8E88C}" PersistMode="Reference"/>
 				<WorkUnit Name="Teleporter" ID="{8117528D-6145-4D0B-B2C6-4A1695CC8D8F}" PersistMode="Reference"/>
+				<WorkUnit Name="Enemy" ID="{518660F2-9329-4177-B1A1-C32439A8E88C}" PersistMode="Reference"/>
+				<WorkUnit Name="Player" ID="{691DB035-59FA-42BD-8C22-AF773BE39B09}" PersistMode="Reference"/>
+				<WorkUnit Name="UI" ID="{910A9BD7-6D38-4047-B39E-B7C369D5ABCF}" PersistMode="Reference"/>
+				<Event Name="Play_Music_Smart" ID="{80973DF7-D85B-4625-A837-4DA900EB803B}">
+					<ChildrenList>
+						<Action Name="" ID="{BA27DCC9-A08B-489F-84CB-A15048FA7111}" ShortID="577038355">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Music Switch" ID="{F03C96DA-535B-427C-9EE2-2DC0289DC96D}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

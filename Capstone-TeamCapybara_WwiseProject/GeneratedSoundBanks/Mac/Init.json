@@ -10,7 +10,7 @@
     "Type": "User",
     "GUID": "{701ECBBD-9C7B-4030-8CDB-749EE5D1C7B9}",
     "Language": "SFX",
-    "Hash": "{357540CC-F8DE-C077-1C73-E3231493C2C4}",
+    "Hash": "{BD8A088B-C3F7-0315-E3BB-D8CFBE1044AE}",
     "ObjectPath": "Init",
     "ShortName": "Init",
     "Path": "Init.bnk",
@@ -54,6 +54,66 @@
       "GUID": "{2535DC4D-E35F-4B3B-8BE6-0284AF857A73}"
      }
     ],
+    "StateGroups": [
+     {
+      "Id": "1690668539",
+      "Name": "Music_States",
+      "ObjectPath": "\\States\\Default Work Unit\\Music_States",
+      "GUID": "{75500C40-A25C-47B7-9F07-2661023F57D5}",
+      "States": [
+       {
+        "Id": "491961918",
+        "Name": "Forest",
+        "ObjectPath": "\\States\\Default Work Unit\\Music_States\\Forest",
+        "GUID": "{ED5C2F44-FFA8-477D-9C74-127B8291875E}"
+       },
+       {
+        "Id": "748895195",
+        "Name": "None",
+        "ObjectPath": "\\States\\Default Work Unit\\Music_States\\None",
+        "GUID": "{2AA072AF-1480-4BB0-9EC5-3DCE2D175CC3}"
+       },
+       {
+        "Id": "1756006875",
+        "Name": "Icey",
+        "ObjectPath": "\\States\\Default Work Unit\\Music_States\\Icey",
+        "GUID": "{154C5158-ADC3-4255-A4F5-8AFA4129604C}"
+       },
+       {
+        "Id": "4122393694",
+        "Name": "Cave",
+        "ObjectPath": "\\States\\Default Work Unit\\Music_States\\Cave",
+        "GUID": "{99BA7111-C7A0-447A-8C7B-520FC9B8BE63}"
+       }
+      ]
+     },
+     {
+      "Id": "4265060404",
+      "Name": "Boss_Alive",
+      "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive",
+      "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}",
+      "States": [
+       {
+        "Id": "655265632",
+        "Name": "Alive",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Alive",
+        "GUID": "{A4FB7019-7BE2-4B55-B62E-D9CFEDF363CC}"
+       },
+       {
+        "Id": "748895195",
+        "Name": "None",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\None",
+        "GUID": "{6981E7EC-A80A-448E-B0BF-87DBCBEE7EFB}"
+       },
+       {
+        "Id": "2044049779",
+        "Name": "Dead",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Dead",
+        "GUID": "{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}"
+       }
+      ]
+     }
+    ],
     "SwitchGroups": [
      {
       "Id": "275596552",
@@ -84,6 +144,6 @@
     ]
    }
   ],
-  "FileHash": "{44DA2890-C0FE-D1D3-DF28-91FF5D7F6FC6}"
+  "FileHash": "{1F2AFF1E-3437-4805-C04C-06E1EE0ECC33}"
  }
 }
