@@ -141,13 +141,19 @@ public class AbilityUIController : MonoBehaviour
         var slot = abilitySlotAsset.Instantiate();
         var chargeLabel = slot.Q<Label>("ChargeLabel");
 
+        // Initialize ability
         chargeLabel.text = ability.currentCharges.ToString();
         slot.Q<Label>("KeyLabel").text = GetKeyDisplayName(ability.key);
 
-        // Only dynamic part stays in code
-        slot.Q<VisualElement>("AbilityIcon").style.backgroundImage = new StyleBackground(ability.icon);
+        // Initialize icon
+        var iconElement = slot.Q<VisualElement>("AbilityIcon");
+        iconElement.style.backgroundImage = new StyleBackground(ability.icon);
+        iconElement.style.backgroundSize = new BackgroundSize(BackgroundSizeType.Cover);
+        iconElement.style.backgroundPositionX = new BackgroundPosition(BackgroundPositionKeyword.Center);
+        iconElement.style.backgroundPositionY = new BackgroundPosition(BackgroundPositionKeyword.Center);
+        iconElement.style.backgroundRepeat = new BackgroundRepeat(Repeat.NoRepeat, Repeat.NoRepeat);
 
-        // Build overlays using USS class instead of manual styling
+        // Prepare overlays
         var overlayContainer = slot.Q<VisualElement>("AbilityIconContainer");
         List<VisualElement> overlays = new List<VisualElement>();
 
@@ -155,14 +161,24 @@ public class AbilityUIController : MonoBehaviour
         {
             VisualElement overlayInstance = new VisualElement();
             overlayInstance.name = "CooldownOverlay" + i;
-            overlayInstance.AddToClassList("cooldown-overlay");
+
+            // Match the styling of your original overlay
+            overlayInstance.style.position = Position.Absolute;
+            overlayInstance.style.top = 0;
+            overlayInstance.style.left = 0;
+            overlayInstance.style.width = Length.Percent(100);
+            overlayInstance.style.height = Length.Percent(100);
+            overlayInstance.style.backgroundColor = new Color(0, 0, 0, 0.5f); // semi-transparent black
+            overlayInstance.style.opacity = 0;
 
             overlayContainer.Add(overlayInstance);
             overlays.Add(overlayInstance);
         }
 
+        // Add the slot to the ability bar
         abilityBar.Add(slot);
 
+        // Track the slot
         abilitySlots.Add(new AbilitySlot
         {
             slotElement = slot,

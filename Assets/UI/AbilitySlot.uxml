@@ -1,10 +1,10 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/AbilitySlot.uss?fileID=7433441132597879392&amp;guid=b12c1b980e0b6d343a305fe11bcc806b&amp;type=3#AbilitySlot" />
-    <engine:VisualElement name="AbilitySlotContainer" style="width: 80px; height: 80px;">
+    <engine:VisualElement name="AbilitySlotContainer">
         <engine:Label text="Label" name="ChargeLabel" />
-        <engine:VisualElement name="AbilityIconContainer" style="background-image: url(&quot;project://database/Assets/Art%20Assets/2D/UI%20assets%202/Abilities/Abilities_Icon_Full.png?fileID=2800000&amp;guid=c10d16953025c4437ae70d96cf41f3c6&amp;type=3#Abilities_Icon_Full&quot;); width: 80px; height: 80px;">
+        <engine:VisualElement name="AbilityIconContainer">
             <engine:VisualElement name="AbilityIcon" />
-            <engine:VisualElement name="CooldownOverlay" style="-unity-background-image-tint-color: rgb(255, 255, 255); -unity-background-scale-mode: stretch-to-fill;" />
+            <engine:VisualElement name="CooldownOverlay" />
         </engine:VisualElement>
         <engine:Label text="Label" name="KeyLabel" />
     </engine:VisualElement>
