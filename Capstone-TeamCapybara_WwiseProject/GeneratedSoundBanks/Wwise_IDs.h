@@ -19,8 +19,12 @@ namespace AK
         static const AkUniqueID ENEMY_LIGHTNING_DAMAGED = 608341856U;
         static const AkUniqueID PLAY_AMBIENCE = 278617630U;
         static const AkUniqueID PLAY_MUSIC = 2932040671U;
+        static const AkUniqueID PLAY_MUSIC_SMART = 3869930065U;
+        static const AkUniqueID PLAY_PLAYER_CROWN_SHOOT = 1245563929U;
         static const AkUniqueID PLAY_PLAYER_DASH = 2175711460U;
         static const AkUniqueID PLAY_PLAYER_FIRE = 1408288908U;
+        static const AkUniqueID PLAY_PLAYER_FIREBALL = 1959126323U;
+        static const AkUniqueID PLAY_PLAYER_GROUND_SLAM = 1163424219U;
         static const AkUniqueID PLAY_PLAYER_JUMP = 562256996U;
         static const AkUniqueID PLAY_PLAYER_MAJOR_LIGHTNING_ATTACK = 865153475U;
         static const AkUniqueID PLAY_PLAYER_MELEE = 3619611380U;
@@ -32,11 +36,42 @@ namespace AK
         static const AkUniqueID PLAY_TELEPORTER_AMBIENCE = 1203559441U;
         static const AkUniqueID PLAY_UI_BUTTON_CLICK = 1661558166U;
         static const AkUniqueID SKULL_DEATH = 2252982343U;
+        static const AkUniqueID SLIME_BOSS_DAMAGE = 804704067U;
+        static const AkUniqueID SLIME_BOSS_JUMP = 1864203916U;
         static const AkUniqueID SLIME_DEATH = 510073564U;
         static const AkUniqueID SLIME_JUMP = 2006797914U;
         static const AkUniqueID STOP_ALL = 452547817U;
         static const AkUniqueID WISP_SHOOT = 1320046920U;
     } // namespace EVENTS
+
+    namespace STATES
+    {
+        namespace BOSS_ALIVE
+        {
+            static const AkUniqueID GROUP = 4265060404U;
+
+            namespace STATE
+            {
+                static const AkUniqueID ALIVE = 655265632U;
+                static const AkUniqueID DEAD = 2044049779U;
+                static const AkUniqueID NONE = 748895195U;
+            } // namespace STATE
+        } // namespace BOSS_ALIVE
+
+        namespace MUSIC_STATES
+        {
+            static const AkUniqueID GROUP = 1690668539U;
+
+            namespace STATE
+            {
+                static const AkUniqueID CAVE = 4122393694U;
+                static const AkUniqueID FOREST = 491961918U;
+                static const AkUniqueID ICEY = 1756006875U;
+                static const AkUniqueID NONE = 748895195U;
+            } // namespace STATE
+        } // namespace MUSIC_STATES
+
+    } // namespace STATES
 
     namespace SWITCHES
     {

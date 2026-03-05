@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{8383BF7C-0465-4E1E-95BB-86767C952073}",
     "Language": "SFX",
-    "Hash": "{AFC49BA4-508C-B8BF-A473-232523E7D001}",
+    "Hash": "{E60E404F-A798-A82F-2E64-1C5D47B0D26B}",
     "ObjectPath": "Play_player_major_lightning_attack",
     "ShortName": "Play_player_major_lightning_attack",
     "Path": "Event/Play_player_major_lightning_attack.bnk",
@@ -61,6 +61,15 @@
       "CachePath": "36/{36377865-E8CD-9A8D-1970-058A0B82E4BD}.wem"
      },
      {
+      "Id": "717902266",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "MagicPack2_ElectricitySpells_Spell2-002[1].wav",
+      "Path": "Media/717902266.wem",
+      "CachePath": "E5/{E54C65E1-09A1-FD32-092E-163FD4B79470}.wem"
+     },
+     {
       "Id": "946455381",
       "Language": "SFX",
       "Streaming": "false",
@@ -77,6 +86,15 @@
       "ShortName": "FRWKComr_InsJ_Fireworks_Launch_Close_01-03.wav",
       "Path": "Media/958849886.wem",
       "CachePath": "C7/{C71CABC7-7E64-7A3C-C76B-BE60430B27CA}.wem"
+     },
+     {
+      "Id": "990834503",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "MagicPack2_ElectricitySpells_Spell2-002[1].wav",
+      "Path": "Media/990834503.wem",
+      "CachePath": "22/{2278AFB9-259B-5F79-7116-E82284AEBAF9}.wem"
      }
     ],
     "Events": [
@@ -105,16 +123,22 @@
         "Id": "635746896"
        },
        {
+        "Id": "717902266"
+       },
+       {
         "Id": "946455381"
        },
        {
         "Id": "958849886"
+       },
+       {
+        "Id": "990834503"
        }
       ]
      }
     ]
    }
   ],
-  "FileHash": "{83891022-9930-49AB-CF51-3A2C2BC024CD}"
+  "FileHash": "{095DED7F-B962-8A3C-5403-CBE182508E1F}"
  }
 }

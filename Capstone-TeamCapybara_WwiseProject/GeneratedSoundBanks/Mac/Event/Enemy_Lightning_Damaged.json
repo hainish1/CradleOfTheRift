@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{AD0B93AC-D87A-4C64-AD94-1A5D7408B5BC}",
     "Language": "SFX",
-    "Hash": "{6407A24B-F6B7-713C-7701-1A57B113C63D}",
+    "Hash": "{27A95745-EB06-3306-260E-9D2472729684}",
     "ObjectPath": "Enemy_Lightning_Damaged",
     "ShortName": "Enemy_Lightning_Damaged",
     "Path": "Event/Enemy_Lightning_Damaged.bnk",
@@ -25,6 +25,24 @@
       "CachePath": "6D/{6DE11572-3DC8-6CD1-E5F6-A0C7026210B4}.wem"
      },
      {
+      "Id": "287669474",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "MagicPack2_ElectricitySpells_Spell2-002[1].wav",
+      "Path": "Media/287669474.wem",
+      "CachePath": "03/{033BCA89-7CA2-CBB9-046E-48DAD6CED709}.wem"
+     },
+     {
+      "Id": "579772068",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "MagicPack2_ElectricitySpells_Spell2-002[1].wav",
+      "Path": "Media/579772068.wem",
+      "CachePath": "48/{48F48F87-5B62-FC4F-2755-660CA2331977}.wem"
+     },
+     {
       "Id": "635746896",
       "Language": "SFX",
       "Streaming": "false",
@@ -32,6 +50,15 @@
       "ShortName": "ELECZap_Bug zapper zapping, electricity, crackle,_RogueWaves_DruidMagic_37.wav",
       "Path": "Media/635746896.wem",
       "CachePath": "36/{36377865-E8CD-9A8D-1970-058A0B82E4BD}.wem"
+     },
+     {
+      "Id": "842134105",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "MagicPack2_ElectricitySpells_Spell2-002[1].wav",
+      "Path": "Media/842134105.wem",
+      "CachePath": "FD/{FDB6B8CC-53A4-BA75-266D-38D4BB12C697}.wem"
      }
     ],
     "Events": [
@@ -48,13 +75,22 @@
         "Id": "203142451"
        },
        {
+        "Id": "287669474"
+       },
+       {
+        "Id": "579772068"
+       },
+       {
         "Id": "635746896"
+       },
+       {
+        "Id": "842134105"
        }
       ]
      }
     ]
    }
   ],
-  "FileHash": "{AC00C849-01CD-2491-5B6F-62B352E18B31}"
+  "FileHash": "{11ADC19C-849B-59D9-1596-FBB7FA9F7D2F}"
  }
 }

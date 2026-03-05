@@ -1,0 +1,48 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Mac",
+  "BasePlatform": "Mac",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "1864203916",
+    "Type": "Event",
+    "GUID": "{3D084328-3220-45D7-B90E-34929754D9A4}",
+    "Language": "SFX",
+    "Hash": "{A2125A80-5AF5-73CB-DF30-B15259A9BBF0}",
+    "ObjectPath": "Slime_Boss_Jump",
+    "ShortName": "Slime_Boss_Jump",
+    "Path": "Event/Slime_Boss_Jump.bnk",
+    "Media": [
+     {
+      "Id": "759369655",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Slime.wav",
+      "Path": "Media/759369655.wem",
+      "CachePath": "56/{561B978D-649A-5AF0-693D-D3A36A1E6ABD}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "1864203916",
+      "Name": "Slime_Boss_Jump",
+      "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Slime Boss\\Slime_Boss_Jump",
+      "GUID": "{3D084328-3220-45D7-B90E-34929754D9A4}",
+      "DurationType": "OneShot",
+      "DurationMin": "0.58653",
+      "DurationMax": "0.8294786",
+      "MediaRefs": [
+       {
+        "Id": "759369655"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{78CF138F-3CD4-81F1-0839-F459A59822A2}"
+ }
+}

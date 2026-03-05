@@ -10,11 +10,20 @@
     "Type": "Event",
     "GUID": "{C486BF1C-C3E4-44E7-A646-AF33A7FDB7C8}",
     "Language": "SFX",
-    "Hash": "{A079BCDA-9479-A23A-714F-323B47B370B8}",
+    "Hash": "{CBF4E53C-9239-EEC2-6E6A-4C61E1F9C1E6}",
     "ObjectPath": "Play_player_fire",
     "ShortName": "Play_player_fire",
     "Path": "Event/Play_player_fire.bnk",
     "Media": [
+     {
+      "Id": "634256709",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "player_melee.wav",
+      "Path": "Media/634256709.wem",
+      "CachePath": "36/{36CA500E-8F43-8690-245A-9248FF6506A8}.wem"
+     },
      {
       "Id": "653905337",
       "Language": "SFX",
@@ -32,9 +41,12 @@
       "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_fire",
       "GUID": "{C486BF1C-C3E4-44E7-A646-AF33A7FDB7C8}",
       "DurationType": "OneShot",
-      "DurationMin": "0.5020917",
-      "DurationMax": "1.2651917",
+      "DurationMin": "1.5780962",
+      "DurationMax": "2.5050716",
       "MediaRefs": [
+       {
+        "Id": "634256709"
+       },
        {
         "Id": "653905337"
        }
@@ -43,6 +55,6 @@
     ]
    }
   ],
-  "FileHash": "{BC0EA785-73D9-AC21-AEE5-63429137BC27}"
+  "FileHash": "{9E3F7587-D746-37DE-70B2-04F1CE8E8DC5}"
  }
 }
