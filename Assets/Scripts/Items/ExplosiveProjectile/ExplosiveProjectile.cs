@@ -5,10 +5,12 @@ public class ExplosiveProjectile : Projectile
 {
     private GameObject fireballVisual;
     private static Shader cachedShader;
-    
+
     private static Collider[] overlapBuffer = new Collider[64];
     private static HashSet<IDamageable> hitBuffer = new HashSet<IDamageable>();
-    
+
+    private const string FireballVisualLayerName = "Projectile";
+
     void Start()
     {
         if (ExplosiveProjectiles.IsEnabled)
@@ -18,7 +20,7 @@ public class ExplosiveProjectile : Projectile
             SetProjectileSpeed();
         }
     }
-    
+
     private void HideOriginalProjectileModel()
     {
         var renderers = GetComponentsInChildren<Renderer>();
@@ -27,7 +29,7 @@ public class ExplosiveProjectile : Projectile
             renderer.enabled = false;
         }
     }
-    
+
     private void CreateFireballVisual()
     {
         fireballVisual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -35,23 +37,26 @@ public class ExplosiveProjectile : Projectile
         fireballVisual.transform.SetParent(transform);
         fireballVisual.transform.localPosition = Vector3.zero;
         fireballVisual.transform.localScale = Vector3.one * ExplosiveProjectiles.FireballVisualScale;
-        
+
+        int layer = LayerMask.NameToLayer(FireballVisualLayerName);
+        if (layer >= 0)
+            fireballVisual.layer = layer;
+
         var col = fireballVisual.GetComponent<Collider>();
-        if (col != null) Destroy(col);
-        
+        if (col != null)
+            DestroyImmediate(col);
+
         if (cachedShader == null)
             cachedShader = Shader.Find("Sprites/Default");
-        
+
         var material = new Material(cachedShader);
         material.color = new Color(1f, 0f, 0f, 1f);
-        
+
         var renderer = fireballVisual.GetComponent<Renderer>();
         if (renderer != null)
-        {
             renderer.material = material;
-        }
     }
-    
+
     public override void Update()
     {
         FadeTrailVisuals();
@@ -259,16 +264,14 @@ public class ExplosiveProjectile : Projectile
             Gizmos.DrawWireSphere(transform.position, ExplosiveProjectiles.AoeRadius);
         }
     }
-    
+
     void OnDestroy()
     {
         if (fireballVisual != null)
         {
-            var renderer = fireballVisual.GetComponent<Renderer>();
-            if (renderer != null && renderer.material != null)
-            {
-                Destroy(renderer.material);
-            }
+            var r = fireballVisual.GetComponent<Renderer>();
+            if (r != null && r.material != null)
+                Destroy(r.material);
         }
     }
 }
