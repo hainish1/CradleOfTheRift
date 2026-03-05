@@ -148,10 +148,6 @@ public class AbilityUIController : MonoBehaviour
         // Initialize icon
         var iconElement = slot.Q<VisualElement>("AbilityIcon");
         iconElement.style.backgroundImage = new StyleBackground(ability.icon);
-        iconElement.style.backgroundSize = new BackgroundSize(BackgroundSizeType.Cover);
-        iconElement.style.backgroundPositionX = new BackgroundPosition(BackgroundPositionKeyword.Center);
-        iconElement.style.backgroundPositionY = new BackgroundPosition(BackgroundPositionKeyword.Center);
-        iconElement.style.backgroundRepeat = new BackgroundRepeat(Repeat.NoRepeat, Repeat.NoRepeat);
 
         // Prepare overlays
         var overlayContainer = slot.Q<VisualElement>("AbilityIconContainer");
