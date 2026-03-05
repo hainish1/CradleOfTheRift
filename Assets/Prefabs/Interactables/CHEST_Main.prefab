@@ -198,6 +198,14 @@ MonoBehaviour:
   singleActivation: 1
   audioData: {fileID: 0}
   lootTable: {fileID: 8095773939667435176}
+  OpenSound:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: 320c2003a177daa4593bce2b7d916e03, type: 2}
+  TooExpensiveSound:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: 95cb2131d27671d4dad96bc21b3187b4, type: 2}
 --- !u!65 &6121807446205894657
 BoxCollider:
   m_ObjectHideFlags: 0
