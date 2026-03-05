@@ -1,0 +1,132 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "1245563929",
+    "Type": "Event",
+    "GUID": "{945D0DC3-475C-4642-81E6-4D6E6C4E8A87}",
+    "Language": "SFX",
+    "Hash": "{7BC37996-1C1C-3191-EF96-E8F972B98DB0}",
+    "ObjectPath": "Play_player_crown_shoot",
+    "ShortName": "Play_player_crown_shoot",
+    "Path": "Event/Play_player_crown_shoot.bnk",
+    "Media": [
+     {
+      "Id": "93125327",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Button4.wav",
+      "Path": "Media/93125327.wem",
+      "CachePath": "3D/{3D16BFB9-EC7C-7924-AD37-C78D9E00D2D8}.wem"
+     },
+     {
+      "Id": "150578852",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Buttons.wav",
+      "Path": "Media/150578852.wem",
+      "CachePath": "50/{500A121C-6450-0BC3-8B75-507C6D1A875E}.wem"
+     },
+     {
+      "Id": "200882620",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Button3.wav",
+      "Path": "Media/200882620.wem",
+      "CachePath": "DB/{DB633B16-77CA-CD71-E4E4-D1E384983C95}.wem"
+     },
+     {
+      "Id": "281346619",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Button5.wav",
+      "Path": "Media/281346619.wem",
+      "CachePath": "F3/{F3CAFFF7-8D18-0993-AE2C-492811127FD3}.wem"
+     },
+     {
+      "Id": "456789138",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Button2.wav",
+      "Path": "Media/456789138.wem",
+      "CachePath": "F1/{F1FE4C67-4C02-45FA-B13F-D379F21AB8F9}.wem"
+     },
+     {
+      "Id": "525294349",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "player_dash.wav",
+      "Path": "Media/525294349.wem",
+      "CachePath": "B4/{B4508153-A108-3A74-B81F-6C643105D9F4}.wem"
+     },
+     {
+      "Id": "634256709",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "player_melee.wav",
+      "Path": "Media/634256709.wem",
+      "CachePath": "36/{36CA500E-8F43-8690-245A-9248FF6506A8}.wem"
+     },
+     {
+      "Id": "647025352",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Weapon Bell.wav",
+      "Path": "Media/647025352.wem",
+      "CachePath": "63/{639B6DC0-1E97-F899-2282-18B7CDA97302}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "1245563929",
+      "Name": "Play_player_crown_shoot",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_crown_shoot",
+      "GUID": "{945D0DC3-475C-4642-81E6-4D6E6C4E8A87}",
+      "DurationType": "OneShot",
+      "DurationMin": "3.5635948",
+      "DurationMax": "4.489848",
+      "MediaRefs": [
+       {
+        "Id": "93125327"
+       },
+       {
+        "Id": "150578852"
+       },
+       {
+        "Id": "200882620"
+       },
+       {
+        "Id": "281346619"
+       },
+       {
+        "Id": "456789138"
+       },
+       {
+        "Id": "525294349"
+       },
+       {
+        "Id": "634256709"
+       },
+       {
+        "Id": "647025352"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{DB2D5638-DB90-111E-2985-1BCC2CE8524D}"
+ }
+}

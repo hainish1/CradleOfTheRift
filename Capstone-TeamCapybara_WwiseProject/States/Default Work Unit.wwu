@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WwiseDocument Type="WorkUnit" ID="{D51EFDF0-CE93-44D2-AEF6-831B3064CA87}" SchemaVersion="133">
 	<States>
-		<WorkUnit Name="Default Work Unit" ID="{D51EFDF0-CE93-44D2-AEF6-831B3064CA87}" PersistMode="Standalone"/>
+		<WorkUnit Name="Default Work Unit" ID="{D51EFDF0-CE93-44D2-AEF6-831B3064CA87}" PersistMode="Standalone">
+			<ChildrenList>
+				<StateGroup Name="Boss_Alive" ID="{BC04C632-B236-4F49-B8B1-30D73127C2AD}">
+					<ChildrenList>
+						<State Name="None" ID="{6981E7EC-A80A-448E-B0BF-87DBCBEE7EFB}"/>
+						<State Name="Alive" ID="{A4FB7019-7BE2-4B55-B62E-D9CFEDF363CC}"/>
+						<State Name="Dead" ID="{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}"/>
+					</ChildrenList>
+				</StateGroup>
+				<StateGroup Name="Music_States" ID="{75500C40-A25C-47B7-9F07-2661023F57D5}">
+					<ChildrenList>
+						<State Name="None" ID="{2AA072AF-1480-4BB0-9EC5-3DCE2D175CC3}"/>
+						<State Name="Cave" ID="{99BA7111-C7A0-447A-8C7B-520FC9B8BE63}"/>
+						<State Name="Forest" ID="{ED5C2F44-FFA8-477D-9C74-127B8291875E}"/>
+						<State Name="Icey" ID="{154C5158-ADC3-4255-A4F5-8AFA4129604C}"/>
+					</ChildrenList>
+				</StateGroup>
+			</ChildrenList>
+		</WorkUnit>
 	</States>
 </WwiseDocument>
