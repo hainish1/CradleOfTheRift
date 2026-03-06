@@ -92,6 +92,11 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private int _currComboCount;
     private GameObject _currTarget;
 
+    // Audio variables.
+    [Header("Sound Effects")]
+    [SerializeField]
+    public AK.Wwise.Event swingSound;
+
     void Awake()
     {;
         _playerMovement = GetComponentInParent<PlayerMovement>();
@@ -205,6 +210,10 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _currComboCount++;
         OnMeleeComboAttack?.Invoke(_currComboCount);
         _weaponAnim.SetTrigger("Attack" + _currComboCount);
+
+        // For the weapon sound.
+        swingSound.Post(gameObject);
+
         StartCoroutine(DelayAttack());
     }
 

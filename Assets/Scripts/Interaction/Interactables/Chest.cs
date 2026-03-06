@@ -10,6 +10,10 @@ public class Chest : MonoBehaviour, IInteractable
     [SerializeField] private bool singleActivation = true;
     [SerializeField] private AudioSource audioData;
     [SerializeField] private LootTable lootTable;
+
+    [Header("Audio Settings")]
+    [SerializeField] private AK.Wwise.Event OpenSound;
+    [SerializeField] private AK.Wwise.Event TooExpensiveSound;
     public string InteractionPrompt => "[E] - " + price + "G";
     public bool SingleActivation => singleActivation;
     private bool canInteract = true;
@@ -27,6 +31,7 @@ public class Chest : MonoBehaviour, IInteractable
                 // Play sounds
                 audioData = GetComponent<AudioSource>();
                 audioData.Play(0);
+                OpenSound.Post(gameObject);
                 // Spawn items
                 if (lootTable != null)
                 {
@@ -52,6 +57,7 @@ public class Chest : MonoBehaviour, IInteractable
             else
             {
                 Debug.Log("U broke.");
+                TooExpensiveSound.Post(gameObject);
             }
         }
 

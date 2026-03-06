@@ -43,12 +43,14 @@ MonoBehaviour:
     dotApplyImmediately: 0
     poisonPoolRadius: 0
     poisonPoolLifetime: 0
+    poisonPoolProjectileVFX: {fileID: 0}
     numberOfProjectiles: 0
     projectileDamageMultiplier: 0
     explosiveAoeRadius: 0
     explosiveAoeDamageMultiplier: 0
     explosiveMaxRange: 0
     explosiveFireballSize: 7.5
+    explosiveProjectileSpeed: 0.7
     explosiveVFX: {fileID: 0}
     chainDamagePercent: 0
     maxChainCount: 0
@@ -75,6 +77,7 @@ MonoBehaviour:
     playerLightningStrikeRadius: 0
     playerLightningStrikeInterval: 0
     playerLightningStrikeElectrifyDamage: 0
+    playerLightningStrikeVFX: {fileID: 0}
     flyingFireDamage: 0
     flyingFireRadius: 0
     flyingFireTickInterval: 0
@@ -84,8 +87,8 @@ MonoBehaviour:
     elementReactionExplosionCooldown: 0
     elementReactionExplosionVFX: {fileID: 0}
     orbitingFireballDamage: 10
-    orbitingFireballRadius: 4
-    orbitingFireballRotationSpeed: 50
+    orbitingFireballRadius: 8
+    orbitingFireballRotationSpeed: 60
     lightningDashDamage: 0
     lightningDashChainCount: 0
     lightningDashChainRange: 0
@@ -109,6 +112,8 @@ MonoBehaviour:
     finisherDamageMultiplier: 0
     finisherRangeMultiplier: 0
     xpGrantAmount: 0
+    pureCoreDamageMultiplier: 1.15
+    pureCoreHealthMultiplier: 1.2
   statType: 13
   operatorType: 0
   value: 1

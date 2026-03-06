@@ -25,11 +25,13 @@
 }
 
 .unityButtonHover:hover {
-    background-color: rgba(21, 6, 34, 0.94);
-    color: rgb(228, 0, 255);
-    transition-property: scale;
+    background-color: rgba(255, 255, 255, 0);
+    color: rgb(245, 240, 230);
+    transition-property: scale, -unity-background-image-tint-color;
     scale: 1.1 1.1;
-    transition-duration: 0.25s;
+    transition-duration: 0.25s, 0.25s;
+    background-image: url("project://database/Assets/Art%20Assets/2D/UI%20assets%202/Game_Over_Select_Glow.png?fileID=2800000&guid=ff0774dcf9244496ab0ec1c96b51e8cc&type=3#Game_Over_Select_Glow");
+    transition-timing-function: ease, ease-in-elastic;
 }
 
 .header {
@@ -95,6 +97,7 @@
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
     -unity-background-image-tint-color: rgb(255, 255, 255);
+    background-image: url("project://database/Assets/Art%20Assets/2D/UI%20assets%202/Inventory/Inventory_Full.png?fileID=2800000&guid=892425e4b80b84198a7f684623b4dce5&type=3#Inventory_Full");
 }
 
 .description {
@@ -103,9 +106,10 @@
 }
 
 .item:hover {
-    transition-duration: 0.25s;
+    transition-duration: 0.15s;
     transition-property: scale;
-    scale: 1.1 1.1;
+    scale: 1.4 1.4;
+    background-image: url("project://database/Assets/Art%20Assets/2D/UI%20assets%202/Inventory/Inventory_Full_Select.png?fileID=2800000&guid=27468393484734e0d8edb610f0eaecf5&type=3#Inventory_Full_Select");
 }
 
 .Background {
@@ -119,37 +123,34 @@
     padding-right: 20px;
 }
 
-/* Hide the clunky up/down buttons for a cleaner look */
-.unity-scroller__low-button, 
+.unity-scroller__low-button {
+    display: none;
+}
+
 .unity-scroller__high-button {
     display: none;
 }
 
-/* Style the background track */
 .unity-base-slider__tracker {
     background-color: rgba(0, 0, 0, 0.3);
     border-width: 0;
     border-radius: 4px;
-    width: 8px; /* Make it thin */
+    width: 8px;
 }
 
-/* Style the "dragger" (the handle) */
 .unity-base-slider__dragger {
-    background-color: rgb(255, 255, 255); /* White handle to start */
+    background-color: rgb(255, 255, 255);
     border-width: 0;
     border-radius: 4px;
     width: 8px;
     transition-duration: 0.2s;
 }
 
-/* Highlight the handle when hovering */
 .unity-base-slider__dragger:hover {
-    background-color: rgb(228, 0, 255); /* Matches the hover color  */
-    scale: 1.2 1.0; /* Make it slightly wider on hover */
+    background-color: rgb(228, 0, 255);
+    scale: 1.2 1;
 }
 
-
-/* Adjust the overall scroller width */
 .unity-scroller {
     width: 12px;
     background-color: transparent;

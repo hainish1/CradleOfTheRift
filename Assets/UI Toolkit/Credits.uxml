@@ -1,7 +1,8 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI%20Toolkit/PauseMenuStyleSheet.uss?fileID=7433441132597879392&amp;guid=e780f1131c06d4602ab181ccec82676f&amp;type=3#PauseMenuStyleSheet" />
-    <engine:VisualElement name="Canvas" class="Background" style="flex-grow: 1;">
+    <engine:VisualElement name="Canvas" class="Background" style="flex-grow: 1; background-color: rgb(14, 0, 29);">
         <engine:Label text="Credits" name="LabelCreditsHeader" class="header" />
-        <engine:Label text="Font:CocoBiker - Foundry: Zetafonts - Designed by:Cosimo Lorenzo Panici " name="LabelCredit1" class="h1" style="font-size: 50px;" />
+        <engine:Label text="Font:CocoBiker - Foundry: Zetafonts - Designed by:Cosimo Lorenzo Pancini " name="LabelCredit1" class="h1" style="font-size: 50px;" />
+        <engine:Button text="Back" name="ButtonBack" class="button unityButtonHover" style="background-color: rgba(21, 7, 34, 0); position: absolute; top: 964px; left: 11px; width: 246px;" />
     </engine:VisualElement>
 </engine:UXML>

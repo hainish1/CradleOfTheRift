@@ -151,6 +151,8 @@ public class LightningDash : IDisposable
         {
             owner.transform.position = to;
         }
+
+        SnapToGroundIfBelow();
     }
 
     private void EnableLightningForm()
@@ -298,10 +300,10 @@ public class LightningDash : IDisposable
     private IEnumerator ChainToEnemyCoroutine(Enemy target, Vector3 fromPos, float damage, int chainNum)
     {
         if (chainNum >= maxChains || target == null) yield break;
-        
         if (hitEnemiesBuffer.Contains(target)) yield break;
 
-        Vector3 targetPos = target.transform.position;
+        Vector3 enemyPos = target.transform.position;
+        Vector3 targetPos = new Vector3(enemyPos.x, enemyPos.y, enemyPos.z);
         
         GameObject lightningStart = new GameObject("DashLightningStart");
         GameObject lightningEnd = new GameObject("DashLightningEnd");
@@ -316,32 +318,50 @@ public class LightningDash : IDisposable
         
         yield return DashToTarget(fromPos, targetPos, DashDuration);
 
-        if (target == null)
+        if (target != null)
         {
-            yield break;
+            lastHitEnemy = target;
+
+            LightningCore.ApplyLightningDamage(owner, target, damage);
+
+            var flash = target.GetComponentInChildren<TargetFlash>();
+            if (flash != null) flash.Flash();
+            
+            hitEnemiesBuffer.Add(target);
         }
-
-        lastHitEnemy = target;
-
-        LightningCore.ApplyLightningDamage(owner, target, damage);
-
-        var flash = target.GetComponentInChildren<TargetFlash>();
-        if (flash != null) flash.Flash();
-        
-        hitEnemiesBuffer.Add(target);
         
         yield return new WaitForSeconds(DashInterval);
 
-        if (target == null)
-        {
-            yield break;
-        }
-
-        Enemy nextTarget = FindNearestEnemy(target.transform.position, hitEnemiesBuffer);
+        Enemy nextTarget = FindNearestEnemy(targetPos, hitEnemiesBuffer);
 
         if (nextTarget != null)
         {
-            yield return playerMovement.StartCoroutine(ChainToEnemyCoroutine(nextTarget, target.transform.position, damage, chainNum + 1));
+            yield return playerMovement.StartCoroutine(ChainToEnemyCoroutine(nextTarget, targetPos, damage, chainNum + 1));
+        }
+    }
+
+    private void SnapToGroundIfBelow()
+    {
+        RaycastHit hit;
+        Vector3 origin = owner.transform.position + Vector3.up;
+        if (Physics.Raycast(origin, Vector3.down, out hit, 5f, Physics.AllLayers, QueryTriggerInteraction.Ignore))
+        {
+            Vector3 pos = owner.transform.position;
+            if (pos.y < hit.point.y)
+            {
+                pos.y = hit.point.y;
+
+                if (characterController != null)
+                {
+                    characterController.enabled = false;
+                    owner.transform.position = pos;
+                    characterController.enabled = true;
+                }
+                else
+                {
+                    owner.transform.position = pos;
+                }
+            }
         }
     }
 

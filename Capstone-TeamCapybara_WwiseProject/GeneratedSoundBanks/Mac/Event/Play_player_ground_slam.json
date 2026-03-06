@@ -1,0 +1,60 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Mac",
+  "BasePlatform": "Mac",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "1163424219",
+    "Type": "Event",
+    "GUID": "{EC6399CF-5E5F-46C2-85FA-296F0A88117B}",
+    "Language": "SFX",
+    "Hash": "{0DA201F2-2772-AF5D-B13A-98D26D760539}",
+    "ObjectPath": "Play_player_ground_slam",
+    "ShortName": "Play_player_ground_slam",
+    "Path": "Event/Play_player_ground_slam.bnk",
+    "Media": [
+     {
+      "Id": "565804503",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0277_explosion_urban_004_02[1].wav",
+      "Path": "Media/565804503.wem",
+      "CachePath": "CD/{CD59CCD3-7C81-B164-F69F-84693DC1C644}.wem"
+     },
+     {
+      "Id": "931612701",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0277_weapon_smoke_grenade_launcher_003[1].wav",
+      "Path": "Media/931612701.wem",
+      "CachePath": "F4/{F4D96E72-5C10-008A-F265-2142BBA0E356}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "1163424219",
+      "Name": "Play_player_ground_slam",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_ground_slam",
+      "GUID": "{EC6399CF-5E5F-46C2-85FA-296F0A88117B}",
+      "DurationType": "OneShot",
+      "DurationMin": "4",
+      "DurationMax": "4",
+      "MediaRefs": [
+       {
+        "Id": "565804503"
+       },
+       {
+        "Id": "931612701"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{373DF51F-4DC1-E1EE-B920-774114FBC5A7}"
+ }
+}

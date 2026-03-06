@@ -55,6 +55,82 @@
 						</Event>
 					</ChildrenList>
 				</Folder>
+				<Event Name="Enemy_Lightning_Damaged" ID="{AD0B93AC-D87A-4C64-AD94-1A5D7408B5BC}">
+					<PropertyList>
+						<Property Name="LimitScope" Type="int16">
+							<ValueList>
+								<Value>1</Value>
+							</ValueList>
+						</Property>
+					</PropertyList>
+					<ChildrenList>
+						<Action Name="" ID="{EA9F35D7-8DD7-4BF4-9684-56002115C7A1}" ShortID="790674044">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="LASRMisc_Beam Transient_04_SFRMS_SCIWPNS" ID="{4C115E24-B0F3-48B2-9CF4-78DF2F953F84}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{4BD70518-CA87-4330-9F87-3C5D7E68F1C8}" ShortID="924607239">
+							<PropertyList>
+								<Property Name="ActionType" Type="int16" Value="13"/>
+								<Property Name="Pitch" Type="int32" Value="-750"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="ELECZap_Bug zapper zapping, electricity, crackle,_RogueWaves_DruidMagic_37" ID="{24724A59-E8DF-4669-AE69-BDA17E3371CD}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{F1A8C156-6B70-40D1-88C8-B506960D52CA}" ShortID="912561566">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="ELECZap_Bug zapper zapping, electricity, crackle,_RogueWaves_DruidMagic_37" ID="{24724A59-E8DF-4669-AE69-BDA17E3371CD}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{B21F642B-D589-4243-9759-E6C04919CFE5}" ShortID="754421158">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="ElectricityShortRandom" ID="{359872F9-8A87-4F23-8A27-26F3AB8BCFE6}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Folder Name="Slime Boss" ID="{CFA563E5-5FF8-4BA9-86D4-1F2ED48083AB}" ShortID="660090223">
+					<ChildrenList>
+						<Event Name="Slime_Boss_Damage" ID="{E02FB9D5-39C3-4BD8-A4EF-B6C3D9EB381D}">
+							<PropertyList>
+								<Property Name="LimitScope" Type="int16">
+									<ValueList>
+										<Value>1</Value>
+									</ValueList>
+								</Property>
+							</PropertyList>
+							<ChildrenList>
+								<Action Name="" ID="{365E87A7-768A-47EB-9960-7749414EAE34}" ShortID="163628558">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Slime_boss_jump" ID="{A7EDAB16-C179-4CBD-A33E-7D428617E36D}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+						<Event Name="Slime_Boss_Jump" ID="{3D084328-3220-45D7-B90E-34929754D9A4}">
+							<ChildrenList>
+								<Action Name="" ID="{B7C2AC1F-CB16-49C9-97A1-1B04DE6D2170}" ShortID="177268233">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Slime" ID="{F468D715-9549-4314-98C5-A7BEA258295B}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+					</ChildrenList>
+				</Folder>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

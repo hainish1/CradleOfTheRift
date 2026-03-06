@@ -1,0 +1,108 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "1959126323",
+    "Type": "Event",
+    "GUID": "{1F51F437-6E41-4EAD-9D88-C22303E4B417}",
+    "Language": "SFX",
+    "Hash": "{7AAC04A0-29D6-FE9C-BD65-749DDDE5D526}",
+    "ObjectPath": "Play_player_fireball",
+    "ShortName": "Play_player_fireball",
+    "Path": "Event/Play_player_fireball.bnk",
+    "Media": [
+     {
+      "Id": "132331391",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0277_weapon_smoke_grenade_launcher_003[1].wav",
+      "Path": "Media/132331391.wem",
+      "CachePath": "53/{53271B9C-519E-3CE1-E40A-462AE1B0185D}.wem"
+     },
+     {
+      "Id": "143699886",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0277_weapon_smoke_grenade_launcher_003[1].wav",
+      "Path": "Media/143699886.wem",
+      "CachePath": "9F/{9F818D5C-0126-3EDD-0EEF-A1D008B245CD}.wem"
+     },
+     {
+      "Id": "330325000",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "FRWKComr_InsJ_Fireworks_Launch_Close_01-03.wav",
+      "Path": "Media/330325000.wem",
+      "CachePath": "26/{262BD1DD-CE66-F631-389F-F14B6CE60233}.wem"
+     },
+     {
+      "Id": "423541166",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Campfire[1].wav",
+      "Path": "Media/423541166.wem",
+      "CachePath": "87/{87B9FC20-42ED-8F8C-21DD-390B7C603C51}.wem"
+     },
+     {
+      "Id": "946455381",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "FRWKComr_InsJ_Fireworks_Launch_Close_01-03.wav",
+      "Path": "Media/946455381.wem",
+      "CachePath": "4F/{4F40197A-F70F-2F34-7C00-715F294B2A9E}.wem"
+     },
+     {
+      "Id": "958849886",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "FRWKComr_InsJ_Fireworks_Launch_Close_01-03.wav",
+      "Path": "Media/958849886.wem",
+      "CachePath": "C7/{C71CABC7-7E64-7A3C-C76B-BE60430B27CA}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "1959126323",
+      "Name": "Play_player_fireball",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_fireball",
+      "GUID": "{1F51F437-6E41-4EAD-9D88-C22303E4B417}",
+      "DurationType": "OneShot",
+      "DurationMin": "5.5745206",
+      "DurationMax": "7.0234556",
+      "MediaRefs": [
+       {
+        "Id": "132331391"
+       },
+       {
+        "Id": "143699886"
+       },
+       {
+        "Id": "330325000"
+       },
+       {
+        "Id": "423541166"
+       },
+       {
+        "Id": "946455381"
+       },
+       {
+        "Id": "958849886"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{A6F582F8-B5EA-F9A1-D881-442FF29BBA4A}"
+ }
+}

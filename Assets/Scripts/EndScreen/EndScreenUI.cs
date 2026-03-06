@@ -102,16 +102,19 @@ public class EndScreenUI : MonoBehaviour
         {
             playAgainButton.RegisterCallback<ClickEvent>(evt =>
             {
-                Debug.Log("Play Again clicked!");
+                // Debug.Log("Play Again clicked!");
                 Time.timeScale = 1f; // unpause
                 PauseManager.GameIsPaused = false;
                 PauseManager.CurrentPauseState = PauseManager.PauseState.None;
                 PlayerHealth.GameIsOver = false;
 
+                if (UpgradeLevelManager.Instance != null)
+                    UpgradeLevelManager.Instance.ResetForNewRun();
+
                 UnityEngine.Cursor.lockState = CursorLockMode.Locked;
                 UnityEngine.Cursor.visible = false;
 
-                SceneManager.LoadScene("Design 1"); // or your current game scene name
+                SceneManager.LoadScene("Design 1");
             });
         }
         if (mainMenuButton != null)
@@ -131,7 +134,7 @@ public class EndScreenUI : MonoBehaviour
         {
             quitButton.RegisterCallback<ClickEvent>(evt =>
             {
-                Debug.Log("Quit clicked!");
+                // Debug.Log("Quit clicked!");
                 Application.Quit();
 
 #if UNITY_EDITOR
