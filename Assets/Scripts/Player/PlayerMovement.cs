@@ -37,6 +37,8 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("The player camera object.")] private Transform _cameraTransform;
     [SerializeField]
     [Tooltip("The player model object.")] private GameObject _playerModel;
+    [SerializeField]
+    [Tooltip("Reference to the player jump animation to get its duration.")] private AnimationClip _jumpAnim;
     public Entity PlayerEntity { get; private set; }
     private Animator _playerAnim;
     private CharacterController _characterController;
@@ -126,13 +128,17 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("Seconds that jump can still be registered after walking off an edge.")] private float _coyoteTimeWindow;
     [SerializeField]
     [Tooltip("Seconds that jump can still be registered before reaching the ground.")] private float _jumpBufferWindow;
+    [SerializeField, Range(0, 1)]
+    [Tooltip("How quickly the player jump animation finishes. (0.0 is instant, 1.0 is the full default duration.)")] private float _jumpAnimationSpeedMultiplier;
     private float _jumpForce;
     private float _coyoteTimer;
     private float _jumpBufferTimer;
     private Vector3 _verticalVelocityVector;
+    public bool IsJumping { get; private set; }
+    private Coroutine _jumpAnimationCoroutine;
 
     // Drift Parameters
-    
+
     [Header("Drift Parameters")] [Space]
     [SerializeField]
     [Tooltip("Seconds before Drift Descent Divisor gradually reaches full effect.")] private float _driftDelay;
@@ -256,7 +262,10 @@ public class PlayerMovement : MonoBehaviour
         _isRegeneratingDash = false;
 
         // Jump Parameters
+        _playerAnim.SetFloat("JumpAnimSpeedMultiplier", 1 / _jumpAnimationSpeedMultiplier);
         _jumpForce = PlayerEntity.Stats.JumpForce;
+        IsJumping = false;
+        _jumpAnimationCoroutine = null;
 
         // Coyote Time Parameters
         _coyoteTimer = _coyoteTimeWindow;
@@ -873,9 +882,10 @@ public class PlayerMovement : MonoBehaviour
     private void JumpInputActionStarted(InputAction.CallbackContext context)
     {
         if (_kbControlsLockTimer > 0) return;
+        if (IsDashing) return;
 
-        if (!IsDashing) _jumpBufferTimer = _jumpBufferWindow;
-        if (!IsFlying && !IsGrounded && !IsDashing) EnableDrift();
+        _jumpBufferTimer = _jumpBufferWindow;
+        if (!IsFlying && !IsGrounded) EnableDrift();
     }
 
     /// <summary>
@@ -913,8 +923,23 @@ public class PlayerMovement : MonoBehaviour
 
         _characterController.Move(Time.deltaTime * _verticalVelocityVector);
 
-        _playerAnim.SetTrigger("Jump");
         jumpSoundEvent.Post(gameObject); // Play the jump sound effect.
+        //_playerAnim.SetTrigger("Jump");
+        //if (_jumpAnimationCoroutine == null)
+        //    StartCoroutine(JumpAnimationDuration());
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Sets IsJumping to true for the duration of the jump animation.
+    ///   </para>
+    /// </summary>
+    /// <returns> IEnumerator object. </returns>
+    private IEnumerator JumpAnimationDuration()
+    {
+        IsJumping = true;
+        yield return new WaitForSeconds((_jumpAnim.length * _jumpAnimationSpeedMultiplier) + 0.01f);
+        IsJumping = false;
     }
 
     /// <summary>

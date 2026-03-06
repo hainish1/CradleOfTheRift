@@ -173,7 +173,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         foreach (AttackInfo info in _attacks)
         {
             float duration = info.PreTransitionAnim.length + info.AttackAnim.length;
-            info.AttackDuration = Mathf.Clamp(duration / currAnimationSpeed, 1e-3f, float.MaxValue);
+            info.AttackDuration = Mathf.Clamp((duration / currAnimationSpeed) + 0.01f, 1e-3f, float.MaxValue);
             info.BufferedAttackDuration = Mathf.Clamp(info.AttackDuration - _comboInputBuffer, 0, float.MaxValue);
         }
 

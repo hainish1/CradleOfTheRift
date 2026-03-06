@@ -59,7 +59,7 @@ public class PlayerShooter : MonoBehaviour
     [SerializeField] private AnimationClip throwAnim;
     [SerializeField] private AnimationClip postTransitionAnim;
     [SerializeField, Range(0, 1)]
-    [Tooltip("How quickly the spear flip animation completes before being thrown (0.0 is instant, 0.5 is halfway, 1.0 is when the spear is thrown).")]
+    [Tooltip("How quickly the spear flip animation completes before being thrown. (0.0 is instant, 0.5 is halfway, 1.0 is when the spear is thrown.)")]
     private float flipAnimCompletionTime;
     [SerializeField] private float regainAnimCompletionSeconds;
     [SerializeField] private float regainDelaySeconds;
