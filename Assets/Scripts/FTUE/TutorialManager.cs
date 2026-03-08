@@ -31,7 +31,7 @@ public class TutorialManager : MonoBehaviour
         // Ensure all EnableObject types are disabled on start.
         foreach (TutorialEvent t in events)
         {
-            if (t.TutorialEventType == tutorialEventType.EnableObject)
+            if (t.TutorialEventType == TutorialEventType.EnableObject)
                 t.TargetObject.SetActive(false);
         }
     }
@@ -78,40 +78,41 @@ public class TutorialManager : MonoBehaviour
     {
         switch (e.TutorialEventType)
         {
-            case tutorialEventType.DestroyObject:
+            case TutorialEventType.DestroyObject:
                 Destroy(e.TargetObject);
                 break;
-            case tutorialEventType.EnableObject:
+            case TutorialEventType.EnableObject:
                 e.TargetObject.SetActive(true);
                 break;
         }
     }
-}
 
-/// <summary>
-///   <para>
-///     A class to represent tutorial events. Supports functionality for destroying
-///     physical barriers, enabling objects in the scene, and the option to require
-///     destroying a group of objects before the event can happen.
-///   </para>
-/// </summary>
-[Serializable] public class TutorialEvent
-{
-    public tutorialEventType TutorialEventType;
-    public GameObject TargetObject;
-    public string EventName;
-    
-    // The event happens when all objects in destruct group are destroyed.
-    public List<GameObject> destructGroup = new List<GameObject>();
-}
+    /// <summary>
+    ///   <para>
+    ///     A class to represent tutorial events. Supports functionality for destroying
+    ///     physical barriers, enabling objects in the scene, and the option to require
+    ///     destroying a group of objects before the event can happen.
+    ///   </para>
+    /// </summary>
+    [Serializable]
+    private class TutorialEvent
+    {
+        public TutorialEventType TutorialEventType;
+        public GameObject TargetObject;
+        public string EventName;
 
-/// <summary>
-///   <para>
-///     The variety of supported tutorial event types.
-///   </para>
-/// </summary>
-public enum tutorialEventType
-{
-    DestroyObject,
-    EnableObject
+        // The event happens when all objects in destruct group are destroyed.
+        public List<GameObject> destructGroup = new List<GameObject>();
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     The variety of supported tutorial event types.
+    ///   </para>
+    /// </summary>
+    private enum TutorialEventType
+    {
+        DestroyObject,
+        EnableObject
+    }
 }

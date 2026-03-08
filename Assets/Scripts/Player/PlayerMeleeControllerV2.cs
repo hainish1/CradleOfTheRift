@@ -18,16 +18,13 @@ using UnityEngine.InputSystem;
 
 public class PlayerMeleeControllerV2 : MonoBehaviour
 {
-    /// <summary>Fired when a combo attack starts. Argument: combo index (1=first, 2=second/finisher for V2).</summary>
-    public event Action<int> OnMeleeComboAttack;
-    /// <summary>Fired when the current melee attack animation ends.</summary>
-    public event Action OnMeleeAttackEnd;
+    // Input Parameters
 
     private InputSystem_Actions _playerInput;
     private InputSystem_Actions.PlayerActions _playerActions;
     private InputAction _attackActions;
 
-    // Weapon Parameters
+    // Player Parameters
 
     [Header("Player Parameters")] [Space]
     [SerializeField]
@@ -39,7 +36,6 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private PlayerMovement _playerMovement;
     private PlayerShooter _playerShooter;
     private Entity _playerEntity;
-    private PlayerAudioController _audioController;
 
     // Animation Parameters
 
@@ -50,10 +46,10 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [Tooltip("The upward pitch limit of attacks in degrees.")] private float _upwardDegreesLimit;
     [SerializeField]
     [Tooltip("The downward pitch limit of attacks in degrees.")] private float _downwardDegreesLimit;
-    [SerializeField] List<AttackInfo> _attacks = new List<AttackInfo>();
+    [SerializeField] private List<AttackInfo> _attacks = new();
     private Animator _weaponAnim;
     private float _degreesPerSecond;
-    private bool _isModelHorizontal;
+    private bool _isModelHorizontal = true;
 
     // Hit Registration Parameters
 
@@ -71,9 +67,9 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private Vector3 _prevHitCapsuleStartPointTemp;
     private Vector3 _prevHitCapsuleEndPointTemp;
     private Vector3 _prevHitCapsuleCenterPointTemp;
-    private RaycastHit[] _objectsHitThisCast;
-    private HashSet<GameObject> _objectsHitThisAttack;
-    private bool _prevHitCapsuleTempPointsInitialized;
+    private RaycastHit[] _objectsHitThisCast = new RaycastHit[32];
+    private HashSet<GameObject> _objectsHitThisAttack = new();
+    private bool _prevHitCapsuleTempPointsInitialized = false;
 
     // Attack Parameters
 
@@ -84,28 +80,43 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [Tooltip("Knockback force of attacks.")] private float _knockbackForce;
     [SerializeField]
     [Tooltip("The buffer time for inputting attack combos in seconds.")] private float _comboInputBuffer;
-    public bool IsAttacking { get; private set; }
-    private bool _isRegistering;
-    public bool CanAttack { get; set; }
-    private bool _comboInputted;
+    public bool IsAttacking { get; private set; } = false;
+    private bool _isRegistering = false;
+    public bool CanAttack { get; set; } = true;
+    private bool _comboInputted = false;
     private int _maxComboCount;
-    private int _currComboCount;
-    private GameObject _currTarget;
+    private int _currComboCount = 0;
+    public event Action<int> OnMeleeComboAttack; /// <summary> Fired when a combo attack starts. Argument: combo index (1=first, 2=second/finisher). </summary>
+    public event Action OnMeleeAttackEnd; /// <summary> Fired when the current melee attack animation ends. </summary>
 
-    // Audio variables.
+    // Audio Parameters
     [Header("Sound Effects")]
-    [SerializeField]
-    public AK.Wwise.Event swingSound;
+    [SerializeField] public AK.Wwise.Event swingSound;
+    private PlayerAudioController _audioController;
 
     void Awake()
-    {;
-        _playerMovement = GetComponentInParent<PlayerMovement>();
-        _playerShooter = GetComponentInParent<PlayerShooter>();
-        _playerEntity = GetComponentInParent<Entity>();
-        _weaponAnim = GetComponent<Animator>();
-        _audioController = GetComponentInParent<PlayerAudioController>();
+    {
+        // Input Parameters
         _playerInput = new InputSystem_Actions();
         _playerActions = _playerInput.Player;
+
+        // Player Parameters
+        _playerEntity = GetComponentInParent<Entity>();
+        _playerMovement = GetComponentInParent<PlayerMovement>();
+        _playerShooter = GetComponentInParent<PlayerShooter>();
+
+        // Animation Parameters
+        _weaponAnim = GetComponent<Animator>();
+        _upwardDegreesLimit = Mathf.Abs(_upwardDegreesLimit);
+        _downwardDegreesLimit = -Mathf.Abs(_downwardDegreesLimit);
+        _degreesPerSecond = Mathf.Deg2Rad * _attackPitchSpeed;
+
+        // Attack Parameters
+        _maxComboCount = _attacks.Count;
+
+        // Audio Parameters
+        _audioController = GetComponentInParent<PlayerAudioController>();
+
     }
 
     void OnEnable()
@@ -117,37 +128,6 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     void OnDisable()
     {
         _attackActions.Disable();
-    }
-
-    void Start()
-    {
-        if (_playerEntity == null) return;
-
-        // Animation Parameters
-        _upwardDegreesLimit = Mathf.Abs(_upwardDegreesLimit);
-        _downwardDegreesLimit = -Mathf.Abs(_downwardDegreesLimit);
-        _degreesPerSecond = Mathf.Deg2Rad * _attackPitchSpeed;
-        _isModelHorizontal = true;
-        RecalculateAnimationSpeed();
-
-        // Hit Registration Parameters
-        _objectsHitThisCast = new RaycastHit[32];
-        _objectsHitThisAttack = new HashSet<GameObject>();
-        _prevHitCapsuleTempPointsInitialized = false;
-
-        // Attack Parameters
-        foreach (AttackInfo info in _attacks)
-        {
-            info.AttackDuration = info.PreTransitionAnim.length + info.AttackAnim.length;
-            info.BufferedAttackDuration = info.AttackDuration - _comboInputBuffer;
-        }
-        IsAttacking = false;
-        _isRegistering = false;
-        CanAttack = true;
-        _comboInputted = false;
-        _maxComboCount = _attacks.Count;
-        _currComboCount = 0;
-        _currTarget = null;
     }
 
     void Update()
@@ -178,7 +158,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         foreach (AttackInfo info in _attacks)
         {
             float duration = info.PreTransitionAnim.length + info.AttackAnim.length;
-            info.AttackDuration = Mathf.Clamp((duration / currAnimationSpeed) + 0.01f, 1e-3f, float.MaxValue);
+            info.AttackDuration = Mathf.Clamp(duration / currAnimationSpeed, 1e-3f, float.MaxValue);
             info.BufferedAttackDuration = Mathf.Clamp(info.AttackDuration - _comboInputBuffer, 0, float.MaxValue);
         }
 
@@ -280,31 +260,17 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         if (IsAttacking)
         {
             Vector3 crosshairIntersect = _playerAimController.GetAimDirection(_playerModelPivot.position, _playerModelPivot.forward, out RaycastHit hit);
-
-            // Check that the object being aimed at is a damageable target.
-            Collider targetCollider = hit.collider;
-            if (targetCollider != null && (1 << targetCollider.gameObject.layer & _damageableLayerMasks) > 0)
-                _currTarget = targetCollider.gameObject;
-            else
-                _currTarget = null;
-
-            if (_currTarget == null) return; // Return early if the target being aimed at is not damageable
-
-
-            // Constrain vertical rotation of player character to the pitch limits.
             Vector3 rotationIncrement = Vector3.RotateTowards(_playerModelPivot.forward, crosshairIntersect, Time.deltaTime * _degreesPerSecond, 0);
             rotationIncrement = CopyVectorAngles(rotationIncrement, _playerCamera.forward); // Ensure player character is always horizontally aligned with camera.
             float pitch = GetPitchDegrees(rotationIncrement);
-            if (pitch >= _downwardDegreesLimit && pitch <= _upwardDegreesLimit)
+            if (pitch >= _downwardDegreesLimit && pitch <= _upwardDegreesLimit) // Constrain vertical rotation of player character to the pitch limits.
                 _playerModelPivot.forward = rotationIncrement;
 
             _isModelHorizontal = false;
         }
-        else
-            _currTarget = null;
 
         // Gradually reset player model alignment while not attacking or if no damageable target is being aimed at.
-        if ((!IsAttacking || _currTarget == null) && !_isModelHorizontal)
+        if (!IsAttacking && !_isModelHorizontal)
         {
             Vector3 worldHorizontal = new Vector3(_playerCamera.forward.x, 0, _playerCamera.forward.z).normalized;
             _playerModelPivot.forward = Vector3.RotateTowards(_playerModelPivot.forward, worldHorizontal, Time.deltaTime * _degreesPerSecond, 0);

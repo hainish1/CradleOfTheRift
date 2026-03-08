@@ -11,7 +11,7 @@ using UnityEngine;
 
 public class TutorialObject : MonoBehaviour
 {
-    public tutorialObjectType ObjectType;
+    [SerializeField] private TutorialObjectType ObjectType;
     public string EventName;
     private bool _wasTouched = false;
 
@@ -36,22 +36,22 @@ public class TutorialObject : MonoBehaviour
     /// </summary>
     public void OnTriggerOrCollide()
     {
-        if (ObjectType != tutorialObjectType.Destroyable)
+        if (ObjectType != TutorialObjectType.Destroyable)
         {
             _wasTouched = true;
             TutorialManager.TriggerTutorialEvent(EventName);
             Destroy(gameObject);
         }
     }
-}
 
-/// <summary>
-///   <para>
-///     The variety of supported tutorial object types.
-///   </para>
-/// </summary>
-public enum tutorialObjectType
-{
-    Touchable,
-    Destroyable
+    /// <summary>
+    ///   <para>
+    ///     The variety of supported tutorial object types.
+    ///   </para>
+    /// </summary>
+    private enum TutorialObjectType
+    {
+        Touchable,
+        Destroyable
+    }
 }

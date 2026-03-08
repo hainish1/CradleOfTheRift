@@ -6,9 +6,10 @@
 //     Written by Hainish Acharya for GAMES 4500, University of Utah.
 //     Contributed to by Samuel Rigby.
 //          -Wrote charge regeneration logic.
-//          -Added compatability with spear throw animation.
-//          -Added SpearFlip and SpearRegain animation coroutines.
 //          -Separated try-firing logic from firing logic.
+//          -Added weapon projectile changing logic.
+//          -Added compatability with weapon throw animation.
+//          -Added WeaponFlip and WeaponRegain animation coroutines.
 //   </para>
 // </summary>
 
@@ -27,6 +28,7 @@ public class PlayerShooter : MonoBehaviour
     private InputAction fireAction;
     private Entity playerEntity; // REF FOR STATS
     private PlayerMovement playerMovement;
+    private PlayerHeldWeaponController playerHeldWeaponController;
     private PlayerMeleeControllerV2 meleeController;
 
     [Header("AimReferences")] [Space]
@@ -45,21 +47,24 @@ public class PlayerShooter : MonoBehaviour
     private float nextFireTime;
     private bool isRegeneratingFireCharges;
     public bool IsThrowing { get; private set; }
-    private Coroutine spearRegainCoroutine;
+    private Coroutine weaponRegainCoroutine;
 
     [Header("Projectiles")] [Space]
-    [SerializeField] private Projectile projectilePrefab;
+    [SerializeField] Projectile spearProjectilePrefab;
+    [SerializeField] Projectile axeProjectilePrefab;
+    [SerializeField] Projectile maceProjectilePrefab;
     [SerializeField] private ExplosiveProjectile explosiveProjectilePrefab;
     [SerializeField] private float projectileSpeed = 50f;
     [SerializeField] private float spawnOffset = 0.1f;
+    private Projectile currProjectilePrefab;
 
-    [Header("Spear Animation")] [Space]
-    [SerializeField] private Transform weaponHandMount;
+    [Header("Weapon Animation")] [Space]
+    [SerializeField] private Transform weaponPivot;
     [SerializeField] private AnimationClip preTransitionAnim;
     [SerializeField] private AnimationClip throwAnim;
     [SerializeField] private AnimationClip postTransitionAnim;
     [SerializeField, Range(0, 1)]
-    [Tooltip("How quickly the spear flip animation completes before being thrown. (0.0 is instant, 0.5 is halfway, 1.0 is when the spear is thrown.)")]
+    [Tooltip("How quickly the weapon flip animation completes before being thrown. (0.0 is instant, 0.5 is halfway, 1.0 is when the weapon is thrown.)")]
     private float flipAnimCompletionTime;
     [SerializeField] private float regainAnimCompletionSeconds;
     [SerializeField] private float regainDelaySeconds;
@@ -85,20 +90,22 @@ public class PlayerShooter : MonoBehaviour
 
         playerEntity = GetComponentInParent<Entity>();
         playerMovement = GetComponentInParent<PlayerMovement>();
+        playerHeldWeaponController = GetComponentInParent<PlayerHeldWeaponController>();
         meleeController = GetComponentInParent<PlayerMeleeControllerV2>();
         shooterAnim = GetComponent<Animator>();
         audioController = GetComponentInParent<PlayerAudioController>();
 
+        SetProjectileType(playerHeldWeaponController._heldWeapon);
         fireMaxCharges = playerEntity.Stats.FireCharges;
         fireChargeCooldown = playerEntity.Stats.FireChargeCooldown;
         currFireCharges = fireMaxCharges;
         isRegeneratingFireCharges = false;
         IsThrowing = false;
-        spearRegainCoroutine = null;
+        weaponRegainCoroutine = null;
 
-        weaponOriginalRotation = weaponHandMount.localRotation;
+        weaponOriginalRotation = weaponPivot.localRotation;
         weaponFlippedRotation = Quaternion.Euler(weaponOriginalRotation.eulerAngles + new Vector3(0, 0, 180));
-        weaponOriginalScale = weaponHandMount.localScale;
+        weaponOriginalScale = weaponPivot.localScale;
         weaponShrunkScale = new Vector3(1, 0.01f, 1);
 
         SetCurrentAnimationSpeed();
@@ -177,9 +184,35 @@ public class PlayerShooter : MonoBehaviour
             }
 
             fireChargeCooldown = playerEntity.Stats.FireChargeCooldown;
-        }    
+        }
     }
 
+    /// <summary>
+    ///   <para>
+    ///     Changes the throwable projectile to the given type.
+    ///   </para>
+    /// </summary>
+    /// <param name="weaponType"> The weapon projectile to change to. </param>
+    public void SetProjectileType(HeldWeaponType weaponType)
+    {
+        switch (weaponType)
+        {
+            case HeldWeaponType.None:
+                currProjectilePrefab = null;
+                break;
+            case HeldWeaponType.Spear:
+                currProjectilePrefab = spearProjectilePrefab;
+                break;
+            case HeldWeaponType.FireAxe:
+                currProjectilePrefab = axeProjectilePrefab;
+                break;
+            case HeldWeaponType.EarthMace:
+                currProjectilePrefab = maceProjectilePrefab;
+                break;
+            default:
+                break;
+        }
+    }
 
     private void OnFireStarted(InputAction.CallbackContext _)
     {
@@ -191,7 +224,7 @@ public class PlayerShooter : MonoBehaviour
         }
         else
         {
-            TryToSpearThrow(false);
+            TryToWeaponThrow(false);
         }
     }
 
@@ -216,7 +249,7 @@ public class PlayerShooter : MonoBehaviour
     private void TryToFire(bool force = false)
     {
         if (!aim || !muzzle || currFireCharges <= 0) return;
-        if (!projectilePrefab) return;
+        if (!currProjectilePrefab) return;
         // if (!force && Time.time > nextFireTime) return;
         if (!force && Time.time < nextFireTime) return;
 
@@ -227,28 +260,25 @@ public class PlayerShooter : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Makes the player character throw their spear if all necessary conditions are met.
+    ///     Makes the player character throw their weapon if all necessary conditions are met.
     ///   </para>
     /// </summary>
     /// <param name="force"> Force the throw regardless of cooldown. </param>
-    private void TryToSpearThrow(bool force = false)
+    private void TryToWeaponThrow(bool force = false)
     {
-        if (!aim || !muzzle || !projectilePrefab || currFireCharges <= 0) return;
-        print("Reached: !aim || !muzzle || currFireCharges <= 0");
-        // Do not allows throws while dashing or attacking.
-        if (playerMovement.IsDashing || meleeController.IsAttacking) return;
-        print("Reached: playerMovement.IsDashing || meleeController.IsAttacking");
+        if (!aim || !muzzle || !currProjectilePrefab || currFireCharges <= 0) return;
+        if (playerMovement.IsDashing || meleeController.IsAttacking) return; // Do not allow throws while dashing or attacking.
         if (!force) // Force throw regardless of cooldown.
             if (Time.time < nextFireTime) return;
 
         nextFireTime = Time.time + (1f / Mathf.Max(0.01f, fireRate));
 
-        // Trigger spear throw animation.
+        // Trigger weapon throw animation.
         SetCurrentAnimationSpeed();
-        shooterAnim.SetTrigger("SpearThrow");
+        shooterAnim.SetTrigger("WeaponThrow");
         
-        // Stop the current SpearRegain coroutine if a new throw was performed in the middle of it.
-        if (spearRegainCoroutine != null) StopCoroutine(spearRegainCoroutine);
+        // Stop the current WeaponRegain coroutine if a new throw was performed in the middle of it.
+        if (weaponRegainCoroutine != null) StopCoroutine(weaponRegainCoroutine);
         
         DecrementFireCharges();
         IsThrowing = true;
@@ -269,7 +299,7 @@ public class PlayerShooter : MonoBehaviour
 
         if (ObjectPool.instance != null)
         {
-            GameObject pooled = ObjectPool.instance.GetObject(projectilePrefab.gameObject, muzzle);
+            GameObject pooled = ObjectPool.instance.GetObject(currProjectilePrefab.gameObject, muzzle);
             
             if (PoisonPoolProjectiles.IsEnabled)
             {
@@ -404,7 +434,7 @@ public class PlayerShooter : MonoBehaviour
         }
         else
         {
-            GameObject go = Instantiate(projectilePrefab.gameObject, spawnPos, spawnRot);
+            GameObject go = Instantiate(currProjectilePrefab.gameObject, spawnPos, spawnRot);
             
             if (PoisonPoolProjectiles.IsEnabled)
             {
@@ -559,8 +589,7 @@ public class PlayerShooter : MonoBehaviour
         currFireCharges--;
 
         // Only initialize regeneration routine if not already regenerating.
-        if (currFireCharges == fireMaxCharges - 1)
-            StartCoroutine(FireChargeRegeneration());
+        if (currFireCharges == fireMaxCharges - 1) StartCoroutine(FireChargeRegeneration());
     }
 
     private IEnumerator FireChargeRegeneration()
@@ -591,7 +620,7 @@ public class PlayerShooter : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Resets the spear throw animation variables using the most up-to-date stats value on any frame this method is called.
+    ///     Resets the weapon throw animation variables using the most up-to-date stats value on any frame this method is called.
     ///   </para>
     /// </summary>
     private void SetCurrentAnimationSpeed()
@@ -600,93 +629,93 @@ public class PlayerShooter : MonoBehaviour
         float statsThrowAnimSpeed = 1 / playerEntity.Stats.ProjectileAnimationSpeed;
         float secondsUntilThrow = preTransitionAnim.length + throwAnim.events[0].time;
         flipAnimMaxSeconds = scriptFlipAnimSpeed * statsThrowAnimSpeed * secondsUntilThrow;
-        shooterAnim.SetFloat("SpearThrowAnimSpeedMultiplier", playerEntity.Stats.ProjectileAnimationSpeed);
+        shooterAnim.SetFloat("WeaponThrowAnimSpeedMultiplier", playerEntity.Stats.ProjectileAnimationSpeed);
     }
 
     /// <summary>
     ///   <para>
-    ///     Animation event to begin the SpearFlip animation coroutine.
+    ///     Animation event to begin the WeaponFlip animation coroutine.
     ///   </para>
     /// </summary>
-    public void OnSpearThrowAnimBegin()
+    public void OnWeaponThrowAnimBegin()
     {
-        StartCoroutine(SpearFlip());
+        StartCoroutine(WeaponFlip());
     }
 
     /// <summary>
     ///   <para>
-    ///     Makes the spear flip 180 degrees around its Z-axis in the designated amount of time.
+    ///     Makes the weapon flip 180 degrees around its Z-axis in the designated amount of time.
     ///   </para>
     /// </summary>
     /// <returns> IEnumerator object. </returns>
-    private IEnumerator SpearFlip()
+    private IEnumerator WeaponFlip()
     {
-        // Ensure spear is visible and oriented correctly in the case of multiple quick consecutive throws.
-        weaponHandMount.localRotation = weaponOriginalRotation;
-        weaponHandMount.localScale = weaponOriginalScale;
+        // Ensure weapon is visible and oriented correctly in the case of multiple quick consecutive throws.
+        weaponPivot.localRotation = weaponOriginalRotation;
+        weaponPivot.localScale = weaponOriginalScale;
         
         float timer = 0;
         while (timer < flipAnimMaxSeconds)
         {
             float completion = timer / flipAnimMaxSeconds;
-            weaponHandMount.localRotation = Quaternion.Lerp(weaponOriginalRotation, weaponFlippedRotation, completion);
+            weaponPivot.localRotation = Quaternion.Lerp(weaponOriginalRotation, weaponFlippedRotation, completion);
 
             timer += Time.deltaTime;
             yield return null;
         }
 
         // Ensure weapon rotation is exact when done rotating.
-        weaponHandMount.localRotation = weaponFlippedRotation;
+        weaponPivot.localRotation = weaponFlippedRotation;
     }
 
     /// <summary>
     ///   <para>
-    ///     Animation event to shoot a projectile and make the spear disappear.
+    ///     Animation event to shoot a projectile and make the weapon disappear.
     ///   </para>
     /// </summary>
-    public void OnSpearThrow()
+    public void OnWeaponThrow()
     {
         // Disappear the weapon by shrinking it to 0.
-        weaponHandMount.localScale = new Vector3(0, 0, 0);
+        weaponPivot.localScale = new Vector3(0, 0, 0);
         Fire();
     }
 
     /// <summary>
     ///   <para>
-    ///     Animation event to begin the SpearRegain animation coroutine.
+    ///     Animation event to begin the WeaponRegain animation coroutine.
     ///   </para>
     /// </summary>
-    public void OnSpearThrowAnimEnd()
+    public void OnWeaponThrowAnimEnd()
     {
-        spearRegainCoroutine = StartCoroutine(SpearRegain());
+        weaponRegainCoroutine = StartCoroutine(WeaponRegain());
     }
 
     /// <summary>
     ///   <para>
-    ///     Makes the spear grow back to its original scale in the designated amount of time.
+    ///     Makes the weapon grow back to its original scale in the designated amount of time.
     ///   </para>
     /// </summary>
     /// <returns> IEnumerator object. </returns>
-    private IEnumerator SpearRegain()
+    private IEnumerator WeaponRegain()
     {
         yield return new WaitForSeconds(regainDelaySeconds);
         
         // Set weapon to original orientation and shrunk scale since the flip animation is complete.
-        weaponHandMount.localRotation = weaponOriginalRotation;
-        weaponHandMount.localScale = weaponShrunkScale;
+        weaponPivot.localRotation = weaponOriginalRotation;
+        weaponPivot.localScale = weaponShrunkScale;
 
         float timer = 0;
         while (timer < regainAnimCompletionSeconds)
         {  
             float completion = timer / regainAnimCompletionSeconds;
-            weaponHandMount.localScale = Vector3.Lerp(weaponShrunkScale, weaponOriginalScale, completion);
+            weaponPivot.localScale = Vector3.Lerp(weaponShrunkScale, weaponOriginalScale, completion);
 
             timer += Time.deltaTime;
             yield return null;
         }
 
         // Ensure weapon scale restoration is exact when done growing.
-        weaponHandMount.localScale = weaponOriginalScale;
+        weaponPivot.localScale = weaponOriginalScale;
         IsThrowing = false;
     }
 }
