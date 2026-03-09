@@ -428,10 +428,11 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!IsGrounded) _groundCollidingPoint = hit;
 
+        // Handle collision with tutorial objects.
         if (hit.gameObject.layer == LayerMask.NameToLayer("TutorialEvent"))
         {
             TutorialObject tutorialScript = hit.gameObject.GetComponent<TutorialObject>();
-            tutorialScript.OnTriggerOrCollide();
+            tutorialScript.OnTriggerOrCollide(hit.collider);
         }
     }
 
