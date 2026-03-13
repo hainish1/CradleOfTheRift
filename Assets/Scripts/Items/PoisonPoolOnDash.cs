@@ -77,7 +77,7 @@ public class PoisonPoolOnDash : System.IDisposable
     {
         Collider[] ownerCols = owner != null ? owner.GetComponentsInChildren<Collider>() : null;
         Vector3 start = origin + Vector3.up * 2f;
-        Vector3 end = origin + Vector3.down * 50f;
+        Vector3 end = origin + Vector3.down * 500f;
         Vector3 dir = (end - start).normalized;
         float distance = Vector3.Distance(start, end);
 

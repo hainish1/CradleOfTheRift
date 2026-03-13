@@ -137,4 +137,11 @@ public class InventoryRuleRunner : MonoBehaviour
         isApplying = false;
     }
 
+    public void ResetForNewRun()
+    {
+        applied.Clear();
+        isApplying = false;
+        EvaluateAll();
+    }
+
 }

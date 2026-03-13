@@ -110,6 +110,10 @@ public class PauseMenu : MonoBehaviour
         // Debug.Log("You Pressed the Start Button");
         PauseManager.GameIsPaused = false;
         PlayerHealth.GameIsOver = false;
+
+        if (UpgradeLevelManager.Instance != null)
+            UpgradeLevelManager.Instance.ResetForNewRun();
+
         SceneManager.LoadScene("Design 1");// Change name to game
     }
 
