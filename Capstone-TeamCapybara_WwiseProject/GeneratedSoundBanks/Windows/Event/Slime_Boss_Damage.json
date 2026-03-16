@@ -1,0 +1,48 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "804704067",
+    "Type": "Event",
+    "GUID": "{E02FB9D5-39C3-4BD8-A4EF-B6C3D9EB381D}",
+    "Language": "SFX",
+    "Hash": "{8D0946B7-1210-A036-16CE-A7C95CC8D1F0}",
+    "ObjectPath": "Slime_Boss_Damage",
+    "ShortName": "Slime_Boss_Damage",
+    "Path": "Event/Slime_Boss_Damage.bnk",
+    "Media": [
+     {
+      "Id": "759369655",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Slime.wav",
+      "Path": "Media/759369655.wem",
+      "CachePath": "56/{561B978D-649A-5AF0-693D-D3A36A1E6ABD}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "804704067",
+      "Name": "Slime_Boss_Damage",
+      "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Slime Boss\\Slime_Boss_Damage",
+      "GUID": "{E02FB9D5-39C3-4BD8-A4EF-B6C3D9EB381D}",
+      "DurationType": "OneShot",
+      "DurationMin": "0.88901323",
+      "DurationMax": "1.2572546",
+      "MediaRefs": [
+       {
+        "Id": "759369655"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{16BE7521-2B21-7BEB-0ABB-9A95DD81EC6B}"
+ }
+}

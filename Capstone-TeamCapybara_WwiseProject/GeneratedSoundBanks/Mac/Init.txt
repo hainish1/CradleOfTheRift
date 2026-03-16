@@ -1,3 +1,16 @@
+State Group	ID	Name			Wwise Object Path	Notes
+	1690668539	Music_States			\Default Work Unit\Music_States	
+	4265060404	Boss_Alive			\Default Work Unit\Boss_Alive	
+
+State	ID	Name	State Group			Notes
+	491961918	Forest	Music_States			
+	748895195	None	Music_States			
+	1756006875	Icey	Music_States			
+	4122393694	Cave	Music_States			
+	655265632	Alive	Boss_Alive			
+	748895195	None	Boss_Alive			
+	2044049779	Dead	Boss_Alive			
+
 Audio Bus	ID	Name			Wwise Object Path	Notes
 	2246998526	Main Audio Bus			\Default Work Unit\Main Audio Bus	
 	2833159698	Environment Bus			\Default Work Unit\Environment Bus	

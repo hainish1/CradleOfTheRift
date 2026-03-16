@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{910A9BD7-6D38-4047-B39E-B7C369D5ABCF}" SchemaVersion="133" RootDocumentID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}" ParentDocumentID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}">
+	<Events>
+		<WorkUnit Name="UI" ID="{910A9BD7-6D38-4047-B39E-B7C369D5ABCF}" OwnerID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}" PersistMode="Nested">
+			<ChildrenList>
+				<Event Name="Play_UI_Button_Click" ID="{E48CE652-E39A-4CBA-ABF9-AD8E796256A6}">
+					<ChildrenList>
+						<Action Name="" ID="{9582D964-070C-40F9-BCB1-56C54C300F8E}" ShortID="272946335">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Button_Clicks" ID="{63F94FF3-C338-4D64-9AA9-ECECDE286CA0}" WorkUnitID="{3FAA4224-FAB7-43F5-B297-21191114DE01}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+			</ChildrenList>
+		</WorkUnit>
+	</Events>
+</WwiseDocument>

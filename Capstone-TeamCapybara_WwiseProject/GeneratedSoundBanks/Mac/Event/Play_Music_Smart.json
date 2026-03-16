@@ -1,0 +1,257 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Mac",
+  "BasePlatform": "Mac",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "3869930065",
+    "Type": "Event",
+    "GUID": "{80973DF7-D85B-4625-A837-4DA900EB803B}",
+    "Language": "SFX",
+    "Hash": "{5CA02383-EA82-DD7C-ECB1-D37333C88F01}",
+    "ObjectPath": "Play_Music_Smart",
+    "ShortName": "Play_Music_Smart",
+    "Path": "Event/Play_Music_Smart.bnk",
+    "Media": [
+     {
+      "Id": "247040063",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "PercussianOrchestra.wav",
+      "Path": "Media/247040063.wem",
+      "CachePath": "FD/{FD2849F6-123F-FAF0-1FAC-AB942A5DB51F}.wem"
+     },
+     {
+      "Id": "729420675",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Icey.wav",
+      "Path": "Media/729420675.wem",
+      "CachePath": "8B/{8B431FE9-CCBE-42DE-C3DD-888DA33BF2F1}.wem"
+     },
+     {
+      "Id": "741799909",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Body.wav",
+      "Path": "Media/741799909.wem",
+      "CachePath": "80/{80B458F1-C69C-DE55-378D-BB13B0F1D906}.wem"
+     },
+     {
+      "Id": "781041820",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "CaveJam.wav",
+      "Path": "Media/781041820.wem",
+      "CachePath": "1D/{1D127F80-CAE5-6B2C-B125-748EF7205CDE}.wem"
+     },
+     {
+      "Id": "854864051",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Intro.wav",
+      "Path": "Media/854864051.wem",
+      "CachePath": "9C/{9CBB8F62-6C36-D81C-5043-3326F7C1AE51}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "3869930065",
+      "Name": "Play_Music_Smart",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_Music_Smart",
+      "GUID": "{80973DF7-D85B-4625-A837-4DA900EB803B}",
+      "DurationType": "Infinite",
+      "SwitchContainers": [
+       {
+        "SwitchValue": {
+         "GroupType": "State",
+         "GroupId": "4265060404",
+         "Id": "0",
+         "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}"
+        },
+        "Children": [
+         {
+          "SwitchValue": {
+           "GroupType": "State",
+           "GroupId": "1690668539",
+           "Id": "4122393694",
+           "GUID": "{99BA7111-C7A0-447A-8C7B-520FC9B8BE63}"
+          },
+          "MediaRefs": [
+           {
+            "Id": "781041820"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "SwitchValue": {
+         "GroupType": "State",
+         "GroupId": "4265060404",
+         "Id": "0",
+         "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}"
+        },
+        "Children": [
+         {
+          "SwitchValue": {
+           "GroupType": "State",
+           "GroupId": "1690668539",
+           "Id": "491961918",
+           "GUID": "{ED5C2F44-FFA8-477D-9C74-127B8291875E}"
+          },
+          "MediaRefs": [
+           {
+            "Id": "247040063"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "SwitchValue": {
+         "GroupType": "State",
+         "GroupId": "4265060404",
+         "Id": "0",
+         "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}"
+        },
+        "Children": [
+         {
+          "SwitchValue": {
+           "GroupType": "State",
+           "GroupId": "1690668539",
+           "Id": "748895195",
+           "GUID": "{2AA072AF-1480-4BB0-9EC5-3DCE2D175CC3}"
+          },
+          "MediaRefs": [
+           {
+            "Id": "729420675"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "SwitchValue": {
+         "GroupType": "State",
+         "GroupId": "4265060404",
+         "Id": "0",
+         "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}"
+        },
+        "Children": [
+         {
+          "SwitchValue": {
+           "GroupType": "State",
+           "GroupId": "1690668539",
+           "Id": "1756006875",
+           "GUID": "{154C5158-ADC3-4255-A4F5-8AFA4129604C}"
+          },
+          "MediaRefs": [
+           {
+            "Id": "729420675"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "SwitchValue": {
+         "GroupType": "State",
+         "GroupId": "4265060404",
+         "Id": "655265632",
+         "GUID": "{A4FB7019-7BE2-4B55-B62E-D9CFEDF363CC}"
+        },
+        "Children": [
+         {
+          "SwitchValue": {
+           "GroupType": "State",
+           "GroupId": "1690668539",
+           "Id": "0",
+           "GUID": "{75500C40-A25C-47B7-9F07-2661023F57D5}"
+          },
+          "MediaRefs": [
+           {
+            "Id": "741799909"
+           },
+           {
+            "Id": "854864051"
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "StateGroups": [
+     {
+      "Id": "1690668539",
+      "Name": "Music_States",
+      "ObjectPath": "\\States\\Default Work Unit\\Music_States",
+      "GUID": "{75500C40-A25C-47B7-9F07-2661023F57D5}",
+      "States": [
+       {
+        "Id": "491961918",
+        "Name": "Forest",
+        "ObjectPath": "\\States\\Default Work Unit\\Music_States\\Forest",
+        "GUID": "{ED5C2F44-FFA8-477D-9C74-127B8291875E}"
+       },
+       {
+        "Id": "748895195",
+        "Name": "None",
+        "ObjectPath": "\\States\\Default Work Unit\\Music_States\\None",
+        "GUID": "{2AA072AF-1480-4BB0-9EC5-3DCE2D175CC3}"
+       },
+       {
+        "Id": "1756006875",
+        "Name": "Icey",
+        "ObjectPath": "\\States\\Default Work Unit\\Music_States\\Icey",
+        "GUID": "{154C5158-ADC3-4255-A4F5-8AFA4129604C}"
+       },
+       {
+        "Id": "4122393694",
+        "Name": "Cave",
+        "ObjectPath": "\\States\\Default Work Unit\\Music_States\\Cave",
+        "GUID": "{99BA7111-C7A0-447A-8C7B-520FC9B8BE63}"
+       }
+      ]
+     },
+     {
+      "Id": "4265060404",
+      "Name": "Boss_Alive",
+      "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive",
+      "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}",
+      "States": [
+       {
+        "Id": "655265632",
+        "Name": "Alive",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Alive",
+        "GUID": "{A4FB7019-7BE2-4B55-B62E-D9CFEDF363CC}"
+       },
+       {
+        "Id": "748895195",
+        "Name": "None",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\None",
+        "GUID": "{6981E7EC-A80A-448E-B0BF-87DBCBEE7EFB}"
+       },
+       {
+        "Id": "2044049779",
+        "Name": "Dead",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Dead",
+        "GUID": "{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{8C5DC6BA-EEB3-154E-1602-11E8DB905B4C}"
+ }
+}
