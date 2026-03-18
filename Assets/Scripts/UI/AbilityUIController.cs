@@ -16,43 +16,36 @@ public class AbilityUIController : MonoBehaviour
 
     private int flyAbilityIndex = -1;
 
-
+    // ------------------------------------------------------------------ //
+    //  Per-slot tracking                                                  //
+    // ------------------------------------------------------------------ //
     [System.Serializable]
     public class AbilitySlot
     {
-        public VisualElement slotElement;
-        public Label chargeLabel;
-        public List<VisualElement> cooldownOverlays = new List<VisualElement>();
+        public VisualElement         slotElement;
+        public Label                 chargeLabel;
+        public DiamondAbilityElement diamond;
     }
 
     private List<AbilitySlot> abilitySlots = new List<AbilitySlot>();
+    private List<AbilityInfo> abilities    = new List<AbilityInfo>();
+    private VisualElement     abilityBar;
 
-    private List<AbilityInfo> abilities = new();
-    private VisualElement abilityBar;
-
-
+    // ------------------------------------------------------------------ //
+    //  Start                                                              //
+    // ------------------------------------------------------------------ //
     private void Start()
     {
         var root = GetComponent<UIDocument>().rootVisualElement;
         abilityBar = root.Q<VisualElement>("AbilityBar");
 
-        // playerManager = FindFirstObjectByType<PlayerManager>();
-        // if (playerManager == null)
-        // {
-        //     Debug.LogError("PlayerManager not found!");
-        //     return;
-        // }
-        if(playerManager == null)
-        {
+        if (playerManager == null)
             playerManager = PlayerLocator.FindPlayerComponent<PlayerManager>();
-        }
-        if(playerManager == null)
+        if (playerManager == null)
+            playerManager = FindFirstObjectByType<PlayerManager>();
+        if (playerManager == null)
         {
-            playerManager = FindFirstObjectByType<PlayerManager>(); // fallback
-        }
-        if(playerManager == null)
-        {
-            Debug.Log("Player manager not found");
+            Debug.LogError("Player manager not found");
             return;
         }
 
@@ -65,159 +58,187 @@ public class AbilityUIController : MonoBehaviour
 
         playerMovement = playerManager.GetComponent<PlayerMovement>();
         if (playerMovement == null)
-        {
             Debug.LogError("PlayerMovement not found!");
-        }
 
+        // ---- Dash ---------------------------------------------------- //
         AbilityInfo dashAbility = new AbilityInfo
         {
-            abilityName = "Dash",
-            key = KeyCode.LeftShift,
-            icon = this.images[0], 
-            maxCharges = playerStats.DashCharges,
+            abilityName    = "Dash",
+            key            = KeyCode.LeftShift,
+            icon           = images[0],
+            maxCharges     = playerStats.DashCharges,
             currentCharges = playerStats.DashCharges,
-            getCooldown = () => playerStats.DashCooldown
+            getCooldown    = () => playerStats.DashCooldown
         };
-        this.abilities.Add(dashAbility);
+        abilities.Add(dashAbility);
         CreateAbility(dashAbility);
         if (playerMovement != null)
             playerMovement.DashCooldownStarted += OnDashCooldownStarted;
 
+        // ---- Fly ----------------------------------------------------- //
         AbilityInfo flyAbility = new AbilityInfo
         {
-            abilityName = "Fly",
-            key = KeyCode.F,
-            icon = this.images.Count > 1 ? this.images[1] : null,
-            maxCharges = 1,
+            abilityName    = "Fly",
+            key            = KeyCode.F,
+            icon           = images.Count > 1 ? images[1] : null,
+            maxCharges     = 1,
             currentCharges = 1,
-            getCooldown = () => 0f
+            getCooldown    = () => 0f
         };
-        flyAbilityIndex = this.abilities.Count;
-        this.abilities.Add(flyAbility);
-        CreateAbility(flyAbility);
+        flyAbilityIndex = abilities.Count;
+        abilities.Add(flyAbility);
+        CreateAbility(flyAbility, fillFromTop: true);
 
+        // ---- Shockwave ----------------------------------------------- //
         AbilityInfo shockwaveAbility = new AbilityInfo
         {
-            abilityName = "Shockwave",
-            key = KeyCode.X,
-            icon = this.images.Count > 2 ? this.images[2] : null,
-            maxCharges = 1,
+            abilityName    = "Shockwave",
+            key            = KeyCode.X,
+            icon           = images.Count > 2 ? images[2] : null,
+            maxCharges     = 1,
             currentCharges = 1,
-            getCooldown = () => playerStats.ShockwaveCooldown
+            getCooldown    = () => playerStats.ShockwaveCooldown
         };
-        this.abilities.Add(shockwaveAbility);
+        abilities.Add(shockwaveAbility);
         CreateAbility(shockwaveAbility);
 
+        // ---- Ranged -------------------------------------------------- //
         AbilityInfo rangedAbility = new AbilityInfo
         {
-            abilityName = "Ranged",
-            key = KeyCode.Mouse1,
-            icon = this.images.Count > 3 ? this.images[3] : null,
-            maxCharges = playerStats.FireCharges,
+            abilityName    = "Ranged",
+            key            = KeyCode.Mouse1,
+            icon           = images.Count > 3 ? images[3] : null,
+            maxCharges     = playerStats.FireCharges,
             currentCharges = playerStats.FireCharges,
-            getCooldown = () => playerStats.FireChargeCooldown
+            getCooldown    = () => playerStats.FireChargeCooldown
         };
-        this.abilities.Add(rangedAbility);
+        abilities.Add(rangedAbility);
         CreateAbility(rangedAbility);
     }
-    
+
+    // ------------------------------------------------------------------ //
+    //  Helpers                                                            //
+    // ------------------------------------------------------------------ //
     string GetKeyDisplayName(KeyCode key)
     {
         switch (key)
         {
-            case KeyCode.Mouse0: return "LMB";
-            case KeyCode.Mouse1: return "RMB";
-            case KeyCode.Mouse2: return "MMB";
-            case KeyCode.LeftShift: return "Shift";
-            case KeyCode.LeftAlt: return "Alt";
+            case KeyCode.Mouse0:      return "LMB";
+            case KeyCode.Mouse1:      return "RMB";
+            case KeyCode.Mouse2:      return "MMB";
+            case KeyCode.LeftShift:   return "Shift";
+            case KeyCode.LeftAlt:     return "Alt";
             case KeyCode.LeftControl: return "Ctrl";
-            case KeyCode.Space: return "Space";
-            default: return key.ToString();
+            case KeyCode.Space:       return "Space";
+            default:                  return key.ToString();
         }
     }
 
-    void CreateAbility(AbilityInfo ability)
+    void CreateAbility(AbilityInfo ability, bool fillFromTop = false)
     {
-        var slot = abilitySlotAsset.Instantiate();
+        var slot        = abilitySlotAsset.Instantiate();
         var chargeLabel = slot.Q<Label>("ChargeLabel");
-
-        // Initialize ability
-        chargeLabel.text = ability.currentCharges.ToString();
         slot.Q<Label>("KeyLabel").text = GetKeyDisplayName(ability.key);
+        chargeLabel.text = ability.currentCharges.ToString();
 
-        // Initialize icon
-        var iconElement = slot.Q<VisualElement>("AbilityIcon");
-        iconElement.style.backgroundImage = new StyleBackground(ability.icon);
+        // ------------------------------------------------------------------
+        // Try to find the DiamondAbilityElement that was declared in UXML.
+        // If it isn't there yet (e.g. Unity hasn't rebuilt its schema cache
+        // after the class was first added), create and insert it in code so
+        // the slot always works without a manual UXML reimport step.
+        // ------------------------------------------------------------------
+        var diamond = slot.Q<DiamondAbilityElement>("DiamondSlot");
 
-        // Prepare overlays
-        var overlayContainer = slot.Q<VisualElement>("AbilityIconContainer");
-        List<VisualElement> overlays = new List<VisualElement>();
-
-        for (int i = 0; i < ability.maxCharges; i++)
+        if (diamond == null)
         {
-            VisualElement overlayInstance = new VisualElement();
-            overlayInstance.name = "CooldownOverlay" + i;
-            overlayInstance.AddToClassList("cooldown-overlay");
+            Debug.LogWarning(
+                "[AbilityUIController] 'DiamondSlot' not found in UXML template — " +
+                "creating DiamondAbilityElement in code. " +
+                "To silence this warning, re-open AbilitySlot.uxml in UI Builder so " +
+                "Unity registers the custom element, then reimport.");
 
-            overlayContainer.Add(overlayInstance);
-            overlays.Add(overlayInstance);
+            diamond      = new DiamondAbilityElement();
+            diamond.name = "DiamondSlot";
+
+            // Mirror the USS sizing rules (.DiamondAbilityElement / #DiamondSlot)
+            diamond.style.width     = 64;
+            diamond.style.height    = 64;
+            diamond.style.flexGrow  = 0;
+            diamond.style.flexShrink = 0;
+            diamond.style.marginTop    = 2;
+            diamond.style.marginBottom = 2;
+
+            // Insert between ChargeLabel and KeyLabel
+            var container = slot.Q<VisualElement>("AbilitySlotContainer");
+            var keyLabel  = slot.Q<Label>("KeyLabel");
+            int insertIdx = container.IndexOf(keyLabel); // insert just before KeyLabel
+            if (insertIdx >= 0)
+                container.Insert(insertIdx, diamond);
+            else
+                container.Add(diamond);
         }
 
-        // Add the slot to the ability bar
+        // Configure the diamond
+        diamond.Icon         = ability.icon;
+        diamond.CooldownT    = 0f;
+        diamond.FillFromTop  = fillFromTop;
+        diamond.BorderColor  = Color.white;
+        diamond.BorderWidth  = 2f;
+        diamond.OverlayColor = new Color(0f, 0f, 0f, 0.6f);
+
         abilityBar.Add(slot);
 
-        // Track the slot
         abilitySlots.Add(new AbilitySlot
         {
             slotElement = slot,
             chargeLabel = chargeLabel,
-            cooldownOverlays = overlays
+            diamond     = diamond
         });
     }
 
+    // ------------------------------------------------------------------ //
+    //  Update                                                             //
+    // ------------------------------------------------------------------ //
     void Update()
     {
+        // Guard: don't run until Start has fully populated both lists.
+        if (abilities.Count == 0 || abilitySlots.Count != abilities.Count) return;
+
         UpdateFlightAbilityUI();
 
-        if (playerMovement != null && abilities.Count > 0)
+        // Sync dash charge count from movement component
+        if (playerMovement != null)
         {
-            abilities[0].currentCharges = playerMovement.CurrentDashCharges;
-            abilitySlots[0].chargeLabel.text = abilities[0].currentCharges.ToString();
+            abilities[0].currentCharges      = playerMovement.CurrentDashCharges;
+            abilitySlots[0].chargeLabel.text  = abilities[0].currentCharges.ToString();
         }
 
+        // Input polling for all non-fly abilities
         for (int i = 0; i < abilities.Count; i++)
         {
             if (i == flyAbilityIndex) continue;
 
             var ability = abilities[i];
-            
-            if (ability.key == KeyCode.Mouse0 && Input.GetMouseButtonDown(0))
+            bool pressed = ability.key switch
             {
-                OnAbilityPressed(i);
-            }
-            else if (ability.key == KeyCode.Mouse1 && Input.GetMouseButtonDown(1))
-            {
-                OnAbilityPressed(i);
-            }
-            else if (ability.key == KeyCode.Mouse2 && Input.GetMouseButtonDown(2))
-            {
-                OnAbilityPressed(i);
-            }
-            else if (ability.key != KeyCode.Mouse0 && ability.key != KeyCode.Mouse1 && ability.key != KeyCode.Mouse2)
-            {
-                if (Input.GetKeyDown(ability.key))
-                {
-                    OnAbilityPressed(i);
-                }
-            }
+                KeyCode.Mouse0 => Input.GetMouseButtonDown(0),
+                KeyCode.Mouse1 => Input.GetMouseButtonDown(1),
+                KeyCode.Mouse2 => Input.GetMouseButtonDown(2),
+                _              => Input.GetKeyDown(ability.key)
+            };
+
+            if (pressed) OnAbilityPressed(i);
         }
     }
 
+    // ------------------------------------------------------------------ //
+    //  Cooldown events                                                    //
+    // ------------------------------------------------------------------ //
     void OnDashCooldownStarted(float duration)
     {
         if (abilities.Count == 0) return;
         var ability = abilities[0];
-        var slot = abilitySlots[0];
+        var slot    = abilitySlots[0];
         ability.pendingCooldowns++;
         if (!ability.isCooldownRunning)
             StartCoroutine(ProcessCooldownQueue(ability, slot));
@@ -229,104 +250,93 @@ public class AbilityUIController : MonoBehaviour
             playerMovement.DashCooldownStarted -= OnDashCooldownStarted;
     }
 
+    // ------------------------------------------------------------------ //
+    //  Flight UI                                                          //
+    // ------------------------------------------------------------------ //
     void UpdateFlightAbilityUI()
     {
-        if (flyAbilityIndex < 0 || playerMovement == null || playerStats == null) return;
+        if (flyAbilityIndex < 0 || playerMovement == null) return;
 
         var slot = abilitySlots[flyAbilityIndex];
-        var overlay = slot.cooldownOverlays[0];
-
-        float maxEnergy = playerStats.FlightMaxEnergy;
-        float currentEnergy = playerMovement.GetCurrentFlightEnergy();
-        float energyRatio = maxEnergy > 0 ? currentEnergy / maxEnergy : 0f;
-
-        if (energyRatio >= 1f)
-        {
-            overlay.style.opacity = 0;
-            overlay.style.height = Length.Percent(0);
-        }
-        else
-        {
-            overlay.style.opacity = 1;
-            overlay.style.height = Length.Percent((1f - energyRatio) * 100f);
-        }
+        // FlightEnergyRatio: 1 = full, 0 = empty.
+        // CooldownT:         0 = no overlay (full), 1 = fully covered (empty).
+        slot.diamond.CooldownT = 1f - playerMovement.FlightEnergyRatio;
     }
 
+    // ------------------------------------------------------------------ //
+    //  Ability pressed / cooldown coroutines                             //
+    // ------------------------------------------------------------------ //
     public void OnAbilityPressed(int abilityIndex)
-{
-    if (abilityIndex == 0) return;
-
-    var ability = abilities[abilityIndex];
-    var slot = abilitySlots[abilityIndex];
-
-    if (ability.currentCharges <= 0)
-        return;
-
-    // Spend a charge
-    ability.currentCharges--;
-    slot.chargeLabel.text = ability.currentCharges.ToString();
-
-    // Queue a cooldown
-    ability.pendingCooldowns++;
-
-    // If no cooldown is currently running, start it
-    if (!ability.isCooldownRunning)
-        StartCoroutine(ProcessCooldownQueue(ability, slot));
-}
-
-private IEnumerator ProcessCooldownQueue(AbilityInfo ability, AbilitySlot slot)
-{
-    ability.isCooldownRunning = true;
-
-    while (ability.pendingCooldowns > 0)
     {
-        // Find the first inactive overlay
-        var overlay = slot.cooldownOverlays.Find(o => o.style.opacity.value == 0);
-        if (overlay != null)
+        if (abilityIndex == 0) return; // dash handled via event
+
+        var ability = abilities[abilityIndex];
+        var slot    = abilitySlots[abilityIndex];
+
+        if (ability.currentCharges <= 0) return;
+
+        ability.currentCharges--;
+        slot.chargeLabel.text = ability.currentCharges.ToString();
+
+        ability.pendingCooldowns++;
+        if (!ability.isCooldownRunning)
+            StartCoroutine(ProcessCooldownQueue(ability, slot));
+    }
+
+    private IEnumerator ProcessCooldownQueue(AbilityInfo ability, AbilitySlot slot)
+    {
+        ability.isCooldownRunning = true;
+
+        while (ability.pendingCooldowns > 0)
         {
-            yield return StartCoroutine(StartCooldown(overlay, ability, slot.chargeLabel, ability.getCooldown()));
+            if (slot.diamond.CooldownT < 0.001f)
+            {
+                yield return StartCoroutine(
+                    StartCooldown(slot.diamond, ability, slot.chargeLabel, ability.getCooldown()));
+            }
+            ability.pendingCooldowns--;
         }
 
-        ability.pendingCooldowns--;
+        ability.isCooldownRunning = false;
     }
 
-    ability.isCooldownRunning = false;
-}
-
-public IEnumerator StartCooldown(VisualElement overlay, AbilityInfo ability, Label chargeLabel, float cooldownTime)
-{
-    overlay.style.opacity = 1;
-    overlay.style.height = Length.Percent(100);
-
-    float elapsed = 0f;
-    while (elapsed < cooldownTime)
+    public IEnumerator StartCooldown(
+        DiamondAbilityElement diamond,
+        AbilityInfo ability,
+        Label chargeLabel,
+        float cooldownTime)
     {
-        elapsed += Time.deltaTime;
-        overlay.style.height = Length.Percent(Mathf.Lerp(100, 0, elapsed / cooldownTime));
-        yield return null;
+        diamond.CooldownT = 1f;
+
+        float elapsed = 0f;
+        while (elapsed < cooldownTime)
+        {
+            elapsed          += Time.deltaTime;
+            diamond.CooldownT = Mathf.Lerp(1f, 0f, elapsed / cooldownTime);
+            yield return null;
+        }
+
+        diamond.CooldownT = 0f;
+
+        ability.currentCharges++;
+        chargeLabel.text = ability.currentCharges.ToString();
     }
-
-    overlay.style.opacity = 0;
-
-    // Refill a charge
-    ability.currentCharges++;
-    chargeLabel.text = ability.currentCharges.ToString();
 }
 
-}
-
+// ------------------------------------------------------------------ //
+//  AbilityInfo                                                        //
+// ------------------------------------------------------------------ //
 [System.Serializable]
 public class AbilityInfo
 {
-    public string abilityName;
-    public KeyCode key;
-    public Texture2D icon;
-    public int maxCharges;
-    public int currentCharges;
+    public string      abilityName;
+    public KeyCode     key;
+    public Texture2D   icon;
+    public int         maxCharges;
+    public int         currentCharges;
     public Func<float> getCooldown;
-    public float CooldownRemaining => getCooldown();
+    public float       CooldownRemaining => getCooldown();
 
-
-    [HideInInspector] public int pendingCooldowns = 0;
+    [HideInInspector] public int  pendingCooldowns  = 0;
     [HideInInspector] public bool isCooldownRunning = false;
 }
