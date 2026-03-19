@@ -8,7 +8,8 @@ public class PauseManager : MonoBehaviour
         PauseMenu,
         Inventory,
         EndGame,
-        Upgrade
+        Upgrade,
+        Settings
     }
     public static bool GameIsPaused; 
     public static PauseState CurrentPauseState = PauseState.None;
@@ -110,6 +111,7 @@ public class PauseManager : MonoBehaviour
         if (PlayerHealth.GameIsOver) return;
         if (CurrentPauseState == PauseState.EndGame) return;
         if (CurrentPauseState == PauseState.Upgrade) return; // don't interfere with upgrade panel
+        if (CurrentPauseState == PauseState.Settings) return;
 
 
         if (CurrentPauseState == PauseState.PauseMenu)

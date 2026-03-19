@@ -111,15 +111,15 @@ unity-content {
 
 #AbilityBar {
     position: absolute;
-    bottom: 100px;      /* moved up 100px from bottom */
+    bottom: 20px;      /* moved up 100px from bottom */
     right: 15px;        /* distance from right */
-    width: 300px;       /* adjust based on number of abilities */
-    height: 64px;       /* size for ability icons */
+    width: 560px;       /* adjust based on number of abilities */
+    height: 160px;       /* size for ability icons */
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
-    gap: 10px;
+    gap: 16px;
     padding: 0;
     background: none;
 }
