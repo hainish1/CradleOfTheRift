@@ -44,6 +44,11 @@ public partial class DiamondAbilityElement : VisualElement
         set { _cooldownT = Mathf.Clamp01(value); MarkDirtyRepaint(); }
     }
 
+    // Custom style property descriptors read from USS (--border-color, etc.)
+    private static readonly CustomStyleProperty<Color> s_BorderColor  = new("--border-color");
+    private static readonly CustomStyleProperty<float> s_BorderWidth  = new("--border-width");
+    private static readonly CustomStyleProperty<Color> s_OverlayColor = new("--overlay-color");
+
     private Color _borderColor = Color.white;
     public Color BorderColor
     {
@@ -78,6 +83,15 @@ public partial class DiamondAbilityElement : VisualElement
     public DiamondAbilityElement()
     {
         generateVisualContent += OnGenerateVisualContent;
+        RegisterCallback<CustomStyleResolvedEvent>(OnCustomStyleResolved);
+    }
+
+    private void OnCustomStyleResolved(CustomStyleResolvedEvent e)
+    {
+        if (customStyle.TryGetValue(s_BorderColor,  out var borderColor))  _borderColor  = borderColor;
+        if (customStyle.TryGetValue(s_BorderWidth,  out var borderWidth))  _borderWidth  = borderWidth;
+        if (customStyle.TryGetValue(s_OverlayColor, out var overlayColor)) _overlayColor = overlayColor;
+        MarkDirtyRepaint();
     }
 
     // ------------------------------------------------------------------ //

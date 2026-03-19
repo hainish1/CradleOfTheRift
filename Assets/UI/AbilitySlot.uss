@@ -18,6 +18,11 @@ DiamondAbilityElement,
     flex-grow: 0;
     flex-shrink: 0;
     margin: 2px 0;
+
+    /* Visual properties for DiamondAbilityElement */
+    --border-color: rgb(255, 255, 255);
+    --border-width: 2;
+    --overlay-color: rgba(0, 0, 0, 0.6);
 }
 
 #KeyLabel {
