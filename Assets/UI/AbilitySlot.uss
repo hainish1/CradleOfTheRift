@@ -37,4 +37,9 @@ DiamondAbilityElement,
     color: white;
     margin-bottom: 2px;
     -unity-text-align: middle-center;
+    height: 18px;   
+}
+
+#ChargeLabel.hidden {
+    visibility: hidden;
 }

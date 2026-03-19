@@ -27,6 +27,11 @@ public class AbilityUIController : MonoBehaviour
     private List<AbilitySlot> abilitySlots = new List<AbilitySlot>();
     private List<AbilityInfo> abilities    = new List<AbilityInfo>();
     private VisualElement     abilityBar;
+    private void UpdateChargeLabel(Label label, AbilityInfo ability)
+    {
+        label.text = ability.showCharges ? ability.currentCharges.ToString() : "";
+        label.EnableInClassList("hidden", !ability.showCharges);
+    }
 
     private void Start()
     {
@@ -77,7 +82,8 @@ public class AbilityUIController : MonoBehaviour
             icon           = images.Count > 1 ? images[1] : null,
             maxCharges     = 1,
             currentCharges = 1,
-            getCooldown    = () => 0f
+            getCooldown    = () => 0f,
+            showCharges = false
         };
         flyAbilityIndex = abilities.Count;
         abilities.Add(flyAbility);
@@ -91,7 +97,8 @@ public class AbilityUIController : MonoBehaviour
             icon           = images.Count > 2 ? images[2] : null,
             maxCharges     = 1,
             currentCharges = 1,
-            getCooldown    = () => playerStats.ShockwaveCooldown
+            getCooldown    = () => playerStats.ShockwaveCooldown,
+            showCharges = false
         };
         abilities.Add(shockwaveAbility);
         CreateAbility(shockwaveAbility);
@@ -130,7 +137,7 @@ public class AbilityUIController : MonoBehaviour
         var slot        = abilitySlotAsset.Instantiate();
         var chargeLabel = slot.Q<Label>("ChargeLabel");
         slot.Q<Label>("KeyLabel").text = GetKeyDisplayName(ability.key);
-        chargeLabel.text = ability.currentCharges.ToString();
+        UpdateChargeLabel(chargeLabel, ability);
 
         var diamond = slot.Q<DiamondAbilityElement>("DiamondSlot");
 
@@ -160,7 +167,7 @@ public class AbilityUIController : MonoBehaviour
         if (playerMovement != null)
         {
             abilities[0].currentCharges      = playerMovement.CurrentDashCharges;
-            abilitySlots[0].chargeLabel.text  = abilities[0].currentCharges.ToString();
+            UpdateChargeLabel(abilitySlots[0].chargeLabel, abilities[0]);
         }
 
         // Input polling for all non-fly abilities
@@ -217,7 +224,7 @@ public class AbilityUIController : MonoBehaviour
         if (ability.currentCharges <= 0) return;
 
         ability.currentCharges--;
-        slot.chargeLabel.text = ability.currentCharges.ToString();
+        UpdateChargeLabel(slot.chargeLabel, ability);
 
         ability.pendingCooldowns++;
         if (!ability.isCooldownRunning)
@@ -260,7 +267,7 @@ public class AbilityUIController : MonoBehaviour
         diamond.CooldownT = 0f;
 
         ability.currentCharges++;
-        chargeLabel.text = ability.currentCharges.ToString();
+        UpdateChargeLabel(chargeLabel, ability);
     }
 }
 
@@ -274,6 +281,7 @@ public class AbilityInfo
     public int         currentCharges;
     public Func<float> getCooldown;
     public float       CooldownRemaining => getCooldown();
+    public bool showCharges = true;
 
     [HideInInspector] public int  pendingCooldowns  = 0;
     [HideInInspector] public bool isCooldownRunning = false;
