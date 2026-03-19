@@ -141,42 +141,7 @@ public class AbilityUIController : MonoBehaviour
         slot.Q<Label>("KeyLabel").text = GetKeyDisplayName(ability.key);
         chargeLabel.text = ability.currentCharges.ToString();
 
-        // ------------------------------------------------------------------
-        // Try to find the DiamondAbilityElement that was declared in UXML.
-        // If it isn't there yet (e.g. Unity hasn't rebuilt its schema cache
-        // after the class was first added), create and insert it in code so
-        // the slot always works without a manual UXML reimport step.
-        // ------------------------------------------------------------------
         var diamond = slot.Q<DiamondAbilityElement>("DiamondSlot");
-
-        if (diamond == null)
-        {
-            Debug.LogWarning(
-                "[AbilityUIController] 'DiamondSlot' not found in UXML template — " +
-                "creating DiamondAbilityElement in code. " +
-                "To silence this warning, re-open AbilitySlot.uxml in UI Builder so " +
-                "Unity registers the custom element, then reimport.");
-
-            diamond      = new DiamondAbilityElement();
-            diamond.name = "DiamondSlot";
-
-            // Mirror the USS sizing rules (.DiamondAbilityElement / #DiamondSlot)
-            diamond.style.width     = 64;
-            diamond.style.height    = 64;
-            diamond.style.flexGrow  = 0;
-            diamond.style.flexShrink = 0;
-            diamond.style.marginTop    = 2;
-            diamond.style.marginBottom = 2;
-
-            // Insert between ChargeLabel and KeyLabel
-            var container = slot.Q<VisualElement>("AbilitySlotContainer");
-            var keyLabel  = slot.Q<Label>("KeyLabel");
-            int insertIdx = container.IndexOf(keyLabel); // insert just before KeyLabel
-            if (insertIdx >= 0)
-                container.Insert(insertIdx, diamond);
-            else
-                container.Add(diamond);
-        }
 
         // Configure the diamond
         diamond.Icon         = ability.icon;
