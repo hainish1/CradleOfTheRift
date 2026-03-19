@@ -16,9 +16,6 @@ public class AbilityUIController : MonoBehaviour
 
     private int flyAbilityIndex = -1;
 
-    // ------------------------------------------------------------------ //
-    //  Per-slot tracking                                                  //
-    // ------------------------------------------------------------------ //
     [System.Serializable]
     public class AbilitySlot
     {
@@ -31,9 +28,6 @@ public class AbilityUIController : MonoBehaviour
     private List<AbilityInfo> abilities    = new List<AbilityInfo>();
     private VisualElement     abilityBar;
 
-    // ------------------------------------------------------------------ //
-    //  Start                                                              //
-    // ------------------------------------------------------------------ //
     private void Start()
     {
         var root = GetComponent<UIDocument>().rootVisualElement;
@@ -116,9 +110,6 @@ public class AbilityUIController : MonoBehaviour
         CreateAbility(rangedAbility);
     }
 
-    // ------------------------------------------------------------------ //
-    //  Helpers                                                            //
-    // ------------------------------------------------------------------ //
     string GetKeyDisplayName(KeyCode key)
     {
         switch (key)
@@ -147,9 +138,6 @@ public class AbilityUIController : MonoBehaviour
         diamond.Icon         = ability.icon;
         diamond.CooldownT    = 0f;
         diamond.FillFromTop  = fillFromTop;
-        diamond.BorderColor  = Color.white;
-        diamond.BorderWidth  = 2f;
-        diamond.OverlayColor = new Color(0f, 0f, 0f, 0.6f);
 
         abilityBar.Add(slot);
 
@@ -161,9 +149,6 @@ public class AbilityUIController : MonoBehaviour
         });
     }
 
-    // ------------------------------------------------------------------ //
-    //  Update                                                             //
-    // ------------------------------------------------------------------ //
     void Update()
     {
         // Guard: don't run until Start has fully populated both lists.
@@ -196,9 +181,6 @@ public class AbilityUIController : MonoBehaviour
         }
     }
 
-    // ------------------------------------------------------------------ //
-    //  Cooldown events                                                    //
-    // ------------------------------------------------------------------ //
     void OnDashCooldownStarted(float duration)
     {
         if (abilities.Count == 0) return;
@@ -215,9 +197,6 @@ public class AbilityUIController : MonoBehaviour
             playerMovement.DashCooldownStarted -= OnDashCooldownStarted;
     }
 
-    // ------------------------------------------------------------------ //
-    //  Flight UI                                                          //
-    // ------------------------------------------------------------------ //
     void UpdateFlightAbilityUI()
     {
         if (flyAbilityIndex < 0 || playerMovement == null) return;
@@ -228,9 +207,6 @@ public class AbilityUIController : MonoBehaviour
         slot.diamond.CooldownT = 1f - playerMovement.FlightEnergyRatio;
     }
 
-    // ------------------------------------------------------------------ //
-    //  Ability pressed / cooldown coroutines                             //
-    // ------------------------------------------------------------------ //
     public void OnAbilityPressed(int abilityIndex)
     {
         if (abilityIndex == 0) return; // dash handled via event
@@ -288,9 +264,6 @@ public class AbilityUIController : MonoBehaviour
     }
 }
 
-// ------------------------------------------------------------------ //
-//  AbilityInfo                                                        //
-// ------------------------------------------------------------------ //
 [System.Serializable]
 public class AbilityInfo
 {
