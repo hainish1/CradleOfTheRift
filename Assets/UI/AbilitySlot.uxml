@@ -2,7 +2,9 @@
     <Style src="project://database/Assets/UI/AbilitySlot.uss?fileID=7433441132597879392&amp;guid=b12c1b980e0b6d343a305fe11bcc806b&amp;type=3#AbilitySlot" />
     <engine:VisualElement name="AbilitySlotContainer">
         <engine:Label text="0" name="ChargeLabel" />
-        <DiamondAbilityElement name="DiamondSlot" />
+        <DiamondAbilityElement name="DiamondSlot" >
+            <engine:Label text="" name="CooldownLabel" />
+        </DiamondAbilityElement>
         <engine:Label text="Key" name="KeyLabel" />
     </engine:VisualElement>
 </engine:UXML>

@@ -21,6 +21,7 @@ public class AbilityUIController : MonoBehaviour
     {
         public VisualElement         slotElement;
         public Label                 chargeLabel;
+        public Label cooldownLabel;
         public DiamondAbilityElement diamond;
     }
 
@@ -31,6 +32,12 @@ public class AbilityUIController : MonoBehaviour
     {
         label.text = ability.showCharges ? ability.currentCharges.ToString() : "";
         label.EnableInClassList("hidden", !ability.showCharges);
+    }
+
+    private string FormatCooldown(float seconds)
+    {
+        if (seconds <= 0f) return "";
+        return Mathf.CeilToInt(seconds).ToString();
     }
 
     private void Start()
@@ -136,6 +143,7 @@ public class AbilityUIController : MonoBehaviour
     {
         var slot        = abilitySlotAsset.Instantiate();
         var chargeLabel = slot.Q<Label>("ChargeLabel");
+        var cooldownLabel = slot.Q<Label>("CooldownLabel");
         slot.Q<Label>("KeyLabel").text = GetKeyDisplayName(ability.key);
         UpdateChargeLabel(chargeLabel, ability);
 
@@ -152,6 +160,7 @@ public class AbilityUIController : MonoBehaviour
         {
             slotElement = slot,
             chargeLabel = chargeLabel,
+            cooldownLabel = cooldownLabel,
             diamond     = diamond
         });
     }
@@ -240,7 +249,7 @@ public class AbilityUIController : MonoBehaviour
             if (slot.diamond.CooldownT < 0.001f)
             {
                 yield return StartCoroutine(
-                    StartCooldown(slot.diamond, ability, slot.chargeLabel, ability.getCooldown()));
+                    StartCooldown(slot.diamond, slot.cooldownLabel, ability, slot.chargeLabel, ability.getCooldown()));
             }
             ability.pendingCooldowns--;
         }
@@ -250,21 +259,26 @@ public class AbilityUIController : MonoBehaviour
 
     public IEnumerator StartCooldown(
         DiamondAbilityElement diamond,
+        Label cooldownLabel,
         AbilityInfo ability,
         Label chargeLabel,
         float cooldownTime)
     {
-        diamond.CooldownT = 1f;
+        diamond.CooldownT    = 1f;
+        cooldownLabel.text   = FormatCooldown(cooldownTime);
 
         float elapsed = 0f;
         while (elapsed < cooldownTime)
         {
-            elapsed          += Time.deltaTime;
-            diamond.CooldownT = Mathf.Lerp(1f, 0f, elapsed / cooldownTime);
+            elapsed            += Time.deltaTime;
+            float remaining     = Mathf.Max(0f, cooldownTime - elapsed);
+            diamond.CooldownT   = Mathf.Lerp(1f, 0f, elapsed / cooldownTime);
+            cooldownLabel.text  = FormatCooldown(remaining);
             yield return null;
         }
 
-        diamond.CooldownT = 0f;
+        diamond.CooldownT  = 0f;
+        cooldownLabel.text = "";
 
         ability.currentCharges++;
         UpdateChargeLabel(chargeLabel, ability);

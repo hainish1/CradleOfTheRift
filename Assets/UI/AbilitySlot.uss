@@ -43,3 +43,12 @@ DiamondAbilityElement,
 #ChargeLabel.hidden {
     visibility: hidden;
 }
+
+#CooldownLabel {
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    -unity-text-align: middle-center;
+    color: white;
+    -unity-font-style: bold;
+    font-size: 14px;
+}
