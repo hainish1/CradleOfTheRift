@@ -1,0 +1,241 @@
+.Background {
+    flex-grow: 1;
+    background-color: rgba(14, 0, 29, 1);
+    width: 1920px;
+    height: 1080px;
+}
+
+.header {
+    font-size: 200px;
+    -unity-text-align: upper-center;
+    background-color: rgba(255, 255, 255, 0);
+    color: rgb(255, 255, 255);
+    justify-content: flex-start;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerLight-aGnx-Font.ttf?fileID=12800000&guid=353234806b51d43e58d9161acf6d5b78&type=3#CocobikerLight-aGnx-Font");
+}
+
+.button {
+    width: 300px;
+    height: 100px;
+    align-items: center;
+    align-self: center;
+    justify-content: center;
+    font-size: 60px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    color: rgb(255, 255, 255);
+    background-color: rgba(14, 0, 29, 1);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-color: rgba(228, 0, 255, 0.7);
+    border-radius: 8px;
+    transition-duration: 0.2s;
+    transition-property: background-color, border-color;
+}
+
+.unityButtonHover:hover {
+    border-color: rgb(228, 0, 255);
+    color: rgb(255, 255, 255);
+    scale: 1.05 1.05;
+    transition-property: scale, background-color, border-color;
+    transition-duration: 0.25s;
+}
+
+/* ── Tab Buttons ── */
+.settings-tab {
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-radius: 0;
+    background-color: rgba(255, 255, 255, 0);
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 70px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    width: 380px;
+    height: 90px;
+    padding-bottom: 8px;
+    -unity-text-align: lower-center;
+
+    /* Animate color and underline */
+    transition-duration: 0.25s;
+    transition-property: color;
+
+    border-bottom-width: 0;
+    border-bottom-color: rgba(255, 255, 255, 0);
+}
+
+/* Hovering an inactive tab lifts it to mid-brightness */
+.settings-tab:hover {
+    color: rgba(255, 255, 255, 0.65);
+    background-color: rgba(255, 255, 255, 0);
+    scale: 1 1; /* prevent the global unityButtonHover scale from firing */
+}
+
+/* Active tab — full white text and underline grows in */
+.settings-tab--active {
+    color: rgb(255, 255, 255);
+    border-bottom-width: 4px;
+    border-bottom-color: rgb(255, 255, 255);
+}
+
+/* Active tab hover — stay bright, no scale */
+.settings-tab--active:hover {
+    color: rgb(255, 255, 255);
+    background-color: rgba(255, 255, 255, 0);
+}
+
+/* ── Settings Page ── */
+.settings-page {
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+/* ── Row (label + control) ── */
+.settings-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 28px;
+    padding-left: 20px;
+    padding-right: 20px;
+    height: 90px;
+    background-color: rgba(255, 255, 255, 0.04);
+    border-radius: 6px;
+    transition-duration: 0.2s;
+    transition-property: background-color;
+}
+
+.settings-row:hover {
+    background-color: rgba(228, 0, 255, 0.08);
+}
+
+/* ── Label on the left ── */
+.settings-label {
+    flex-grow: 1;
+    font-size: 60px;
+    color: rgb(255, 255, 255);
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    -unity-text-align: middle-left;
+}
+
+/* ── Slider ── */
+.settings-slider {
+    width: 600px;
+    height: 40px;
+    margin-right: 20px;
+    justify-content: center;
+}
+
+.settings-slider .unity-base-slider__tracker {
+    background-color: rgba(255, 255, 255, 0.2);
+    height: 8px;
+    width: 100%;
+    border-radius: 4px;
+    border-width: 0;
+}
+
+.settings-slider .unity-base-slider__dragger {
+    background-color: rgb(255, 255, 255);
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    border-width: 0;
+    margin-top: -10px;
+    transition-duration: 0.15s;
+    transition-property: scale, background-color;
+}
+
+.settings-slider .unity-base-slider__dragger:hover {
+    background-color: rgb(228, 0, 255);
+    scale: 1.2 1.2;
+}
+
+/* ── Numeric value label ── */
+.settings-value-label {
+    width: 80px;
+    font-size: 55px;
+    color: rgb(255, 255, 255);
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    -unity-text-align: middle-right;
+}
+
+/* ── Dropdown ── */
+.settings-dropdown {
+    width: 500px;
+    height: 65px;
+    font-size: 50px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    color: rgb(255, 255, 255);
+    background-color: rgba(21, 7, 34, 0.9);
+    border-width: 2px;
+    border-color: rgba(228, 0, 255, 0.5);
+    border-radius: 4px;
+}
+
+/* ── Modal Overlay ── */
+.modal-instance {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+    background-color: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-box {
+    background-color: rgba(14, 0, 29, 1);
+    border-width: 2px;
+    border-color: rgba(228, 0, 255, 0.7);
+    border-radius: 12px;
+    padding: 60px;
+    align-items: center;
+    min-width: 700px;
+}
+
+.modal-title {
+    font-size: 70px;
+    color: rgb(255, 255, 255);
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    -unity-text-align: upper-center;
+    margin-bottom: 20px;
+}
+
+.modal-body {
+    font-size: 45px;
+    color: rgba(255, 255, 255, 0.6);
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    -unity-text-align: upper-center;
+    margin-bottom: 50px;
+}
+
+.modal-buttons {
+    flex-direction: row;
+}
+
+.modal-button {
+    margin-left: 20px;
+    margin-right: 20px;
+    font-size: 45px;
+    width: 280px;
+    height: 80px;
+}
+
+.modal-button:active {
+    background-color: rgba(228, 0, 255, 0.3);
+    border-color: rgb(228, 0, 255);
+    scale: 0.97 0.97;
+    transition-duration: 0.05s;
+    transition-property: scale, background-color, border-color;
+}
