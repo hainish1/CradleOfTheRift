@@ -228,7 +228,7 @@ public class EnemyRange : Enemy
                 // slide, not stick
                 float velocityIntoWall = Vector3.Dot(currentHorizontalVelocity, -wallHit.normal);
                 if (velocityIntoWall > 0f)
-                    currentHorizontalVelocity += wallHit.normal * velocityIntoWall;
+                    currentHorizontalVelocity += -wallHit.normal * velocityIntoWall;
             }
         }
 
