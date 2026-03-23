@@ -11,10 +11,19 @@ State	ID	Name	State Group			Notes
 	748895195	None	Boss_Alive			
 	2044049779	Dead	Boss_Alive			
 
+Game Parameter	ID	Name			Wwise Object Path	Notes
+	535618029	EnemyVolume			\Default Work Unit\EnemyVolume	
+	1399119200	PlayerVolume			\Default Work Unit\PlayerVolume	
+	2346531308	MusicVolume			\Default Work Unit\MusicVolume	
+	2918011349	MasterVolume			\Default Work Unit\MasterVolume	
+	3211196718	EnvironmentVolume			\Default Work Unit\EnvironmentVolume	
+
 Audio Bus	ID	Name			Wwise Object Path	Notes
+	174537428	Player Bus			\Default Work Unit\Main Audio Bus\Player Bus	
+	963934797	Enemy Bus			\Default Work Unit\Main Audio Bus\Enemy Bus	
 	2246998526	Main Audio Bus			\Default Work Unit\Main Audio Bus	
-	2833159698	Environment Bus			\Default Work Unit\Environment Bus	
-	3127962312	Music Bus			\Default Work Unit\Music Bus	
+	2833159698	Environment Bus			\Default Work Unit\Main Audio Bus\Environment Bus	
+	3127962312	Music Bus			\Default Work Unit\Main Audio Bus\Music Bus	
 
 Audio Devices	ID	Name	Type				Notes
 	2317455096	No_Output	No Output			
