@@ -138,7 +138,7 @@ public class PauseMenu : MonoBehaviour
         if (UpgradeLevelManager.Instance != null)
             UpgradeLevelManager.Instance.ResetForNewRun();
 
-        SceneManager.LoadScene("Design 1");// Change name to game
+        SceneManager.LoadScene("Main");// Change name to game
     }
     private void OnSettingsClick(ClickEvent evt)
     {

@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class ExplosiveProjectile : Projectile
 {
+    //[SerializeField] private GameObject travelVfxPrefab;
     private GameObject fireballVisual;
     private static Shader cachedShader;
 
@@ -32,11 +33,43 @@ public class ExplosiveProjectile : Projectile
 
     private void CreateFireballVisual()
     {
-        fireballVisual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        fireballVisual.name = "FireballVisual";
-        fireballVisual.transform.SetParent(transform);
-        fireballVisual.transform.localPosition = Vector3.zero;
-        fireballVisual.transform.localScale = Vector3.one * ExplosiveProjectiles.FireballVisualScale;
+        if (ExplosiveProjectiles.FireballTravelVFX != null)
+        {
+            Debug.Log("Using assigned travel VFX prefab for ExplosiveProjectile.");
+            fireballVisual = Instantiate(ExplosiveProjectiles.FireballTravelVFX, transform);
+            fireballVisual.name = "FireballVisual";
+            fireballVisual.transform.localPosition = Vector3.zero;
+            fireballVisual.transform.localScale = Vector3.one * ExplosiveProjectiles.FireballVisualScale;
+
+        }
+        else
+        {
+            Debug.LogWarning("Travel VFX prefab not assigned for ExplosiveProjectile. Using simple sphere visual.");
+            fireballVisual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            fireballVisual.name = "FireballVisual";
+            fireballVisual.transform.SetParent(transform);
+            fireballVisual.transform.localPosition = Vector3.zero;
+            fireballVisual.transform.localScale = Vector3.one * ExplosiveProjectiles.FireballVisualScale;
+            //CreateSimpleFireballVisual();
+
+            // int layer = LayerMask.NameToLayer(FireballVisualLayerName);
+            // if (layer >= 0)
+            //     fireballVisual.layer = layer;
+
+            // var col = fireballVisual.GetComponent<Collider>();
+            // if (col != null)
+            //     DestroyImmediate(col);
+
+            // if (cachedShader == null)
+            //     cachedShader = Shader.Find("Sprites/Default");
+
+            // var material = new Material(cachedShader);
+            // material.color = new Color(1f, 0f, 0f, 1f);
+
+            // var renderer = fireballVisual.GetComponent<Renderer>();
+            // if (renderer != null)
+            //     renderer.material = material;
+        }
 
         int layer = LayerMask.NameToLayer(FireballVisualLayerName);
         if (layer >= 0)
@@ -55,6 +88,29 @@ public class ExplosiveProjectile : Projectile
         var renderer = fireballVisual.GetComponent<Renderer>();
         if (renderer != null)
             renderer.material = material;
+        // fireballVisual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        // fireballVisual.name = "FireballVisual";
+        // fireballVisual.transform.SetParent(transform);
+        // fireballVisual.transform.localPosition = Vector3.zero;
+        // fireballVisual.transform.localScale = Vector3.one * ExplosiveProjectiles.FireballVisualScale;
+
+        // int layer = LayerMask.NameToLayer(FireballVisualLayerName);
+        // if (layer >= 0)
+        //     fireballVisual.layer = layer;
+
+        // var col = fireballVisual.GetComponent<Collider>();
+        // if (col != null)
+        //     DestroyImmediate(col);
+
+        // if (cachedShader == null)
+        //     cachedShader = Shader.Find("Sprites/Default");
+
+        // var material = new Material(cachedShader);
+        // material.color = new Color(1f, 0f, 0f, 1f);
+
+        // var renderer = fireballVisual.GetComponent<Renderer>();
+        // if (renderer != null)
+        //     renderer.material = material;
     }
 
     public override void Update()
@@ -185,7 +241,7 @@ public class ExplosiveProjectile : Projectile
         {
             var fx = Instantiate(ExplosiveProjectiles.ExplosionVFX);
             fx.transform.position = transform.position;
-            float scale = Mathf.Clamp(radius * 0.025f, 0.5f, 0.625f);
+            float scale = Mathf.Clamp(radius * 0.025f, 0.5f, 0.625f) * 2;   // idk its really not big enough so i added a x2
             fx.transform.localScale = Vector3.one * scale;
             Destroy(fx, 1f);
         }
