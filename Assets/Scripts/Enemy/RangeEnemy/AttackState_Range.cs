@@ -22,6 +22,7 @@ public class AttackState_Range : EnemyState
     {
         // holdHorizontalPosition keeps the enemy in place via flight logic;
         enemyRange.SetHorizontalPosition(true);
+        enemyRange.ResetFlightVelocity();
         enemyRange.SafeStopAgent();
         enemyRange.currentShotsRemaining = enemyRange.shotsPerSet;
         timer = Random.Range(enemyRange.attackDelayMin, enemyRange.attackDelayMax);
@@ -50,7 +51,7 @@ public class AttackState_Range : EnemyState
 
         float distSqr = (enemy.target.position - enemy.transform.position).sqrMagnitude;
         float rangeSqr = enemyRange.attackRange * enemyRange.attackRange;
-        if (distSqr > rangeSqr * 1.2f) 
+        if (distSqr > rangeSqr * 1.2f || !enemyRange.HasLineOfSightToTarget()) // if enemy has lost sight to target, change back to CHASE state
         {
             stateMachine.ChangeState(enemyRange.GetChase());
             return;

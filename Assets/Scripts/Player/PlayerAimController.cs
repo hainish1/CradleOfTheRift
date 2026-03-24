@@ -61,7 +61,7 @@ public class PlayerAimController : MonoBehaviour
 
     public void ForceCoupleOnFire() => forceCoupleTimer = kForceCoupleDuration;
 
-    public Vector3 GetAimDirection(Vector3 origin, Vector3 fallbackForward)
+    public Vector3 GetAimDirection(Vector3 origin, Vector3 fallbackForward, out RaycastHit raycastHit)
     {
         // if (aimTargetManager != null)
         // {
@@ -69,14 +69,17 @@ public class PlayerAimController : MonoBehaviour
         // }
         // return fallbackForward;
 
+        raycastHit = new RaycastHit();
         if (!cam) cam = Camera.main;
         if (!cam) return fallbackForward;
 
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         if (Physics.Raycast(ray, out var hit, maxAimDistance, aimMask, QueryTriggerInteraction.Ignore))
         {
+            raycastHit = hit;
             return (hit.point - origin).normalized;
         }
+        raycastHit = hit;
         return ray.direction;
     }
 

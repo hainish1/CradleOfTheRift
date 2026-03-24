@@ -51,8 +51,8 @@ public class ChaseState_Range : EnemyState
 
         float attackRangeSqr = enemyRange.attackRange * enemyRange.attackRange;
 
-        // if in range and cooldown expired only then ATTACK
-        if (distSqr <= attackRangeSqr && Time.time >= enemyRange.nextAttackTime)
+        // if in range, cooldown expired, AND clear line of sight, only then ATTACK
+        if (distSqr <= attackRangeSqr && Time.time >= enemyRange.nextAttackTime && enemyRange.HasLineOfSightToTarget())
         {
             stateMachine.ChangeState(enemyRange.GetAttack());
         }
