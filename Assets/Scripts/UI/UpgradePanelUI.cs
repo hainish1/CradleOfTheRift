@@ -136,7 +136,6 @@ public class UpgradePanelUI : MonoBehaviour
         divider.style.backgroundColor = rarityCol;
         card.Add(divider);
 
-        // Description
         if (!string.IsNullOrEmpty(item.description))
         {
             var desc = new Label(item.GetFormattedDescription(1, false));
@@ -144,7 +143,16 @@ public class UpgradePanelUI : MonoBehaviour
             card.Add(desc);
         }
 
-        // click handle
+        var inv = PlayerLocator.FindPlayerComponent<PlayerInventory>();
+        int owned = inv != null ? inv.GetItemCount(item) : 0;
+        if (item.canStack && owned > 0)
+        {
+            var ownedLabel = new Label($"Owned: {owned}");
+            ownedLabel.AddToClassList("upgrade-owned");
+            card.Add(ownedLabel);
+        }
+
+
         card.RegisterCallback<ClickEvent>(evt =>
         {
             Hide();
