@@ -121,6 +121,8 @@ public class PlayerMovement : MonoBehaviour
     private bool _isRegeneratingDash;
     public int CurrentDashCharges => _currDashCharges;
     public event Action<float> DashCooldownStarted;
+    public static event System.Action<int, int> OnDashChargeSpent;      // (current, max)
+    public static event System.Action<int, int> OnDashChargeRestored;   // (current, max)
     private Vector3 _dashDirectionUnitVector;
 
     // Jump Parameters
@@ -759,6 +761,8 @@ public class PlayerMovement : MonoBehaviour
                 _dashDirectionUnitVector = GetComponentInParent<Transform>().forward;
 
             _currDashCharges--;
+            OnDashChargeSpent?.Invoke(_currDashCharges, _dashMaxCharges);
+
 
             // Only initialize regeneration routine if not already regenerating.
             if (_currDashCharges == _dashMaxCharges - 1) StartCoroutine(DashChargesRegeneration());
@@ -821,6 +825,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 timer = 0;
                 _currDashCharges++;
+                OnDashChargeRestored?.Invoke(_currDashCharges, _dashMaxCharges);
             }
 
             if (_currDashCharges >= _dashMaxCharges) break;

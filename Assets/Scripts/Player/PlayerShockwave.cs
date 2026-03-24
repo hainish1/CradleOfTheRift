@@ -42,6 +42,7 @@ public class PlayerShockwave : MonoBehaviour
     [SerializeField]
     [Tooltip("How quickly the shockwave effect sphere expands to the shockwave radius in units per second.")] private float _shockEffectExpansionSpeed;
     private float _shockwaveTimer;
+    public static event System.Action OnShockwaveUsed;
 
     void Awake()
     {
@@ -108,6 +109,7 @@ public class PlayerShockwave : MonoBehaviour
     private void PerformShockwave()
     {
         _shockwaveTimer = 0;
+        OnShockwaveUsed?.Invoke();
         _shockwaveCameraImpulseSource.GenerateImpulse(_cameraShakeIntensity);
         _shockwaveEffectSphere.SetActive(true);
         _playerAnim.SetTrigger("Shockwave");

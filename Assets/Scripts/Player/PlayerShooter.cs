@@ -46,6 +46,8 @@ public class PlayerShooter : MonoBehaviour
     private bool isFiring;
     private float nextFireTime;
     private bool isRegeneratingFireCharges;
+    public static event Action<int, int> OnFireChargeSpent;      // (current, max)
+    public static event Action<int, int> OnFireChargeRestored;   // (current, max)
     public bool IsThrowing { get; private set; }
     private Coroutine weaponRegainCoroutine;
 
@@ -587,6 +589,7 @@ public class PlayerShooter : MonoBehaviour
     private void DecrementFireCharges()
     {
         currFireCharges--;
+        OnFireChargeSpent?.Invoke((int)currFireCharges, fireMaxCharges);
 
         // Only initialize regeneration routine if not already regenerating.
         if (currFireCharges == fireMaxCharges - 1) StartCoroutine(FireChargeRegeneration());
@@ -606,6 +609,7 @@ public class PlayerShooter : MonoBehaviour
             {
                 timer = 0;
                 currFireCharges++;
+                OnFireChargeRestored?.Invoke((int)currFireCharges, fireMaxCharges);
             }
 
             if (currFireCharges >= fireMaxCharges) break;
