@@ -93,6 +93,14 @@ public class EnemyRange : Enemy
     private bool wasKnockedBack;
     private float navMeshSyncTimer;
 
+    // use NavMesh when line of sight is blocked, manual when clear
+    private bool useNavMode;
+    private float navDestTimer;
+
+    // un collide with wall
+    private Collider selfCollider;
+    private readonly Collider[] depBuffer = new Collider[4];
+
     private void OnEnable()
     {
         EnemyRegistry.RegisterFlyer(this);
@@ -122,6 +130,8 @@ public class EnemyRange : Enemy
 
         knockBackRef = GetComponent<AgentKnockBack>();
         if (knockBackRef != null) knockBackRef.manageAgentPosition = false;
+
+        selfCollider = GetComponent<Collider>();
 
         idle = new IdleState_Range(this, stateMachine);
         chase = new ChaseState_Range(this, stateMachine);
@@ -176,16 +186,51 @@ public class EnemyRange : Enemy
         float bobOffset = Mathf.Sin(bobPhase) * hoverBobAmplitude;
         float finalTargetY = baseTargetY + bobOffset;
 
-        // --- Horizontal target ---
-        Vector3 desiredHorizontalPos = transform.position;
+        
+        // use navmesh when a wall blocks enemy, switch to manual if clear
         if (target != null)
-            desiredHorizontalPos = GetSpreadoutChasePoint();
+            useNavMode = !HasLineOfSightToTarget();
+        else
+            useNavMode = false;
 
-        // Keep agent on mesh for spawner 
         SyncAgentToNavMeshPeriodicaly();
 
-        // make next position
         Vector3 nextPos = transform.position;
+        Vector3 desiredHorizontalPos = transform.position;
+
+        if (target != null)
+        {
+            if (useNavMode)
+            {
+                // route around the wall
+                navDestTimer -= Time.deltaTime;
+                if (navDestTimer <= 0f && agent != null && agent.isOnNavMesh)
+                {
+                    navDestTimer = 0.3f;
+                    agent.isStopped = false;
+                    agent.SetDestination(target.position);
+                }
+                Vector3 steering = (agent != null && agent.hasPath) ? agent.steeringTarget : target.position;
+                desiredHorizontalPos = new Vector3(steering.x, transform.position.y, steering.z);
+            }
+            else
+            {
+                // normal manual flight
+                desiredHorizontalPos = GetSpreadoutChasePoint();
+            }
+        }
+
+        Vector3 toDesired = new(desiredHorizontalPos.x - transform.position.x, 0f, desiredHorizontalPos.z - transform.position.z);
+        if (toDesired.sqrMagnitude > 0.01f)
+        {
+            float toDist = toDesired.magnitude;
+            if (Physics.SphereCast(transform.position, 0.4f, toDesired.normalized, out RaycastHit desiredHit, toDist, obstacleMask, QueryTriggerInteraction.Ignore))
+            {
+                float safeDist = Mathf.Max(0f, desiredHit.distance - 0.2f);
+                desiredHorizontalPos.x = transform.position.x + toDesired.normalized.x * safeDist;
+                desiredHorizontalPos.z = transform.position.z + toDesired.normalized.z * safeDist;
+            }
+        }
 
         nextPos.x = Mathf.SmoothDamp(transform.position.x, desiredHorizontalPos.x,
                                       ref currentHorizontalVelocity.x, horizontalSmoothTime);
@@ -194,13 +239,43 @@ public class EnemyRange : Enemy
 
         // Cap horizontal speed to prevent runaway drift
         Vector3 hDelta = new Vector3(nextPos.x - transform.position.x, 0f, nextPos.z - transform.position.z);
-        float maxStep = maxHorizontalSpeed * Time.deltaTime;
-        if (hDelta.sqrMagnitude > maxStep * maxStep)
+        if (hDelta.magnitude > maxHorizontalSpeed * Time.deltaTime)
         {
-            hDelta = hDelta.normalized * maxStep;
+            hDelta = hDelta.normalized * maxHorizontalSpeed * Time.deltaTime;
             nextPos.x = transform.position.x + hDelta.x;
             nextPos.z = transform.position.z + hDelta.z;
-            currentHorizontalVelocity = Vector3.ClampMagnitude(currentHorizontalVelocity, maxHorizontalSpeed);
+        }
+
+        // use SphereCast to stop before walls
+        if (hDelta.sqrMagnitude > 0.0001f)
+        {
+            float castDist = hDelta.magnitude;
+            if (Physics.SphereCast(transform.position, 0.4f, hDelta.normalized, out RaycastHit wallHit,
+                                   castDist + 0.05f, obstacleMask, QueryTriggerInteraction.Ignore))
+            {
+                float safeDistance = Mathf.Max(0f, wallHit.distance - 0.2f);
+                nextPos.x = transform.position.x + hDelta.normalized.x * safeDistance;
+                nextPos.z = transform.position.z + hDelta.normalized.z * safeDistance;
+                currentHorizontalVelocity = Vector3.zero;
+            }
+        }
+
+        // if already inside a wall, push out
+        if (selfCollider != null)
+        {
+            int count = Physics.OverlapSphereNonAlloc(nextPos, 0.5f, depBuffer, obstacleMask, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < count; i++)
+            {
+                if (Physics.ComputePenetration(selfCollider, nextPos, transform.rotation,
+                                               depBuffer[i], depBuffer[i].transform.position, depBuffer[i].transform.rotation,
+                                               out Vector3 dir, out float dist))
+                {
+                    dir.y = 0f;
+                    nextPos += dir * Mathf.Min(dist, 8f * Time.deltaTime);
+                    float incomingVelocity = Vector3.Dot(currentHorizontalVelocity, -dir);
+                    if (incomingVelocity > 0f) currentHorizontalVelocity += dir * incomingVelocity;
+                }
+            }
         }
 
         // Vertical SmoothDamp
@@ -211,25 +286,6 @@ public class EnemyRange : Enemy
         {
             nextPos.y = transform.position.y + Mathf.Sign(vDelta) * maxVStep;
             currentYVelocity = Mathf.Clamp(currentYVelocity, -maxVerticalSpeed, maxVerticalSpeed);
-        }
-
-        // avoid the wall
-        Vector3 moveDelta = nextPos - transform.position;
-        float moveDist = moveDelta.magnitude;
-        if (moveDist > 0.001f)
-        {
-            if (Physics.SphereCast(transform.position, 0.35f, moveDelta.normalized,
-                                   out RaycastHit wallHit, moveDist + 0.1f,
-                                   obstacleMask, QueryTriggerInteraction.Ignore))
-            {
-                float safeDist = Mathf.Max(0f, wallHit.distance - 0.15f);
-                nextPos = transform.position + moveDelta.normalized * safeDist;
-
-                // slide, not stick
-                float velocityIntoWall = Vector3.Dot(currentHorizontalVelocity, -wallHit.normal);
-                if (velocityIntoWall > 0f)
-                    currentHorizontalVelocity += -wallHit.normal * velocityIntoWall;
-            }
         }
 
         transform.position = nextPos;
@@ -269,6 +325,20 @@ public class EnemyRange : Enemy
         SyncAgentToNavMesh();
     }
 
+
+    /// <summary>
+    /// returns true if no obstacle blocks the path to the player
+    /// </summary>
+    public bool HasLineOfSightToTarget()
+    {
+        if (target == null) return false;
+        Vector3 origin = transform.position + Vector3.up * 0.5f;
+        Vector3 aimPos  = target.position   + Vector3.up * 0.5f;
+        Vector3 dir = aimPos - origin;
+        float distance = dir.magnitude;
+        if (distance < 0.01f) return true;
+        return !Physics.SphereCast(origin, 0.15f, dir / distance, out _, distance, obstacleMask, QueryTriggerInteraction.Ignore);
+    }
 
     public void FireAtTarget()
     {
