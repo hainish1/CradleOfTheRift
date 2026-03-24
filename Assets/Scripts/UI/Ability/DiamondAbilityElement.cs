@@ -23,10 +23,6 @@ using UnityEngine.UIElements;
 [UxmlElement]
 public partial class DiamondAbilityElement : VisualElement
 {
-    // ------------------------------------------------------------------ //
-    //  Public properties                                                  //
-    // ------------------------------------------------------------------ //
-
     private Texture2D _icon;
     public Texture2D Icon
     {
@@ -74,9 +70,6 @@ public partial class DiamondAbilityElement : VisualElement
         set { _fillFromTop = value; MarkDirtyRepaint(); }
     }
 
-    // ------------------------------------------------------------------ //
-    //  Constructor                                                        //
-    // ------------------------------------------------------------------ //
     public DiamondAbilityElement()
     {
         generateVisualContent += OnGenerateVisualContent;
@@ -91,9 +84,6 @@ public partial class DiamondAbilityElement : VisualElement
         MarkDirtyRepaint();
     }
 
-    // ------------------------------------------------------------------ //
-    //  Drawing                                                            //
-    // ------------------------------------------------------------------ //
     private void OnGenerateVisualContent(MeshGenerationContext ctx)
     {
         float w = resolvedStyle.width;
@@ -102,14 +92,14 @@ public partial class DiamondAbilityElement : VisualElement
 
         float pad = _borderWidth * 0.5f + 1f;
 
-        Vector2 top    = new Vector2(w * 0.5f, pad);
-        Vector2 right  = new Vector2(w - pad,  h * 0.5f);
+        Vector2 top = new Vector2(w * 0.5f, pad);
+        Vector2 right = new Vector2(w - pad, h * 0.5f);
         Vector2 bottom = new Vector2(w * 0.5f, h - pad);
-        Vector2 left   = new Vector2(pad,      h * 0.5f);
+        Vector2 left = new Vector2(pad, h * 0.5f);
 
         var painter = ctx.painter2D;
 
-        // ---- 1. Icon ---- //
+        // ---- Icon ---- //
         if (_icon != null)
         {
             DrawIconMesh(ctx, top, right, bottom, left, w, h);
@@ -126,7 +116,7 @@ public partial class DiamondAbilityElement : VisualElement
             painter.Fill();
         }
 
-        // ---- 2. Cooldown overlay ---- //
+        // ---- Cooldown overlay ---- //
         if (_cooldownT > 0.001f)
         {
             if (_fillFromTop)
@@ -145,9 +135,9 @@ public partial class DiamondAbilityElement : VisualElement
             }
         }
 
-        // ---- 3. Border ---- //
+        // ---- Border ---- //
         painter.strokeColor = _borderColor;
-        painter.lineWidth   = _borderWidth;
+        painter.lineWidth = _borderWidth;
         painter.BeginPath();
         painter.MoveTo(top);
         painter.LineTo(right);
@@ -183,8 +173,8 @@ public partial class DiamondAbilityElement : VisualElement
         // At t=1: cutY = bottom.y → full diamond dark.
         // At t=0: cutY = top.y   → nothing dark.
         float diamondH = bottom.y - top.y;
-        float cutY     = top.y + (t * diamondH);
-        float midY     = (top.y + bottom.y) * 0.5f;
+        float cutY = top.y + (t * diamondH);
+        float midY = (top.y + bottom.y) * 0.5f;
 
         painter.fillColor = color;
         painter.BeginPath();
@@ -219,9 +209,6 @@ public partial class DiamondAbilityElement : VisualElement
         painter.Fill();
     }
 
-    // ------------------------------------------------------------------ //
-    //  Icon mesh                                                          //
-    // ------------------------------------------------------------------ //
     private void DrawIconMesh(MeshGenerationContext ctx, Vector2 top, Vector2 right,
         Vector2 bottom, Vector2 left, float w, float h)
     {
@@ -230,8 +217,8 @@ public partial class DiamondAbilityElement : VisualElement
         Vertex MakeVertex(Vector2 pos) => new Vertex
         {
             position = new Vector3(pos.x, pos.y, Vertex.nearZ),
-            tint     = Color.white,
-            uv       = new Vector2(pos.x / w, 1f - (pos.y / h))
+            tint = Color.white,
+            uv = new Vector2(pos.x / w, 1f - (pos.y / h))
         };
 
         mesh.SetNextVertex(MakeVertex(top));
