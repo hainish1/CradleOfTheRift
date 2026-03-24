@@ -23,9 +23,6 @@ using UnityEngine.UIElements;
 [UxmlElement]
 public partial class DiamondAbilityElement : VisualElement
 {
-    public new class UxmlFactory : UxmlFactory<DiamondAbilityElement, UxmlTraits> { }
-    public new class UxmlTraits : VisualElement.UxmlTraits { }
-
     // ------------------------------------------------------------------ //
     //  Public properties                                                  //
     // ------------------------------------------------------------------ //
