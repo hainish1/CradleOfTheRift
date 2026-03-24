@@ -10,22 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
-  m_Name: LightningStrikeDamage Upgrade
+  m_Name: LightningStrike HealUpgrade
   m_EditorClassIdentifier: 
-  itemName: Lightning Strike:Damage
-  description: damage +5
+  itemName: Lightning Strike:Heal
+  description: ' Lightning strikes now heals you'
   icon: {fileID: 21300000, guid: 54c2e0e1f98cc18448b731de7d4b8117, type: 3}
-  rarity: 0
-  rarityColor: {r: 1, g: 1, b: 1, a: 1}
-  canStack: 1
-  maxStacks: 9999
+  rarity: 2
+  rarityColor: {r: 0.6392157, g: 0.15686275, b: 1, a: 1}
+  canStack: 0
+  maxStacks: 1
   stackingType: 0
   useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 31
-    description: ' Lightning strikes your location periodically. If you are hit you
-      will take damage, but lightning will chain to nearby enemies and acid pools'
+  - kind: 37
+    description: ' Lightning strikes now heals you'
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0
