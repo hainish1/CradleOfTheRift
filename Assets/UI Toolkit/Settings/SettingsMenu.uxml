@@ -1,0 +1,23 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="AudioPage" src="project://database/Assets/UI%20Toolkit/Settings/AudioPage.uxml?fileID=9197481963319205126&amp;guid=1d1bc0e326243de428b1c71a417d3267&amp;type=3#AudioPage" />
+    <engine:Template name="VideoPage" src="project://database/Assets/UI%20Toolkit/Settings/VideoPage.uxml?fileID=9197481963319205126&amp;guid=101e3974e3f84df459c2eaf2b01dcdc4&amp;type=3#VideoPage" />
+    <engine:Template name="ControlsPage" src="project://database/Assets/UI%20Toolkit/Settings/ControlsPage.uxml?fileID=9197481963319205126&amp;guid=273855631d79e0c488afffab1ea28f9a&amp;type=3#ControlsPage" />
+    <Style src="project://database/Assets/UI%20Toolkit/Settings/SettingsStyleSheet.uss?fileID=7433441132597879392&amp;guid=4e331d6e341bfd245aadb0e434e7894e&amp;type=3#SettingsStyleSheet" />
+    <engine:VisualElement name="Canvas" class="Background" style="flex-grow: 1; width: 1920px; height: 1080px;">
+        <engine:Label text="Settings" name="LabelSettings" class="header" style="font-size: 120px; margin-top: 20px;" />
+        <engine:VisualElement name="TabBar" style="flex-direction: row; align-self: center; margin-top: 10px; margin-bottom: 0;">
+            <engine:Button text="Audio" name="TabAudio" class="settings-tab settings-tab--active unityButtonHover" />
+            <engine:Button text="Video" name="TabVideo" class="settings-tab unityButtonHover" />
+            <engine:Button text="Controls" name="TabControls" class="settings-tab unityButtonHover" />
+        </engine:VisualElement>
+        <engine:VisualElement name="PagesContainer" style="flex-grow: 1; margin-left: 200px; margin-right: 200px; margin-top: 30px; margin-bottom: 120px;">
+            <engine:Instance template="AudioPage" />
+            <engine:Instance template="VideoPage" />
+            <engine:Instance template="ControlsPage" />
+        </engine:VisualElement>
+        <engine:VisualElement name="BottomBar" style="flex-direction: row; align-self: center; position: absolute; bottom: 30px;">
+            <engine:Button text="Revert" name="ButtonRevert" class="button unityButtonHover" style="width: 300px; font-size: 60px; margin-right: 40px;" />
+            <engine:Button text="Back" name="ButtonBack" class="button unityButtonHover" style="width: 300px; font-size: 60px;" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
