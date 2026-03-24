@@ -3,18 +3,20 @@
    This sheet only handles layout and text labels.                        */
 
 #AbilitySlotContainer {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 132px;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 /* Size the custom diamond element. Keep it square so the diamond is symmetric. */
 DiamondAbilityElement,
 #DiamondSlot {
-    width: 64px;
-    height: 64px;
+    width: 90px;
+    height: 90px;
     flex-grow: 0;
     flex-shrink: 0;
     margin: 2px 0;
@@ -42,4 +44,13 @@ DiamondAbilityElement,
 
 #ChargeLabel.hidden {
     visibility: hidden;
+}
+
+#CooldownLabel {
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    -unity-text-align: middle-center;
+    color: white;
+    -unity-font-style: bold;
+    font-size: 20px;
 }

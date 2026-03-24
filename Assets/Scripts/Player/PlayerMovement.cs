@@ -19,6 +19,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    // Input Parameters
+    
     private InputSystem_Actions _playerInput;
     private InputSystem_Actions.PlayerActions _playerActions;
 
@@ -37,6 +39,8 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("The player camera object.")] private Transform _cameraTransform;
     [SerializeField]
     [Tooltip("The player model object.")] private GameObject _playerModel;
+    [SerializeField]
+    [Tooltip("Reference to the player jump animation to get its duration.")] private AnimationClip _jumpAnim;
     public Entity PlayerEntity { get; private set; }
     private Animator _playerAnim;
     private CharacterController _characterController;
@@ -71,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
     private float _moveDeceleration;
     public bool IsSlowed { get; set; }
     public Vector3 _lateralVelocityVector;
-    private Vector2 _moveInputTemp;
+    private Vector2 _moveInputTemp = Vector2.zero;
 
     // Hover Parameters
 
@@ -94,8 +98,8 @@ public class PlayerMovement : MonoBehaviour
     public bool IsGrounded { get; private set; }
     private float _groundedCastRadius;
     private float _groundedCastPauseTimer;
-    private RaycastHit _groundPointHovering;
-    private ControllerColliderHit _groundPointColliding;
+    private RaycastHit _groundHoveringPoint;
+    private ControllerColliderHit _groundCollidingPoint;
 
     // Knockback Parameters
 
@@ -116,7 +120,9 @@ public class PlayerMovement : MonoBehaviour
     private int _currDashCharges;
     private bool _isRegeneratingDash;
     public int CurrentDashCharges => _currDashCharges;
-    public event System.Action<float> DashCooldownStarted;
+    public event Action<float> DashCooldownStarted;
+    public static event System.Action<int, int> OnDashChargeSpent;      // (current, max)
+    public static event System.Action<int, int> OnDashChargeRestored;   // (current, max)
     private Vector3 _dashDirectionUnitVector;
 
     // Jump Parameters
@@ -126,19 +132,23 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("Seconds that jump can still be registered after walking off an edge.")] private float _coyoteTimeWindow;
     [SerializeField]
     [Tooltip("Seconds that jump can still be registered before reaching the ground.")] private float _jumpBufferWindow;
+    [SerializeField, Range(0, 1)]
+    [Tooltip("How quickly the player jump animation finishes. (0.0 is instant, 1.0 is the full default duration.)")] private float _jumpAnimationSpeedMultiplier;
     private float _jumpForce;
     private float _coyoteTimer;
     private float _jumpBufferTimer;
     private Vector3 _verticalVelocityVector;
+    public bool IsJumping { get; private set; }
+    private Coroutine _jumpAnimationCoroutine;
 
     // Drift Parameters
-    
+
     [Header("Drift Parameters")] [Space]
     [SerializeField]
     [Tooltip("Seconds before Drift Descent Divisor gradually reaches full effect.")] private float _driftDelay;
     private bool _isDrifting;
     private float _driftDescentDivisor;
-    private float _currDriftDescentDivisor;
+    private float _currDriftDescentDivisor = 1;
     private float _driftDelayTimer;
 
     // Flight Parameters
@@ -177,13 +187,27 @@ public class PlayerMovement : MonoBehaviour
 
     void Awake()
     {
+        // Input Parameters
+        _playerInput = new InputSystem_Actions();
+        _playerActions = _playerInput.Player;
+
+        // Player Parameters
         PlayerEntity = GetComponent<Entity>();
         _characterController = GetComponent<CharacterController>();
         _meleeController = GetComponentInChildren<PlayerMeleeControllerV2>();
         _playerShooter = GetComponentInChildren<PlayerShooter>();
         _playerAnim = _playerModel.GetComponent<Animator>();
-        _playerInput = new InputSystem_Actions();
-        _playerActions = _playerInput.Player;
+        _playerHalfHeight = _characterController.height / 2;
+        _playerRadius = _characterController.radius;
+
+        // Gravity Parameters
+        _gravityAirDrag += Mathf.Abs(Physics.gravity.y) * _gravityMultiplier;
+
+        // Hover Parameters
+        _groundedCastRadius = _playerRadius - 0.1f;
+
+        // Coyote Time Parameters
+        _coyoteTimer = _coyoteTimeWindow;
     }
 
     void OnEnable()
@@ -220,72 +244,41 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        if (PlayerEntity == null) return;
-
-        // Player Parameters
-        _playerHalfHeight = GetComponent<CharacterController>().height / 2;
-        _playerRadius = GetComponent<CharacterController>().radius;
-
-        // Gravity Parameters
-        _gravityAirDrag += Mathf.Abs(Physics.gravity.y) * _gravityMultiplier;
-
         // Movement Parameters
         _moveMaxSpeed = PlayerEntity.Stats.MoveSpeed;
         _moveAcceleration = _moveMaxSpeed / _moveAccelerationSeconds;
         _moveDeceleration = _moveMaxSpeed / _moveDecelerationSeconds;
-        IsSlowed = false;
-        _moveInputTemp = Vector2.zero;
-
-        // Hover Parameters
-        _groundedCastRadius = _playerRadius - 0.1f;
-        _groundedCastPauseTimer = 0;
-        GetIsGrounded();
-        _groundPointColliding = null;
 
         // KnockBack Parameters
         _kbDamping = PlayerEntity.Stats.KbDamping;
         _kbControlsLockTime = PlayerEntity.Stats.KbControlsLockTime;
         _kbDashLockTime = PlayerEntity.Stats.KbDashLockTime;
-        _kbControlsLockTimer = 0;
-        _kbDashLockTimer = 0;
 
         // Dash Parameters
         _dashMaxCharges = PlayerEntity.Stats.DashCharges;
         _currDashCharges = _dashMaxCharges;
-        IsDashing = false;
-        _isRegeneratingDash = false;
 
         // Jump Parameters
         _jumpForce = PlayerEntity.Stats.JumpForce;
-
-        // Coyote Time Parameters
-        _coyoteTimer = _coyoteTimeWindow;
-        _jumpBufferTimer = 0;
+        _playerAnim.SetFloat("JumpAnimSpeedMultiplier", 1 / _jumpAnimationSpeedMultiplier);
 
         // Drift Parameters
         _driftDescentDivisor = PlayerEntity.Stats.DriftDescentDivisor;
-        _currDriftDescentDivisor = 1;
-        _driftDelayTimer = 0;
-        _isDrifting = false;
 
         // Flight Parameters
         _flightAcceleration = _flightMaxSpeed / _flightAccelerationSeconds;
         _flightDeceleration = _flightMaxSpeed / _flightDecelerationSeconds;
-        IsFlying = false;
         _currFlightEnergy = _flightMaxEnergy;
-        IsRegeneratingFlight = false;
-        _flightRegenerationCoroutine = null;
 
         // VFX
-        if (dashVFXPrefab != null)
-            dashVFXPrefab.SetActive(false);
+        dashVFXPrefab.SetActive(false);
     }
 
     void Update()
     {
-        TryGetComplicatedStatChanges();
+        TryGetComplexStatChanges();
 
-        GetIsGrounded();
+        IsGrounded = GetIsGrounded();
         GravityConditions();
         DecrementAllTimers();
 
@@ -293,16 +286,16 @@ public class PlayerMovement : MonoBehaviour
 
         if (IsDashing)
         {
-            GetIsGrounded();
+            IsGrounded = GetIsGrounded();
             DashConditions();
         }
         else
         {
             MoveConditions();
-            GetIsGrounded();
+            IsGrounded = GetIsGrounded();
             HoverConditions();
             JumpConditions();
-            GetIsGrounded();
+            IsGrounded = GetIsGrounded();
             DriftConditions();
             FlightConditions();
         }
@@ -323,7 +316,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void SnapToHoverAfterSlam()
     {
-        float targetY = _groundPointHovering.point.y + _hoverHeight + _playerHalfHeight;
+        float targetY = _groundHoveringPoint.point.y + _hoverHeight + _playerHalfHeight;
 
         _characterController.Move(Vector3.up * 0.02f); // tiny upward
 
@@ -373,7 +366,7 @@ public class PlayerMovement : MonoBehaviour
     ///     Gets all stat changes from the stats file on any frame this method is called.
     ///   </para>
     /// </summary>
-    private void TryGetComplicatedStatChanges()
+    private void TryGetComplexStatChanges()
     {
         if (PlayerEntity == null) return;
         
@@ -406,21 +399,24 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     ///   <para>
-    ///     Updates all grounded information for hovering on the frame this method is called.
+    ///     Checks if the player character is grounded (hovering) and updates the
+    ///     ground hovering point on the frame this method is called.
     ///   </para>
     /// </summary>
-    private void GetIsGrounded()
+    /// <returns> True if near enough to the ground for hovering, otherwise false. </returns>
+    private bool GetIsGrounded()
     {
-        IsGrounded = PlayerGroundCheck.GetIsGrounded(GetPlayerCharacterBottom(),
-                                                    _groundedCastLength,
-                                                    _groundedCastRadius,
-                                                    _maxGroundAngle,
-                                                    _groundedLayerMasks,
-                                                    out RaycastHit hitInfo,
-                                                    _groundedCastPauseTimer);
-        _groundPointHovering = hitInfo;
+        bool grounded = PlayerGroundCheck.GetIsGrounded(GetPlayerCharacterBottom(),
+                                                        _groundedCastLength,
+                                                        _groundedCastRadius,
+                                                        _maxGroundAngle,
+                                                        _groundedLayerMasks,
+                                                        out RaycastHit hitInfo,
+                                                        _groundedCastPauseTimer);
+        _groundHoveringPoint = hitInfo;
 
         //Debug.DrawRay(GetPlayerCharacterBottom(), _groundedCastLength * Vector3.down, Color.red);
+        return grounded;
     }
 
     /// <summary>
@@ -432,12 +428,13 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="hit"> The collision point. </param>
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (!IsGrounded) _groundPointColliding = hit;
+        if (!IsGrounded) _groundCollidingPoint = hit;
 
+        // Handle collision with tutorial objects.
         if (hit.gameObject.layer == LayerMask.NameToLayer("TutorialEvent"))
         {
             TutorialObject tutorialScript = hit.gameObject.GetComponent<TutorialObject>();
-            tutorialScript.OnTriggerOrCollide();
+            tutorialScript.OnTriggerOrCollide(hit.collider);
         }
     }
 
@@ -455,7 +452,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 gravityVelocityVector;
 
         // Do not accelerate if sliding on a steep slope.
-        if (_groundPointColliding == null)
+        if (_groundCollidingPoint == null)
         {
             float accelIncrement = Time.deltaTime * aggregateGravityStrength;
             _verticalVelocityVector.y = Mathf.Clamp(_verticalVelocityVector.y + accelIncrement, aggregateGravityStrength, float.MaxValue);
@@ -467,10 +464,10 @@ public class PlayerMovement : MonoBehaviour
             // If sliding on a steep slope, ensure gravity is always sliding the player character.
             if (_verticalVelocityVector.y > -1) _verticalVelocityVector.y = -1;
 
-            gravityVelocityVector = _verticalVelocityVector.magnitude * new Vector3(_groundPointColliding.normal.x,
+            gravityVelocityVector = _verticalVelocityVector.magnitude * new Vector3(_groundCollidingPoint.normal.x,
                                                                                     _verticalVelocityVector.y,
-                                                                                    _groundPointColliding.normal.z).normalized;
-            _groundPointColliding = null;
+                                                                                    _groundCollidingPoint.normal.z).normalized;
+            _groundCollidingPoint = null;
         }
 
         _characterController.Move(Time.deltaTime * gravityVelocityVector);
@@ -579,7 +576,6 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 GetMoveInputDirection()
     {
         Vector2 moveInput = _moveActions.ReadValue<Vector2>();
-
         Vector3 cameraPerspectiveForward = _cameraTransform ? _cameraTransform.forward : Vector3.forward;
         Vector3 cameraPerspectiveRight = _cameraTransform ? _cameraTransform.right : Vector3.right;
         cameraPerspectiveForward.y = 0;
@@ -605,7 +601,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (_moveActions.ReadValue<Vector2>() != Vector2.zero)
             {
-                Vector3 groundPlaneMoveUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundPointHovering.normal);
+                Vector3 groundPlaneMoveUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundHoveringPoint.normal);
 
                 if (_moveInputTemp == Vector2.zero)
                     moveDirectionUnitVector = CopyVectorAngles(groundPlaneMoveUnitVector, moveDirectionUnitVector);
@@ -709,7 +705,7 @@ public class PlayerMovement : MonoBehaviour
         // Skip hover calculations if not on the ground.
         if (!IsGrounded) return;
 
-        _currHoverHeight = _groundPointHovering.point.y + _hoverHeight;
+        _currHoverHeight = _groundHoveringPoint.point.y + _hoverHeight;
         float playerCharacterBottomHeight = GetPlayerCharacterBottom().y;
         float heightDisplacement = _currHoverHeight - playerCharacterBottomHeight;
 
@@ -765,10 +761,11 @@ public class PlayerMovement : MonoBehaviour
                 _dashDirectionUnitVector = GetComponentInParent<Transform>().forward;
 
             _currDashCharges--;
+            OnDashChargeSpent?.Invoke(_currDashCharges, _dashMaxCharges);
+
 
             // Only initialize regeneration routine if not already regenerating.
-            if (_currDashCharges == _dashMaxCharges - 1)
-                StartCoroutine(DashChargesRegeneration());
+            if (_currDashCharges == _dashMaxCharges - 1) StartCoroutine(DashChargesRegeneration());
 
             float dashDuration = _dashDistance / _dashSpeed;
             StartCoroutine(InitiateDashDuration(dashDuration));
@@ -777,8 +774,10 @@ public class PlayerMovement : MonoBehaviour
             dashSoundEvent.Post(gameObject);
 
             // Play Dash VFX
-            if(dashVFXPrefab == null) return;
-            else StartCoroutine(EnableDashVFX());
+            if(dashVFXPrefab == null)
+                return;
+            else
+                StartCoroutine(EnableDashVFX());
             //PlayDashVFX(transform.position, Quaternion.LookRotation(_dashDirectionUnitVector));
         }
     }
@@ -806,7 +805,7 @@ public class PlayerMovement : MonoBehaviour
     private void GroundClampSnap(ref Vector3 moveDirectionUnitVector)
     {
         if (IsGrounded)
-            moveDirectionUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundPointHovering.normal);
+            moveDirectionUnitVector = Vector3.ProjectOnPlane(moveDirectionUnitVector, _groundHoveringPoint.normal);
     }
 
     /// <summary>
@@ -826,6 +825,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 timer = 0;
                 _currDashCharges++;
+                OnDashChargeRestored?.Invoke(_currDashCharges, _dashMaxCharges);
             }
 
             if (_currDashCharges >= _dashMaxCharges) break;
@@ -873,9 +873,10 @@ public class PlayerMovement : MonoBehaviour
     private void JumpInputActionStarted(InputAction.CallbackContext context)
     {
         if (_kbControlsLockTimer > 0) return;
+        if (IsDashing) return;
 
-        if (!IsDashing) _jumpBufferTimer = _jumpBufferWindow;
-        if (!IsFlying && !IsGrounded && !IsDashing) EnableDrift();
+        _jumpBufferTimer = _jumpBufferWindow;
+        if (!IsFlying && !IsGrounded) EnableDrift();
     }
 
     /// <summary>
@@ -912,9 +913,24 @@ public class PlayerMovement : MonoBehaviour
         _verticalVelocityVector.y = jumpForce;
 
         _characterController.Move(Time.deltaTime * _verticalVelocityVector);
-        
-        // Play the jump sound effect.
-        jumpSoundEvent.Post(gameObject);
+
+        jumpSoundEvent.Post(gameObject); // Play the jump sound effect.
+        //_playerAnim.SetTrigger("Jump");
+        //if (_jumpAnimationCoroutine == null)
+        //    StartCoroutine(JumpAnimationDuration());
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Sets IsJumping to true for the duration of the jump animation.
+    ///   </para>
+    /// </summary>
+    /// <returns> IEnumerator object. </returns>
+    private IEnumerator JumpAnimationDuration()
+    {
+        IsJumping = true;
+        yield return new WaitForSeconds((_jumpAnim.length * _jumpAnimationSpeedMultiplier) + 0.01f);
+        IsJumping = false;
     }
 
     /// <summary>

@@ -18,27 +18,24 @@ using UnityEngine.InputSystem;
 
 public class PlayerMeleeControllerV2 : MonoBehaviour
 {
-    /// <summary>Fired when a combo attack starts. Argument: combo index (1=first, 2=second/finisher for V2).</summary>
-    public event Action<int> OnMeleeComboAttack;
-    /// <summary>Fired when the current melee attack animation ends.</summary>
-    public event Action OnMeleeAttackEnd;
+    // Input Parameters
 
     private InputSystem_Actions _playerInput;
     private InputSystem_Actions.PlayerActions _playerActions;
     private InputAction _attackActions;
 
-    // Weapon Parameters
+    // Player Parameters
 
     [Header("Player Parameters")] [Space]
     [SerializeField]
     [Tooltip("The player camera.")] private Transform _playerCamera;
     [SerializeField]
+    [Tooltip("Pivot of the player model.")] private Transform _playerModelPivot;
+    [SerializeField]
     [Tooltip("Controller for player aim.")] private PlayerAimController _playerAimController;
-    private Transform _playerModel;
     private PlayerMovement _playerMovement;
     private PlayerShooter _playerShooter;
     private Entity _playerEntity;
-    private PlayerAudioController _audioController;
 
     // Animation Parameters
 
@@ -49,10 +46,10 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [Tooltip("The upward pitch limit of attacks in degrees.")] private float _upwardDegreesLimit;
     [SerializeField]
     [Tooltip("The downward pitch limit of attacks in degrees.")] private float _downwardDegreesLimit;
-    [SerializeField] List<AttackInfo> _attacks = new List<AttackInfo>();
+    [SerializeField] private List<AttackInfo> _attacks = new();
     private Animator _weaponAnim;
     private float _degreesPerSecond;
-    private bool _isModelHorizontal;
+    private bool _isModelHorizontal = true;
 
     // Hit Registration Parameters
 
@@ -70,9 +67,9 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private Vector3 _prevHitCapsuleStartPointTemp;
     private Vector3 _prevHitCapsuleEndPointTemp;
     private Vector3 _prevHitCapsuleCenterPointTemp;
-    private RaycastHit[] _objectsHitThisCast;
-    private HashSet<GameObject> _objectsHitThisAttack;
-    private bool _prevHitCapsuleTempPointsInitialized;
+    private RaycastHit[] _objectsHitThisCast = new RaycastHit[32];
+    private HashSet<GameObject> _objectsHitThisAttack = new();
+    private bool _prevHitCapsuleTempPointsInitialized = false;
 
     // Attack Parameters
 
@@ -83,28 +80,43 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [Tooltip("Knockback force of attacks.")] private float _knockbackForce;
     [SerializeField]
     [Tooltip("The buffer time for inputting attack combos in seconds.")] private float _comboInputBuffer;
-    public bool IsAttacking { get; private set; }
-    private bool _isRegistering;
-    public bool CanAttack { get; set; }
-    private bool _comboInputted;
+    public bool IsAttacking { get; private set; } = false;
+    private bool _isRegistering = false;
+    public bool CanAttack { get; set; } = true;
+    private bool _comboInputted = false;
     private int _maxComboCount;
-    private int _currComboCount;
+    private int _currComboCount = 0;
+    public event Action<int> OnMeleeComboAttack; /// <summary> Fired when a combo attack starts. Argument: combo index (1=first, 2=second/finisher). </summary>
+    public event Action OnMeleeAttackEnd; /// <summary> Fired when the current melee attack animation ends. </summary>
 
-    // Audio variables.
+    // Audio Parameters
     [Header("Sound Effects")]
-    [SerializeField]
-    public AK.Wwise.Event swingSound;
+    [SerializeField] public AK.Wwise.Event swingSound;
+    private PlayerAudioController _audioController;
 
     void Awake()
     {
-        _playerModel = gameObject.transform;
-        _playerMovement = GetComponentInParent<PlayerMovement>();
-        _playerShooter = GetComponentInParent<PlayerShooter>();
-        _playerEntity = GetComponentInParent<Entity>();
-        _weaponAnim = _playerModel.GetComponent<Animator>();
-        _audioController = GetComponentInParent<PlayerAudioController>();
+        // Input Parameters
         _playerInput = new InputSystem_Actions();
         _playerActions = _playerInput.Player;
+
+        // Player Parameters
+        _playerEntity = GetComponentInParent<Entity>();
+        _playerMovement = GetComponentInParent<PlayerMovement>();
+        _playerShooter = GetComponentInParent<PlayerShooter>();
+
+        // Animation Parameters
+        _weaponAnim = GetComponent<Animator>();
+        _upwardDegreesLimit = Mathf.Abs(_upwardDegreesLimit);
+        _downwardDegreesLimit = -Mathf.Abs(_downwardDegreesLimit);
+        _degreesPerSecond = Mathf.Deg2Rad * _attackPitchSpeed;
+
+        // Attack Parameters
+        _maxComboCount = _attacks.Count;
+
+        // Audio Parameters
+        _audioController = GetComponentInParent<PlayerAudioController>();
+
     }
 
     void OnEnable()
@@ -116,36 +128,6 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     void OnDisable()
     {
         _attackActions.Disable();
-    }
-
-    void Start()
-    {
-        if (_playerEntity == null) return;
-
-        // Animation Parameters
-        _upwardDegreesLimit = Mathf.Abs(_upwardDegreesLimit);
-        _downwardDegreesLimit = -Mathf.Abs(_downwardDegreesLimit);
-        _degreesPerSecond = Mathf.Deg2Rad * _attackPitchSpeed;
-        _isModelHorizontal = true;
-        RecalculateAnimationSpeed();
-
-        // Hit Registration Parameters
-        _objectsHitThisCast = new RaycastHit[32];
-        _objectsHitThisAttack = new HashSet<GameObject>();
-        _prevHitCapsuleTempPointsInitialized = false;
-
-        // Attack Parameters
-        foreach (AttackInfo info in _attacks)
-        {
-            info.AttackDuration = info.PreTransitionAnim.length + info.AttackAnim.length;
-            info.BufferedAttackDuration = info.AttackDuration - _comboInputBuffer;
-        }
-        IsAttacking = false;
-        _isRegistering = false;
-        CanAttack = true;
-        _comboInputted = false;
-        _maxComboCount = _attacks.Count;
-        _currComboCount = 0;
     }
 
     void Update()
@@ -277,22 +259,51 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     {
         if (IsAttacking)
         {
-            // Constrain vertical rotation of player character to the pitch limits.
-            Vector3 crosshairIntersect = _playerAimController.GetAimDirection(_playerModel.position, _playerModel.forward);
-            Vector3 rotationIncrement = Vector3.RotateTowards(_playerModel.forward, crosshairIntersect, Time.deltaTime * _degreesPerSecond, 0);
+            Vector3 crosshairIntersect = _playerAimController.GetAimDirection(_playerModelPivot.position, _playerModelPivot.forward, out RaycastHit hit);
+            Vector3 rotationIncrement = Vector3.RotateTowards(_playerModelPivot.forward, crosshairIntersect, Time.deltaTime * _degreesPerSecond, 0);
+            rotationIncrement = CopyVectorAngles(rotationIncrement, _playerCamera.forward); // Ensure player character is always horizontally aligned with camera.
             float pitch = GetPitchDegrees(rotationIncrement);
-            if (pitch >= _downwardDegreesLimit && pitch <= _upwardDegreesLimit)
-                _playerModel.forward = rotationIncrement;
+            if (pitch >= _downwardDegreesLimit && pitch <= _upwardDegreesLimit) // Constrain vertical rotation of player character to the pitch limits.
+                _playerModelPivot.forward = rotationIncrement;
 
             _isModelHorizontal = false;
         }
-        // Gradually reset player model alignment while not attacking.
-        else if (!_isModelHorizontal)
+
+        // Gradually reset player model alignment while not attacking or if no damageable target is being aimed at.
+        if (!IsAttacking && !_isModelHorizontal)
         {
             Vector3 worldHorizontal = new Vector3(_playerCamera.forward.x, 0, _playerCamera.forward.z).normalized;
-            _playerModel.forward = Vector3.RotateTowards(_playerModel.forward, worldHorizontal, Time.deltaTime * _degreesPerSecond, 0);
-            if (Vector3.Angle(_playerModel.forward, worldHorizontal) < 1e-3f) _isModelHorizontal = true;
+            _playerModelPivot.forward = Vector3.RotateTowards(_playerModelPivot.forward, worldHorizontal, Time.deltaTime * _degreesPerSecond, 0);
+            if (Vector3.Angle(_playerModelPivot.forward, worldHorizontal) < 1e-3f)
+            {
+                _playerModelPivot.localRotation = Quaternion.Euler(0, 0, 0); // Zero out pivot rotation for exactness.
+                _isModelHorizontal = true;
+            }
         }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Gets a Vector3 that is composed of the pitch and yaw from two other given vectors.
+    ///   </para>
+    /// </summary>
+    /// <param name="copyVectorPitch"> The vector pitch to copy. </param>
+    /// <param name="copyVectorYaw"> The vector yaw to copy. </param>
+    /// <returns> Composite vector from the pitch and yaw. </returns>
+    private Vector3 CopyVectorAngles(Vector3 copyVectorPitch, Vector3 copyVectorYaw)
+    {
+        // Get copied pitch and yaw in radians.
+        float copiedPitch = Mathf.Atan2(copyVectorPitch.y, Mathf.Sqrt(copyVectorPitch.x * copyVectorPitch.x
+                                                                      + copyVectorPitch.z * copyVectorPitch.z));
+        float copiedYaw = Mathf.Atan2(copyVectorYaw.x, copyVectorYaw.z);
+
+        // Calculate the composite vector using the copied pitch and yaw.
+        float cosPitch = Mathf.Cos(copiedPitch);
+        float vectorX = cosPitch * Mathf.Sin(copiedYaw);
+        float vectorY = Mathf.Sin(copiedPitch);
+        float vectorZ = cosPitch * Mathf.Cos(copiedYaw);
+
+        return new Vector3(vectorX, vectorY, vectorZ);
     }
 
     /// <summary>
@@ -376,26 +387,40 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// </summary>
     void OnDrawGizmos()
     {
-        if (!_isRegistering || !_debug) return;
+        if (!_debug) return;
 
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(_hitCapsuleStartPoint.position, _hitCapsuleCastRadius);
-        Gizmos.DrawWireSphere(_hitCapsuleEndPoint.position, _hitCapsuleCastRadius);
+        // Melee aim debugging.
+        if (IsAttacking)
+        {
+            Vector3 crosshairIntersect = _playerAimController.GetAimDirection(_playerModelPivot.position, _playerModelPivot.forward, out RaycastHit hit);
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireSphere(_playerModelPivot.position, 0.5f);
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(hit.point, 0.5f);
+        }
 
-        Vector3[] lineStartPoints = new Vector3[4];
-        lineStartPoints[0] = _hitCapsuleStartPoint.position + _hitCapsuleCastRadius * _hitCapsuleStartPoint.forward;
-        lineStartPoints[1] = _hitCapsuleStartPoint.position - _hitCapsuleCastRadius * _hitCapsuleStartPoint.forward;
-        lineStartPoints[2] = _hitCapsuleStartPoint.position + _hitCapsuleCastRadius * _hitCapsuleStartPoint.right;
-        lineStartPoints[3] = _hitCapsuleStartPoint.position - _hitCapsuleCastRadius * _hitCapsuleStartPoint.right;
+        // Attack registration debugging.
+        if (_isRegistering)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(_hitCapsuleStartPoint.position, _hitCapsuleCastRadius);
+            Gizmos.DrawWireSphere(_hitCapsuleEndPoint.position, _hitCapsuleCastRadius);
 
-        Vector3[] lineEndPoints = new Vector3[4];
-        lineEndPoints[0] = _hitCapsuleEndPoint.position + _hitCapsuleCastRadius * _hitCapsuleEndPoint.forward;
-        lineEndPoints[1] = _hitCapsuleEndPoint.position - _hitCapsuleCastRadius * _hitCapsuleEndPoint.forward;
-        lineEndPoints[2] = _hitCapsuleEndPoint.position + _hitCapsuleCastRadius * _hitCapsuleEndPoint.right;
-        lineEndPoints[3] = _hitCapsuleEndPoint.position - _hitCapsuleCastRadius * _hitCapsuleEndPoint.right;
+            Vector3[] lineStartPoints = new Vector3[4];
+            lineStartPoints[0] = _hitCapsuleStartPoint.position + _hitCapsuleCastRadius * _hitCapsuleStartPoint.forward;
+            lineStartPoints[1] = _hitCapsuleStartPoint.position - _hitCapsuleCastRadius * _hitCapsuleStartPoint.forward;
+            lineStartPoints[2] = _hitCapsuleStartPoint.position + _hitCapsuleCastRadius * _hitCapsuleStartPoint.right;
+            lineStartPoints[3] = _hitCapsuleStartPoint.position - _hitCapsuleCastRadius * _hitCapsuleStartPoint.right;
 
-        for (int i = 0; i < 4; i++)
-            Gizmos.DrawLine(lineStartPoints[i], lineEndPoints[i]);
+            Vector3[] lineEndPoints = new Vector3[4];
+            lineEndPoints[0] = _hitCapsuleEndPoint.position + _hitCapsuleCastRadius * _hitCapsuleEndPoint.forward;
+            lineEndPoints[1] = _hitCapsuleEndPoint.position - _hitCapsuleCastRadius * _hitCapsuleEndPoint.forward;
+            lineEndPoints[2] = _hitCapsuleEndPoint.position + _hitCapsuleCastRadius * _hitCapsuleEndPoint.right;
+            lineEndPoints[3] = _hitCapsuleEndPoint.position - _hitCapsuleCastRadius * _hitCapsuleEndPoint.right;
+
+            for (int i = 0; i < 4; i++)
+                Gizmos.DrawLine(lineStartPoints[i], lineEndPoints[i]);
+        }
     }
 
     /// <summary>

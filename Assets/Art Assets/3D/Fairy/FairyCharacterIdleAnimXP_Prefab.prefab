@@ -129,6 +129,7 @@ Transform:
   - {fileID: 1791856504923247933}
   - {fileID: 7600189784954906408}
   - {fileID: 3435950768047899369}
+  - {fileID: 883563723077708220}
   - {fileID: 5415853934911803164}
   m_Father: {fileID: 6090720209905836794}
   m_LocalEulerAnglesHint: {x: 0.51887774, y: -109.983444, z: 31.633583}
@@ -704,8 +705,7 @@ Transform:
   m_LocalPosition: {x: 0.0068988167, y: 0.02464944, z: -0.0006112424}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 883563723077708220}
+  m_Children: []
   m_Father: {fileID: 3434601670524540518}
   m_LocalEulerAnglesHint: {x: 115, y: 0, z: 0}
 --- !u!1 &2620250370340816026
@@ -1046,12 +1046,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerCamera: {fileID: 0}
+  _playerModelPivot: {fileID: 0}
+  _playerAimController: {fileID: 0}
   _attackPitchSpeed: 240
-  _upwardDegreesLimit: 40
+  _upwardDegreesLimit: 80
   _downwardDegreesLimit: 40
   _attacks:
   - PreTransitionAnim: {fileID: 7400000, guid: 0a2f0fcac3bd6344789873b22676d91e, type: 2}
-    AttackAnim: {fileID: 7400000, guid: 15e6dfb76ca55ee4aaca5276755563dd, type: 2}
+    AttackAnim: {fileID: 7400000, guid: 43168a8b8716f1d49953def3ba00e2b0, type: 2}
     PostTransitionAnim: {fileID: 7400000, guid: 8d8882d831a04cf4d8b8f37c8517c541, type: 2}
     AttackDuration: 0
     BufferedAttackDuration: 0
@@ -1062,13 +1064,17 @@ MonoBehaviour:
     BufferedAttackDuration: 0
   _hitCapsuleStartPoint: {fileID: 7269917343812784875}
   _hitCapsuleEndPoint: {fileID: 4877342124702405127}
-  _hitCapsuleCastRadius: 2
+  _hitCapsuleCastRadius: 3
   _damageableLayerMasks:
     serializedVersion: 2
     m_Bits: 7168
   _debug: 1
   _knockbackForce: 18
   _comboInputBuffer: 0.1
+  swingSound:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
 --- !u!114 &8760255454139778537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1128,8 +1134,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3460231269518442667}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.22, z: 0}
+  m_LocalRotation: {x: -0.58030075, y: -0.03263195, z: 0.24743834, w: 0.77521646}
+  m_LocalPosition: {x: -0.06916922, y: 0.06954058, z: -0.20210184}
   m_LocalScale: {x: 6, y: 6, z: 6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1137,7 +1143,7 @@ Transform:
   - {fileID: 6685475329622810133}
   - {fileID: 7269917343812784875}
   - {fileID: 4877342124702405127}
-  m_Father: {fileID: 5415853934911803164}
+  m_Father: {fileID: 3434601670524540518}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3501878695430174026
 GameObject:
