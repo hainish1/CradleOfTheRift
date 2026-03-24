@@ -616,7 +616,8 @@ public class PlayerInventory : MonoBehaviour
                 effect.explosiveProjectileSpeed,
                 initialStacks,
                 effect.duration,
-                effect.explosiveVFX
+                effect.explosiveVFX,
+                effect.explosiveTravelVFX
             );
             if (effect.duration > 0f) tickingEffects.Add(explosiveProjectilesEffect);
             Debug.Log($"[Effect] Explosive Projectiles created : Stacks{initialStacks}");

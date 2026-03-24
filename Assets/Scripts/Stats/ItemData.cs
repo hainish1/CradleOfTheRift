@@ -97,6 +97,7 @@ public class EffectSpec
     public float explosiveFireballSize = 7.5f;
     public float explosiveProjectileSpeed = 0.7f;
     public GameObject explosiveVFX;
+    public GameObject explosiveTravelVFX;
 
     // Chain Lightning
     public float chainDamagePercent = 0.5f;

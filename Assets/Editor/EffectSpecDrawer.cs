@@ -103,6 +103,7 @@ public class EffectSpecDrawer : PropertyDrawer
             "explosiveFireballSize",
             "explosiveProjectileSpeed",
             "explosiveVFX",
+            "explosiveTravelVFX",
         },
 
         ItemEffectKind.ChainLightning => new[]
