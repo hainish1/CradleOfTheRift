@@ -28,6 +28,7 @@ public class DamageVignetteController : MonoBehaviour
 
 
     [Header("Critical Pulse")]
+    [SerializeField] private bool enableCriticalPulse = true;
     [Tooltip("Health percentage threshold to trigger critical pulse (0-1)")]
     [SerializeField] private float criticalThreshold = 0.25f;
 
@@ -75,7 +76,8 @@ public class DamageVignetteController : MonoBehaviour
         if (current < previousHealth)
             TriggerFlash();
 
-        UpdateLowHealthPulse(current, max);
+        if (enableCriticalPulse)
+            UpdateLowHealthPulse(current, max);
 
         previousHealth = current;
     }
@@ -105,7 +107,7 @@ public class DamageVignetteController : MonoBehaviour
         {
             pulseCoroutine = StartCoroutine(PulseRoutine());
         }
-        else if (!isCritical && pulseCoroutine != null)
+        else if ((!isCritical || !enableCriticalPulse) && pulseCoroutine != null)
         {
             StopCoroutine(pulseCoroutine);
             pulseCoroutine = null;
