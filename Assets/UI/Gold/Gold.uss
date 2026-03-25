@@ -1,0 +1,22 @@
+.gold-container {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.gold-icon {
+        width: 28px;
+    height: 28px;
+    /* Replace this path with your actual gold icon asset */
+    /* background-image: url("project://database/Assets/Art Assets/2D/UI assets/Gold_Icon.png"); */
+    /* -unity-background-scale-mode: scale-to-fit; */
+}
+
+.gold-label {
+    -unity-font-style: bold;
+    font-size: 24px;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-left;
+    margin: 0px;
+    padding: 0px;
+}
