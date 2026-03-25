@@ -1,5 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <ui:Template name="InventoryUI" src="project://database/Assets/UI/InventoryUI.uxml?fileID=9197481963319205126&amp;guid=9836c162555c40640a3ee2f70b6ac4d6&amp;type=3#InventoryUI" />
+    <ui:Template name="HealthBar" src="project://database/Assets/UI/HealthBar/HealthBar.uxml?fileID=9197481963319205126&amp;guid=c62ad0f5596be254dacd6d01d4d62a42&amp;type=3#HealthBar" />
     <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=340cd68f9068b8147b6cb9f90ab8e93c&amp;type=3#Stylesheet" />
     <ui:VisualElement name="HUD" picking-mode="Ignore" style="flex-grow: 1;">
         <ui:VisualElement name="InventoryGroup" style="flex-grow: 1; top: -34px; left: 1px;">
@@ -16,9 +17,7 @@
         <ui:VisualElement name="TimerContainer" style="flex-grow: 1; top: 7px; right: -1px; height: 108px; width: 437px; background-image: url(&quot;project://database/Assets/Art%20Assets/2D/UI%20assets%202/Timer/Timer_Full.png?fileID=2800000&amp;guid=8b998bc8202f546358ba1f8d2aa13fb6&amp;type=3#Timer_Full&quot;);">
             <ui:Label text="Label" name="TimerLabel" style="position: absolute; top: 6px; left: 26px;" />
         </ui:VisualElement>
-        <ui:VisualElement name="HealthContainer" style="flex-grow: 1; align-items: flex-start; justify-content: flex-start;">
-            <ui:ProgressBar name="HealthBar" style="visibility: hidden; background-image: url(&quot;project://database/Assets/Art%20Assets/2D/UI%20assets%202/Health%20Bar/Health_Bar_Full.png?fileID=2800000&amp;guid=3af8ac29ca375461bac723b6d002cdcd&amp;type=3#Health_Bar_Full&quot;);" />
-        </ui:VisualElement>
+        <ui:Instance template="HealthBar" name="HealthBar" />
         <ui:VisualElement name="AbilityBar" style="flex-grow: 1; bottom: 76px; right: 333px;" />
         <ui:VisualElement name="XPContainer" picking-mode="Ignore">
             <ui:Label text="Level: 0" name="LevelLabel" />
