@@ -5,6 +5,13 @@ using UnityEngine.UIElements;
 public class DamageVignetteController : MonoBehaviour
 {
     [SerializeField] private PlayerHealth health;
+    [Header("Vignette Appearance")]
+    [SerializeField] private Color vignetteColor = new Color(0.6f, 0f, 0f, 1f);
+    [Tooltip("How far from the edge the vignette starts (0 = full screen, 1 = edges only)")]
+    [SerializeField] private float innerRadiusFraction = 0.35f;
+    [Tooltip("How sharply the vignette falls off toward the center. Higher = more concentrated at edges")]
+    [SerializeField] private float falloffPower = 2f;
+
 
     [Header("Flash On Hit")]
     [Tooltip("Peak opacity of the vignette flash on hit (0-1)")]
@@ -18,7 +25,7 @@ public class DamageVignetteController : MonoBehaviour
 
     [Tooltip("How long the vignette takes to fully fade out")]
     [SerializeField] private float fadeOutDuration = 0.4f;
-    
+
 
     [Header("Critical Pulse")]
     [Tooltip("Health percentage threshold to trigger critical pulse (0-1)")]
@@ -44,7 +51,12 @@ public class DamageVignetteController : MonoBehaviour
 
         var root = GetComponent<UIDocument>().rootVisualElement;
 
-        vignette = new RadialVignetteElement();
+        vignette = new RadialVignetteElement
+        {
+            vignetteColor = vignetteColor,
+            innerRadiusFraction = innerRadiusFraction,
+            falloffPower = falloffPower
+        };
         vignette.style.opacity = 0;
         root.Add(vignette);
 

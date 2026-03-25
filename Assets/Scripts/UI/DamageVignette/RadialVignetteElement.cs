@@ -3,8 +3,13 @@ using UnityEngine.UIElements;
 
 public class RadialVignetteElement : VisualElement
 {
-    // Tint color of the vignette (default: deep red)
     public Color vignetteColor = new Color(0.6f, 0f, 0f, 1f);
+
+    // How far from the edge the vignette starts (0 = full screen, 1 = edges only)
+    public float innerRadiusFraction = 0.35f;
+
+    // Controls how sharply the vignette falls off toward the center. Higher = more concentrated at edges
+    public float falloffPower = 2f;
 
     public RadialVignetteElement()
     {
@@ -12,11 +17,11 @@ public class RadialVignetteElement : VisualElement
 
         // Fill the screen, ignore mouse input
         style.position = Position.Absolute;
-        style.left   = 0; style.top    = 0;
-        style.right  = 0; style.bottom = 0;
-        style.width  = new StyleLength(new Length(100, LengthUnit.Percent));
+        style.left = 0; style.top = 0;
+        style.right = 0; style.bottom = 0;
+        style.width = new StyleLength(new Length(100, LengthUnit.Percent));
         style.height = new StyleLength(new Length(100, LengthUnit.Percent));
-        pickingMode  = PickingMode.Ignore;
+        pickingMode = PickingMode.Ignore;
     }
 
     private void OnGenerateVisualContent(MeshGenerationContext ctx)
@@ -28,33 +33,31 @@ public class RadialVignetteElement : VisualElement
         float cy = r.height * 0.5f;
 
         // Use enough rings to keep the gradient smooth
-        int   rings        = 40;
-        float outerRadius  = Mathf.Sqrt(cx * cx + cy * cy); // reaches all corners
-        float innerRadius  = outerRadius * 0.35f;            // clear center
-
-        Color transparent = new Color(vignetteColor.r, vignetteColor.g, vignetteColor.b, 0f);
+        int rings = 40;
+        float outerRadius = Mathf.Sqrt(cx * cx + cy * cy); // reaches all corners
+        float innerRadius = outerRadius * Mathf.Clamp01(innerRadiusFraction); // clear center
 
         for (int i = 0; i < rings; i++)
         {
-            float t0 = (float) i       / rings;
-            float t1 = (float)(i + 1)  / rings;
+            float t0 = (float) i / rings;
+            float t1 = (float)(i + 1) / rings;
 
             float r0 = Mathf.Lerp(innerRadius, outerRadius, t0);
             float r1 = Mathf.Lerp(innerRadius, outerRadius, t1);
 
             // Ease-in so the edge is dense and the center stays clear
-            float a0 = Mathf.Pow(t0, 2f) * vignetteColor.a;
-            float a1 = Mathf.Pow(t1, 2f) * vignetteColor.a;
+            float a0 = Mathf.Pow(t0, falloffPower) * vignetteColor.a;
+            float a1 = Mathf.Pow(t1, falloffPower) * vignetteColor.a;
 
             Color c0 = new Color(vignetteColor.r, vignetteColor.g, vignetteColor.b, a0);
             Color c1 = new Color(vignetteColor.r, vignetteColor.g, vignetteColor.b, a1);
 
-            int   segments = 64;
-            float step     = 360f / segments;
+            int segments = 64;
+            float step = 360f / segments;
 
             for (int s = 0; s < segments; s++)
             {
-                float angleA = Mathf.Deg2Rad * (s       * step);
+                float angleA = Mathf.Deg2Rad * (s * step);
                 float angleB = Mathf.Deg2Rad * ((s + 1) * step);
 
                 // Quad: two triangles forming a ring slice
