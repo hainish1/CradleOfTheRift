@@ -1,7 +1,9 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/Gold/Gold.uss?fileID=7433441132597879392&amp;guid=c59794750a1eea5428aa90d280173243&amp;type=3#Gold" />
     <engine:VisualElement name="GoldContainer" class="gold-container">
-        <engine:VisualElement name="GoldIcon" class="gold-icon" />
+        <engine:VisualElement name="GoldIcon" class="gold-icon">
+            <engine:VisualElement name="GoldIconInner" class="gold-icon-inner" />
+        </engine:VisualElement>
         <engine:Label name="GoldLabel" text="0" class="gold-label" />
     </engine:VisualElement>
 </engine:UXML>
