@@ -1,0 +1,7 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Inventory/ChestPrompt.uss?fileID=7433441132597879392&amp;guid=0adfe40525085d74cb77be4e56f765c8&amp;type=3#ChestPrompt" />
+    <engine:VisualElement name="ChestPrompt" class="chest-prompt">
+        <engine:VisualElement name="ChestIcon" class="chest-icon" />
+        <engine:Label name="ChestKeyLabel" class="chest-key-label" text="[E]" />
+    </engine:VisualElement>
+</engine:UXML>
