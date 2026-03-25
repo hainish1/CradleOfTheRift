@@ -5,7 +5,7 @@
     <ui:Template name="HealthBar" src="project://database/Assets/UI/HealthBar/HealthBar.uxml?fileID=9197481963319205126&amp;guid=c62ad0f5596be254dacd6d01d4d62a42&amp;type=3#HealthBar" />
     <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=340cd68f9068b8147b6cb9f90ab8e93c&amp;type=3#Stylesheet" />
     <ui:VisualElement name="HUD" picking-mode="Ignore" style="flex-grow: 1;">
-        <ui:VisualElement name="TopLeftHUD" style="position: absolute; top: 15px; left: 15px; flex-direction: column; gap: 8px;">
+        <ui:VisualElement name="TopLeftHUD">
             <ui:Instance template="ChestPrompt" name="ChestPrompt" />
             <ui:Instance template="Gold" name="Gold" />
         </ui:VisualElement>
