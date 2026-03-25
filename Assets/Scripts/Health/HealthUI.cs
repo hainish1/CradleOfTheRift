@@ -6,10 +6,10 @@ public class HealthUI : MonoBehaviour
 {
     [SerializeField] private PlayerHealth health;
 
-    // How long to hold the red damage bar before it starts shrinking
+    [Tooltip("How long to hold the red damage bar before it starts shrinking")]
     [SerializeField] private float damageHoldDuration = 0.5f;
 
-    // How long the red bar takes to drain down to the new health value
+    [Tooltip("How long the red bar takes to drain down to the new health value")]
     [SerializeField] private float damageDrainDuration = 0.4f;
 
     private ProgressBar healthBar;
