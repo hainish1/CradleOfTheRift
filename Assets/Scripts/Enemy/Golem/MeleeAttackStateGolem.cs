@@ -4,7 +4,7 @@ using UnityEngine;
 /// Class - Represents the Attack State for Melee Enemy.
 /// Uses swept-sphere collision during the leap
 /// </summary>
-public class AttackStateGolem : EnemyState
+public class MeleeAttackStateGolem : EnemyState
 {
     private EnemyGolem enemyGolem;
     private AgentKnockBack knockBack;
@@ -22,7 +22,7 @@ public class AttackStateGolem : EnemyState
     // Tracks phase transitions 
     private Phase lastPhase;
 
-    public AttackStateGolem(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
+    public MeleeAttackStateGolem(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
         enemyGolem = enemy as EnemyGolem;
         knockBack = enemy.GetComponent<AgentKnockBack>();

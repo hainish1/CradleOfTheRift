@@ -16,17 +16,19 @@ public class EnemyGolem : Enemy
     public float knockbackPower = 10f; // how far can push the enemy
     public float recoveryTime { get; private set; } = 0.25f;
 
-    [Header("Slime drag stuff")]
-    public float dragSpeed = 6f;
-    public float dragDuration = 0.35f;
-    public float restDuration = 0.25f;
+    // [Header("Slime drag stuff")]
+    // public float dragSpeed = 6f;
+    // public float dragDuration = 0.35f;
+    // public float restDuration = 0.25f;
 
 
-    [Header("Slam attack")]
-    public float slamDamage = 1;
-    public float windupTime = .15f;
-    public float chargeSpeed = 12f;
-    public float chargeTime = .18f;
+    [Header("Rock Throw Attack Settings")]
+    public float directDamage = 20;
+    public float AOEDamage = 5;
+    public float windupTime = 0.7f;
+    public float projectileVelocity = 8f;
+    // public float chargeSpeed = 12f;
+    // public float chargeTime = .18f;
 
     [Header("AttackHitbox")]
     [SerializeField] private EnemyMeleeHitbox hitbox;
@@ -50,10 +52,11 @@ public class EnemyGolem : Enemy
     [HideInInspector] public bool isInAir;
     [HideInInspector] public Vector3 inAirVelocity;
 
-    IdleState_Melee idle;
-    ChaseState_Melee chase;
-    AttackState_Melee attack;
-    RecoveryState_Melee recovery;
+    IdleStateGolem idle;
+    ChaseStateGolem chase;
+    MeleeAttackStateGolem meleeAttack;
+    RangeAttackStateGolem rangeAttack;
+    RecoveryStateGolem recovery;
 
     [Header("Jump Sound Effect")]
     // The sound effect of the slime jumping at the player
@@ -93,7 +96,8 @@ public class EnemyGolem : Enemy
 
         idle = new IdleState_Melee(this, stateMachine);
         chase = new ChaseState_Melee(this, stateMachine);
-        attack = new AttackState_Melee(this, stateMachine);
+        rangeAttack = new RangeAttackStateGolem(this, stateMachine);
+        meleeAttack = new MeleeAttackStateGolem(this, stateMachine);
         recovery = new RecoveryState_Melee(this, stateMachine);
 
         stateMachine.Initialize(idle);
