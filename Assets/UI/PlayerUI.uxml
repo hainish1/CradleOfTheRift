@@ -21,7 +21,7 @@
         <ui:VisualElement name="TimerContainer" style="flex-grow: 1; top: 7px; right: -1px; height: 108px; width: 437px; background-image: url(&quot;project://database/Assets/Art%20Assets/2D/UI%20assets%202/Timer/Timer_Full.png?fileID=2800000&amp;guid=8b998bc8202f546358ba1f8d2aa13fb6&amp;type=3#Timer_Full&quot;);">
             <ui:Label text="Label" name="TimerLabel" style="position: absolute; top: 6px; left: 26px;" />
         </ui:VisualElement>
-        <ui:Instance template="HealthBar" name="HealthBar" />
+        <ui:Instance template="HealthBar" name="HealthBar" picking-mode="Ignore" />
         <ui:VisualElement name="AbilityBar" style="flex-grow: 1; bottom: 76px; right: 333px;" />
         <ui:Instance template="XPContainer" name="XPContainer" />
     </ui:VisualElement>
