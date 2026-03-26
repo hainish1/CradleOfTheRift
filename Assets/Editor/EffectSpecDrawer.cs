@@ -103,6 +103,7 @@ public class EffectSpecDrawer : PropertyDrawer
             "explosiveFireballSize",
             "explosiveProjectileSpeed",
             "explosiveVFX",
+            "explosiveTravelVFX",
         },
 
         ItemEffectKind.ChainLightning => new[]
@@ -229,6 +230,36 @@ public class EffectSpecDrawer : PropertyDrawer
             "pureCoreDamageMultiplier",
             "pureCoreHealthMultiplier",
         },
+
+        ItemEffectKind.LightningStrikeBase => new[]
+        {
+            "playerLightningStrikeDamage", "playerLightningStrikeRadius",
+            "playerLightningStrikeInterval", "playerLightningStrikeVFX",
+        },
+        ItemEffectKind.LightningStrikeDamage => new[]
+        {
+            "lightningStrikeBonusDamage",
+        },
+        ItemEffectKind.LightningStrikeChainBuff => new[]
+        {
+            "chainLightningTestBuffDuration", "chainLightningTestChainDamagePercent",
+            "chainLightningTestMaxDepth", "chainLightningTestBranchesPerNode",
+            "chainLightningTestChainRange",
+        },
+        ItemEffectKind.LightningStrikePlayerChain => Array.Empty<string>(),
+        ItemEffectKind.LightningStrikeElectrify => new[]
+        {
+            "playerLightningStrikeElectrifyDamage",
+        },
+        ItemEffectKind.LightningStrikeCooldown => new[]
+        {
+            "lightningStrikeCooldownReduction",
+        },
+        ItemEffectKind.LightningStrikeCount => new[]
+        {
+            "lightningStrikeBonusCount", "lightningStrikeSpreadRadius",
+        },
+        ItemEffectKind.LightningStrikeSelfHeal => Array.Empty<string>(),
 
         _ => Array.Empty<string>(),
     };

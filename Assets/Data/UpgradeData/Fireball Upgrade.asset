@@ -19,7 +19,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 8fa2a36f5f130804cbc7f3b7f28df1f3, type: 3}
   rarity: 1
   rarityColor: {r: 0, g: 0.735849, b: 0.09301324, a: 1}
-  canStack: 1
+  canStack: 0
   maxStacks: 99
   stackingType: 0
   useMultipleStats: 1
@@ -49,11 +49,12 @@ MonoBehaviour:
     numberOfProjectiles: 0
     projectileDamageMultiplier: 0
     explosiveAoeRadius: 10
-    explosiveAoeDamageMultiplier: 2
+    explosiveAoeDamageMultiplier: 1.5
     explosiveMaxRange: 100
     explosiveFireballSize: 3
-    explosiveProjectileSpeed: 5
-    explosiveVFX: {fileID: 0}
+    explosiveProjectileSpeed: 60
+    explosiveVFX: {fileID: 676540690991785363, guid: a2018f62fc3c3344b881fabb897f74d3, type: 3}
+    explosiveTravelVFX: {fileID: 5567662292661809767, guid: beb992516f37b7241885df2f6d5cbc6f, type: 3}
     chainDamagePercent: 0
     maxChainCount: 0
     chainRange: 0

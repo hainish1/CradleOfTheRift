@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class ExplosiveProjectile : Projectile
 {
+    //[SerializeField] private GameObject travelVfxPrefab;
     private GameObject fireballVisual;
     private static Shader cachedShader;
 
@@ -17,8 +18,25 @@ public class ExplosiveProjectile : Projectile
         {
             HideOriginalProjectileModel();
             CreateFireballVisual();
-            SetProjectileSpeed();
         }
+    }
+
+    public override void Init(Vector3 velocity, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
+    {
+        base.Init(velocity, mask, damage, flyDistance, attacker);
+
+        if (ExplosiveProjectiles.IsEnabled && fireballVisual == null)
+        {
+            HideOriginalProjectileModel();
+            CreateFireballVisual();
+        }
+
+        ResetTravelVFX();
+
+        if (!ExplosiveProjectiles.IsEnabled || rb == null) return;
+
+        Vector3 dir = velocity.sqrMagnitude > 0.0001f ? velocity.normalized : transform.forward;
+        rb.linearVelocity = dir * ExplosiveProjectiles.ProjectileSpeed;
     }
 
     private void HideOriginalProjectileModel()
@@ -32,11 +50,45 @@ public class ExplosiveProjectile : Projectile
 
     private void CreateFireballVisual()
     {
-        fireballVisual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        fireballVisual.name = "FireballVisual";
-        fireballVisual.transform.SetParent(transform);
-        fireballVisual.transform.localPosition = Vector3.zero;
-        fireballVisual.transform.localScale = Vector3.one * ExplosiveProjectiles.FireballVisualScale;
+        bool usingTravelVFX = ExplosiveProjectiles.FireballTravelVFX != null;
+
+        if (usingTravelVFX)
+        {
+            Debug.Log("Using assigned travel VFX prefab for ExplosiveProjectile.");
+            fireballVisual = Instantiate(ExplosiveProjectiles.FireballTravelVFX, transform);
+            fireballVisual.name = "FireballVisual";
+            fireballVisual.transform.localPosition = Vector3.zero;
+            fireballVisual.transform.localScale = Vector3.one;
+
+        }
+        else
+        {
+            Debug.LogWarning("Travel VFX prefab not assigned for ExplosiveProjectile. Using simple sphere visual.");
+            fireballVisual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            fireballVisual.name = "FireballVisual";
+            fireballVisual.transform.SetParent(transform);
+            fireballVisual.transform.localPosition = Vector3.zero;
+            fireballVisual.transform.localScale = Vector3.one * ExplosiveProjectiles.FireballVisualScale;
+            //CreateSimpleFireballVisual();
+
+            // int layer = LayerMask.NameToLayer(FireballVisualLayerName);
+            // if (layer >= 0)
+            //     fireballVisual.layer = layer;
+
+            // var col = fireballVisual.GetComponent<Collider>();
+            // if (col != null)
+            //     DestroyImmediate(col);
+
+            // if (cachedShader == null)
+            //     cachedShader = Shader.Find("Sprites/Default");
+
+            // var material = new Material(cachedShader);
+            // material.color = new Color(1f, 0f, 0f, 1f);
+
+            // var renderer = fireballVisual.GetComponent<Renderer>();
+            // if (renderer != null)
+            //     renderer.material = material;
+        }
 
         int layer = LayerMask.NameToLayer(FireballVisualLayerName);
         if (layer >= 0)
@@ -46,15 +98,43 @@ public class ExplosiveProjectile : Projectile
         if (col != null)
             DestroyImmediate(col);
 
-        if (cachedShader == null)
-            cachedShader = Shader.Find("Sprites/Default");
+        // Keep travel VFX prefab materials untouched.
+        // Only apply the red fallback material to the primitive sphere fallback.
+        if (!usingTravelVFX)
+        {
+            if (cachedShader == null)
+                cachedShader = Shader.Find("Sprites/Default");
 
-        var material = new Material(cachedShader);
-        material.color = new Color(1f, 0f, 0f, 1f);
+            var material = new Material(cachedShader);
+            material.color = new Color(1f, 0f, 0f, 1f);
 
-        var renderer = fireballVisual.GetComponent<Renderer>();
-        if (renderer != null)
-            renderer.material = material;
+            var renderer = fireballVisual.GetComponent<Renderer>();
+            if (renderer != null)
+                renderer.material = material;
+        }
+        // fireballVisual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        // fireballVisual.name = "FireballVisual";
+        // fireballVisual.transform.SetParent(transform);
+        // fireballVisual.transform.localPosition = Vector3.zero;
+        // fireballVisual.transform.localScale = Vector3.one * ExplosiveProjectiles.FireballVisualScale;
+
+        // int layer = LayerMask.NameToLayer(FireballVisualLayerName);
+        // if (layer >= 0)
+        //     fireballVisual.layer = layer;
+
+        // var col = fireballVisual.GetComponent<Collider>();
+        // if (col != null)
+        //     DestroyImmediate(col);
+
+        // if (cachedShader == null)
+        //     cachedShader = Shader.Find("Sprites/Default");
+
+        // var material = new Material(cachedShader);
+        // material.color = new Color(1f, 0f, 0f, 1f);
+
+        // var renderer = fireballVisual.GetComponent<Renderer>();
+        // if (renderer != null)
+        //     renderer.material = material;
     }
 
     public override void Update()
@@ -89,11 +169,25 @@ public class ExplosiveProjectile : Projectile
             rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
         }
     }
-    
-    private void SetProjectileSpeed()
+
+    private void ResetTravelVFX()
     {
-        if (rb != null)
-            rb.linearVelocity *= ExplosiveProjectiles.ProjectileSpeed;
+        if (fireballVisual == null) return;
+
+        var trails = fireballVisual.GetComponentsInChildren<TrailRenderer>(true);
+        foreach (var t in trails)
+        {
+            t.Clear();
+            t.emitting = false;
+            t.emitting = true;
+        }
+
+        var particles = fireballVisual.GetComponentsInChildren<ParticleSystem>(true);
+        foreach (var ps in particles)
+        {
+            ps.Clear(true);
+            ps.Play(true);
+        }
     }
 
     public override void OnCollisionEnter(Collision collision)
@@ -185,7 +279,7 @@ public class ExplosiveProjectile : Projectile
         {
             var fx = Instantiate(ExplosiveProjectiles.ExplosionVFX);
             fx.transform.position = transform.position;
-            float scale = Mathf.Clamp(radius * 0.025f, 0.5f, 0.625f);
+            float scale = Mathf.Clamp(radius * 0.025f, 0.5f, 0.625f) * 2;   // idk its really not big enough so i added a x2
             fx.transform.localScale = Vector3.one * scale;
             Destroy(fx, 1f);
         }

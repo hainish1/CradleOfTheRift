@@ -7,7 +7,7 @@ public class ElementReactionExplosion : IDisposable
     private Entity owner;
     private float explosionDamage;
     private float explosionRadius;
-    private const float EXPLOSION_COOLDOWN_PER_ENEMY = 1f;
+    private float cooldownPerEnemy;
     private int stacks;
     private float duration;
     private float timer;
@@ -22,6 +22,7 @@ public class ElementReactionExplosion : IDisposable
         Entity owner, 
         float explosionDamage, 
         float explosionRadius, 
+        float cooldownPerEnemy = 1f,
         int initialStacks = 1, 
         float durationSec = -1f,
         GameObject explosionVFX = null)
@@ -29,6 +30,7 @@ public class ElementReactionExplosion : IDisposable
         this.owner = owner;
         this.explosionDamage = explosionDamage;
         this.explosionRadius = explosionRadius;
+        this.cooldownPerEnemy = Mathf.Max(0f, cooldownPerEnemy);
         this.stacks = initialStacks > 0 ? initialStacks : 1;
         this.duration = durationSec;
         this.timer = durationSec;
@@ -40,7 +42,7 @@ public class ElementReactionExplosion : IDisposable
     
     public void AddStack(int count = 1)
     {
-        stacks += count > 0 ? count : 1;
+        stacks += count;
         if (stacks <= 0) Dispose();
     }
     
@@ -94,7 +96,7 @@ public class ElementReactionExplosion : IDisposable
             if (IsOnCooldown(enemy)) return;
             isProcessingExplosion = true;
             TriggerExplosion(enemy);
-            explosionCooldowns[enemy] = Time.time + EXPLOSION_COOLDOWN_PER_ENEMY;
+            explosionCooldowns[enemy] = Time.time + cooldownPerEnemy;
             tracker.ClearStatuses();
             isProcessingExplosion = false;
         }

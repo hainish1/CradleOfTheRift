@@ -43,7 +43,15 @@ public enum ItemEffectKind
     FinisherStrike,
     XPGrant,
     PureCore,
-    PoisonPoolProjectile
+    PoisonPoolProjectile,
+    LightningStrikeBase,
+    LightningStrikeDamage,
+    LightningStrikeChainBuff,
+    LightningStrikePlayerChain,
+    LightningStrikeElectrify,
+    LightningStrikeCooldown,
+    LightningStrikeCount,
+    LightningStrikeSelfHeal,
 }
 
 [Serializable]
@@ -97,6 +105,7 @@ public class EffectSpec
     public float explosiveFireballSize = 7.5f;
     public float explosiveProjectileSpeed = 0.7f;
     public GameObject explosiveVFX;
+    public GameObject explosiveTravelVFX;
 
     // Chain Lightning
     public float chainDamagePercent = 0.5f;
@@ -202,6 +211,16 @@ public class EffectSpec
     public float pureCoreDamageMultiplier = 1.15f;
     [Tooltip("Health multiplier when player has no elemental items (e.g. 1.2 = +20%)")]
     public float pureCoreHealthMultiplier = 1.2f;
+
+    // Lightning Strike Damage Boost
+    public float lightningStrikeBonusDamage = 5f;
+
+    // Lightning Strike Cooldown Reduction
+    public float lightningStrikeCooldownReduction = 0.5f;
+
+    // Lightning Strike Bonus Count
+    public int lightningStrikeBonusCount = 1;
+    public float lightningStrikeSpreadRadius = 8f;
 }
 
 public enum ItemRarity

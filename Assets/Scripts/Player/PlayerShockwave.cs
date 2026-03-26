@@ -25,6 +25,7 @@ public class PlayerShockwave : MonoBehaviour
     [SerializeField] public CinemachineImpulseSource _shockwaveCameraImpulseSource;
     [SerializeField] private float _cameraShakeIntensity;
     private Entity _playerEntity;
+    private Animator _playerAnim;
     private Renderer _renderer;
     private Color _originalColor;
 
@@ -41,10 +42,12 @@ public class PlayerShockwave : MonoBehaviour
     [SerializeField]
     [Tooltip("How quickly the shockwave effect sphere expands to the shockwave radius in units per second.")] private float _shockEffectExpansionSpeed;
     private float _shockwaveTimer;
+    public static event System.Action OnShockwaveUsed;
 
     void Awake()
     {
         _playerEntity = GetComponent<Entity>();
+        _playerAnim = GetComponentInChildren<Animator>();
         _renderer = _shockwaveEffectSphere.GetComponent<Renderer>();
         _playerInput = new InputSystem_Actions();
         _playerActions = _playerInput.Player;
@@ -106,8 +109,10 @@ public class PlayerShockwave : MonoBehaviour
     private void PerformShockwave()
     {
         _shockwaveTimer = 0;
+        OnShockwaveUsed?.Invoke();
         _shockwaveCameraImpulseSource.GenerateImpulse(_cameraShakeIntensity);
         _shockwaveEffectSphere.SetActive(true);
+        _playerAnim.SetTrigger("Shockwave");
 
         HashSet<GameObject> objectsRegistered = new HashSet<GameObject>(); // Do not overcount objects with multiple colliders.
         Collider[] hitObjects = Physics.OverlapSphere(transform.position, ShockwaveRadius, _damageableLayerMasks);

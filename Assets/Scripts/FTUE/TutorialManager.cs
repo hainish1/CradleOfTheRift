@@ -3,7 +3,7 @@
 //     Samuel Rigby
 //   </authors>
 //   <para>
-//     Written by Samuel Rigby for GAMES 4510, University of Utah, February 2026.
+//     Written by Samuel Rigby for GAMES 4510, University of Utah.
 //   </para>
 // </summary>
 
@@ -13,8 +13,8 @@ using UnityEngine;
 
 public class TutorialManager : MonoBehaviour
 {
-    [SerializeField] private List<TutorialEvent> events = new List<TutorialEvent>();
-    public static event Action<string> OnTutorialEvent;
+    [SerializeField] private List<TutorialEvent> events = new();
+    public static Action<string> OnTutorialEvent;
 
     private void OnEnable()
     {
@@ -26,92 +26,160 @@ public class TutorialManager : MonoBehaviour
         OnTutorialEvent -= QueryEvent;
     }
 
-    void Start()
-    {
-        // Ensure all EnableObject types are disabled on start.
-        foreach (TutorialEvent t in events)
-        {
-            if (t.TutorialEventType == tutorialEventType.EnableObject)
-                t.TargetObject.SetActive(false);
-        }
-    }
-
     /// <summary>
     ///   <para>
-    ///     Triggers the event of a given name when static called.
-    ///   </para>
-    /// </summary>
-    /// <param name="eventName"> Name of event. </param>
-    public static void TriggerTutorialEvent(string eventName)
-    {
-        OnTutorialEvent?.Invoke(eventName);
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Queries the list of all tutorial events when called and executes the
+    ///     Queries the list of all tutorial events and executes the
     ///     first match found.
     ///   </para>
     /// </summary>
     /// <param name="eventName"> Name of event. </param>
     private void QueryEvent(string eventName)
     {
-        foreach (TutorialEvent e in events)
+        foreach (TutorialEvent tutorialEvent in events)
         {
-            if (e.EventName == eventName)
+            if (tutorialEvent.EventName != eventName) continue;
+
+            // Do not execute event until all objects in destruct group are destroyed.
+            if (tutorialEvent.DestructGroup.Count > 0) tutorialEvent.DestructGroup.RemoveAt(0);
+            if (tutorialEvent.DestructGroup.Count == 0) ExecuteTasks(tutorialEvent);
+            return;
+        }
+        Debug.LogWarning($"No tutorial event of name \"{eventName}\" exists.");
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Executes the tasks of a tutorial event.
+    ///   </para>
+    /// </summary>
+    /// <param name="tutorialEvent"> TutorialEvent class. </param>
+    private void ExecuteTasks(TutorialEvent tutorialEvent)
+    {
+        foreach (TutorialTask task in tutorialEvent.Tasks)
+        {
+            if (task.TargetObject == null) continue; // Skip if target object is null.
+            switch (task.TaskType)
             {
-                // Do not execute event until all objects in destruct group are destroyed.
-                if (e.destructGroup.Count > 0) e.destructGroup.RemoveAt(0);
-                if (e.destructGroup.Count == 0) ExecuteEvent(e);
-                break;
+                case TutorialTaskType.EnableObject:
+                    task.TargetObject.SetActive(true);
+                    break;
+                case TutorialTaskType.DisableObject:
+                    task.TargetObject.SetActive(false);
+                    break;
+                case TutorialTaskType.DestroyObject:
+                    Destroy(task.TargetObject);
+                    break;
+                case TutorialTaskType.TeleportObject:
+                    TeleportTarget(task);
+                    break;
+                default:
+                    break;
             }
         }
     }
 
     /// <summary>
     ///   <para>
-    ///     Executes a tutorial event based on its properties.
+    ///     Teleports a target object to a target position.
     ///   </para>
     /// </summary>
-    /// <param name="e"> TutorialEvent class with properties. </param>
-    private void ExecuteEvent(TutorialEvent e)
+    /// <param name="task"> TutorialTask class. </param>
+    private void TeleportTarget(TutorialTask task)
     {
-        switch (e.TutorialEventType)
+        CharacterController characterController = task.TargetObject.GetComponent<CharacterController>();
+        Rigidbody rigidbody = task.TargetObject.GetComponent<Rigidbody>();
+        if ((characterController && !rigidbody) || (!characterController && !rigidbody)) // If CharacterController or neither.
         {
-            case tutorialEventType.DestroyObject:
-                Destroy(e.TargetObject);
-                break;
-            case tutorialEventType.EnableObject:
-                e.TargetObject.SetActive(true);
-                break;
+            if (characterController != null) characterController.enabled = false; // Disable CharacterController to allow direct position modification.
+            NonRigidbodyTeleport(task);
+            if (characterController != null) characterController.enabled = true; // Re-enable CharacterController after teleport.
         }
+        else if (rigidbody && !characterController) // If Rigidbody.
+            RigidbodyTeleport(task, rigidbody);
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Handles teleportation for objects with a CharacterController and objects lacking
+    ///     both a CharacterController and Rigidbody.
+    ///   </para>
+    /// </summary>
+    /// <param name="task"> TutorialTask class. </param>
+    private void NonRigidbodyTeleport(TutorialTask task)
+    {
+        if (task.TeleportType == TutorialTeleportType.Manual)
+            task.TargetObject.transform.SetPositionAndRotation(task.TargetPosition, Quaternion.Euler(task.TargetOrientation));
+        else if (task.TeleportType == TutorialTeleportType.Object)
+            task.TargetObject.transform.SetPositionAndRotation(task.TargetTransform.position, task.TargetTransform.rotation);
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Handles teleportation for objects with a Rigidbody.
+    ///   </para>
+    /// </summary>
+    /// <param name="task"> TutorialTask class. </param>
+    /// <param name="rigidbody"> The target object's Rigidbody. </param>
+    private void RigidbodyTeleport(TutorialTask task, Rigidbody rigidbody)
+    {
+        if (task.TeleportType == TutorialTeleportType.Manual)
+            rigidbody.transform.SetPositionAndRotation(task.TargetPosition, Quaternion.Euler(task.TargetOrientation));
+        else if (task.TeleportType == TutorialTeleportType.Object)
+            rigidbody.transform.SetPositionAndRotation(task.TargetTransform.position, task.TargetTransform.rotation);
     }
 }
 
 /// <summary>
 ///   <para>
-///     A class to represent tutorial events. Supports functionality for destroying
-///     physical barriers, enabling objects in the scene, and the option to require
-///     destroying a group of objects before the event can happen.
+///     A class to represent tutorial events. Supports the option to require
+///     destroying a group of objects before an event's tasks can execute.
 ///   </para>
 /// </summary>
-[Serializable] public class TutorialEvent
+[Serializable]
+public class TutorialEvent
 {
-    public tutorialEventType TutorialEventType;
-    public GameObject TargetObject;
-    public string EventName;
-    
-    // The event happens when all objects in destruct group are destroyed.
-    public List<GameObject> destructGroup = new List<GameObject>();
+    [Tooltip("Specific name of a tutorial event that can be triggered.")] public string EventName;
+    [Tooltip("Event will not trigger until everything in the destruct group is destroyed.")] public List<GameObject> DestructGroup = new();
+    [Tooltip("Tasks that will be performed when the event is triggered.")] public List<TutorialTask> Tasks = new();
 }
 
 /// <summary>
 ///   <para>
-///     The variety of supported tutorial event types.
+///     A class to represent tutorial Tasks. Supports functionality for
+///     enabling/disabling, destroying and teleporting objects in the scene.
 ///   </para>
 /// </summary>
-public enum tutorialEventType
+[Serializable]
+public class TutorialTask
 {
+    public TutorialTaskType TaskType;
+    [Tooltip("Object to be affected by the chosen task type.")] public GameObject TargetObject;
+    [Tooltip("Teleport to a manually typed position and orientaton, or to an empty object in the scene.")] public TutorialTeleportType TeleportType;
+    public Vector3 TargetPosition;
+    public Vector3 TargetOrientation;
+    public Transform TargetTransform;
+}
+
+/// <summary>
+///   <para>
+///     The variety of supported tutorial task types.
+///   </para>
+/// </summary>
+public enum TutorialTaskType
+{
+    EnableObject,
+    DisableObject,
     DestroyObject,
-    EnableObject
+    TeleportObject
+}
+
+/// <summary>
+///   <para>
+///     The variety of teleport position input types.
+///   </para>
+/// </summary>
+public enum TutorialTeleportType
+{
+    Manual,
+    Object
 }

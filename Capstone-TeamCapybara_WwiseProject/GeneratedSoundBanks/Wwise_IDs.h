@@ -89,11 +89,22 @@ namespace AK
 
     } // namespace SWITCHES
 
+    namespace GAME_PARAMETERS
+    {
+        static const AkUniqueID ENEMYVOLUME = 535618029U;
+        static const AkUniqueID ENVIRONMENTVOLUME = 3211196718U;
+        static const AkUniqueID MASTERVOLUME = 2918011349U;
+        static const AkUniqueID MUSICVOLUME = 2346531308U;
+        static const AkUniqueID PLAYERVOLUME = 1399119200U;
+    } // namespace GAME_PARAMETERS
+
     namespace BUSSES
     {
+        static const AkUniqueID ENEMY_BUS = 963934797U;
         static const AkUniqueID ENVIRONMENT_BUS = 2833159698U;
         static const AkUniqueID MAIN_AUDIO_BUS = 2246998526U;
         static const AkUniqueID MUSIC_BUS = 3127962312U;
+        static const AkUniqueID PLAYER_BUS = 174537428U;
     } // namespace BUSSES
 
     namespace AUDIO_DEVICES

@@ -2,20 +2,6 @@
     background-color: green;
 }
 
-#HealthBar {
-    width: 100%;        /* fill the container */
-    height: 100%;
-}
-
-#HealthBar .unity-progress-bar__title {
-    color: white
-    font-size: 14px;
-}
-
-#HealthBar .unity-progress-bar__progress {
-    background-color: red;
-}
-
 #SpawnerDev {
     position: absolute;  
     bottom: 0px;          /* pin to bottom */
@@ -48,17 +34,6 @@ unity-content {
 
 
 
-
-
-
-#HealthContainer {
-    position: absolute;
-    bottom: 15px;      /* distance from bottom; adjust so it’s above inventory */
-    left: 50%;         /* align with left edge of screen */
-    margin-left: -150px;
-    width: 300px;       /* health bar width */
-    height: 25px;       /* health bar height */
-}
 
 
 #GoldContainer {
@@ -111,17 +86,12 @@ unity-content {
 
 #AbilityBar {
     position: absolute;
-    bottom: 100px;      /* moved up 100px from bottom */
+    bottom: 20px;      /* moved up 100px from bottom */
     right: 15px;        /* distance from right */
-    width: 300px;       /* adjust based on number of abilities */
-    height: 64px;       /* size for ability icons */
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
     align-items: center;
-    gap: 10px;
-    padding: 0;
-    background: none;
+    gap: 16px;
 }
 
 /* XP HUD */
