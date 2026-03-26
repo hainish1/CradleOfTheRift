@@ -1,0 +1,22 @@
+.chest-prompt {
+    flex-direction: column;
+    align-items: center;
+    width: 64px;
+}
+
+.chest-icon {
+    width: 52px;
+    height: 52px;
+    background-image: url("project://database/Assets/Art%20Assets/2D/UI%20assets/Tab%20Icon/Tab_Icon_Base%201.png?fileID=2800000&guid=61f160efa0caf49eda34b8f6903f51fb&type=3#Tab_Icon_Base 1");
+    -unity-background-scale-mode: scale-to-fit;
+    margin-bottom: 4px;
+}
+
+.chest-key-label {
+    -unity-font-style: bold;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.90);
+    -unity-text-align: middle-center;
+    margin: 0px;
+    padding: 0px;
+}

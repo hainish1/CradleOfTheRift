@@ -33,17 +33,16 @@ unity-content {
 
 
 
-
-
-
-#GoldContainer {
-    margin-top: 10px;   /* pushes gold down below extraction bar */
+#TopLeftHUD {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    flex-direction: column;
 }
 
-#GoldLabel {
-    font-size: 28px;
-    font-weight: bold;
-    color: white;
+/* Space between ChestPrompt and Gold */
+#TopLeftHUD > * {
+    margin-bottom: 8px;
 }
 
 #TimerContainer {
