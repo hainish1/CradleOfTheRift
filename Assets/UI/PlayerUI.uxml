@@ -22,7 +22,7 @@
             <ui:Label text="Label" name="TimerLabel" style="position: absolute; top: 6px; left: 26px;" />
         </ui:VisualElement>
         <ui:Instance template="HealthBar" name="HealthBarRoot" picking-mode="Ignore" />
-        <ui:VisualElement name="AbilityBar" style="flex-grow: 1; bottom: 76px; right: 333px;" />
+        <ui:VisualElement name="AbilityBar" />
         <ui:Instance template="XPContainer" name="XPContainerRoot" />
     </ui:VisualElement>
     <ui:VisualElement name="SpawnerDev" picking-mode="Ignore" style="width: 291px;">

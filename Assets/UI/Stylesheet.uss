@@ -93,11 +93,12 @@ unity-content {
 
 #AbilityBar {
     position: absolute;
-    bottom: 20px;      /* moved up 100px from bottom */
-    right: 15px;        /* distance from right */
+    bottom: 62px;     
+    right: 100px;     
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 16px;
+    padding-bottom: 14px; /* make room for key labels (Fixes slight overflow issue) */
 }
+
 
