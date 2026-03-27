@@ -3,6 +3,7 @@
     <ui:Template name="HealthBar" src="project://database/Assets/UI/HealthBar/HealthBar.uxml?fileID=9197481963319205126&amp;guid=c62ad0f5596be254dacd6d01d4d62a42&amp;type=3#HealthBar" />
     <ui:Template name="Gold" src="project://database/Assets/UI/Gold/Gold.uxml?fileID=9197481963319205126&amp;guid=58e61ad538d08ba4e81b9f3de3ac0614&amp;type=3#Gold" />
     <ui:Template name="XPContainer" src="project://database/Assets/UI/XPContainer/XPContainer.uxml?fileID=9197481963319205126&amp;guid=46540d2cc7508014e9f7347c001a6fe9&amp;type=3#XPContainer" />
+    <ui:Template name="ChestPrompt" src="project://database/Assets/UI/Inventory/ChestPrompt.uxml?fileID=9197481963319205126&amp;guid=294f913208e76bd44bb9d12c02ee7dc3&amp;type=3#ChestPrompt" />
     <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=340cd68f9068b8147b6cb9f90ab8e93c&amp;type=3#Stylesheet" />
     <ui:VisualElement name="HUD" picking-mode="Ignore" style="flex-grow: 1;">
         <ui:VisualElement name="InventoryGroup" style="flex-grow: 1; top: -34px; left: 1px;">
@@ -17,6 +18,7 @@
             <ui:Label text="Label" name="TimerLabel" style="position: absolute; top: 6px; left: 26px;" />
         </ui:VisualElement>
         <ui:Instance template="HealthBar" name="HealthBarRoot" picking-mode="Ignore" />
+        <ui:Instance template="ChestPrompt" name="ChestRoot" />
         <ui:VisualElement name="AbilityBar" />
         <ui:Instance template="Gold" name="GoldRoot" />
         <ui:Instance template="XPContainer" name="XPContainerRoot" />

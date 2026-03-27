@@ -82,6 +82,12 @@ unity-content {
     gap: 5px;          /* spacing between inventory and extraction bar */
 }
 
+#ChestRoot {
+    position: absolute;
+    bottom: 200px;
+    left: 100px;
+}
+
 #AbilityBar {
     position: absolute;
     bottom: 62px;     
