@@ -1,10 +1,21 @@
-#TimerRoot {
+#TopLeftHUD {
     position: absolute;
-    top: 10px;        /* distance from top of the screen */
-    right: 10px;      /* distance from right of the screen */
-    width: auto;      /* or set a fixed width if needed */
+    top: 10px;
+    left: 10px;
+    flex-direction: row; /* Aligns Timer and Scaler in a row */
+    align-items: center;
+    padding: 10px 20px; /* Adjust padding to fit inside your border image */
+    
+    /* Border Image Styling */
+    background-image: url('project://database/Assets/Art%20Assets/2D/UI%20assets%202/Timer/Timer_Full_Horizontal_Flip.png?fileID=2800000&amp;guid=216e5e9cb7e4cd94a8c980e15df05700&amp;type=3#Timer_Full_Horizontal_Flip');
+    -unity-background-scale-mode: stretch-to-fill;
 }
 
+#TimerRoot {
+    width: 120px; 
+    margin-right: 15px; /* Space between Timer and Scaler */
+    /* flex-shrink: 0; */ /* Forces timer to not grow */
+}
 
 .extraction-bar .unity-progress-bar__progress {
     background-color: green;
