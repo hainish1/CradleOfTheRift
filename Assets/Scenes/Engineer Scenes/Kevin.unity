@@ -896,10 +896,11 @@ MonoBehaviour:
   fadeInDuration: 0.05
   holdDuration: 0.1
   fadeOutDuration: 0.4
-  enableCriticalPulse: 1
+  criticalMode: 2
   criticalThreshold: 0.25
-  pulseOpacity: 0.3
+  criticalOpacity: 0.3
   pulseDuration: 0.6
+  criticalFadeOutDuration: 0.8
 --- !u!1 &1412768012 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7463639161683059228, guid: 7205e46c8e503824e97dfb470a009b58, type: 3}
@@ -1415,6 +1416,10 @@ PrefabInstance:
     - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
       propertyPath: m_Name
       value: SlimeEnemyWobble
+      objectReference: {fileID: 0}
+    - target: {fileID: 6223163396465808229, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

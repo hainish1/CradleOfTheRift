@@ -26,7 +26,12 @@ unity-content {
     position: relative; 
 }
 
-
+#HealthBarRoot {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    margin-left: -150px;
+}
 
 
 
