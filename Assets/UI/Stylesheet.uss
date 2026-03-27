@@ -2,9 +2,10 @@
     position: absolute;
     top: 10px;
     left: 10px;
-    flex-direction: row; /* Aligns Timer and Scaler in a row */
+    flex-direction: row;
     align-items: center;
-    padding: 10px 20px; /* Adjust padding to fit inside your border image */
+    padding: 10px 20px 10px 40px;
+    height: 100px;
     
     /* Border Image Styling */
     background-image: url('project://database/Assets/Art%20Assets/2D/UI%20assets%202/Timer/Timer_Full_Horizontal_Flip.png?fileID=2800000&amp;guid=216e5e9cb7e4cd94a8c980e15df05700&amp;type=3#Timer_Full_Horizontal_Flip');
@@ -14,6 +15,7 @@
 #TimerRoot {
     width: 120px; 
     margin-right: 15px; /* Space between Timer and Scaler */
+    margin-left: 10px;
     /* flex-shrink: 0; */ /* Forces timer to not grow */
 }
 
