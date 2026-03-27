@@ -26,9 +26,9 @@ unity-content {
     position: relative; 
 }
 
-#HealthBarRoot {
+#GoldRoot {
     position: absolute;
-    bottom: 60px;
+    bottom: 120px;
     left: 100px;
 }
 
@@ -38,19 +38,10 @@ unity-content {
     left: 100px;
 }
 
-
-
-
-#TopLeftHUD {
+#HealthBarRoot {
     position: absolute;
-    top: 15px;
-    left: 15px;
-    flex-direction: column;
-}
-
-/* Space between ChestPrompt and Gold */
-#TopLeftHUD > * {
-    margin-bottom: 8px;
+    bottom: 60px;
+    left: 100px;
 }
 
 #TimerContainer {
@@ -100,5 +91,3 @@ unity-content {
     align-items: center;
     padding-bottom: 14px; /* make room for key labels (Fixes slight overflow issue) */
 }
-
-
