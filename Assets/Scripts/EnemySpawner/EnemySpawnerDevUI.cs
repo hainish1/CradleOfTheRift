@@ -17,11 +17,12 @@ public class EnemySpawnerUI : MonoBehaviour
     {
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
+        this.devContainer = root.Q<VisualElement>("SpawnerDevHUDRoot");
+
         this.currentEnemyCountLabel = root.Q<Label>("CurrentEnemyCount");
         this.currentCreditsLabel = root.Q<Label>("CurrentCredits");
         this.currentMaxEnemyCapLabel = root.Q<Label>("CurrentMaxEnemyCap");
         this.currentWaveLabel = root.Q<Label>("CurrentWave");
-        this.devContainer = root.Q<VisualElement>("SpawnerDevHUDContainer");
 
         // Logic for Original Spawner
         if (this.spawner != null)
