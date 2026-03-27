@@ -72,13 +72,9 @@ public class PlayerXPUI : MonoBehaviour
             levelUpHint.style.display = showHint ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
-        if (xpLabel != null)
-            xpLabel.text = $"{currentXP} / {xpToLevelUp} XP";
-
         if (xpBar != null)
-        {
             xpBar.highValue = xpToLevelUp;
             xpBar.value = currentXP;
-        }
+            xpBar.title = $"{currentXP} / {xpToLevelUp} XP";
     }
 }

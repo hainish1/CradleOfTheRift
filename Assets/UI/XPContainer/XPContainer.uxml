@@ -4,7 +4,6 @@
         <engine:VisualElement name="XPRow" picking-mode="Ignore">
             <engine:Label text="Lv 1" name="LevelLabel" />
             <engine:ProgressBar value="0" name="XPBar" />
-            <engine:Label text="0 / 100 XP" name="XPLabel" />
         </engine:VisualElement>
         <engine:Label text="Press Q to level up" name="LevelUpHint" />
     </engine:VisualElement>

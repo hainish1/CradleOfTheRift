@@ -29,15 +29,22 @@
 }
 
 #XPBar {
-    width: 190px;
+    flex-grow: 1;
     align-self: center;
     margin: 0;
-    margin-right: 8px;
+    /* margin-right: 8px; */
     padding: 0;
     background-color: rgba(0, 0, 0, 0.50);
     border-color: rgba(80, 180, 255, 0.25);
     border-width: 1px;
     border-radius: 3px;
+}
+
+#XPBar .unity-progress-bar__title {
+    color: rgb(255, 255, 255);
+    font-size: 10px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
 }
 
 #XPBar .unity-progress-bar__background {
@@ -47,18 +54,6 @@
 
 #XPBar .unity-progress-bar__progress {
     background-color: rgba(80, 180, 255, 0.85);
-}
-
-
-#XPLabel {
-    font-size: 11px;
-    color: rgba(200, 200, 200, 0.70);
-    -unity-text-align: middle-right;
-    white-space: nowrap;
-    flex-shrink: 0;
-    width: 80px;
-    margin: 0;
-    padding: 0;
 }
 
 #LevelUpHint {
