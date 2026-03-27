@@ -32,8 +32,7 @@
 }
 
 #XPBar {
-    flex: 1;
-    height: 12px;
+    width: 190px;
     align-self: center;
     margin: 0;
     margin-right: 8px;
@@ -42,35 +41,17 @@
     border-color: rgba(80, 180, 255, 0.25);
     border-width: 1px;
     border-radius: 3px;
-    overflow: hidden;
 }
 
 #XPBar .unity-progress-bar__background {
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    margin: 0;
-    padding: 0;
     background-color: transparent;
     border-width: 0;
-    border-radius: 0;
 }
 
 #XPBar .unity-progress-bar__progress {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    margin: 0;
     background-color: rgba(80, 180, 255, 0.85);
-    border-radius: 0;
 }
 
-#XPBar .unity-progress-bar__title {
-    display: none;
-}
 
 #XPLabel {
     font-size: 11px;
