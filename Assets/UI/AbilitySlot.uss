@@ -21,9 +21,10 @@ DiamondAbilityElement,
     flex-shrink: 0;
     margin: 2px 0;
 
-    /* Visual properties for DiamondAbilityElement */
-    --border-color: rgb(168, 144, 96);
 
+    /* Visual properties for DiamondAbilityElement */
+    /* --border-color: rgb(168, 144, 96); */
+    --border-color: rgb(255, 255, 255);
     /* --border-color: rgb(130, 100, 60); */
 
 
@@ -35,8 +36,18 @@ DiamondAbilityElement,
 #KeyLabel {
     font-size: 14px;
     color: white;
-    margin-top: 2px;
+    margin-top: 4px;
     -unity-text-align: middle-center;
+
+    /* Pill badge */
+    background-color: rgba(0, 0, 0, 0.55);
+    border-color: rgba(255, 255, 255, 0.5);
+    border-width: 1px;
+    border-radius: 6px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 #ChargeLabel {
