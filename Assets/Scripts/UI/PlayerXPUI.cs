@@ -63,7 +63,7 @@ public class PlayerXPUI : MonoBehaviour
     {
         if (levelLabel != null)
         {
-            levelLabel.text = $"Level: {level}";
+            levelLabel.text = $"Lv {level}";
         }
 
         if (levelUpHint != null)
@@ -73,7 +73,7 @@ public class PlayerXPUI : MonoBehaviour
         }
 
         if (xpLabel != null)
-            xpLabel.text = $"XP: {currentXP} / {xpToLevelUp}";
+            xpLabel.text = $"{currentXP} / {xpToLevelUp} XP";
 
         if (xpBar != null)
         {
