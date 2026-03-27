@@ -21,7 +21,7 @@ public class EnemySpawnerUI : MonoBehaviour
         this.currentCreditsLabel = root.Q<Label>("CurrentCredits");
         this.currentMaxEnemyCapLabel = root.Q<Label>("CurrentMaxEnemyCap");
         this.currentWaveLabel = root.Q<Label>("CurrentWave");
-        this.devContainer = root.Q<VisualElement>("SpawnerDev");
+        this.devContainer = root.Q<VisualElement>("SpawnerDevHUDContainer");
 
         // Logic for Original Spawner
         if (this.spawner != null)

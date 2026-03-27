@@ -1,0 +1,13 @@
+#SpawnerDevHUDContainer {
+    width: 291px;         /* desired width */
+    height: 216px;        /* desired height */
+    display: flex;
+    flex-direction: column; /* stack children vertically */
+    padding: 10px;
+    background-color: rgba(0,0,0,0.5); 
+}
+
+/* Add spacing between the labels */
+#SpawnerDevHUDContainer > Label {
+    margin-bottom: 5px;
+}

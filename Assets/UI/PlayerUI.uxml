@@ -7,9 +7,10 @@
     <ui:Template name="AbilitySlot" src="project://database/Assets/UI/AbilitySlot.uxml?fileID=9197481963319205126&amp;guid=a8e77727db11c7e40809d6ff565c7ddc&amp;type=3#AbilitySlot" />
     <ui:Template name="Gold" src="project://database/Assets/UI/Gold/Gold.uxml?fileID=9197481963319205126&amp;guid=58e61ad538d08ba4e81b9f3de3ac0614&amp;type=3#Gold" />
     <ui:Template name="XPContainer" src="project://database/Assets/UI/XPContainer/XPContainer.uxml?fileID=9197481963319205126&amp;guid=46540d2cc7508014e9f7347c001a6fe9&amp;type=3#XPContainer" />
+    <ui:Template name="SpawnerDevHUD" src="project://database/Assets/UI/SpawnerDevHUD/SpawnerDevHUD.uxml?fileID=9197481963319205126&amp;guid=7d6a6eb589ced2c40b9c3b6befc1ffeb&amp;type=3#SpawnerDevHUD" />
     <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=340cd68f9068b8147b6cb9f90ab8e93c&amp;type=3#Stylesheet" />
     <ui:VisualElement name="HUD" picking-mode="Ignore" style="flex-grow: 1;">
-        <ui:VisualElement name="TopLeftHUD" >
+        <ui:VisualElement name="TopLeftHUD">
             <ui:Instance template="Timer" name="TimerRoot" />
             <ui:Instance template="DifficultyScaler" name="DifficultyScalerRoot" />
         </ui:VisualElement>
@@ -32,10 +33,5 @@
         <ui:Instance template="Gold" name="GoldRoot" />
         <ui:Instance template="XPContainer" name="XPContainerRoot" />
     </ui:VisualElement>
-    <ui:VisualElement name="SpawnerDev" picking-mode="Ignore" style="width: 291px;">
-        <ui:Label name="CurrentEnemyCount" text="Current Enemy Count: 0" />
-        <ui:Label name="CurrentCredits" text="Current Credits: N/A" />
-        <ui:Label name="CurrentMaxEnemyCap" text="Current Max Enemy Cap: N/A" />
-        <ui:Label name="CurrentWave" text="Current Wave: 0" />
-    </ui:VisualElement>
+    <ui:Instance template="SpawnerDevHUD" name="SpawnerDevHUDRoot" />
 </ui:UXML>
