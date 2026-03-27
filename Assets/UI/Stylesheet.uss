@@ -1,23 +1,26 @@
+#TopLeftHUD {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 20px 10px 40px;
+    height: 100px;
+    
+    /* Border Image Styling */
+    background-image: url('project://database/Assets/Art%20Assets/2D/UI%20assets%202/Timer/Timer_Full_Horizontal_Flip.png?fileID=2800000&amp;guid=216e5e9cb7e4cd94a8c980e15df05700&amp;type=3#Timer_Full_Horizontal_Flip');
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+#TimerRoot {
+    width: 120px; 
+    margin-right: 15px; /* Space between Timer and Scaler */
+    margin-left: 10px;
+    /* flex-shrink: 0; */ /* Forces timer to not grow */
+}
+
 .extraction-bar .unity-progress-bar__progress {
     background-color: green;
-}
-
-#SpawnerDev {
-    position: absolute;  
-    bottom: 0px;          /* pin to bottom */
-    right: 0px;           /* pin to right */
-    width: 291px;         /* desired width */
-    height: 216px;        /* desired height */
-    
-    display: flex;
-    flex-direction: column; /* stack children vertically */
-    padding: 10px;
-    background-color: rgba(0,0,0,0.5); 
-}
-
-/* Add spacing between the labels */
-#SpawnerDev > Label {
-    margin-bottom: 5px;
 }
 
 unity-content {
@@ -26,38 +29,23 @@ unity-content {
     position: relative; 
 }
 
-
-
-
-
-
-
-
-#TopLeftHUD {
+#GoldRoot {
     position: absolute;
-    top: 15px;
-    left: 15px;
-    flex-direction: column;
+    bottom: 120px;
+    left: 100px;
 }
 
-/* Space between ChestPrompt and Gold */
-#TopLeftHUD > * {
-    margin-bottom: 8px;
-}
-
-#TimerContainer {
+#XPContainerRoot {
     position: absolute;
-    top: 10px;        /* distance from top of the screen */
-    right: 10px;      /* distance from right of the screen */
-    width: auto;      /* or set a fixed width if needed */
+    bottom: 95px;
+    left: 100px;
 }
 
-#TimerContainer > Label {
-    color: white;     /* make text visible */
-    font-size: 40px;  /* adjust as needed */
+#HealthBarRoot {
+    position: absolute;
+    bottom: 60px;
+    left: 100px;
 }
-
-
 
 #InventoryContainer {
     width: 500px;        /* match scroll-view width */
@@ -83,59 +71,26 @@ unity-content {
     gap: 5px;          /* spacing between inventory and extraction bar */
 }
 
+#ChestRoot {
+    position: absolute;
+    bottom: 55px;
+    right: 550px;
+}
+
 #AbilityBar {
     position: absolute;
-    bottom: 20px;      /* moved up 100px from bottom */
-    right: 15px;        /* distance from right */
+    bottom: 62px;     
+    right: 100px;     
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 16px;
+    padding-bottom: 14px; /* make room for key labels (Fixes slight overflow issue) */
 }
 
-/* XP HUD */
-#XPContainer{
-    position: absolute;
-    bottom: 50px;
-    left: 50px;
-    margin-left: -150px;
-    width: 300px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 
-}
-
-#LevelLabel {
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
-    margin-bottom: 2px;
-}
-
-#LevelUpHint {
-    font-size: 14px;
-    font-weight: bold;
-    color: rgb(255, 220, 50);
-    margin-bottom: 2px;
-    display: none;
-}
-
-#XPLabel {
-    font-size: 14px;
-    color: rgb(200, 200, 200);
-    margin-bottom: 2px;
-}
-
-#XPBar {
-    width: 100%;
-    height: 18px;
-}
-
-#XPBar .unity-progress-bar__progress {
-    background-color: rgb(80, 180, 255);
-}
-
-#XPBar .unity-progress-bar__title {
+#SpawnerDevHUDRoot {
+    position: absolute;  
+    top: 250px;          /* pin to bottom */
+    left: 100px;           /* pin to right */
     display: none;
 }

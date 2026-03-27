@@ -63,6 +63,9 @@ public class AbilityUIController : MonoBehaviour
         playerMovement = playerManager.GetComponent<PlayerMovement>();
         if (playerMovement == null) Debug.LogError("PlayerMovement not found!");
 
+        // Remove placeholder abilities from playerUI.uxml
+        abilityBar.Clear();
+
         // ---- Dash -------------------------------------------------------- //
         var dashAbility = new AbilityInfo
         {
