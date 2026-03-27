@@ -23,7 +23,7 @@
         </ui:VisualElement>
         <ui:Instance template="HealthBar" name="HealthBarRoot" picking-mode="Ignore" />
         <ui:VisualElement name="AbilityBar" style="flex-grow: 1; bottom: 76px; right: 333px;" />
-        <ui:Instance template="XPContainer" name="XPContainer" />
+        <ui:Instance template="XPContainer" name="XPContainerRoot" />
     </ui:VisualElement>
     <ui:VisualElement name="SpawnerDev" picking-mode="Ignore" style="width: 291px;">
         <ui:Label name="CurrentEnemyCount" text="Current Enemy Count: 0" />
