@@ -1,9 +1,10 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/SpawnerDevHUD/SpawnerDevHUD.uss?fileID=7433441132597879392&amp;guid=ac82b44af6cbd274785646ccccc0a7a4&amp;type=3#SpawnerDevHUD" />
-    <engine:VisualElement name="SpawnerDevHUDContainer" picking-mode="Ignore" style="width: 291px;">
-        <engine:Label name="CurrentEnemyCount" text="Current Enemy Count: 0" />
-        <engine:Label name="CurrentCredits" text="Current Credits: N/A" />
-        <engine:Label name="CurrentMaxEnemyCap" text="Current Max Enemy Cap: N/A" />
+    <engine:VisualElement name="SpawnerDevHUDContainer" picking-mode="Ignore" >
+        <engine:Label name="HUDHeader" text="WHOEVER IS USING THIS, DONT PUT THIS IN THE BUILD!!!!!" />
         <engine:Label name="CurrentWave" text="Current Wave: 0" />
+        <engine:Label name="CurrentMaxEnemyCap" class="info-label" text="Current Max Enemy Cap: N/A" />
+        <engine:Label name="CurrentEnemyCount" class="info-label" text="Current Enemy Count: 0" />
+        <engine:Label name="CurrentCredits" class="info-label" text="Current Credits: N/A" />
     </engine:VisualElement>
 </engine:UXML>
