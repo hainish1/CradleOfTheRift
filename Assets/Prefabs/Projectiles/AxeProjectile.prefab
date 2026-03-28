@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7602645346483822257}
   - component: {fileID: 8798023174576497895}
   - component: {fileID: 7430822607540931534}
-  - component: {fileID: 3140400090891409143}
+  - component: {fileID: 6018421107269708113}
   - component: {fileID: 729833330588080243}
   - component: {fileID: -8502030724956538082}
   m_Layer: 9
@@ -112,7 +112,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.6
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3140400090891409143
+--- !u!114 &6018421107269708113
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -121,12 +121,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 3232334194741932682}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d70ac87e40db904a88f5f56a07f4e6f, type: 3}
+  m_Script: {fileID: 11500000, guid: 097f081222fff6945ae24b9f088dffd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   bulletImpactFX: {fileID: 8296457393497080562, guid: 83ff99043eb56d54099c28f25d33f0ab, type: 3}
   trail: {fileID: -8502030724956538082}
-  lifeTime: 15
+  lifeTime: 5
   gravity: 0
   hitForce: 5
   knockBackImpulse: 8
@@ -134,6 +134,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 7377
   rb: {fileID: 729833330588080243}
+  _projectileSpeed: 100
+  _maxArcDegrees: 15
+  _maxTravelDistance: 100
 --- !u!54 &729833330588080243
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -15,12 +15,6 @@ public class Projectile : MonoBehaviour
     [Header("flight")]
     [SerializeField] protected float lifeTime = 6f;
     [SerializeField] protected float gravity = 0f;
-    [SerializeField] protected float axeTravelSeconds = 1;
-    private bool isAxe = false;
-    private float axeTimer = 0;
-    private bool isReturning = false;
-    private Vector3 targetPos = Vector3.zero;
-    private GameObject returnTarget = null;
 
     [Header("hit")]
     [SerializeField] protected float hitForce = 8f;
@@ -75,32 +69,6 @@ public class Projectile : MonoBehaviour
         // Debug.Log($"Projectile initialized with damage: {actualDamage}");
     }
 
-
-    public virtual void InitAxe(Vector3 targetPos, GameObject returnTarget, LayerMask mask, float damage, float flyDistance = 100, Entity attacker = null)
-    {
-        isAxe = true;
-        this.targetPos = targetPos;
-        this.returnTarget = returnTarget;
-        hitMask = mask;
-        actualDamage = damage;
-        this.attacker = attacker;
-        age = 0;
-        rb.freezeRotation = true;
-        trail.Clear();
-        trail.time = 0.25f;
-        startPos = transform.position;
-        this.flyDistance = flyDistance + 1;
-
-
-        Vector3 targetDir = targetPos - transform.position;
-
-        // 2. Create a rotation that looks at the target but stays upright
-        Quaternion targetRotation = Quaternion.LookRotation(targetDir, Vector3.up);
-
-        // 3. Slerp the rotation instead of the vector
-        transform.rotation = targetRotation;
-    }
-
     public virtual void InitializeTrailVisuals()
     {
         trail.Clear();
@@ -121,52 +89,23 @@ public class Projectile : MonoBehaviour
 
     public virtual void Update()
     {
-        if (!isAxe)
+        FadeTrailVisuals();
+        age += Time.deltaTime;
+        if (age >= lifeTime)
         {
-            FadeTrailVisuals();
-            age += Time.deltaTime;
-            if (age >= lifeTime)
-            {
-                // Destroy(gameObject);
-                ReturnToSource();
-                return;
-            }
-            if (gravity != 0f)
-            {
-                rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
-            }
-
-            // create a natural arc motion or skip once we have hit something
-            if (!hasHit && rb.linearVelocity.sqrMagnitude > 0.1f)
-            {
-                transform.rotation = Quaternion.LookRotation(rb.linearVelocity);
-            }
+            // Destroy(gameObject);
+            ReturnToSource();
+            return;
         }
-        else
+        if (gravity != 0f)
         {
-            age += Time.deltaTime;
-            if (age >= lifeTime) Destroy(gameObject); // Destroy axe if not returned quickly enough.
-            if (!returnTarget) Destroy(gameObject); // Destroy axe if player died.
+            rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
+        }
 
-            FadeTrailVisuals();
-
-            float percentageCompletion = axeTimer / axeTravelSeconds;
-            if (!isReturning)
-            {
-                transform.position = Vector3.Slerp(startPos, targetPos, percentageCompletion);
-                if (percentageCompletion >= 1)
-                {
-                    isReturning = true;
-                    axeTimer = 0;
-                }
-            }
-            else
-            {
-                transform.position = Vector3.Slerp(targetPos, returnTarget.transform.position, percentageCompletion);
-                if (percentageCompletion >= 1) Destroy(gameObject);
-            }
-
-            axeTimer += Time.deltaTime;
+        // create a natural arc motion or skip once we have hit something
+        if (!hasHit && rb.linearVelocity.sqrMagnitude > 0.1f)
+        {
+            transform.rotation = Quaternion.LookRotation(rb.linearVelocity);
         }
     }
     protected virtual void OnEnable()
@@ -202,104 +141,70 @@ public class Projectile : MonoBehaviour
 
     public virtual void OnCollisionEnter(Collision collision)
     {
-        if (!isAxe)
+        if (hasHit)
         {
-            if (hasHit)
-            {
-                return;
-            }
-            // check layer mask
-            if (((1 << collision.gameObject.layer) & hitMask) == 0)
-                return;
-
-            CreateImpactFX();
-
-            // check if collided with enemy and if yes then damage it
-            var enemy = collision.collider.GetComponentInParent<Enemy>();
-
-            // Passthrough spear- pass through enemies, destroy on anything else
-            if (PassThroughSpear.IsEnabled && enemy != null
-                && enemiesPassedThrough < PassThroughSpear.MaxPassThroughCount)
-            {
-                // Damage this enemy while passing through
-                ApplyEnemyHit(collision, enemy, passingThrough: true);
-
-                // Ignore future collisions with ALL other any colliders on this enemy
-                Collider myCollider = GetComponent<Collider>();
-                if (myCollider != null)
-                {
-                    Collider[] enemyColliders = enemy.GetComponentsInChildren<Collider>();
-                    foreach (Collider ec in enemyColliders)
-                    {
-                        Physics.IgnoreCollision(myCollider, ec);
-                    }
-                }
-
-                enemiesPassedThrough++;
-
-                // restore the velocity and position from before the collision so the projectile continues on its original trajectory.
-                if (rb != null)
-                {
-                    rb.linearVelocity = savedVelocity;
-                    rb.angularVelocity = Vector3.zero;
-                    // Push forward slightly to clear the enemy collider and prevent collision again 
-                    rb.position = savedPosition + savedVelocity.normalized * 0.1f;
-                }
-
-                Debug.Log($"[PassThroughSpear] Passed through {collision.gameObject.name} "
-                        + $"({enemiesPassedThrough}/{PassThroughSpear.MaxPassThroughCount})");
-                return; // do NOT destroy, keep flying
-            }
-
-            // Normal hit 
-            hasHit = true; // lock rotation 
-            CreateImpactFX();
-
-            if (enemy != null)
-            {
-                ApplyEnemyHit(collision, enemy);
-            }
-
-            // apply physics force
-            if (collision.rigidbody != null)
-            {
-                Vector3 force = rb.linearVelocity.normalized * hitForce;
-                collision.rigidbody.AddForceAtPosition(force, collision.contacts[0].point, ForceMode.Impulse);
-            }
-
-            ReturnToSource(); // destroy / return to pool
+            return;
         }
-        else
+        // check layer mask
+        if (((1 << collision.gameObject.layer) & hitMask) == 0)
+            return;
+
+        CreateImpactFX();
+
+        // check if collided with enemy and if yes then damage it
+        var enemy = collision.collider.GetComponentInParent<Enemy>();
+
+        // Passthrough spear- pass through enemies, destroy on anything else
+        if (PassThroughSpear.IsEnabled && enemy != null
+            && enemiesPassedThrough < PassThroughSpear.MaxPassThroughCount)
         {
-            CreateImpactFX();
+            // Damage this enemy while passing through
+            ApplyEnemyHit(collision, enemy, passingThrough: true);
 
-            // check if collided with enemy and if yes then damage it
-            var enemy = collision.collider.GetComponentInParent<Enemy>();
-
-            if (enemy != null)
+            // Ignore future collisions with ALL other any colliders on this enemy
+            Collider myCollider = GetComponent<Collider>();
+            if (myCollider != null)
             {
-                // Damage this enemy while passing through
-                ApplyEnemyHit(collision, enemy, passingThrough: true);
-
-                // Ignore future collisions with ALL other any colliders on this enemy
-                Collider myCollider = GetComponent<Collider>();
-                if (myCollider != null)
+                Collider[] enemyColliders = enemy.GetComponentsInChildren<Collider>();
+                foreach (Collider ec in enemyColliders)
                 {
-                    Collider[] enemyColliders = enemy.GetComponentsInChildren<Collider>();
-                    foreach (Collider ec in enemyColliders)
-                    {
-                        Physics.IgnoreCollision(myCollider, ec);
-                    }
+                    Physics.IgnoreCollision(myCollider, ec);
                 }
             }
 
-            // apply physics force
-            if (collision.rigidbody != null)
+            enemiesPassedThrough++;
+
+            // restore the velocity and position from before the collision so the projectile continues on its original trajectory.
+            if (rb != null)
             {
-                Vector3 force = rb.linearVelocity.normalized * hitForce;
-                collision.rigidbody.AddForceAtPosition(force, collision.contacts[0].point, ForceMode.Impulse);
+                rb.linearVelocity = savedVelocity;
+                rb.angularVelocity = Vector3.zero;
+                // Push forward slightly to clear the enemy collider and prevent collision again 
+                rb.position = savedPosition + savedVelocity.normalized * 0.1f;
             }
+
+            Debug.Log($"[PassThroughSpear] Passed through {collision.gameObject.name} "
+                    + $"({enemiesPassedThrough}/{PassThroughSpear.MaxPassThroughCount})");
+            return; // do NOT destroy, keep flying
         }
+
+        // Normal hit 
+        hasHit = true; // lock rotation 
+        CreateImpactFX();
+
+        if (enemy != null)
+        {
+            ApplyEnemyHit(collision, enemy);
+        }
+
+        // apply physics force
+        if (collision.rigidbody != null)
+        {
+            Vector3 force = rb.linearVelocity.normalized * hitForce;
+            collision.rigidbody.AddForceAtPosition(force, collision.contacts[0].point, ForceMode.Impulse);
+        }
+
+        ReturnToSource(); // destroy / return to pool
     }
 
     /// <summary>

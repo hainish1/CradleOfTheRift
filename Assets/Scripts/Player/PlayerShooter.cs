@@ -288,7 +288,7 @@ public class PlayerShooter : MonoBehaviour
 
     private void Fire()
     {
-        Vector3 direction = aim.GetAimDirection(muzzle.position, muzzle.forward, out RaycastHit hit);
+        Vector3 direction = aim.GetAimDirection(muzzle.position, muzzle.forward, out RaycastHit raycastHit);
 
         Vector3 spawnPos = muzzle.position + direction * spawnOffset;
         Quaternion spawnRot = Quaternion.LookRotation(direction, Vector3.up);
@@ -578,8 +578,11 @@ public class PlayerShooter : MonoBehaviour
         if (currProjectilePrefab != axeProjectilePrefab)
             proj?.Init(velocity, shootMask, currentDamage, 100, playerEntity);
         else
-            proj?.InitAxe(hit.point, gameObject, shootMask, currentDamage, 100, playerEntity);
-            
+        {
+            GameObject axe = Instantiate(axeProjectilePrefab.gameObject, spawnPos, spawnRot);
+            AxeProjectile axeProj = axe.GetComponent<AxeProjectile>();
+            axeProj.Init(raycastHit, direction, gameObject.transform, shootMask, currentDamage, 100, playerEntity);
+        }
 
         // Debug.Log($"Fired projectile with {currentDamage} damage");
         // Play firing sound
