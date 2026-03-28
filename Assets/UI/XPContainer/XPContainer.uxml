@@ -1,0 +1,10 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/XPContainer/XPContainer.uss?fileID=7433441132597879392&amp;guid=d6afbd2352720ea458b8cff5f34a1b50&amp;type=3#XPContainer" />
+    <engine:VisualElement name="XPContainer" picking-mode="Ignore">
+        <engine:Label text="Press Q to level up" name="LevelUpHint" />
+        <engine:VisualElement name="XPRow" picking-mode="Ignore">
+            <engine:Label text="Lv 1" name="LevelLabel" />
+            <engine:ProgressBar value="0" name="XPBar" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
