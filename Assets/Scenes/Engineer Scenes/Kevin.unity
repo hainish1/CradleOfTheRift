@@ -2662,6 +2662,14 @@ PrefabInstance:
       propertyPath: objectiveUI
       value: 
       objectReference: {fileID: 421401595}
+    - target: {fileID: 1938250066004172014, guid: bd99f53ce71c1ef4587243cdc3f8f854, type: 3}
+      propertyPath: steps.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1938250066004172014, guid: bd99f53ce71c1ef4587243cdc3f8f854, type: 3}
+      propertyPath: 'steps.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 68f7bf84e3467c840a5bc7d31e9050ec, type: 2}
     - target: {fileID: 2805886429433933106, guid: bd99f53ce71c1ef4587243cdc3f8f854, type: 3}
       propertyPath: m_LocalPosition.x
       value: -11.692564

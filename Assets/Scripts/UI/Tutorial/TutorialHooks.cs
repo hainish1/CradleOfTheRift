@@ -90,14 +90,13 @@ public class TutorialHooks : MonoBehaviour
     //  Helper
     // ────────────────────────────────────────────────────────────────────
 
-    /// Returns true if the current step highlights the given ability slot index.
+    /// Returns true only if the current step explicitly highlights the given ability slot.
+    /// Steps completed by trigger zones, timers, or other non-ability means return false
+    /// here — TutorialHooks should never complete those steps.
     private static bool StepWantsSlot(int slotIndex)
     {
         var step = TutorialSceneManager.Instance?.CurrentStep;
         if (step == null) return false;
-        // Event-mode steps with no specific slot also pass through
-        if (step.completionMode == CompletionMode.Event && step.highlightTargets.Length == 0)
-            return true;
         return step.HighlightsAbilitySlot(slotIndex);
     }
 }
