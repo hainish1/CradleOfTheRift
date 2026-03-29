@@ -960,74 +960,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 149912c8cb6bcde449ca2f8fb45bd3b8, type: 3}
---- !u!1 &337349877
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 337349878}
-  - component: {fileID: 337349880}
-  - component: {fileID: 337349879}
-  m_Layer: 6
-  m_Name: ObjectiveTriggerZoneUI
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &337349878
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 337349877}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.02412419, y: -0.27904385, z: -0.02842406, w: 0.95955443}
-  m_LocalPosition: {x: -0.00119, y: 0.01185, z: 0.00027}
-  m_LocalScale: {x: 0.01173117, y: 0.004757631, z: 0.01173117}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 242795822}
-  m_LocalEulerAnglesHint: {x: 1.744, y: -32.489, z: -3.902}
---- !u!114 &337349879
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 337349877}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4949cb9c5014a94c8ef2b5dcdefa97a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  expectedStepIndex: 1
-  playerTag: Player
---- !u!65 &337349880
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 337349877}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &351999150
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1113,9 +1045,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 650f8b37338b44f3981905b561a3fcfd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2079935073}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 650f8b37338b44f3981905b561a3fcfd, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1102783536}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 650f8b37338b44f3981905b561a3fcfd, type: 3}
       insertIndex: -1
@@ -3299,74 +3228,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 2ecc2bdd371bf01429d2dcdd695764ce, type: 3}
---- !u!1 &1102783535
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1102783536}
-  - component: {fileID: 1102783537}
-  - component: {fileID: 1102783538}
-  m_Layer: 0
-  m_Name: ObjectiveTriggerZoneUI
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1102783536
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1102783535}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.91454434, y: -0.005736348, z: -0.40441835, w: -0.0046495073}
-  m_LocalPosition: {x: -0.005912577, y: -0.011620333, z: -0.0201612}
-  m_LocalScale: {x: 0.000320432, y: 0.0008686143, z: 0.00032238982}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 351999155}
-  m_LocalEulerAnglesHint: {x: 0, y: 23.718, z: 0}
---- !u!65 &1102783537
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1102783535}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 7.24, y: 3.71, z: 6.86}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1102783538
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1102783535}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4949cb9c5014a94c8ef2b5dcdefa97a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  expectedStepIndex: 0
-  playerTag: Player
 --- !u!1001 &1122221727
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4762,6 +4623,7 @@ GameObject:
   - component: {fileID: 1810700471}
   - component: {fileID: 1810700470}
   - component: {fileID: 1810700469}
+  - component: {fileID: 1810700472}
   m_Layer: 17
   m_Name: Hitbox
   m_TagString: Untagged
@@ -4823,6 +4685,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2079935073}
   m_LocalEulerAnglesHint: {x: 0, y: 26.257, z: 0}
+--- !u!114 &1810700472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1810700468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4949cb9c5014a94c8ef2b5dcdefa97a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  expectedStepIndex: 0
+  playerTag: Player
 --- !u!1 &1815668499
 GameObject:
   m_ObjectHideFlags: 0
@@ -4834,6 +4710,7 @@ GameObject:
   - component: {fileID: 1815668500}
   - component: {fileID: 1815668502}
   - component: {fileID: 1815668501}
+  - component: {fileID: 1815668503}
   m_Layer: 17
   m_Name: Hitbox
   m_TagString: Untagged
@@ -4895,6 +4772,20 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5, y: 5, z: 5}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1815668503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1815668499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4949cb9c5014a94c8ef2b5dcdefa97a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  expectedStepIndex: 2
+  playerTag: Player
 --- !u!1001 &1825333399
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4971,6 +4862,7 @@ GameObject:
   - component: {fileID: 1833329200}
   - component: {fileID: 1833329202}
   - component: {fileID: 1833329201}
+  - component: {fileID: 1833329203}
   m_Layer: 17
   m_Name: Hitbox
   m_TagString: Untagged
@@ -5032,6 +4924,20 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5, y: 5, z: 5}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1833329203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1833329199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4949cb9c5014a94c8ef2b5dcdefa97a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  expectedStepIndex: 1
+  playerTag: Player
 --- !u!4 &1836129792 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 984479434153791223, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
@@ -5151,9 +5057,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: b05e3b6cbad754a629b7e378140e4a8f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1556864292}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: b05e3b6cbad754a629b7e378140e4a8f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 337349878}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b05e3b6cbad754a629b7e378140e4a8f, type: 3}
       insertIndex: -1
