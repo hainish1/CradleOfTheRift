@@ -261,6 +261,28 @@ public class EffectSpecDrawer : PropertyDrawer
         },
         ItemEffectKind.LightningStrikeSelfHeal => Array.Empty<string>(),
 
+        ItemEffectKind.OrbitingFireballBase => new[]
+        {
+            "orbitingFireballDamage", "orbitingFireballRadius", "orbitingFireballRotationSpeed",
+            "orbitingFireballVFX",
+        },
+        ItemEffectKind.OrbitingFireballBonusCount => new[]
+        {
+            "orbitingFireballBonusCount",
+        },
+        ItemEffectKind.OrbitingFireballBonusDamage => new[]
+        {
+            "orbitingFireballBonusDamage",
+        },
+        ItemEffectKind.OrbitingFireballBonusSpeed => new[]
+        {
+            "orbitingFireballBonusSpeed",
+        },
+        ItemEffectKind.OrbitingFireballOnKill => new[]
+        {
+            "orbitingFireballOnKillDuration",
+        },
+
         _ => Array.Empty<string>(),
     };
 }

@@ -52,6 +52,11 @@ public enum ItemEffectKind
     LightningStrikeCooldown,
     LightningStrikeCount,
     LightningStrikeSelfHeal,
+    OrbitingFireballBase,
+    OrbitingFireballBonusCount,
+    OrbitingFireballBonusDamage,
+    OrbitingFireballBonusSpeed,
+    OrbitingFireballOnKill,
 }
 
 [Serializable]
@@ -165,6 +170,7 @@ public class EffectSpec
     public float orbitingFireballDamage = 10f;
     public float orbitingFireballRadius = 3f;
     public float orbitingFireballRotationSpeed = 60f;
+    public GameObject orbitingFireballVFX;
 
     // Lightning Dash
     public float lightningDashDamage = 20f;
@@ -221,6 +227,12 @@ public class EffectSpec
     // Lightning Strike Bonus Count
     public int lightningStrikeBonusCount = 1;
     public float lightningStrikeSpreadRadius = 8f;
+
+    // Orbiting Fireball Upgrades
+    public int orbitingFireballBonusCount = 1;
+    public float orbitingFireballBonusDamage = 3f;
+    public float orbitingFireballBonusSpeed = 15f;
+    public float orbitingFireballOnKillDuration = 5f;
 }
 
 public enum ItemRarity

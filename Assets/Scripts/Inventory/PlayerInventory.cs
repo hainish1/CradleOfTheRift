@@ -59,6 +59,8 @@ public class PlayerInventory : MonoBehaviour
     private LightningStrikeChainBuff lightningStrikeChainBuffEffect;
     private LightningStrikePlayerChain lightningStrikePlayerChainEffect;
     private LightningStrikeElectrify lightningStrikeElectrifyEffect;
+    private OrbitingFireballs orbitingFireballBaseEffect;
+    private OrbitingFireballOnKill orbitingFireballOnKillEffect;
 
     // if I have time limited effects that need use of Updates, I will keep em here
     private readonly List<IDisposable> tickingEffects = new();
@@ -110,6 +112,7 @@ public class PlayerInventory : MonoBehaviour
         finisherStrikeEffect?.Update(dt);
         lightningStrikeBaseEffect?.Update(dt);
         lightningStrikeChainBuffEffect?.Update(dt);
+        orbitingFireballBaseEffect?.Update(dt);
         //homingProjectilesEffect?.Update(dt);
 
 
@@ -154,12 +157,14 @@ public class PlayerInventory : MonoBehaviour
     {
         orbitingFireballsEffect?.Pause();
         orbitingFireballsTestEffect?.Pause();
+        orbitingFireballBaseEffect?.Pause();
     }
 
     public void ResumeOrbitingFireballs()
     {
         orbitingFireballsEffect?.Resume();
         orbitingFireballsTestEffect?.Resume();
+        orbitingFireballBaseEffect?.Resume();
     }
 
     public void RemoveItem(ItemData itemData)
@@ -398,6 +403,21 @@ public class PlayerInventory : MonoBehaviour
                 case ItemEffectKind.LightningStrikeSelfHeal:
                     EnsureLightningStrikeSelfHeal();
                     break;
+                case ItemEffectKind.OrbitingFireballBase:
+                    EnsureOrbitingFireballBase(effect);
+                    break;
+                case ItemEffectKind.OrbitingFireballBonusCount:
+                    EnsureOrbitingFireballBonusCount(effect, stacksAdded);
+                    break;
+                case ItemEffectKind.OrbitingFireballBonusDamage:
+                    EnsureOrbitingFireballBonusDamage(effect, stacksAdded);
+                    break;
+                case ItemEffectKind.OrbitingFireballBonusSpeed:
+                    EnsureOrbitingFireballBonusSpeed(effect, stacksAdded);
+                    break;
+                case ItemEffectKind.OrbitingFireballOnKill:
+                    EnsureOrbitingFireballOnKill(effect);
+                    break;
             }
         }
 
@@ -502,6 +522,54 @@ public class PlayerInventory : MonoBehaviour
                 electrifyDamage: effect.playerLightningStrikeElectrifyDamage
             );
             Debug.Log("[Effect] LightningStrikeElectrify created");
+        }
+    }
+
+    private void EnsureOrbitingFireballBase(EffectSpec effect)
+    {
+        if (orbitingFireballBaseEffect == null || orbitingFireballBaseEffect.IsDisposed)
+        {
+            orbitingFireballBaseEffect = new OrbitingFireballs(
+                owner: playerEntity,
+                damage: effect.orbitingFireballDamage,
+                orbitRadius: effect.orbitingFireballRadius,
+                rotationSpeed: effect.orbitingFireballRotationSpeed,
+                fireballVFX: effect.orbitingFireballVFX
+            );
+            Debug.Log("[Effect] OrbitingFireballBase created");
+        }
+    }
+
+    private void EnsureOrbitingFireballBonusCount(EffectSpec effect, int stacksAdded)
+    {
+        if (orbitingFireballBaseEffect != null && !orbitingFireballBaseEffect.IsDisposed)
+            orbitingFireballBaseEffect.AddBonusBalls(effect.orbitingFireballBonusCount * stacksAdded);
+    }
+
+    private void EnsureOrbitingFireballBonusDamage(EffectSpec effect, int stacksAdded)
+    {
+        if (orbitingFireballBaseEffect != null && !orbitingFireballBaseEffect.IsDisposed)
+            orbitingFireballBaseEffect.AddDamageBonus(effect.orbitingFireballBonusDamage * stacksAdded);
+    }
+
+    private void EnsureOrbitingFireballBonusSpeed(EffectSpec effect, int stacksAdded)
+    {
+        if (orbitingFireballBaseEffect != null && !orbitingFireballBaseEffect.IsDisposed)
+            orbitingFireballBaseEffect.AddSpeedBonus(effect.orbitingFireballBonusSpeed * stacksAdded);
+    }
+
+    private void EnsureOrbitingFireballOnKill(EffectSpec effect)
+    {
+        if (orbitingFireballOnKillEffect == null || orbitingFireballOnKillEffect.IsDisposed)
+        {
+            if (orbitingFireballBaseEffect != null && !orbitingFireballBaseEffect.IsDisposed)
+            {
+                orbitingFireballOnKillEffect = new OrbitingFireballOnKill(
+                    fireballs: orbitingFireballBaseEffect,
+                    duration: effect.orbitingFireballOnKillDuration
+                );
+                Debug.Log("[Effect] OrbitingFireballOnKill created");
+            }
         }
     }
 
@@ -1355,6 +1423,44 @@ public class PlayerInventory : MonoBehaviour
                 if (lightningStrikeBaseEffect != null && !lightningStrikeBaseEffect.IsDisposed)
                     lightningStrikeBaseEffect.SetSelfHeal(false);
                 break;
+            case ItemEffectKind.OrbitingFireballBase:
+                if (orbitingFireballBaseEffect != null && !orbitingFireballBaseEffect.IsDisposed)
+                {
+                    orbitingFireballBaseEffect.Dispose();
+                    orbitingFireballBaseEffect = null;
+                }
+                break;
+            case ItemEffectKind.OrbitingFireballBonusCount:
+                if (orbitingFireballBaseEffect != null && !orbitingFireballBaseEffect.IsDisposed)
+                {
+                    var cntSpec = GetEffectSpec(ItemEffectKind.OrbitingFireballBonusCount);
+                    if (cntSpec != null)
+                        orbitingFireballBaseEffect.RemoveBonusBalls(cntSpec.orbitingFireballBonusCount * stacks);
+                }
+                break;
+            case ItemEffectKind.OrbitingFireballBonusDamage:
+                if (orbitingFireballBaseEffect != null && !orbitingFireballBaseEffect.IsDisposed)
+                {
+                    var fbDmgSpec = GetEffectSpec(ItemEffectKind.OrbitingFireballBonusDamage);
+                    if (fbDmgSpec != null)
+                        orbitingFireballBaseEffect.RemoveDamageBonus(fbDmgSpec.orbitingFireballBonusDamage * stacks);
+                }
+                break;
+            case ItemEffectKind.OrbitingFireballBonusSpeed:
+                if (orbitingFireballBaseEffect != null && !orbitingFireballBaseEffect.IsDisposed)
+                {
+                    var spdSpec = GetEffectSpec(ItemEffectKind.OrbitingFireballBonusSpeed);
+                    if (spdSpec != null)
+                        orbitingFireballBaseEffect.RemoveSpeedBonus(spdSpec.orbitingFireballBonusSpeed * stacks);
+                }
+                break;
+            case ItemEffectKind.OrbitingFireballOnKill:
+                if (orbitingFireballOnKillEffect != null && !orbitingFireballOnKillEffect.IsDisposed)
+                {
+                    orbitingFireballOnKillEffect.Dispose();
+                    orbitingFireballOnKillEffect = null;
+                }
+                break;
 
         }
     }
@@ -1521,6 +1627,8 @@ public class PlayerInventory : MonoBehaviour
         lightningStrikeChainBuffEffect?.Dispose(); lightningStrikeChainBuffEffect = null;
         lightningStrikePlayerChainEffect?.Dispose(); lightningStrikePlayerChainEffect = null;
         lightningStrikeElectrifyEffect?.Dispose(); lightningStrikeElectrifyEffect = null;
+        orbitingFireballBaseEffect?.Dispose(); orbitingFireballBaseEffect = null;
+        orbitingFireballOnKillEffect?.Dispose(); orbitingFireballOnKillEffect = null;
 
         tickingEffects.Clear();
     }    void OnDestroy()
@@ -1557,6 +1665,8 @@ public class PlayerInventory : MonoBehaviour
         lightningStrikeChainBuffEffect?.Dispose();
         lightningStrikePlayerChainEffect?.Dispose();
         lightningStrikeElectrifyEffect?.Dispose();
+        orbitingFireballBaseEffect?.Dispose();
+        orbitingFireballOnKillEffect?.Dispose();
         //homingProjectilesEffect?.Dispose();
         ElementSystem.ClearTempRules();
 
