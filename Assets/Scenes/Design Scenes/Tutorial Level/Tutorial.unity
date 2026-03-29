@@ -1401,7 +1401,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4b15a635c08378459e797f684c485c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tutorialDocument: {fileID: 2085112556}
+  objectiveUI: {fileID: 999668094}
+  objectivePanel: {fileID: 893942521}
 --- !u!1001 &550031585
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1420,7 +1421,7 @@ PrefabInstance:
       objectReference: {fileID: 999668094}
     - target: {fileID: 1938250066004172014, guid: bd99f53ce71c1ef4587243cdc3f8f854, type: 3}
       propertyPath: steps.Array.size
-      value: 8
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1938250066004172014, guid: bd99f53ce71c1ef4587243cdc3f8f854, type: 3}
       propertyPath: 'steps.Array.data[0]'
@@ -2762,6 +2763,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22d243c4ee27d8b4fbfdfb918ccf6cbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &893942521 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2008524293075977917, guid: 97a03f75cd0beb142ae7de1a6c332cbe, type: 3}
+  m_PrefabInstance: {fileID: 551831762}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &906533794
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5077,8 +5083,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   expectedStepIndex: 7
-  interactKey: 101
-  playerTag: Player
 --- !u!1001 &1892520364
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5661,17 +5665,6 @@ MonoBehaviour:
   _singleActivation: 1
   _allowedTargets: 0
   _triggerTargets: []
---- !u!114 &2085112556 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2265399521313077072, guid: e1de26640ee22ec41beb855dafcb0f98, type: 3}
-  m_PrefabInstance: {fileID: 999668093}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2111974995 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8841140246284276385, guid: 4a9e46ffe00dc5941903e7455226e19a, type: 3}

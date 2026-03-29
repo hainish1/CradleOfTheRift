@@ -163,5 +163,10 @@ public class TutorialObjectiveUI : MonoBehaviour
         return new ObjectiveRow { root = root, icon = icon, label = label, hint = hint };
     }
 
+    public void Hide()
+    {
+        _doc.rootVisualElement.style.display = DisplayStyle.None;
+    }
+
     private bool IsDone(ObjectiveRow r) => r.root.ClassListContains(CSS_ROW_DONE);
 }
