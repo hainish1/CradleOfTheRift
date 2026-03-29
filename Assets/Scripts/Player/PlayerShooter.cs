@@ -564,11 +564,6 @@ public class PlayerShooter : MonoBehaviour
             else dirXZ.Normalize();
             velocity = dirXZ * 20f + Vector3.up * 15f;
         }
-        else if (ExplosiveProjectiles.IsEnabled && proj is ExplosiveProjectile)
-        {
-            speed *= 0.2f;
-            velocity = direction * speed;
-        }
         else
         {
             velocity = direction * speed;

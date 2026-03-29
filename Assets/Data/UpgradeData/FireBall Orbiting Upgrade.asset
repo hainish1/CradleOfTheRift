@@ -17,7 +17,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 8fa2a36f5f130804cbc7f3b7f28df1f3, type: 3}
   rarity: 2
   rarityColor: {r: 0.6392157, g: 0.15686275, b: 1, a: 1}
-  canStack: 1
+  canStack: 0
   maxStacks: 99
   stackingType: 0
   useMultipleStats: 1
@@ -52,6 +52,7 @@ MonoBehaviour:
     explosiveFireballSize: 7.5
     explosiveProjectileSpeed: 0.7
     explosiveVFX: {fileID: 0}
+    explosiveTravelVFX: {fileID: 0}
     chainDamagePercent: 0
     maxChainCount: 0
     chainRange: 0
