@@ -158,6 +158,11 @@ public class AbilityUIController : MonoBehaviour
     void CreateAbility(AbilityInfo ability, bool fillFromTop = false)
     {
         var slot = abilitySlotAsset.Instantiate();
+
+        // Name the TemplateContainer so TutorialHighlighter can find it by name.
+        // Convention: "AbilitySlot_0", "AbilitySlot_1", etc. matches slot list index.
+        slot.name = $"AbilitySlot_{abilitySlots.Count}";
+
         var chargeLabel = slot.Q<Label>("ChargeLabel");
         var cooldownLabel = slot.Q<Label>("CooldownLabel");
         slot.Q<Label>("KeyLabel").text = GetKeyDisplayName(ability.key);
