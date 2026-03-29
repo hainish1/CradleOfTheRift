@@ -41,6 +41,12 @@ public class TutorialStep : ScriptableObject
 
     [Tooltip("Seconds to wait before auto-completing (only used when completionMode = Timer).")]
     public float timerDuration = 3f;
+
+    [Tooltip("If true, only a TutorialTriggerZone can complete this step — ability events " +
+             "in TutorialHooks are ignored even if this step highlights an ability slot. " +
+             "Use this when an ability is highlighted as a hint (e.g. 'use dash to reach here') " +
+             "but the real completion condition is reaching a physical location.")]
+    public bool requiresTriggerZone = false;
 }
 
 public enum CompletionMode
