@@ -10,13 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76794b9e3d003c942976a0cd77518f3c, type: 3}
-  m_Name: Objective_2
+  m_Name: Objective_6
   m_EditorClassIdentifier: 
-  objectiveText: Dash to the red plate
-  hintText: 
-  highlightTargets:
-  - {fileID: 11400000, guid: 760de52176ae8c24eaa563b2092fe6ed, type: 2}
+  objectiveText: Use the shockwave
+  hintText: Press X
+  highlightTargets: []
   completionMode: 1
-  keyToPress: 98
+  keyToPress: 120
   timerDuration: 3
-  requiresTriggerZone: 1
+  requiresTriggerZone: 0
