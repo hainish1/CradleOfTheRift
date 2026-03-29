@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76794b9e3d003c942976a0cd77518f3c, type: 3}
-  m_Name: Test_step
+  m_Name: DestinationHighlight
   m_EditorClassIdentifier: 
-  objectiveText: Open the inventory
-  hintText: Press TAB
+  objectiveText: Fly to that place
+  hintText: 
   highlightTargets:
-  - {fileID: 11400000, guid: 150f247ff705b5e4d9f0ab795ea1ce88, type: 2}
-  completionMode: 1
-  keyToPress: 9
+  - {fileID: 11400000, guid: d37ae7f3c25239c4e9694afac392925b, type: 2}
+  completionMode: 0
+  keyToPress: 0
   timerDuration: 3
