@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76794b9e3d003c942976a0cd77518f3c, type: 3}
-  m_Name: Objective_3
+  m_Name: Objective_4
   m_EditorClassIdentifier: 
-  objectiveText: Glide and dash
-  hintText: Jump and hold space to glide (Ask Noah)
+  objectiveText: Fly to the top
+  hintText: Press F and hold Space
   highlightTargets:
-  - {fileID: 11400000, guid: 760de52176ae8c24eaa563b2092fe6ed, type: 2}
+  - {fileID: 11400000, guid: 0553909c7fcdeea4b8551c9f7e7499ac, type: 2}
   completionMode: 0
   keyToPress: 0
   timerDuration: 3

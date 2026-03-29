@@ -195,6 +195,10 @@ PrefabInstance:
       propertyPath: playerSpawnPoint
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 7558003053126955156, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: _heldWeapon
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8678201601994762703, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: _cameraTransform
       value: 
@@ -1395,7 +1399,7 @@ PrefabInstance:
       objectReference: {fileID: 999668094}
     - target: {fileID: 1938250066004172014, guid: bd99f53ce71c1ef4587243cdc3f8f854, type: 3}
       propertyPath: steps.Array.size
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1938250066004172014, guid: bd99f53ce71c1ef4587243cdc3f8f854, type: 3}
       propertyPath: 'steps.Array.data[0]'
@@ -1409,6 +1413,14 @@ PrefabInstance:
       propertyPath: 'steps.Array.data[2]'
       value: 
       objectReference: {fileID: 11400000, guid: 833fb8b1a7c37b0429edd7436107b0b6, type: 2}
+    - target: {fileID: 1938250066004172014, guid: bd99f53ce71c1ef4587243cdc3f8f854, type: 3}
+      propertyPath: 'steps.Array.data[3]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 0b2df89c93e2a24429d38f1696bf11e2, type: 2}
+    - target: {fileID: 1938250066004172014, guid: bd99f53ce71c1ef4587243cdc3f8f854, type: 3}
+      propertyPath: 'steps.Array.data[4]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 3b3afcbebe2b72c4ba70da5c61da1593, type: 2}
     - target: {fileID: 2805886429433933106, guid: bd99f53ce71c1ef4587243cdc3f8f854, type: 3}
       propertyPath: m_LocalPosition.x
       value: -11.692564
@@ -1513,6 +1525,10 @@ PrefabInstance:
     - target: {fileID: 2008524293075977917, guid: 97a03f75cd0beb142ae7de1a6c332cbe, type: 3}
       propertyPath: m_Name
       value: ObjectivesPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 2008524293075977917, guid: 97a03f75cd0beb142ae7de1a6c332cbe, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3901,6 +3917,7 @@ GameObject:
   - component: {fileID: 1529377196}
   - component: {fileID: 1529377198}
   - component: {fileID: 1529377197}
+  - component: {fileID: 1529377199}
   m_Layer: 17
   m_Name: Hitbox
   m_TagString: Untagged
@@ -3961,6 +3978,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5, y: 5, z: 5}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1529377199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1529377195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5b548ba2695c4f47a542cecd949b3b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectileLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  expectedStepIndex: 4
 --- !u!1001 &1537365990
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4347,6 +4380,7 @@ GameObject:
   - component: {fileID: 1692944617}
   - component: {fileID: 1692944619}
   - component: {fileID: 1692944618}
+  - component: {fileID: 1692944620}
   m_Layer: 17
   m_Name: Hitbox
   m_TagString: Untagged
@@ -4408,6 +4442,20 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5, y: 5, z: 5}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1692944620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1692944616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4949cb9c5014a94c8ef2b5dcdefa97a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  expectedStepIndex: 3
+  playerTag: Player
 --- !u!1 &1695670968 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 206638388532156557, guid: a6f206b8dbc506d4eb764be3257fd338, type: 3}
