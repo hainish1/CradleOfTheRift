@@ -21,7 +21,8 @@ public class RecoveryStateGolem : EnemyState
     /// </summary>
     public override void Enter()
     {
-        endTime = Time.time + enemyGolem.recoveryTime; // post attack pause
+        // TODO: Need to add some random wandering instead of standing still while recovering
+        endTime = Time.time + Random.Range(enemyGolem.minAttackPauseTime, enemyGolem.maxAttackPauseTime); // post attack pause
         if (enemy.agent != null)
         {
             enemy.agent.isStopped = true;

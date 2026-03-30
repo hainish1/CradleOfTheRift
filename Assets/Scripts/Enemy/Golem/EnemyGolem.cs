@@ -10,12 +10,15 @@ using UnityEngine.AI;
 public class EnemyGolem : Enemy
 {
     [Header("Movement and Range")]
-    public float chaseSpeed = 4f;
-    public float shootingRange = 10f;
+    public float chaseSpeed = 10f;
+    public float shootingRange = 60f;
     public float minAttackDistance = 2f;
     // public int damage = 10; 
-    public float knockbackPower = 10f; // how far can push the enemy
-    public float recoveryTime { get; private set; } = 1.5f;
+    public float knockbackPower = 100f; // how far can push the enemy
+    public float minAttackPauseTime = 1f;
+    public float maxAttackPauseTime = 1f;
+    public float minRecoveryTime = 3f;
+    public float maxRecoveryTime = 5f;
 
     // [Header("Slime drag stuff")]
     // public float dragSpeed = 6f;
@@ -25,15 +28,16 @@ public class EnemyGolem : Enemy
 
     [Header("Rock Throw Attack Settings")]
     public GameObject rockProjectilePrefab;
-    public float directDamage = 20f;
-    public float AOEDamage = 5f;
-    public float windupTime = 0.7f;
+    public float directDamage = 20f;    // Not used rn
+    public float AOEDamage = 5f;        // Not used rn
+    public float minWindupTime = 1.5f;
+    public float maxWindupTime = 2.5f;
     public float projectileVelocity = 12f;
     public Transform projectileSpawnPoint; // Where the rock spawns
     public float turnSpeedWhileAiming = 8f;
 
     [Header("VFX / SFX")]
-    public GameObject throwVFXPrefab;
+    public GameObject throwRockVFXPrefab;
     [SerializeField] private AK.Wwise.Event throwSFX;
     IdleStateGolem idle;
     ChaseStateGolem chase;

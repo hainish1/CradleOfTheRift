@@ -21,7 +21,7 @@ public class RangeAttackStateGolem : EnemyState
     public override void Enter()
     {
         enemyGolem.PauseAgent();
-        timer = enemyGolem.windupTime;
+        timer = Random.Range(enemyGolem.minWindupTime, enemyGolem.maxWindupTime);
         hasThrown = false;
 
         // Trigger throwing animation (not yet implemented)
