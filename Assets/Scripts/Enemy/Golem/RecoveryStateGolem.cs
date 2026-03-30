@@ -55,42 +55,34 @@ public class RecoveryStateGolem : EnemyState
             }
             return;
         }
-
-        float currentDistance = Vector3.Distance(enemy.transform.position, enemy.target.position);
-        if (needsRetreat && currentDistance < enemyGolem.minAttackDistance)
+        if (needsRetreat)
         {
 
-            // calc retreat position
+            // Retreat while recovering
             Vector3 awayFromPlayer = enemy.transform.position - enemy.target.position;
             awayFromPlayer.y = 0f;
             if (awayFromPlayer.sqrMagnitude > 0.0001f)
             {
-                awayFromPlayer.Normalize();
-                Vector3 retreatPosition = enemy.target.position + awayFromPlayer * enemyGolem.leapAttackRange;
-
+                Vector3 retreatPosition = enemy.target.position + awayFromPlayer.normalized * enemyGolem.shootingRange;
                 if (enemy.agent != null && enemy.agent.enabled)
                 {
-                    enemy.agent.SetDestination(retreatPosition);
                     enemy.agent.isStopped = false;
+                    enemy.agent.SetDestination(retreatPosition);
                 }
             }
-
         }
-        else
+        if (Time.time >= endTime)
+        {
+            needsRetreat = false;
+            if (PlayerInAggressionRange())
             {
-                needsRetreat = false;
-                if (Time.time >= endTime)
-                {
-                    if (PlayerInAggressionRange())
-                    {
-                        stateMachine.ChangeState(enemyGolem.GetChase());
-                    }
-                    else
-                    {
-                        stateMachine.ChangeState(enemyGolem.GetIdle());
-                    }
-                }
+                stateMachine.ChangeState(enemyGolem.GetChase());
             }
+            else
+            {
+                stateMachine.ChangeState(enemyGolem.GetIdle());
+            }
+        }
     }
 
 

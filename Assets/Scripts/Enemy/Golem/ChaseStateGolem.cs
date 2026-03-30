@@ -7,10 +7,6 @@ public class ChaseStateGolem : EnemyState
 {
     private EnemyGolem enemyGolem;
     private AgentKnockBack knockBack;
-
-    private bool dragging;
-    private float phaseTimer;
-
     public ChaseStateGolem(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
         enemyGolem = enemy as EnemyGolem;
@@ -22,15 +18,9 @@ public class ChaseStateGolem : EnemyState
     /// </summary>
     public override void Enter()
     {
-        if (enemy != null)
+        if (enemy?.agent != null)
         {
-            if (enemy.agent != null)
-            {
-                enemy.agent.isStopped = false;
-                enemy.agent.speed = enemyGolem.dragSpeed;
-                dragging = true;
-                phaseTimer = enemyGolem.dragDuration;
-            }
+            enemy.agent.isStopped = false;
         }
     }
 
@@ -44,77 +34,46 @@ public class ChaseStateGolem : EnemyState
         if (enemy.target == null) return; // if there is not target then nothing to chase
         float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.target.position);
 
-        if (distanceToPlayer > enemyGolem.leapAttackRange)
+        if (distanceToPlayer > enemyGolem.shootingRange)  // Chase the player if out of range
         {
-            phaseTimer -= Time.deltaTime; // continue chasing with drag n rest phase
-
-            if (dragging)
+            if(enemy.agent != null)
             {
-                if(enemy.agent != null)
-                {
-                    enemy.agent.isStopped = false;
-                    enemy.agent.speed = enemyGolem.dragSpeed;
-                    SetAgentDestination(enemy.target.position); // give the AI a position to chase
-                }  
+                enemy.agent.isStopped = false;
+                SetAgentDestination(enemy.target.position); // give the AI a position to chase
             }
-            else
-            {
-                // rest phase
-                if(enemy.agent != null)
-                {
-                    enemy.agent.isStopped = true;
-                    enemy.agent.velocity = Vector3.zero;
-                    FaceTarget(enemy.turnSpeed);
-                }
-
-            }
-
-            if (phaseTimer <= 0f)
-            {
-                dragging = !dragging;
-                phaseTimer = dragging ? enemyGolem.dragDuration : enemyGolem.restDuration;
-            }
-        }
-        else if(distanceToPlayer <= enemyGolem.leapAttackRange && distanceToPlayer >= enemyGolem.minAttackDistance)
+        }  
+        else if (distanceToPlayer < enemyGolem.minAttackDistance)   // If the player is too close, retreat for now. (This behavior may change to be removed or replaced with a melee attack)
         {
-            // within leap attack range but not too close, stop and face player
-            enemy.agent.isStopped = true;
-            enemy.agent.velocity = Vector3.zero;
-            FaceTarget(enemy.turnSpeed);
-        }
-        else if(distanceToPlayer < enemyGolem.minAttackDistance)
-        {
-            // too close, back slightly
             Vector3 awayFromPlayer = enemy.transform.position - enemy.target.position;
             awayFromPlayer.y = 0f;
             awayFromPlayer.Normalize();
 
-            Vector3 retreatPosition = enemy.target.position + awayFromPlayer * enemyGolem.leapAttackRange;
-            enemy.agent.isStopped = false;
-            SetAgentDestination(retreatPosition);
+            Vector3 retreatPosition = enemy.target.position + awayFromPlayer * enemyGolem.shootingRange;
+            
+            if(enemy.agent != null)
+            {
+                enemy.agent.isStopped = false;
+                SetAgentDestination(retreatPosition);   // Replace this with a melee attack state later
+            }
+
         }
-
-        // Don't initiate attack during active knockback (PLS)
-        if (knockBack != null && knockBack.IsKnockbackActive) return;
-
-        // Don't leap at a player who is too high above or below - looks unnatural
-        float yDiff = Mathf.Abs(enemy.target.position.y - enemy.transform.position.y);
-        if (yDiff > enemyGolem.maxAttackHeightDiff) return;
-
-        if(distanceToPlayer <= enemyGolem.leapAttackRange &&
-            distanceToPlayer >= enemyGolem.minAttackDistance &&
-            Time.time >= enemy.nextAttackAllowed)
+        else
         {
-            stateMachine.ChangeState(enemyGolem.GetAttack());
+            if (enemy.agent != null)
+            {
+                enemy.agent.isStopped = true;
+                enemy.agent.velocity = Vector3.zero;
+            }
+
+            FaceTarget(enemy.turnSpeed);
+
+            // Don't initiate attack during active knockback (PLS)
+            if (knockBack != null && knockBack.IsKnockbackActive) return;
+
+            if(Time.time >= enemy.nextAttackAllowed)
+            {
+                stateMachine.ChangeState(enemyGolem.GetAttack());
+            }
         }
-
-        
-
-        // // trying to enter attack state
-        // if (PlayerInAttackRange(enemyGolem.attackRange) && Time.time >= enemy.nextAttackAllowed)
-        // {
-        //     stateMachine.ChangeState(enemyGolem.GetAttack());
-        // }
-
     }
 }
