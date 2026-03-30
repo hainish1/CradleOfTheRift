@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{80973DF7-D85B-4625-A837-4DA900EB803B}",
     "Language": "SFX",
-    "Hash": "{5CA02383-EA82-DD7C-ECB1-D37333C88F01}",
+    "Hash": "{A6D18D55-BC65-A463-72DD-174A96F7C099}",
     "ObjectPath": "Play_Music_Smart",
     "ShortName": "Play_Music_Smart",
     "Path": "Event/Play_Music_Smart.bnk",
@@ -23,6 +23,24 @@
       "ShortName": "PercussianOrchestra.wav",
       "Path": "Media/247040063.wem",
       "CachePath": "FD/{FD2849F6-123F-FAF0-1FAC-AB942A5DB51F}.wem"
+     },
+     {
+      "Id": "325838643",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "CaveJamSynth.wav",
+      "Path": "Media/325838643.wem",
+      "CachePath": "87/{878226FD-668B-694E-C68E-654AE5873D9F}.wem"
+     },
+     {
+      "Id": "553245426",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "CaveJamBells.wav",
+      "Path": "Media/553245426.wem",
+      "CachePath": "90/{901CB6AB-AFA8-9ADF-0D8C-E84D6838B536}.wem"
      },
      {
       "Id": "729420675",
@@ -85,6 +103,12 @@
            "GUID": "{99BA7111-C7A0-447A-8C7B-520FC9B8BE63}"
           },
           "MediaRefs": [
+           {
+            "Id": "325838643"
+           },
+           {
+            "Id": "553245426"
+           },
            {
             "Id": "781041820"
            }
@@ -190,6 +214,14 @@
       ]
      }
     ],
+    "GameParameters": [
+     {
+      "Id": "3040750302",
+      "Name": "DistanceToExtractionPoint",
+      "ObjectPath": "\\Game Parameters\\Default Work Unit\\DistanceToExtractionPoint",
+      "GUID": "{07D46845-C40B-40D5-9C40-99C958D0F115}"
+     }
+    ],
     "StateGroups": [
      {
       "Id": "1690668539",
@@ -252,6 +284,6 @@
     ]
    }
   ],
-  "FileHash": "{1D1674E0-A54D-699B-DC5E-EB965C50636A}"
+  "FileHash": "{C07386EB-E552-4C17-3996-891E8376A7A0}"
  }
 }

@@ -25,6 +25,13 @@ Audio Bus	ID	Name			Wwise Object Path	Notes
 	2833159698	Environment Bus			\Default Work Unit\Main Audio Bus\Environment Bus	
 	3127962312	Music Bus			\Default Work Unit\Main Audio Bus\Music Bus	
 
+Auxiliary Bus	ID	Name			Wwise Object Path	Notes
+	1180036773	Cave_Bus			\Default Work Unit\Main Audio Bus\Cave_Bus	
+
+Effect plug-ins	ID	Name	Type				Notes
+	1588715066	Echoes_Linear	Wwise Delay			
+	3164629247	Holy	Wwise RoomVerb			
+
 Audio Devices	ID	Name	Type				Notes
 	2317455096	No_Output	No Output			
 	3859886410	System	System			
