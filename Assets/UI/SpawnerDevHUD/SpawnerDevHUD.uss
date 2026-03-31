@@ -1,0 +1,39 @@
+#SpawnerDevHUDContainer {
+    width: 300px;
+    padding: 15px;
+    background-color: rgba(20, 20, 20, 0.85); 
+    
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+#HUDHeader {
+    font-size: 20px; 
+    color: #FF4444;
+    
+    /* Enable text wrapping */
+    white-space: normal; 
+    
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    margin-bottom: 12px;
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+#CurrentWave {
+    color: #FFD700; 
+    font-size: 16px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+    margin-bottom: 10px;
+    padding-bottom: 4px;
+}
+
+.info-label {
+    color: white; 
+    font-size: 14px; 
+    margin-bottom: 6px;
+}

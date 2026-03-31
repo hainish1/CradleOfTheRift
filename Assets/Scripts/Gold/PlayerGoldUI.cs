@@ -44,6 +44,6 @@ public class PlayerGoldUI : MonoBehaviour
     }
 
     private void OnGoldChanged(int gold) {
-        this.goldLabel.text = $"Gold: {gold.ToString()}";
+        this.goldLabel.text = gold.ToString();
     }
 }
