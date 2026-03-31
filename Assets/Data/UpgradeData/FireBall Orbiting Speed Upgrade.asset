@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
-  m_Name: FireBall Orbiting Lightning Bouns Upgrade
+  m_Name: FireBall Orbiting Speed Upgrade
   m_EditorClassIdentifier: 
-  itemName: Oribiting Fireball lightning
-  description: Gain a fireball that orbit you after you done 30 lighnting damage
+  itemName: Oribiting  Fireball Speed
+  description: fireball speed++
   icon: {fileID: 21300000, guid: 8fa2a36f5f130804cbc7f3b7f28df1f3, type: 3}
-  rarity: 3
-  rarityColor: {r: 1, g: 0.92156863, b: 0.16470589, a: 1}
-  canStack: 0
+  rarity: 0
+  rarityColor: {r: 1, g: 1, b: 1, a: 1}
+  canStack: 1
   maxStacks: 99
   stackingType: 0
   useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 46
-    description: Gain a fireball that orbit you after you done 30 lighnting damage
+  - kind: 41
+    description: fireball speed++
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0
@@ -132,11 +132,11 @@ MonoBehaviour:
     gloomAttackSpeedBuff: 0.3
     gloomFireCooldownIncrease: 0
     gloomPoolPrefab: {fileID: 0}
-    orbitingFireballBonusCount: 1
-    orbitingFireballBonusDamage: 3
-    orbitingFireballBonusSpeed: 15
+    orbitingFireballBonusCount: 5
+    orbitingFireballBonusDamage: 5
+    orbitingFireballBonusSpeed: 20
     orbitingFireballOnKillDuration: 5
-    orbitingFireballOnLightningThreshold: 30
+    orbitingFireballOnLightningThreshold: 100
     orbitingFireballOnLightningDuration: 5
   statType: 13
   operatorType: 0
