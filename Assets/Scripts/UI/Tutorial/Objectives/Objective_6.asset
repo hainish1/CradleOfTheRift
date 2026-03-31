@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectiveText: Use the shockwave
   hintText: Press X
-  highlightTargets: []
+  highlightTargets:
+  - {fileID: 11400000, guid: 2e7721f30a2eb734f9e6f8c5e38c29ce, type: 2}
   completionMode: 1
   keyToPress: 120
   timerDuration: 3
