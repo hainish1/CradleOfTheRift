@@ -17,6 +17,8 @@ public class ExtractionManager : MonoBehaviour
     private ExtractionZone currentActiveZone;
     public bool CanStartExtraction() => !isAnyZoneActive;
 
+    [SerializeField] private bool isTutorialMode = false;
+
     public event Action OnGameWon;
 
 
@@ -75,7 +77,19 @@ public class ExtractionManager : MonoBehaviour
     private void TriggerGlobalWin()
     {
         isExtractionCompleted = true;
-        OnGameWon?.Invoke(); // Tell the UI to show the screen
+
+        if (isTutorialMode)
+        {
+            // let TutorialSceneManager handle the transition
+            if (TutorialSceneManager.Instance != null && TutorialSceneManager.Instance.IsComplete)
+            {
+                var completer = TutorialSceneManager.Instance.GetComponent<TutorialCompleter>();
+                if (completer != null) completer.CompleteTutorial();
+            }
+            return;
+        }
+        // else its just the normal stuff
+        OnGameWon?.Invoke();
     }
 
     public bool IsExtractionCompleted()
