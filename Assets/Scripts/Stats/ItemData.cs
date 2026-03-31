@@ -52,6 +52,15 @@ public enum ItemEffectKind
     LightningStrikeCooldown,
     LightningStrikeCount,
     LightningStrikeSelfHeal,
+    OrbitingFireballBase,
+    OrbitingFireballBonusCount,
+    OrbitingFireballBonusDamage,
+    OrbitingFireballBonusSpeed,
+    OrbitingFireballOnKill,
+    GroundSlam,
+    ZoomUpgrade,
+    GloomUpgrade,
+    OrbitingFireballOnLightning,
 }
 
 [Serializable]
@@ -165,6 +174,7 @@ public class EffectSpec
     public float orbitingFireballDamage = 10f;
     public float orbitingFireballRadius = 3f;
     public float orbitingFireballRotationSpeed = 60f;
+    public GameObject orbitingFireballVFX;
 
     // Lightning Dash
     public float lightningDashDamage = 20f;
@@ -221,6 +231,32 @@ public class EffectSpec
     // Lightning Strike Bonus Count
     public int lightningStrikeBonusCount = 1;
     public float lightningStrikeSpreadRadius = 8f;
+
+    // Ground Slam
+    public float groundSlamDamage = 20f;
+
+    // Zoom Upgrade 
+    public float zoomUpgradeDamage = 15f;
+    public float zoomUpgradeRange = 5f;
+    public float zoomUpgradeDashDistanceBonus = 0f;
+    public GameObject zoomUpgradeVFX;
+
+    // Gloom Upgrade (poison pool)
+    public float gloomDamagePerTick = 5f;
+    public float gloomTickInterval = 0.5f;
+    public float gloomPoolRadius = 4f;
+    public float gloomPoolLifetime = 6f;
+    public float gloomAttackSpeedBuff = 0.3f;
+    public float gloomFireCooldownIncrease = 0f;
+    public GameObject gloomPoolPrefab;
+
+    // Orbiting Fireball Upgrades
+    public int orbitingFireballBonusCount = 1;
+    public float orbitingFireballBonusDamage = 3f;
+    public float orbitingFireballBonusSpeed = 15f;
+    public float orbitingFireballOnKillDuration = 5f;
+    public float orbitingFireballOnLightningThreshold = 100f;
+    public float orbitingFireballOnLightningDuration = 5f;
 }
 
 public enum ItemRarity

@@ -139,8 +139,9 @@ public class AbilityUIController : MonoBehaviour
         PlayerShooter.OnFireChargeSpent += HandleFireChargeSpent;
         PlayerShooter.OnFireChargeRestored += HandleFireChargeRestored;
 
-        // Shockwave
+        // Shockwave / GroundSlam (share the same UI slot)
         PlayerShockwave.OnShockwaveUsed += HandleShockwaveUsed;
+        PlayerGroundSlam.OnGroundSlamUsed += HandleShockwaveUsed;
     }
 
     private void OnDisable()
@@ -152,6 +153,7 @@ public class AbilityUIController : MonoBehaviour
         PlayerShooter.OnFireChargeRestored -= HandleFireChargeRestored;
 
         PlayerShockwave.OnShockwaveUsed -= HandleShockwaveUsed;
+        PlayerGroundSlam.OnGroundSlamUsed -= HandleShockwaveUsed;
     }
 
     void Update()

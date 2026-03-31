@@ -76,7 +76,7 @@ public class EffectSpecDrawer : PropertyDrawer
 
         ItemEffectKind.FallDamageBonus => new[]
         {
-            "fallDamageBonusPerMeter", "fallDamageBonusPerStack",
+            "fallDamageBonusPerMeter",
         },
 
         ItemEffectKind.DotOnHit => new[]
@@ -260,6 +260,50 @@ public class EffectSpecDrawer : PropertyDrawer
             "lightningStrikeBonusCount", "lightningStrikeSpreadRadius",
         },
         ItemEffectKind.LightningStrikeSelfHeal => Array.Empty<string>(),
+
+        ItemEffectKind.OrbitingFireballBase => new[]
+        {
+            "orbitingFireballDamage", "orbitingFireballRadius", "orbitingFireballRotationSpeed",
+            "orbitingFireballVFX",
+        },
+        ItemEffectKind.OrbitingFireballBonusCount => new[]
+        {
+            "orbitingFireballBonusCount",
+        },
+        ItemEffectKind.OrbitingFireballBonusDamage => new[]
+        {
+            "orbitingFireballBonusDamage",
+        },
+        ItemEffectKind.OrbitingFireballBonusSpeed => new[]
+        {
+            "orbitingFireballBonusSpeed",
+        },
+        ItemEffectKind.OrbitingFireballOnKill => new[]
+        {
+            "orbitingFireballOnKillDuration",
+        },
+        ItemEffectKind.OrbitingFireballOnLightning => new[]
+        {
+            "orbitingFireballOnLightningThreshold",
+            "orbitingFireballOnLightningDuration",
+        },
+
+        ItemEffectKind.GroundSlam => new[]
+        {
+            "groundSlamDamage",
+        },
+
+        ItemEffectKind.ZoomUpgrade => new[]
+        {
+            "zoomUpgradeDamage", "zoomUpgradeRange", "zoomUpgradeDashDistanceBonus", "zoomUpgradeVFX",
+        },
+
+        ItemEffectKind.GloomUpgrade => new[]
+        {
+            "gloomDamagePerTick", "gloomTickInterval", "gloomPoolRadius",
+            "gloomPoolLifetime", "gloomAttackSpeedBuff",
+            "gloomFireCooldownIncrease", "gloomPoolPrefab",
+        },
 
         _ => Array.Empty<string>(),
     };
