@@ -23,14 +23,19 @@ DiamondAbilityElement,
 
 
     /* Visual properties for DiamondAbilityElement */
+    /* This is the background color */
+    --background-color: rgb(38, 38, 38);
+
+    /* These are for the diamond border */
     /* --border-color: rgb(168, 144, 96); */
     --border-color: rgb(255, 255, 255);
     /* --border-color: rgb(130, 100, 60); */
-
-
-
     --border-width: 2;
+
+    /* Cooldown overlay settings */
     --overlay-color: rgba(0, 0, 0, 0.6);
+    --edge-color: rgba(255, 255, 255, 0.9); /* White line*/
+    --edge-width: 2; /* Width of line */
 }
 
 #KeyLabel {

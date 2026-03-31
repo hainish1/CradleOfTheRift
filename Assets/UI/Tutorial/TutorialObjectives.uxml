@@ -1,0 +1,35 @@
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
+    editor-extension-mode="False">
+
+    <Style src="project://database/Assets/UI/Tutorial/TutorialObjectives.uss" />
+
+    <!--
+        Root is transparent and non-interactive outside the panel.
+        The panel itself sits top-right (adjust in USS).
+    -->
+    <engine:VisualElement name="TutorialRoot" picking-mode="Ignore">
+
+        <engine:VisualElement name="ObjectivesPanel">
+
+            <!-- Header -->
+            <engine:VisualElement name="ObjectivesHeader">
+                <engine:Label name="ObjectivesTitle" text="OBJECTIVES" />
+            </engine:VisualElement>
+
+            <!-- Divider -->
+            <engine:VisualElement name="ObjectivesDivider" />
+
+            <!--
+                Rows are injected here at runtime by TutorialObjectiveUI.cs.
+                Do NOT add children here manually — they will be cleared on Start.
+            -->
+            <engine:VisualElement name="ObjectiveList" />
+
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+
+</engine:UXML>
