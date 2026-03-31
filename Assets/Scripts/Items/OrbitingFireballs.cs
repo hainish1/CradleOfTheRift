@@ -18,7 +18,8 @@ public class OrbitingFireballs : IDisposable
     private bool isPaused;
     private GameObject fireballVFX;
 
-    private const int MaxFireballs = 20;
+    private static readonly int[] RingCapacity = { 6, 12, 24 };
+    private const int MaxFireballs = 6 + 12 + 24;
 
     public OrbitingFireballs(Entity owner, float damage, float orbitRadius, float rotationSpeed, int initialStacks = 1, float durationSec = -1f, GameObject fireballVFX = null)
     {
@@ -73,9 +74,7 @@ public class OrbitingFireballs : IDisposable
 
     private float CalculateFireballScale(int count)
     {
-        if (count <= 3) return 2.5f;
-        if (count <= 10) return Mathf.Lerp(2.5f, 1.5f, (count - 3) / 7f);
-        return Mathf.Lerp(1.5f, 0.8f, (count - 10) / 10f);
+        return 2.5f;
     }
 
     public void Pause()
@@ -106,11 +105,6 @@ public class OrbitingFireballs : IDisposable
             }
         }
 
-        Vector3 playerPos = owner.transform.position;
-        float angleStep = 360f / fireballs.Count;
-        float effectiveSpeed = rotationSpeed + bonusSpeed;
-        float scale = CalculateFireballScale(fireballs.Count);
-
         for (int i = fireballs.Count - 1; i >= 0; i--)
         {
             if (fireballs[i] == null || fireballs[i].IsDestroyed)
@@ -125,13 +119,47 @@ public class OrbitingFireballs : IDisposable
             {
                 fireballs[i].Destroy();
                 fireballs.RemoveAt(i);
-                continue;
             }
+        }
+
+        Vector3 playerPos = owner.transform.position;
+        float effectiveSpeed = rotationSpeed + bonusSpeed;
+        int activeCount = fireballs.Count;
+        float scale = CalculateFireballScale(activeCount);
+
+        int ringCount = RingCapacity.Length;
+        int[] ringStart = new int[ringCount];
+        int[] ringCounts = new int[ringCount];
+        int cumulative = 0;
+        for (int r = 0; r < ringCount; r++)
+        {
+            ringStart[r] = cumulative;
+            int inThisRing = Mathf.Min(Mathf.Max(activeCount - cumulative, 0), RingCapacity[r]);
+            ringCounts[r] = inThisRing;
+            cumulative += RingCapacity[r];
+        }
+
+        for (int i = 0; i < activeCount; i++)
+        {
+            int ring = 0;
+            for (int r = 0; r < ringCount; r++)
+            {
+                if (i < ringStart[r] + ringCounts[r]) { ring = r; break; }
+            }
+            int indexInRing = i - ringStart[ring];
+            int countInRing = ringCounts[ring];
+
+            float ringRadius = orbitRadius * (1f + ring * 1.0f);
+            float angleStep = 360f / countInRing;
 
             fireballs[i].transform.localScale = Vector3.one * scale;
-            float angle = (Time.time * effectiveSpeed + angleStep * i) % 360f;
+            float angle = (Time.time * effectiveSpeed + angleStep * indexInRing) % 360f;
             float rad = angle * Mathf.Deg2Rad;
-            Vector3 offset = new Vector3(Mathf.Cos(rad) * orbitRadius * 0.75f, 0.8f, Mathf.Sin(rad) * orbitRadius * 0.75f);
+            Vector3 offset = new Vector3(
+                Mathf.Cos(rad) * ringRadius * 0.75f,
+                0.8f,
+                Mathf.Sin(rad) * ringRadius * 0.75f
+            );
             fireballs[i].transform.position = playerPos + offset;
         }
     }

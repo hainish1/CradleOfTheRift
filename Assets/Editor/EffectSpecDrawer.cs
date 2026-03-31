@@ -76,7 +76,7 @@ public class EffectSpecDrawer : PropertyDrawer
 
         ItemEffectKind.FallDamageBonus => new[]
         {
-            "fallDamageBonusPerMeter", "fallDamageBonusPerStack",
+            "fallDamageBonusPerMeter",
         },
 
         ItemEffectKind.DotOnHit => new[]
@@ -281,6 +281,28 @@ public class EffectSpecDrawer : PropertyDrawer
         ItemEffectKind.OrbitingFireballOnKill => new[]
         {
             "orbitingFireballOnKillDuration",
+        },
+        ItemEffectKind.OrbitingFireballOnLightning => new[]
+        {
+            "orbitingFireballOnLightningThreshold",
+            "orbitingFireballOnLightningDuration",
+        },
+
+        ItemEffectKind.GroundSlam => new[]
+        {
+            "groundSlamDamage",
+        },
+
+        ItemEffectKind.ZoomUpgrade => new[]
+        {
+            "zoomUpgradeDamage", "zoomUpgradeRange", "zoomUpgradeDashDistanceBonus", "zoomUpgradeVFX",
+        },
+
+        ItemEffectKind.GloomUpgrade => new[]
+        {
+            "gloomDamagePerTick", "gloomTickInterval", "gloomPoolRadius",
+            "gloomPoolLifetime", "gloomAttackSpeedBuff",
+            "gloomFireCooldownIncrease", "gloomPoolPrefab",
         },
 
         _ => Array.Empty<string>(),
