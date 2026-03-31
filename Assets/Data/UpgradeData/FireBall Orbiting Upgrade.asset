@@ -23,7 +23,7 @@ MonoBehaviour:
   useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 19
+  - kind: 38
     description: Gain three fireballs that orbit you
     duration: -1
     healOnDamagePercentPerStack: 0
@@ -90,6 +90,7 @@ MonoBehaviour:
     orbitingFireballDamage: 10
     orbitingFireballRadius: 8
     orbitingFireballRotationSpeed: 60
+    orbitingFireballVFX: {fileID: 5567662292661809767, guid: beb992516f37b7241885df2f6d5cbc6f, type: 3}
     lightningDashDamage: 0
     lightningDashChainCount: 0
     lightningDashChainRange: 0
@@ -115,6 +116,14 @@ MonoBehaviour:
     xpGrantAmount: 0
     pureCoreDamageMultiplier: 1.15
     pureCoreHealthMultiplier: 1.2
+    lightningStrikeBonusDamage: 5
+    lightningStrikeCooldownReduction: 0.5
+    lightningStrikeBonusCount: 1
+    lightningStrikeSpreadRadius: 8
+    orbitingFireballBonusCount: 1
+    orbitingFireballBonusDamage: 3
+    orbitingFireballBonusSpeed: 15
+    orbitingFireballOnKillDuration: 5
   statType: 13
   operatorType: 0
   value: 1

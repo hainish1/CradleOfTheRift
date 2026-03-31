@@ -29,11 +29,13 @@ public class PlayerGroundSlam : MonoBehaviour
     private CharacterController controller;
     private PlayerMovement playerMovement;
     private bool isSlamming = false;
+    private float slamCooldownTimer;
     // private bool canDoSlam => !controller.isGrounded && (controller.transform.position.y > minSlamHeight);
-    private bool canDoSlam => !controller.isGrounded && HeightAboveGroundSufficient();
+    private bool canDoSlam => !controller.isGrounded && HeightAboveGroundSufficient() && slamCooldownTimer <= 0f;
 
     private Entity _playerEntity;
-    private float SlamDamage => _playerEntity.Stats.ShockwaveDamage;
+    public float slamDamage = 20f;
+    public static event System.Action OnGroundSlamUsed;
     // private float SlamRadius => _playerEntity.Stats.SlamRadius;
     // public float slamRadius = 5f;
 
@@ -74,6 +76,12 @@ public class PlayerGroundSlam : MonoBehaviour
             TryToStartSlam();
             Debug.Log("X pressed, trying to slam");
         };
+    }
+
+    void Update()
+    {
+        if (slamCooldownTimer > 0f)
+            slamCooldownTimer -= Time.deltaTime;
     }
 
     void TryToStartSlam()
@@ -138,8 +146,13 @@ public class PlayerGroundSlam : MonoBehaviour
         // Play slam sound
         audioController?.PlaySlamSound();
 
+        float totalDamage = slamDamage;
+        if (FallDamageBonus.Instance != null)
+        {
+            totalDamage += FallDamageBonus.Instance.GetBonusSlamDamage(transform.position.y);
+        }
+
         HashSet<Enemy> uniqueEnemies = new HashSet<Enemy>();
-        // now do attacks to enemy in sphere overlap
         Collider[] hits = Physics.OverlapSphere(transform.position, CurrentSlamRadius, enemyMask);
         foreach (Collider col in hits)
         {
@@ -147,7 +160,6 @@ public class PlayerGroundSlam : MonoBehaviour
             if (enemy != null && !uniqueEnemies.Contains(enemy))
             {
                 uniqueEnemies.Add(enemy);
-                // first do knockback if enenmy has it
                 var kb = enemy?.GetComponent<AgentKnockBack>();
                 if (kb != null)
                 {
@@ -157,24 +169,19 @@ public class PlayerGroundSlam : MonoBehaviour
                 var flash = col.GetComponentInParent<TargetFlash>();
                 if (flash != null) flash.Flash();
 
-                // then do damage
                 var dmg = enemy?.GetComponent<IDamageable>();
                 if (dmg != null)
                 {
-                    float totalDamage = SlamDamage;
-                    
-                    if (FallDamageBonus.Instance != null)
-                    {
-                        float bonusDamage = FallDamageBonus.Instance.GetBonusSlamDamage(transform.position.y);
-                        totalDamage += bonusDamage;
-                    }
-                    
                     dmg.TakeDamage(totalDamage);
+                    CombatEvents.ReportDamage(_playerEntity, enemy, totalDamage);
                 }
             }
         }
 
         isSlamming = false;
+        if (_playerEntity != null)
+            slamCooldownTimer = _playerEntity.Stats.ShockwaveCooldown;
+        OnGroundSlamUsed?.Invoke();
     }
 
     void DoImpactEffect()
