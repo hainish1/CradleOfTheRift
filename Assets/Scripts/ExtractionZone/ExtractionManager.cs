@@ -13,6 +13,7 @@ public class ExtractionManager : MonoBehaviour
     public event Action<ExtractionZone> ExtractionStarted; 
     public event Action AllExtractionsFinished;
 
+    private bool isExtractionCompleted = false;
     private ExtractionZone currentActiveZone;
     public bool CanStartExtraction() => !isAnyZoneActive;
 
@@ -73,7 +74,13 @@ public class ExtractionManager : MonoBehaviour
     }
     private void TriggerGlobalWin()
     {
+        isExtractionCompleted = true;
         OnGameWon?.Invoke(); // Tell the UI to show the screen
+    }
+
+    public bool IsExtractionCompleted()
+    {
+        return isExtractionCompleted;   
     }
     
 }

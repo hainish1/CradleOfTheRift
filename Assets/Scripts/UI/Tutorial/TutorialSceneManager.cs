@@ -24,6 +24,7 @@ public class TutorialSceneManager : MonoBehaviour
     [Header("References (auto-found if blank)")]
     [SerializeField] private TutorialObjectiveUI objectiveUI;
     [SerializeField] private TutorialHighlighter  highlighter;
+    private TutorialCompleter tutorialCompleter;
 
     public event Action<TutorialStep>       OnStepStarted;
     public event Action<TutorialStep, int>  OnStepCompleted;
@@ -60,6 +61,7 @@ public class TutorialSceneManager : MonoBehaviour
             Debug.LogWarning("[TutorialManager] No steps assigned.");
             return;
         }
+        tutorialCompleter = GetComponent<TutorialCompleter>();
 
         objectiveUI?.Initialise(steps);
         AdvanceToNextStep();
@@ -108,6 +110,11 @@ public class TutorialSceneManager : MonoBehaviour
             objectiveUI?.MarkAllComplete();
             OnTutorialComplete?.Invoke();
             Debug.Log("[TutorialManager] Tutorial complete!");
+            // call the tutorial thing here
+            if (ExtractionManager.Instance.IsExtractionCompleted())
+            {
+                tutorialCompleter.CompleteTutorial(); // go to the main scene
+            }
             return;
         }
 
