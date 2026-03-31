@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{45515A68-3C88-4BE3-9E9F-1CEF6A8B5019}",
     "Language": "SFX",
-    "Hash": "{3CCD0929-858D-DD85-C6C4-7E2F0500D181}",
+    "Hash": "{5E3FEBC4-A5C6-DEE4-D30B-8F1FF2C7582E}",
     "ObjectPath": "Chest_Locked",
     "ShortName": "Chest_Locked",
     "Path": "Event/Chest_Locked.bnk",
@@ -70,6 +70,18 @@
       "CachePath": "A0/{A0AAFAB0-5EA7-9A9A-81E1-9CF350B8C8AB}.wem"
      }
     ],
+    "Plugins": {
+     "ShareSets": [
+      {
+       "Id": "415841907",
+       "Name": "Space_Garage",
+       "ObjectPath": "\\Effects\\Factory Effects\\RoomVerb\\Huge Spaces\\Space_Garage",
+       "GUID": "{1AF92D84-49DD-4BBC-8F29-6C6D10082B6E}",
+       "LibName": "Wwise RoomVerb",
+       "LibId": "7733251"
+      }
+     ]
+    },
     "Events": [
      {
       "Id": "895085565",
@@ -98,11 +110,18 @@
        {
         "Id": "908695156"
        }
-      ]
+      ],
+      "PluginRefs": {
+       "ShareSets": [
+        {
+         "Id": "415841907"
+        }
+       ]
+      }
      }
     ]
    }
   ],
-  "FileHash": "{6EE25C76-B13C-452C-2EF6-F766DF01B4B9}"
+  "FileHash": "{C5FEAEEC-966F-0000-211F-AA77B028CC10}"
  }
 }

@@ -1,0 +1,59 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "1180036773",
+    "Type": "Bus",
+    "GUID": "{E6A51744-C3D0-4F4A-83C6-066B77EDCB0D}",
+    "Language": "SFX",
+    "Hash": "{46D26741-7720-5E62-6EC3-7A7A57DF293D}",
+    "ObjectPath": "Cave_Bus",
+    "ShortName": "Cave_Bus",
+    "Path": "Bus/Cave_Bus.bnk",
+    "Plugins": {
+     "ShareSets": [
+      {
+       "Id": "1588715066",
+       "Name": "Echoes_Linear",
+       "ObjectPath": "\\Effects\\Factory Effects\\Delay\\Echoes_Linear",
+       "GUID": "{D20F3717-EBA2-4E3A-84F8-C8BD431563FB}",
+       "LibName": "Wwise Delay",
+       "LibId": "6946819"
+      },
+      {
+       "Id": "3164629247",
+       "Name": "Holy",
+       "ObjectPath": "\\Effects\\Factory Effects\\RoomVerb\\Cathedrals\\Holy",
+       "GUID": "{CC7B8638-C670-4AD5-B3FB-331EA81037F6}",
+       "LibName": "Wwise RoomVerb",
+       "LibId": "7733251"
+      }
+     ]
+    },
+    "AuxBusses": [
+     {
+      "Id": "1180036773",
+      "Name": "Cave_Bus",
+      "ObjectPath": "\\Busses\\Default Work Unit\\Main Audio Bus\\Cave_Bus",
+      "GUID": "{E6A51744-C3D0-4F4A-83C6-066B77EDCB0D}",
+      "PluginRefs": {
+       "ShareSets": [
+        {
+         "Id": "1588715066"
+        },
+        {
+         "Id": "3164629247"
+        }
+       ]
+      }
+     }
+    ]
+   }
+  ],
+  "FileHash": "{1E269E95-E82A-B5C1-CA02-EDA53C0D4FC7}"
+ }
+}
