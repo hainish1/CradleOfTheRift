@@ -29,7 +29,8 @@ public class AxeProjectile : Projectile
     private float _baseTurnRate;
     private Vector3 _attackTargetPos = Vector3.zero;
     private Vector3 _returnTargetOriginOnReturn;
-    private Transform _returnTarget;
+    private GameObject _returnTargetObj;
+    private Transform _returnTargetCenter;
     private Coroutine _whirlCoroutine;
 
     void Start()
@@ -41,7 +42,7 @@ public class AxeProjectile : Projectile
     {
         if (!_isInitialized) return; // Wait until initialization has occured.
         if (_isExpired) return; // Do nothing if projectile is expired.
-        if (!_returnTarget) DestroyAxe(); // Destroy axe if player died.
+        if (!_returnTargetCenter) DestroyAxe(); // Destroy axe if player died.
 
         age += Time.deltaTime;
         if (age >= lifeTime) // Destroy axe if it did not return quickly enough.
@@ -52,10 +53,10 @@ public class AxeProjectile : Projectile
         }
 
         // Start returning when target position is reached.
-        if (!_isReturning && Vector3.Distance(transform.position, _attackTargetPos) < 1) InitializeReturn();
+        if (!_isReturning && Vector3.Distance(transform.position, _attackTargetPos) < 2) InitializeReturn();
 
         // Destroy axe when it reaches return target.
-        if (_isReturning && Vector3.Distance(transform.position, _returnTarget.position) < 1) DestroyAxe();
+        if (_isReturning && Vector3.Distance(transform.position, _returnTargetCenter.position) < 2) DestroyAxe();
 
         FadeTrailVisuals();
         RotateAndMove();
@@ -100,7 +101,8 @@ public class AxeProjectile : Projectile
 
 
     public void Init(Vector3 attackTargetPos,
-                     Transform returnTarget,
+                     GameObject returnTargetObj,
+                     Transform returnTargetCenter,
                      LayerMask mask,
                      float damage,
                      float flyDistance = 100,
@@ -109,7 +111,8 @@ public class AxeProjectile : Projectile
         // Initialize member variables.
         rb.linearVelocity = _projectileSpeed * transform.forward; // Set a constant linear velocity.
         _attackTargetPos = attackTargetPos;
-        _returnTarget = returnTarget;
+        _returnTargetObj = returnTargetObj;
+        _returnTargetCenter = returnTargetCenter;
         hitMask = mask;
         actualDamage = damage;
         this.attacker = attacker;
@@ -129,10 +132,10 @@ public class AxeProjectile : Projectile
 
     private void RotateAndMove()
     {
-        Vector3 currTargetPos = _isReturning ? _returnTarget.position : _attackTargetPos;
+        Vector3 currTargetPos = _isReturning ? _returnTargetCenter.position : _attackTargetPos;
         float currTurnRate = _isReturning
             // Increase turn rate according to how far the return target moved from its original position on the return path.
-            ? _baseTurnRate * (1 + Vector3.Distance(_returnTarget.position, _returnTargetOriginOnReturn))
+            ? _baseTurnRate * (1 + Vector3.Distance(_returnTargetCenter.position, _returnTargetOriginOnReturn))
             : _baseTurnRate;
 
         // Rotate towards target position.
@@ -149,9 +152,9 @@ public class AxeProjectile : Projectile
 
     private void InitializeReturn()
     {
-        float distance = Vector3.Distance(transform.position, _returnTarget.position);
-        InitializeArcPath(distance, _returnTarget.position);
-        _returnTargetOriginOnReturn = _returnTarget.position;
+        float distance = Vector3.Distance(transform.position, _returnTargetCenter.position);
+        InitializeArcPath(distance, _returnTargetCenter.position);
+        _returnTargetOriginOnReturn = _returnTargetCenter.position;
         _isReturning = true;
     }
 
@@ -189,8 +192,8 @@ public class AxeProjectile : Projectile
 
     private IEnumerator TimeoutReturn()
     {
-        // Face the axe at the return target immediately.
-        Vector3 targetDirectionUnitVector = (_returnTarget.position - transform.position).normalized;
+        // Face axe at the return target immediately.
+        Vector3 targetDirectionUnitVector = (_returnTargetCenter.position - transform.position).normalized;
         Quaternion targetRotation = Quaternion.LookRotation(targetDirectionUnitVector);
         rb.MoveRotation(targetRotation);
 
@@ -201,11 +204,11 @@ public class AxeProjectile : Projectile
         while (timer > 0) // Rapidly move straight towards return target for two seconds.
         {
             float moveIncrement = Time.deltaTime * _timeoutReturnSpeed;
-            float currDistance = Vector3.Distance(transform.position, _returnTarget.position);
+            float currDistance = Vector3.Distance(transform.position, _returnTargetCenter.position);
             if (moveIncrement > currDistance) break; // Exit loop if the return target is reached.
 
             // Rotate and move towards return target position.
-            targetDirectionUnitVector = (_returnTarget.position - transform.position).normalized;
+            targetDirectionUnitVector = (_returnTargetCenter.position - transform.position).normalized;
             targetRotation = Quaternion.LookRotation(targetDirectionUnitVector);
             rb.MoveRotation(targetRotation);
             rb.MovePosition(rb.position + (moveIncrement * transform.forward));
@@ -220,6 +223,11 @@ public class AxeProjectile : Projectile
 
     private void DestroyAxe()
     {
+        // Return axe to thrower before it is destroyed.
+        PlayerShooter shooterScript = _returnTargetObj.GetComponent<PlayerShooter>();
+        print(shooterScript);
+        if (shooterScript) shooterScript.ReturnAxe();
+
         StopCoroutine(_whirlCoroutine);
         Destroy(gameObject);
     }

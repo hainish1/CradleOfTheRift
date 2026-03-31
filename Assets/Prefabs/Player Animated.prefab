@@ -489,7 +489,6 @@ GameObject:
   - component: {fileID: 2600056389756744934}
   - component: {fileID: 8678201601994762703}
   - component: {fileID: 7558003053126955156}
-  - component: {fileID: 3932950717491979509}
   - component: {fileID: 146141417271177862}
   - component: {fileID: 3225160770112030272}
   - component: {fileID: 5019255924879695643}
@@ -680,44 +679,6 @@ MonoBehaviour:
   _axeModel: {fileID: 8947979902455578915}
   _maceModel: {fileID: 4255331478704609254}
   _heldWeapon: 3
---- !u!114 &3932950717491979509
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2377490915647840013}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05fe248d4c7cf764aaf54fd67ddf5559, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  aim: {fileID: 0}
-  muzzle: {fileID: 0}
-  aimTargetManager: {fileID: 0}
-  shootMask:
-    serializedVersion: 2
-    m_Bits: 3153
-  fireRate: 0.1
-  fullAuto: 0
-  playerCenter: {fileID: 0}
-  spearProjectilePrefab: {fileID: 0}
-  axeProjectilePrefab: {fileID: 0}
-  maceProjectilePrefab: {fileID: 0}
-  explosiveProjectilePrefab: {fileID: 0}
-  projectileSpeed: 150
-  spawnOffset: 0.1
-  weaponPivot: {fileID: 0}
-  preTransitionAnim: {fileID: 0}
-  throwAnim: {fileID: 0}
-  postTransitionAnim: {fileID: 0}
-  flipAnimCompletionTime: 0
-  regainAnimCompletionSeconds: 0
-  regainDelaySeconds: 0
-  fireEvent:
-    idInternal: 0
-    valueGuidInternal: 
-    WwiseObjectReference: {fileID: 11400000, guid: cb6fa2f5c156cf74e99840e8869c65cf, type: 2}
 --- !u!114 &146141417271177862
 MonoBehaviour:
   m_ObjectHideFlags: 0

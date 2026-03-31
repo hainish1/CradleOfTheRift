@@ -587,9 +587,9 @@ public class PlayerShooter : MonoBehaviour
             if (raycastHit.collider)
                 targetPos = raycastHit.point;
             else
-                targetPos = aim.GetAimIntersectPoint(axeProjScript._maxTravelDistance); ;
+                targetPos = aim.GetAimIntersectPoint(axeProjScript._maxTravelDistance);
 
-            axeProjScript.Init(targetPos, playerCenter, shootMask, currentDamage, 100, playerEntity);
+            axeProjScript.Init(targetPos, gameObject, playerCenter, shootMask, currentDamage, 100, playerEntity);
         }
 
         // Debug.Log($"Fired projectile with {currentDamage} damage");
@@ -660,7 +660,8 @@ public class PlayerShooter : MonoBehaviour
     /// </summary>
     public void OnWeaponThrowAnimBegin()
     {
-        StartCoroutine(WeaponFlip());
+        // Do not flip the axe.
+        if (currProjectilePrefab != axeProjectilePrefab) StartCoroutine(WeaponFlip());
     }
 
     /// <summary>
@@ -708,7 +709,8 @@ public class PlayerShooter : MonoBehaviour
     /// </summary>
     public void OnWeaponThrowAnimEnd()
     {
-        weaponRegainCoroutine = StartCoroutine(WeaponRegain());
+        if (currProjectilePrefab != axeProjectilePrefab) // Do not grow the axe.
+            weaponRegainCoroutine = StartCoroutine(WeaponRegain());
     }
 
     /// <summary>
@@ -736,6 +738,17 @@ public class PlayerShooter : MonoBehaviour
         }
 
         // Ensure weapon scale restoration is exact when done growing.
+        weaponPivot.localScale = weaponOriginalScale;
+        IsThrowing = false;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Returns the weapon to the player character if the projectile is an axe.
+    ///   </para>
+    /// </summary>
+    public void ReturnAxe()
+    {
         weaponPivot.localScale = weaponOriginalScale;
         IsThrowing = false;
     }
