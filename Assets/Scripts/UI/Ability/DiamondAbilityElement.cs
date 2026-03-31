@@ -113,21 +113,20 @@ public partial class DiamondAbilityElement : VisualElement
 
         var painter = ctx.painter2D;
 
+        // ---- Background fill (always drawn) ---- //
+        painter.fillColor = new Color(0.15f, 0.15f, 0.15f, 1f);
+        painter.BeginPath();
+        painter.MoveTo(top);
+        painter.LineTo(right);
+        painter.LineTo(bottom);
+        painter.LineTo(left);
+        painter.ClosePath();
+        painter.Fill();
+        
         // ---- Icon ---- //
         if (_icon != null)
         {
             DrawIconMesh(ctx, top, right, bottom, left, w, h);
-        }
-        else
-        {
-            painter.fillColor = new Color(0.15f, 0.15f, 0.15f, 1f);
-            painter.BeginPath();
-            painter.MoveTo(top);
-            painter.LineTo(right);
-            painter.LineTo(bottom);
-            painter.LineTo(left);
-            painter.ClosePath();
-            painter.Fill();
         }
 
         // ---- Cooldown overlay ---- //
