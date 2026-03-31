@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3131522396516064293}
   m_Layer: 0
-  m_Name: M_SlimeLighting
+  m_Name: M_SlimeEarth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 2323496405659109023}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 23.54, y: 44.069, z: -303.22}
+  m_LocalPosition: {x: 32.19, y: 44.069, z: -303.22}
   m_LocalScale: {x: 32.50808, y: 32.50808, z: 32.50808}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -98,7 +98,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 224c385f24be85f4f9f1ebbc041ce8c0, type: 2}
+  - {fileID: 2100000, guid: 7293a2ce350e2d7449a79896313ce51c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -184,7 +184,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: afbbac7a17bf4034495f03fe5bd94fdd, type: 2}
+  - {fileID: 2100000, guid: 7d12854837e240f4bb1de5eed1140723, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -270,7 +270,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 224c385f24be85f4f9f1ebbc041ce8c0, type: 2}
+  - {fileID: 2100000, guid: 7293a2ce350e2d7449a79896313ce51c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
