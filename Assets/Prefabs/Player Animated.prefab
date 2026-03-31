@@ -700,6 +700,7 @@ MonoBehaviour:
     m_Bits: 3153
   fireRate: 0.1
   fullAuto: 0
+  playerCenter: {fileID: 0}
   spearProjectilePrefab: {fileID: 0}
   axeProjectilePrefab: {fileID: 0}
   maceProjectilePrefab: {fileID: 0}
@@ -2336,6 +2337,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4695716311520933976}
     - target: {fileID: 8760255454139778537, guid: 607539a4845f7fa438ebcc9034794389, type: 3}
+      propertyPath: playerCenter
+      value: 
+      objectReference: {fileID: 8360927580550886531}
+    - target: {fileID: 8760255454139778537, guid: 607539a4845f7fa438ebcc9034794389, type: 3}
       propertyPath: projectileSpeed
       value: 200
       objectReference: {fileID: 0}
@@ -2346,7 +2351,7 @@ PrefabInstance:
     - target: {fileID: 8760255454139778537, guid: 607539a4845f7fa438ebcc9034794389, type: 3}
       propertyPath: axeProjectilePrefab
       value: 
-      objectReference: {fileID: 3140400090891409143, guid: 1eceaa3c35f3d0d41a32e23f42bf06df, type: 3}
+      objectReference: {fileID: 6018421107269708113, guid: 1eceaa3c35f3d0d41a32e23f42bf06df, type: 3}
     - target: {fileID: 8760255454139778537, guid: 607539a4845f7fa438ebcc9034794389, type: 3}
       propertyPath: maceProjectilePrefab
       value: 

@@ -24,7 +24,7 @@ public class Projectile : MonoBehaviour
     protected float actualDamage; // THIS WILL STORE DAMAGE FROM STATS SYSTEM
 
     public Rigidbody rb;
-    private Collider selfCollider;
+    protected Collider selfCollider;
     protected float age;
     protected Vector3 startPos;
     protected float flyDistance;
@@ -32,8 +32,8 @@ public class Projectile : MonoBehaviour
     protected bool hasHit;
 
     // Pass-through spear tracking
-    private Vector3 savedVelocity;
-    private Vector3 savedPosition;
+    protected Vector3 savedVelocity;
+    protected Vector3 savedPosition;
     private int enemiesPassedThrough;
 
     public virtual void Awake()
@@ -122,7 +122,7 @@ public class Projectile : MonoBehaviour
             trail.time = 0.25f;
         }
 
-        if (rb != null)
+        if (rb != null && !rb.isKinematic)
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;

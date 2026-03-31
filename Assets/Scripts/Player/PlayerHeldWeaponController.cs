@@ -48,12 +48,12 @@ public class PlayerHeldWeaponController : MonoBehaviour
                 _axeModel.SetActive(false);
                 _maceModel.SetActive(false);
                 break;
-            case HeldWeaponType.FireAxe:
+            case HeldWeaponType.Axe:
                 _spearModel.SetActive(false);
                 _axeModel.SetActive(true);
                 _maceModel.SetActive(false);
                 break;
-            case HeldWeaponType.EarthMace:
+            case HeldWeaponType.Mace:
                 _spearModel.SetActive(false);
                 _axeModel.SetActive(false);
                 _maceModel.SetActive(true);
@@ -73,6 +73,6 @@ public enum HeldWeaponType
 {
     None,
     Spear,
-    FireAxe,
-    EarthMace
+    Axe,
+    Mace
 }
