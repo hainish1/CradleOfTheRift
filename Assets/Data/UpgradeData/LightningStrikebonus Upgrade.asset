@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: LightningStrikebonus Upgrade
   m_EditorClassIdentifier: 
   itemName: 'Lightning Strike: more Strile'
-  description: ' Lightning strikes your location periodically. '
+  description: ' Lightning strikes count +1'
   icon: {fileID: 21300000, guid: 54c2e0e1f98cc18448b731de7d4b8117, type: 3}
   rarity: 1
   rarityColor: {r: 0, g: 0.7372549, b: 0.09411765, a: 1}
@@ -24,7 +24,7 @@ MonoBehaviour:
   statMods: []
   effects:
   - kind: 36
-    description: ' Lightning strikes your location periodically.'
+    description: ' Lightning strikes count +1'
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0
@@ -90,6 +90,7 @@ MonoBehaviour:
     orbitingFireballDamage: 0
     orbitingFireballRadius: 0
     orbitingFireballRotationSpeed: 0
+    orbitingFireballVFX: {fileID: 0}
     lightningDashDamage: 0
     lightningDashChainCount: 0
     lightningDashChainRange: 0
@@ -119,6 +120,24 @@ MonoBehaviour:
     lightningStrikeCooldownReduction: 0.5
     lightningStrikeBonusCount: 5
     lightningStrikeSpreadRadius: 20
+    groundSlamDamage: 20
+    zoomUpgradeDamage: 15
+    zoomUpgradeRange: 5
+    zoomUpgradeDashDistanceBonus: 0
+    zoomUpgradeVFX: {fileID: 0}
+    gloomDamagePerTick: 5
+    gloomTickInterval: 0.5
+    gloomPoolRadius: 4
+    gloomPoolLifetime: 6
+    gloomAttackSpeedBuff: 0.3
+    gloomFireCooldownIncrease: 0
+    gloomPoolPrefab: {fileID: 0}
+    orbitingFireballBonusCount: 1
+    orbitingFireballBonusDamage: 3
+    orbitingFireballBonusSpeed: 15
+    orbitingFireballOnKillDuration: 5
+    orbitingFireballOnLightningThreshold: 100
+    orbitingFireballOnLightningDuration: 5
   statType: 13
   operatorType: 0
   value: 1
