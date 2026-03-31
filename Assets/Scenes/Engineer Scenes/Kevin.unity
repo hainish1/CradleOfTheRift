@@ -770,17 +770,21 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1557612151386117096, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
+      propertyPath: 'images.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2800000, guid: 98e2bcc9cf85bd940bdb161881bab33d, type: 3}
+    - target: {fileID: 1557612151386117096, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
       propertyPath: 'images.Array.data[1]'
       value: 
-      objectReference: {fileID: 2800000, guid: 60543084556cda8439f8d4834475dbaa, type: 3}
+      objectReference: {fileID: 2800000, guid: 4632aa3ac92b7d24098156bec17f1bcf, type: 3}
     - target: {fileID: 1557612151386117096, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
       propertyPath: 'images.Array.data[2]'
       value: 
-      objectReference: {fileID: 2800000, guid: 60543084556cda8439f8d4834475dbaa, type: 3}
+      objectReference: {fileID: 2800000, guid: ba1411818f5bf24439b0c8987286281c, type: 3}
     - target: {fileID: 1557612151386117096, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
       propertyPath: 'images.Array.data[3]'
       value: 
-      objectReference: {fileID: 2800000, guid: 60543084556cda8439f8d4834475dbaa, type: 3}
+      objectReference: {fileID: 2800000, guid: 19a526f1ba785284382f794d145d6023, type: 3}
     - target: {fileID: 5504009049952780630, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
       propertyPath: spawner_2
       value: 

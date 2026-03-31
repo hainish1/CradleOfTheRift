@@ -70,6 +70,20 @@ public partial class DiamondAbilityElement : VisualElement
         set { _fillFromTop = value; MarkDirtyRepaint(); }
     }
 
+    private float _iconScale = 1.5f;
+    public float IconScale
+    {
+        get => _iconScale;
+        set { _iconScale = value; MarkDirtyRepaint(); }
+    }
+
+    private Vector2 _iconOffset = Vector2.zero;
+    public Vector2 IconOffset
+    {
+        get => _iconOffset;
+        set { _iconOffset = value; MarkDirtyRepaint(); }
+    }
+
     public DiamondAbilityElement()
     {
         generateVisualContent += OnGenerateVisualContent;
@@ -212,21 +226,34 @@ public partial class DiamondAbilityElement : VisualElement
     private void DrawIconMesh(MeshGenerationContext ctx, Vector2 top, Vector2 right,
         Vector2 bottom, Vector2 left, float w, float h)
     {
+        // The inner axis-aligned square inscribed in the diamond.
+        // Its corners are at the midpoints between the diamond's vertices.
+        float cx = w * 0.5f + _iconOffset.x;
+        float cy = h * 0.5f + IconOffset.y;
+        float halfSize = (right.x - left.x) * 0.5f * 0.5f; // half the diamond width / 2
+
+        float scaledHalf = halfSize * _iconScale;
+
+        Vector2 tlCorner = new Vector2(cx - scaledHalf, cy - scaledHalf); // top-left
+        Vector2 trCorner = new Vector2(cx + scaledHalf, cy - scaledHalf); // top-right
+        Vector2 brCorner = new Vector2(cx + scaledHalf, cy + scaledHalf); // bottom-right
+        Vector2 blCorner = new Vector2(cx - scaledHalf, cy + scaledHalf); // bottom-left
+
         var mesh = ctx.Allocate(4, 6, _icon);
 
-        Vertex MakeVertex(Vector2 pos) => new Vertex
+        Vertex MakeVertex(Vector2 pos, Vector2 uv) => new Vertex
         {
             position = new Vector3(pos.x, pos.y, Vertex.nearZ),
             tint = Color.white,
-            uv = new Vector2(pos.x / w, 1f - (pos.y / h))
+            uv = uv
         };
 
-        mesh.SetNextVertex(MakeVertex(top));
-        mesh.SetNextVertex(MakeVertex(right));
-        mesh.SetNextVertex(MakeVertex(bottom));
-        mesh.SetNextVertex(MakeVertex(left));
+        mesh.SetNextVertex(MakeVertex(tlCorner, new Vector2(0, 1)));
+        mesh.SetNextVertex(MakeVertex(trCorner, new Vector2(1, 1)));
+        mesh.SetNextVertex(MakeVertex(brCorner, new Vector2(1, 0)));
+        mesh.SetNextVertex(MakeVertex(blCorner, new Vector2(0, 0)));
 
-        mesh.SetNextIndex(0); mesh.SetNextIndex(1); mesh.SetNextIndex(3);
-        mesh.SetNextIndex(1); mesh.SetNextIndex(2); mesh.SetNextIndex(3);
+        mesh.SetNextIndex(0); mesh.SetNextIndex(1); mesh.SetNextIndex(2);
+        mesh.SetNextIndex(0); mesh.SetNextIndex(2); mesh.SetNextIndex(3);
     }
 }
