@@ -74,7 +74,8 @@ public class AbilityUIController : MonoBehaviour
             icon = images[0],
             maxCharges = playerStats.DashCharges,
             currentCharges = playerStats.DashCharges,
-            getCooldown = () => playerStats.DashCooldown
+            getCooldown = () => playerStats.DashCooldown,
+            iconScale = 1.2f
         };
         abilities.Add(dashAbility);
         CreateAbility(dashAbility);
@@ -88,7 +89,8 @@ public class AbilityUIController : MonoBehaviour
             maxCharges = 1,
             currentCharges = 1,
             getCooldown = () => 0f,
-            showCharges = false
+            showCharges = false,
+            iconScale = 1.1f
         };
         flyAbilityIndex = abilities.Count;
         abilities.Add(flyAbility);
@@ -103,7 +105,8 @@ public class AbilityUIController : MonoBehaviour
             maxCharges = 1,
             currentCharges = 1,
             getCooldown = () => playerStats.ShockwaveCooldown,
-            showCharges = false
+            showCharges = false,
+            iconScale = 1.3f
         };
         shockwaveAbilityIndex = abilities.Count;
         abilities.Add(shockwaveAbility);
@@ -117,7 +120,9 @@ public class AbilityUIController : MonoBehaviour
             icon = images.Count > 3 ? images[3] : null,
             maxCharges = playerStats.FireCharges,
             currentCharges = playerStats.FireCharges,
-            getCooldown = () => playerStats.FireChargeCooldown
+            getCooldown = () => playerStats.FireChargeCooldown,
+            iconScale = 1.2f,
+            iconOffset = new Vector2(5f, 0f)
         };
         rangedAbilityIndex = abilities.Count;
         abilities.Add(rangedAbility);
@@ -160,6 +165,11 @@ public class AbilityUIController : MonoBehaviour
     void CreateAbility(AbilityInfo ability, bool fillFromTop = false)
     {
         var slot = abilitySlotAsset.Instantiate();
+
+        // Name the TemplateContainer so TutorialHighlighter can find it by name.
+        // Convention: "AbilitySlot_0", "AbilitySlot_1", etc. matches slot list index.
+        slot.name = $"AbilitySlot_{abilitySlots.Count}";
+
         var chargeLabel = slot.Q<Label>("ChargeLabel");
         var cooldownLabel = slot.Q<Label>("CooldownLabel");
         slot.Q<Label>("KeyLabel").text = GetKeyDisplayName(ability.key);
@@ -169,6 +179,8 @@ public class AbilityUIController : MonoBehaviour
         diamond.Icon = ability.icon;
         diamond.CooldownT = 0f;
         diamond.FillFromTop = fillFromTop;
+        diamond.IconScale = ability.iconScale;
+        diamond.IconOffset = ability.iconOffset;
 
         abilityBar.Add(slot);
 
@@ -177,7 +189,7 @@ public class AbilityUIController : MonoBehaviour
             slotElement = slot,
             chargeLabel = chargeLabel,
             cooldownLabel = cooldownLabel,
-            diamond = diamond
+            diamond = diamond,
         });
     }
 
@@ -331,6 +343,8 @@ public class AbilityInfo
     public Func<float> getCooldown;
     public float CooldownRemaining => getCooldown();
     public bool showCharges = true;
+    public float iconScale = 1.5f;
+    public Vector2 iconOffset = Vector2.zero;
 
     [HideInInspector] public int  pendingCooldowns  = 0;
     [HideInInspector] public bool isCooldownRunning = false;
