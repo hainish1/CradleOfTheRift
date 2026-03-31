@@ -41,6 +41,10 @@ public partial class DiamondAbilityElement : VisualElement
     private static readonly CustomStyleProperty<Color> s_BorderColor  = new("--border-color");
     private static readonly CustomStyleProperty<float> s_BorderWidth  = new("--border-width");
     private static readonly CustomStyleProperty<Color> s_OverlayColor = new("--overlay-color");
+    private static readonly CustomStyleProperty<Color> s_EdgeColor      = new("--edge-color");
+    private static readonly CustomStyleProperty<float> s_EdgeWidth      = new("--edge-width");
+    private static readonly CustomStyleProperty<Color> s_BackgroundColor = new("--background-color");
+
 
     private Color _borderColor = Color.white;
     public Color BorderColor
@@ -61,6 +65,27 @@ public partial class DiamondAbilityElement : VisualElement
     {
         get => _overlayColor;
         set { _overlayColor = value; MarkDirtyRepaint(); }
+    }
+
+    private Color _edgeColor = new Color(1f, 1f, 1f, 0.9f);
+    public Color EdgeColor
+    {
+        get => _edgeColor;
+        set { _edgeColor = value; MarkDirtyRepaint(); }
+    }
+
+    private float _edgeWidth = 2f;
+    public float EdgeWidth
+    {
+        get => _edgeWidth;
+        set { _edgeWidth = value; MarkDirtyRepaint(); }
+    }
+
+    private Color _backgroundColor = new Color(0.15f, 0.15f, 0.15f, 1f);
+    public Color BackgroundColor
+    {
+        get => _backgroundColor;
+        set { _backgroundColor = value; MarkDirtyRepaint(); }
     }
 
     private bool _fillFromTop = false;
@@ -92,9 +117,12 @@ public partial class DiamondAbilityElement : VisualElement
 
     private void OnCustomStyleResolved(CustomStyleResolvedEvent e)
     {
-        if (customStyle.TryGetValue(s_BorderColor,  out var borderColor))  _borderColor  = borderColor;
-        if (customStyle.TryGetValue(s_BorderWidth,  out var borderWidth))  _borderWidth  = borderWidth;
-        if (customStyle.TryGetValue(s_OverlayColor, out var overlayColor)) _overlayColor = overlayColor;
+        if (customStyle.TryGetValue(s_BorderColor,     out var borderColor))     _borderColor     = borderColor;
+        if (customStyle.TryGetValue(s_BorderWidth,     out var borderWidth))     _borderWidth     = borderWidth;
+        if (customStyle.TryGetValue(s_OverlayColor,    out var overlayColor))    _overlayColor    = overlayColor;
+        if (customStyle.TryGetValue(s_EdgeColor,       out var edgeColor))       _edgeColor       = edgeColor;
+        if (customStyle.TryGetValue(s_EdgeWidth,       out var edgeWidth))       _edgeWidth       = edgeWidth;
+        if (customStyle.TryGetValue(s_BackgroundColor, out var backgroundColor)) _backgroundColor = backgroundColor;
         MarkDirtyRepaint();
     }
 
@@ -114,7 +142,7 @@ public partial class DiamondAbilityElement : VisualElement
         var painter = ctx.painter2D;
 
         // ---- Background fill (always drawn) ---- //
-        painter.fillColor = new Color(0.15f, 0.15f, 0.15f, 1f);
+        painter.fillColor = _backgroundColor;
         painter.BeginPath();
         painter.MoveTo(top);
         painter.LineTo(right);
@@ -135,7 +163,7 @@ public partial class DiamondAbilityElement : VisualElement
             if (_fillFromTop)
             {
                 // Flight energy: dark wedge grows downward from the top as energy depletes.
-                DrawWedgeFromTop(painter, top, right, bottom, left, _cooldownT, _overlayColor);
+                DrawWedgeFromTop(painter, top, right, bottom, left, _cooldownT, _overlayColor, _edgeColor, _edgeWidth);
             }
             else
             {
@@ -144,7 +172,7 @@ public partial class DiamondAbilityElement : VisualElement
                 // The lower portion is left undrawn so the icon shows through bright.
                 // As CooldownT goes from 1→0, the dark wedge shrinks downward toward the
                 // bottom tip — so the bright area grows upward from the bottom. ✓
-                DrawWedgeFromTop(painter, top, right, bottom, left, _cooldownT, _overlayColor);
+                DrawWedgeFromTop(painter, top, right, bottom, left, _cooldownT, _overlayColor, _edgeColor, _edgeWidth);
             }
         }
 
@@ -165,7 +193,7 @@ public partial class DiamondAbilityElement : VisualElement
     //  t=0 → nothing. t=1 → full diamond.                               //
     // ------------------------------------------------------------------ //
     private void DrawWedgeFromTop(Painter2D painter, Vector2 top, Vector2 right,
-    Vector2 bottom, Vector2 left, float t, Color color)
+    Vector2 bottom, Vector2 left, float t, Color color, Color edgeColor, float edgeWidth)
     {
         if (t <= 0.001f) return;
 
@@ -219,8 +247,8 @@ public partial class DiamondAbilityElement : VisualElement
         painter.Fill();
 
         // ---- Edge line at the cooldown boundary ---- //
-        painter.strokeColor = new Color(1f, 1f, 1f, 0.9f); // bright white edge
-        painter.lineWidth = 2f;
+        painter.strokeColor = _edgeColor;
+        painter.lineWidth = _edgeWidth;
         painter.BeginPath();
         painter.MoveTo(lEdge);
         painter.LineTo(rEdge);
