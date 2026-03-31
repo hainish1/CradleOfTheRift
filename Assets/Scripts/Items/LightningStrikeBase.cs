@@ -24,7 +24,7 @@ public class LightningStrikeBase : IDisposable
     private const float MinInterval = 0.5f;
 
     private const float StrikeDelay = 0.5f;
-    private const float StrikeHeight = 10f;
+    private const float StrikeHeight = 20f;
     private const float StrikeVfxDuration = 0.25f;
 
     private struct PendingStrike
@@ -94,11 +94,12 @@ public class LightningStrikeBase : IDisposable
 
         for (int i = 0; i < bonusStrikes; i++)
         {
+            float bonusTriggerTime = triggerTime + UnityEngine.Random.Range(0.1f, 0.45f);
             Vector2 offset = UnityEngine.Random.insideUnitCircle * spreadRadius;
             Vector3 randomPos = playerPos + new Vector3(offset.x, 0f, offset.y);
             Vector3 randomGround = GetGroundPoint(randomPos);
             CreateWarningVfx(randomGround);
-            pending.Add(new PendingStrike { groundPoint = randomGround, triggerTime = triggerTime });
+            pending.Add(new PendingStrike { groundPoint = randomGround, triggerTime = bonusTriggerTime });
         }
     }
 
