@@ -10,11 +10,29 @@
     "Type": "User",
     "GUID": "{701ECBBD-9C7B-4030-8CDB-749EE5D1C7B9}",
     "Language": "SFX",
-    "Hash": "{C8A530FA-B39D-9912-7ADE-93969B36E814}",
+    "Hash": "{F252EFEE-9AD7-19E5-D542-3F9F00C4CEF5}",
     "ObjectPath": "Init",
     "ShortName": "Init",
     "Path": "Init.bnk",
     "Plugins": {
+     "ShareSets": [
+      {
+       "Id": "1588715066",
+       "Name": "Echoes_Linear",
+       "ObjectPath": "\\Effects\\Factory Effects\\Delay\\Echoes_Linear",
+       "GUID": "{D20F3717-EBA2-4E3A-84F8-C8BD431563FB}",
+       "LibName": "Wwise Delay",
+       "LibId": "6946819"
+      },
+      {
+       "Id": "3164629247",
+       "Name": "Holy",
+       "ObjectPath": "\\Effects\\Factory Effects\\RoomVerb\\Cathedrals\\Holy",
+       "GUID": "{CC7B8638-C670-4AD5-B3FB-331EA81037F6}",
+       "LibName": "Wwise RoomVerb",
+       "LibId": "7733251"
+      }
+     ],
      "AudioDevices": [
       {
        "Id": "2317455096",
@@ -66,6 +84,24 @@
       "GUID": "{D6DEB41F-D126-4561-A478-17D3AE92545C}"
      }
     ],
+    "AuxBusses": [
+     {
+      "Id": "1180036773",
+      "Name": "Cave_Bus",
+      "ObjectPath": "\\Busses\\Default Work Unit\\Main Audio Bus\\Cave_Bus",
+      "GUID": "{E6A51744-C3D0-4F4A-83C6-066B77EDCB0D}",
+      "PluginRefs": {
+       "ShareSets": [
+        {
+         "Id": "1588715066"
+        },
+        {
+         "Id": "3164629247"
+        }
+       ]
+      }
+     }
+    ],
     "GameParameters": [
      {
       "Id": "535618029",
@@ -90,6 +126,12 @@
       "Name": "MasterVolume",
       "ObjectPath": "\\Game Parameters\\Default Work Unit\\MasterVolume",
       "GUID": "{6E88AF8D-1548-49B9-ACC7-E613429F7CC5}"
+     },
+     {
+      "Id": "3040750302",
+      "Name": "DistanceToExtractionPoint",
+      "ObjectPath": "\\Game Parameters\\Default Work Unit\\DistanceToExtractionPoint",
+      "GUID": "{07D46845-C40B-40D5-9C40-99C958D0F115}"
      },
      {
       "Id": "3211196718",
@@ -188,6 +230,6 @@
     ]
    }
   ],
-  "FileHash": "{181527E7-4F59-56CE-6197-0A5F678C4038}"
+  "FileHash": "{FFB08208-2C58-6FE1-1C80-8B173EC42904}"
  }
 }

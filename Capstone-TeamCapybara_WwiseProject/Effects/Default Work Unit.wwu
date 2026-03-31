@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WwiseDocument Type="WorkUnit" ID="{7181FDB3-C30F-466F-9AF9-CBEB839E9B94}" SchemaVersion="133">
 	<Effects>
-		<WorkUnit Name="Default Work Unit" ID="{7181FDB3-C30F-466F-9AF9-CBEB839E9B94}" PersistMode="Standalone"/>
+		<WorkUnit Name="Default Work Unit" ID="{7181FDB3-C30F-466F-9AF9-CBEB839E9B94}" PersistMode="Standalone">
+			<ChildrenList>
+				<Effect Name="GoofyTrem" ID="{53486DD8-7078-4084-8298-27ECB052D4F2}" PluginName="Wwise Tremolo" CompanyID="0" PluginID="131" PluginType="3">
+					<PropertyList>
+						<Property Name="ModFrequency" Type="Real32" Value="0.62"/>
+						<Property Name="ModWaveform" Type="int32" Value="1"/>
+					</PropertyList>
+				</Effect>
+			</ChildrenList>
+		</WorkUnit>
 	</Effects>
 </WwiseDocument>

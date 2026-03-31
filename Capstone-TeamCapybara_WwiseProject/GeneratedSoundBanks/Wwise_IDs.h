@@ -31,6 +31,7 @@ namespace AK
         static const AkUniqueID PLAY_RIVER1 = 2332603225U;
         static const AkUniqueID PLAY_RIVER2 = 2332603226U;
         static const AkUniqueID PLAY_SONG_CAVE = 332365527U;
+        static const AkUniqueID PLAY_SONG_CAVEJAMDYNAMIC = 62910592U;
         static const AkUniqueID PLAY_SONG_ICEY = 3808693238U;
         static const AkUniqueID PLAY_SONG_PERCUSSIANORCHESTRA = 920721062U;
         static const AkUniqueID PLAY_TELEPORTER_AMBIENCE = 1203559441U;
@@ -91,6 +92,7 @@ namespace AK
 
     namespace GAME_PARAMETERS
     {
+        static const AkUniqueID DISTANCETOEXTRACTIONPOINT = 3040750302U;
         static const AkUniqueID ENEMYVOLUME = 535618029U;
         static const AkUniqueID ENVIRONMENTVOLUME = 3211196718U;
         static const AkUniqueID MASTERVOLUME = 2918011349U;
@@ -106,6 +108,11 @@ namespace AK
         static const AkUniqueID MUSIC_BUS = 3127962312U;
         static const AkUniqueID PLAYER_BUS = 174537428U;
     } // namespace BUSSES
+
+    namespace AUX_BUSSES
+    {
+        static const AkUniqueID CAVE_BUS = 1180036773U;
+    } // namespace AUX_BUSSES
 
     namespace AUDIO_DEVICES
     {
