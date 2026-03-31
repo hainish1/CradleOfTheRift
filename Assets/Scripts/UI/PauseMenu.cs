@@ -19,6 +19,9 @@ public class PauseMenu : MonoBehaviour
     [SerializeField]private GameObject mainMenuUI;
 
     [SerializeField] private SettingsMenuController settingsMenuController; 
+    [SerializeField] private string mainSceneName = "Main";
+    [SerializeField] private string tutorialSceneName = "Tutorial";
+
 
     private void Awake()
     {
@@ -131,14 +134,19 @@ public class PauseMenu : MonoBehaviour
 
     private void OnStartGameClick(ClickEvent evt)
     {
-        // Debug.Log("You Pressed the Start Button");
         PauseManager.GameIsPaused = false;
         PlayerHealth.GameIsOver = false;
 
         if (UpgradeLevelManager.Instance != null)
             UpgradeLevelManager.Instance.ResetForNewRun();
 
-        SceneManager.LoadScene("Main");// Change name to game
+        SceneManager.LoadScene(mainSceneName); // will change later
+
+        // if tutorial already completed, then just start Main scene
+        // if (GameSaveState.HasCompletedTutorial)
+        //     SceneManager.LoadScene(mainSceneName);
+        // else
+        //     SceneManager.LoadScene(tutorialSceneName);
     }
     private void OnSettingsClick(ClickEvent evt)
     {
@@ -182,4 +190,10 @@ public class PauseMenu : MonoBehaviour
         pauseManager.QuitGame();
     }
 
+    [ContextMenu("Reset Save State")]
+    private void DebugResetSave()
+    {
+        GameSaveState.ResetAll();
+        Debug.Log("Save state reset");
+    }
 }
