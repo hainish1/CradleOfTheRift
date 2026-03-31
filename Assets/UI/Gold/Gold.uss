@@ -6,30 +6,9 @@
 .gold-icon {
     width: 28px;
     height: 28px;
-    /* background-image: url("project://database/Assets/Art%20Assets/2D/UI%20assets/Gold_Icon.png?fileID=2800000&guid=1234567890abcdef1234567890abcdef&type=3#Gold_Icon");
-    -unity-background-scale-mode: scale-to-fit; */
-
-    /* Remove this block when we have Gold image */
-    background-color: rgb(218, 165, 32);
-    border-radius: 14px;
-    border-width: 2px;
-    border-color: rgb(139, 100, 8);
-    align-items: center;
-    justify-content: center;
-    /* End of placeholder styling */
-
+    background-image: url("project://database/Assets/Art%20Assets/2D/Gold/CapyCoin.png?fileID=2800000&amp;guid=21a8d7c599d484ea1a99c0bf53558bf6&amp;type=3#CapyCoin");
+    -unity-background-scale-mode: scale-to-fit;
 }
-
-/* Remove this block when we have Gold image */
-.gold-icon-inner {
-    width: 14px;
-    height: 14px;
-    background-color: rgb(255, 210, 80);
-    border-radius: 7px;
-    border-width: 1px;
-    border-color: rgb(180, 130, 20);
-}
-
 
 .gold-label {
     -unity-font-style: bold;
