@@ -165,7 +165,7 @@ public partial class DiamondAbilityElement : VisualElement
     //  t=0 → nothing. t=1 → full diamond.                               //
     // ------------------------------------------------------------------ //
     private void DrawWedgeFromTop(Painter2D painter, Vector2 top, Vector2 right,
-        Vector2 bottom, Vector2 left, float t, Color color)
+    Vector2 bottom, Vector2 left, float t, Color color)
     {
         if (t <= 0.001f) return;
 
@@ -179,12 +179,9 @@ public partial class DiamondAbilityElement : VisualElement
             painter.LineTo(left);
             painter.ClosePath();
             painter.Fill();
-            return;
+            return; // no edge line when fully covered
         }
 
-        // cutY moves downward from top.y toward bottom.y as t increases.
-        // At t=1: cutY = bottom.y → full diamond dark.
-        // At t=0: cutY = top.y   → nothing dark.
         float diamondH = bottom.y - top.y;
         float cutY = top.y + (t * diamondH);
         float midY = (top.y + bottom.y) * 0.5f;
@@ -192,12 +189,13 @@ public partial class DiamondAbilityElement : VisualElement
         painter.fillColor = color;
         painter.BeginPath();
 
+        Vector2 rEdge, lEdge;
+
         if (cutY <= midY)
         {
-            // Dark wedge is entirely in the upper triangle.
-            float   tEdge = (cutY - top.y) / (midY - top.y);
-            Vector2 rEdge = Vector2.Lerp(top, right, tEdge);
-            Vector2 lEdge = Vector2.Lerp(top, left,  tEdge);
+            float tEdge = (cutY - top.y) / (midY - top.y);
+            rEdge = Vector2.Lerp(top, right, tEdge);
+            lEdge = Vector2.Lerp(top, left, tEdge);
 
             painter.MoveTo(top);
             painter.LineTo(rEdge);
@@ -206,10 +204,9 @@ public partial class DiamondAbilityElement : VisualElement
         }
         else
         {
-            // Dark wedge crosses midline into lower triangle.
-            float   tEdge = (cutY - midY) / (bottom.y - midY);
-            Vector2 rEdge = Vector2.Lerp(right, bottom, tEdge);
-            Vector2 lEdge = Vector2.Lerp(left,  bottom, tEdge);
+            float tEdge = (cutY - midY) / (bottom.y - midY);
+            rEdge = Vector2.Lerp(right, bottom, tEdge);
+            lEdge = Vector2.Lerp(left, bottom, tEdge);
 
             painter.MoveTo(top);
             painter.LineTo(right);
@@ -220,6 +217,14 @@ public partial class DiamondAbilityElement : VisualElement
         }
 
         painter.Fill();
+
+        // ---- Edge line at the cooldown boundary ---- //
+        painter.strokeColor = new Color(1f, 1f, 1f, 0.9f); // bright white edge
+        painter.lineWidth = 2f;
+        painter.BeginPath();
+        painter.MoveTo(lEdge);
+        painter.LineTo(rEdge);
+        painter.Stroke();
     }
 
     private void DrawIconMesh(MeshGenerationContext ctx, Vector2 top, Vector2 right,
