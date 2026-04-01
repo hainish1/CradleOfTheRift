@@ -1,0 +1,80 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[RequireComponent(typeof(AudioSource))]
+public class ChestTutorial : MonoBehaviour, IInteractable
+{
+    //[SerializeField] private string prompt = "Press E to interact";
+    [SerializeField] private int price = 10;
+    [SerializeField] private bool singleActivation = true;
+    [SerializeField] private AudioSource audioData;
+    [SerializeField] private LootTable lootTable;
+
+    [Header("Audio Settings")]
+    [SerializeField] private AK.Wwise.Event OpenSound;
+    [SerializeField] private AK.Wwise.Event TooExpensiveSound;
+
+    [Header("Tutorial Settings")]
+    [SerializeField] private int expectedStepIndex = -1;
+
+    public string InteractionPrompt => "[E] - " + price + "G";
+    public bool SingleActivation => singleActivation;
+    private bool canInteract = true;
+    public bool Interact(Interactor interactor)
+    {
+        Debug.Log("Interacted with " + gameObject.name);
+
+        // Block interaction if we're waiting for a specific tutorial step
+        if (expectedStepIndex >= 0 &&
+            TutorialSceneManager.Instance?.CurrentStepIndex != expectedStepIndex)
+        {
+            Debug.Log("[Tutorial] Chest interaction blocked — wrong tutorial step.");
+            return false;
+        }
+
+        if (canInteract)
+        {
+            // Check if the interactor has enough money
+
+            if (interactor.GetComponent<PlayerGold>().SpendGold(price))
+            {
+                Debug.Log("U have money.");
+                // Play sounds
+                audioData = GetComponent<AudioSource>();
+                audioData.Play(0);
+                OpenSound.Post(gameObject);
+                // Spawn items
+                if (lootTable != null)
+                {
+                    //Instantiate(item, transform.position + Vector3.up, Quaternion.identity);
+                    // grab the inventory here and pass it down
+                    var inv = interactor.GetComponent<PlayerInventory>();
+                    lootTable.DoDrop(inv);
+                    Debug.Log("Dropped loot.");
+                }
+                else
+                {
+                    // Spawn random item perhaps
+                    //Instantiate(item, transform.position + Vector3.up, Quaternion.identity);
+                    Debug.Log("No loot table.");
+                }
+                if (SingleActivation)
+                {
+                    canInteract = false;
+                    Debug.Log("[Tutorial] Chest destroyed — completing step.");
+                    TutorialSceneManager.Instance?.CompleteCurrentStep();
+                    Destroy(gameObject, 1f); // Add a Delay to allow sound to play and block subsequent interactions
+                }   
+                return true;
+            }
+            else
+            {
+                Debug.Log("U broke.");
+                TooExpensiveSound.Post(gameObject);
+            }
+        }
+
+        return false;
+    }
+}
