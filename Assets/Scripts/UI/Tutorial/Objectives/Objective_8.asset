@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76794b9e3d003c942976a0cd77518f3c, type: 3}
   m_Name: Objective_8
   m_EditorClassIdentifier: 
-  objectiveText: Open the chest
-  hintText: 
+  objectiveText: Defeat enemies to earn XP and Gold
+  hintText: Go to the next platform to fight some enemies
   highlightTargets: []
-  completionMode: 0
-  keyToPress: 0
-  timerDuration: 3
+  completionMode: 2
+  keyToPress: 113
+  timerDuration: 10
   requiresTriggerZone: 0

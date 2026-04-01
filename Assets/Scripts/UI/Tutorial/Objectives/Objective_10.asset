@@ -10,14 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76794b9e3d003c942976a0cd77518f3c, type: 3}
-  m_Name: Objective_4
+  m_Name: Objective_10
   m_EditorClassIdentifier: 
-  objectiveText: Fly to the top of the cliff to find the next plate
-  hintText: Press F to activate flight. While in flight hold SPACE to go up and CONTROL
-    to go down. Press F again to end flight
-  highlightTargets:
-  - {fileID: 11400000, guid: 0553909c7fcdeea4b8551c9f7e7499ac, type: 2}
+  objectiveText: Open the chest
+  hintText: Use the gold you earn from defeating enemies to open the chest
+  highlightTargets: []
   completionMode: 0
   keyToPress: 0
   timerDuration: 3
-  requiresTriggerZone: 1
+  requiresTriggerZone: 0
