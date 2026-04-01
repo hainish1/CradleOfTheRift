@@ -10,13 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76794b9e3d003c942976a0cd77518f3c, type: 3}
-  m_Name: Objective_7
+  m_Name: Objective_9
   m_EditorClassIdentifier: 
-  objectiveText: Learn your attacks
-  hintText: Press RIGHT MOUSE BUTTON to throw your spear and hit the Plate
-  highlightTargets:
-  - {fileID: 11400000, guid: 2e7721f30a2eb734f9e6f8c5e38c29ce, type: 2}
+  objectiveText: Open the chest
+  hintText: Use the gold you earn from defeating enemies to open the chest
+  highlightTargets: []
   completionMode: 0
   keyToPress: 0
   timerDuration: 3
-  requiresTriggerZone: 1
+  requiresTriggerZone: 0
