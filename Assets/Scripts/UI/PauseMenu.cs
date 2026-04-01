@@ -140,13 +140,13 @@ public class PauseMenu : MonoBehaviour
         if (UpgradeLevelManager.Instance != null)
             UpgradeLevelManager.Instance.ResetForNewRun();
 
-        SceneManager.LoadScene(mainSceneName); // will change later
+        // SceneManager.LoadScene(mainSceneName); // will change later
 
         // if tutorial already completed, then just start Main scene
-        // if (GameSaveState.HasCompletedTutorial)
-        //     SceneManager.LoadScene(mainSceneName);
-        // else
-        //     SceneManager.LoadScene(tutorialSceneName);
+        if (GameSaveState.HasCompletedTutorial)
+            SceneManager.LoadScene(mainSceneName);
+        else
+            SceneManager.LoadScene(tutorialSceneName);
     }
     private void OnSettingsClick(ClickEvent evt)
     {
