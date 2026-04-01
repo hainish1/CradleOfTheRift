@@ -88,8 +88,11 @@ public class ExtractionManager : MonoBehaviour
             }
             return;
         }
-        Debug.Log("Win should work!");
-        OnGameWon?.Invoke();
+        else
+        {
+            Debug.Log("Win should work!");
+            OnGameWon?.Invoke();
+        }
     }
 
     public bool IsExtractionCompleted()

@@ -12,11 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76794b9e3d003c942976a0cd77518f3c, type: 3}
   m_Name: Objective_6
   m_EditorClassIdentifier: 
-  objectiveText: Learn your attacks
-  hintText: Press X to cast your shockwave
-  highlightTargets:
-  - {fileID: 11400000, guid: 17066160b8cd04b489576cf03bba430b, type: 2}
-  completionMode: 1
-  keyToPress: 120
-  timerDuration: 3
-  requiresTriggerZone: 1
+  objectiveText: Defeat enemies to earn XP and Gold
+  hintText: Go to the next platform to fight some enemies
+  highlightTargets: []
+  completionMode: 2
+  keyToPress: 113
+  timerDuration: 10
+  requiresTriggerZone: 0

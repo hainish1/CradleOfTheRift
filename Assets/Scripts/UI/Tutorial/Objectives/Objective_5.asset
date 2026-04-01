@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Objective_5
   m_EditorClassIdentifier: 
   objectiveText: Learn your attacks
-  hintText: Press LEFT MOUSE BUTTON to use your basic attack
+  hintText: Press RIGHT MOUSE BUTTON to throw your spear and hit the Plate
   highlightTargets:
-  - {fileID: 11400000, guid: 17066160b8cd04b489576cf03bba430b, type: 2}
-  completionMode: 1
-  keyToPress: 323
+  - {fileID: 11400000, guid: 2e7721f30a2eb734f9e6f8c5e38c29ce, type: 2}
+  completionMode: 0
+  keyToPress: 0
   timerDuration: 3
   requiresTriggerZone: 1
