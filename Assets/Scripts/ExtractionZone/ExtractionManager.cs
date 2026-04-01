@@ -88,7 +88,7 @@ public class ExtractionManager : MonoBehaviour
             }
             return;
         }
-        // else its just the normal stuff
+        Debug.Log("Win should work!");
         OnGameWon?.Invoke();
     }
 
