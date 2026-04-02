@@ -224,7 +224,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.21226418, g: 0.35097808, b: 1, a: 1}
+      maxColor: {r: 0.012281951, g: 0.029856043, b: 0.11320752, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -4899,7 +4899,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 8daefc2714ef7524093b6efb42e11327, type: 2}
-  - {fileID: 2100000, guid: 1995e83751d57df4899ddbf814a307b0, type: 2}
+  - {fileID: 2100000, guid: 74574d91abd5c714fa60370b2b6317ce, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4946,7 +4946,7 @@ Transform:
   m_GameObject: {fileID: 4501453823928765777}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 41.744003, y: 37.7, z: -302.57}
+  m_LocalPosition: {x: 39.25, y: 37.7, z: -302.57}
   m_LocalScale: {x: 172.32988, y: 172.32988, z: 172.32988}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5177,7 +5177,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.0141509175, g: 0.072142094, b: 1, a: 1}
+      maxColor: {r: 0, g: 0.09174347, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
