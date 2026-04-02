@@ -96,7 +96,7 @@ public class ExplosiveProjectile : Projectile
 
         var col = fireballVisual.GetComponent<Collider>();
         if (col != null)
-            DestroyImmediate(col);
+            Destroy(col);
 
         // Keep travel VFX prefab materials untouched.
         // Only apply the red fallback material to the primitive sphere fallback.

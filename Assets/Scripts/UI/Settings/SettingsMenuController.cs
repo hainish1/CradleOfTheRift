@@ -29,7 +29,7 @@ public class SettingsMenuController : MonoBehaviour
     private VisualElement pageAudio, pageVideo, pageControls;
 
     // Bottom bar
-    private Button buttonRevert, buttonBack;
+    private Button buttonRevert, buttonResetTutorial, buttonBack;
 
     // USS class applied to whichever tab button is currently selected
     private const string ACTIVE_TAB_CLASS = "settings-tab--active";
@@ -127,13 +127,20 @@ public class SettingsMenuController : MonoBehaviour
         controlsCtrl.Initialize(pageControls);
 
         // Wire bottom bar button
-        buttonRevert = root.Q<Button>("ButtonRevert");
-        buttonBack   = root.Q<Button>("ButtonBack");
+        buttonRevert        = root.Q<Button>("ButtonRevert");
+        buttonResetTutorial = root.Q<Button>("ButtonResetTutorial");
+        buttonBack          = root.Q<Button>("ButtonBack");
 
         buttonRevert?.RegisterCallback<ClickEvent>(_ =>
         {
             service.RevertToSnapshot();
             RefreshAllPages();
+        });
+        buttonResetTutorial?.RegisterCallback<ClickEvent>(_ =>
+        {
+            GameSaveState.ResetAll();
+            buttonResetTutorial.text = "Tutorial Reset!";
+            buttonResetTutorial.SetEnabled(false);
         });
         buttonBack?.RegisterCallback<ClickEvent>(_ => OnBackPressed?.Invoke());
 

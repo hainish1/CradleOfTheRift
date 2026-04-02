@@ -48,7 +48,8 @@ public class EnemySpawnerUI : MonoBehaviour
         }
         else
         {
-            Debug.LogError("EnemySpawnerUI: No spawner assigned in the inspector!");
+            // Debug.LogError("EnemySpawnerUI: No spawner assigned in the inspector!");
+            Debug.Log("Enemy Spawner is not assigned");
         }
     }
 

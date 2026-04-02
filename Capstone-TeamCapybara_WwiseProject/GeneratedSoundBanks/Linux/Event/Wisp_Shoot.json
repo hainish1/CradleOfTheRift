@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{5927D32A-011B-427A-861A-E335EDACC3D5}",
     "Language": "SFX",
-    "Hash": "{C333C6AF-453D-DD40-BFFB-853D8E3B5952}",
+    "Hash": "{9080C332-5263-E2AF-EDCD-7D2FDCC772B8}",
     "ObjectPath": "Wisp_Shoot",
     "ShortName": "Wisp_Shoot",
     "Path": "Event/Wisp_Shoot.bnk",
@@ -31,6 +31,7 @@
       "Name": "Wisp_Shoot",
       "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Skull\\Wisp_Shoot",
       "GUID": "{5927D32A-011B-427A-861A-E335EDACC3D5}",
+      "MaxAttenuation": "200",
       "DurationType": "OneShot",
       "DurationMin": "0.5255698",
       "DurationMax": "0.7432679",
@@ -43,6 +44,6 @@
     ]
    }
   ],
-  "FileHash": "{62A3A237-5DEE-1755-6F76-B99B009F5534}"
+  "FileHash": "{F6B281B3-C6D6-7729-3389-21A014F21CA7}"
  }
 }
