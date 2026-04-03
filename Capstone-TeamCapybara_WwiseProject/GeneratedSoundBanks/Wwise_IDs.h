@@ -14,6 +14,7 @@ namespace AK
     namespace EVENTS
     {
         static const AkUniqueID CHEST_AMBIENT = 3464756077U;
+        static const AkUniqueID CHEST_AMBIENT_STOP = 1316707488U;
         static const AkUniqueID CHEST_LOCKED = 895085565U;
         static const AkUniqueID CHEST_OPEN = 2728948375U;
         static const AkUniqueID ENEMY_LIGHTNING_DAMAGED = 608341856U;
