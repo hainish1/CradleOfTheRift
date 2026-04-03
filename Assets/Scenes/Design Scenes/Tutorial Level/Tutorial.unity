@@ -211,6 +211,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 650308296}
   m_SourcePrefab: {fileID: 100100000, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+--- !u!114 &503734 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1600938844907053042, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+  m_PrefabInstance: {fileID: 503733}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7044a37391385ba449f5aa830b6a7074, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7288614 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 984479434153791223, guid: eabe788a6c9294e4cbccd96a95ef3639, type: 3}
@@ -2740,7 +2751,7 @@ PrefabInstance:
     - target: {fileID: 4526442510806449292, guid: 04f382082c040d140a97cebed8f7b8cb, type: 3}
       propertyPath: playerAim
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 503734}
     - target: {fileID: 4526442510806449292, guid: 04f382082c040d140a97cebed8f7b8cb, type: 3}
       propertyPath: pauseMenuUI
       value: 
