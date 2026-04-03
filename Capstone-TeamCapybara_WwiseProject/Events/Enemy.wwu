@@ -131,6 +131,24 @@
 						</Event>
 					</ChildrenList>
 				</Folder>
+				<Event Name="Enemy_Spawn" ID="{D2413B90-2C59-482B-BCA5-8215FBCFE27A}">
+					<ChildrenList>
+						<Action Name="" ID="{E8A5FA44-123A-47C2-9D0E-732A27787700}" ShortID="979503014">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="MobSpawn_Glitch" ID="{B9BEDD95-EFBD-4270-8EEF-35BB4048B0C3}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{B6C661D7-6A71-4908-B07B-2DA129872B66}" ShortID="779446078">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="MobSpawn_Digital" ID="{171FFD86-F68C-41ED-8428-D7224585A7B8}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>
