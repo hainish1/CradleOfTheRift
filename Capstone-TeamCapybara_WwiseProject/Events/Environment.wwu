@@ -136,6 +136,20 @@
 								</Action>
 							</ChildrenList>
 						</Event>
+						<Event Name="Chest_Ambient_Stop" ID="{D6FC8F6B-1389-44AE-B70D-F7AE14754C54}">
+							<ChildrenList>
+								<Action Name="" ID="{7B336642-0CEE-4090-A22F-8364B2A81298}" ShortID="475487913">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="2"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Chest_Ambient" ID="{C1B07238-5A1E-4B3C-8A90-B98E6C0740D1}" WorkUnitID="{8ADB7485-E0A9-4F0D-A14F-7ED951DF96EF}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
 					</ChildrenList>
 				</Folder>
 			</ChildrenList>

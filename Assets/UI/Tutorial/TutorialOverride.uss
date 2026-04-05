@@ -1,0 +1,223 @@
+/*
+ * TutorialOverride.uss
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Injected at RUNTIME by TutorialHighlighter.cs — ONLY in the tutorial scene.
+ * Removed on destroy. Never affects the regular game scene.
+ *
+ * Pattern:
+ *   TutorialHighlighter adds  .tutorial-highlight  +  .tutorial-highlight--{style}
+ *   TutorialPulseDriver toggles .tutorial-highlight--{style}-bright  on a timer
+ *   USS transitions between the two states to create a smooth pulse loop.
+ *
+ * All widths, colors, and durations here were chosen to match the
+ * existing visual language of AbilitySlot.uss / Gold.uss / XPContainer.uss.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+
+/* ==========================================================================
+   1. GOLD PULSE  (ability diamonds, chest icon, general purpose)
+   Uses --border-color custom property for DiamondAbilityElement,
+   and border-color for regular VisualElements.
+   ========================================================================== */
+
+/* Base state: white → gold transition in */
+.tutorial-highlight--gold-pulse {
+    border-color:    rgba(255, 195, 40, 0.90);
+    border-width:    2px;
+    border-radius:   3px;
+    transition-property:  border-color, border-width;
+    transition-duration:  0.35s, 0.35s;
+    transition-timing-function: ease-out, ease-out;
+}
+
+/* DiamondAbilityElement reads --border-color, not border-color */
+DiamondAbilityElement.tutorial-highlight--gold-pulse {
+    --border-color: rgb(255, 195, 40);
+    transition-property: --border-color;
+    transition-duration: 0.35s;
+    transition-timing-function: ease-out;
+}
+
+/* Bright phase (toggled by TutorialPulseDriver) */
+.tutorial-highlight--gold-bright {
+    border-color:   rgba(255, 240, 130, 1.0);
+    transition-property:  border-color;
+    transition-duration:  0.75s;
+    transition-timing-function: ease-in-out;
+}
+
+DiamondAbilityElement.tutorial-highlight--gold-bright {
+    --border-color: rgb(255, 240, 130);
+    transition-property: --border-color;
+    transition-duration: 0.75s;
+    transition-timing-function: ease-in-out;
+}
+
+/* Key label badge inside a highlighted ability slot */
+.tutorial-highlight--gold-pulse > #KeyLabel {
+    border-color: rgba(255, 200, 50, 0.85);
+    color:        rgb(255, 215, 80);
+    transition-property: border-color, color;
+    transition-duration: 0.35s, 0.35s;
+}
+
+
+/* ==========================================================================
+   2. GOLD STATIC  (containers, parents — no pulse, just a persistent glow)
+   ========================================================================== */
+
+.tutorial-highlight--gold-static {
+    border-color:   rgba(255, 195, 40, 0.55);
+    border-width:   1px;
+    border-radius:  4px;
+    transition-property: border-color;
+    transition-duration: 0.3s;
+}
+
+
+/* ==========================================================================
+   3. BLUE PULSE  (XP bar, level label — matches the existing blue palette)
+   ========================================================================== */
+
+/* Base: the existing blue border intensifies */
+.tutorial-highlight--blue-pulse {
+    border-color:   rgba(80, 180, 255, 0.95);
+    border-width:   2px;
+    transition-property:  border-color, border-width;
+    transition-duration:  0.35s, 0.35s;
+    transition-timing-function: ease-out, ease-out;
+}
+
+/* Bright phase */
+.tutorial-highlight--blue-bright {
+    border-color:   rgba(160, 230, 255, 1.0);
+    transition-property:  border-color;
+    transition-duration:  0.75s;
+    transition-timing-function: ease-in-out;
+}
+
+/* XPBar progress fill brightens too */
+.tutorial-highlight--blue-pulse > .unity-progress-bar__progress {
+    background-color: rgba(120, 210, 255, 0.95);
+    transition-property: background-color;
+    transition-duration: 0.35s;
+}
+
+/* LevelLabel badge pops gold when its row is highlighted */
+#LevelLabel.tutorial-highlight--blue-pulse {
+    border-color:   rgba(80, 210, 255, 0.90);
+    color:          rgb(130, 220, 255);
+    background-color: rgba(40, 100, 160, 0.25);
+}
+
+
+/* ==========================================================================
+   4. SCALE PULSE  (icons — subtle breathing scale effect)
+   Pairs well with chest icon or gold icon.
+   ========================================================================== */
+
+.tutorial-highlight--scale-pulse {
+    scale: 1 1;
+    transition-property:  scale;
+    transition-duration:  0.35s;
+    transition-timing-function: ease-out;
+}
+
+/* Big phase */
+.tutorial-highlight--scale-big {
+    scale: 1.12 1.12;
+    transition-property:  scale;
+    transition-duration:  0.75s;
+    transition-timing-function: ease-in-out;
+}
+
+
+/* ==========================================================================
+   5. FLASH HIGHLIGHT  (gold counter, single burst of attention)
+   One bright background flash that then fades — no looping needed.
+   TutorialPulseDriver is NOT used for this style; the CSS transition
+   runs once when the class is added, then settles.
+   ========================================================================== */
+
+.tutorial-highlight--flash {
+    background-color: rgba(255, 210, 50, 0.22);
+    border-color:     rgba(255, 200, 40, 0.80);
+    border-width:     2px;
+    border-radius:    4px;
+    transition-property:  background-color, border-color;
+    transition-duration:  0.4s, 0.4s;
+    transition-timing-function: ease-out, ease-out;
+}
+
+/* Gold label text brightens on flash */
+.tutorial-highlight--flash > .gold-label,
+.tutorial-highlight--flash.gold-label {
+    color: rgb(255, 240, 100);
+    transition-property: color;
+    transition-duration: 0.4s;
+}
+
+
+/* ==========================================================================
+   6. WIDGET-SPECIFIC OVERRIDES
+   Applied when the base highlight classes land on a known element ID/class.
+   ========================================================================== */
+
+/* ── Gold container ──────────────────────────────────────────────────────── */
+/* The gold-icon circle gets a matching gold ring */
+.tutorial-highlight--gold-pulse > #GoldIcon,
+.tutorial-highlight--flash      > #GoldIcon {
+    border-color:  rgba(255, 200, 40, 0.90);
+    border-width:  2px;
+    transition-property: border-color;
+    transition-duration: 0.35s;
+}
+
+/* ── Chest prompt ────────────────────────────────────────────────────────── */
+/* The key label badge matches the ability slot treatment */
+.tutorial-highlight--gold-pulse > #ChestKeyLabel,
+.tutorial-highlight--scale-pulse > #ChestKeyLabel {
+    border-color: rgba(255, 200, 50, 0.85);
+    color:        rgb(255, 215, 80);
+    transition-property: border-color, color;
+    transition-duration: 0.35s;
+}
+
+/* The chest icon itself gets a subtle gold glow via background tint */
+.tutorial-highlight--gold-pulse > #ChestIcon,
+.tutorial-highlight--scale-pulse > #ChestIcon {
+    /* Tint the background image gold by overlaying a translucent color */
+    /* Unity doesn't support filter: tint, so we use a border ring instead */
+    border-color:  rgba(255, 195, 40, 0.75);
+    border-width:  2px;
+    border-radius: 4px;
+    transition-property: border-color;
+    transition-duration: 0.35s;
+}
+
+/* ── XP bar ──────────────────────────────────────────────────────────────── */
+/* Progress bar background gets a blue-tinted border */
+#XPBar.tutorial-highlight--blue-pulse {
+    border-color:  rgba(100, 200, 255, 0.85);
+    border-width:  1px;
+}
+
+/* ── Health bar (if you add it later) ───────────────────────────────────── */
+/* Just add: elementName = "HealthBar", style = BluePulse or GoldPulse */
+
+
+/* ==========================================================================
+   HOW TO ADD A NEW WIDGET LATER
+   ==========================================================================
+
+   1. Note the element's #name from its UXML (e.g. "HealthBarFill").
+   2. Create a TutorialHighlightTarget SO:
+        uiDocumentObjectName → the GameObject name that holds the UIDocument
+        elementName          → "HealthBarFill"
+        style                → pick from GoldPulse / BluePulse / ScalePulse etc.
+   3. Add it to the TutorialStep's highlightTargets[] array in the inspector.
+   4. That's it. No new code, no new USS rules needed unless you want a
+      widget-specific visual tweak — in which case add a rule in section 6.
+
+   ========================================================================== */

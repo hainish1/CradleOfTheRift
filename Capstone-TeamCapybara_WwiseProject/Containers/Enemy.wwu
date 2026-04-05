@@ -21,6 +21,7 @@
 										</ModifierInfo>
 									</ModifierList>
 								</Property>
+								<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
 								<Property Name="Volume" Type="Real64">
 									<ModifierList>
 										<ModifierInfo>
@@ -75,6 +76,7 @@
 										</ModifierInfo>
 									</ModifierList>
 								</Property>
+								<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
 								<Property Name="Volume" Type="Real64">
 									<ModifierList>
 										<ModifierInfo>
@@ -116,7 +118,6 @@
 					<ChildrenList>
 						<Sound Name="SkullBreak" ID="{8F9013A0-8435-4BAD-99F5-9EDCCE8AB5D0}" ShortID="272321459">
 							<PropertyList>
-								<Property Name="3DSpatialization" Type="int16" Value="2"/>
 								<Property Name="Pitch" Type="int32">
 									<ModifierList>
 										<ModifierInfo>
@@ -130,6 +131,7 @@
 										</ModifierInfo>
 									</ModifierList>
 								</Property>
+								<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
 								<Property Name="Volume" Type="Real64">
 									<ValueList>
 										<Value>4</Value>
@@ -148,6 +150,9 @@
 								</Property>
 							</PropertyList>
 							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+								</Reference>
 								<Reference Name="Conversion">
 									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
 								</Reference>
@@ -184,6 +189,7 @@
 										</ModifierInfo>
 									</ModifierList>
 								</Property>
+								<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
 								<Property Name="Volume" Type="Real64">
 									<ModifierList>
 										<ModifierInfo>
@@ -199,6 +205,9 @@
 								</Property>
 							</PropertyList>
 							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+								</Reference>
 								<Reference Name="Conversion">
 									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
 								</Reference>
@@ -238,6 +247,7 @@
 										</ModifierInfo>
 									</ModifierList>
 								</Property>
+								<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
 								<Property Name="Volume" Type="Real64">
 									<ValueList>
 										<Value>4</Value>
@@ -278,6 +288,158 @@
 						</Sound>
 					</ChildrenList>
 				</Folder>
+				<Sound Name="MobSpawn_Digital" ID="{171FFD86-F68C-41ED-8428-D7224585A7B8}" ShortID="498532470">
+					<PropertyList>
+						<Property Name="3DSpatialization" Type="int16" Value="2"/>
+						<Property Name="AttenuationDistanceScaling" Type="Real32" Value="0.8"/>
+						<Property Name="OutputBusVolume" Type="Real64">
+							<ValueList>
+								<Value>18</Value>
+							</ValueList>
+						</Property>
+						<Property Name="Pitch" Type="int32">
+							<ModifierList>
+								<ModifierInfo>
+									<Modifier Name="" ID="{B95BBFD0-0FBB-40E7-844D-D2F6C1149F20}">
+										<PropertyList>
+											<Property Name="Enabled" Type="bool" Value="True"/>
+											<Property Name="Max" Type="Real64" Value="400"/>
+											<Property Name="Min" Type="Real64" Value="-400"/>
+										</PropertyList>
+									</Modifier>
+								</ModifierInfo>
+							</ModifierList>
+						</Property>
+					</PropertyList>
+					<ReferenceList>
+						<Reference Name="Attenuation">
+							<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+						</Reference>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="MobSpawn_Digital" ID="{4F8D15DA-FA3E-457E-B685-B7C11F95C24B}">
+							<PropertyList>
+								<Property Name="FadeInDuration" Type="Real64" Value="0.22007722007722"/>
+								<Property Name="FadeOutDuration" Type="Real64" Value="0.49034749034749"/>
+								<Property Name="FadeOutShape" Type="int16" Value="6"/>
+								<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+								<Property Name="TrimEnd" Type="Real64" Value="1.00772200772201"/>
+							</PropertyList>
+							<Language>SFX</Language>
+							<AudioFile>MobSpawn_Digital.wav</AudioFile>
+							<MediaIDList>
+								<MediaID ID="95708307"/>
+							</MediaIDList>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="MobSpawn_Digital" ID="{4F8D15DA-FA3E-457E-B685-B7C11F95C24B}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
+				<RandomSequenceContainer Name="MobSpawn_Glitch" ID="{B9BEDD95-EFBD-4270-8EEF-35BB4048B0C3}" ShortID="876676652">
+					<PropertyList>
+						<Property Name="3DSpatialization" Type="int16" Value="2"/>
+						<Property Name="AttenuationDistanceScaling" Type="Real32" Value="0.8"/>
+						<Property Name="Pitch" Type="int32">
+							<ModifierList>
+								<ModifierInfo>
+									<Modifier Name="" ID="{BA20B291-EF51-4B9F-8ED5-438F46F5DC16}">
+										<PropertyList>
+											<Property Name="Enabled" Type="bool" Value="True"/>
+											<Property Name="Max" Type="Real64" Value="400"/>
+											<Property Name="Min" Type="Real64" Value="-400"/>
+										</PropertyList>
+									</Modifier>
+								</ModifierInfo>
+							</ModifierList>
+						</Property>
+					</PropertyList>
+					<ReferenceList>
+						<Reference Name="Attenuation">
+							<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+						</Reference>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<Sound Name="MobSpawn_Glitch1" ID="{F2252AAA-D26F-40E4-8C24-CC0FF4B99DA6}" ShortID="669365111">
+							<ReferenceList>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="MobSpawn_Glitch1" ID="{EC2E684E-D312-4CF8-A5A3-E390044B15F5}">
+									<Language>SFX</Language>
+									<AudioFile>MobSpawn_Glitch1.wav</AudioFile>
+									<MediaIDList>
+										<MediaID ID="907344378"/>
+									</MediaIDList>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="MobSpawn_Glitch1" ID="{EC2E684E-D312-4CF8-A5A3-E390044B15F5}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+						<Sound Name="MobSpawn_Glitch2" ID="{5BF77D8F-32F1-4C0A-89D6-7174B17E659A}" ShortID="28256481">
+							<ReferenceList>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="MobSpawn_Glitch2" ID="{6673AF44-76BB-46C7-A29D-36EA5BEA2D01}">
+									<Language>SFX</Language>
+									<AudioFile>MobSpawn_Glitch2.wav</AudioFile>
+									<MediaIDList>
+										<MediaID ID="600938173"/>
+									</MediaIDList>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="MobSpawn_Glitch2" ID="{6673AF44-76BB-46C7-A29D-36EA5BEA2D01}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+						<Sound Name="MobSpawn_Glitch3" ID="{1AEDFF7D-2885-485B-8E9C-8C2270AE1EA4}" ShortID="8649699">
+							<ReferenceList>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="MobSpawn_Glitch3" ID="{65A4F612-189A-4AB3-94F6-2C8DD4C12FCF}">
+									<Language>SFX</Language>
+									<AudioFile>MobSpawn_Glitch3.wav</AudioFile>
+									<MediaIDList>
+										<MediaID ID="929668299"/>
+									</MediaIDList>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="MobSpawn_Glitch3" ID="{65A4F612-189A-4AB3-94F6-2C8DD4C12FCF}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+					</ChildrenList>
+				</RandomSequenceContainer>
 			</ChildrenList>
 		</WorkUnit>
 	</Containers>
