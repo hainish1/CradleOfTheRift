@@ -14,15 +14,21 @@ using UnityEngine;
 public class AxeProjectile : Projectile
 {
     [Header("Axe Model Parameters")]
-    [SerializeField] private Transform _modelTransform;
-    [SerializeField] private float _whirlSpeed;
+    [SerializeField]
+    [Tooltip("Transform of the weapon model.")] private Transform _modelTransform;
+    [SerializeField]
+    [Tooltip("How quickly the weapon whirls in units per second.")] private float _whirlSpeed;
 
     [Header("Axe Projectile Parameters")]
-    [SerializeField] private float _projectileSpeed;
-    [SerializeField] private float _maxArcDegrees;
-    [SerializeField] private float _arcFlatteningCapDistance;
-    [SerializeField] private float _timeoutReturnSpeed;
-    public float MaxTravelDistance;
+    [SerializeField]
+    [Tooltip("How quickly the weapon travels in units per second.")] private float _projectileSpeed;
+    [SerializeField]
+    [Tooltip("The maximum degrees which the weapon can arc away from the player upon throw.")] private float _maxArcDegrees;
+    [SerializeField]
+    [Tooltip("The distance from a target at which Max Arc Degrees is reached.")] private float _arcFlatteningCapDistance;
+    [SerializeField]
+    [Tooltip("How quickly the weapon forcibly returns to the thrower in units per second.")] private float _timeoutReturnSpeed;
+    [Tooltip("The maximum distance in units from the thrower which the weapon can travel to.")] public float MaxTravelDistance;
     private bool _isInitialized;
     private bool _isExpired;
     private bool _isReturning;
@@ -94,9 +100,9 @@ public class AxeProjectile : Projectile
             if (selfCollider) // Temporarily ignore future collisions with all colliders of the enemy that was hit.
             {
                 Collider[] enemyColliders = enemyScript.GetComponentsInChildren<Collider>();
-                foreach (Collider collider in enemyColliders)
+                foreach (Collider col in enemyColliders)
                 {
-                    Physics.IgnoreCollision(selfCollider, collider, true);
+                    Physics.IgnoreCollision(selfCollider, col, true);
                     StartCoroutine(ReactivateEnemyColliders(enemyColliders, other.gameObject, delaySeconds: 1));
                 }
             }
@@ -249,8 +255,8 @@ public class AxeProjectile : Projectile
     {
         yield return new WaitForSeconds(delaySeconds);
         if (!enemy) yield break; // Do nothing and end coroutine if enemy is dead.
-        foreach (Collider collider in enemyColliders)
-            Physics.IgnoreCollision(selfCollider, collider, false);
+        foreach (Collider col in enemyColliders)
+            Physics.IgnoreCollision(selfCollider, col, false);
     }
 
     /// <summary>

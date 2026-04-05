@@ -37,7 +37,7 @@ public class LightningDash : IDisposable
     private PlayerShooter shooter;
     private PlayerMeleeController melee;
     private PlayerGroundSlam slam;
-    private PlayerShockwave shockwave;
+    private PlayerShockwaveController shockwave;
     private PlayerHealth playerHealth;
 
     public LightningDash(Entity owner, float damage, int chainCount, float range, int initialStacks = 1, float durationSec = -1f)
@@ -66,7 +66,7 @@ public class LightningDash : IDisposable
         shooter = owner.GetComponentInChildren<PlayerShooter>();
         melee = owner.GetComponentInChildren<PlayerMeleeController>();
         slam = owner.GetComponent<PlayerGroundSlam>();
-        shockwave = owner.GetComponent<PlayerShockwave>();
+        shockwave = owner.GetComponent<PlayerShockwaveController>();
         playerHealth = owner.GetComponent<PlayerHealth>();
 
         SetupLightningTrail();

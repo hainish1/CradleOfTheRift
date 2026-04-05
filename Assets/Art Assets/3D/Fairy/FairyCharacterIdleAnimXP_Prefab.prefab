@@ -989,7 +989,7 @@ MonoBehaviour:
   _hitCapsuleCastRadius: 2
   _damageableLayerMasks:
     serializedVersion: 2
-    m_Bits: 7168
+    m_Bits: 3072
   _debug: 1
   _knockbackForce: 18
   _comboInputBuffer: 0.1
@@ -1020,7 +1020,7 @@ MonoBehaviour:
   playerCenter: {fileID: 0}
   spearProjectilePrefab: {fileID: 3140400090891409143, guid: a6fb9f8d0097a78469656e682c859c0d, type: 3}
   axeProjectilePrefab: {fileID: 6018421107269708113, guid: 1eceaa3c35f3d0d41a32e23f42bf06df, type: 3}
-  maceProjectilePrefab: {fileID: 3140400090891409143, guid: 06fd9845d1721ad49ac20d2dd758cf3e, type: 3}
+  maceProjectilePrefab: {fileID: 6490759825773957261, guid: 06fd9845d1721ad49ac20d2dd758cf3e, type: 3}
   explosiveProjectilePrefab: {fileID: 0}
   projectileSpeed: 200
   spawnOffset: 0.1
@@ -1839,7 +1839,7 @@ GameObject:
   - component: {fileID: 6828442079665837141}
   - component: {fileID: 3787398028134208446}
   m_Layer: 0
-  m_Name: FireAxe
+  m_Name: Axe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2529,7 +2529,7 @@ GameObject:
   - component: {fileID: 6613235801554622886}
   - component: {fileID: 3860239263265577440}
   m_Layer: 0
-  m_Name: EarthMace
+  m_Name: Mace
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

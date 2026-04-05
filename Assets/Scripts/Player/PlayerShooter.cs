@@ -98,7 +98,7 @@ public class PlayerShooter : MonoBehaviour
         shooterAnim = GetComponent<Animator>();
         audioController = GetComponentInParent<PlayerAudioController>();
 
-        SetProjectileType(playerHeldWeaponController._heldWeapon);
+        SetProjectileType(playerHeldWeaponController.HeldWeapon);
         fireMaxCharges = playerEntity.Stats.FireCharges;
         fireChargeCooldown = playerEntity.Stats.FireChargeCooldown;
         currFireCharges = fireMaxCharges;
@@ -626,8 +626,13 @@ public class PlayerShooter : MonoBehaviour
         }
 
         // Initialize the projectile as an axe or non-axe.
-        if (currProjectilePrefab != axeProjectilePrefab)
+        if (currProjectilePrefab == spearProjectilePrefab)
             projScript?.Init(velocity, shootMask, currentDamage, 100, playerEntity);
+        else if (currProjectilePrefab == maceProjectilePrefab)
+        {
+            MaceProjectile maceProjScript = proj.GetComponent<MaceProjectile>();
+            maceProjScript.Init(velocity, shootMask, currentDamage, 100, playerEntity);
+        }
         else
         {
             AxeProjectile axeProjScript = proj.GetComponent<AxeProjectile>();

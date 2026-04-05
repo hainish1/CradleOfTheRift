@@ -140,7 +140,7 @@ public class AbilityUIController : MonoBehaviour
         PlayerShooter.OnFireChargeRestored += HandleFireChargeRestored;
 
         // Shockwave / GroundSlam (share the same UI slot)
-        PlayerShockwave.OnShockwaveUsed += HandleShockwaveUsed;
+        PlayerShockwaveController.OnShockwaveUsed += HandleShockwaveUsed;
         PlayerGroundSlam.OnGroundSlamUsed += HandleShockwaveUsed;
     }
 
@@ -152,7 +152,7 @@ public class AbilityUIController : MonoBehaviour
         PlayerShooter.OnFireChargeSpent -= HandleFireChargeSpent;
         PlayerShooter.OnFireChargeRestored -= HandleFireChargeRestored;
 
-        PlayerShockwave.OnShockwaveUsed -= HandleShockwaveUsed;
+        PlayerShockwaveController.OnShockwaveUsed -= HandleShockwaveUsed;
         PlayerGroundSlam.OnGroundSlamUsed -= HandleShockwaveUsed;
     }
 

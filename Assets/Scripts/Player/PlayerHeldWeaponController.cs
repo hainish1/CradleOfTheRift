@@ -14,7 +14,7 @@ public class PlayerHeldWeaponController : MonoBehaviour
     [SerializeField] private GameObject _spearModel;
     [SerializeField] private GameObject _axeModel;
     [SerializeField] private GameObject _maceModel;
-    [SerializeField] public HeldWeaponType _heldWeapon;
+    [SerializeField] public HeldWeaponType HeldWeapon;
     private PlayerShooter _playerShooter;
 
     void Awake()
@@ -24,7 +24,7 @@ public class PlayerHeldWeaponController : MonoBehaviour
 
     void Start()
     {
-        ChangeWeapon(_heldWeapon);
+        ChangeWeapon(HeldWeapon);
     }
 
     /// <summary>
