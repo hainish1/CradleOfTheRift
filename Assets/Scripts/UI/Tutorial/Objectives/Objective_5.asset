@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76794b9e3d003c942976a0cd77518f3c, type: 3}
+  m_Name: Objective_5
+  m_EditorClassIdentifier: 
+  objectiveText: 'Shoot at the target '
+  hintText: Right Click
+  highlightTargets:
+  - {fileID: 11400000, guid: 17066160b8cd04b489576cf03bba430b, type: 2}
+  completionMode: 0
+  keyToPress: 0
+  timerDuration: 3
+  requiresTriggerZone: 1

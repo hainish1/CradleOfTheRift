@@ -1,0 +1,142 @@
+/*
+ * TutorialObjectives.uss
+ * Styles for the tutorial objective panel and row states.
+ * Loaded ONLY by the TutorialObjectives UIDocument — never affects regular gameplay UI.
+ */
+
+/* ============================================================
+   PANEL SHELL
+   ============================================================ */
+
+#TutorialRoot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Let clicks pass through to the game */
+    /* picking-mode is set in UXML */
+}
+
+#ObjectivesPanel {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 280px;
+
+    background-color: rgba(8, 8, 12, 0.78);
+    border-color: rgba(255, 255, 255, 0.12);
+    border-width: 1px;
+    border-radius: 6px;
+    padding: 14px 16px 16px 16px;
+
+    /* Subtle inner glow */
+    /* Unity UI Toolkit doesn't support box-shadow, so we fake it with border */
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+#ObjectivesHeader {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+#ObjectivesTitle {
+    font-size: 11px;
+    color: rgba(200, 180, 120, 0.9);   /* muted gold */
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    flex-grow: 1;
+}
+
+#ObjectivesDivider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px;
+}
+
+/* ============================================================
+   ROWS
+   ============================================================ */
+
+.objective-row {
+    flex-direction: row;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    transition-property: background-color, opacity;
+    transition-duration: 0.25s;
+    transition-timing-function: ease-out;
+    opacity: 0.55;
+}
+
+.objective-row--active {
+    background-color: rgba(255, 255, 255, 0.06);
+    opacity: 1.0;
+}
+
+.objective-row--done {
+    opacity: 0.38;
+}
+
+/* ============================================================
+   STATUS ICON (bullet / checkmark)
+   ============================================================ */
+
+.objective-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    margin-top: 1px;
+    -unity-text-align: middle-center;
+    font-size: 13px;
+    flex-shrink: 0;
+    transition-property: color;
+    transition-duration: 0.2s;
+}
+
+.objective-icon--pending {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.objective-icon--active {
+    color: rgba(255, 210, 80, 1.0);   /* gold bullet on active step */
+}
+
+.objective-icon--done {
+    color: rgba(100, 210, 100, 1.0);  /* green checkmark */
+}
+
+/* ============================================================
+   LABELS
+   ============================================================ */
+
+.objective-label {
+    font-size: 13px;
+    color: rgba(200, 200, 210, 0.7);
+    -unity-text-align: upper-left;
+    white-space: normal;
+    flex-grow: 1;
+    transition-property: color;
+    transition-duration: 0.2s;
+}
+
+.objective-label--active {
+    color: rgba(240, 235, 220, 1.0);
+    -unity-font-style: bold;
+}
+
+.objective-label--done {
+    color: rgba(160, 160, 170, 0.5);
+}
+
+.objective-hint {
+    font-size: 11px;
+    color: rgba(180, 160, 90, 0.85);  /* warm amber hint */
+    margin-top: 3px;
+    white-space: normal;
+}
