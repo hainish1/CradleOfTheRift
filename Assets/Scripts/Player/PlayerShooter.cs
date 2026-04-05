@@ -583,12 +583,7 @@ public class PlayerShooter : MonoBehaviour
             AxeProjectile axeProjScript = proj.GetComponent<AxeProjectile>();
 
             // Initialize target position.
-            Vector3 targetPos;
-            if (raycastHit.collider)
-                targetPos = raycastHit.point;
-            else
-                targetPos = aim.GetAimIntersectPoint(axeProjScript._maxTravelDistance);
-
+            Vector3 targetPos = raycastHit.collider ? raycastHit.point : aim.GetAimIntersectPoint(axeProjScript.MaxTravelDistance);
             axeProjScript.Init(targetPos, gameObject, playerCenter, shootMask, currentDamage, 100, playerEntity);
         }
 

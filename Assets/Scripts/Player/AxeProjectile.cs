@@ -22,7 +22,7 @@ public class AxeProjectile : Projectile
     [SerializeField] private float _maxArcDegrees;
     [SerializeField] private float _arcFlatteningCapDistance;
     [SerializeField] private float _timeoutReturnSpeed;
-    public float _maxTravelDistance;
+    public float MaxTravelDistance;
     private bool _isInitialized = false;
     private bool _isExpired = false;
     private bool _isReturning = false;
@@ -40,6 +40,9 @@ public class AxeProjectile : Projectile
 
     protected override void FixedUpdate()
     {
+        AxeProjectile script = GetComponent<AxeProjectile>();
+        print($"Component ID: {script.GetInstanceID()}");
+
         if (!_isInitialized) return; // Wait until initialization has occured.
         if (_isExpired) return; // Do nothing if projectile is expired.
         if (!_returnTargetCenter) DestroyAxe(); // Destroy axe if player died.
@@ -60,18 +63,14 @@ public class AxeProjectile : Projectile
 
         FadeTrailVisuals();
         RotateAndMove();
-
-        //if (rb && !hasHit)
-        //{
-        //    savedVelocity = rb.linearVelocity;
-        //    savedPosition = rb.position;
-        //}
     }
 
     public override void Update() {}
 
     public override void OnCollisionEnter(Collision collision)
     {
+        if (_isExpired) return; // Do nothing if projectile is expired.
+
         int collisionLayerResult = (1 << collision.gameObject.layer) & hitMask;
         if (collisionLayerResult == 0) return; // Do nothing if collision layer is not of a valid type.
         
@@ -109,7 +108,6 @@ public class AxeProjectile : Projectile
                      Entity attacker = null)
     {
         // Initialize member variables.
-        rb.linearVelocity = _projectileSpeed * transform.forward; // Set a constant linear velocity.
         _attackTargetPos = attackTargetPos;
         _returnTargetObj = returnTargetObj;
         _returnTargetCenter = returnTargetCenter;
@@ -126,7 +124,11 @@ public class AxeProjectile : Projectile
         // Initialize arcing logic.
         float distance = Vector3.Distance(startPos, _attackTargetPos);
         InitializeArcPath(distance, _attackTargetPos);
+        rb.linearVelocity = Vector3.zero;
         _isInitialized = true;
+
+        AxeProjectile script = GetComponent<AxeProjectile>();
+        print($"Component ID: {script.GetInstanceID()}");
     }
 
 
@@ -139,8 +141,7 @@ public class AxeProjectile : Projectile
             : _baseTurnRate;
 
         // Rotate towards target position.
-        Vector3 targetDirectionUnitVector = (currTargetPos - transform.position).normalized; // Get direction and angle of turn.
-        Quaternion targetRotation = Quaternion.LookRotation(targetDirectionUnitVector);
+        Quaternion targetRotation = CalculateRotationToTarget(currTargetPos);
         Quaternion rotateIncrement = Quaternion.RotateTowards(transform.rotation, targetRotation, Time.deltaTime * currTurnRate);
         rb.MoveRotation(rotateIncrement);
         
@@ -166,9 +167,20 @@ public class AxeProjectile : Projectile
         float initialDegrees = _maxArcDegrees * Mathf.Clamp01(distance / _arcFlatteningCapDistance); // Cap initial angle at maximum arc degrees.
         float initialRadians = initialDegrees * Mathf.Deg2Rad;
         float turnRateRadians = 2 * _projectileSpeed * Mathf.Sin(initialRadians) / distance; // Calculate constant turn rate to intersect target position.
-        transform.LookAt(targetPos); // Face axe toward its target.
-        transform.Rotate(0, initialDegrees, 0); // Rotate axe initially to its own right.
         _baseTurnRate = turnRateRadians * Mathf.Rad2Deg;
+
+        // Set the transform rotation and the rigidbody rotation to the same angle at the same time to avoid a race condition.
+        Quaternion targetRotation = CalculateRotationToTarget(targetPos);
+        Quaternion initialRotation = targetRotation * Quaternion.Euler(0, initialDegrees, 0);
+        rb.rotation = initialRotation;
+        transform.rotation = initialRotation;
+    }
+
+
+    private Quaternion CalculateRotationToTarget(Vector3 targetPos)
+    {
+        Vector3 targetDirectionUnitVector = (targetPos - transform.position).normalized;
+        return Quaternion.LookRotation(targetDirectionUnitVector);
     }
 
 
@@ -192,14 +204,6 @@ public class AxeProjectile : Projectile
 
     private IEnumerator TimeoutReturn()
     {
-        // Face axe at the return target immediately.
-        Vector3 targetDirectionUnitVector = (_returnTargetCenter.position - transform.position).normalized;
-        Quaternion targetRotation = Quaternion.LookRotation(targetDirectionUnitVector);
-        rb.MoveRotation(targetRotation);
-
-        // Set the constant linear velocity for timeout return after the initial rotation.
-        rb.linearVelocity = _timeoutReturnSpeed * transform.forward;
-
         float timer = 2;
         while (timer > 0) // Rapidly move straight towards return target for two seconds.
         {
@@ -208,8 +212,8 @@ public class AxeProjectile : Projectile
             if (moveIncrement > currDistance) break; // Exit loop if the return target is reached.
 
             // Rotate and move towards return target position.
-            targetDirectionUnitVector = (_returnTargetCenter.position - transform.position).normalized;
-            targetRotation = Quaternion.LookRotation(targetDirectionUnitVector);
+            Vector3 targetDirectionUnitVector = (_returnTargetCenter.position - transform.position).normalized;
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirectionUnitVector);
             rb.MoveRotation(targetRotation);
             rb.MovePosition(rb.position + (moveIncrement * transform.forward));
 
@@ -225,7 +229,6 @@ public class AxeProjectile : Projectile
     {
         // Return axe to thrower before it is destroyed.
         PlayerShooter shooterScript = _returnTargetObj.GetComponent<PlayerShooter>();
-        print(shooterScript);
         if (shooterScript) shooterScript.ReturnAxe();
 
         StopCoroutine(_whirlCoroutine);
