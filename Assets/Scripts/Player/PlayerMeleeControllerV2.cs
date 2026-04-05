@@ -268,9 +268,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
             _isModelHorizontal = false;
         }
-
-        // Gradually reset player model alignment while not attacking or if no damageable target is being aimed at.
-        if (!IsAttacking && !_isModelHorizontal)
+        else if (!IsAttacking && !_isModelHorizontal) // Gradually reset player model alignment while not attacking or if no damageable target is being aimed at.
         {
             Vector3 worldHorizontal = new Vector3(_playerCamera.forward.x, 0, _playerCamera.forward.z).normalized;
             _playerModelPivot.forward = Vector3.RotateTowards(_playerModelPivot.forward, worldHorizontal, Time.deltaTime * _degreesPerSecond, 0);
@@ -279,6 +277,10 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
                 _playerModelPivot.localRotation = Quaternion.Euler(0, 0, 0); // Zero out pivot rotation for exactness.
                 _isModelHorizontal = true;
             }
+        }
+        else
+        {
+            _playerModelPivot.localRotation = Quaternion.Euler(0, 0, 0); // Safety measure on every frame to ensure default alignment.
         }
     }
 
