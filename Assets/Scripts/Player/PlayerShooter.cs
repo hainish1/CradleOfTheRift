@@ -308,7 +308,7 @@ public class PlayerShooter : MonoBehaviour
             
             if (GloomUpgrade.IsEnabled)
             {
-                proj = pooled.GetComponent<GloomProjectile>();
+                projScript = pooled.GetComponent<GloomProjectile>();
                 if (proj == null)
                 {
                     var oldProj = pooled.GetComponent<Projectile>();
@@ -317,19 +317,19 @@ public class PlayerShooter : MonoBehaviour
                         var bulletFX = oldProj.BulletImpactFX;
                         var trail = oldProj.trail;
                         Destroy(oldProj);
-                        proj = pooled.AddComponent<GloomProjectile>();
-                        proj.BulletImpactFX = bulletFX;
-                        proj.trail = trail;
+                        projScript = pooled.AddComponent<GloomProjectile>();
+                        projScript.BulletImpactFX = bulletFX;
+                        projScript.trail = trail;
                     }
                     else
                     {
                         var oldExpProj = pooled.GetComponent<ExplosiveProjectile>();
                         var oldBounceProj = pooled.GetComponent<BounceProjectile>();
                         var oldPoisonProj = pooled.GetComponent<PoisonPoolBottleProjectile>();
-                        if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); proj = pooled.AddComponent<GloomProjectile>(); proj.BulletImpactFX = b; proj.trail = t; }
-                        else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); proj = pooled.AddComponent<GloomProjectile>(); proj.BulletImpactFX = b; proj.trail = t; }
-                        else if (oldPoisonProj != null) { var b = oldPoisonProj.BulletImpactFX; var t = oldPoisonProj.trail; Destroy(oldPoisonProj); proj = pooled.AddComponent<GloomProjectile>(); proj.BulletImpactFX = b; proj.trail = t; }
-                        else proj = pooled.AddComponent<GloomProjectile>();
+                        if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); projScript = pooled.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+                        else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); projScript = pooled.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+                        else if (oldPoisonProj != null) { var b = oldPoisonProj.BulletImpactFX; var t = oldPoisonProj.trail; Destroy(oldPoisonProj); projScript = pooled.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+                        else projScript = pooled.AddComponent<GloomProjectile>();
                     }
                 }
             }
@@ -466,29 +466,27 @@ public class PlayerShooter : MonoBehaviour
         }
         else
         {
-            GameObject go = Instantiate(currProjectilePrefab.gameObject, spawnPos, spawnRot);
-            
             if (GloomUpgrade.IsEnabled)
             {
-                var oldProj = go.GetComponent<Projectile>();
+                var oldProj = proj.GetComponent<Projectile>();
                 if (oldProj != null)
                 {
                     var bulletFX = oldProj.BulletImpactFX;
                     var trail = oldProj.trail;
                     Destroy(oldProj);
-                    proj = go.AddComponent<GloomProjectile>();
-                    proj.BulletImpactFX = bulletFX;
-                    proj.trail = trail;
+                    projScript = proj.AddComponent<GloomProjectile>();
+                    projScript.BulletImpactFX = bulletFX;
+                    projScript.trail = trail;
                 }
                 else
                 {
-                    var oldExpProj = go.GetComponent<ExplosiveProjectile>();
-                    var oldBounceProj = go.GetComponent<BounceProjectile>();
-                    var oldPoisonProj = go.GetComponent<PoisonPoolBottleProjectile>();
-                    if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); proj = go.AddComponent<GloomProjectile>(); proj.BulletImpactFX = b; proj.trail = t; }
-                    else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); proj = go.AddComponent<GloomProjectile>(); proj.BulletImpactFX = b; proj.trail = t; }
-                    else if (oldPoisonProj != null) { var b = oldPoisonProj.BulletImpactFX; var t = oldPoisonProj.trail; Destroy(oldPoisonProj); proj = go.AddComponent<GloomProjectile>(); proj.BulletImpactFX = b; proj.trail = t; }
-                    else proj = go.AddComponent<GloomProjectile>();
+                    var oldExpProj = proj.GetComponent<ExplosiveProjectile>();
+                    var oldBounceProj = proj.GetComponent<BounceProjectile>();
+                    var oldPoisonProj = proj.GetComponent<PoisonPoolBottleProjectile>();
+                    if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); projScript = proj.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+                    else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); projScript = proj.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+                    else if (oldPoisonProj != null) { var b = oldPoisonProj.BulletImpactFX; var t = oldPoisonProj.trail; Destroy(oldPoisonProj); projScript = proj.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+                    else projScript = proj.AddComponent<GloomProjectile>();
                 }
             }
             else if (PoisonPoolProjectiles.IsEnabled)
@@ -609,12 +607,12 @@ public class PlayerShooter : MonoBehaviour
 
         float speed = projectileSpeed;
         Vector3 velocity;
-        if (GloomUpgrade.IsEnabled && proj is GloomProjectile)
+        if (GloomUpgrade.IsEnabled && projScript is GloomProjectile)
         {
             proj.transform.position = playerEntity.transform.position + Vector3.up * 5f;
             velocity = Vector3.down * 2f;
         }
-        else if (PoisonPoolProjectiles.IsEnabled && proj is PoisonPoolBottleProjectile)
+        else if (PoisonPoolProjectiles.IsEnabled && projScript is PoisonPoolBottleProjectile)
         {
             Vector3 dirXZ = direction;
             dirXZ.y = 0f;
