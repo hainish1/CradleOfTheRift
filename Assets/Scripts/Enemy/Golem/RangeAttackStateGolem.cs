@@ -78,6 +78,37 @@ public class RangeAttackStateGolem : EnemyState
         // Play throw sound effect
         enemyGolem.PlayThrowSFX();
     }
+    // private Vector3 CalculateLaunchVelocity(Vector3 target, float timeToTarget)
+    // {
+    //     // using a formula
+    //     Vector3 direction = target - this.transform.position;
+    //     Vector3 directionXZ = new Vector3(direction.x, 0, direction.z);
+
+    //     Vector3 velocityXZ = directionXZ / timeToTarget; // calculate velocity based direction of throw and time to reach target
+
+    //     // A DESC FOR THIS FORMULA
+    //     // (Physics.gravity.y * Mathf.Pow(timeToTarget, 2)) / 2 :- this part calculates
+    //     // d = 1/2 * g * t^2, d = displacement, g = gravity, t = time taken
+    //     // (direction.y - (Physics.gravity.y * Mathf.Pow(timeToTarget, 2)) / 2) :- calculates the initial vertical displacement 
+    //     // neeeded, taking into account the displacement due to gravity
+    //     // finally dividing this displacement by time gives us the velocity we need = v = s/t
+
+    //     float velocityY = (direction.y - (Physics.gravity.y * Mathf.Pow(timeToTarget, 2)) / 2) / timeToTarget;
+
+    //     Vector3 launchVelocity = velocityXZ + (Vector3.up * velocityY);
+
+    //     return launchVelocity;
+
+    // }
+    // public void SetupGrenade(LayerMask allyLayerMask, Vector3 target, float timeToTarget, float countdown, float impactPower, int grenadeDamage)
+    // {
+    //     canExplode = true;
+    //     this.allyLayerMask = allyLayerMask;
+    //     rb.linearVelocity = CalculateLaunchVelocity(target, timeToTarget);
+    //     this.explosionTimer = countdown + timeToTarget; // so it starts actual countdown after reaching the target time
+    //     this.impactPower = impactPower;
+    //     this.grenadeDamage = grenadeDamage;
+    // }
 
     public override void Exit()
     {
