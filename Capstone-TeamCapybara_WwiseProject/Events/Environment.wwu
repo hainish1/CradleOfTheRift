@@ -152,6 +152,17 @@
 						</Event>
 					</ChildrenList>
 				</Folder>
+				<Event Name="Pick_Up_Item" ID="{32445DB7-BBAA-4391-93C2-913AFFFF7125}">
+					<ChildrenList>
+						<Action Name="" ID="{2DB38CBD-3EA5-4B4F-A2E7-4F0A80DF1425}" ShortID="1039740754">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Item Pickup" ID="{904BF4B8-3F5C-4045-B2F0-CB304643D46F}" WorkUnitID="{8ADB7485-E0A9-4F0D-A14F-7ED951DF96EF}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>
