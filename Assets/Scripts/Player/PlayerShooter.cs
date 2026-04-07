@@ -98,7 +98,7 @@ public class PlayerShooter : MonoBehaviour
         shooterAnim = GetComponent<Animator>();
         audioController = GetComponentInParent<PlayerAudioController>();
 
-        SetProjectileType(playerHeldWeaponController._heldWeapon);
+        SetProjectileType(playerHeldWeaponController.HeldWeapon);
         fireMaxCharges = playerEntity.Stats.FireCharges;
         fireChargeCooldown = playerEntity.Stats.FireChargeCooldown;
         currFireCharges = fireMaxCharges;
@@ -306,7 +306,34 @@ public class PlayerShooter : MonoBehaviour
             Destroy(proj);
             GameObject pooled = ObjectPool.instance.GetObject(currProjectilePrefab.gameObject, muzzle);
             
-            if (PoisonPoolProjectiles.IsEnabled)
+            if (GloomUpgrade.IsEnabled)
+            {
+                projScript = pooled.GetComponent<GloomProjectile>();
+                if (proj == null)
+                {
+                    var oldProj = pooled.GetComponent<Projectile>();
+                    if (oldProj != null)
+                    {
+                        var bulletFX = oldProj.BulletImpactFX;
+                        var trail = oldProj.trail;
+                        Destroy(oldProj);
+                        projScript = pooled.AddComponent<GloomProjectile>();
+                        projScript.BulletImpactFX = bulletFX;
+                        projScript.trail = trail;
+                    }
+                    else
+                    {
+                        var oldExpProj = pooled.GetComponent<ExplosiveProjectile>();
+                        var oldBounceProj = pooled.GetComponent<BounceProjectile>();
+                        var oldPoisonProj = pooled.GetComponent<PoisonPoolBottleProjectile>();
+                        if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); projScript = pooled.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+                        else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); projScript = pooled.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+                        else if (oldPoisonProj != null) { var b = oldPoisonProj.BulletImpactFX; var t = oldPoisonProj.trail; Destroy(oldPoisonProj); projScript = pooled.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+                        else projScript = pooled.AddComponent<GloomProjectile>();
+                    }
+                }
+            }
+            else if (PoisonPoolProjectiles.IsEnabled)
             {
                 projScript = pooled.GetComponent<PoisonPoolBottleProjectile>();
                 if (projScript == null)
@@ -439,7 +466,30 @@ public class PlayerShooter : MonoBehaviour
         }
         else
         {
-            if (PoisonPoolProjectiles.IsEnabled)
+            if (GloomUpgrade.IsEnabled)
+            {
+                var oldProj = proj.GetComponent<Projectile>();
+                if (oldProj != null)
+                {
+                    var bulletFX = oldProj.BulletImpactFX;
+                    var trail = oldProj.trail;
+                    Destroy(oldProj);
+                    projScript = proj.AddComponent<GloomProjectile>();
+                    projScript.BulletImpactFX = bulletFX;
+                    projScript.trail = trail;
+                }
+                else
+                {
+                    var oldExpProj = proj.GetComponent<ExplosiveProjectile>();
+                    var oldBounceProj = proj.GetComponent<BounceProjectile>();
+                    var oldPoisonProj = proj.GetComponent<PoisonPoolBottleProjectile>();
+                    if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); projScript = proj.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+                    else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); projScript = proj.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+                    else if (oldPoisonProj != null) { var b = oldPoisonProj.BulletImpactFX; var t = oldPoisonProj.trail; Destroy(oldPoisonProj); projScript = proj.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+                    else projScript = proj.AddComponent<GloomProjectile>();
+                }
+            }
+            else if (PoisonPoolProjectiles.IsEnabled)
             {
                 var oldProj = proj.GetComponent<Projectile>();
                 if (oldProj != null)
@@ -557,7 +607,12 @@ public class PlayerShooter : MonoBehaviour
 
         float speed = projectileSpeed;
         Vector3 velocity;
-        if (PoisonPoolProjectiles.IsEnabled && projScript is PoisonPoolBottleProjectile)
+        if (GloomUpgrade.IsEnabled && projScript is GloomProjectile)
+        {
+            proj.transform.position = playerEntity.transform.position + Vector3.up * 5f;
+            velocity = Vector3.down * 2f;
+        }
+        else if (PoisonPoolProjectiles.IsEnabled && projScript is PoisonPoolBottleProjectile)
         {
             Vector3 dirXZ = direction;
             dirXZ.y = 0f;
@@ -565,31 +620,26 @@ public class PlayerShooter : MonoBehaviour
             else dirXZ.Normalize();
             velocity = dirXZ * 20f + Vector3.up * 15f;
         }
-        else if (ExplosiveProjectiles.IsEnabled && projScript is ExplosiveProjectile)
-        {
-            speed *= 0.2f;
-            velocity = direction * speed;
-        }
         else
         {
             velocity = direction * speed;
         }
 
         // Initialize the projectile as an axe or non-axe.
-        if (currProjectilePrefab != axeProjectilePrefab)
+        if (currProjectilePrefab == spearProjectilePrefab)
             projScript?.Init(velocity, shootMask, currentDamage, 100, playerEntity);
+        else if (currProjectilePrefab == maceProjectilePrefab)
+        {
+            MaceProjectile maceProjScript = proj.GetComponent<MaceProjectile>();
+            maceProjScript.Init(velocity, shootMask, currentDamage, 100, playerEntity);
+        }
         else
         {
             AxeProjectile axeProjScript = proj.GetComponent<AxeProjectile>();
 
             // Initialize target position.
-            Vector3 targetPos;
-            if (raycastHit.collider)
-                targetPos = raycastHit.point;
-            else
-                targetPos = aim.GetAimIntersectPoint(axeProjScript._maxTravelDistance);
-
-            axeProjScript.Init(targetPos, gameObject, playerCenter, shootMask, currentDamage, 100, playerEntity);
+            Vector3 targetPos = raycastHit.collider ? raycastHit.point : aim.GetAimIntersectPoint(axeProjScript.MaxTravelDistance);
+            axeProjScript.Init(targetPos, playerCenter, shootMask, currentDamage, 100, playerEntity);
         }
 
         // Debug.Log($"Fired projectile with {currentDamage} damage");
@@ -709,8 +759,7 @@ public class PlayerShooter : MonoBehaviour
     /// </summary>
     public void OnWeaponThrowAnimEnd()
     {
-        if (currProjectilePrefab != axeProjectilePrefab) // Do not grow the axe.
-            weaponRegainCoroutine = StartCoroutine(WeaponRegain());
+        weaponRegainCoroutine = StartCoroutine(WeaponRegain());
     }
 
     /// <summary>
@@ -738,17 +787,6 @@ public class PlayerShooter : MonoBehaviour
         }
 
         // Ensure weapon scale restoration is exact when done growing.
-        weaponPivot.localScale = weaponOriginalScale;
-        IsThrowing = false;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Returns the weapon to the player character if the projectile is an axe.
-    ///   </para>
-    /// </summary>
-    public void ReturnAxe()
-    {
         weaponPivot.localScale = weaponOriginalScale;
         IsThrowing = false;
     }

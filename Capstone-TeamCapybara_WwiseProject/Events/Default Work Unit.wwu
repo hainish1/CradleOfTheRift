@@ -85,6 +85,17 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Play_Song_CaveJamDynamic" ID="{11A5C28C-A0B1-4365-ADD9-5B57D9DAE1DB}">
+					<ChildrenList>
+						<Action Name="" ID="{DEC493D1-B273-4D29-A003-AC689C82580E}" ShortID="914665118">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Song_CaveJamDynamic" ID="{428B940B-7B36-4A4C-AFEB-A6F49255C668}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

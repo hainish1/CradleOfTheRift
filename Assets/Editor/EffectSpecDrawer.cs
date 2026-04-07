@@ -76,7 +76,7 @@ public class EffectSpecDrawer : PropertyDrawer
 
         ItemEffectKind.FallDamageBonus => new[]
         {
-            "fallDamageBonusPerMeter", "fallDamageBonusPerStack",
+            "fallDamageBonusPerMeter",
         },
 
         ItemEffectKind.DotOnHit => new[]
@@ -229,6 +229,80 @@ public class EffectSpecDrawer : PropertyDrawer
         {
             "pureCoreDamageMultiplier",
             "pureCoreHealthMultiplier",
+        },
+
+        ItemEffectKind.LightningStrikeBase => new[]
+        {
+            "playerLightningStrikeDamage", "playerLightningStrikeRadius",
+            "playerLightningStrikeInterval", "playerLightningStrikeVFX",
+        },
+        ItemEffectKind.LightningStrikeDamage => new[]
+        {
+            "lightningStrikeBonusDamage",
+        },
+        ItemEffectKind.LightningStrikeChainBuff => new[]
+        {
+            "chainLightningTestBuffDuration", "chainLightningTestChainDamagePercent",
+            "chainLightningTestMaxDepth", "chainLightningTestBranchesPerNode",
+            "chainLightningTestChainRange",
+        },
+        ItemEffectKind.LightningStrikePlayerChain => Array.Empty<string>(),
+        ItemEffectKind.LightningStrikeElectrify => new[]
+        {
+            "playerLightningStrikeElectrifyDamage",
+        },
+        ItemEffectKind.LightningStrikeCooldown => new[]
+        {
+            "lightningStrikeCooldownReduction",
+        },
+        ItemEffectKind.LightningStrikeCount => new[]
+        {
+            "lightningStrikeBonusCount", "lightningStrikeSpreadRadius",
+        },
+        ItemEffectKind.LightningStrikeSelfHeal => Array.Empty<string>(),
+
+        ItemEffectKind.OrbitingFireballBase => new[]
+        {
+            "orbitingFireballDamage", "orbitingFireballRadius", "orbitingFireballRotationSpeed",
+            "orbitingFireballVFX",
+        },
+        ItemEffectKind.OrbitingFireballBonusCount => new[]
+        {
+            "orbitingFireballBonusCount",
+        },
+        ItemEffectKind.OrbitingFireballBonusDamage => new[]
+        {
+            "orbitingFireballBonusDamage",
+        },
+        ItemEffectKind.OrbitingFireballBonusSpeed => new[]
+        {
+            "orbitingFireballBonusSpeed",
+        },
+        ItemEffectKind.OrbitingFireballOnKill => new[]
+        {
+            "orbitingFireballOnKillDuration",
+        },
+        ItemEffectKind.OrbitingFireballOnLightning => new[]
+        {
+            "orbitingFireballOnLightningThreshold",
+            "orbitingFireballOnLightningDuration",
+        },
+
+        ItemEffectKind.GroundSlam => new[]
+        {
+            "groundSlamDamage",
+        },
+
+        ItemEffectKind.ZoomUpgrade => new[]
+        {
+            "zoomUpgradeDamage", "zoomUpgradeRange", "zoomUpgradeDashDistanceBonus", "zoomUpgradeVFX",
+        },
+
+        ItemEffectKind.GloomUpgrade => new[]
+        {
+            "gloomDamagePerTick", "gloomTickInterval", "gloomPoolRadius",
+            "gloomPoolLifetime", "gloomAttackSpeedBuff",
+            "gloomFireCooldownIncrease", "gloomPoolPrefab",
         },
 
         _ => Array.Empty<string>(),

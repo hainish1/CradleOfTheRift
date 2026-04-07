@@ -104,6 +104,14 @@
     padding-right: 4px;
 }
 
+.upgrade-owned {
+    font-size: 12px;
+    color: rgb(180, 220, 255);
+    margin-top: 6px;
+    -unity-text-align: middle-center;
+    -unity-font-style: italic;
+}
+
 /* Container for the new buttons */
 .action-buttons-container {
     flex-direction: row;

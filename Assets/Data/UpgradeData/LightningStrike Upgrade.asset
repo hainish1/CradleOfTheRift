@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
   m_Name: LightningStrike Upgrade
   m_EditorClassIdentifier: 
-  itemName: Lightning Strike
-  description: ' Lightning strikes your location periodically. If you are hit you
-    will take damage, but lightning will chain to nearby enemies and acid pools'
+  itemName: Lightning Strike I
+  description: ' Lightning strikes your location periodically. '
   icon: {fileID: 21300000, guid: 54c2e0e1f98cc18448b731de7d4b8117, type: 3}
   rarity: 1
   rarityColor: {r: 0, g: 0.7372549, b: 0.09411765, a: 1}
@@ -24,9 +23,8 @@ MonoBehaviour:
   useMultipleStats: 1
   statMods: []
   effects:
-  - kind: 17
-    description: ' Lightning strikes your location periodically. If you are hit you
-      will take damage, but lightning will chain to nearby enemies and acid pools'
+  - kind: 30
+    description: ' Lightning strikes your location periodically.'
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0
@@ -52,7 +50,9 @@ MonoBehaviour:
     explosiveAoeDamageMultiplier: 0
     explosiveMaxRange: 0
     explosiveFireballSize: 7.5
+    explosiveProjectileSpeed: 0.7
     explosiveVFX: {fileID: 0}
+    explosiveTravelVFX: {fileID: 0}
     chainDamagePercent: 0
     maxChainCount: 0
     chainRange: 0
@@ -115,6 +115,10 @@ MonoBehaviour:
     xpGrantAmount: 50
     pureCoreDamageMultiplier: 1.15
     pureCoreHealthMultiplier: 1.2
+    lightningStrikeBonusDamage: 5
+    lightningStrikeCooldownReduction: 0.5
+    lightningStrikeBonusCount: 1
+    lightningStrikeSpreadRadius: 8
   statType: 13
   operatorType: 0
   value: 1

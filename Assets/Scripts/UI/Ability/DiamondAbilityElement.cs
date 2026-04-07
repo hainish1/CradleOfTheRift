@@ -23,13 +23,6 @@ using UnityEngine.UIElements;
 [UxmlElement]
 public partial class DiamondAbilityElement : VisualElement
 {
-    public new class UxmlFactory : UxmlFactory<DiamondAbilityElement, UxmlTraits> { }
-    public new class UxmlTraits : VisualElement.UxmlTraits { }
-
-    // ------------------------------------------------------------------ //
-    //  Public properties                                                  //
-    // ------------------------------------------------------------------ //
-
     private Texture2D _icon;
     public Texture2D Icon
     {
@@ -48,6 +41,10 @@ public partial class DiamondAbilityElement : VisualElement
     private static readonly CustomStyleProperty<Color> s_BorderColor  = new("--border-color");
     private static readonly CustomStyleProperty<float> s_BorderWidth  = new("--border-width");
     private static readonly CustomStyleProperty<Color> s_OverlayColor = new("--overlay-color");
+    private static readonly CustomStyleProperty<Color> s_EdgeColor      = new("--edge-color");
+    private static readonly CustomStyleProperty<float> s_EdgeWidth      = new("--edge-width");
+    private static readonly CustomStyleProperty<Color> s_BackgroundColor = new("--background-color");
+
 
     private Color _borderColor = Color.white;
     public Color BorderColor
@@ -70,6 +67,27 @@ public partial class DiamondAbilityElement : VisualElement
         set { _overlayColor = value; MarkDirtyRepaint(); }
     }
 
+    private Color _edgeColor = new Color(1f, 1f, 1f, 0.9f);
+    public Color EdgeColor
+    {
+        get => _edgeColor;
+        set { _edgeColor = value; MarkDirtyRepaint(); }
+    }
+
+    private float _edgeWidth = 2f;
+    public float EdgeWidth
+    {
+        get => _edgeWidth;
+        set { _edgeWidth = value; MarkDirtyRepaint(); }
+    }
+
+    private Color _backgroundColor = new Color(0.15f, 0.15f, 0.15f, 1f);
+    public Color BackgroundColor
+    {
+        get => _backgroundColor;
+        set { _backgroundColor = value; MarkDirtyRepaint(); }
+    }
+
     private bool _fillFromTop = false;
     public bool FillFromTop
     {
@@ -77,9 +95,20 @@ public partial class DiamondAbilityElement : VisualElement
         set { _fillFromTop = value; MarkDirtyRepaint(); }
     }
 
-    // ------------------------------------------------------------------ //
-    //  Constructor                                                        //
-    // ------------------------------------------------------------------ //
+    private float _iconScale = 1.5f;
+    public float IconScale
+    {
+        get => _iconScale;
+        set { _iconScale = value; MarkDirtyRepaint(); }
+    }
+
+    private Vector2 _iconOffset = Vector2.zero;
+    public Vector2 IconOffset
+    {
+        get => _iconOffset;
+        set { _iconOffset = value; MarkDirtyRepaint(); }
+    }
+
     public DiamondAbilityElement()
     {
         generateVisualContent += OnGenerateVisualContent;
@@ -88,15 +117,15 @@ public partial class DiamondAbilityElement : VisualElement
 
     private void OnCustomStyleResolved(CustomStyleResolvedEvent e)
     {
-        if (customStyle.TryGetValue(s_BorderColor,  out var borderColor))  _borderColor  = borderColor;
-        if (customStyle.TryGetValue(s_BorderWidth,  out var borderWidth))  _borderWidth  = borderWidth;
-        if (customStyle.TryGetValue(s_OverlayColor, out var overlayColor)) _overlayColor = overlayColor;
+        if (customStyle.TryGetValue(s_BorderColor,     out var borderColor))     _borderColor     = borderColor;
+        if (customStyle.TryGetValue(s_BorderWidth,     out var borderWidth))     _borderWidth     = borderWidth;
+        if (customStyle.TryGetValue(s_OverlayColor,    out var overlayColor))    _overlayColor    = overlayColor;
+        if (customStyle.TryGetValue(s_EdgeColor,       out var edgeColor))       _edgeColor       = edgeColor;
+        if (customStyle.TryGetValue(s_EdgeWidth,       out var edgeWidth))       _edgeWidth       = edgeWidth;
+        if (customStyle.TryGetValue(s_BackgroundColor, out var backgroundColor)) _backgroundColor = backgroundColor;
         MarkDirtyRepaint();
     }
 
-    // ------------------------------------------------------------------ //
-    //  Drawing                                                            //
-    // ------------------------------------------------------------------ //
     private void OnGenerateVisualContent(MeshGenerationContext ctx)
     {
         float w = resolvedStyle.width;
@@ -105,37 +134,36 @@ public partial class DiamondAbilityElement : VisualElement
 
         float pad = _borderWidth * 0.5f + 1f;
 
-        Vector2 top    = new Vector2(w * 0.5f, pad);
-        Vector2 right  = new Vector2(w - pad,  h * 0.5f);
+        Vector2 top = new Vector2(w * 0.5f, pad);
+        Vector2 right = new Vector2(w - pad, h * 0.5f);
         Vector2 bottom = new Vector2(w * 0.5f, h - pad);
-        Vector2 left   = new Vector2(pad,      h * 0.5f);
+        Vector2 left = new Vector2(pad, h * 0.5f);
 
         var painter = ctx.painter2D;
 
-        // ---- 1. Icon ---- //
+        // ---- Background fill (always drawn) ---- //
+        painter.fillColor = _backgroundColor;
+        painter.BeginPath();
+        painter.MoveTo(top);
+        painter.LineTo(right);
+        painter.LineTo(bottom);
+        painter.LineTo(left);
+        painter.ClosePath();
+        painter.Fill();
+        
+        // ---- Icon ---- //
         if (_icon != null)
         {
             DrawIconMesh(ctx, top, right, bottom, left, w, h);
         }
-        else
-        {
-            painter.fillColor = new Color(0.15f, 0.15f, 0.15f, 1f);
-            painter.BeginPath();
-            painter.MoveTo(top);
-            painter.LineTo(right);
-            painter.LineTo(bottom);
-            painter.LineTo(left);
-            painter.ClosePath();
-            painter.Fill();
-        }
 
-        // ---- 2. Cooldown overlay ---- //
+        // ---- Cooldown overlay ---- //
         if (_cooldownT > 0.001f)
         {
             if (_fillFromTop)
             {
                 // Flight energy: dark wedge grows downward from the top as energy depletes.
-                DrawWedgeFromTop(painter, top, right, bottom, left, _cooldownT, _overlayColor);
+                DrawWedgeFromTop(painter, top, right, bottom, left, _cooldownT, _overlayColor, _edgeColor, _edgeWidth);
             }
             else
             {
@@ -144,13 +172,13 @@ public partial class DiamondAbilityElement : VisualElement
                 // The lower portion is left undrawn so the icon shows through bright.
                 // As CooldownT goes from 1→0, the dark wedge shrinks downward toward the
                 // bottom tip — so the bright area grows upward from the bottom. ✓
-                DrawWedgeFromTop(painter, top, right, bottom, left, _cooldownT, _overlayColor);
+                DrawWedgeFromTop(painter, top, right, bottom, left, _cooldownT, _overlayColor, _edgeColor, _edgeWidth);
             }
         }
 
-        // ---- 3. Border ---- //
+        // ---- Border ---- //
         painter.strokeColor = _borderColor;
-        painter.lineWidth   = _borderWidth;
+        painter.lineWidth = _borderWidth;
         painter.BeginPath();
         painter.MoveTo(top);
         painter.LineTo(right);
@@ -165,7 +193,7 @@ public partial class DiamondAbilityElement : VisualElement
     //  t=0 → nothing. t=1 → full diamond.                               //
     // ------------------------------------------------------------------ //
     private void DrawWedgeFromTop(Painter2D painter, Vector2 top, Vector2 right,
-        Vector2 bottom, Vector2 left, float t, Color color)
+    Vector2 bottom, Vector2 left, float t, Color color, Color edgeColor, float edgeWidth)
     {
         if (t <= 0.001f) return;
 
@@ -179,25 +207,23 @@ public partial class DiamondAbilityElement : VisualElement
             painter.LineTo(left);
             painter.ClosePath();
             painter.Fill();
-            return;
+            return; // no edge line when fully covered
         }
 
-        // cutY moves downward from top.y toward bottom.y as t increases.
-        // At t=1: cutY = bottom.y → full diamond dark.
-        // At t=0: cutY = top.y   → nothing dark.
         float diamondH = bottom.y - top.y;
-        float cutY     = top.y + (t * diamondH);
-        float midY     = (top.y + bottom.y) * 0.5f;
+        float cutY = top.y + (t * diamondH);
+        float midY = (top.y + bottom.y) * 0.5f;
 
         painter.fillColor = color;
         painter.BeginPath();
 
+        Vector2 rEdge, lEdge;
+
         if (cutY <= midY)
         {
-            // Dark wedge is entirely in the upper triangle.
-            float   tEdge = (cutY - top.y) / (midY - top.y);
-            Vector2 rEdge = Vector2.Lerp(top, right, tEdge);
-            Vector2 lEdge = Vector2.Lerp(top, left,  tEdge);
+            float tEdge = (cutY - top.y) / (midY - top.y);
+            rEdge = Vector2.Lerp(top, right, tEdge);
+            lEdge = Vector2.Lerp(top, left, tEdge);
 
             painter.MoveTo(top);
             painter.LineTo(rEdge);
@@ -206,10 +232,9 @@ public partial class DiamondAbilityElement : VisualElement
         }
         else
         {
-            // Dark wedge crosses midline into lower triangle.
-            float   tEdge = (cutY - midY) / (bottom.y - midY);
-            Vector2 rEdge = Vector2.Lerp(right, bottom, tEdge);
-            Vector2 lEdge = Vector2.Lerp(left,  bottom, tEdge);
+            float tEdge = (cutY - midY) / (bottom.y - midY);
+            rEdge = Vector2.Lerp(right, bottom, tEdge);
+            lEdge = Vector2.Lerp(left, bottom, tEdge);
 
             painter.MoveTo(top);
             painter.LineTo(right);
@@ -220,29 +245,47 @@ public partial class DiamondAbilityElement : VisualElement
         }
 
         painter.Fill();
+
+        // ---- Edge line at the cooldown boundary ---- //
+        painter.strokeColor = _edgeColor;
+        painter.lineWidth = _edgeWidth;
+        painter.BeginPath();
+        painter.MoveTo(lEdge);
+        painter.LineTo(rEdge);
+        painter.Stroke();
     }
 
-    // ------------------------------------------------------------------ //
-    //  Icon mesh                                                          //
-    // ------------------------------------------------------------------ //
     private void DrawIconMesh(MeshGenerationContext ctx, Vector2 top, Vector2 right,
         Vector2 bottom, Vector2 left, float w, float h)
     {
+        // The inner axis-aligned square inscribed in the diamond.
+        // Its corners are at the midpoints between the diamond's vertices.
+        float cx = w * 0.5f + _iconOffset.x;
+        float cy = h * 0.5f + IconOffset.y;
+        float halfSize = (right.x - left.x) * 0.5f * 0.5f; // half the diamond width / 2
+
+        float scaledHalf = halfSize * _iconScale;
+
+        Vector2 tlCorner = new Vector2(cx - scaledHalf, cy - scaledHalf); // top-left
+        Vector2 trCorner = new Vector2(cx + scaledHalf, cy - scaledHalf); // top-right
+        Vector2 brCorner = new Vector2(cx + scaledHalf, cy + scaledHalf); // bottom-right
+        Vector2 blCorner = new Vector2(cx - scaledHalf, cy + scaledHalf); // bottom-left
+
         var mesh = ctx.Allocate(4, 6, _icon);
 
-        Vertex MakeVertex(Vector2 pos) => new Vertex
+        Vertex MakeVertex(Vector2 pos, Vector2 uv) => new Vertex
         {
             position = new Vector3(pos.x, pos.y, Vertex.nearZ),
-            tint     = Color.white,
-            uv       = new Vector2(pos.x / w, 1f - (pos.y / h))
+            tint = Color.white,
+            uv = uv
         };
 
-        mesh.SetNextVertex(MakeVertex(top));
-        mesh.SetNextVertex(MakeVertex(right));
-        mesh.SetNextVertex(MakeVertex(bottom));
-        mesh.SetNextVertex(MakeVertex(left));
+        mesh.SetNextVertex(MakeVertex(tlCorner, new Vector2(0, 1)));
+        mesh.SetNextVertex(MakeVertex(trCorner, new Vector2(1, 1)));
+        mesh.SetNextVertex(MakeVertex(brCorner, new Vector2(1, 0)));
+        mesh.SetNextVertex(MakeVertex(blCorner, new Vector2(0, 0)));
 
-        mesh.SetNextIndex(0); mesh.SetNextIndex(1); mesh.SetNextIndex(3);
-        mesh.SetNextIndex(1); mesh.SetNextIndex(2); mesh.SetNextIndex(3);
+        mesh.SetNextIndex(0); mesh.SetNextIndex(1); mesh.SetNextIndex(2);
+        mesh.SetNextIndex(0); mesh.SetNextIndex(2); mesh.SetNextIndex(3);
     }
 }

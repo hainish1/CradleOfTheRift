@@ -261,8 +261,8 @@ public class UpgradeLevelManager : MonoBehaviour
         ItemData chosen = currentChoices[choiceIndex];
         Debug.Log($"Player selected upgrade: {chosen.itemName}");
 
-        // mark as chosen so it does not appear again
-        chosenUpgrades.Add(chosen);
+        if (!chosen.canStack)
+            chosenUpgrades.Add(chosen);
 
         // apply the item to the player's inventory effects ans stats
         PlayerInventory inventory = PlayerLocator.FindPlayerComponent<PlayerInventory>();
@@ -306,24 +306,33 @@ public class UpgradeLevelManager : MonoBehaviour
         _                    =>  1,
     };
 
-    // picks weighted-random choices from pool that have not been chosen yet
     private List<ItemData> PickRandomUpgrades()
     {
         var available = new List<ItemData>();
         int totalWeight = 0;
 
-        // combine pool(do we need this?)
         var combined = new List<ItemData>(upgradePool);
         foreach (var item in runtimePool)
             if (!combined.Contains(item)) combined.Add(item);
 
+        var inventory = PlayerLocator.FindPlayerComponent<PlayerInventory>();
+
         foreach (var item in combined)
         {
-            if (item != null && !chosenUpgrades.Contains(item) && !blockedFromPool.Contains(item))
+            if (item == null || blockedFromPool.Contains(item)) continue;
+
+            if (item.canStack)
             {
-                available.Add(item);
-                totalWeight += RarityWeight(item.rarity);
+                int current = inventory != null ? inventory.GetItemCount(item) : 0;
+                if (current >= item.maxStacks) continue;
             }
+            else
+            {
+                if (chosenUpgrades.Contains(item)) continue;
+            }
+
+            available.Add(item);
+            totalWeight += RarityWeight(item.rarity);
         }
 
         var result = new List<ItemData>();

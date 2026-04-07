@@ -132,15 +132,15 @@ MonoBehaviour:
   knockBackImpulse: 8
   hitMask:
     serializedVersion: 2
-    m_Bits: 7377
+    m_Bits: 3281
   rb: {fileID: 729833330588080243}
   _modelTransform: {fileID: 8456299673095554944}
   _whirlSpeed: 1000
   _projectileSpeed: 100
   _maxArcDegrees: 15
   _arcFlatteningCapDistance: 10
-  _timeoutReturnSpeed: 2000
-  _maxTravelDistance: 100
+  _timeoutReturnSpeed: 3000
+  MaxTravelDistance: 200
 --- !u!54 &729833330588080243
 Rigidbody:
   m_ObjectHideFlags: 0

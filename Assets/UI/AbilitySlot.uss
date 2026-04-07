@@ -21,25 +21,56 @@ DiamondAbilityElement,
     flex-shrink: 0;
     margin: 2px 0;
 
+
     /* Visual properties for DiamondAbilityElement */
+    /* This is the background color */
+    --background-color: rgb(38, 38, 38);
+
+    /* These are for the diamond border */
+    /* --border-color: rgb(168, 144, 96); */
     --border-color: rgb(255, 255, 255);
+    /* --border-color: rgb(130, 100, 60); */
     --border-width: 2;
+
+    /* Cooldown overlay settings */
     --overlay-color: rgba(0, 0, 0, 0.6);
+    --edge-color: rgba(255, 255, 255, 0.9); /* White line*/
+    --edge-width: 2; /* Width of line */
 }
 
 #KeyLabel {
     font-size: 14px;
     color: white;
-    margin-top: 2px;
+    margin-top: 4px;
     -unity-text-align: middle-center;
+
+    /* Pill badge */
+    background-color: rgba(0, 0, 0, 0.55);
+    border-color: rgba(255, 255, 255, 0.5);
+    border-width: 1px;
+    border-radius: 6px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 #ChargeLabel {
     font-size: 14px;
     color: white;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
     -unity-text-align: middle-center;
-    height: 18px;   
+    height: 23px;   
+
+    /* Pill badge styling  */
+    background-color: rgba(0, 0, 0, 0.55); 
+    border-color: rgba(255, 255, 255, 0.5); 
+    border-width: 1px; 
+    border-radius: 6px; 
+    padding-left: 6px; 
+    padding-right: 6px; 
+    padding-top: 2px; 
+    padding-bottom: 2px;
 }
 
 #ChargeLabel.hidden {

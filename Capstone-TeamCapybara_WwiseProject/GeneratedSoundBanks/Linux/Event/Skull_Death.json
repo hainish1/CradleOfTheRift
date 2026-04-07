@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{A8E4830F-5B35-40AF-AE8F-1180F925315F}",
     "Language": "SFX",
-    "Hash": "{B0533F60-2A33-9557-9290-829321F71F07}",
+    "Hash": "{FB96FA4D-01E1-61A5-0027-07BA4614F9CC}",
     "ObjectPath": "Skull_Death",
     "ShortName": "Skull_Death",
     "Path": "Event/Skull_Death.bnk",
@@ -31,6 +31,7 @@
       "Name": "Skull_Death",
       "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Skull\\Skull_Death",
       "GUID": "{A8E4830F-5B35-40AF-AE8F-1180F925315F}",
+      "MaxAttenuation": "200",
       "DurationType": "OneShot",
       "DurationMin": "0.70790565",
       "DurationMax": "0.7945974",
@@ -43,6 +44,6 @@
     ]
    }
   ],
-  "FileHash": "{0E0B3DB5-1FCE-08D4-39A1-33ADDB640377}"
+  "FileHash": "{E35C591B-E667-942B-98AB-4856C1C1AACA}"
  }
 }
