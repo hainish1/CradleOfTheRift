@@ -11,6 +11,7 @@ public class ExtractionZone : MonoBehaviour
     private bool isExtracting = false;
     private bool isInteracted = false;
     private bool hasFinishedExtracting = false;
+    [SerializeField] private bool needToKillBoss = false;
 
 
     public event Action<float> ChargeChanged;
@@ -118,6 +119,10 @@ private void OnExtraction()
 {
     if (this.isExtracting && this.currentCharge < this.chargeTime)
     {
+        if(needToKillBoss == false)
+            {
+                isBossDead = true;
+            }
         // Calculate the 99% threshold
         float maxAllowedCharge = this.isBossDead ? this.chargeTime : this.chargeTime * 0.99f;
 
@@ -135,7 +140,7 @@ private void OnExtraction()
             this.ExtractionFinished?.Invoke();
 
             // Disable the entire zone object
-            gameObject.SetActive(false);
+            // gameObject.SetActive(false);
         }
     }
     else if (!this.isExtracting && !this.hasFinishedExtracting)

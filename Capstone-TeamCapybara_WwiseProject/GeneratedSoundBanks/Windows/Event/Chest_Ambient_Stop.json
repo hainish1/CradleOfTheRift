@@ -1,0 +1,33 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "1316707488",
+    "Type": "Event",
+    "GUID": "{D6FC8F6B-1389-44AE-B70D-F7AE14754C54}",
+    "Language": "SFX",
+    "Hash": "{44C0995F-5F14-5C01-909F-54E89E59A919}",
+    "ObjectPath": "Chest_Ambient_Stop",
+    "ShortName": "Chest_Ambient_Stop",
+    "Path": "Event/Chest_Ambient_Stop.bnk",
+    "Events": [
+     {
+      "Id": "1316707488",
+      "Name": "Chest_Ambient_Stop",
+      "ObjectPath": "\\Events\\Default Work Unit\\Environment\\Chest\\Chest_Ambient_Stop",
+      "GUID": "{D6FC8F6B-1389-44AE-B70D-F7AE14754C54}",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0"
+     }
+    ]
+   }
+  ],
+  "FileHash": "{D3DBCE6F-E84B-743B-AC55-417C738CA0C2}"
+ }
+}

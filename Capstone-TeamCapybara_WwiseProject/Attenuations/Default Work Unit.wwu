@@ -174,7 +174,7 @@
 				</Attenuation>
 				<Attenuation Name="Chest Attenuation" ID="{342B66EC-3B00-4619-92C2-3938E7313634}" ShortID="227636801">
 					<PropertyList>
-						<Property Name="RadiusMax" Type="Real64" Value="50"/>
+						<Property Name="RadiusMax" Type="Real64" Value="30"/>
 					</PropertyList>
 					<CurveUsageInfoList>
 						<VolumeDryUsage>
@@ -188,10 +188,17 @@
 											<XPos>0</XPos>
 											<YPos>0</YPos>
 											<Flags>5</Flags>
+											<SegmentShape>Log1</SegmentShape>
 										</Point>
 										<Point>
-											<XPos>50</XPos>
-											<YPos>-9.80766</YPos>
+											<XPos>21.31764</XPos>
+											<YPos>-5.3138</YPos>
+											<Flags>0</Flags>
+											<SegmentShape>Exp1</SegmentShape>
+										</Point>
+										<Point>
+											<XPos>30</XPos>
+											<YPos>-200</YPos>
 											<Flags>37</Flags>
 										</Point>
 									</PointList>
@@ -199,10 +206,10 @@
 							</CurveUsageInfo>
 						</VolumeDryUsage>
 						<VolumeWetGameUsage>
-							<CurveUsageInfo Platform="Linked" CurveToUse="UseVolumeDry"/>
+							<CurveUsageInfo Platform="Linked" CurveToUse="None"/>
 						</VolumeWetGameUsage>
 						<VolumeWetUserUsage>
-							<CurveUsageInfo Platform="Linked" CurveToUse="UseVolumeDry"/>
+							<CurveUsageInfo Platform="Linked" CurveToUse="None"/>
 						</VolumeWetUserUsage>
 						<LowPassFilterUsage>
 							<CurveUsageInfo Platform="Linked" CurveToUse="Custom">
@@ -217,17 +224,17 @@
 											<Flags>5</Flags>
 										</Point>
 										<Point>
-											<XPos>12.279075</XPos>
+											<XPos>7.367445</XPos>
 											<YPos>3</YPos>
 											<Flags>0</Flags>
 										</Point>
 										<Point>
-											<XPos>27.44185</XPos>
+											<XPos>16.46511</XPos>
 											<YPos>50</YPos>
 											<Flags>0</Flags>
 										</Point>
 										<Point>
-											<XPos>50</XPos>
+											<XPos>30</XPos>
 											<YPos>85</YPos>
 											<Flags>37</Flags>
 										</Point>

@@ -17,6 +17,8 @@ public class EndScreenUI : MonoBehaviour
     private PauseManager ManagePause;
     private bool IsScreenShowing = false;
 
+    private bool subscribedToExtraction;
+
     void OnEnable()
     {
         if(playerHealth == null)
@@ -24,23 +26,38 @@ public class EndScreenUI : MonoBehaviour
             playerHealth = PlayerLocator.FindPlayerComponent<PlayerHealth>();
         }
 
-        if (ExtractionManager.Instance != null)
-            ExtractionManager.Instance.OnGameWon += OnWinScreen;
+        TrySubscribeToExtraction(); // to fix race issue
 
         if(playerHealth == null)
         {
             Debug.Log("Player health missing on player, or player missing");
             return;
         }
-        
+
         if (this.playerHealth != null)
             this.playerHealth.LoseScreen += OnLoseScreen;
     }
 
+    void Update()
+    {
+        if (!subscribedToExtraction)
+            TrySubscribeToExtraction(); // keep trying
+    }
+
+    private void TrySubscribeToExtraction()
+    {
+        if (subscribedToExtraction) return;
+        if (ExtractionManager.Instance == null) return;
+
+        ExtractionManager.Instance.OnGameWon += OnWinScreen;
+        subscribedToExtraction = true;
+    }
+
     void OnDisable()
     {
-        if (ExtractionManager.Instance != null)
+        if (subscribedToExtraction && ExtractionManager.Instance != null)
             ExtractionManager.Instance.OnGameWon -= OnWinScreen;
+        subscribedToExtraction = false;
 
         if (this.playerHealth != null)
             this.playerHealth.LoseScreen -= OnLoseScreen;
@@ -114,7 +131,7 @@ public class EndScreenUI : MonoBehaviour
                 UnityEngine.Cursor.lockState = CursorLockMode.Locked;
                 UnityEngine.Cursor.visible = false;
 
-                SceneManager.LoadScene("Design 1");
+                SceneManager.LoadScene("Main");
             });
         }
         if (mainMenuButton != null)
