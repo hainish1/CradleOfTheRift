@@ -65,6 +65,7 @@ public class PlayerInventory : MonoBehaviour
     private GroundSlamEffect groundSlamEffect;
     private ZoomUpgrade zoomUpgradeEffect;
     private GloomUpgrade gloomUpgradeEffect;
+    private PoisonCloudEffect poisonCloudEffect;
 
     // if I have time limited effects that need use of Updates, I will keep em here
     private readonly List<IDisposable> tickingEffects = new();
@@ -120,6 +121,7 @@ public class PlayerInventory : MonoBehaviour
         groundSlamEffect?.Update(dt);
         zoomUpgradeEffect?.Update(dt);
         gloomUpgradeEffect?.Update(dt);
+        poisonCloudEffect?.Update(dt);
         //homingProjectilesEffect?.Update(dt);
 
 
@@ -437,6 +439,9 @@ public class PlayerInventory : MonoBehaviour
                 case ItemEffectKind.GloomUpgrade:
                     EnsureGloomUpgrade(effect);
                     break;
+                case ItemEffectKind.PoisonCloud:
+                    EnsurePoisonCloud(effect);
+                    break;
             }
         }
 
@@ -648,6 +653,25 @@ public class PlayerInventory : MonoBehaviour
                 poolPrefab: effect.gloomPoolPrefab
             );
             Debug.Log("[Effect] GloomUpgrade created");
+        }
+    }
+
+    private void EnsurePoisonCloud(EffectSpec effect)
+    {
+        if (poisonCloudEffect == null || poisonCloudEffect.IsDisposed)
+        {
+            poisonCloudEffect = new PoisonCloudEffect(
+                owner: playerEntity,
+                damagePerTick: effect.poisonCloudDamagePerTick,
+                damageTickInterval: effect.poisonCloudDamageTickInterval,
+                cloudRadius: effect.poisonCloudRadius,
+                cloudLifetime: effect.poisonCloudLifetime,
+                behindDistance: effect.poisonCloudBehindDistance,
+                vfxPrefab: effect.poisonCloudVfxPrefab,
+                durationSec: effect.duration
+            );
+            if (effect.duration > 0f) tickingEffects.Add(poisonCloudEffect);
+            Debug.Log("[Effect] PoisonCloud created");
         }
     }
 
@@ -1558,6 +1582,13 @@ public class PlayerInventory : MonoBehaviour
                     gloomUpgradeEffect = null;
                 }
                 break;
+            case ItemEffectKind.PoisonCloud:
+                if (poisonCloudEffect != null && !poisonCloudEffect.IsDisposed)
+                {
+                    poisonCloudEffect.Dispose();
+                    poisonCloudEffect = null;
+                }
+                break;
 
         }
     }
@@ -1730,6 +1761,7 @@ public class PlayerInventory : MonoBehaviour
         groundSlamEffect?.Dispose(); groundSlamEffect = null;
         zoomUpgradeEffect?.Dispose(); zoomUpgradeEffect = null;
         gloomUpgradeEffect?.Dispose(); gloomUpgradeEffect = null;
+        poisonCloudEffect?.Dispose(); poisonCloudEffect = null;
 
         tickingEffects.Clear();
     }    void OnDestroy()
@@ -1772,6 +1804,7 @@ public class PlayerInventory : MonoBehaviour
         groundSlamEffect?.Dispose();
         zoomUpgradeEffect?.Dispose();
         gloomUpgradeEffect?.Dispose();
+        poisonCloudEffect?.Dispose();
         //homingProjectilesEffect?.Dispose();
         ElementSystem.ClearTempRules();
 

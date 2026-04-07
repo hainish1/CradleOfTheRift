@@ -305,6 +305,16 @@ public class EffectSpecDrawer : PropertyDrawer
             "gloomFireCooldownIncrease", "gloomPoolPrefab",
         },
 
+        ItemEffectKind.PoisonCloud => new[]
+        {
+            "poisonCloudDamagePerTick",
+            "poisonCloudDamageTickInterval",
+            "poisonCloudRadius",
+            "poisonCloudLifetime",
+            "poisonCloudBehindDistance",
+            "poisonCloudVfxPrefab",
+        },
+
         _ => Array.Empty<string>(),
     };
 }
