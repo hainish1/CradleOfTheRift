@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8625057985296539852}
   - component: {fileID: 2051378061209437517}
   m_Layer: 0
-  m_Name: EarthMace
+  m_Name: Mace
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 7602645346483822257}
   - component: {fileID: 8798023174576497895}
   - component: {fileID: 7430822607540931534}
-  - component: {fileID: 3140400090891409143}
+  - component: {fileID: 6490759825773957261}
   - component: {fileID: 729833330588080243}
   - component: {fileID: -8502030724956538082}
   m_Layer: 9
@@ -198,7 +198,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.6
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3140400090891409143
+--- !u!114 &6490759825773957261
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -207,7 +207,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3232334194741932682}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d70ac87e40db904a88f5f56a07f4e6f, type: 3}
+  m_Script: {fileID: 11500000, guid: a6787bf0df66c7b4ea947c73266cbde2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   bulletImpactFX: {fileID: 8296457393497080562, guid: 83ff99043eb56d54099c28f25d33f0ab, type: 3}
@@ -218,8 +218,11 @@ MonoBehaviour:
   knockBackImpulse: 8
   hitMask:
     serializedVersion: 2
-    m_Bits: 7377
+    m_Bits: 3281
   rb: {fileID: 729833330588080243}
+  _projectileShockwaveDamage: 20
+  _projectileShockwaveRadius: 20.9
+  _projectileShockwaveKnockback: 250
 --- !u!54 &729833330588080243
 Rigidbody:
   m_ObjectHideFlags: 0
