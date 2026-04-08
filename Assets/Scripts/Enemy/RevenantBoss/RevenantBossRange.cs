@@ -324,10 +324,11 @@ public class RevenantBossRange : Enemy
         }
     }
 
+    // Called by BossSpawner to initialize damage based on difficulty scaler
     public void InitializeAllDamage(float multiplier)
     {
-        Debug.Log($"Revenant Boss Damage. Base Projectile: {projectileDamage}, Base AOE: {AOEProjectileDamage}, Base ArcAOE: {AOEArcProjectileDamage}");
-        
+        Debug.Log($"Revenant Boss Base Damage. Base Projectile: {projectileDamage}, Base AOE: {AOEProjectileDamage}, Base ArcAOE: {AOEArcProjectileDamage}");
+
         projectileDamage *= multiplier;
         AOEProjectileDamage *= multiplier;
         AOEArcProjectileDamage *= multiplier;

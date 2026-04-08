@@ -98,12 +98,10 @@ public class BossSpawner : MonoBehaviour
         float difficulty = difficultyScaler.GetDifficultyScale();
         float multiplier = damageScaleCurve.Evaluate(difficulty);
 
-        EnemyMelee melee = enemyObj.GetComponent<EnemyMelee>();
+        EnemyBoss_SS melee = enemyObj.GetComponent<EnemyBoss_SS>();
         if (melee != null)
         {
-            float oldDmg = melee.GetBaseDamage();
-            float newDmg = melee.GetBaseDamage() * multiplier;
-            melee.InitializeSlamDamage(newDmg);
+            melee.InitializeAllDamage(multiplier);
             return;
         }
 
