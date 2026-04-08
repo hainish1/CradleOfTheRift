@@ -104,17 +104,14 @@ public class BossSpawner : MonoBehaviour
             float oldDmg = melee.GetBaseDamage();
             float newDmg = melee.GetBaseDamage() * multiplier;
             melee.InitializeSlamDamage(newDmg);
-            Debug.Log($"BossSpawner: Scaled Boss Damage to {newDmg} from base {oldDmg} with difficulty {difficulty} and multiplier {multiplier}");
             return;
         }
 
-        EnemyRange range = enemyObj.GetComponent<EnemyRange>();
+        RevenantBossRange range = enemyObj.GetComponent<RevenantBossRange>();
         if (range != null)
         {
-            float oldDmg = range.GetBaseDamage();
-            float newDmg = range.GetBaseDamage() * multiplier;
-            range.InitializeDamage(newDmg);
-            Debug.Log($"BossSpawner: Scaled Boss Damage to {newDmg} from base {oldDmg} with difficulty {difficulty} and multiplier {multiplier}");
+            range.InitializeAllDamage(multiplier);
+            return;
         }
 
     }

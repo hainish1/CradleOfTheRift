@@ -324,6 +324,17 @@ public class RevenantBossRange : Enemy
         }
     }
 
+    public void InitializeAllDamage(float multiplier)
+    {
+        Debug.Log($"Revenant Boss Damage. Base Projectile: {projectileDamage}, Base AOE: {AOEProjectileDamage}, Base ArcAOE: {AOEArcProjectileDamage}");
+        
+        projectileDamage *= multiplier;
+        AOEProjectileDamage *= multiplier;
+        AOEArcProjectileDamage *= multiplier;
+
+        Debug.Log($"Initialized Revenant Boss Damage with multiplier {multiplier}.Projectile: {projectileDamage}, AOE: {AOEProjectileDamage}, ArcAOE: {AOEArcProjectileDamage}");
+    }
+
     /// <summary>
     /// Used to initialize damage for this enemy.
     /// </summary>
