@@ -133,6 +133,18 @@ public class BossSpawner : MonoBehaviour
 
         Destroy(vfx, 4.0f); // Should prob make the VFX auto destroy instead of doing it here.
     }
+
+    private void Reset()
+    {
+        ResetScalingCurves();
+    }
+
+    [ContextMenu("Reset Scaling Curves")]
+    private void ResetScalingCurves()
+    {
+        healthScaleCurve = AnimationCurve.Linear(0, 1, 30, 6);
+        damageScaleCurve = AnimationCurve.Linear(0, 1, 30, 3);
+    }
 }
 
 [Serializable]
