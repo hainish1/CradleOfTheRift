@@ -22,6 +22,9 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private string mainSceneName = "Main";
     [SerializeField] private string tutorialSceneName = "Tutorial";
 
+    [Header("Click Sound Effects")]
+    [SerializeField] private AK.Wwise.Event clickSFX;
+
 
     private void Awake()
     {
@@ -61,6 +64,8 @@ public class PauseMenu : MonoBehaviour
         var action = InputActions.FindAction("Pause");
 
         InputActions.Enable();
+
+        document.rootVisualElement.RegisterCallback<ClickEvent>(PlayClickSoundEffect);
 
         if (startButton != null)
             startButton.RegisterCallback<ClickEvent>(OnStartGameClick);
@@ -154,6 +159,7 @@ public class PauseMenu : MonoBehaviour
         PauseManager.CurrentPauseState = PauseManager.PauseState.Settings;
         gameObject.SetActive(false);
         settingsMenuController.gameObject.SetActive(true);
+        PlayClickSoundEffect(evt);
     }
 
     private void OnSettingsBack()
@@ -195,5 +201,16 @@ public class PauseMenu : MonoBehaviour
     {
         GameSaveState.ResetAll();
         Debug.Log("Save state reset");
+    }
+    
+    /// <summary>
+    /// Posts a Wwise event if it's set.
+    /// </summary>
+    private void PlayClickSoundEffect(ClickEvent evt)
+    {
+        if (clickSFX.IsValid())
+        {
+            clickSFX.Post(gameObject);
+        }
     }
 }
