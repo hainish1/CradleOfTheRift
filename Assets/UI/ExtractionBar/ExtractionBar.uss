@@ -1,0 +1,11 @@
+
+.extraction-bar .unity-progress-bar__progress {
+    background-color: green;
+}
+
+
+#ExtractionContainer {
+    width: 500px;    /* match inventory width */
+    height: 24px;    /* extraction bar height */
+    margin-top: 10px;
+}

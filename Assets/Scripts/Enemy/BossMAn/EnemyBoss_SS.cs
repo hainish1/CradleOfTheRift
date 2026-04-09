@@ -385,4 +385,15 @@ public class EnemyBoss_SS : Enemy
         Gizmos.DrawWireSphere(transform.position, playerTooClose);
 
     }
+
+    // Called by BossSpawner to initialize damage based on difficulty scaler
+    public void InitializeAllDamage(float multiplier)
+    {
+        Debug.Log($"Slime Boss Base Damage. Base slam: {slamDamage}, Base Explosion: {explosionDamage}");
+
+        slamDamage *= multiplier;
+        explosionDamage *= multiplier;
+
+        Debug.Log($"Initialized Slime Boss Damage with multiplier {multiplier}. slam: {slamDamage}, Explosion: {explosionDamage}");   
+    }
 }
