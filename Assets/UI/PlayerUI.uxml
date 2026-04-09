@@ -31,6 +31,7 @@
         </ui:VisualElement>
         <ui:Instance template="Gold" name="GoldRoot" />
         <ui:Instance template="XPContainer" name="XPContainerRoot" />
+        <ui:Label text="Press Q to level up" name="CenterLevelUpHint" picking-mode="Ignore" />
     </ui:VisualElement>
     <ui:Instance template="SpawnerDevHUD" name="SpawnerDevHUDRoot" />
 </ui:UXML>

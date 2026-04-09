@@ -86,3 +86,42 @@ unity-content {
     left: 100px;           /* pin to right */
     display: none;
 }
+
+/* Center Level Up Hint Styling */
+#CenterLevelUpHint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%; /* Perfectly centers the element */
+    margin-top: 100px; /* Nudges it below the center crosshair */
+    
+    display: none;
+    font-size: 13px;
+    -unity-font-style: bold;
+    color: rgba(200, 200, 200, 0.9); /* Subdued grayish-white */
+    -unity-text-align: middle-center;
+    
+    background-color: rgba(40, 40, 40, 0.6); /* Semi-transparent dark gray */
+    border-color: rgba(120, 120, 120, 0.5);
+    border-width: 1px;
+    border-radius: 10px;
+    padding: 3px 12px;
+
+    /* fade-in base state */
+    opacity: 0;
+    scale: 1 1;
+    transition-property: opacity, scale;
+    transition-duration: 0.4s, 0.4s;
+    transition-timing-function: ease-in-out, ease-in-out;
+}
+
+#CenterLevelUpHint.hint-visible {
+    opacity: 1;
+    scale: 1 1;
+}
+
+#CenterLevelUpHint.hint-pulse-dim {
+    opacity: 0.45;
+    scale: 1.05 1.05;
+    transition-duration: 0.9s, 0.9s;
+}
