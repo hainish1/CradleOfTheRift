@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /// <summary>
-/// Class - Represents a Melee Enemy, inherits from Base Enemy class 
+/// Class - Represents a Golem, inherits from Base Enemy class 
 /// and defines functionality of its own
 /// </summary>
 public class EnemyGolem : Enemy
@@ -19,11 +19,8 @@ public class EnemyGolem : Enemy
     public float maxAttackPauseTime = 1f;
     public float minRecoveryTime = 3f;
     public float maxRecoveryTime = 5f;
-
-    // [Header("Slime drag stuff")]
-    // public float dragSpeed = 6f;
-    // public float dragDuration = 0.35f;
-    // public float restDuration = 0.25f;
+    public float wanderInterval = 2f;  // Time between wander direction changes
+    public float wanderRadius = 4f;    // Radius for wandering distance from its current position
 
 
     [Header("Rock Throw Attack Settings")]

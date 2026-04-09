@@ -11,8 +11,6 @@ public class ChaseStateGolem : EnemyState
     // Wandering variables
     private bool isWandering;
     private float wanderTimer;
-    private float wanderInterval = 2f;  // Time between wander direction changes
-    private float wanderRadius = 4f;    // Radius for wandering distance from its current position
     public ChaseStateGolem(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
         enemyGolem = enemy as EnemyGolem;
@@ -107,10 +105,10 @@ public class ChaseStateGolem : EnemyState
     /// </summary>
     private void PickWanderPoint()
     {
-        Vector2 randomCircle = Random.insideUnitCircle * wanderRadius;
+        Vector2 randomCircle = Random.insideUnitCircle * enemyGolem.wanderRadius;
         Vector3 randomPos = enemyGolem.transform.position + new Vector3(randomCircle.x, 0, randomCircle.y);
 
-        if (UnityEngine.AI.NavMesh.SamplePosition(randomPos, out UnityEngine.AI.NavMeshHit hit, wanderRadius, UnityEngine.AI.NavMesh.AllAreas))
+        if (UnityEngine.AI.NavMesh.SamplePosition(randomPos, out UnityEngine.AI.NavMeshHit hit, enemyGolem.wanderRadius, UnityEngine.AI.NavMesh.AllAreas))
         {
             if (enemy.agent != null)
             {
@@ -118,7 +116,7 @@ public class ChaseStateGolem : EnemyState
                 enemy.agent.SetDestination(hit.position);
             }
             isWandering = true;
-            wanderTimer = wanderInterval; 
+            wanderTimer = enemyGolem.wanderInterval; 
         }
         else
         {
