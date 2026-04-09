@@ -109,10 +109,10 @@ unity-content {
     /* 2. BACKGROUND: Subtle horizontal 'wash' instead of a box */
     background-color: rgba(0, 0, 0, 0.4);
     
-    /* 3. BRAKETS: Framing the text (differentiates from the pill shape) */
+    /* 3. BRAKETS: Framing the text */
     border-left-width: 3px;
     border-right-width: 3px;
-    border-left-color: rgb(80, 180, 255); /* Matches your LevelLabel blue */ 
+    border-left-color: rgb(80, 180, 255);
     border-right-color: rgb(80, 180, 255);
     
     /* 4. UNDERLINE: Thin accent to ground the text */
@@ -122,7 +122,7 @@ unity-content {
 
 
 
-    padding: 2px 14px;
+    padding: 4px 14px 2px 14px;
     border-radius: 0;
 
     /* fade-in base state */
