@@ -81,31 +81,38 @@ public class PlayerXPUI : MonoBehaviour
 
         if (show)
         {
-            if (levelUpHint.style.display == DisplayStyle.Flex && _isPulsing)
-                return; // already showing and pulsing, dont restart
-
-            // Make the element part of layout
-            levelUpHint.style.display = DisplayStyle.Flex;
-
-            // Trigger fade-in on the next frame so the transition fires
-            // (USS transitions don't fire if class is added the same frame
-            // the element becomes visible)
-            levelUpHint.schedule.Execute(() =>
+            if (levelUpHint.style.display != DisplayStyle.Flex)
             {
-                levelUpHint.AddToClassList("hint-visible");
-                StartPulse();
-            }).StartingIn(20);
+                // Make the element part of layout
+                levelUpHint.style.display = DisplayStyle.Flex;
+
+                // Trigger fade-in on the next frame so the transition fires
+                // (USS transitions don't fire if class is added the same frame
+                // the element becomes visible)
+                levelUpHint.schedule.Execute(() =>
+                {
+                    levelUpHint.AddToClassList("hint-visible");
+                    StartPulse();
+                }).StartingIn(20);
+            }
         }
         else
         {
+            // Only hide if we aren't immediately showing it again for a multi-level up
+            if (PlayerXP.Instance != null && PlayerXP.Instance.IsLevelUpReady) 
+                return;
+            
             StopPulse();
-
             // Fade out, then hide from layout once the transition completes
             levelUpHint.RemoveFromClassList("hint-visible");
             levelUpHint.RemoveFromClassList("hint-pulse-dim");
 
             levelUpHint.schedule.Execute(() =>
             {
+                // Double check we haven't become ready again during the fade-out
+                if (levelUpHint.ClassListContains("hint-visible")) 
+                    return;
+                    
                 levelUpHint.style.display = DisplayStyle.None;
             }).StartingIn(450); // slightly longer than the 0.4s transition
         }
