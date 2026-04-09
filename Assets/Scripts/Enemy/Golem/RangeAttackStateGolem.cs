@@ -84,7 +84,7 @@ public class RangeAttackStateGolem : EnemyState
 
             // Apply the calculated ballistic velocity
             rb.linearVelocity = CalculateLaunchVelocity(spawnPos, targetPos, timeToTarget);
-            rock.Init(enemyGolem.directDamage, enemyGolem.projectileKnockback, enemyGolem.projectileMask);
+            //rock.Init(enemyGolem.directDamage, enemyGolem.projectileKnockback, enemyGolem.projectileMask);
         }
 
         // Play throw sound effect

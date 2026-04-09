@@ -14,16 +14,17 @@ public class EnemyRockProjectile : MonoBehaviour
     [SerializeField] private float gravity = 9f;
 
     [Header("hit")]
-    private float directDamage = 0;
     [SerializeField] private float hitForce = 8f;
     [SerializeField] private float knockBackImpulse = 8f;
     [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
+    private bool hasHit;
 
-    [Header("AOE Effect")]
-    [SerializeField] private float AOERadius = 8f;
-    private float AOEDamage = 5f;
-    [SerializeField] private float AOEDelay = 1f;
-    [SerializeField] private EnemyDelayedAOE delayedAOE;
+    //[Header("Damage")]
+    //[SerializeField] private float AOERadius = 8f;
+    //private float AOEDamage = 5f;
+    //[SerializeField] private float AOEDelay = 1f;
+    //[SerializeField] private EnemyDelayedAOE delayedAOE;
+    private float directDamage;
 
     Rigidbody rb;
     private float age;
@@ -39,11 +40,11 @@ public class EnemyRockProjectile : MonoBehaviour
     /// <param name="velocity"> Velocity of the projectile. </param>
     /// <param name="mask"> Collection of what types of objects this projectile can interact with. </param>
     /// <param name="newDamage"> Amount of damage the explosion will do. This projectile will do no direct damage on its own. </param>
-    public void Init(Vector3 velocity, LayerMask mask, float newDamage)
+    public void Init(Vector3 velocity, LayerMask mask, float damage)
     {
         rb.linearVelocity = velocity;
         hitMask = mask;
-        AOEDamage = newDamage;
+        directDamage = damage;
         age = 0f;
     }
 
@@ -62,7 +63,7 @@ public class EnemyRockProjectile : MonoBehaviour
     }   
 
     /// <summary>
-    /// Upon collision, spawn the delayed AOE effect at the contact point and destroy this projectile
+    /// Upon collision, damamge the player if it hit, apply force to other rigidbodies it might hit, and destroy this projectile
     /// </summary>
     /// <param name="collision"></param>
     void OnCollisionEnter(Collision collision)
@@ -70,31 +71,58 @@ public class EnemyRockProjectile : MonoBehaviour
         if (((1 << collision.gameObject.layer) & hitMask) == 0)
             return;
 
-        // spawn AOE effect on collision
-        SpawnAOEObject(collision.GetContact(0).point);
-        Destroy(gameObject);
+        hasHit = true;
+
+        // check if collided with enemy and if yes then damage it
+        var pm = collision.collider.GetComponentInParent<PlayerMovement>();
+
+
+        if (pm != null)
+        {
+            var contact = collision.GetContact(0);
+
+            Vector3 dir = -contact.normal; // opposite of contact point
+            dir.y = 0f;
+            if (dir.sqrMagnitude > 0.0001f) dir.Normalize();
+
+            pm.ApplyImpulse(dir * knockBackImpulse);
+
+        }
+
+        // other rigidbodies it might hit
+        if (collision.rigidbody != null)
+        {
+            Vector3 force = rb.linearVelocity.normalized * hitForce;
+            collision.rigidbody.AddForceAtPosition(force, collision.GetContact(0).point, ForceMode.Impulse);
+        }
+        var damageable = collision.collider.GetComponentInParent<IDamageable>();
+        if (damageable != null && !damageable.IsDead)
+        {
+            damageable.TakeDamage(directDamage);
+        }
+
+
+        // place to add impact effects later
+
+        ReturnToPool();
     }
 
-    /// <summary>
-    /// Spawn the delayed AOE effect at the given position
-    /// </summary>
-    /// <param name="position"> Spawn AOE at this position, usually at point of collision. </param>
-    private void SpawnAOEObject(Vector3 position)
+    void ReturnToPool()
     {
-        if (delayedAOE != null)
+        if (ObjectPool.instance != null)
         {
-            EnemyDelayedAOE explosion = Instantiate(delayedAOE, position, Quaternion.identity);
-            explosion.Init(AOERadius, AOEDamage, AOEDelay);
+            ObjectPool.instance.ReturnObject(gameObject, 0.01f);
         }
         else
         {
-            Debug.LogError("No delayed AOE prefab assigned in editor!");
+            Destroy(gameObject);
         }
     }
 
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, AOERadius);
-    }
+
+    // void OnDrawGizmos()
+    // {
+    //     Gizmos.color = Color.red;
+    //     Gizmos.DrawWireSphere(transform.position, AOERadius);
+    // }
 }
