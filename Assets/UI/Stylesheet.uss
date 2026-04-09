@@ -93,19 +93,37 @@ unity-content {
     top: 50%;
     left: 50%;
     translate: -50% -50%; /* Perfectly centers the element */
-    margin-top: 100px; /* Nudges it below the center crosshair */
     
     display: none;
-    font-size: 13px;
+    font-size: 11px;
     -unity-font-style: bold;
-    color: rgba(200, 200, 200, 0.9); /* Subdued grayish-white */
+    color: #FFFFFF; /* Subdued grayish-white */
     -unity-text-align: middle-center;
+    letter-spacing: 1px;
     
-    background-color: rgba(40, 40, 40, 0.6); /* Semi-transparent dark gray */
-    border-color: rgba(120, 120, 120, 0.5);
-    border-width: 1px;
-    border-radius: 10px;
-    padding: 3px 12px;
+
+    /* 1. TEXT PROTECTION: Outline ensures readability on bright scenes */
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: rgba(0, 0, 0, 0.9);
+
+    /* 2. BACKGROUND: Subtle horizontal 'wash' instead of a box */
+    background-color: rgba(0, 0, 0, 0.4);
+    
+    /* 3. BRAKETS: Framing the text (differentiates from the pill shape) */
+    border-left-width: 3px;
+    border-right-width: 3px;
+    border-left-color: rgb(80, 180, 255); /* Matches your LevelLabel blue */ 
+    border-right-color: rgb(80, 180, 255);
+    
+    /* 4. UNDERLINE: Thin accent to ground the text */
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(255, 255, 255, 0.3);
+
+
+
+
+    padding: 2px 14px;
+    border-radius: 0;
 
     /* fade-in base state */
     opacity: 0;
@@ -122,6 +140,6 @@ unity-content {
 
 #CenterLevelUpHint.hint-pulse-dim {
     opacity: 0.45;
-    scale: 1.05 1.05;
+    scale: 1.1 1.1;
     transition-duration: 0.9s, 0.9s;
 }
