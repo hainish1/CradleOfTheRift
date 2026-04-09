@@ -67,6 +67,9 @@ public class RangeAttackStateGolem : EnemyState
         Vector3 targetPos = enemy.target.position + Vector3.up * 1.5f; 
         
         GameObject rock = Object.Instantiate(enemyGolem.rockProjectilePrefab, spawnPos, Quaternion.identity);
+//EnemyProjectile projectile2 = Instantiate(projectilePrefab, spawnPoint2, rotation2);
+        // projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
+
         
         if (rock.TryGetComponent<Rigidbody>(out Rigidbody rb))
         {
@@ -81,6 +84,7 @@ public class RangeAttackStateGolem : EnemyState
 
             // Apply the calculated ballistic velocity
             rb.linearVelocity = CalculateLaunchVelocity(spawnPos, targetPos, timeToTarget);
+            rock.Init(enemyGolem.directDamage, enemyGolem.projectileKnockback, enemyGolem.projectileMask);
         }
 
         // Play throw sound effect
