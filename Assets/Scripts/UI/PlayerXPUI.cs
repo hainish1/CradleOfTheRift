@@ -5,6 +5,7 @@ public class PlayerXPUI : MonoBehaviour
 {
     private Label levelLabel;
     private Label levelUpHint;
+    private Label centerLevelUpHint;
     private Label xpLabel;
     private ProgressBar xpBar;
     private bool _isPulsing = false;
@@ -16,6 +17,7 @@ public class PlayerXPUI : MonoBehaviour
 
         levelLabel  = root.Q<Label>("LevelLabel");
         levelUpHint = root.Q<Label>("LevelUpHint");
+        centerLevelUpHint = root.Q<Label>("CenterLevelUpHint");
         xpLabel     = root.Q<Label>("XPLabel");
         xpBar       = root.Q<ProgressBar>("XPBar");
 
@@ -81,17 +83,30 @@ public class PlayerXPUI : MonoBehaviour
 
         if (show)
         {
-            if (levelUpHint.style.display != DisplayStyle.Flex)
+            bool needsShow = (levelUpHint != null && levelUpHint.style.display != DisplayStyle.Flex) ||
+                             (centerLevelUpHint != null && centerLevelUpHint.style.display != DisplayStyle.Flex);
+
+            if (needsShow)
             {
+
                 // Make the element part of layout
-                levelUpHint.style.display = DisplayStyle.Flex;
+                if (levelUpHint != null)
+                    levelUpHint.style.display = DisplayStyle.Flex;
+
+                if (centerLevelUpHint != null)
+                    centerLevelUpHint.style.display = DisplayStyle.Flex;
+
+                // Grab whichever element isn't null to schedule the event
+                var schedulerElement = levelUpHint ?? centerLevelUpHint;
+
 
                 // Trigger fade-in on the next frame so the transition fires
                 // (USS transitions don't fire if class is added the same frame
                 // the element becomes visible)
-                levelUpHint.schedule.Execute(() =>
+                schedulerElement.schedule.Execute(() =>
                 {
-                    levelUpHint.AddToClassList("hint-visible");
+                    levelUpHint?.AddToClassList("hint-visible");
+                    centerLevelUpHint?.AddToClassList("hint-visible");
                     StartPulse();
                 }).StartingIn(20);
             }
@@ -104,16 +119,25 @@ public class PlayerXPUI : MonoBehaviour
             
             StopPulse();
             // Fade out, then hide from layout once the transition completes
-            levelUpHint.RemoveFromClassList("hint-visible");
-            levelUpHint.RemoveFromClassList("hint-pulse-dim");
+            levelUpHint?.RemoveFromClassList("hint-visible");
+            levelUpHint?.RemoveFromClassList("hint-pulse-dim");
 
-            levelUpHint.schedule.Execute(() =>
+            centerLevelUpHint?.RemoveFromClassList("hint-visible");
+            centerLevelUpHint?.RemoveFromClassList("hint-pulse-dim");
+
+            var schedulerElement = levelUpHint ?? centerLevelUpHint;
+
+            schedulerElement.schedule.Execute(() =>
             {
                 // Double check we haven't become ready again during the fade-out
-                if (levelUpHint.ClassListContains("hint-visible")) 
+                if (levelLabel != null && levelUpHint.ClassListContains("hint-visible")) 
                     return;
                     
-                levelUpHint.style.display = DisplayStyle.None;
+                if (levelUpHint != null)
+                    levelUpHint.style.display = DisplayStyle.None;
+                if (centerLevelUpHint != null)
+                    centerLevelUpHint.style.display = DisplayStyle.None;
+                    
             }).StartingIn(450); // slightly longer than the 0.4s transition
         }
     }
@@ -128,13 +152,24 @@ public class PlayerXPUI : MonoBehaviour
         if (_isPulsing) return;
         _isPulsing = true;
 
-        _pulseSchedule = levelUpHint.schedule.Execute(() =>
+        var schedulerElement = levelUpHint ?? centerLevelUpHint;
+        if (schedulerElement == null) return;
+
+        _pulseSchedule = schedulerElement.schedule.Execute(() =>
         {
-            if (levelUpHint.ClassListContains("hint-pulse-dim"))
-                levelUpHint.RemoveFromClassList("hint-pulse-dim");
-            else
-                levelUpHint.AddToClassList("hint-pulse-dim");
+            TogglePulseClass(levelUpHint);
+            TogglePulseClass(centerLevelUpHint);
         }).Every(950);
+    }
+
+    private void TogglePulseClass(Label element)
+    {
+        if (element == null) return;
+
+        if (element.ClassListContains("hint-pulse-dim"))
+            element.RemoveFromClassList("hint-pulse-dim");
+        else
+            element.AddToClassList("hint-pulse-dim");
     }
 
     private void StopPulse()
