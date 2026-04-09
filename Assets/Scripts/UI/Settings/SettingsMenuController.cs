@@ -1,6 +1,7 @@
+using Mono.Cecil.Cil;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-using System.Collections.Generic;
 
 public class SettingsMenuController : MonoBehaviour
 {
@@ -9,6 +10,9 @@ public class SettingsMenuController : MonoBehaviour
     [SerializeField] private string musicVolumeRTPC   = "MusicVolume";
     [SerializeField] private string sfxVolumeRTPC     = "SFXVolume";
     [SerializeField] private string ambientVolumeRTPC = "AmbientVolume";
+
+    [Header("Sound Effects")]
+    [SerializeField] private AK.Wwise.Event clickSFX;
 
     // ── Tab animation config ──────────────────────────────────────────
     private const float BORDER_MAX = 4f; // px when active
@@ -88,6 +92,11 @@ public class SettingsMenuController : MonoBehaviour
         // Create the service
         service = new SettingsService(masterVolumeRTPC, musicVolumeRTPC,
                                       sfxVolumeRTPC, ambientVolumeRTPC);
+
+        // Bind the click sfx to the root.
+        // Hopefully through event propogation,
+        // this will make the click sfx play for every click!
+        root.RegisterCallback<ClickEvent>(PlayClickSoundEffect);
 
         // Query tab buttons
         tabAudio    = root.Q<Button>("TabAudio");
@@ -179,5 +188,16 @@ public class SettingsMenuController : MonoBehaviour
 
         foreach (var (tab, page) in tabPagePairs)
             page.style.display = (tab == targetTab) ? DisplayStyle.Flex : DisplayStyle.None;
+    }
+
+    /// <summary>
+    /// Posts a Wwise event if it's set.
+    /// </summary>
+    private void PlayClickSoundEffect(ClickEvent evt)
+    {
+        if (clickSFX.IsValid())
+        {
+            clickSFX.Post();
+        }
     }
 }
