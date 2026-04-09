@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6136272082482821300
 Transform:
   m_ObjectHideFlags: 0
@@ -182,13 +182,13 @@ MonoBehaviour:
   maxAttackPauseTime: 1
   minRecoveryTime: 3
   maxRecoveryTime: 60
-  rockProjectilePrefab: {fileID: 3232334194741932682, guid: 1dff6ae550385f244b0694002d4424df, type: 3}
+  rockProjectilePrefab: {fileID: 3232334194741932682, guid: adf349a4643808e428b922062262b364, type: 3}
   directDamage: 20
   AOEDamage: 5
   minWindupTime: 1.5
   maxWindupTime: 2.5
   projectileVelocity: 12
-  projectileSpawnPoint: {fileID: 6136272082482821300}
+  projectileSpawnPoint: {fileID: 6465249743287801400}
   turnSpeedWhileAiming: 10
   throwRockVFXPrefab: {fileID: 0}
   throwSFX:
@@ -434,5 +434,10 @@ PrefabInstance:
 --- !u!4 &2545160238402103216 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
+  m_PrefabInstance: {fileID: 2655013533814259803}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6465249743287801400 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9034694599746016867, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
   m_PrefabInstance: {fileID: 2655013533814259803}
   m_PrefabAsset: {fileID: 0}

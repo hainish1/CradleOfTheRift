@@ -63,52 +63,49 @@ public class RangeAttackStateGolem : EnemyState
             ? enemyGolem.projectileSpawnPoint.position 
             : enemy.transform.position + Vector3.up * 1.5f;
 
-        // TODO: Throw a straight projectile for now, add arc and prediction later
+        // Target the player's center mass rather than their feet
+        Vector3 targetPos = enemy.target.position + Vector3.up * 1.5f; 
         
         GameObject rock = Object.Instantiate(enemyGolem.rockProjectilePrefab, spawnPos, Quaternion.identity);
         
-        // Aim for player's center
-        Vector3 toTarget = (enemy.target.position + Vector3.up * 1.5f) - spawnPos; 
-        
         if (rock.TryGetComponent<Rigidbody>(out Rigidbody rb))
         {
-            rb.linearVelocity = toTarget.normalized * enemyGolem.projectileVelocity;
+            // Calculate horizontal distance to the target
+            float distanceXZ = Vector2.Distance(new Vector2(spawnPos.x, spawnPos.z), new Vector2(targetPos.x, targetPos.z));
+            
+            // Calculate how long the rock should take to reach the target based on our configured horizontal velocity
+            float timeToTarget = distanceXZ / enemyGolem.projectileVelocity;
+            
+            // Prevent division by zero if the player is clipping inside the golem
+            timeToTarget = Mathf.Max(0.1f, timeToTarget);
+
+            // Apply the calculated ballistic velocity
+            rb.linearVelocity = CalculateLaunchVelocity(spawnPos, targetPos, timeToTarget);
         }
 
         // Play throw sound effect
         enemyGolem.PlayThrowSFX();
     }
-    // private Vector3 CalculateLaunchVelocity(Vector3 target, float timeToTarget)
-    // {
-    //     // using a formula
-    //     Vector3 direction = target - this.transform.position;
-    //     Vector3 directionXZ = new Vector3(direction.x, 0, direction.z);
 
-    //     Vector3 velocityXZ = directionXZ / timeToTarget; // calculate velocity based direction of throw and time to reach target
+    /// <summary>
+    /// Calculates the precise 3D velocity required to hit a target point over a specific duration, factoring in Unity's gravity.
+    /// </summary>
+    private Vector3 CalculateLaunchVelocity(Vector3 startPoint, Vector3 targetPoint, float timeToTarget)
+    {
+        // Calculate displacement
+        Vector3 displacement = targetPoint - startPoint;
+        Vector3 displacementXZ = new Vector3(displacement.x, 0, displacement.z);
 
-    //     // A DESC FOR THIS FORMULA
-    //     // (Physics.gravity.y * Mathf.Pow(timeToTarget, 2)) / 2 :- this part calculates
-    //     // d = 1/2 * g * t^2, d = displacement, g = gravity, t = time taken
-    //     // (direction.y - (Physics.gravity.y * Mathf.Pow(timeToTarget, 2)) / 2) :- calculates the initial vertical displacement 
-    //     // neeeded, taking into account the displacement due to gravity
-    //     // finally dividing this displacement by time gives us the velocity we need = v = s/t
+        // Calculate XZ (horizontal) velocity needed to cover the distance in timeToTarget
+        Vector3 velocityXZ = displacementXZ / timeToTarget;
 
-    //     float velocityY = (direction.y - (Physics.gravity.y * Mathf.Pow(timeToTarget, 2)) / 2) / timeToTarget;
+        // Calculate Y (vertical) velocity using the kinematic equation: d = vi*t + 1/2*a*t^2
+        // Rearranged to solve for vi (initial velocity): vi = (d - 1/2*a*t^2) / t
+        float velocityY = (displacement.y - (Physics.gravity.y * Mathf.Pow(timeToTarget, 2)) / 2f) / timeToTarget;
 
-    //     Vector3 launchVelocity = velocityXZ + (Vector3.up * velocityY);
-
-    //     return launchVelocity;
-
-    // }
-    // public void SetupGrenade(LayerMask allyLayerMask, Vector3 target, float timeToTarget, float countdown, float impactPower, int grenadeDamage)
-    // {
-    //     canExplode = true;
-    //     this.allyLayerMask = allyLayerMask;
-    //     rb.linearVelocity = CalculateLaunchVelocity(target, timeToTarget);
-    //     this.explosionTimer = countdown + timeToTarget; // so it starts actual countdown after reaching the target time
-    //     this.impactPower = impactPower;
-    //     this.grenadeDamage = grenadeDamage;
-    // }
+        // Combine horizontal and vertical velocities
+        return velocityXZ + (Vector3.up * velocityY);
+    }
 
     public override void Exit()
     {
