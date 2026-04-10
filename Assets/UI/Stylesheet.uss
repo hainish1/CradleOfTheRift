@@ -44,6 +44,13 @@ unity-content {
     left: 100px;
 }
 
+#ExtractionRoot {
+    position: absolute;
+    bottom: 400px;
+    right: 100px;
+}
+
+
 #InventoryContainer {
     width: 500px;        /* match scroll-view width */
     display: flex;

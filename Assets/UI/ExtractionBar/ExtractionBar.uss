@@ -1,11 +1,57 @@
-
-.extraction-bar .unity-progress-bar__progress {
-    background-color: green;
+.extraction-bar {
+    width: 360px;
+    height: 26px;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
 }
 
+/* Track background — matches health bar style */
+.extraction-bar .unity-progress-bar__background {
+    background-color: rgba(0, 0, 0, 0.35);
+    border-color: rgba(255, 255, 255, 0.12);
+    border-width: 1px;
+    border-radius: 3px;
+}
 
-#ExtractionContainer {
-    width: 500px;    /* match inventory width */
-    height: 24px;    /* extraction bar height */
-    margin-top: 10px;
+/* Fill — cyan/teal: distinct from health green, fits sci-fi palette */
+.extraction-bar .unity-progress-bar__progress {
+    background-color: rgba(80, 210, 210, 0.90);
+    border-radius: 3px;
+    transition-property: background-color;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+}
+
+/* Label — matches health bar typography */
+.extraction-bar .unity-progress-bar__title {
+    color: rgba(255, 255, 255, 0.90);
+    font-size: 14px;
+    -unity-font-style: bold;
+    -unity-text-outline-width: 0.5px;
+    -unity-text-outline-color: rgba(0, 0, 0, 0.85);
+    transition-property: color;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+}
+
+/* ── Decaying state (player has left the zone) ────── */
+
+/* Fill shifts to a desaturated orange-red — "draining" reads immediately */
+.extraction-bar.decaying .unity-progress-bar__progress {
+    background-color: rgba(220, 100, 60, 0.85);
+    transition-duration: 0.3s;
+}
+
+/* Label dims and warms to reinforce the danger */
+.extraction-bar.decaying .unity-progress-bar__title {
+    color: rgba(255, 180, 120, 0.90);
+    transition-duration: 0.3s;
+}
+
+/* Pulse: the bar outline flickers to draw the eye */
+.extraction-bar.decaying .unity-progress-bar__background {
+    border-color: rgba(220, 100, 60, 0.55);
+    transition-property: border-color;
+    transition-duration: 0.3s;
 }
