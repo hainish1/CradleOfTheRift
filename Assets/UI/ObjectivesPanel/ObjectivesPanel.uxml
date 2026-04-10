@@ -6,10 +6,10 @@
         <ui:VisualElement name="LocateRow" class="objective-row objective-active">
             <ui:Label text="•  Locate Extraction Site" name="LocateLabel" class="objective-label" style="font-size: 20px;" />
         </ui:VisualElement>
-        <ui:Instance template="ExtractionBar" name="ExtractionBarRoot" />
         <ui:VisualElement name="ChargeRow" class="objective-row objective-inactive" style="display: none;">
             <ui:Label text="•  Charge the Extraction Site" name="ChargeLabel" class="objective-label" />
         </ui:VisualElement>
+        <ui:Instance template="ExtractionBar" name="ExtractionBarRoot" />
         <ui:VisualElement name="KillRow" class="objective-row objective-inactive" style="display: none;">
             <ui:Label text="•  Eliminate the Boss" name="KillLabel" class="objective-label" />
         </ui:VisualElement>
