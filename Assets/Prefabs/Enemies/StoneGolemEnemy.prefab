@@ -117,10 +117,9 @@ MonoBehaviour:
   gizosOn: 1
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
   nextAttackAllowed: 0.5
-  chaseSpeed: 10
+  chaseSpeed: 100
   shootingRange: 60
   minAttackDistance: 2
-  knockbackPower: 100
   minAttackPauseTime: 1
   maxAttackPauseTime: 1
   minRecoveryTime: 3
@@ -128,12 +127,12 @@ MonoBehaviour:
   wanderInterval: 2
   wanderRadius: 4
   rockProjectilePrefab: {fileID: 3232334194741932682, guid: adf349a4643808e428b922062262b364, type: 3}
-  directDamage: 20
-  AOEDamage: 5
+  directDamage: 25
+  AOEDamage: 0
   minWindupTime: 1.5
   maxWindupTime: 2.5
   projectileVelocity: 100
-  projectileKnockback: 20
+  projectileKnockback: 300
   projectileSpawnPoint: {fileID: 6136272082482821300}
   turnSpeedWhileAiming: 10
   projectileMask:
@@ -337,7 +336,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.65
+      value: -0.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
       propertyPath: m_LocalPosition.z

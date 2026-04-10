@@ -14,7 +14,7 @@ public class EnemyGolem : Enemy
     public float shootingRange = 60f;
     public float minAttackDistance = 2f;
     // public int damage = 10; 
-    public float knockbackPower = 100f; // how far can push the enemy
+    //public float knockbackPower = 100f; // how far can push the enemy
     public float minAttackPauseTime = 1f;
     public float maxAttackPauseTime = 1f;
     public float minRecoveryTime = 3f;
