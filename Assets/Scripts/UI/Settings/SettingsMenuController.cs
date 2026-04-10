@@ -96,7 +96,7 @@ public class SettingsMenuController : MonoBehaviour
         // Bind the click sfx to the root.
         // Hopefully through event propogation,
         // this will make the click sfx play for every click!
-        root.RegisterCallback<ClickEvent>(PlayClickSoundEffect);
+        root.RegisterCallback<ClickEvent>(_ => AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX));
 
         // Query tab buttons
         tabAudio    = root.Q<Button>("TabAudio");
@@ -151,7 +151,9 @@ public class SettingsMenuController : MonoBehaviour
             buttonResetTutorial.text = "Tutorial Reset!";
             buttonResetTutorial.SetEnabled(false);
         });
+        buttonBack?.RegisterCallback<ClickEvent>(_ => AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX));
         buttonBack?.RegisterCallback<ClickEvent>(_ => OnBackPressed?.Invoke());
+        
 
         // Load saved settings and push to all pages
         service.Load();
@@ -188,16 +190,5 @@ public class SettingsMenuController : MonoBehaviour
 
         foreach (var (tab, page) in tabPagePairs)
             page.style.display = (tab == targetTab) ? DisplayStyle.Flex : DisplayStyle.None;
-    }
-
-    /// <summary>
-    /// Posts a Wwise event if it's set.
-    /// </summary>
-    private void PlayClickSoundEffect(ClickEvent evt)
-    {
-        if (clickSFX.IsValid())
-        {
-            clickSFX.Post();
-        }
     }
 }
