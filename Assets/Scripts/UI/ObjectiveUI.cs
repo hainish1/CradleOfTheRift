@@ -40,12 +40,13 @@ public class ObjectiveUI : MonoBehaviour
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
         objectivesPanel = root.Q<VisualElement>("ObjectivesPanel");
-        locateRow       = root.Q<VisualElement>("LocateRow");
-        chargeRow       = root.Q<VisualElement>("ChargeRow");
-        killRow         = root.Q<VisualElement>("KillRow");
-        locateLabel     = root.Q<Label>("LocateLabel");
-        chargeLabel     = root.Q<Label>("ChargeLabel");
-        killLabel       = root.Q<Label>("KillLabel");
+
+        locateRow       = objectivesPanel.Q<VisualElement>("LocateRow");
+        chargeRow       = objectivesPanel.Q<VisualElement>("ChargeRow");
+        killRow         = objectivesPanel.Q<VisualElement>("KillRow");
+        locateLabel     = objectivesPanel.Q<Label>("LocateLabel");
+        chargeLabel     = objectivesPanel.Q<Label>("ChargeLabel");
+        killLabel       = objectivesPanel.Q<Label>("KillLabel");
 
         if (ExtractionManager.Instance != null)
         {
