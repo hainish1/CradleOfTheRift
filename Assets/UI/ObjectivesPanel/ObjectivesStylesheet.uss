@@ -9,25 +9,7 @@
     border-radius: 4px;
     padding: 10px 14px 12px 14px;
     flex-direction: column;
-}
-
-.panel-fill-image {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    -unity-background-scale-mode: stretch-to-fill;
-}
-
-#PanelImageBackground {
-    z-index: -2;
     background-image: url("project://database/Assets/Art%20Assets/2D/UI/Objectives/BoxBackgroundSolidFlippedHorizontal.png?fileID=2800000&amp;guid=3ceb9f4372f940745857f30d8da74b63&amp;type=3#BoxBackgroundSolidFlippedHorizontal");
-}
-
-#PanelImageMid {
-    z-index: -1;
-    background-image: url("project://database/Assets/Art%20Assets/2D/UI%20assets%202/Timer/Timer_Base.png?fileID=2800000&amp;guid=7f2991a4be4dd4ef29032e0dde03c774&amp;type=3#Timer_Base");
 }
 
 #ObjectivesHeader {
