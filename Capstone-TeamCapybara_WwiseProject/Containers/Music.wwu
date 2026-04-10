@@ -1059,6 +1059,36 @@
 								</MusicSegment>
 							</ChildrenList>
 						</MusicPlaylistContainer>
+						<MusicPlaylistContainer Name="Silence" ID="{3A83B414-8F46-46AC-BB4A-1D2253D21EDD}" ShortID="673463360">
+							<ReferenceList>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+								<Reference Name="PlaylistRoot">
+									<Custom>
+										<MusicPlaylistItem Name="" ID="{57EFB508-A9D8-4A29-8B60-6D20DCCC1527}" ShortID="362215898"/>
+									</Custom>
+								</Reference>
+								<Reference Name="TransitionRoot">
+									<Custom>
+										<MusicTransition Name="Root" ID="{216F9529-98B6-48B2-B443-66D0714428F4}">
+											<PropertyList>
+												<Property Name="IsFolder" Type="bool" Value="True"/>
+											</PropertyList>
+											<ChildrenList>
+												<MusicTransition Name="Transition" ID="{F084785F-4292-4198-89FB-80FBC219650E}">
+													<TransitionInfo/>
+												</MusicTransition>
+											</ChildrenList>
+											<TransitionInfo/>
+										</MusicTransition>
+									</Custom>
+								</Reference>
+							</ReferenceList>
+						</MusicPlaylistContainer>
 					</ChildrenList>
 					<ObjectLists>
 						<ObjectList Name="Arguments">
@@ -1131,7 +1161,7 @@
 							<MultiSwitchEntry Name="" ID="{3410E827-EFBB-4141-B405-DDA0C3599C86}">
 								<ReferenceList>
 									<Reference Name="AudioNode">
-										<ObjectRef Name="Icey" ID="{A6B06205-81D6-44EF-82FC-F16A34B38E31}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
+										<ObjectRef Name="Silence" ID="{3A83B414-8F46-46AC-BB4A-1D2253D21EDD}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
 									</Reference>
 								</ReferenceList>
 								<ObjectLists>

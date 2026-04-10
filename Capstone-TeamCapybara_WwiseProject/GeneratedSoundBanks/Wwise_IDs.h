@@ -13,6 +13,10 @@ namespace AK
 {
     namespace EVENTS
     {
+        static const AkUniqueID BOSS_SLIMEALIVE = 215348046U;
+        static const AkUniqueID BOSS_SLIMEDEAD = 3430058625U;
+        static const AkUniqueID BOSS_WISPALIVE = 3209282391U;
+        static const AkUniqueID BOSS_WISPDEAD = 2298776174U;
         static const AkUniqueID CHEST_AMBIENT = 3464756077U;
         static const AkUniqueID CHEST_AMBIENT_STOP = 1316707488U;
         static const AkUniqueID CHEST_LOCKED = 895085565U;

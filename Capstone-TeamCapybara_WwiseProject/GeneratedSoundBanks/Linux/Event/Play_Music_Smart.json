@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{80973DF7-D85B-4625-A837-4DA900EB803B}",
     "Language": "SFX",
-    "Hash": "{A6D18D55-BC65-A463-72DD-174A96F7C099}",
+    "Hash": "{4B5B5F9A-C995-3E52-3CAE-56578A2F160A}",
     "ObjectPath": "Play_Music_Smart",
     "ShortName": "Play_Music_Smart",
     "Path": "Event/Play_Music_Smart.bnk",
@@ -146,21 +146,7 @@
          "Id": "0",
          "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}"
         },
-        "Children": [
-         {
-          "SwitchValue": {
-           "GroupType": "State",
-           "GroupId": "1690668539",
-           "Id": "748895195",
-           "GUID": "{2AA072AF-1480-4BB0-9EC5-3DCE2D175CC3}"
-          },
-          "MediaRefs": [
-           {
-            "Id": "729420675"
-           }
-          ]
-         }
-        ]
+        "Children": []
        },
        {
         "SwitchValue": {
@@ -284,6 +270,6 @@
     ]
    }
   ],
-  "FileHash": "{16793696-EF25-0F54-56A9-A0AD7C429E17}"
+  "FileHash": "{B3051037-874C-4A1C-DA47-61A5A4FED5B8}"
  }
 }

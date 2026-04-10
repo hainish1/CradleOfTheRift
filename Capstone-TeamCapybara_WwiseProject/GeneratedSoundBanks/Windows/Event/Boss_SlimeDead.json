@@ -1,0 +1,70 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "3430058625",
+    "Type": "Event",
+    "GUID": "{10CD570A-9903-4AF4-8C4C-1863DCB33574}",
+    "Language": "SFX",
+    "Hash": "{36EC4B29-1553-BA68-FFD6-83C58070987F}",
+    "ObjectPath": "Boss_SlimeDead",
+    "ShortName": "Boss_SlimeDead",
+    "Path": "Event/Boss_SlimeDead.bnk",
+    "Events": [
+     {
+      "Id": "3430058625",
+      "Name": "Boss_SlimeDead",
+      "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Boss_SlimeDead",
+      "GUID": "{10CD570A-9903-4AF4-8C4C-1863DCB33574}",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0",
+      "ActionSetState": [
+       {
+        "GroupId": "4265060404",
+        "Id": "2044049779",
+        "Name": "Dead",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Dead",
+        "GUID": "{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}"
+       }
+      ]
+     }
+    ],
+    "StateGroups": [
+     {
+      "Id": "4265060404",
+      "Name": "Boss_Alive",
+      "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive",
+      "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}",
+      "States": [
+       {
+        "Id": "655265632",
+        "Name": "Alive",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Alive",
+        "GUID": "{A4FB7019-7BE2-4B55-B62E-D9CFEDF363CC}"
+       },
+       {
+        "Id": "748895195",
+        "Name": "None",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\None",
+        "GUID": "{6981E7EC-A80A-448E-B0BF-87DBCBEE7EFB}"
+       },
+       {
+        "Id": "2044049779",
+        "Name": "Dead",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Dead",
+        "GUID": "{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{F9603219-15C7-16A8-481D-0A3BF6A6D0FF}"
+ }
+}
