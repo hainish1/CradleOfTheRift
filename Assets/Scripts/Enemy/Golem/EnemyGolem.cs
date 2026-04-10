@@ -30,7 +30,7 @@ public class EnemyGolem : Enemy
     public float minWindupTime = 1.5f;
     public float maxWindupTime = 2.5f;
     public float projectileVelocity = 12f;
-    public float projectileKnockback = 10f;
+    public float projectileKnockback = 20f;
     public Transform projectileSpawnPoint; // Where the rock spawns
     public float turnSpeedWhileAiming = 8f;
     public LayerMask projectileMask = ~0;

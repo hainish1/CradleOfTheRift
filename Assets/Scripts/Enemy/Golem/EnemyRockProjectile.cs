@@ -15,8 +15,8 @@ public class EnemyRockProjectile : MonoBehaviour
 
     [Header("hit")]
     [SerializeField] private float hitForce = 8f;
-    [SerializeField] private float knockBackImpulse = 8f;
-    [SerializeField] private LayerMask hitMask = ~0; // what can this bullet hit
+    private float knockBackImpulse;
+    private LayerMask hitMask = ~0; // what can this bullet hit
     private bool hasHit;
 
     //[Header("Damage")]
@@ -40,11 +40,12 @@ public class EnemyRockProjectile : MonoBehaviour
     /// <param name="velocity"> Velocity of the projectile. </param>
     /// <param name="mask"> Collection of what types of objects this projectile can interact with. </param>
     /// <param name="newDamage"> Amount of damage the explosion will do. This projectile will do no direct damage on its own. </param>
-    public void Init(Vector3 velocity, LayerMask mask, float damage)
+    public void Init(Vector3 velocity, LayerMask mask, float damage, float knockback)
     {
         rb.linearVelocity = velocity;
         hitMask = mask;
         directDamage = damage;
+        knockBackImpulse = knockback;
         age = 0f;
     }
 

@@ -97,12 +97,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lifeTime: 6
-  gravity: 9
+  gravity: 9.8
   hitForce: 8
   knockBackImpulse: 8
   hitMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 1361
 --- !u!1 &6199202630226384469
 GameObject:
   m_ObjectHideFlags: 0
@@ -324,6 +324,10 @@ PrefabInstance:
     - target: {fileID: 4658278565933542678, guid: a8201a802e6fa2f4fb6267778cfaae1e, type: 3}
       propertyPath: m_Name
       value: Fire_Blue
+      objectReference: {fileID: 0}
+    - target: {fileID: 4658278565933542678, guid: a8201a802e6fa2f4fb6267778cfaae1e, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 4658278565933542678, guid: a8201a802e6fa2f4fb6267778cfaae1e, type: 3}
       propertyPath: m_IsActive

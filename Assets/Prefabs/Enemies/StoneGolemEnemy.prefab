@@ -64,7 +64,7 @@ Transform:
   m_GameObject: {fileID: 6223163396465808229}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.2, z: 0}
+  m_LocalPosition: {x: 0, y: 6, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -132,9 +132,13 @@ MonoBehaviour:
   AOEDamage: 5
   minWindupTime: 1.5
   maxWindupTime: 2.5
-  projectileVelocity: 12
-  projectileSpawnPoint: {fileID: 6465249743287801400}
+  projectileVelocity: 100
+  projectileKnockback: 20
+  projectileSpawnPoint: {fileID: 6136272082482821300}
   turnSpeedWhileAiming: 10
+  projectileMask:
+    serializedVersion: 2
+    m_Bits: 1345
   throwRockVFXPrefab: {fileID: 0}
   throwSFX:
     idInternal: 0
@@ -547,10 +551,5 @@ PrefabInstance:
 --- !u!4 &2545160238402103216 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
-  m_PrefabInstance: {fileID: 2655013533814259803}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &6465249743287801400 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 9034694599746016867, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
   m_PrefabInstance: {fileID: 2655013533814259803}
   m_PrefabAsset: {fileID: 0}

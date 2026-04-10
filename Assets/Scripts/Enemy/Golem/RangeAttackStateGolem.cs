@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -66,29 +67,56 @@ public class RangeAttackStateGolem : EnemyState
         // Target the player's center mass rather than their feet
         Vector3 targetPos = enemy.target.position + Vector3.up * 1.5f; 
         
-        GameObject rock = Object.Instantiate(enemyGolem.rockProjectilePrefab, spawnPos, Quaternion.identity);
-//EnemyProjectile projectile2 = Instantiate(projectilePrefab, spawnPoint2, rotation2);
-        // projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
-
-        
-        if (rock.TryGetComponent<Rigidbody>(out Rigidbody rb))
+        // Pull from the Object Pool if available, else instantiate normally
+        GameObject rockObj;
+        if (ObjectPool.instance != null)
         {
-            // Calculate horizontal distance to the target
-            float distanceXZ = Vector2.Distance(new Vector2(spawnPos.x, spawnPos.z), new Vector2(targetPos.x, targetPos.z));
-            
-            // Calculate how long the rock should take to reach the target based on our configured horizontal velocity
-            float timeToTarget = distanceXZ / enemyGolem.projectileVelocity;
-            
-            // Prevent division by zero if the player is clipping inside the golem
-            timeToTarget = Mathf.Max(0.1f, timeToTarget);
-
-            // Apply the calculated ballistic velocity
-            rb.linearVelocity = CalculateLaunchVelocity(spawnPos, targetPos, timeToTarget);
-            //rock.Init(enemyGolem.directDamage, enemyGolem.projectileKnockback, enemyGolem.projectileMask);
+            Transform spawnTransform = enemyGolem.projectileSpawnPoint != null ? enemyGolem.projectileSpawnPoint : enemyGolem.transform;
+            rockObj = ObjectPool.instance.GetObject(enemyGolem.rockProjectilePrefab, spawnTransform);
+            rockObj.transform.position = spawnPos;
+            rockObj.transform.rotation = Quaternion.identity;
+        }
+        else
+        {
+            rockObj = Object.Instantiate(enemyGolem.rockProjectilePrefab, spawnPos, Quaternion.identity);
         }
 
-        // Play throw sound effect
-        enemyGolem.PlayThrowSFX();
+        // Initialize the projectile
+        if (rockObj.TryGetComponent<EnemyRockProjectile>(out EnemyRockProjectile rock))
+        {
+            float distanceXZ = Vector2.Distance(new Vector2(spawnPos.x, spawnPos.z), new Vector2(targetPos.x, targetPos.z));
+            float timeToTarget = distanceXZ / enemyGolem.projectileVelocity;
+            timeToTarget = Mathf.Max(0.1f, timeToTarget);
+
+            Vector3 calculatedVelocity = CalculateLaunchVelocity(spawnPos, targetPos, timeToTarget);
+
+            // Init: (Vector3 velocity, LayerMask mask, float damage, float knockback)
+            rock.Init(calculatedVelocity, enemyGolem.projectileMask, enemyGolem.directDamage, enemyGolem.projectileKnockback);
+        }
+
+        //         EnemyRockProjectile rock = Instantiate(enemyGolem.rockProjectilePrefab, spawnPos, Quaternion.identity);
+// //EnemyProjectile projectile2 = Instantiate(projectilePrefab, spawnPoint2, rotation2);
+//         // projectile2.Init(direction2 * projectileSpeed, projectileMask, this.projectileDamage);
+
+        
+//         if (rock.TryGetComponent<Rigidbody>(out Rigidbody rb))
+//         {
+//             // Calculate horizontal distance to the target
+//             float distanceXZ = Vector2.Distance(new Vector2(spawnPos.x, spawnPos.z), new Vector2(targetPos.x, targetPos.z));
+            
+//             // Calculate how long the rock should take to reach the target based on our configured horizontal velocity
+//             float timeToTarget = distanceXZ / enemyGolem.projectileVelocity;
+            
+//             // Prevent division by zero if the player is clipping inside the golem
+//             timeToTarget = Mathf.Max(0.1f, timeToTarget);
+
+//             // Apply the calculated ballistic velocity
+//             rb.linearVelocity = CalculateLaunchVelocity(spawnPos, targetPos, timeToTarget);
+//             rock.Init(enemyGolem.projectileVelocity, enemyGolem.projectileMask, enemyGolem.directDamage, enemyGolem.projectileKnockback);
+//         }
+
+//         // Play throw sound effect
+//         enemyGolem.PlayThrowSFX();
     }
 
     /// <summary>
