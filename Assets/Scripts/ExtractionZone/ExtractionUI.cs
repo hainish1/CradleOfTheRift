@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -7,8 +8,9 @@ public class ExtractionUI : MonoBehaviour
     private ProgressBar extractionBar;
     private ExtractionZone activeZoneRef;
 
-    // Tracks whether we were previously decaying so we only touch the USS class on change
     private bool wasDecaying = false;
+    private float lastCharge = 0f;
+    private Coroutine flashRoutine;
 
     void Start()
     {
@@ -29,9 +31,9 @@ public class ExtractionUI : MonoBehaviour
         this.extractionBar.highValue = zone.ChargeTime;
         this.extractionBar.style.display = DisplayStyle.Flex;
 
-        // Reset decay state on a fresh extraction
+        lastCharge = 0f;
         wasDecaying = false;
-        this.extractionBar.RemoveFromClassList("decaying");
+        StopFlash();
 
         zone.ChargeChanged += OnChargeUpdate;
     }
@@ -41,7 +43,7 @@ public class ExtractionUI : MonoBehaviour
         if (activeZoneRef != null)
             activeZoneRef.ChargeChanged -= OnChargeUpdate;
 
-        this.extractionBar.RemoveFromClassList("decaying");
+        StopFlash();
         this.extractionBar.style.display = DisplayStyle.None;
         activeZoneRef = null;
         wasDecaying = false;
@@ -54,34 +56,50 @@ public class ExtractionUI : MonoBehaviour
         float percent = (currentCharge / activeZoneRef.ChargeTime) * 100f;
         this.extractionBar.title = $"Extraction: [{Mathf.RoundToInt(percent)}%]";
 
-        // Determine decay: charge is falling (bar previously had a higher value)
-        // ExtractionZone decays when the player is outside — detect this by
-        // checking the previous frame's value against the current one.
-        bool isDecaying = currentCharge < this.extractionBar.value;
-
-        // Because we set extractionBar.value above, we compare against the stored field instead.
-        // Use the delta approach: track last known charge on the component.
         UpdateDecayVisual(currentCharge);
     }
-
-    // Decay detection
-    // We store lastCharge so we can tell whether the bar is filling or draining,
-    // regardless of the rate — this mirrors exactly what ExtractionZone does
-    // (it drains at Time.deltaTime when isExtracting is false).
-    private float lastCharge = 0f;
 
     private void UpdateDecayVisual(float currentCharge)
     {
         bool isDecaying = currentCharge < lastCharge;
         lastCharge = currentCharge;
 
-        // Only touch USS classes when state actually changes. Avoids per-frame churn
+        // Only act when state actually changes — avoids per-frame class churn
         if (isDecaying == wasDecaying) return;
         wasDecaying = isDecaying;
 
         if (isDecaying)
+        {
             this.extractionBar.AddToClassList("decaying");
+            flashRoutine = StartCoroutine(FlashLoop());
+        }
         else
-            this.extractionBar.RemoveFromClassList("decaying");
+        {
+            StopFlash();
+        }
+    }
+
+    private void StopFlash()
+    {
+        if (flashRoutine != null)
+        {
+            StopCoroutine(flashRoutine);
+            flashRoutine = null;
+        }
+        this.extractionBar.RemoveFromClassList("decaying-flash");
+        this.extractionBar.RemoveFromClassList("decaying");
+    }
+
+    // Asymmetric pulse: fast snap in (0.08s hold), slow fade out (0.55s rest)
+    // Feels like a warning heartbeat rather than a mechanical strobe
+    private IEnumerator FlashLoop()
+    {
+        while (true)
+        {
+            this.extractionBar.AddToClassList("decaying-flash");
+            yield return new WaitForSeconds(0.08f);    // hold the bright flare briefly
+            this.extractionBar.RemoveFromClassList("decaying-flash");
+            yield return new WaitForSeconds(0.55f);    // sit in the smolder state longer
+        }
     }
 }
