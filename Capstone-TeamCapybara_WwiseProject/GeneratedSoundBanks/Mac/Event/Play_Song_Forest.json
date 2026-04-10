@@ -1,0 +1,92 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Mac",
+  "BasePlatform": "Mac",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "3919329323",
+    "Type": "Event",
+    "GUID": "{26925292-B42B-492C-A49E-8491601813F4}",
+    "Language": "SFX",
+    "Hash": "{369508B5-529D-AC57-7A08-AFD2F657A259}",
+    "ObjectPath": "Play_Song_Forest",
+    "ShortName": "Play_Song_Forest",
+    "Path": "Event/Play_Song_Forest.bnk",
+    "Media": [
+     {
+      "Id": "247040063",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "PercussianOrchestra.wav",
+      "Path": "Media/247040063.wem",
+      "CachePath": "FD/{FD2849F6-123F-FAF0-1FAC-AB942A5DB51F}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "3919329323",
+      "Name": "Play_Song_Forest",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_Song_Forest",
+      "GUID": "{26925292-B42B-492C-A49E-8491601813F4}",
+      "MaxAttenuation": "200",
+      "DurationType": "Infinite",
+      "SwitchContainers": [
+       {
+        "SwitchValue": {
+         "GroupType": "State",
+         "GroupId": "4265060404",
+         "Id": "2044049779",
+         "GUID": "{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}"
+        },
+        "MediaRefs": [
+         {
+          "Id": "247040063"
+         }
+        ]
+       },
+       {
+        "SwitchValue": {
+         "GroupType": "State",
+         "GroupId": "4265060404",
+         "Id": "0",
+         "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}"
+        },
+        "MediaRefs": [
+         {
+          "Id": "247040063"
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "StateGroups": [
+     {
+      "Id": "4265060404",
+      "Name": "Boss_Alive",
+      "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive",
+      "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}",
+      "States": [
+       {
+        "Id": "655265632",
+        "Name": "Alive",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Alive",
+        "GUID": "{A4FB7019-7BE2-4B55-B62E-D9CFEDF363CC}"
+       },
+       {
+        "Id": "2044049779",
+        "Name": "Dead",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Dead",
+        "GUID": "{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{A0BAC25C-9350-AA8C-9D29-7A90E08DE10F}"
+ }
+}

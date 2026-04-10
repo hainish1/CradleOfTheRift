@@ -24,9 +24,16 @@ public class EnemyHealth : HealthController
 
     [Header("Sounds")]
     [SerializeField]
+    private AK.Wwise.Event spawnSFX;
+    [SerializeField]
     private AK.Wwise.Event deathSFX;
     [SerializeField]
     private AK.Wwise.Event damagedSFX;
+
+    private void Start()
+    {
+        PlaySpawnSFX();
+    }
 
 
     /// <summary>
@@ -61,6 +68,7 @@ public class EnemyHealth : HealthController
         }
 
         PlayDeathSFX();
+            
         PlayPSVFX(deathVFX, deathVFXSpawnPoint != null ? deathVFXSpawnPoint : transform);
 
         Destroy(gameObject, cleanupDelay);
@@ -112,8 +120,17 @@ public class EnemyHealth : HealthController
     /// </summary>
     private void PlayDeathSFX()
     {
-        if (deathSFX != null)
+        if (deathSFX.IsValid())
             deathSFX.Post(gameObject);
+    }
+    /// <summary>
+    /// Posts the enemy Spawn
+    /// Wwise Event.
+    /// </summary>
+    private void PlaySpawnSFX()
+    {
+        if (spawnSFX.IsValid())
+            spawnSFX.Post(gameObject);
     }
 
     public void PlayPSVFX(GameObject vfxPrefab, Transform spawnPos)

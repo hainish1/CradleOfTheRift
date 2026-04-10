@@ -1,0 +1,10 @@
+Event	ID	Name			Wwise Object Path	Notes
+	2758397059	Play_Song_Boss			\Default Work Unit\Play_Song_Boss	
+
+State Group	ID	Name			Wwise Object Path	Notes
+	4265060404	Boss_Alive			\Default Work Unit\Boss_Alive	
+
+State	ID	Name	State Group			Notes
+	655265632	Alive	Boss_Alive			
+	2044049779	Dead	Boss_Alive			
+
