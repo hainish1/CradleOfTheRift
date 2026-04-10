@@ -115,7 +115,7 @@ public class ItemPickup : MonoBehaviour
         // If not, just use a default one!
         else
         {
-            AkUnitySoundEngine.PostEvent("Pick_Up_Item", gameObject);
+            AUDIO_GlobalAudioPlayer.Instance.PlayPickupItem();
             print("Playing pickup item event!");
         }
     }
