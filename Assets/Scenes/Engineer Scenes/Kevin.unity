@@ -1073,7 +1073,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: 1e78771022128b742a8650341387398f, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 9c43216d6e6b7404cbc74a6d6dfd19e9, type: 3}
-  m_SortingOrder: 100
+  m_SortingOrder: 700
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
   m_WorldSpaceHeight: 1080
@@ -1107,6 +1107,15 @@ MonoBehaviour:
   uiDocument: {fileID: 1258441548}
   scrollSpeed: 60
   fadeHeight: 100
+  starCount: 60
+  starMinSize: 1
+  starMaxSize: 3
+  starMinTwinkle: 1.5
+  starMaxTwinkle: 4
+  dustSpawnRate: 0.4
+  dustRiseDistance: 28
+  dustFadeDuration: 1.8
+  dustPerBurst: 2
 --- !u!1 &1312346801
 GameObject:
   m_ObjectHideFlags: 0
