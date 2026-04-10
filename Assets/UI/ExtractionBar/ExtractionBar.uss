@@ -1,11 +1,74 @@
-
-.extraction-bar .unity-progress-bar__progress {
-    background-color: green;
+.extraction-bar {
+    background-color: transparent; 
+    width: 100%;
+    max-width: 250px;
 }
 
+/* Track background — matches health bar style */
+.extraction-bar .unity-progress-bar__background {
+    background-color: rgba(0, 0, 0, 0.35);
+    border-color: rgba(255, 255, 255, 0.12);
+    border-width: 1px;
+    border-radius: 3px;
+    transition-property: background-color, border-color, border-width;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+}
 
-#ExtractionContainer {
-    width: 500px;    /* match inventory width */
-    height: 24px;    /* extraction bar height */
-    margin-top: 10px;
+/* Fill — cyan/teal: distinct from health green, fits sci-fi palette */
+.extraction-bar .unity-progress-bar__progress {
+    background-color: rgba(80, 210, 210, 0.90);
+    border-radius: 3px;
+    transition-property: background-color;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+}
+
+/* Label — matches health bar typography */
+.extraction-bar .unity-progress-bar__title {
+    color: rgba(255, 255, 255, 0.90);
+    font-size: 14px;
+    -unity-font-style: bold;
+    -unity-text-outline-width: 0.5px;
+    -unity-text-outline-color: rgba(0, 0, 0, 0.85);
+    transition-property: color;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+}
+
+/* ── Decaying: base smolder state ──────────────────── */
+
+.extraction-bar.decaying .unity-progress-bar__progress {
+    background-color: rgba(220, 80, 40, 0.90);
+    transition-duration: 0.3s;
+}
+
+.extraction-bar.decaying .unity-progress-bar__title {
+    color: rgba(255, 160, 80, 0.95);
+    transition-duration: 0.3s;
+}
+
+.extraction-bar.decaying .unity-progress-bar__background {
+    border-color: rgba(220, 80, 40, 0.60);
+    transition-duration: 0.3s;
+}
+
+/* ── Decaying: flash ON — bright flare ─────────────── */
+/* Snaps in fast (0.08s), then fades back to smolder via .decaying rules above */
+
+.extraction-bar.decaying-flash .unity-progress-bar__progress {
+    background-color: rgba(255, 50, 10, 1.0);
+    transition-duration: 0.08s;
+}
+
+.extraction-bar.decaying-flash .unity-progress-bar__background {
+    background-color: rgba(180, 40, 10, 0.30);
+    border-color: rgba(255, 70, 20, 0.95);
+    border-width: 2px;
+    transition-duration: 0.08s;
+}
+
+.extraction-bar.decaying-flash .unity-progress-bar__title {
+    color: rgba(255, 220, 180, 1.0);
+    transition-duration: 0.08s;
 }

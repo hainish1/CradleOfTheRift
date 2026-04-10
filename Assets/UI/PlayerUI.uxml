@@ -8,7 +8,7 @@
     <ui:Template name="Gold" src="project://database/Assets/UI/Gold/Gold.uxml?fileID=9197481963319205126&amp;guid=58e61ad538d08ba4e81b9f3de3ac0614&amp;type=3#Gold" />
     <ui:Template name="XPContainer" src="project://database/Assets/UI/XPContainer/XPContainer.uxml?fileID=9197481963319205126&amp;guid=46540d2cc7508014e9f7347c001a6fe9&amp;type=3#XPContainer" />
     <ui:Template name="SpawnerDevHUD" src="project://database/Assets/UI/SpawnerDevHUD/SpawnerDevHUD.uxml?fileID=9197481963319205126&amp;guid=7d6a6eb589ced2c40b9c3b6befc1ffeb&amp;type=3#SpawnerDevHUD" />
-    <ui:Template name="ExtractionBar" src="project://database/Assets/UI/ExtractionBar/ExtractionBar.uxml?fileID=9197481963319205126&amp;guid=730ca545a71bf2149a78152fcca054c0&amp;type=3#ExtractionBar" />
+    <ui:Template name="ObjectivesPanel" src="project://database/Assets/UI/ObjectivesPanel/ObjectivesPanel.uxml?fileID=9197481963319205126&amp;guid=6bf2f76af27d9974a96abcb5013b380f&amp;type=3#ObjectivesPanel" />
     <Style src="project://database/Assets/UI/Stylesheet.uss?fileID=7433441132597879392&amp;guid=340cd68f9068b8147b6cb9f90ab8e93c&amp;type=3#Stylesheet" />
     <ui:VisualElement name="HUD" picking-mode="Ignore" style="flex-grow: 1;">
         <ui:VisualElement name="TopLeftHUD">
@@ -20,7 +20,6 @@
                 <ui:Instance template="InventoryUI" />
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:Instance template="ExtractionBar" name="ExtractionRoot" />
         <ui:Instance template="HealthBar" name="HealthBarRoot" picking-mode="Ignore" />
         <ui:Instance template="ChestPrompt" name="ChestRoot" />
         <ui:VisualElement name="AbilityBar">
@@ -32,6 +31,7 @@
         <ui:Instance template="Gold" name="GoldRoot" />
         <ui:Instance template="XPContainer" name="XPContainerRoot" />
         <ui:Label text="Press Q to level up" name="CenterLevelUpHint" picking-mode="Ignore" />
+        <ui:Instance template="ObjectivesPanel" name="ObjectivesPanelRoot" />
     </ui:VisualElement>
     <ui:Instance template="SpawnerDevHUD" name="SpawnerDevHUDRoot" />
 </ui:UXML>

@@ -44,6 +44,7 @@ unity-content {
     left: 100px;
 }
 
+
 #InventoryContainer {
     width: 500px;        /* match scroll-view width */
     display: flex;
@@ -51,7 +52,11 @@ unity-content {
     gap: 5px;
 }
 
-
+#ObjectivesPanelRoot {
+    position: absolute;
+    top: 124px;
+    right: 40px;
+}
 
 
 #InventoryGroup {
