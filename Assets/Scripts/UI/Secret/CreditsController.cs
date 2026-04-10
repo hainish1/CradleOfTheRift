@@ -46,6 +46,8 @@ public class CreditsController : MonoBehaviour
 
     private void OnEnable()
     {
+        Time.timeScale = 1f;
+        
         var root = uiDocument.rootVisualElement;
 
         _scrollView  = root.Q<ScrollView>("credits-scroll");

@@ -7,6 +7,7 @@ public class SettingsData
     public int musicVolume   = 75;
     public int sfxVolume     = 100;
     public int ambientVolume = 50;
+    public bool hasBeatenGame = false;
 
     public bool Equals(SettingsData other)
     {
@@ -14,11 +15,12 @@ public class SettingsData
         return masterVolume  == other.masterVolume  &&
                musicVolume   == other.musicVolume   &&
                sfxVolume     == other.sfxVolume     &&
-               ambientVolume == other.ambientVolume;
+               ambientVolume == other.ambientVolume &&
+                hasBeatenGame == other.hasBeatenGame;
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(masterVolume, musicVolume, sfxVolume, ambientVolume);
+        return HashCode.Combine(masterVolume, musicVolume, sfxVolume, ambientVolume, hasBeatenGame);
     }
 }

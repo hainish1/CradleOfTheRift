@@ -72,6 +72,15 @@ public class EndScreenUI : MonoBehaviour
         
         FinalizeEndGame();
 
+        var settings = GlobalSettingsManager.Instance.Service.Current;
+        if (!settings.hasBeatenGame)
+        {
+            settings.hasBeatenGame = true;
+            GlobalSettingsManager.Instance.Service.Save();
+
+            StartCoroutine(TransitionToCredits(2f));
+        }
+
         // go back to Start scene
         // StartCoroutine(LoadSceneAfterDelay("Jared", 5f)); // 5 second delay
     }
@@ -167,5 +176,13 @@ public class EndScreenUI : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         SceneManager.LoadScene(sceneName);
+    }
+
+    private IEnumerator TransitionToCredits(float delay)
+    {
+        Debug.Log("Credits timer started..."); 
+        yield return new WaitForSecondsRealtime(delay);
+        Debug.Log("Timer finished, attempting to load scene...");
+        SceneManager.LoadScene("Credits"); 
     }
 }
