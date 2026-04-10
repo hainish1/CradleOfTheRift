@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
+using static UnityEditor.Recorder.OutputPath;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -65,32 +66,54 @@ public class PauseMenu : MonoBehaviour
 
         InputActions.Enable();
 
-        document.rootVisualElement.RegisterCallback<ClickEvent>(PlayClickSoundEffect);
-
         if (startButton != null)
+        {
             startButton.RegisterCallback<ClickEvent>(OnStartGameClick);
+        }
+            
 
         if (settingsButton != null)
+        {
             settingsButton.RegisterCallback<ClickEvent>(OnSettingsClick);
+        }
+
 
         if (continueButton != null)
+        {
             continueButton.RegisterCallback<ClickEvent>(OnContinueClick);
+        }
+
 
         if (mainMenuButton != null)
+        {
             mainMenuButton.RegisterCallback<ClickEvent>(OnMainMenuClick);
+        }
+        
 
         if (creditsButton != null)
+        {
             creditsButton.RegisterCallback<ClickEvent>(OnCreditsClick);
+        }
+
 
         if (backButton != null)
+        {
             backButton.RegisterCallback<ClickEvent>(OnBackClick);
 
+        }
+
         if (quitButton != null)
+        {
             quitButton.RegisterCallback<ClickEvent>(OnQuitGameClick);
+        }
+            
         
         // When the Back button is pressed inside Settings, re-show this menu
         if (settingsMenuController != null)
             settingsMenuController.OnBackPressed += OnSettingsBack;
+
+        //document.rootVisualElement.RegisterCallback<ClickEvent>(PlayClickSoundEffect);
+        document.rootVisualElement.RegisterCallback<ClickEvent>(_ => AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX));
     }
 
     private void OnDisable()
@@ -130,6 +153,7 @@ public class PauseMenu : MonoBehaviour
 
     private void OnMainMenuClick(ClickEvent evt)
     {
+        AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX);
         Time.timeScale = 1f;
         PauseManager.GameIsPaused = false;
         PauseManager.CurrentPauseState = PauseManager.PauseState.None;
@@ -139,6 +163,7 @@ public class PauseMenu : MonoBehaviour
 
     private void OnStartGameClick(ClickEvent evt)
     {
+        AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX);
         PauseManager.GameIsPaused = false;
         PlayerHealth.GameIsOver = false;
 
@@ -155,15 +180,16 @@ public class PauseMenu : MonoBehaviour
     }
     private void OnSettingsClick(ClickEvent evt)
     {
+        AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX);
         if (settingsMenuController == null) return;
         PauseManager.CurrentPauseState = PauseManager.PauseState.Settings;
         gameObject.SetActive(false);
         settingsMenuController.gameObject.SetActive(true);
-        PlayClickSoundEffect(evt);
     }
 
     private void OnSettingsBack()
     {
+        AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX);
         settingsMenuController.gameObject.SetActive(false);
         PauseManager.CurrentPauseState = PauseManager.PauseState.PauseMenu;
         gameObject.SetActive(true);
@@ -172,6 +198,7 @@ public class PauseMenu : MonoBehaviour
 
     private void OnContinueClick(ClickEvent evt)
     {
+        AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX);
         if (PlayerHealth.GameIsOver) return;
 
         pauseManager.ResumeGame();
@@ -180,6 +207,7 @@ public class PauseMenu : MonoBehaviour
 
     private void OnCreditsClick(ClickEvent evt)
     {
+        AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX);
         creditsUI.SetActive(true);
         mainMenuUI.SetActive(false);
 
@@ -187,12 +215,14 @@ public class PauseMenu : MonoBehaviour
 
     private void OnBackClick(ClickEvent evt)
     {
+        AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX);
         creditsUI.SetActive(false);
         mainMenuUI.SetActive(true);
     }
 
     private void OnQuitGameClick(ClickEvent evt)
     {
+        AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX);
         pauseManager.QuitGame();
     }
 
@@ -201,16 +231,5 @@ public class PauseMenu : MonoBehaviour
     {
         GameSaveState.ResetAll();
         Debug.Log("Save state reset");
-    }
-    
-    /// <summary>
-    /// Posts a Wwise event if it's set.
-    /// </summary>
-    private void PlayClickSoundEffect(ClickEvent evt)
-    {
-        if (clickSFX.IsValid())
-        {
-            clickSFX.Post(gameObject);
-        }
     }
 }
