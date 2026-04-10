@@ -1,9 +1,7 @@
 .extraction-bar {
-    width: 360px;
-    height: 26px;
-    margin: 0;
-    padding: 0;
-    background-color: transparent;
+    background-color: transparent; 
+    width: 100%;
+    max-width: 250px;
 }
 
 /* Track background — matches health bar style */
