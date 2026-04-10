@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{A3A35380-C253-492B-9A9B-1099C778BB0A}",
     "Language": "SFX",
-    "Hash": "{5751B5E9-5D44-C7E5-B184-C062860B31A3}",
+    "Hash": "{DAC00905-1292-124C-581B-001C8440B79D}",
     "ObjectPath": "Play_Song_Icey",
     "ShortName": "Play_Song_Icey",
     "Path": "Event/Play_Song_Icey.bnk",
@@ -33,15 +33,47 @@
       "GUID": "{A3A35380-C253-492B-9A9B-1099C778BB0A}",
       "MaxAttenuation": "200",
       "DurationType": "Infinite",
-      "MediaRefs": [
+      "SwitchContainers": [
        {
-        "Id": "729420675"
+        "SwitchValue": {
+         "GroupType": "State",
+         "GroupId": "4265060404",
+         "Id": "0",
+         "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}"
+        },
+        "MediaRefs": [
+         {
+          "Id": "729420675"
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "StateGroups": [
+     {
+      "Id": "4265060404",
+      "Name": "Boss_Alive",
+      "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive",
+      "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}",
+      "States": [
+       {
+        "Id": "655265632",
+        "Name": "Alive",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Alive",
+        "GUID": "{A4FB7019-7BE2-4B55-B62E-D9CFEDF363CC}"
+       },
+       {
+        "Id": "2044049779",
+        "Name": "Dead",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Dead",
+        "GUID": "{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}"
        }
       ]
      }
     ]
    }
   ],
-  "FileHash": "{85E6AFF5-B520-6A1D-AE07-64D8C8CCE107}"
+  "FileHash": "{A22A4B63-3745-7B81-DA16-73F3DFFFA90B}"
  }
 }

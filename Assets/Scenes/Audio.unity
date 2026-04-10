@@ -10722,7 +10722,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1082425986}
   - component: {fileID: 1082425987}
-  - component: {fileID: 1082425989}
   - component: {fileID: 1082425988}
   m_Layer: 0
   m_Name: Tree Zone
@@ -10795,27 +10794,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1082425989
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1082425985}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49171bc662a25c7458c058e13e8c405c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  excludeOthers: 0
-  isDefault: 0
-  data:
-    idInternal: 0
-    valueGuidInternal: 
-    WwiseObjectReference: {fileID: 11400000, guid: aab5b6f8643e8e44e839312cd8a5af38, type: 2}
-  priority: 0
-  auxBusIdInternal: 0
-  valueGuidInternal: 
 --- !u!1 &1092146343
 GameObject:
   m_ObjectHideFlags: 0
@@ -16114,7 +16092,7 @@ MonoBehaviour:
   data:
     idInternal: 0
     valueGuidInternal: 
-    WwiseObjectReference: {fileID: 11400000, guid: 156214d455d1c844a8b8ae20abd38580, type: 2}
+    WwiseObjectReference: {fileID: 11400000, guid: f1456bed701ea2948a5245170bd0f766, type: 2}
   useCallbacks: 0
   stopSoundOnDestroy: 1
   Callbacks: []
@@ -16361,7 +16339,7 @@ Transform:
   m_GameObject: {fileID: 1896973811}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -239.1, y: 6.1, z: -267}
+  m_LocalPosition: {x: -170, y: 6.1, z: -23.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

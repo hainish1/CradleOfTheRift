@@ -25,8 +25,6 @@ namespace AK
         static const AkUniqueID ENEMY_SPAWN = 1526102535U;
         static const AkUniqueID PICK_UP_ITEM = 4229230304U;
         static const AkUniqueID PLAY_AMBIENCE = 278617630U;
-        static const AkUniqueID PLAY_MUSIC = 2932040671U;
-        static const AkUniqueID PLAY_MUSIC_SMART = 3869930065U;
         static const AkUniqueID PLAY_PLAYER_CROWN_SHOOT = 1245563929U;
         static const AkUniqueID PLAY_PLAYER_DASH = 2175711460U;
         static const AkUniqueID PLAY_PLAYER_FIRE = 1408288908U;
@@ -37,10 +35,10 @@ namespace AK
         static const AkUniqueID PLAY_PLAYER_MELEE = 3619611380U;
         static const AkUniqueID PLAY_RIVER1 = 2332603225U;
         static const AkUniqueID PLAY_RIVER2 = 2332603226U;
+        static const AkUniqueID PLAY_SONG_BOSS = 2758397059U;
         static const AkUniqueID PLAY_SONG_CAVE = 332365527U;
-        static const AkUniqueID PLAY_SONG_CAVEJAMDYNAMIC = 62910592U;
+        static const AkUniqueID PLAY_SONG_FOREST = 3919329323U;
         static const AkUniqueID PLAY_SONG_ICEY = 3808693238U;
-        static const AkUniqueID PLAY_SONG_PERCUSSIANORCHESTRA = 920721062U;
         static const AkUniqueID PLAY_TELEPORTER_AMBIENCE = 1203559441U;
         static const AkUniqueID PLAY_UI_BUTTON_CLICK = 1661558166U;
         static const AkUniqueID SKULL_DEATH = 2252982343U;
@@ -62,7 +60,6 @@ namespace AK
             {
                 static const AkUniqueID ALIVE = 655265632U;
                 static const AkUniqueID DEAD = 2044049779U;
-                static const AkUniqueID NONE = 748895195U;
             } // namespace STATE
         } // namespace BOSS_ALIVE
 

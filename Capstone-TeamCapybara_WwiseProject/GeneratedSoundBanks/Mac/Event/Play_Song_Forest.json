@@ -1,39 +1,52 @@
 {
  "SoundBanksInfo": {
-  "Platform": "Linux",
-  "BasePlatform": "Linux",
+  "Platform": "Mac",
+  "BasePlatform": "Mac",
   "SchemaVersion": "16",
   "SoundBankVersion": "172",
   "SoundBanks": [
    {
-    "Id": "3808693238",
+    "Id": "3919329323",
     "Type": "Event",
-    "GUID": "{A3A35380-C253-492B-9A9B-1099C778BB0A}",
+    "GUID": "{26925292-B42B-492C-A49E-8491601813F4}",
     "Language": "SFX",
-    "Hash": "{DAC00905-1292-124C-581B-001C8440B79D}",
-    "ObjectPath": "Play_Song_Icey",
-    "ShortName": "Play_Song_Icey",
-    "Path": "Event/Play_Song_Icey.bnk",
+    "Hash": "{369508B5-529D-AC57-7A08-AFD2F657A259}",
+    "ObjectPath": "Play_Song_Forest",
+    "ShortName": "Play_Song_Forest",
+    "Path": "Event/Play_Song_Forest.bnk",
     "Media": [
      {
-      "Id": "729420675",
+      "Id": "247040063",
       "Language": "SFX",
       "Streaming": "false",
       "Location": "Loose",
-      "ShortName": "Icey.wav",
-      "Path": "Media/729420675.wem",
-      "CachePath": "8B/{8B431FE9-CCBE-42DE-C3DD-888DA33BF2F1}.wem"
+      "ShortName": "PercussianOrchestra.wav",
+      "Path": "Media/247040063.wem",
+      "CachePath": "FD/{FD2849F6-123F-FAF0-1FAC-AB942A5DB51F}.wem"
      }
     ],
     "Events": [
      {
-      "Id": "3808693238",
-      "Name": "Play_Song_Icey",
-      "ObjectPath": "\\Events\\Default Work Unit\\Play_Song_Icey",
-      "GUID": "{A3A35380-C253-492B-9A9B-1099C778BB0A}",
+      "Id": "3919329323",
+      "Name": "Play_Song_Forest",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_Song_Forest",
+      "GUID": "{26925292-B42B-492C-A49E-8491601813F4}",
       "MaxAttenuation": "200",
       "DurationType": "Infinite",
       "SwitchContainers": [
+       {
+        "SwitchValue": {
+         "GroupType": "State",
+         "GroupId": "4265060404",
+         "Id": "2044049779",
+         "GUID": "{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}"
+        },
+        "MediaRefs": [
+         {
+          "Id": "247040063"
+         }
+        ]
+       },
        {
         "SwitchValue": {
          "GroupType": "State",
@@ -43,7 +56,7 @@
         },
         "MediaRefs": [
          {
-          "Id": "729420675"
+          "Id": "247040063"
          }
         ]
        }
@@ -74,6 +87,6 @@
     ]
    }
   ],
-  "FileHash": "{F247B409-8E90-3B09-6852-1C58FD6986F6}"
+  "FileHash": "{A0BAC25C-9350-AA8C-9D29-7A90E08DE10F}"
  }
 }
