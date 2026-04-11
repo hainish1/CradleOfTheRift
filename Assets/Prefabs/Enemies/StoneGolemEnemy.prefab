@@ -91,7 +91,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 1
-  m_BaseOffset: 0.6
+  m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &201720854443848597
@@ -107,8 +107,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  aggressionRange: 800
-  playerOutOfRange: 800
+  aggressionRange: 300
+  playerOutOfRange: 300
   turnSpeed: 10
   attackCooldown: 0
   playerMask:
@@ -117,27 +117,25 @@ MonoBehaviour:
   gizosOn: 1
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
   nextAttackAllowed: 0.5
-  chaseSpeed: 100
-  shootingRange: 60
+  chaseSpeed: 15
+  shootingRange: 20
   minAttackDistance: 2
-  minAttackPauseTime: 1
-  maxAttackPauseTime: 1
-  minRecoveryTime: 3
-  maxRecoveryTime: 60
+  minAttackPauseTime: 5
+  maxAttackPauseTime: 5
   wanderInterval: 2
   wanderRadius: 4
   rockProjectilePrefab: {fileID: 3232334194741932682, guid: adf349a4643808e428b922062262b364, type: 3}
-  directDamage: 25
+  directDamage: 35
   AOEDamage: 0
-  minWindupTime: 1.5
-  maxWindupTime: 2.5
+  minWindupTime: 2
+  maxWindupTime: 2
   projectileVelocity: 100
-  projectileKnockback: 300
+  projectileKnockback: 200
   projectileSpawnPoint: {fileID: 6136272082482821300}
   turnSpeedWhileAiming: 10
   projectileMask:
     serializedVersion: 2
-    m_Bits: 1345
+    m_Bits: 1344
   throwRockVFXPrefab: {fileID: 0}
   throwSFX:
     idInternal: 0
@@ -220,6 +218,10 @@ MonoBehaviour:
   damageVisuals: {fileID: 2533069923019125397}
   deathVFX: {fileID: 676540690991785363, guid: ceee2cd6e8010af4bbcec230578f8910, type: 3}
   deathVFXSpawnPoint: {fileID: 0}
+  spawnSFX:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
   deathSFX:
     idInternal: 0
     valueGuidInternal: 
@@ -336,7 +338,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
       propertyPath: m_LocalPosition.z

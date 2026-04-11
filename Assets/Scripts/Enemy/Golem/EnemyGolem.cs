@@ -17,8 +17,8 @@ public class EnemyGolem : Enemy
     //public float knockbackPower = 100f; // how far can push the enemy
     public float minAttackPauseTime = 1f;
     public float maxAttackPauseTime = 1f;
-    public float minRecoveryTime = 3f;
-    public float maxRecoveryTime = 5f;
+    // public float minRecoveryTime = 1f;
+    // public float maxRecoveryTime = 1f;
     public float wanderInterval = 2f;  // Time between wander direction changes
     public float wanderRadius = 4f;    // Radius for wandering distance from its current position
 
@@ -30,7 +30,7 @@ public class EnemyGolem : Enemy
     public float minWindupTime = 1.5f;
     public float maxWindupTime = 2.5f;
     public float projectileVelocity = 12f;
-    public float projectileKnockback = 20f;
+    public float projectileKnockback = 100f;
     public Transform projectileSpawnPoint; // Where the rock spawns
     public float turnSpeedWhileAiming = 8f;
     public LayerMask projectileMask = ~0;
