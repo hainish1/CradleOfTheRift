@@ -15,7 +15,7 @@ public class EndScreenUI : MonoBehaviour
     private GameObject activeScreen;
     [SerializeField]
     private PauseManager ManagePause;
-    [SerializeField] private float timeBeforeLoadingCredits = 3f;
+    [SerializeField] private float timeBeforeLoadingCreditsScene = 3f;
     private bool IsScreenShowing = false;
 
     private bool subscribedToExtraction;
@@ -79,7 +79,7 @@ public class EndScreenUI : MonoBehaviour
             settings.hasBeatenGame = true;
             GlobalSettingsManager.Instance.Service.Save();
 
-            StartCoroutine(TransitionToCredits(timeBeforeLoadingCredits));
+            StartCoroutine(TransitionToCredits(timeBeforeLoadingCreditsScene));
         }
 
         // go back to Start scene
