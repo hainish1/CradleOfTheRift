@@ -60,6 +60,7 @@ namespace AK
             {
                 static const AkUniqueID ALIVE = 655265632U;
                 static const AkUniqueID DEAD = 2044049779U;
+                static const AkUniqueID NONE = 748895195U;
             } // namespace STATE
         } // namespace BOSS_ALIVE
 

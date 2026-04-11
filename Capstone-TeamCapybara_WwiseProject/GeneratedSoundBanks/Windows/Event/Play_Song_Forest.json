@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{26925292-B42B-492C-A49E-8491601813F4}",
     "Language": "SFX",
-    "Hash": "{369508B5-529D-AC57-7A08-AFD2F657A259}",
+    "Hash": "{0C4FB0AA-60B4-2459-FBA2-312DE16E9203}",
     "ObjectPath": "Play_Song_Forest",
     "ShortName": "Play_Song_Forest",
     "Path": "Event/Play_Song_Forest.bnk",
@@ -77,6 +77,12 @@
         "GUID": "{A4FB7019-7BE2-4B55-B62E-D9CFEDF363CC}"
        },
        {
+        "Id": "748895195",
+        "Name": "None",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\None",
+        "GUID": "{DEECE8B4-6DDE-47CF-8B9E-899088C3DA0D}"
+       },
+       {
         "Id": "2044049779",
         "Name": "Dead",
         "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Dead",
@@ -87,6 +93,6 @@
     ]
    }
   ],
-  "FileHash": "{5180F1BF-2BC2-5795-BB3A-619A2F63F5A9}"
+  "FileHash": "{67E715DC-C6A8-7FEC-79A0-3793537E3B4E}"
  }
 }

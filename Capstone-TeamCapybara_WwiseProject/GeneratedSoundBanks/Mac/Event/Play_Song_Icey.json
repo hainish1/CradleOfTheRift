@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{A3A35380-C253-492B-9A9B-1099C778BB0A}",
     "Language": "SFX",
-    "Hash": "{DAC00905-1292-124C-581B-001C8440B79D}",
+    "Hash": "{014C0216-58C9-F128-815C-427717EBFF25}",
     "ObjectPath": "Play_Song_Icey",
     "ShortName": "Play_Song_Icey",
     "Path": "Event/Play_Song_Icey.bnk",
@@ -64,6 +64,12 @@
         "GUID": "{A4FB7019-7BE2-4B55-B62E-D9CFEDF363CC}"
        },
        {
+        "Id": "748895195",
+        "Name": "None",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\None",
+        "GUID": "{DEECE8B4-6DDE-47CF-8B9E-899088C3DA0D}"
+       },
+       {
         "Id": "2044049779",
         "Name": "Dead",
         "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Dead",
@@ -74,6 +80,6 @@
     ]
    }
   ],
-  "FileHash": "{290BB9D8-87A8-74E1-873B-D429F0545040}"
+  "FileHash": "{521B924D-9F0A-178E-5E81-9A067FFEA687}"
  }
 }
