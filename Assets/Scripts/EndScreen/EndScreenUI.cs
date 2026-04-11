@@ -74,13 +74,17 @@ public class EndScreenUI : MonoBehaviour
         FinalizeEndGame();
 
         var settings = GlobalSettingsManager.Instance.Service.Current;
-        if (!settings.hasBeatenGame)
+        bool isFirstTimeBeatingGame = !settings.hasBeatenGame;
+
+        if (isFirstTimeBeatingGame)
         {
             settings.hasBeatenGame = true;
             GlobalSettingsManager.Instance.Service.Save();
 
             StartCoroutine(TransitionToCredits(timeBeforeLoadingCreditsScene));
         }
+
+        HookEndScreenButtons(activeScreen, isFirstTimeBeatingGame);
 
         // go back to Start scene
         // StartCoroutine(LoadSceneAfterDelay("Jared", 5f)); // 5 second delay
@@ -109,7 +113,7 @@ public class EndScreenUI : MonoBehaviour
         ManagePause.PauseForEndGame();
     }
 
-    private void HookEndScreenButtons(GameObject screen)
+    private void HookEndScreenButtons(GameObject screen, bool hideButtons = false)
     {
         // get UI Document on the end screen object
         var document = screen.GetComponent<UIDocument>();
@@ -123,6 +127,18 @@ public class EndScreenUI : MonoBehaviour
         var playAgainButton = root.Q<Button>("playAgainButton");
         var quitButton = root.Q<Button>("quitButton");
         var mainMenuButton = root.Q<Button>("mainMenuButton");
+
+        // Hide buttons on first time win so credits play uninterrupted
+        if (hideButtons)
+        {
+            if(playAgainButton != null)
+                playAgainButton.style.display = DisplayStyle.None;
+            if(quitButton != null)
+                quitButton.style.display = DisplayStyle.None;
+            if(mainMenuButton != null)
+                mainMenuButton.style.display = DisplayStyle.None;
+            return; 
+        }
 
         // Play Again → restart current level
         if (playAgainButton != null)
