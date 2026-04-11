@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class CreditsController : MonoBehaviour
 {
@@ -23,9 +24,10 @@ public class CreditsController : MonoBehaviour
     [SerializeField] private float dustSpawnRate    = 0.4f;   
     [SerializeField] private float dustRiseDistance = 28f;
     [SerializeField] private float dustFadeDuration = 1.8f;
-    [SerializeField] private int   dustPerBurst     = 2;      
+    [SerializeField] private int   dustPerBurst     = 2;  
 
-    public System.Action OnCreditsFinished;
+    [Header("Scene Transition")]
+    [SerializeField] private string nextSceneName = "MainMenu";    
 
     private ScrollView    _scrollView;
     private VisualElement _container;
@@ -260,8 +262,12 @@ public class CreditsController : MonoBehaviour
 
     private void FinishCredits()
     {
+        // Guard against being called more than once
+        if (!_scrolling && !enabled) return;
+
         _scrolling = false;
-        OnCreditsFinished?.Invoke();
+
+        SceneManager.LoadScene(nextSceneName);
     }
 
     private static float EaseOut(float t) => 1f - (1f - t) * (1f - t);
