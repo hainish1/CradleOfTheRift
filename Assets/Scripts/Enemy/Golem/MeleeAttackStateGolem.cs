@@ -1,3 +1,39 @@
+using UnityEngine;
+
+/// <summary>
+/// Class - Placeholder for the Golem enemy melee logic.
+/// </summary>
+public class MeleeAttackStateGolem : EnemyState
+{
+    private EnemyGolem enemyGolem;
+
+    public MeleeAttackStateGolem(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
+    {
+        enemyGolem = enemy as EnemyGolem;
+    }
+
+    public override void Enter()
+    {
+        enemyGolem.PauseAgent();
+        Debug.Log("Golem entered Melee Attack State");
+        // TODO: Trigger melee animation
+        // TODO: Enable hitboxes
+    }
+
+    public override void Update()
+    {
+        // For now, immediately exit back to Chase. 
+        // Replace this later with an animation timer or an event trigger.
+        stateMachine.ChangeState(enemyGolem.GetChase());
+    }
+
+    public override void Exit()
+    {
+        enemyGolem.ResumeAgent();
+        // TODO: Disable hitboxes
+    }
+}
+
 // using UnityEngine;
 
 // /// <summary>

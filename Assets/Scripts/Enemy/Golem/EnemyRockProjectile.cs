@@ -69,6 +69,7 @@ public class EnemyRockProjectile : MonoBehaviour
     /// <param name="collision"></param>
     void OnCollisionEnter(Collision collision)
     {
+        if (hasHit) return; // prevent multiple collisions from one throw
         if (((1 << collision.gameObject.layer) & hitMask) == 0)
             return;
 

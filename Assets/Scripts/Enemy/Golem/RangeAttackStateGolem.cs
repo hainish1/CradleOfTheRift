@@ -65,7 +65,7 @@ public class RangeAttackStateGolem : EnemyState
             : enemy.transform.position + Vector3.up * 1.5f;
 
         // Target the player's center mass rather than their feet
-        Vector3 targetPos = enemy.target.position + Vector3.up * 1.5f; 
+        Vector3 targetPos = enemy.target.position + Vector3.up * 5f; 
         
         // Pull from the Object Pool if available, else instantiate normally
         GameObject rockObj;

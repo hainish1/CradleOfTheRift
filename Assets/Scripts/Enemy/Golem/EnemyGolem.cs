@@ -12,16 +12,16 @@ public class EnemyGolem : Enemy
     [Header("Movement and Range")]
     public float chaseSpeed = 10f;
     public float shootingRange = 60f;
-    public float minAttackDistance = 2f;
+    public float minAttackDistance = 4f;
     // public int damage = 10; 
     //public float knockbackPower = 100f; // how far can push the enemy
-    public float minAttackPauseTime = 1f;
-    public float maxAttackPauseTime = 1f;
     // public float minRecoveryTime = 1f;
     // public float maxRecoveryTime = 1f;
-    public float wanderInterval = 2f;  // Time between wander direction changes
-    public float wanderRadius = 4f;    // Radius for wandering distance from its current position
-
+    public float wanderInterval = 3f;  // Time between wander direction changes
+    public float wanderRadius = 20f;    // Radius for wandering distance from its current position
+    public float minWanderTime = 1f;
+    public float maxWanderTime = 1f;
+    public float postAttackCooldown = 1f;
 
     [Header("Rock Throw Attack Settings")]
     public GameObject rockProjectilePrefab;
@@ -35,13 +35,20 @@ public class EnemyGolem : Enemy
     public float turnSpeedWhileAiming = 8f;
     public LayerMask projectileMask = ~0;
 
+    [Header("Melee Attack Settings")]
+    public float meleeDamage = 20f;
+    public float meleeKnockback = 100f;
+    public float meleeRadius = 3f;
+    public LayerMask meleeMask = ~0;
+    public float meleeCooldown = 0.5f;
+
     [Header("VFX / SFX")]
     public GameObject throwRockVFXPrefab;
     [SerializeField] private AK.Wwise.Event throwSFX;
     IdleStateGolem idle;
     ChaseStateGolem chase;
-    //MeleeAttackStateGolem meleeAttack;
     RangeAttackStateGolem rangeAttack;
+    MeleeAttackStateGolem meleeAttack;
     RecoveryStateGolem recovery;
     private void OnEnable()
     {
@@ -66,7 +73,7 @@ public class EnemyGolem : Enemy
         idle = new IdleStateGolem(this, stateMachine);
         chase = new ChaseStateGolem(this, stateMachine);
         rangeAttack = new RangeAttackStateGolem(this, stateMachine);
-        //meleeAttack = new MeleeAttackStateGolem(this, stateMachine);  // will not be implemented for now but prob will be for the boss version
+        meleeAttack = new MeleeAttackStateGolem(this, stateMachine);
         recovery = new RecoveryStateGolem(this, stateMachine);
 
         stateMachine.Initialize(idle);
@@ -129,6 +136,7 @@ public class EnemyGolem : Enemy
     public EnemyState GetIdle() => idle;
     public EnemyState GetChase() => chase;
     public EnemyState GetAttack() => rangeAttack;
+    public EnemyState GetMeleeAttack() => meleeAttack;
     public EnemyState GetRecovery() => recovery;
 
     private float EstimateParticleLifetime(GameObject fx)
@@ -142,7 +150,6 @@ public class EnemyGolem : Enemy
             float startDelay = main.startDelay.constantMax;
             float duration = main.duration;
             float startLifetime = main.startLifetime.constantMax;
-
             float total = startDelay + duration + startLifetime;
             if (total > max) max = total;
         }
@@ -152,11 +159,14 @@ public class EnemyGolem : Enemy
 
     void OnDrawGizmos()
     {
-        Gizmos.color = aggressionColor;
+        Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, minAttackDistance);
 
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, shootingRange);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, wanderRadius);
     }
 
     // /// <summary>
