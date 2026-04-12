@@ -7,6 +7,10 @@ using UnityEngine;
 /// </summary>
 public class EnemyRange : Enemy
 {
+    [Header("Elemental")]
+    [Tooltip("Select element, visuals, damage multiplier and DOT setting")]
+    public ElementalProfile elementalProfile = new ElementalProfile();
+
     public float projectileDamage = 1;
 
     [Header("Flight Settings")]
@@ -33,7 +37,7 @@ public class EnemyRange : Enemy
     public float spreadRadiusJitter = 2f;
     public float wispSeparationRadius = 5f;
     public float wispSeparationStrength = 1.5f;
-    public float navSampleDistance = 2f;
+    // public float navSampleDistance = 2f;
     public float angleAdaptSpeed = 1.5f;
 
     [Space]
@@ -120,7 +124,7 @@ public class EnemyRange : Enemy
         orbitVisuals = GetComponent<EnemyRangeOrbitVisuals>();
         if (agent != null)
         {
-            agent.speed = chaseSpeed;
+            agent.speed = chaseSpeed * (elementalProfile != null ? elementalProfile.speedMultiplier : 1f);
             agent.stoppingDistance = 0f;
             agent.updatePosition = false;
             agent.updateRotation = false; // handle rotation in states using FaceTargetSmooth
@@ -132,6 +136,8 @@ public class EnemyRange : Enemy
         if (knockBackRef != null) knockBackRef.manageAgentPosition = false;
 
         selfCollider = GetComponent<Collider>();
+
+        ApplyElementalVisuals();
 
         idle = new IdleState_Range(this, stateMachine);
         chase = new ChaseState_Range(this, stateMachine);
@@ -412,37 +418,37 @@ public class EnemyRange : Enemy
 
 
 
-    /// <summary>
-    /// Used to fire one projectile in direction of te target
-    /// </summary>
-    public void FireOnce()
-    {
-        if (!firePoint || !projectilePrefab) return;
-
-        Vector3 direction = (target ? (target.position + Vector3.up * .5f) - firePoint.position : transform.forward).normalized;
-
-        Vector3 spawnPoint = firePoint.position + direction * spawnOffset;
-        Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
-
-        GameObject projObj = GetPooledProjectile(spawnPoint, rotation);
-        EnemyProjectile projectile = projObj.GetComponent<EnemyProjectile>();
-        projectile.Init(direction * projectileSpeed, projectileMask, this.projectileDamage);
-
-        shootSFX.Post(gameObject);
-        if (shootVFX != null)
-        {
-            PlayPSVFX(shootVFX, firePoint);
-        }
-
-        if (orbitVisuals != null)
-        {
-            int orbIndex = orbitVisuals.GetNextVisibleOrbIndex();
-            if (orbIndex >= 0)
-            {
-                orbitVisuals.HideOrb(orbIndex);
-            }
-        }
-    }
+    // /// <summary>
+    // /// Used to fire one projectile in direction of te target
+    // /// </summary>
+    // public void FireOnce()
+    // {
+    //     if (!firePoint || !projectilePrefab) return;
+    //
+    //     Vector3 direction = (target ? (target.position + Vector3.up * .5f) - firePoint.position : transform.forward).normalized;
+    //
+    //     Vector3 spawnPoint = firePoint.position + direction * spawnOffset;
+    //     Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
+    //
+    //     GameObject projObj = GetPooledProjectile(spawnPoint, rotation);
+    //     EnemyProjectile projectile = projObj.GetComponent<EnemyProjectile>();
+    //     projectile.Init(direction * projectileSpeed, projectileMask, this.projectileDamage);
+    //
+    //     shootSFX.Post(gameObject);
+    //     if (shootVFX != null)
+    //     {
+    //         PlayPSVFX(shootVFX, firePoint);
+    //     }
+    //
+    //     if (orbitVisuals != null)
+    //     {
+    //         int orbIndex = orbitVisuals.GetNextVisibleOrbIndex();
+    //         if (orbIndex >= 0)
+    //         {
+    //             orbitVisuals.HideOrb(orbIndex);
+    //         }
+    //     }
+    // }
 
     private GameObject GetPooledProjectile(Vector3 position, Quaternion rotation)
     {
@@ -613,6 +619,30 @@ public class EnemyRange : Enemy
     /// </summary>
     /// <returns></returns>
     public float GetBaseDamage() => projectileDamage;
+
+    // Damage actually dealt per projectile after applying the
+    // elemental damage multiplier. 
+    public float GetEffectiveProjectileDamage()
+    {
+        float mult = elementalProfile != null ? elementalProfile.damageMultiplier : 1f;
+        return projectileDamage * mult;
+    }
+
+    public void TryApplyElementalOnHit(IDamageable target)
+    {
+        ElementalEffects.TryApplyDOT(this, elementalProfile, target);
+    }
+
+    public void ApplyElementalVisuals()
+    {
+        if (elementalProfile == null) return;
+        if (elementalProfile.modelVariant != null && !elementalProfile.modelVariant.activeSelf)
+            elementalProfile.modelVariant.SetActive(true);
+        if (elementalProfile.bodyVFX != null && !elementalProfile.bodyVFX.activeSelf)
+            elementalProfile.bodyVFX.SetActive(true);
+    }
+
+    public ElementalType GetElementalType() => elementalProfile != null ? elementalProfile.type : ElementalType.None;
 
 
     // HELPERS
