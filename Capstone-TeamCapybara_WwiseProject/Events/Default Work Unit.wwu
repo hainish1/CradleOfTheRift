@@ -3,29 +3,18 @@
 	<Events>
 		<WorkUnit Name="Default Work Unit" ID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}" PersistMode="Standalone">
 			<ChildrenList>
-				<Event Name="Play_Song_PercussianOrchestra" ID="{26925292-B42B-492C-A49E-8491601813F4}">
+				<Event Name="Play_Song_Forest" ID="{26925292-B42B-492C-A49E-8491601813F4}">
 					<ChildrenList>
 						<Action Name="" ID="{C6011DA8-7F42-4BE2-A8B1-8E8B3E558698}" ShortID="353094373">
 							<ReferenceList>
 								<Reference Name="Target">
-									<ObjectRef Name="Song_PercussianOrchestra" ID="{ABFB06D3-3D28-4F68-B441-B0B5B9DC7597}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
+									<ObjectRef Name="Forest" ID="{99446370-AABF-44F5-83E2-73DF1D8EB86A}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
 								</Reference>
 							</ReferenceList>
 						</Action>
 					</ChildrenList>
 				</Event>
 				<WorkUnit Name="Environment" ID="{3965F864-7315-4D51-BF9F-405BFDDB9631}" PersistMode="Reference"/>
-				<Event Name="Play_Music" ID="{7350712A-6C2C-4480-8AF3-17F38DC9DCC2}">
-					<ChildrenList>
-						<Action Name="" ID="{0D3B7297-8CCF-4787-B9E9-2CA4FD8FB572}" ShortID="471894057">
-							<ReferenceList>
-								<Reference Name="Target">
-									<ObjectRef Name="Music_Regions" ID="{9F10F8CE-5DE1-4F37-8B55-EE3E303306C6}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
-								</Reference>
-							</ReferenceList>
-						</Action>
-					</ChildrenList>
-				</Event>
 				<Event Name="Play_Ambience" ID="{CE6BB63A-104F-4DB4-8942-57550847B9DA}">
 					<ChildrenList>
 						<Action Name="" ID="{DC46A79F-1993-4FE6-B5F8-2913546A0C9A}" ShortID="1063254417">
@@ -42,7 +31,7 @@
 						<Action Name="" ID="{BFE7E685-4CDB-46A9-A2FA-8F1667A02183}" ShortID="108663395">
 							<ReferenceList>
 								<Reference Name="Target">
-									<ObjectRef Name="Song_CaveJam" ID="{102D2251-66C2-4132-8C77-AEF0B4D19D70}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
+									<ObjectRef Name="Cave" ID="{8B651C66-9B3C-4270-9F3B-A08D4250E7ED}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
 								</Reference>
 							</ReferenceList>
 						</Action>
@@ -53,7 +42,7 @@
 						<Action Name="" ID="{B13A2024-370A-495D-A8A6-D9DB7FE4152B}" ShortID="422986124">
 							<ReferenceList>
 								<Reference Name="Target">
-									<ObjectRef Name="Song_Icey" ID="{C25E1A64-7228-4301-95D5-D1E167EB3C26}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
+									<ObjectRef Name="Icey" ID="{262C49CC-AD12-4346-8973-0802AD47628B}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
 								</Reference>
 							</ReferenceList>
 						</Action>
@@ -74,23 +63,12 @@
 				<WorkUnit Name="Enemy" ID="{518660F2-9329-4177-B1A1-C32439A8E88C}" PersistMode="Reference"/>
 				<WorkUnit Name="Player" ID="{691DB035-59FA-42BD-8C22-AF773BE39B09}" PersistMode="Reference"/>
 				<WorkUnit Name="UI" ID="{910A9BD7-6D38-4047-B39E-B7C369D5ABCF}" PersistMode="Reference"/>
-				<Event Name="Play_Music_Smart" ID="{80973DF7-D85B-4625-A837-4DA900EB803B}">
+				<Event Name="Play_Song_Boss" ID="{80973DF7-D85B-4625-A837-4DA900EB803B}">
 					<ChildrenList>
 						<Action Name="" ID="{BA27DCC9-A08B-489F-84CB-A15048FA7111}" ShortID="577038355">
 							<ReferenceList>
 								<Reference Name="Target">
-									<ObjectRef Name="Music Switch" ID="{F03C96DA-535B-427C-9EE2-2DC0289DC96D}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
-								</Reference>
-							</ReferenceList>
-						</Action>
-					</ChildrenList>
-				</Event>
-				<Event Name="Play_Song_CaveJamDynamic" ID="{11A5C28C-A0B1-4365-ADD9-5B57D9DAE1DB}">
-					<ChildrenList>
-						<Action Name="" ID="{DEC493D1-B273-4D29-A003-AC689C82580E}" ShortID="914665118">
-							<ReferenceList>
-								<Reference Name="Target">
-									<ObjectRef Name="Song_CaveJamDynamic" ID="{428B940B-7B36-4A4C-AFEB-A6F49255C668}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
+									<ObjectRef Name="Boss" ID="{F03C96DA-535B-427C-9EE2-2DC0289DC96D}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
 								</Reference>
 							</ReferenceList>
 						</Action>

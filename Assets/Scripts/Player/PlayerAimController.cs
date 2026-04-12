@@ -1,7 +1,8 @@
 using System;
+using Unity.Cinemachine.Samples;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Unity.Cinemachine.Samples;
+using static UnityEngine.UI.Image;
 
 public class PlayerAimController : MonoBehaviour
 {
@@ -69,7 +70,7 @@ public class PlayerAimController : MonoBehaviour
         // }
         // return fallbackForward;
 
-        raycastHit = new RaycastHit();
+        raycastHit = new();
         if (!cam) cam = Camera.main;
         if (!cam) return fallbackForward;
 
@@ -81,6 +82,28 @@ public class PlayerAimController : MonoBehaviour
         }
         raycastHit = hit;
         return ray.direction;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Gets the point in the world where the crosshair is intersecting, or returns a point along
+    ///     the ray at a specified distance if the world was not intersected.
+    ///   </para>
+    /// </summary>
+    /// <param name="maxCastDistance"> Point along the ray to return if no intersection. </param>
+    /// <returns> A point along the ray. </returns>
+    public Vector3 GetAimIntersectPoint(float maxCastDistance)
+    {
+        if (!cam) cam = Camera.main;
+        if (!cam) return Vector3.zero;
+        if (maxCastDistance > maxAimDistance) maxCastDistance = maxAimDistance;
+        if (maxCastDistance < 0) maxCastDistance = 0;
+
+        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        if (Physics.Raycast(ray, out RaycastHit hit, maxAimDistance, aimMask, QueryTriggerInteraction.Ignore))
+            return hit.point;
+        else
+            return ray.GetPoint(maxCastDistance);
     }
 
     void OnEnable()
