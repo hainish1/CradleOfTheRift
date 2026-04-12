@@ -299,26 +299,7 @@ public class PlayerShooter : MonoBehaviour
         float currentDamage = playerEntity.Stats.ProjectileDamage;
 
         GameObject proj = Instantiate(currProjectilePrefab.gameObject, spawnPos, spawnRot);
-
-        //GameObject proj = ObjectPool.instance
-        //    ? ObjectPool.instance.GetObject(currProjectilePrefab.gameObject, muzzle)
-        //    : Instantiate(currProjectilePrefab.gameObject, spawnPos, spawnRot);
-
         var projScript = proj.GetComponent<Projectile>();
-
-        //if (ObjectPool.instance)
-        //{
-        //    proj.transform.SetPositionAndRotation(spawnPos, spawnRot);
-
-        //    if (GloomUpgrade.IsEnabled)
-        //        ProjectileModificationCheck(typeof(GloomProjectile), projScript);
-        //    else if (PoisonPoolProjectiles.IsEnabled)
-        //        ProjectileModificationCheck(typeof(PoisonPoolBottleProjectile), projScript);
-        //    else if (BounceProjectiles.IsEnabled)
-        //        ProjectileModificationCheck(typeof(BounceProjectile), projScript);
-        //    else if (ExplosiveProjectiles.IsEnabled)
-        //        ProjectileModificationCheck(typeof(ExplosiveProjectile), projScript);
-        //}
 
         float speed = projectileSpeed;
         Vector3 velocity;
@@ -361,32 +342,6 @@ public class PlayerShooter : MonoBehaviour
         // Play firing sound
         audioController?.PlayAttackSound();
         fireEvent.Post(gameObject);
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Changes a projectile object's current script type to a desired script type and preserves
-    ///     the bullet impact and trail effects of the current script type. Does nothing if the current
-    ///     script type is already the desired type.
-    ///   </para>
-    /// </summary>
-    /// <param name="targetProjType"> The desired projectile script type. </param>
-    /// <param name="currProjScript"> The current projectile script type. </param>
-    private void ProjectileModificationCheck(Type targetProjType, Projectile currProjScript)
-    {
-        if (currProjScript && currProjScript.GetType() == targetProjType) return;
-
-        // Get the current projectile script's game object and then add the desired projectile script type to it.
-        GameObject proj = currProjScript.gameObject;
-        Projectile newProjScript = proj.AddComponent(targetProjType) as Projectile;
-
-        // Copy values from the current script's effects into the desired script.
-        var bulletFX = currProjScript.BulletImpactFX;
-        var trail = currProjScript.trail;
-        if (bulletFX) newProjScript.BulletImpactFX = bulletFX;
-        if (trail) newProjScript.trail = trail;
-        
-        Destroy(currProjScript); // Destroy the old script type.
     }
 
     /// <summary>

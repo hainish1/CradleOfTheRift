@@ -49,6 +49,7 @@ public class RangeAttackStateGolem : EnemyState
             {
                 enemyGolem.ThrowRock();
                 hasThrown = true;
+                enemyGolem.golemAnim.SetTrigger("AttackRanged");
 
                 // Set cooldown and go to recovery
                 enemy.nextAttackAllowed = Time.time + enemyGolem.attackCooldown;
