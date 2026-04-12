@@ -42,6 +42,7 @@ public class CreditsController : MonoBehaviour
 
     private VisualElement _creditsRoot;
 
+    private List<VisualElement> _dividers = new();
     private List<StarData> _stars = new();
     private List<DustParticle> _dustParticles = new();
     private float              _dustTimer;
@@ -66,6 +67,22 @@ public class CreditsController : MonoBehaviour
         _treeLeft.generateVisualContent   += ctx => DrawTree(ctx, false);
         _treeRight.generateVisualContent  += ctx => DrawTree(ctx, true);
 
+        // Replace rune dividers — alternate twisted vine / ancient oak / twisted vine
+        int dividerIndex = 0;
+        root.Query<VisualElement>(className: "rune-divider").ForEach(div =>
+        {
+            foreach (var child in div.Children())
+                child.style.display = DisplayStyle.None;
+
+            if (dividerIndex % 2 == 0)
+                div.generateVisualContent += DrawTwistedVineDivider;
+            else
+                div.generateVisualContent += DrawAncientOakDivider;
+
+            _dividers.Add(div);
+            dividerIndex++;
+        });
+
         _skipButton.clicked += FinishCredits;
 
         _scrollView.RegisterCallback<GeometryChangedEvent>(OnLayoutReady);
@@ -78,6 +95,19 @@ public class CreditsController : MonoBehaviour
         if (_treeLeft   != null) _treeLeft.generateVisualContent   -= ctx => DrawTree(ctx, false);
         if (_treeRight  != null) _treeRight.generateVisualContent  -= ctx => DrawTree(ctx, true);
         if (_skipButton != null) _skipButton.clicked               -= FinishCredits;
+        int cleanupIndex = 0;
+        foreach (var div in _dividers)
+        {
+            if (div != null)
+            {
+                if (cleanupIndex % 2 == 0)
+                    div.generateVisualContent -= DrawTwistedVineDivider;
+                else
+                    div.generateVisualContent -= DrawAncientOakDivider;
+            }
+            cleanupIndex++;
+        }
+        _dividers.Clear();
 
         foreach (var s in _stars)        s.Element?.RemoveFromHierarchy();
         foreach (var d in _dustParticles) d.Element?.RemoveFromHierarchy();
@@ -273,117 +303,386 @@ public class CreditsController : MonoBehaviour
 
     private static float EaseOut(float t) => 1f - (1f - t) * (1f - t);
 
+    private void DrawTwistedVineDivider(MeshGenerationContext ctx)
+    {
+        var p  = ctx.painter2D;
+        float cx = ctx.visualElement.layout.width  * 0.5f;
+        float cy = ctx.visualElement.layout.height * 0.5f;
+
+        Color vine    = new Color(0.42f, 0.34f, 0.60f, 0.85f);
+        Color leafCol = new Color(0.24f, 0.50f, 0.33f, 0.90f);
+        Color berry1  = new Color(0.55f, 0.23f, 0.43f, 1.00f);
+        Color berry2  = new Color(0.63f, 0.27f, 0.43f, 1.00f);
+        Color petal   = new Color(0.83f, 0.47f, 0.60f, 1.00f);
+        Color stamen  = new Color(1.00f, 0.88f, 0.63f, 1.00f);
+
+        // Main S-curve vine arms
+        p.lineWidth   = 2.0f;
+        p.strokeColor = vine;
+        p.BeginPath();
+        p.MoveTo(new Vector2(cx - 5f, cy));
+        p.BezierCurveTo(new Vector2(cx - 18f, cy - 5f), new Vector2(cx - 35f, cy + 5f),
+                        new Vector2(cx - 50f, cy - 3f));
+        p.BezierCurveTo(new Vector2(cx - 60f, cy - 8f), new Vector2(cx - 68f, cy - 4f),
+                        new Vector2(cx - 74f, cy));
+        p.Stroke();
+        p.BeginPath();
+        p.MoveTo(new Vector2(cx + 5f, cy));
+        p.BezierCurveTo(new Vector2(cx + 18f, cy - 5f), new Vector2(cx + 35f, cy + 5f),
+                        new Vector2(cx + 50f, cy - 3f));
+        p.BezierCurveTo(new Vector2(cx + 60f, cy - 8f), new Vector2(cx + 68f, cy - 4f),
+                        new Vector2(cx + 74f, cy));
+        p.Stroke();
+
+        // Spiral curls at tips
+        p.lineWidth   = 1.2f;
+        p.strokeColor = new Color(vine.r, vine.g, vine.b, 0.70f);
+        p.BeginPath();
+        p.MoveTo(new Vector2(cx - 74f, cy));
+        p.BezierCurveTo(new Vector2(cx - 80f, cy - 4f), new Vector2(cx - 82f, cy - 10f),
+                        new Vector2(cx - 78f, cy - 13f));
+        p.BezierCurveTo(new Vector2(cx - 74f, cy - 16f), new Vector2(cx - 70f, cy - 12f),
+                        new Vector2(cx - 72f, cy - 8f));
+        p.Stroke();
+        p.BeginPath();
+        p.MoveTo(new Vector2(cx + 74f, cy));
+        p.BezierCurveTo(new Vector2(cx + 80f, cy - 4f), new Vector2(cx + 82f, cy - 10f),
+                        new Vector2(cx + 78f, cy - 13f));
+        p.BezierCurveTo(new Vector2(cx + 74f, cy - 16f), new Vector2(cx + 70f, cy - 12f),
+                        new Vector2(cx + 72f, cy - 8f));
+        p.Stroke();
+
+        // Small leaves along vine
+        void DrawVineLeaf(Vector2 pos, float angle, Color c)
+        {
+            float cos = Mathf.Cos(angle * Mathf.Deg2Rad);
+            float sin = Mathf.Sin(angle * Mathf.Deg2Rad);
+            p.fillColor = c;
+            p.BeginPath();
+            p.MoveTo(pos);
+            p.BezierCurveTo(
+                new Vector2(pos.x + cos * 6f - sin * 2.5f, pos.y + sin * 6f + cos * 2.5f),
+                new Vector2(pos.x + cos * 10f - sin * 1f,  pos.y + sin * 10f + cos * 1f),
+                new Vector2(pos.x + cos * 11f,             pos.y + sin * 11f));
+            p.BezierCurveTo(
+                new Vector2(pos.x + cos * 10f + sin * 1f,  pos.y + sin * 10f - cos * 1f),
+                new Vector2(pos.x + cos * 6f  + sin * 2.5f, pos.y + sin * 6f - cos * 2.5f),
+                pos);
+            p.Fill();
+        }
+        DrawVineLeaf(new Vector2(cx - 22f, cy - 3f), -60f,  leafCol);
+        DrawVineLeaf(new Vector2(cx - 48f, cy - 2f),  130f, leafCol);
+        DrawVineLeaf(new Vector2(cx + 22f, cy - 3f), -120f, leafCol);
+        DrawVineLeaf(new Vector2(cx + 48f, cy - 2f),  50f,  leafCol);
+
+        // Berries on curls
+        p.fillColor = berry1;
+        p.BeginPath(); p.Arc(new Vector2(cx - 75f, cy - 9f),  2.5f, 0f, 360f); p.Fill();
+        p.fillColor = berry2;
+        p.BeginPath(); p.Arc(new Vector2(cx - 79f, cy - 12f), 2.0f, 0f, 360f); p.Fill();
+        p.fillColor = berry1;
+        p.BeginPath(); p.Arc(new Vector2(cx + 75f, cy - 9f),  2.5f, 0f, 360f); p.Fill();
+        p.fillColor = berry2;
+        p.BeginPath(); p.Arc(new Vector2(cx + 79f, cy - 12f), 2.0f, 0f, 360f); p.Fill();
+
+        // Centre flower
+        p.fillColor = new Color(0.11f, 0.07f, 0.20f, 1f);
+        p.BeginPath(); p.Arc(new Vector2(cx, cy), 7f, 0f, 360f); p.Fill();
+        p.lineWidth = 1f; p.strokeColor = new Color(0.61f, 0.41f, 0.53f, 1f);
+        p.BeginPath(); p.Arc(new Vector2(cx, cy), 7f, 0f, 360f); p.Stroke();
+        p.fillColor = petal;
+        p.BeginPath(); p.Arc(new Vector2(cx,       cy - 4.5f), 2.0f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx + 3.9f, cy + 2.2f), 2.0f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx - 3.9f, cy + 2.2f), 2.0f, 0f, 360f); p.Fill();
+        p.fillColor = stamen;
+        p.BeginPath(); p.Arc(new Vector2(cx, cy), 1.5f, 0f, 360f); p.Fill();
+    }
+
+    private void DrawAncientOakDivider(MeshGenerationContext ctx)
+    {
+        var p  = ctx.painter2D;
+        float cx = ctx.visualElement.layout.width  * 0.5f;
+        float cy = ctx.visualElement.layout.height * 0.5f;
+
+        Color bough  = new Color(0.23f, 0.18f, 0.12f, 1.00f);
+        Color capDk  = new Color(0.42f, 0.18f, 0.09f, 1.00f);
+        Color capMd  = new Color(0.61f, 0.33f, 0.16f, 1.00f);
+        Color capLt  = new Color(0.80f, 0.40f, 0.22f, 1.00f);
+        Color spot   = new Color(1.00f, 1.00f, 1.00f, 0.48f);
+        Color moss   = new Color(0.24f, 0.38f, 0.25f, 1.00f);
+
+        // Main gnarled boughs
+        p.lineWidth   = 3.5f;
+        p.strokeColor = bough;
+        p.BeginPath();
+        p.MoveTo(new Vector2(cx - 6f, cy + 2f));
+        p.BezierCurveTo(new Vector2(cx - 20f, cy - 2f), new Vector2(cx - 42f, cy + 4f),
+                        new Vector2(cx - 58f, cy - 2f));
+        p.BezierCurveTo(new Vector2(cx - 66f, cy - 5f), new Vector2(cx - 70f, cy - 2f),
+                        new Vector2(cx - 72f, cy));
+        p.Stroke();
+        p.BeginPath();
+        p.MoveTo(new Vector2(cx + 6f, cy + 2f));
+        p.BezierCurveTo(new Vector2(cx + 20f, cy - 2f), new Vector2(cx + 42f, cy + 4f),
+                        new Vector2(cx + 58f, cy - 2f));
+        p.BezierCurveTo(new Vector2(cx + 66f, cy - 5f), new Vector2(cx + 70f, cy - 2f),
+                        new Vector2(cx + 72f, cy));
+        p.Stroke();
+
+        // Moss tufts at mushroom base
+        p.lineWidth   = 0.8f;
+        p.strokeColor = moss;
+        p.BeginPath(); p.MoveTo(new Vector2(cx - 14f, cy + 3f)); p.BezierCurveTo(new Vector2(cx - 14f, cy + 1f), new Vector2(cx - 13f, cy),     new Vector2(cx - 12f, cy + 1f)); p.Stroke();
+        p.BeginPath(); p.MoveTo(new Vector2(cx - 12f, cy + 3f)); p.BezierCurveTo(new Vector2(cx - 12f, cy),     new Vector2(cx - 11f, cy - 1f), new Vector2(cx - 10f, cy));     p.Stroke();
+        p.BeginPath(); p.MoveTo(new Vector2(cx + 12f, cy + 3f)); p.BezierCurveTo(new Vector2(cx + 12f, cy + 1f), new Vector2(cx + 11f, cy),     new Vector2(cx + 10f, cy + 1f)); p.Stroke();
+        p.BeginPath(); p.MoveTo(new Vector2(cx + 14f, cy + 3f)); p.BezierCurveTo(new Vector2(cx + 14f, cy),     new Vector2(cx + 13f, cy - 1f), new Vector2(cx + 12f, cy));     p.Stroke();
+
+        // Left small mushroom
+        p.fillColor = capDk;
+        p.BeginPath(); p.MoveTo(new Vector2(cx - 10f, cy + 3f)); p.LineTo(new Vector2(cx - 6f, cy + 3f)); p.LineTo(new Vector2(cx - 8f, cy)); p.Fill();
+        p.fillColor = capMd;
+        p.BeginPath(); p.Arc(new Vector2(cx - 8f, cy), 4f, 0f, 360f); p.Fill();
+        p.fillColor = spot;
+        p.BeginPath(); p.Arc(new Vector2(cx - 9f,   cy - 0.5f), 0.7f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx - 6.5f, cy + 0.5f), 0.5f, 0f, 360f); p.Fill();
+
+        // Centre large mushroom
+        p.fillColor = capDk;
+        p.BeginPath(); p.MoveTo(new Vector2(cx - 4f, cy + 3f)); p.LineTo(new Vector2(cx + 4f, cy + 3f)); p.LineTo(new Vector2(cx, cy - 2f)); p.Fill();
+        p.fillColor = capMd;
+        p.BeginPath(); p.Arc(new Vector2(cx, cy - 2f), 6.5f, 0f, 360f); p.Fill();
+        p.fillColor = capLt;
+        p.BeginPath(); p.Arc(new Vector2(cx, cy - 2.3f), 5.5f, 0f, 360f); p.Fill();
+        p.fillColor = spot;
+        p.BeginPath(); p.Arc(new Vector2(cx - 1.5f, cy - 3f),   1.0f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx + 2f,   cy - 1.8f), 0.7f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx - 0.5f, cy - 0.8f), 0.5f, 0f, 360f); p.Fill();
+
+        // Right small mushroom
+        p.fillColor = capDk;
+        p.BeginPath(); p.MoveTo(new Vector2(cx + 6f, cy + 3f)); p.LineTo(new Vector2(cx + 10f, cy + 3f)); p.LineTo(new Vector2(cx + 8f, cy)); p.Fill();
+        p.fillColor = capMd;
+        p.BeginPath(); p.Arc(new Vector2(cx + 8f, cy), 4f, 0f, 360f); p.Fill();
+        p.fillColor = spot;
+        p.BeginPath(); p.Arc(new Vector2(cx + 7f,   cy - 0.5f), 0.7f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx + 9.5f, cy + 0.5f), 0.5f, 0f, 360f); p.Fill();
+    }
     private void DrawTree(MeshGenerationContext ctx, bool isRight)
     {
-        var p = ctx.painter2D;
-        float cx = 50f; // Center of the 100px wide tree
+        var p  = ctx.painter2D;
+        float cx = 80f;  // Centre of 160px-wide canvas
+        float by = 180f; // Bottom of 180px-tall canvas — crystals/trunk base sit here
 
-        // 1. Double-layered magical aura
-        Color auraColor = isRight 
-            ? new Color(0.67f, 0.85f, 1f, 0.15f) 
-            : new Color(0.78f, 0.72f, 1f, 0.15f);
-            
-        p.fillColor = auraColor;
-        p.BeginPath(); p.Arc(new Vector2(cx, 55f), 65f, 0f, 360f); p.Fill();
-        
-        p.fillColor = new Color(auraColor.r, auraColor.g, auraColor.b, 0.25f);
-        p.BeginPath(); p.Arc(new Vector2(cx, 55f), 45f, 0f, 360f); p.Fill();
+        // ── Palette ──────────────────────────────────────────────────────────
+        Color auraOuter  = isRight ? new Color(0.40f, 0.80f, 1.00f, 0.08f) : new Color(0.65f, 0.45f, 1.00f, 0.08f);
+        Color auraMid    = isRight ? new Color(0.40f, 0.80f, 1.00f, 0.16f) : new Color(0.65f, 0.45f, 1.00f, 0.16f);
+        Color auraInner  = isRight ? new Color(0.60f, 0.90f, 1.00f, 0.28f) : new Color(0.78f, 0.60f, 1.00f, 0.28f);
 
-        // 2. Ancient Trunk with Flared Roots
-        p.fillColor = new Color(0.15f, 0.10f, 0.25f, 1f); // Darker, richer wood
+        Color trunkDark  = new Color(0.08f, 0.05f, 0.18f, 1f);
+        Color trunkMid   = new Color(0.13f, 0.09f, 0.26f, 1f);
+
+        Color sapVein    = isRight ? new Color(0.50f, 0.90f, 1.00f, 0.80f) : new Color(0.80f, 0.60f, 1.00f, 0.80f);
+
+        Color canopyDeep = isRight ? new Color(0.18f, 0.38f, 0.62f, 0.95f) : new Color(0.32f, 0.22f, 0.62f, 0.95f);
+        Color canopyMid  = isRight ? new Color(0.30f, 0.58f, 0.82f, 0.92f) : new Color(0.50f, 0.35f, 0.80f, 0.92f);
+        Color canopyGlow = isRight ? new Color(0.65f, 0.88f, 1.00f, 0.88f) : new Color(0.80f, 0.68f, 1.00f, 0.88f);
+        Color canopyTip  = isRight ? new Color(0.85f, 0.97f, 1.00f, 0.70f) : new Color(0.92f, 0.85f, 1.00f, 0.70f);
+
+        Color orbGold    = new Color(1.00f, 0.95f, 0.60f, 1f);
+        Color orbCyan    = new Color(0.55f, 1.00f, 0.90f, 1f);
+        Color orbMagenta = new Color(1.00f, 0.55f, 0.90f, 1f);
+
+        Color crystalA   = isRight ? new Color(0.45f, 0.85f, 1.00f, 0.90f) : new Color(0.75f, 0.50f, 1.00f, 0.90f);
+        Color crystalB   = isRight ? new Color(0.25f, 0.60f, 0.90f, 0.80f) : new Color(0.55f, 0.30f, 0.85f, 0.80f);
+
+        Color vineColor  = isRight ? new Color(0.45f, 0.85f, 1.00f, 0.60f) : new Color(0.78f, 0.60f, 1.00f, 0.60f);
+
+        // ── 1. Wide ambient aura (3 rings) ───────────────────────────────────
+        p.fillColor = auraOuter;
+        p.BeginPath(); p.Arc(new Vector2(cx, by - 120f), 80f, 0f, 360f); p.Fill();
+        p.fillColor = auraMid;
+        p.BeginPath(); p.Arc(new Vector2(cx, by - 125f), 58f, 0f, 360f); p.Fill();
+        p.fillColor = auraInner;
+        p.BeginPath(); p.Arc(new Vector2(cx, by - 128f), 38f, 0f, 360f); p.Fill();
+
+        // ── 2. Ground crystals at roots ───────────────────────────────────────
+        void DrawCrystal(Vector2 base_, float w, float h, float lean, Color ca, Color cb)
+        {
+            float tipX = base_.x + lean;
+            float tipY = base_.y - h;
+            p.fillColor = ca;
+            p.BeginPath();
+            p.MoveTo(new Vector2(base_.x - w * 0.5f, base_.y));
+            p.LineTo(new Vector2(base_.x + w * 0.5f, base_.y));
+            p.LineTo(new Vector2(tipX, tipY));
+            p.Fill();
+            p.fillColor = cb;
+            p.BeginPath();
+            p.MoveTo(new Vector2(base_.x + w * 0.1f, base_.y));
+            p.LineTo(new Vector2(base_.x + w * 0.5f, base_.y));
+            p.LineTo(new Vector2(tipX, tipY));
+            p.Fill();
+        }
+
+        DrawCrystal(new Vector2(cx - 32f, by),  7f, 22f, -4f, crystalA, crystalB);
+        DrawCrystal(new Vector2(cx - 22f, by),  5f, 15f, -2f, crystalB, crystalA);
+        DrawCrystal(new Vector2(cx + 28f, by),  7f, 20f,  3f, crystalA, crystalB);
+        DrawCrystal(new Vector2(cx + 38f, by),  5f, 13f,  4f, crystalB, crystalA);
+        DrawCrystal(new Vector2(cx -  8f, by),  4f, 10f,  1f, crystalA, crystalB);
+        DrawCrystal(new Vector2(cx + 10f, by),  4f, 12f, -1f, crystalB, crystalA);
+
+        p.fillColor = new Color(crystalA.r, crystalA.g, crystalA.b, 0.20f);
+        p.BeginPath(); p.Arc(new Vector2(cx - 28f, by - 2f), 18f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx + 32f, by - 2f), 15f, 0f, 360f); p.Fill();
+
+        // ── 3. Ancient trunk (two-tone, wider base) ───────────────────────────
+        p.fillColor = trunkDark;
         p.BeginPath();
-        p.MoveTo(new Vector2(cx - 18f, 140f)); // Left root
-        p.BezierCurveTo(
-            new Vector2(cx - 8f, 115f),
-            new Vector2(cx - 4f, 80f),
-            new Vector2(cx, 60f));
-        p.BezierCurveTo(
-            new Vector2(cx + 4f, 80f),
-            new Vector2(cx + 8f, 115f),
-            new Vector2(cx + 18f, 140f)); // Right root
+        p.MoveTo(new Vector2(cx - 20f, by));
+        p.BezierCurveTo(new Vector2(cx - 10f, by - 22f), new Vector2(cx - 5f, by - 55f), new Vector2(cx - 3f, by - 78f));
+        p.BezierCurveTo(new Vector2(cx + 5f,  by - 55f), new Vector2(cx + 10f, by - 22f), new Vector2(cx + 20f, by));
         p.Fill();
 
-        // 3. Glowing Sap Vein on Trunk
-        p.lineWidth = 1.5f;
-        p.strokeColor = isRight 
-            ? new Color(0.66f, 0.85f, 1f, 0.6f) 
-            : new Color(0.78f, 0.72f, 1f, 0.6f);
+        p.fillColor = trunkMid;
         p.BeginPath();
-        p.MoveTo(new Vector2(cx - 2f, 135f));
-        p.BezierCurveTo(new Vector2(cx + 4f, 110f), new Vector2(cx - 5f, 90f), new Vector2(cx + 1f, 70f));
-        p.Stroke();
+        p.MoveTo(new Vector2(cx - 7f, by - 5f));
+        p.BezierCurveTo(new Vector2(cx - 3f, by - 30f), new Vector2(cx - 2f, by - 55f), new Vector2(cx, by - 75f));
+        p.BezierCurveTo(new Vector2(cx + 3f, by - 55f), new Vector2(cx + 3f, by - 30f), new Vector2(cx + 7f, by - 5f));
+        p.Fill();
 
-        // 4. Branches
-        p.lineWidth = 3f;
-        p.strokeColor = new Color(0.15f, 0.10f, 0.25f, 1f);
+        // ── 4. Glowing sap veins ──────────────────────────────────────────────
+        p.lineWidth = 1.2f;
+        p.strokeColor = sapVein;
         p.BeginPath();
-        p.MoveTo(new Vector2(cx, 80f));
-        p.BezierCurveTo(new Vector2(cx - 15f, 75f), new Vector2(cx - 30f, 60f), new Vector2(cx - 35f, 45f));
+        p.MoveTo(new Vector2(cx - 1f, by - 2f));
+        p.BezierCurveTo(new Vector2(cx + 5f, by - 22f), new Vector2(cx - 6f, by - 45f), new Vector2(cx + 2f, by - 68f));
+        p.Stroke();
+        p.lineWidth = 0.8f;
+        p.BeginPath();
+        p.MoveTo(new Vector2(cx - 3f, by - 25f));
+        p.BezierCurveTo(new Vector2(cx - 10f, by - 32f), new Vector2(cx - 16f, by - 38f), new Vector2(cx - 20f, by - 44f));
         p.Stroke();
         p.BeginPath();
-        p.MoveTo(new Vector2(cx, 90f));
-        p.BezierCurveTo(new Vector2(cx + 15f, 85f), new Vector2(cx + 30f, 70f), new Vector2(cx + 35f, 55f));
+        p.MoveTo(new Vector2(cx + 3f, by - 30f));
+        p.BezierCurveTo(new Vector2(cx + 10f, by - 37f), new Vector2(cx + 16f, by - 42f), new Vector2(cx + 19f, by - 48f));
         p.Stroke();
 
-        // 5. Canopy Setup
-        Color primaryCanopy = isRight 
-            ? new Color(0.29f, 0.48f, 0.69f, 0.95f) 
-            : new Color(0.48f, 0.37f, 0.75f, 0.95f);
-            
-        Color highlightCanopy = isRight 
-            ? new Color(0.66f, 0.85f, 1f, 0.85f) 
-            : new Color(0.78f, 0.72f, 1f, 0.85f);
-            
-        Color magicCore = new Color(0.99f, 0.94f, 0.65f, 1f); // Golden starlight
-
-        // Back leaves
-        p.fillColor = primaryCanopy;
-        p.BeginPath(); p.Arc(new Vector2(cx - 28f, 55f), 26f, 0f, 360f); p.Fill();
-        p.BeginPath(); p.Arc(new Vector2(cx + 28f, 60f), 24f, 0f, 360f); p.Fill();
-        p.BeginPath(); p.Arc(new Vector2(cx, 35f), 32f, 0f, 360f); p.Fill();
-        
-        // Floating magical leaf clusters (disconnected from the tree)
-        p.BeginPath(); p.Arc(new Vector2(cx - 45f, 40f), 6f, 0f, 360f); p.Fill();
-        p.BeginPath(); p.Arc(new Vector2(cx + 40f, 30f), 8f, 0f, 360f); p.Fill();
-        p.BeginPath(); p.Arc(new Vector2(cx, 5f), 7f, 0f, 360f); p.Fill();
-
-        // Front/highlight leaves
-        p.fillColor = highlightCanopy;
-        p.BeginPath(); p.Arc(new Vector2(cx - 18f, 45f), 20f, 0f, 360f); p.Fill();
-        p.BeginPath(); p.Arc(new Vector2(cx + 18f, 50f), 18f, 0f, 360f); p.Fill();
-        p.BeginPath(); p.Arc(new Vector2(cx, 30f), 22f, 0f, 360f); p.Fill();
-
-        // 6. Hanging magical vines
-        p.lineWidth = 1.5f;
-        p.strokeColor = highlightCanopy;
-        p.BeginPath(); 
-        p.MoveTo(new Vector2(cx - 25f, 75f)); 
-        p.BezierCurveTo(new Vector2(cx - 27f, 85f), new Vector2(cx - 23f, 95f), new Vector2(cx - 26f, 105f)); 
+        // ── 5. Branches (4 total) ─────────────────────────────────────────────
+        p.lineWidth = 3.5f;
+        p.strokeColor = trunkDark;
+        p.BeginPath();
+        p.MoveTo(new Vector2(cx, by - 98f));
+        p.BezierCurveTo(new Vector2(cx - 14f, by - 102f), new Vector2(cx - 28f, by - 118f), new Vector2(cx - 38f, by - 134f));
         p.Stroke();
-        
-        p.BeginPath(); 
-        p.MoveTo(new Vector2(cx + 22f, 80f)); 
-        p.BezierCurveTo(new Vector2(cx + 20f, 90f), new Vector2(cx + 24f, 100f), new Vector2(cx + 21f, 110f)); 
+        p.BeginPath();
+        p.MoveTo(new Vector2(cx, by - 92f));
+        p.BezierCurveTo(new Vector2(cx + 14f, by - 96f), new Vector2(cx + 28f, by - 112f), new Vector2(cx + 38f, by - 128f));
+        p.Stroke();
+        p.lineWidth = 2f;
+        p.BeginPath();
+        p.MoveTo(new Vector2(cx - 10f, by - 108f));
+        p.BezierCurveTo(new Vector2(cx - 18f, by - 118f), new Vector2(cx - 28f, by - 130f), new Vector2(cx - 20f, by - 150f));
+        p.Stroke();
+        p.BeginPath();
+        p.MoveTo(new Vector2(cx + 10f, by - 104f));
+        p.BezierCurveTo(new Vector2(cx + 20f, by - 116f), new Vector2(cx + 32f, by - 128f), new Vector2(cx + 22f, by - 148f));
         p.Stroke();
 
-        // 7. Embedded glowing orbs/fruit inside the canopy
-        Vector2[] orbs = {
-            new Vector2(cx - 15f, 35f),
-            new Vector2(cx + 12f, 42f),
-            new Vector2(cx + 26f, 55f),
-            new Vector2(cx - 25f, 62f),
-            new Vector2(cx, 20f)
-        };
-        
-        foreach(var pos in orbs) 
+        // ── 6. Canopy — four depth layers ────────────────────────────────────
+        p.fillColor = canopyDeep;
+        p.BeginPath(); p.Arc(new Vector2(cx - 30f, by - 122f), 28f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx + 30f, by - 118f), 26f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx,       by - 144f), 34f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx - 48f, by - 138f),  8f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx + 44f, by - 148f), 10f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx + 10f, by - 176f),  7f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx - 15f, by - 182f),  6f, 0f, 360f); p.Fill();
+
+        p.fillColor = canopyMid;
+        p.BeginPath(); p.Arc(new Vector2(cx - 20f, by - 132f), 22f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx + 20f, by - 128f), 20f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx,       by - 148f), 24f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx - 38f, by - 146f), 11f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx + 34f, by - 156f), 13f, 0f, 360f); p.Fill();
+
+        p.fillColor = canopyGlow;
+        p.BeginPath(); p.Arc(new Vector2(cx - 10f, by - 140f), 14f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx + 12f, by - 136f), 12f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx,       by - 156f), 16f, 0f, 360f); p.Fill();
+
+        p.fillColor = canopyTip;
+        p.BeginPath(); p.Arc(new Vector2(cx,      by - 164f), 10f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx - 8f, by - 152f),  7f, 0f, 360f); p.Fill();
+        p.BeginPath(); p.Arc(new Vector2(cx + 9f, by - 150f),  6f, 0f, 360f); p.Fill();
+
+        // ── 7. Hanging vines (3 strands) ─────────────────────────────────────
+        p.lineWidth = 1.2f;
+        p.strokeColor = vineColor;
+        p.BeginPath();
+        p.MoveTo(new Vector2(cx - 26f, by - 106f));
+        p.BezierCurveTo(new Vector2(cx - 29f, by - 94f), new Vector2(cx - 24f, by - 82f), new Vector2(cx - 28f, by - 68f));
+        p.Stroke();
+        p.BeginPath();
+        p.MoveTo(new Vector2(cx + 24f, by - 102f));
+        p.BezierCurveTo(new Vector2(cx + 21f, by - 90f), new Vector2(cx + 26f, by - 78f), new Vector2(cx + 22f, by - 64f));
+        p.Stroke();
+        p.BeginPath();
+        p.MoveTo(new Vector2(cx,       by - 112f));
+        p.BezierCurveTo(new Vector2(cx + 3f,   by - 100f), new Vector2(cx - 3f, by - 88f), new Vector2(cx + 1f, by - 74f));
+        p.Stroke();
+
+        void DrawVineLeaf(Vector2 pos, Color c)
         {
-            // Soft halo
-            p.fillColor = new Color(magicCore.r, magicCore.g, magicCore.b, 0.4f);
-            p.BeginPath(); p.Arc(pos, 4f, 0f, 360f); p.Fill();
-            // Bright solid core
-            p.fillColor = magicCore;
-            p.BeginPath(); p.Arc(pos, 1.5f, 0f, 360f); p.Fill();
+            p.fillColor = c;
+            p.BeginPath();
+            p.MoveTo(new Vector2(pos.x,      pos.y - 4f));
+            p.LineTo(new Vector2(pos.x + 3f, pos.y));
+            p.LineTo(new Vector2(pos.x,      pos.y + 4f));
+            p.LineTo(new Vector2(pos.x - 3f, pos.y));
+            p.Fill();
         }
+        DrawVineLeaf(new Vector2(cx - 28f, by - 66f), canopyGlow);
+        DrawVineLeaf(new Vector2(cx + 22f, by - 62f), canopyGlow);
+        DrawVineLeaf(new Vector2(cx + 1f,  by - 72f), canopyTip);
+
+        // ── 8. Glowing orbs — 3 colours, 3-ring halos ────────────────────────
+        (Vector2 pos, Color col)[] orbDefs = {
+            (new Vector2(cx - 14f, by - 146f), orbGold),
+            (new Vector2(cx + 13f, by - 140f), orbCyan),
+            (new Vector2(cx + 28f, by - 126f), orbGold),
+            (new Vector2(cx - 26f, by - 120f), orbMagenta),
+            (new Vector2(cx,       by - 162f), orbCyan),
+            (new Vector2(cx - 5f,  by - 128f), orbGold),
+        };
+
+        foreach (var (pos, col) in orbDefs)
+        {
+            p.fillColor = new Color(col.r, col.g, col.b, 0.12f);
+            p.BeginPath(); p.Arc(pos, 8f,   0f, 360f); p.Fill();
+            p.fillColor = new Color(col.r, col.g, col.b, 0.30f);
+            p.BeginPath(); p.Arc(pos, 4.5f, 0f, 360f); p.Fill();
+            p.fillColor = new Color(col.r, col.g, col.b, 0.65f);
+            p.BeginPath(); p.Arc(pos, 2.5f, 0f, 360f); p.Fill();
+            p.fillColor = Color.white;
+            p.BeginPath(); p.Arc(pos, 1.0f, 0f, 360f); p.Fill();
+        }
+
+        // ── 9. Sparkle cross-flares on brightest orbs ────────────────────────
+        void DrawFlare(Vector2 pos, Color col, float len)
+        {
+            p.lineWidth = 0.8f;
+            p.strokeColor = new Color(col.r, col.g, col.b, 0.70f);
+            p.BeginPath(); p.MoveTo(new Vector2(pos.x - len, pos.y)); p.LineTo(new Vector2(pos.x + len, pos.y)); p.Stroke();
+            p.BeginPath(); p.MoveTo(new Vector2(pos.x, pos.y - len)); p.LineTo(new Vector2(pos.x, pos.y + len)); p.Stroke();
+            p.strokeColor = new Color(col.r, col.g, col.b, 0.35f);
+            float d = len * 0.6f;
+            p.BeginPath(); p.MoveTo(new Vector2(pos.x - d, pos.y - d)); p.LineTo(new Vector2(pos.x + d, pos.y + d)); p.Stroke();
+            p.BeginPath(); p.MoveTo(new Vector2(pos.x + d, pos.y - d)); p.LineTo(new Vector2(pos.x - d, pos.y + d)); p.Stroke();
+        }
+
+        DrawFlare(new Vector2(cx,       by - 162f), orbCyan,    6f);
+        DrawFlare(new Vector2(cx - 14f, by - 146f), orbGold,    5f);
+        DrawFlare(new Vector2(cx - 26f, by - 120f), orbMagenta, 4f);
     }
 
     private void DrawFadeTop(MeshGenerationContext ctx)

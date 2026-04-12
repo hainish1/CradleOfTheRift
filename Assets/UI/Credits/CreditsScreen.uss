@@ -34,21 +34,18 @@
     margin-top: 36px;
     margin-bottom: 36px;
     justify-content: center;
+    width: 160px;
+    height: 40px;
 }
 
 .rune-line {
-    width: 60px;
-    height: 1px;
-    background-color: rgb(58, 47, 86);
-    margin-left: 12px;
-    margin-right: 12px;
+    width: 0;
+    height: 0;
 }
 
 .rune-gem {
-    width: 8px;
-    height: 8px;
-    background-color: rgb(200, 169, 110);
-    rotate: 45deg;
+    width: 0;
+    height: 0;
 }
 
 /* ── Typography ── */
@@ -163,12 +160,12 @@
 .tree {
     position: absolute;
     bottom: 0; /* Planted on the ground */
-    width: 100px;
-    height: 140px;
+    width: 160px;
+    height: 180px;
 }
 
-.tree-left  { left: 16px; }
-.tree-right { right: 16px; }
+.tree-left  { left: -20px; }
+.tree-right { right: -20px; }
 
 /* ── Skip button ── */
 .skip-button {
