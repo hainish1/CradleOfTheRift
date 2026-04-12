@@ -12,12 +12,13 @@ public class EnemyRockProjectile : MonoBehaviour
     [Header("flight")]
     [SerializeField] private float lifeTime = 6f;
     [SerializeField] private float gravity = 9f;
-
-    [Header("hit")]
-    [SerializeField] private float hitForce = 8f;
+    private float hitForce = 8f;
     private float knockBackImpulse;
     private LayerMask hitMask = ~0; // what can this bullet hit
     private bool hasHit;
+
+    [Header("Effects")]
+    [SerializeField] private GameObject impactVFX;
 
     //[Header("Damage")]
     //[SerializeField] private float AOERadius = 8f;
@@ -104,7 +105,8 @@ public class EnemyRockProjectile : MonoBehaviour
         }
 
 
-        // place to add impact effects later
+        // add impact effects later
+        CreateImpactVFX();
 
         ReturnToPool();
     }
@@ -121,6 +123,16 @@ public class EnemyRockProjectile : MonoBehaviour
         }
     }
 
+    public void CreateImpactVFX()
+    {
+        if (impactVFX == null) return;
+        GameObject newFx = Instantiate(impactVFX);
+        newFx.transform.position = transform.position;
+        newFx.transform.rotation = Quaternion.identity;
+        newFx.transform.localScale = Vector3.one * 3;
+
+        Destroy(newFx, 1); // destroy after one second
+    }
 
     // void OnDrawGizmos()
     // {

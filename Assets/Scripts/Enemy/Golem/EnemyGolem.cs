@@ -37,10 +37,12 @@ public class EnemyGolem : Enemy
 
     [Header("Melee Attack Settings")]
     public float meleeDamage = 20f;
-    public float meleeKnockback = 100f;
+    public float meleeHorizontalKnockback = 100f;
+    public float meleeVerticalKnockback = 100f;
     public float meleeRadius = 3f;
-    public LayerMask meleeMask = ~0;
+    //public LayerMask meleeMask = ~0;
     public float meleeCooldown = 0.5f;
+    public Transform meleePosition;
 
     [Header("VFX / SFX")]
     public GameObject throwRockVFXPrefab;
@@ -132,6 +134,101 @@ public class EnemyGolem : Enemy
         throwSFX?.Post(gameObject);
     }
 
+    public void ThrowRock()
+    {
+        // Use the defined spawn point or default to slightly above the golem
+        Vector3 spawnPos = projectileSpawnPoint != null 
+            ? projectileSpawnPoint.position 
+            : transform.position + Vector3.up * 1.5f;
+
+        // Target the player's center mass rather than their feet
+        Vector3 targetPos = target.position + Vector3.up * 1.5f; 
+        
+        // Pull from the Object Pool if available, else instantiate normally
+        GameObject rockObj;
+        if (ObjectPool.instance != null)
+        {
+            Transform spawnTransform = projectileSpawnPoint != null ? projectileSpawnPoint : this.transform;
+            rockObj = ObjectPool.instance.GetObject(rockProjectilePrefab, spawnTransform);
+            rockObj.transform.position = spawnPos;
+            rockObj.transform.rotation = Quaternion.identity;
+        }
+        else
+        {
+            rockObj = Instantiate(rockProjectilePrefab, spawnPos, Quaternion.identity);
+        }
+
+        // Initialize the projectile
+        if (rockObj.TryGetComponent<EnemyRockProjectile>(out EnemyRockProjectile rock))
+        {
+            float distanceXZ = Vector2.Distance(new Vector2(spawnPos.x, spawnPos.z), new Vector2(targetPos.x, targetPos.z));
+            float timeToTarget = distanceXZ / projectileVelocity;
+            timeToTarget = Mathf.Max(0.1f, timeToTarget);
+
+            Vector3 calculatedVelocity = CalculateLaunchVelocity(spawnPos, targetPos, timeToTarget);
+
+            // Init: (Vector3 velocity, LayerMask mask, float damage, float knockback)
+            rock.Init(calculatedVelocity, projectileMask, directDamage, projectileKnockback);
+        }
+    }
+
+    /// <summary>
+    /// Calculates the precise 3D velocity required to hit a target point over a specific duration, factoring in Unity's gravity.
+    /// </summary>
+    private Vector3 CalculateLaunchVelocity(Vector3 startPoint, Vector3 targetPoint, float timeToTarget)
+    {
+        // Calculate displacement
+        Vector3 displacement = targetPoint - startPoint;
+        Vector3 displacementXZ = new Vector3(displacement.x, 0, displacement.z);
+
+        // Calculate XZ (horizontal) velocity needed to cover the distance in timeToTarget
+        Vector3 velocityXZ = displacementXZ / timeToTarget;
+
+        // Calculate Y (vertical) velocity using the kinematic equation: d = vi*t + 1/2*a*t^2
+        // Rearranged to solve for vi (initial velocity): vi = (d - 1/2*a*t^2) / t
+        float velocityY = (displacement.y - (Physics.gravity.y * Mathf.Pow(timeToTarget, 2)) / 2f) / timeToTarget;
+
+        // Combine horizontal and vertical velocities
+        return velocityXZ + (Vector3.up * velocityY);
+    }
+
+    /// <summary>
+    /// Perform a simple melee attack by checking for the player within a radius and applying damage and knockback if hit
+    /// </summary>
+    public void MeleeSlamAttack()
+    {
+        // Sphere for now, maybe use box later
+        Collider[] hitColliders = Physics.OverlapSphere(meleePosition.position, meleeRadius);
+
+        foreach (Collider hit in hitColliders)
+        {
+            // Check if the thing we hit was the player
+            if (hit.CompareTag("Player"))
+            {
+                // Apply damage
+                var damageable = hit.GetComponentInParent<IDamageable>();
+                if (damageable != null && !damageable.IsDead)
+                {
+                    damageable.TakeDamage(meleeDamage);
+                }
+
+                // Apply knockback
+                var pm = hit.GetComponentInParent<PlayerMovement>();
+                if (pm != null)
+                {
+                    Vector3 horizontalDirection = (hit.transform.position - transform.position).normalized;
+                    horizontalDirection.y = 0;
+                    Vector3 finalKnockback = (horizontalDirection * meleeHorizontalKnockback) + (Vector3.up * meleeVerticalKnockback);
+                    
+                    pm.ApplyImpulse(finalKnockback);
+                }
+
+                // Once the player has been hit, break out of the loop so we don't accidentally hit them twice
+                break; 
+            }
+        }
+    }
+
     //Getters for States that this Melee Enemy has
     public EnemyState GetIdle() => idle;
     public EnemyState GetChase() => chase;
@@ -167,6 +264,13 @@ public class EnemyGolem : Enemy
 
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, wanderRadius);
+
+        // Draw the melee sphere so you can balance the radius in the editor!
+        if (meleePosition != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(meleePosition.position, meleeRadius);
+        }
     }
 
     // /// <summary>

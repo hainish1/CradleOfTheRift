@@ -6,6 +6,12 @@ using UnityEngine;
 public class MeleeAttackStateGolem : EnemyState
 {
     private EnemyGolem enemyGolem;
+    private float stateTimer;
+    private bool hasAttacked;
+
+    // Attack animation timing
+    private float totalAnimationTime = 1.0f; // How long the whole state lasts
+    private float hitFrameTime = 0.5f;       // The exact moment the punch lands
 
     public MeleeAttackStateGolem(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
@@ -15,22 +21,42 @@ public class MeleeAttackStateGolem : EnemyState
     public override void Enter()
     {
         enemyGolem.PauseAgent();
-        Debug.Log("Golem entered Melee Attack State");
-        // TODO: Trigger melee animation
-        // TODO: Enable hitboxes
+        //Debug.Log("Golem entered Melee Attack State");
+        stateTimer = 0f;
+        hasAttacked = false;
     }
 
     public override void Update()
     {
-        // For now, immediately exit back to Chase. 
-        // Replace this later with an animation timer or an event trigger.
-        stateMachine.ChangeState(enemyGolem.GetChase());
+       stateTimer += Time.deltaTime;
+
+        // Keep turning to face the player until melee attack
+        if (stateTimer < hitFrameTime)
+        {
+            enemyGolem.FaceTargetSmooth(enemyGolem.turnSpeedWhileAiming);
+        }
+
+        // Play melee attack once when the timer hits the sweet spot
+        if (stateTimer >= hitFrameTime && !hasAttacked)
+        {
+            enemyGolem.MeleeSlamAttack();
+            hasAttacked = true;
+        }
+
+        // Leave the state when the full animation time is over
+        if (stateTimer >= totalAnimationTime)
+        {
+            // Set melee cooldown
+            enemyGolem.nextAttackAllowed = Time.time + enemyGolem.attackCooldown;
+            
+            // Go to recovery to pause and wander
+            stateMachine.ChangeState(enemyGolem.GetRecovery());
+        }
     }
 
     public override void Exit()
     {
         enemyGolem.ResumeAgent();
-        // TODO: Disable hitboxes
     }
 }
 
