@@ -1,12 +1,18 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class TutorialCompleteHandler : MonoBehaviour
 {
     [SerializeField] private TutorialObjectiveUI objectiveUI;
-    [SerializeField] private GameObject objectivePanel;
+    [SerializeField] private UIDocument playerUIDocument;
+    private VisualElement objectivePanel;
 
     void Start()
     {
+        objectivePanel = playerUIDocument.rootVisualElement.Q("ObjectivesPanelRoot");
+        if (objectivePanel != null)
+            objectivePanel.style.display = DisplayStyle.None;
+
         TutorialSceneManager.Instance.OnTutorialComplete += OnTutorialComplete;
     }
 
@@ -19,6 +25,8 @@ public class TutorialCompleteHandler : MonoBehaviour
     private void OnTutorialComplete()
     {
         objectiveUI.Hide();
-        objectivePanel?.SetActive(true);
+
+        if (objectivePanel != null)
+            objectivePanel.style.display = DisplayStyle.Flex;
     }
 }
