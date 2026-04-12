@@ -298,495 +298,331 @@ public class PlayerShooter : MonoBehaviour
 
         float currentDamage = playerEntity.Stats.ProjectileDamage;
 
-        GameObject proj;
-        if (ObjectPool.instance)
-            proj = ObjectPool.instance.GetObject(currProjectilePrefab.gameObject, muzzle);
-        else
-            proj = Instantiate(currProjectilePrefab.gameObject, spawnPos, spawnRot);
+        GameObject proj = ObjectPool.instance
+            ? ObjectPool.instance.GetObject(currProjectilePrefab.gameObject, muzzle)
+            : Instantiate(currProjectilePrefab.gameObject, spawnPos, spawnRot);
 
         var projScript = proj.GetComponent<Projectile>();
 
-        if (GloomUpgrade.IsEnabled)
+        if (ObjectPool.instance)
         {
-            if (!projScript || !(projScript is GloomProjectile))
-            {
-                GloomProjectile newScript = new();
-                CopyProjectileFX(newScript, projScript);
-                Destroy(projScript);
-                projScript = proj.AddComponent<GloomProjectile>();
-            }
-
-        }
-        else if (PoisonPoolProjectiles.IsEnabled)
-        {
-
-        }
-        else if (BounceProjectiles.IsEnabled)
-        {
-
-        }
-        else if (ExplosiveProjectiles.IsEnabled)
-        {
-
-        }
-        else
-        {
-
-        }
-
-
-
+            proj.transform.SetPositionAndRotation(spawnPos, spawnRot);
 
             if (GloomUpgrade.IsEnabled)
-        {
-            if (pooledProjScript != null)
-            {
-                var bulletFX = pooledProjScript.BulletImpactFX;
-                var trail = pooledProjScript.trail;
-                Destroy(pooledProjScript);
-                projScript = proj.AddComponent<GloomProjectile>();
-                projScript.BulletImpactFX = bulletFX;
-                projScript.trail = trail;
-            }
-            else
-            {
-                var oldExpProj = proj.GetComponent<ExplosiveProjectile>();
-                var oldBounceProj = proj.GetComponent<BounceProjectile>();
-                var oldPoisonProj = proj.GetComponent<PoisonPoolBottleProjectile>();
-                if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); projScript = proj.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
-                else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); projScript = proj.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
-                else if (oldPoisonProj != null) { var b = oldPoisonProj.BulletImpactFX; var t = oldPoisonProj.trail; Destroy(oldPoisonProj); projScript = proj.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
-                else projScript = proj.AddComponent<GloomProjectile>();
-            }
-
-
-
-            CopyProjectileFX(projScript, pooledProjScript);
-
-
-        }
-        else if (PoisonPoolProjectiles.IsEnabled)
-        {
-            var oldProj = proj.GetComponent<Projectile>();
-            if (oldProj != null)
-            {
-                var bulletFX = oldProj.BulletImpactFX;
-                var trail = oldProj.trail;
-                Destroy(oldProj);
-                projScript = proj.AddComponent<PoisonPoolBottleProjectile>();
-                projScript.BulletImpactFX = bulletFX;
-                projScript.trail = trail;
-            }
-            else
-            {
-                var oldExpProj = proj.GetComponent<ExplosiveProjectile>();
-                var oldBounceProj = proj.GetComponent<BounceProjectile>();
-                if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); projScript = proj.AddComponent<PoisonPoolBottleProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
-                else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); projScript = proj.AddComponent<PoisonPoolBottleProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
-                else projScript = proj.AddComponent<PoisonPoolBottleProjectile>();
-            }
-        }
-        else if (BounceProjectiles.IsEnabled)
-        {
-            var oldProj = proj.GetComponent<Projectile>();
-            if (oldProj != null)
-            {
-                var bulletFX = oldProj.BulletImpactFX;
-                var trail = oldProj.trail;
-                Destroy(oldProj);
-                projScript = proj.AddComponent<BounceProjectile>();
-                projScript.BulletImpactFX = bulletFX;
-                projScript.trail = trail;
-            }
-            else
-            {
-                var oldExpProj = proj.GetComponent<ExplosiveProjectile>();
-                if (oldExpProj != null)
-                {
-                    var bulletFX = oldExpProj.BulletImpactFX;
-                    var trail = oldExpProj.trail;
-                    Destroy(oldExpProj);
-                    projScript = proj.AddComponent<BounceProjectile>();
-                    projScript.BulletImpactFX = bulletFX;
-                    projScript.trail = trail;
-                }
-                else
-                {
-                    projScript = proj.GetComponent<BounceProjectile>();
-                    if (projScript == null) projScript = proj.AddComponent<BounceProjectile>();
-                }
-            }
-        }
-        else if (ExplosiveProjectiles.IsEnabled)
-        {
-            var oldProj = proj.GetComponent<Projectile>();
-            if (oldProj != null)
-            {
-                var bulletFX = oldProj.BulletImpactFX;
-                var trail = oldProj.trail;
-                Destroy(oldProj);
-                projScript = proj.AddComponent<ExplosiveProjectile>();
-                projScript.BulletImpactFX = bulletFX;
-                projScript.trail = trail;
-            }
-            else
-            {
-                var oldBounceProj = proj.GetComponent<BounceProjectile>();
-                if (oldBounceProj != null)
-                {
-                    var bulletFX = oldBounceProj.BulletImpactFX;
-                    var trail = oldBounceProj.trail;
-                    Destroy(oldBounceProj);
-                    projScript = proj.AddComponent<ExplosiveProjectile>();
-                    projScript.BulletImpactFX = bulletFX;
-                    projScript.trail = trail;
-                }
-                else
-                {
-                    projScript = proj.GetComponent<ExplosiveProjectile>();
-                    if (projScript == null) projScript = proj.AddComponent<ExplosiveProjectile>();
-                }
-            }
-        }
-        else
-        {
-            var oldExpProj = proj.GetComponent<ExplosiveProjectile>();
-            if (oldExpProj != null)
-            {
-                var bulletFX = oldExpProj.BulletImpactFX;
-                var trail = oldExpProj.trail;
-                Destroy(oldExpProj);
-                projScript = proj.AddComponent<Projectile>();
-                projScript.BulletImpactFX = bulletFX;
-                projScript.trail = trail;
-            }
-            else
-            {
-                var oldBounceProj = proj.GetComponent<BounceProjectile>();
-                if (oldBounceProj != null)
-                {
-                    var bulletFX = oldBounceProj.BulletImpactFX;
-                    var trail = oldBounceProj.trail;
-                    Destroy(oldBounceProj);
-                    projScript = proj.AddComponent<Projectile>();
-                    projScript.BulletImpactFX = bulletFX;
-                    projScript.trail = trail;
-                }
-                else
-                {
-                    projScript = proj.GetComponent<Projectile>();
-                    if (projScript == null) projScript = proj.AddComponent<Projectile>();
-                }
-            }
-        }
-
-
-
-
-
-        if (ObjectPool.instance != null)
-        {
-            Destroy(proj);
-            GameObject pooled = ObjectPool.instance.GetObject(currProjectilePrefab.gameObject, muzzle);
-
-            if (GloomUpgrade.IsEnabled)
-            {
-                projScript = pooled.GetComponent<GloomProjectile>();
-                if (proj == null)
-                {
-                    var oldProj = pooled.GetComponent<Projectile>();
-                    if (oldProj != null)
-                    {
-                        var bulletFX = oldProj.BulletImpactFX;
-                        var trail = oldProj.trail;
-                        Destroy(oldProj);
-                        projScript = pooled.AddComponent<GloomProjectile>();
-                        projScript.BulletImpactFX = bulletFX;
-                        projScript.trail = trail;
-                    }
-                    else
-                    {
-                        var oldExpProj = pooled.GetComponent<ExplosiveProjectile>();
-                        var oldBounceProj = pooled.GetComponent<BounceProjectile>();
-                        var oldPoisonProj = pooled.GetComponent<PoisonPoolBottleProjectile>();
-                        if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); projScript = pooled.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
-                        else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); projScript = pooled.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
-                        else if (oldPoisonProj != null) { var b = oldPoisonProj.BulletImpactFX; var t = oldPoisonProj.trail; Destroy(oldPoisonProj); projScript = pooled.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
-                        else projScript = pooled.AddComponent<GloomProjectile>();
-                    }
-                }
-            }
+                ProjectileModificationCheck(typeof(GloomProjectile), projScript);
             else if (PoisonPoolProjectiles.IsEnabled)
-            {
-                projScript = pooled.GetComponent<PoisonPoolBottleProjectile>();
-                if (projScript == null)
-                {
-                    var oldProj = pooled.GetComponent<Projectile>();
-                    if (oldProj != null)
-                    {
-                        var bulletFX = oldProj.BulletImpactFX;
-                        var trail = oldProj.trail;
-                        Destroy(oldProj);
-                        projScript = pooled.AddComponent<PoisonPoolBottleProjectile>();
-                        projScript.BulletImpactFX = bulletFX;
-                        projScript.trail = trail;
-                    }
-                    else
-                    {
-                        var oldExpProj = pooled.GetComponent<ExplosiveProjectile>();
-                        var oldBounceProj = pooled.GetComponent<BounceProjectile>();
-                        if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); projScript = pooled.AddComponent<PoisonPoolBottleProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
-                        else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); projScript = pooled.AddComponent<PoisonPoolBottleProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
-                        else projScript = pooled.AddComponent<PoisonPoolBottleProjectile>();
-                    }
-                }
-            }
+                ProjectileModificationCheck(typeof(PoisonPoolBottleProjectile), projScript);
             else if (BounceProjectiles.IsEnabled)
-            {
-                projScript = pooled.GetComponent<BounceProjectile>();
-                if (projScript == null)
-                {
-                    var oldProj = pooled.GetComponent<Projectile>();
-                    if (oldProj != null)
-                    {
-                        var bulletFX = oldProj.BulletImpactFX;
-                        var trail = oldProj.trail;
-                        Destroy(oldProj);
-                        projScript = pooled.AddComponent<BounceProjectile>();
-                        projScript.BulletImpactFX = bulletFX;
-                        projScript.trail = trail;
-                    }
-                    else
-                    {
-                        var oldExpProj = pooled.GetComponent<ExplosiveProjectile>();
-                        if (oldExpProj != null)
-                        {
-                            var bulletFX = oldExpProj.BulletImpactFX;
-                            var trail = oldExpProj.trail;
-                            Destroy(oldExpProj);
-                            projScript = pooled.AddComponent<BounceProjectile>();
-                            projScript.BulletImpactFX = bulletFX;
-                            projScript.trail = trail;
-                        }
-                        else
-                        {
-                            projScript = pooled.AddComponent<BounceProjectile>();
-                        }
-                    }
-                }
-            }
+                ProjectileModificationCheck(typeof(BounceProjectile), projScript);
             else if (ExplosiveProjectiles.IsEnabled)
-            {
-                projScript = pooled.GetComponent<ExplosiveProjectile>();
-                if (projScript == null)
-                {
-                    var oldProj = pooled.GetComponent<Projectile>();
-                    if (oldProj != null)
-                    {
-                        var bulletFX = oldProj.BulletImpactFX;
-                        var trail = oldProj.trail;
-                        Destroy(oldProj);
-                        projScript = pooled.AddComponent<ExplosiveProjectile>();
-                        projScript.BulletImpactFX = bulletFX;
-                        projScript.trail = trail;
-                    }
-                    else
-                    {
-                        var oldBounceProj = pooled.GetComponent<BounceProjectile>();
-                        if (oldBounceProj != null)
-                        {
-                            var bulletFX = oldBounceProj.BulletImpactFX;
-                            var trail = oldBounceProj.trail;
-                            Destroy(oldBounceProj);
-                            projScript = pooled.AddComponent<ExplosiveProjectile>();
-                            projScript.BulletImpactFX = bulletFX;
-                            projScript.trail = trail;
-                        }
-                        else
-                        {
-                            projScript = pooled.AddComponent<ExplosiveProjectile>();
-                        }
-                    }
-                }
-            }
-            else
-            {
-                projScript = pooled.GetComponent<Projectile>();
-                if (projScript == null)
-                {
-                    var oldExpProj = pooled.GetComponent<ExplosiveProjectile>();
-                    if (oldExpProj != null)
-                    {
-                        var bulletFX = oldExpProj.BulletImpactFX;
-                        var trail = oldExpProj.trail;
-                        Destroy(oldExpProj);
-                        projScript = pooled.AddComponent<Projectile>();
-                        projScript.BulletImpactFX = bulletFX;
-                        projScript.trail = trail;
-                    }
-                    else
-                    {
-                        var oldBounceProj = pooled.GetComponent<BounceProjectile>();
-                        if (oldBounceProj != null)
-                        {
-                            var bulletFX = oldBounceProj.BulletImpactFX;
-                            var trail = oldBounceProj.trail;
-                            Destroy(oldBounceProj);
-                            projScript = pooled.AddComponent<Projectile>();
-                            projScript.BulletImpactFX = bulletFX;
-                            projScript.trail = trail;
-                        }
-                        else
-                        {
-                            projScript = pooled.AddComponent<Projectile>();
-                        }
-                    }
-                }
-            }
+                ProjectileModificationCheck(typeof(ExplosiveProjectile), projScript);
+        }
 
-            projScript.transform.position = spawnPos;
-            projScript.transform.rotation = spawnRot;
-        }
-        else
-        {
-            if (GloomUpgrade.IsEnabled)
-            {
-                var oldProj = proj.GetComponent<Projectile>();
-                if (oldProj != null)
-                {
-                    var bulletFX = oldProj.BulletImpactFX;
-                    var trail = oldProj.trail;
-                    Destroy(oldProj);
-                    projScript = proj.AddComponent<GloomProjectile>();
-                    projScript.BulletImpactFX = bulletFX;
-                    projScript.trail = trail;
-                }
-                else
-                {
-                    var oldExpProj = proj.GetComponent<ExplosiveProjectile>();
-                    var oldBounceProj = proj.GetComponent<BounceProjectile>();
-                    var oldPoisonProj = proj.GetComponent<PoisonPoolBottleProjectile>();
-                    if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); projScript = proj.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
-                    else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); projScript = proj.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
-                    else if (oldPoisonProj != null) { var b = oldPoisonProj.BulletImpactFX; var t = oldPoisonProj.trail; Destroy(oldPoisonProj); projScript = proj.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
-                    else projScript = proj.AddComponent<GloomProjectile>();
-                }
-            }
-            else if (PoisonPoolProjectiles.IsEnabled)
-            {
-                var oldProj = proj.GetComponent<Projectile>();
-                if (oldProj != null)
-                {
-                    var bulletFX = oldProj.BulletImpactFX;
-                    var trail = oldProj.trail;
-                    Destroy(oldProj);
-                    projScript = proj.AddComponent<PoisonPoolBottleProjectile>();
-                    projScript.BulletImpactFX = bulletFX;
-                    projScript.trail = trail;
-                }
-                else
-                {
-                    var oldExpProj = proj.GetComponent<ExplosiveProjectile>();
-                    var oldBounceProj = proj.GetComponent<BounceProjectile>();
-                    if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); projScript = proj.AddComponent<PoisonPoolBottleProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
-                    else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); projScript = proj.AddComponent<PoisonPoolBottleProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
-                    else projScript = proj.AddComponent<PoisonPoolBottleProjectile>();
-                }
-            }
-            else if (BounceProjectiles.IsEnabled)
-            {
-                var oldProj = proj.GetComponent<Projectile>();
-                if (oldProj != null)
-                {
-                    var bulletFX = oldProj.BulletImpactFX;
-                    var trail = oldProj.trail;
-                    Destroy(oldProj);
-                    projScript = proj.AddComponent<BounceProjectile>();
-                    projScript.BulletImpactFX = bulletFX;
-                    projScript.trail = trail;
-                }
-                else
-                {
-                    var oldExpProj = proj.GetComponent<ExplosiveProjectile>();
-                    if (oldExpProj != null)
-                    {
-                        var bulletFX = oldExpProj.BulletImpactFX;
-                        var trail = oldExpProj.trail;
-                        Destroy(oldExpProj);
-                        projScript = proj.AddComponent<BounceProjectile>();
-                        projScript.BulletImpactFX = bulletFX;
-                        projScript.trail = trail;
-                    }
-                    else
-                    {
-                        projScript = proj.GetComponent<BounceProjectile>();
-                        if (projScript == null) projScript = proj.AddComponent<BounceProjectile>();
-                    }
-                }
-            }
-            else if (ExplosiveProjectiles.IsEnabled)
-            {
-                var oldProj = proj.GetComponent<Projectile>();
-                if (oldProj != null)
-                {
-                    var bulletFX = oldProj.BulletImpactFX;
-                    var trail = oldProj.trail;
-                    Destroy(oldProj);
-                    projScript = proj.AddComponent<ExplosiveProjectile>();
-                    projScript.BulletImpactFX = bulletFX;
-                    projScript.trail = trail;
-                }
-                else
-                {
-                    var oldBounceProj = proj.GetComponent<BounceProjectile>();
-                    if (oldBounceProj != null)
-                    {
-                        var bulletFX = oldBounceProj.BulletImpactFX;
-                        var trail = oldBounceProj.trail;
-                        Destroy(oldBounceProj);
-                        projScript = proj.AddComponent<ExplosiveProjectile>();
-                        projScript.BulletImpactFX = bulletFX;
-                        projScript.trail = trail;
-                    }
-                    else
-                    {
-                        projScript = proj.GetComponent<ExplosiveProjectile>();
-                        if (projScript == null) projScript = proj.AddComponent<ExplosiveProjectile>();
-                    }
-                }
-            }
-            else
-            {
-                var oldExpProj = proj.GetComponent<ExplosiveProjectile>();
-                if (oldExpProj != null)
-                {
-                    var bulletFX = oldExpProj.BulletImpactFX;
-                    var trail = oldExpProj.trail;
-                    Destroy(oldExpProj);
-                    projScript = proj.AddComponent<Projectile>();
-                    projScript.BulletImpactFX = bulletFX;
-                    projScript.trail = trail;
-                }
-                else
-                {
-                    var oldBounceProj = proj.GetComponent<BounceProjectile>();
-                    if (oldBounceProj != null)
-                    {
-                        var bulletFX = oldBounceProj.BulletImpactFX;
-                        var trail = oldBounceProj.trail;
-                        Destroy(oldBounceProj);
-                        projScript = proj.AddComponent<Projectile>();
-                        projScript.BulletImpactFX = bulletFX;
-                        projScript.trail = trail;
-                    }
-                    else
-                    {
-                        projScript = proj.GetComponent<Projectile>();
-                        if (projScript == null) projScript = proj.AddComponent<Projectile>();
-                    }
-                }
-            }
-        }
+
+
+        //if (ObjectPool.instance != null)
+        //{
+        //    Destroy(proj);
+        //    GameObject pooled = ObjectPool.instance.GetObject(currProjectilePrefab.gameObject, muzzle);
+
+        //    if (GloomUpgrade.IsEnabled)
+        //    {
+        //        projScript = pooled.GetComponent<GloomProjectile>();
+        //        if (proj == null)
+        //        {
+        //            var oldProj = pooled.GetComponent<Projectile>();
+        //            if (oldProj != null)
+        //            {
+        //                var bulletFX = oldProj.BulletImpactFX;
+        //                var trail = oldProj.trail;
+        //                Destroy(oldProj);
+        //                projScript = pooled.AddComponent<GloomProjectile>();
+        //                projScript.BulletImpactFX = bulletFX;
+        //                projScript.trail = trail;
+        //            }
+        //            else
+        //            {
+        //                var oldExpProj = pooled.GetComponent<ExplosiveProjectile>();
+        //                var oldBounceProj = pooled.GetComponent<BounceProjectile>();
+        //                var oldPoisonProj = pooled.GetComponent<PoisonPoolBottleProjectile>();
+        //                if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); projScript = pooled.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+        //                else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); projScript = pooled.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+        //                else if (oldPoisonProj != null) { var b = oldPoisonProj.BulletImpactFX; var t = oldPoisonProj.trail; Destroy(oldPoisonProj); projScript = pooled.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+        //                else projScript = pooled.AddComponent<GloomProjectile>();
+        //            }
+        //        }
+        //    }
+        //    else if (PoisonPoolProjectiles.IsEnabled)
+        //    {
+        //        projScript = pooled.GetComponent<PoisonPoolBottleProjectile>();
+        //        if (projScript == null)
+        //        {
+        //            var oldProj = pooled.GetComponent<Projectile>();
+        //            if (oldProj != null)
+        //            {
+        //                var bulletFX = oldProj.BulletImpactFX;
+        //                var trail = oldProj.trail;
+        //                Destroy(oldProj);
+        //                projScript = pooled.AddComponent<PoisonPoolBottleProjectile>();
+        //                projScript.BulletImpactFX = bulletFX;
+        //                projScript.trail = trail;
+        //            }
+        //            else
+        //            {
+        //                var oldExpProj = pooled.GetComponent<ExplosiveProjectile>();
+        //                var oldBounceProj = pooled.GetComponent<BounceProjectile>();
+        //                if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); projScript = pooled.AddComponent<PoisonPoolBottleProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+        //                else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); projScript = pooled.AddComponent<PoisonPoolBottleProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+        //                else projScript = pooled.AddComponent<PoisonPoolBottleProjectile>();
+        //            }
+        //        }
+        //    }
+        //    else if (BounceProjectiles.IsEnabled)
+        //    {
+        //        projScript = pooled.GetComponent<BounceProjectile>();
+        //        if (projScript == null)
+        //        {
+        //            var oldProj = pooled.GetComponent<Projectile>();
+        //            if (oldProj != null)
+        //            {
+        //                var bulletFX = oldProj.BulletImpactFX;
+        //                var trail = oldProj.trail;
+        //                Destroy(oldProj);
+        //                projScript = pooled.AddComponent<BounceProjectile>();
+        //                projScript.BulletImpactFX = bulletFX;
+        //                projScript.trail = trail;
+        //            }
+        //            else
+        //            {
+        //                var oldExpProj = pooled.GetComponent<ExplosiveProjectile>();
+        //                if (oldExpProj != null)
+        //                {
+        //                    var bulletFX = oldExpProj.BulletImpactFX;
+        //                    var trail = oldExpProj.trail;
+        //                    Destroy(oldExpProj);
+        //                    projScript = pooled.AddComponent<BounceProjectile>();
+        //                    projScript.BulletImpactFX = bulletFX;
+        //                    projScript.trail = trail;
+        //                }
+        //                else
+        //                {
+        //                    projScript = pooled.AddComponent<BounceProjectile>();
+        //                }
+        //            }
+        //        }
+        //    }
+        //    else if (ExplosiveProjectiles.IsEnabled)
+        //    {
+        //        projScript = pooled.GetComponent<ExplosiveProjectile>();
+        //        if (projScript == null)
+        //        {
+        //            var oldProj = pooled.GetComponent<Projectile>();
+        //            if (oldProj != null)
+        //            {
+        //                var bulletFX = oldProj.BulletImpactFX;
+        //                var trail = oldProj.trail;
+        //                Destroy(oldProj);
+        //                projScript = pooled.AddComponent<ExplosiveProjectile>();
+        //                projScript.BulletImpactFX = bulletFX;
+        //                projScript.trail = trail;
+        //            }
+        //            else
+        //            {
+        //                var oldBounceProj = pooled.GetComponent<BounceProjectile>();
+        //                if (oldBounceProj != null)
+        //                {
+        //                    var bulletFX = oldBounceProj.BulletImpactFX;
+        //                    var trail = oldBounceProj.trail;
+        //                    Destroy(oldBounceProj);
+        //                    projScript = pooled.AddComponent<ExplosiveProjectile>();
+        //                    projScript.BulletImpactFX = bulletFX;
+        //                    projScript.trail = trail;
+        //                }
+        //                else
+        //                {
+        //                    projScript = pooled.AddComponent<ExplosiveProjectile>();
+        //                }
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        projScript = pooled.GetComponent<Projectile>();
+        //        if (projScript == null)
+        //        {
+        //            var oldExpProj = pooled.GetComponent<ExplosiveProjectile>();
+        //            if (oldExpProj != null)
+        //            {
+        //                var bulletFX = oldExpProj.BulletImpactFX;
+        //                var trail = oldExpProj.trail;
+        //                Destroy(oldExpProj);
+        //                projScript = pooled.AddComponent<Projectile>();
+        //                projScript.BulletImpactFX = bulletFX;
+        //                projScript.trail = trail;
+        //            }
+        //            else
+        //            {
+        //                var oldBounceProj = pooled.GetComponent<BounceProjectile>();
+        //                if (oldBounceProj != null)
+        //                {
+        //                    var bulletFX = oldBounceProj.BulletImpactFX;
+        //                    var trail = oldBounceProj.trail;
+        //                    Destroy(oldBounceProj);
+        //                    projScript = pooled.AddComponent<Projectile>();
+        //                    projScript.BulletImpactFX = bulletFX;
+        //                    projScript.trail = trail;
+        //                }
+        //                else
+        //                {
+        //                    projScript = pooled.AddComponent<Projectile>();
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    projScript.transform.position = spawnPos;
+        //    projScript.transform.rotation = spawnRot;
+        //}
+        //else
+        //{
+        //    if (GloomUpgrade.IsEnabled)
+        //    {
+        //        var oldProj = proj.GetComponent<Projectile>();
+        //        if (oldProj != null)
+        //        {
+        //            var bulletFX = oldProj.BulletImpactFX;
+        //            var trail = oldProj.trail;
+        //            Destroy(oldProj);
+        //            projScript = proj.AddComponent<GloomProjectile>();
+        //            projScript.BulletImpactFX = bulletFX;
+        //            projScript.trail = trail;
+        //        }
+        //        else
+        //        {
+        //            var oldExpProj = proj.GetComponent<ExplosiveProjectile>();
+        //            var oldBounceProj = proj.GetComponent<BounceProjectile>();
+        //            var oldPoisonProj = proj.GetComponent<PoisonPoolBottleProjectile>();
+        //            if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); projScript = proj.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+        //            else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); projScript = proj.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+        //            else if (oldPoisonProj != null) { var b = oldPoisonProj.BulletImpactFX; var t = oldPoisonProj.trail; Destroy(oldPoisonProj); projScript = proj.AddComponent<GloomProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+        //            else projScript = proj.AddComponent<GloomProjectile>();
+        //        }
+        //    }
+        //    else if (PoisonPoolProjectiles.IsEnabled)
+        //    {
+        //        var oldProj = proj.GetComponent<Projectile>();
+        //        if (oldProj != null)
+        //        {
+        //            var bulletFX = oldProj.BulletImpactFX;
+        //            var trail = oldProj.trail;
+        //            Destroy(oldProj);
+        //            projScript = proj.AddComponent<PoisonPoolBottleProjectile>();
+        //            projScript.BulletImpactFX = bulletFX;
+        //            projScript.trail = trail;
+        //        }
+        //        else
+        //        {
+        //            var oldExpProj = proj.GetComponent<ExplosiveProjectile>();
+        //            var oldBounceProj = proj.GetComponent<BounceProjectile>();
+        //            if (oldExpProj != null) { var b = oldExpProj.BulletImpactFX; var t = oldExpProj.trail; Destroy(oldExpProj); projScript = proj.AddComponent<PoisonPoolBottleProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+        //            else if (oldBounceProj != null) { var b = oldBounceProj.BulletImpactFX; var t = oldBounceProj.trail; Destroy(oldBounceProj); projScript = proj.AddComponent<PoisonPoolBottleProjectile>(); projScript.BulletImpactFX = b; projScript.trail = t; }
+        //            else projScript = proj.AddComponent<PoisonPoolBottleProjectile>();
+        //        }
+        //    }
+        //    else if (BounceProjectiles.IsEnabled)
+        //    {
+        //        var oldProj = proj.GetComponent<Projectile>();
+        //        if (oldProj != null)
+        //        {
+        //            var bulletFX = oldProj.BulletImpactFX;
+        //            var trail = oldProj.trail;
+        //            Destroy(oldProj);
+        //            projScript = proj.AddComponent<BounceProjectile>();
+        //            projScript.BulletImpactFX = bulletFX;
+        //            projScript.trail = trail;
+        //        }
+        //        else
+        //        {
+        //            var oldExpProj = proj.GetComponent<ExplosiveProjectile>();
+        //            if (oldExpProj != null)
+        //            {
+        //                var bulletFX = oldExpProj.BulletImpactFX;
+        //                var trail = oldExpProj.trail;
+        //                Destroy(oldExpProj);
+        //                projScript = proj.AddComponent<BounceProjectile>();
+        //                projScript.BulletImpactFX = bulletFX;
+        //                projScript.trail = trail;
+        //            }
+        //            else
+        //            {
+        //                projScript = proj.GetComponent<BounceProjectile>();
+        //                if (projScript == null) projScript = proj.AddComponent<BounceProjectile>();
+        //            }
+        //        }
+        //    }
+        //    else if (ExplosiveProjectiles.IsEnabled)
+        //    {
+        //        var oldProj = proj.GetComponent<Projectile>();
+        //        if (oldProj != null)
+        //        {
+        //            var bulletFX = oldProj.BulletImpactFX;
+        //            var trail = oldProj.trail;
+        //            Destroy(oldProj);
+        //            projScript = proj.AddComponent<ExplosiveProjectile>();
+        //            projScript.BulletImpactFX = bulletFX;
+        //            projScript.trail = trail;
+        //        }
+        //        else
+        //        {
+        //            var oldBounceProj = proj.GetComponent<BounceProjectile>();
+        //            if (oldBounceProj != null)
+        //            {
+        //                var bulletFX = oldBounceProj.BulletImpactFX;
+        //                var trail = oldBounceProj.trail;
+        //                Destroy(oldBounceProj);
+        //                projScript = proj.AddComponent<ExplosiveProjectile>();
+        //                projScript.BulletImpactFX = bulletFX;
+        //                projScript.trail = trail;
+        //            }
+        //            else
+        //            {
+        //                projScript = proj.GetComponent<ExplosiveProjectile>();
+        //                if (projScript == null) projScript = proj.AddComponent<ExplosiveProjectile>();
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        var oldExpProj = proj.GetComponent<ExplosiveProjectile>();
+        //        if (oldExpProj != null)
+        //        {
+        //            var bulletFX = oldExpProj.BulletImpactFX;
+        //            var trail = oldExpProj.trail;
+        //            Destroy(oldExpProj);
+        //            projScript = proj.AddComponent<Projectile>();
+        //            projScript.BulletImpactFX = bulletFX;
+        //            projScript.trail = trail;
+        //        }
+        //        else
+        //        {
+        //            var oldBounceProj = proj.GetComponent<BounceProjectile>();
+        //            if (oldBounceProj != null)
+        //            {
+        //                var bulletFX = oldBounceProj.BulletImpactFX;
+        //                var trail = oldBounceProj.trail;
+        //                Destroy(oldBounceProj);
+        //                projScript = proj.AddComponent<Projectile>();
+        //                projScript.BulletImpactFX = bulletFX;
+        //                projScript.trail = trail;
+        //            }
+        //            else
+        //            {
+        //                projScript = proj.GetComponent<Projectile>();
+        //                if (projScript == null) projScript = proj.AddComponent<Projectile>();
+        //            }
+        //        }
+        //    }
+        //}
 
         float speed = projectileSpeed;
         Vector3 velocity;
@@ -808,13 +644,13 @@ public class PlayerShooter : MonoBehaviour
             velocity = direction * speed;
         }
 
-        // Initialize the projectile as an axe or non-axe.
+        // Initialize the projectile according to its weapon type.
         if (currProjectilePrefab == spearProjectilePrefab)
-            projScript?.Init(velocity, shootMask, currentDamage, 100, playerEntity);
+            projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
         else if (currProjectilePrefab == maceProjectilePrefab)
         {
             MaceProjectile maceProjScript = proj.GetComponent<MaceProjectile>();
-            maceProjScript.Init(velocity, shootMask, currentDamage, 100, playerEntity);
+            maceProjScript.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
         }
         else
         {
@@ -822,7 +658,7 @@ public class PlayerShooter : MonoBehaviour
 
             // Initialize target position.
             Vector3 targetPos = raycastHit.collider ? raycastHit.point : aim.GetAimIntersectPoint(axeProjScript.MaxTravelDistance);
-            axeProjScript.Init(targetPos, playerCenter, shootMask, currentDamage, 100, playerEntity);
+            axeProjScript.Init(targetPos, playerCenter, shootMask, currentDamage, flyDistance: 100, playerEntity);
         }
 
         // Debug.Log($"Fired projectile with {currentDamage} damage");
@@ -831,10 +667,30 @@ public class PlayerShooter : MonoBehaviour
         fireEvent.Post(gameObject);
     }
 
-    private void CopyProjectileFX(Projectile newProj, Projectile oldProj)
+    /// <summary>
+    ///   <para>
+    ///     Changes a projectile object's current script type to a desired script type and preserves
+    ///     the bullet impact and trail effects of the current script type. Does nothing if the current
+    ///     script type is already the desired type.
+    ///   </para>
+    /// </summary>
+    /// <param name="targetProjType"> The desired projectile script type. </param>
+    /// <param name="currProjScript"> The current projectile script type. </param>
+    private void ProjectileModificationCheck(Type targetProjType, Projectile currProjScript)
     {
-        if (oldProj.BulletImpactFX) newProj.BulletImpactFX = oldProj.BulletImpactFX; ;
-        if (oldProj.trail) newProj.trail = oldProj.trail;
+        if (currProjScript && currProjScript.GetType() == targetProjType) return;
+
+        // Get the current projectile script's game object and then add the desired projectile script type to it.
+        GameObject proj = currProjScript.gameObject;
+        Projectile newProjScript = proj.AddComponent(targetProjType) as Projectile;
+
+        // Copy values from the current script's effects into the desired script.
+        var bulletFX = currProjScript.BulletImpactFX;
+        var trail = currProjScript.trail;
+        if (bulletFX) newProjScript.BulletImpactFX = bulletFX;
+        if (trail) newProjScript.trail = trail;
+        
+        Destroy(currProjScript); // Destroy the old script type.
     }
 
     /// <summary>

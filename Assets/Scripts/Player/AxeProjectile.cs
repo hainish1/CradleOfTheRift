@@ -37,17 +37,12 @@ public class AxeProjectile : Projectile
     private Vector3 _attackPosition;
     private Vector3 _throwerOriginOnReturn;
     private Transform _throwerCenter;
-    private Coroutine _whirlCoroutine;
-
-    void Start()
-    {
-        _whirlCoroutine = StartCoroutine(InitializeModelWhirl());
-    }
 
     protected override void FixedUpdate()
     {
         if (!_isInitialized) return; // Do nothing if initialization has not occured.
 
+        _modelTransform.Rotate(xAngle: 0, yAngle: 0, Time.fixedDeltaTime * _whirlSpeed); // Rotate the axe model for whirl effect.
         FadeTrailVisuals();
 
         if (_isExpired) return; // Return early if projectile is expired.
@@ -153,6 +148,9 @@ public class AxeProjectile : Projectile
         startPos = transform.position;
         this.flyDistance = flyDistance + 1;
 
+        // Initialize model rotation.
+        _modelTransform.rotation = Quaternion.Euler(90, 0, 0);
+
         // Initialize arcing logic.
         InitializeArcPath(_attackPosition);
         _isInitialized = true;
@@ -228,21 +226,6 @@ public class AxeProjectile : Projectile
 
     /// <summary>
     ///   <para>
-    ///     Whirls the axe model indefinitely until stopped.
-    ///   </para>
-    /// </summary>
-    /// <returns> IEnumerator object. </returns>
-    private IEnumerator InitializeModelWhirl()
-    {
-        while (true)
-        {
-            _modelTransform.Rotate(xAngle: 0, yAngle: 0, Time.deltaTime * _whirlSpeed);
-            yield return null;
-        }
-    }
-
-    /// <summary>
-    ///   <para>
     ///     Reactivates collision for an enemy's colliders after a certain delay in order to make getting
     ///     damaged on the return path possible.
     ///   </para>
@@ -302,7 +285,6 @@ public class AxeProjectile : Projectile
         _isInitialized = false;
         _isExpired = false;
         _isReturning = false;
-        StopCoroutine(_whirlCoroutine);
         ReturnToSource(); // Destroy.
     }
 }
