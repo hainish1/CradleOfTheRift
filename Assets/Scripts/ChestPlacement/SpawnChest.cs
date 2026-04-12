@@ -11,6 +11,10 @@ public class SpawnChest : MonoBehaviour
 
     [Tooltip("The minimum distance allowed between any two enabled chests.")]
     [SerializeField] private float minDistanceBetweenChests = 5f;   // Inclusive
+
+    [Tooltip("The ambient sounds chests have.")]
+    [SerializeField]
+    private AK.Wwise.Event chestAmbientSoundEffect;
     
     private List<GameObject> activeChests;
 
@@ -72,6 +76,7 @@ public class SpawnChest : MonoBehaviour
         foreach (GameObject chest in activeChests)
         {
             chest.SetActive(true);
+            chestAmbientSoundEffect.Post(chest);
         }
 
         // Log a warning if desired number of chests couldn't spawn.

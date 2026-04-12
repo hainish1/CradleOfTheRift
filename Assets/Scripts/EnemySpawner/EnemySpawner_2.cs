@@ -105,6 +105,7 @@ public class EnemySpawner_2 : MonoBehaviour
     [SerializeField] private Transform playerLocation;
     [SerializeField] private DifficultyScaler difficultyScaler;
     [SerializeField] private GameObject spawnVFXPrefab;
+    [SerializeField] private AK.Wwise.Event spawnSFX;
 
 
     [Header("Node Settings")]
@@ -474,6 +475,8 @@ public class EnemySpawner_2 : MonoBehaviour
             // Play visual effects and instantiate the enemy
             PlaySpawnVFX(finalSpawnPos, Quaternion.identity);
             GameObject enemyObj = Instantiate(enemy.prefab, finalSpawnPos, Quaternion.identity);
+            // Play the sound effect.
+            PlaySpawnSFX(enemyObj);
 
             // Log the spawn for Gizmo debugging
             if (showSpawnDebug)
@@ -616,6 +619,16 @@ public class EnemySpawner_2 : MonoBehaviour
         GameObject vfx = Instantiate(spawnVFXPrefab, position, rotation);
 
         Destroy(vfx, 2.0f); // Should prob make the VFX auto destroy instead of doing it here.
+    }
+
+    /// <summary>
+    /// Tries to play the spawn sound effect if it's set.
+    /// </summary>
+    /// <param name="enemy">The enemy to play the sound at.</param>
+    private void PlaySpawnSFX(GameObject enemy)
+    {
+        if (spawnSFX is null) return;
+        spawnSFX.Post(enemy);
     }
 
     private void EnsurePlayerLocation()

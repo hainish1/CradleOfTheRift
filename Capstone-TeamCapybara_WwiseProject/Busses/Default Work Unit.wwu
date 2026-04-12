@@ -164,6 +164,13 @@
 							</PropertyList>
 							<ObjectLists>
 								<ObjectList Name="Effects">
+									<EffectSlot Name="" ID="{5A35CFE3-0EEF-4A13-A90F-3BB6C18516D2}" ShortID="176117759">
+										<ReferenceList>
+											<Reference Name="Effect" PluginName="Wwise Delay" CompanyID="0" PluginID="106" PluginType="3">
+												<ObjectRef Name="Echoes_Linear" ID="{D20F3717-EBA2-4E3A-84F8-C8BD431563FB}" WorkUnitID="{E8613F7D-BAD3-45CD-A3ED-505576F31277}"/>
+											</Reference>
+										</ReferenceList>
+									</EffectSlot>
 									<EffectSlot Name="" ID="{DB3D8218-10BF-4D30-9C58-AB8D9F85F94F}" ShortID="50126906">
 										<ReferenceList>
 											<Reference Name="Effect" PluginName="Wwise Delay" CompanyID="0" PluginID="106" PluginType="3">
@@ -171,10 +178,10 @@
 											</Reference>
 										</ReferenceList>
 									</EffectSlot>
-									<EffectSlot Name="" ID="{3A80C55C-A463-408F-8DAB-7E587477B19F}" ShortID="698098043">
+									<EffectSlot Name="" ID="{F2FD02CA-9128-44E5-9028-B40B4C49279C}" ShortID="1010249169">
 										<ReferenceList>
 											<Reference Name="Effect" PluginName="Wwise RoomVerb" CompanyID="0" PluginID="118" PluginType="3">
-												<ObjectRef Name="Holy" ID="{CC7B8638-C670-4AD5-B3FB-331EA81037F6}" WorkUnitID="{E8613F7D-BAD3-45CD-A3ED-505576F31277}"/>
+												<ObjectRef Name="Medium" ID="{AEB3F175-958B-45F2-A4C2-3FBD4F456568}" WorkUnitID="{E8613F7D-BAD3-45CD-A3ED-505576F31277}"/>
 											</Reference>
 										</ReferenceList>
 									</EffectSlot>

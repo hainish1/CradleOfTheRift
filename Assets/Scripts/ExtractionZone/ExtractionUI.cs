@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -6,6 +7,10 @@ public class ExtractionUI : MonoBehaviour
 {
     private ProgressBar extractionBar;
     private ExtractionZone activeZoneRef;
+
+    private bool wasDecaying = false;
+    private float lastCharge = 0f;
+    private Coroutine flashRoutine;
 
     void Start()
     {
@@ -25,8 +30,11 @@ public class ExtractionUI : MonoBehaviour
         activeZoneRef = zone;
         this.extractionBar.highValue = zone.ChargeTime;
         this.extractionBar.style.display = DisplayStyle.Flex;
-        
-        // Subscribe to the specific zone's progress
+
+        lastCharge = 0f;
+        wasDecaying = false;
+        StopFlash();
+
         zone.ChargeChanged += OnChargeUpdate;
     }
 
@@ -35,14 +43,63 @@ public class ExtractionUI : MonoBehaviour
         if (activeZoneRef != null)
             activeZoneRef.ChargeChanged -= OnChargeUpdate;
 
+        StopFlash();
         this.extractionBar.style.display = DisplayStyle.None;
         activeZoneRef = null;
+        wasDecaying = false;
     }
 
     private void OnChargeUpdate(float currentCharge)
     {
         this.extractionBar.value = currentCharge;
+
         float percent = (currentCharge / activeZoneRef.ChargeTime) * 100f;
         this.extractionBar.title = $"Extraction: [{Mathf.RoundToInt(percent)}%]";
+
+        UpdateDecayVisual(currentCharge);
+    }
+
+    private void UpdateDecayVisual(float currentCharge)
+    {
+        bool isDecaying = currentCharge < lastCharge;
+        lastCharge = currentCharge;
+
+        // Only act when state actually changes — avoids per-frame class churn
+        if (isDecaying == wasDecaying) return;
+        wasDecaying = isDecaying;
+
+        if (isDecaying)
+        {
+            this.extractionBar.AddToClassList("decaying");
+            flashRoutine = StartCoroutine(FlashLoop());
+        }
+        else
+        {
+            StopFlash();
+        }
+    }
+
+    private void StopFlash()
+    {
+        if (flashRoutine != null)
+        {
+            StopCoroutine(flashRoutine);
+            flashRoutine = null;
+        }
+        this.extractionBar.RemoveFromClassList("decaying-flash");
+        this.extractionBar.RemoveFromClassList("decaying");
+    }
+
+    // Asymmetric pulse: fast snap in (0.08s hold), slow fade out (0.55s rest)
+    // Feels like a warning heartbeat rather than a mechanical strobe
+    private IEnumerator FlashLoop()
+    {
+        while (true)
+        {
+            this.extractionBar.AddToClassList("decaying-flash");
+            yield return new WaitForSeconds(0.08f);    // hold the bright flare briefly
+            this.extractionBar.RemoveFromClassList("decaying-flash");
+            yield return new WaitForSeconds(0.55f);    // sit in the smolder state longer
+        }
     }
 }

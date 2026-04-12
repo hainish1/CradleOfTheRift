@@ -28,7 +28,7 @@ public class TutorialHooks : MonoBehaviour
 
     void OnEnable()
     {
-        PlayerShockwave.OnShockwaveUsed  += OnShockwaveUsed;
+        PlayerShockwaveController.OnShockwaveUsed  += OnShockwaveUsed;
         PlayerMovement.OnDashChargeSpent += OnDashUsed;
         PlayerShooter.OnFireChargeSpent  += OnRangedUsed;
 
@@ -39,7 +39,7 @@ public class TutorialHooks : MonoBehaviour
 
     void OnDisable()
     {
-        PlayerShockwave.OnShockwaveUsed  -= OnShockwaveUsed;
+        PlayerShockwaveController.OnShockwaveUsed  -= OnShockwaveUsed;
         PlayerMovement.OnDashChargeSpent -= OnDashUsed;
         PlayerShooter.OnFireChargeSpent  -= OnRangedUsed;
 

@@ -1,4 +1,5 @@
 using System.Reflection.Emit;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -23,7 +24,7 @@ public class Projectile : MonoBehaviour
     protected float actualDamage; // THIS WILL STORE DAMAGE FROM STATS SYSTEM
 
     public Rigidbody rb;
-    private Collider selfCollider;
+    protected Collider selfCollider;
     protected float age;
     protected Vector3 startPos;
     protected float flyDistance;
@@ -31,8 +32,8 @@ public class Projectile : MonoBehaviour
     protected bool hasHit;
 
     // Pass-through spear tracking
-    private Vector3 savedVelocity;
-    private Vector3 savedPosition;
+    protected Vector3 savedVelocity;
+    protected Vector3 savedPosition;
     private int enemiesPassedThrough;
 
     public virtual void Awake()
@@ -63,7 +64,7 @@ public class Projectile : MonoBehaviour
         trail.time = 0.25f;
         startPos = transform.position;
         this.flyDistance = flyDistance + 1;
-        
+
 
         // Debug.Log($"Projectile initialized with damage: {actualDamage}");
     }
@@ -106,7 +107,6 @@ public class Projectile : MonoBehaviour
         {
             transform.rotation = Quaternion.LookRotation(rb.linearVelocity);
         }
-
     }
     protected virtual void OnEnable()
     {
@@ -122,7 +122,7 @@ public class Projectile : MonoBehaviour
             trail.time = 0.25f;
         }
 
-        if (rb != null)
+        if (rb != null && !rb.isKinematic)
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
@@ -141,7 +141,10 @@ public class Projectile : MonoBehaviour
 
     public virtual void OnCollisionEnter(Collision collision)
     {
-        if (hasHit) return;
+        if (hasHit)
+        {
+            return;
+        }
         // check layer mask
         if (((1 << collision.gameObject.layer) & hitMask) == 0)
             return;
@@ -156,7 +159,7 @@ public class Projectile : MonoBehaviour
             && enemiesPassedThrough < PassThroughSpear.MaxPassThroughCount)
         {
             // Damage this enemy while passing through
-            ApplyEnemyHit(collision, enemy, passingThrough: true);
+            ApplyEnemyHitCollision(collision, enemy, passingThrough: true);
 
             // Ignore future collisions with ALL other any colliders on this enemy
             Collider myCollider = GetComponent<Collider>();
@@ -191,7 +194,7 @@ public class Projectile : MonoBehaviour
 
         if (enemy != null)
         {
-            ApplyEnemyHit(collision, enemy);
+            ApplyEnemyHitCollision(collision, enemy);
         }
 
         // apply physics force
@@ -208,7 +211,7 @@ public class Projectile : MonoBehaviour
     /// Applies damage, knockback, flash, and delayed-damage marks to an enemy.
     /// When passingThrough is true, hasHit is NOT set so the projectile can keep hitting more enemies.
     /// </summary>
-    protected void ApplyEnemyHit(Collision collision, Enemy enemy, bool passingThrough = false)
+    protected void ApplyEnemyHitCollision(Collision collision, Enemy enemy, bool passingThrough = false)
     {
         var kb = enemy.GetComponent<AgentKnockBack>();
         if (kb != null)
@@ -236,6 +239,44 @@ public class Projectile : MonoBehaviour
 
             if (!passingThrough) hasHit = true;
             Debug.Log($"Dealt {actualDamage} damage to {collision.gameObject.name}");
+        }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Applies damage, knockback and flash to an enemy and spawns a delayed damage marker.
+    ///   </para>
+    /// </summary>
+    /// <param name="collider"> The collider of the enemy being hit. </param>
+    /// <param name="enemy"> Enemy script of the enemy being hit. </param>
+    /// <param name="passingThrough"> Whether or not the projectile should pass through multiple enemies. </param>
+    protected void ApplyEnemyHitCollider(Collider collider, Enemy enemy, bool passingThrough = false)
+    {
+        Vector3 contactPoint = collider.ClosestPoint(transform.position);
+
+        AgentKnockBack knockback = enemy.GetComponent<AgentKnockBack>();
+        if (knockback)
+        {
+            Vector3 direction = (contactPoint - transform.position).normalized;
+            direction.y = 0f;
+            if (direction.sqrMagnitude > 0.0001f) direction.Normalize();
+            knockback.ApplyImpulse(direction * knockBackImpulse);
+        }
+
+        TargetFlash flash = collider.GetComponentInParent<TargetFlash>();
+        if (flash) flash.Flash();
+
+        IDamageable damageable = collider.GetComponentInParent<IDamageable>();
+        if (damageable != null && !damageable.IsDead)
+        {
+            damageable.TakeDamage(actualDamage);
+            CombatEvents.ReportDamage(attacker, enemy, actualDamage);
+
+            if (DelayedProjectiles.IsEnabled)
+                CreateDelayedDamageMark(enemy, contactPoint);
+
+            if (!passingThrough) hasHit = true;
+            Debug.Log($"Dealt {actualDamage} damage to {collider.gameObject.name}");
         }
     }
 

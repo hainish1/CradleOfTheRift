@@ -10,6 +10,12 @@ public class BossSpawner : MonoBehaviour
     private float heightOffset = 5f;
     [SerializeField] private float spawnDelay = 1f;
     [SerializeField] private GameObject spawnVFXPrefab;
+    [SerializeField] private DifficultyScaler difficultyScaler;
+
+
+    [Header("Scaling Curves")]
+    [SerializeField] private AnimationCurve healthScaleCurve;
+    [SerializeField] private AnimationCurve damageScaleCurve;
 
     private EnemyHealth activeBoss;
     public event Action BossDied;
@@ -19,6 +25,12 @@ public class BossSpawner : MonoBehaviour
         extractionZone = GetComponent<ExtractionZone>();
         if (extractionZone == null)
             Debug.LogError("BossSpawner: ExtractionZone component not found!");
+        
+        if (difficultyScaler == null) {
+            Debug.LogError("BossSpawner: DifficultyScaler reference not set!");
+            return;
+        }
+
     }
 
     private void OnEnable()
@@ -56,8 +68,50 @@ public class BossSpawner : MonoBehaviour
 
         PlaySpawnVFX(spawnPoint, UnityEngine.Quaternion.identity);
         GameObject boss = Instantiate(randomBoss.prefab, spawnPoint, UnityEngine.Quaternion.identity);
+        
+        EnemyHealth bossHealth = boss.GetComponent<EnemyHealth>();
+        ScaleBossHealth(bossHealth);
+        ScaleBossDamage(boss);
+
         this.activeBoss = boss.GetComponent<EnemyHealth>();
         this.activeBoss.EnemyDied += OnBossDied;
+    }
+
+    private void ScaleBossHealth(EnemyHealth bossHealth)
+    {        
+        if (bossHealth != null)
+        {
+            float difficulty = difficultyScaler.GetDifficultyScale();
+            float multiplier = healthScaleCurve.Evaluate(difficulty);
+
+            float oldHealth = bossHealth.GetMaxHealth();
+
+            float newHealth = bossHealth.GetMaxHealth() * multiplier;
+            bossHealth.InitializeHealth(newHealth);
+
+            Debug.Log($"BossSpawner: Scaled Boss Health to {newHealth} from base {oldHealth} with difficulty {difficulty} and multiplier {multiplier}");
+        }
+    }
+
+    private void ScaleBossDamage(GameObject enemyObj)
+    {
+        float difficulty = difficultyScaler.GetDifficultyScale();
+        float multiplier = damageScaleCurve.Evaluate(difficulty);
+
+        EnemyBoss_SS melee = enemyObj.GetComponent<EnemyBoss_SS>();
+        if (melee != null)
+        {
+            melee.InitializeAllDamage(multiplier);
+            return;
+        }
+
+        RevenantBossRange range = enemyObj.GetComponent<RevenantBossRange>();
+        if (range != null)
+        {
+            range.InitializeAllDamage(multiplier);
+            return;
+        }
+
     }
 
     private void OnBossDied(EnemyHealth deadBoss)
@@ -76,6 +130,18 @@ public class BossSpawner : MonoBehaviour
         GameObject vfx = Instantiate(spawnVFXPrefab, position, rotation);
 
         Destroy(vfx, 4.0f); // Should prob make the VFX auto destroy instead of doing it here.
+    }
+
+    private void Reset()
+    {
+        ResetScalingCurves();
+    }
+
+    [ContextMenu("Reset Scaling Curves")]
+    private void ResetScalingCurves()
+    {
+        healthScaleCurve = AnimationCurve.Linear(0, 1, 30, 6);
+        damageScaleCurve = AnimationCurve.Linear(0, 1, 30, 3);
     }
 }
 

@@ -1,6 +1,7 @@
+using Mono.Cecil.Cil;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-using System.Collections.Generic;
 
 public class SettingsMenuController : MonoBehaviour
 {
@@ -9,6 +10,9 @@ public class SettingsMenuController : MonoBehaviour
     [SerializeField] private string musicVolumeRTPC   = "MusicVolume";
     [SerializeField] private string sfxVolumeRTPC     = "SFXVolume";
     [SerializeField] private string ambientVolumeRTPC = "AmbientVolume";
+
+    [Header("Sound Effects")]
+    [SerializeField] private AK.Wwise.Event clickSFX;
 
     // ── Tab animation config ──────────────────────────────────────────
     private const float BORDER_MAX = 4f; // px when active
@@ -89,6 +93,11 @@ public class SettingsMenuController : MonoBehaviour
         service = new SettingsService(masterVolumeRTPC, musicVolumeRTPC,
                                       sfxVolumeRTPC, ambientVolumeRTPC);
 
+        // Bind the click sfx to the root.
+        // Hopefully through event propogation,
+        // this will make the click sfx play for every click!
+        root.RegisterCallback<ClickEvent>(_ => AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX));
+
         // Query tab buttons
         tabAudio    = root.Q<Button>("TabAudio");
         tabVideo    = root.Q<Button>("TabVideo");
@@ -142,7 +151,9 @@ public class SettingsMenuController : MonoBehaviour
             buttonResetTutorial.text = "Tutorial Reset!";
             buttonResetTutorial.SetEnabled(false);
         });
+        buttonBack?.RegisterCallback<ClickEvent>(_ => AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX));
         buttonBack?.RegisterCallback<ClickEvent>(_ => OnBackPressed?.Invoke());
+        
 
         // Load saved settings and push to all pages
         service.Load();

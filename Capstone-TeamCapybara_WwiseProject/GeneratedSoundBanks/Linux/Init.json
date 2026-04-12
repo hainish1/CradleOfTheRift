@@ -10,7 +10,7 @@
     "Type": "User",
     "GUID": "{701ECBBD-9C7B-4030-8CDB-749EE5D1C7B9}",
     "Language": "SFX",
-    "Hash": "{E5944208-859E-30CF-BACD-93A044C0F4AD}",
+    "Hash": "{FC3D3E27-C454-52AB-3C39-4876ED9FF058}",
     "ObjectPath": "Init",
     "ShortName": "Init",
     "Path": "Init.bnk",
@@ -25,10 +25,10 @@
        "LibId": "6946819"
       },
       {
-       "Id": "3164629247",
-       "Name": "Holy",
-       "ObjectPath": "\\Effects\\Factory Effects\\RoomVerb\\Cathedrals\\Holy",
-       "GUID": "{CC7B8638-C670-4AD5-B3FB-331EA81037F6}",
+       "Id": "2849147824",
+       "Name": "Medium",
+       "ObjectPath": "\\Effects\\Factory Effects\\RoomVerb\\Cathedrals\\Medium",
+       "GUID": "{AEB3F175-958B-45F2-A4C2-3FBD4F456568}",
        "LibName": "Wwise RoomVerb",
        "LibId": "7733251"
       }
@@ -96,7 +96,7 @@
          "Id": "1588715066"
         },
         {
-         "Id": "3164629247"
+         "Id": "2849147824"
         }
        ]
       }
@@ -189,7 +189,7 @@
         "Id": "748895195",
         "Name": "None",
         "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\None",
-        "GUID": "{6981E7EC-A80A-448E-B0BF-87DBCBEE7EFB}"
+        "GUID": "{DEECE8B4-6DDE-47CF-8B9E-899088C3DA0D}"
        },
        {
         "Id": "2044049779",
@@ -230,6 +230,6 @@
     ]
    }
   ],
-  "FileHash": "{2123FA1B-E2E5-C3D0-452F-A54A9B3200B1}"
+  "FileHash": "{98A802FE-F7AD-72A2-EAFA-F7492993DAC9}"
  }
 }

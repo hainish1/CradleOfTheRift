@@ -1,0 +1,48 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "4229230304",
+    "Type": "Event",
+    "GUID": "{32445DB7-BBAA-4391-93C2-913AFFFF7125}",
+    "Language": "SFX",
+    "Hash": "{281F7444-22BE-C006-8BEC-21D27FF54905}",
+    "ObjectPath": "Pick_Up_Item",
+    "ShortName": "Pick_Up_Item",
+    "Path": "Event/Pick_Up_Item.bnk",
+    "Media": [
+     {
+      "Id": "961520638",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Item Pickup.wav",
+      "Path": "Media/961520638.wem",
+      "CachePath": "03/{0324A3BC-B688-2F7E-91D1-23B40CC30AF3}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "4229230304",
+      "Name": "Pick_Up_Item",
+      "ObjectPath": "\\Events\\Default Work Unit\\Environment\\Pick_Up_Item",
+      "GUID": "{32445DB7-BBAA-4391-93C2-913AFFFF7125}",
+      "DurationType": "OneShot",
+      "DurationMin": "4",
+      "DurationMax": "4",
+      "MediaRefs": [
+       {
+        "Id": "961520638"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{F3535311-E9AD-4394-833A-A09527C48CAD}"
+ }
+}

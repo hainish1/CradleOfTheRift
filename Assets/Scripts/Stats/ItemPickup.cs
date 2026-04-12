@@ -9,6 +9,9 @@ public class ItemPickup : MonoBehaviour
     [Header("Tooltip")]
     [Tooltip("How close the player needs to be for tooltip to show")]
     [SerializeField] private float tooltipRange = 20f;
+    
+    [Header("Sound Effects")]
+    [SerializeField] private AK.Wwise.Event pickupSound;
 
     private Vector3 startPosition;
     private Transform playerTransform;
@@ -78,6 +81,9 @@ public class ItemPickup : MonoBehaviour
             // show pickup banner after pickupin up item
             if (ItemPickupBannerUI.Instance != null)
                 ItemPickupBannerUI.Instance.Show(itemData);
+            
+            // Play the sound!
+            PlaySound();
 
             if (destroyOnPickup)
             {
@@ -97,4 +103,20 @@ public class ItemPickup : MonoBehaviour
     }
 
     public ItemData ItemData => itemData;
+
+    private void PlaySound()
+    {
+        // If a custom sound is set, play it.
+        if (pickupSound.IsValid())
+        {
+            pickupSound.Post(gameObject);
+            print("Playing custom sound!");
+        }
+        // If not, just use a default one!
+        else
+        {
+            AUDIO_GlobalAudioPlayer.Instance.PlayPickupItem();
+            print("Playing pickup item event!");
+        }
+    }
 }
