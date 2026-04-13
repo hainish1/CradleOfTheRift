@@ -518,7 +518,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void MoveConditions()
     {
-        if (_shockwaveController.IsCastingShockwave) return; // Do not allow movement while casting a shockwave.
+        if (_shockwaveController.IsCastingShockwave) return; // Do not allow movement while casting shockwave.
 
         // Trigger corresponding move animations.
         Vector2 inputDirection = _moveActions.ReadValue<Vector2>().normalized;
@@ -753,7 +753,7 @@ public class PlayerMovement : MonoBehaviour
         // Check if the player character is being knocked back.
         if (_kbDashLockTimer > 0) return;
 
-        // Do not allow dashes while attacking or throwing.
+        // Do not allow dashes while attacking, throwing or casting shockwave.
         if (_meleeController.IsAttacking || _playerShooter.IsThrowing || _shockwaveController.IsCastingShockwave) return;
 
         if (_currDashCharges != 0 && !IsDashing)
