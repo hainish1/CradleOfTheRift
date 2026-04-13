@@ -63,7 +63,8 @@ public class Interactor : MonoBehaviour
             {
                 if (!interactionPromptUI.isDisplayed)
                 {
-                    interactionPromptUI.ShowPrompt(interactable.InteractionPrompt);
+                    float? heightOverride = (interactable as IPromptHeightOverride)?.PromptHeightOffset;
+                    interactionPromptUI.ShowPrompt(interactable.InteractionPrompt, colliders[0].transform, heightOverride);
                 }
             }
         }
