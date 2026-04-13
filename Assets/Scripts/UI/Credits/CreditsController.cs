@@ -470,7 +470,7 @@ public class CreditsController : MonoBehaviour
     private void DrawTree(MeshGenerationContext ctx, bool isRight)
     {
         var p  = ctx.painter2D;
-        float cx = 80f;  // Centre of 160px-wide canvas
+        float cx = 100f;  // Centre of 200px-wide canvas
         float by = 180f; // Bottom of 180px-tall canvas — crystals/trunk base sit here
 
         // ── Palette ──────────────────────────────────────────────────────────

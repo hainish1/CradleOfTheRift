@@ -160,12 +160,12 @@
 .tree {
     position: absolute;
     bottom: 0; /* Planted on the ground */
-    width: 160px;
+    width: 200px;
     height: 180px;
 }
 
-.tree-left  { left: -20px; }
-.tree-right { right: -20px; }
+.tree-left  { left: 0px; }
+.tree-right { right: 0px; }
 
 /* ── Skip button ── */
 .skip-button {
