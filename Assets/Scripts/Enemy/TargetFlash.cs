@@ -4,28 +4,41 @@ using UnityEngine;
 /// <summary>
 /// Class : Used to flash a GameObject with some color when its hit
 /// </summary>
+[DisallowMultipleComponent]
 public class TargetFlash : MonoBehaviour
 {
-    [Header("Materials")]
-    [SerializeField] private Material original;
     [SerializeField] private Material flash;
     [SerializeField] private float flashDuration = .1f;
 
-    private Renderer rend;
-    private Coroutine flashRoutine;
+    [Tooltip("if false every Renderer under this transform flashes")]
+    [SerializeField] private bool flashOnlyRootRenderer = false;
 
+    private Renderer[] renderers;
+    private Material[][] originalMaterials;
+    private Coroutine flashRoutine;
 
     void Awake()
     {
-        rend = GetComponent<Renderer>();
-        if (rend == null)
+        GetRenderers();
+    }
+
+    public void GetRenderers()
+    {
+        if (flashOnlyRootRenderer)
         {
-            rend = GetComponentInChildren<Renderer>();
+            var single = GetComponent<Renderer>();
+            if (single == null) single = GetComponentInChildren<Renderer>();
+            renderers = single != null ? new[] { single } : System.Array.Empty<Renderer>();
+        }
+        else
+        {
+            renderers = GetComponentsInChildren<Renderer>(true);
         }
 
-        if (rend != null && original != null)
+        originalMaterials = new Material[renderers.Length][];
+        for (int i = 0; i < renderers.Length; i++)
         {
-            rend.material = original;
+            originalMaterials[i] = renderers[i].sharedMaterials;
         }
     }
 
@@ -34,6 +47,9 @@ public class TargetFlash : MonoBehaviour
     /// </summary>
     public void Flash()
     {
+        if (!isActiveAndEnabled) return;
+        if (flash == null || renderers == null || renderers.Length == 0) return;
+
         if (flashRoutine != null)
             StopCoroutine(flashRoutine);
         flashRoutine = StartCoroutine(DoFlash());
@@ -46,11 +62,44 @@ public class TargetFlash : MonoBehaviour
     /// <returns></returns>
     private IEnumerator DoFlash()
     {
-        if (rend != null && flash != null)
-            rend.material = flash;
+        ApplyFlashMaterial();
         yield return new WaitForSeconds(flashDuration);
-        if (rend != null && original != null)
-            rend.material = original;
+        RestoreOriginalMaterials();
+        flashRoutine = null;
     }
 
+    private void ApplyFlashMaterial()
+    {
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            var r = renderers[i];
+            if (r == null) continue;
+
+            int slots = originalMaterials[i] != null ? originalMaterials[i].Length : 1;
+            var flashArr = new Material[Mathf.Max(1, slots)];
+            for (int s = 0; s < flashArr.Length; s++) flashArr[s] = flash;
+            r.sharedMaterials = flashArr;
+        }
+    }
+
+    private void RestoreOriginalMaterials()
+    {
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            var r = renderers[i];
+            if (r == null || originalMaterials[i] == null) continue;
+            r.sharedMaterials = originalMaterials[i];
+        }
+    }
+
+    void OnDisable()
+    {
+        // never leave enemy stuck on the flash 
+        if (flashRoutine != null)
+        {
+            StopCoroutine(flashRoutine);
+            flashRoutine = null;
+        }
+        RestoreOriginalMaterials();
+    }
 }
