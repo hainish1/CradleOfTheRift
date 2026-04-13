@@ -114,7 +114,7 @@ Transform:
   m_GameObject: {fileID: 3164673703855120416}
   serializedVersion: 2
   m_LocalRotation: {x: 0.720421, y: -0, z: -0, w: 0.69353706}
-  m_LocalPosition: {x: -0.000000009778887, y: -0.0188, z: 0.0141}
+  m_LocalPosition: {x: -0.000000009778887, y: -0.01899, z: 0.01916}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -130,7 +130,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 11
   m_Type: 2
-  m_Color: {r: 0.990566, g: 0.07008721, b: 0.790514, a: 1}
+  m_Color: {r: 0.07058824, g: 0.99215686, b: 0.92491686, a: 1}
   m_Intensity: 15
   m_Range: 200
   m_SpotAngle: 30
@@ -464,7 +464,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 1}
+      maxColor: {r: 0.008939743, g: 0, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -528,8 +528,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 4
-      minScalar: 2
+      scalar: 2.5
+      minScalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1720,8 +1720,8 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     speedRange: {x: 0, y: 1}
-    tilesX: 2
-    tilesY: 2
+    tilesX: 4
+    tilesY: 4
     animationType: 0
     rowIndex: 0
     cycles: 1
@@ -1948,7 +1948,7 @@ ParticleSystem:
     orbitalY:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 3.41
+      scalar: 5
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -9934,7 +9934,7 @@ Transform:
   m_GameObject: {fileID: 8571773845090298731}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0043, y: 0.0126, z: 0.0002}
+  m_LocalPosition: {x: -0.0043, y: 0.0126, z: -0.0043}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10133,7 +10133,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.8793335, g: 0, b: 1, a: 1}
+      maxColor: {r: 0, g: 0.13914871, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -10197,7 +10197,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 9.21
+      scalar: 6.59
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -11389,8 +11389,8 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     speedRange: {x: 0, y: 1}
-    tilesX: 2
-    tilesY: 2
+    tilesX: 4
+    tilesY: 4
     animationType: 0
     rowIndex: 0
     cycles: 1
@@ -14715,7 +14715,7 @@ ParticleSystemRenderer:
   m_MeshDistribution: 0
   m_SortMode: 0
   m_MinParticleSize: 0
-  m_MaxParticleSize: 0.5
+  m_MaxParticleSize: 5
   m_CameraVelocityScale: 0
   m_VelocityScale: 0
   m_LengthScale: 2
