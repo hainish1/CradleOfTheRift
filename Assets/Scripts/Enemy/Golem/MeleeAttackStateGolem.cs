@@ -41,6 +41,7 @@ public class MeleeAttackStateGolem : EnemyState
         {
             enemyGolem.MeleeSlamAttack();
             hasAttacked = true;
+            enemyGolem.golemAnim.SetTrigger("AttackMelee");
         }
 
         // Leave the state when the full animation time is over

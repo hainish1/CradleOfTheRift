@@ -213,13 +213,14 @@ MonoBehaviour:
   bulletImpactFX: {fileID: 8296457393497080562, guid: 83ff99043eb56d54099c28f25d33f0ab, type: 3}
   trail: {fileID: -8502030724956538082}
   lifeTime: 2
-  gravity: 29.43
+  gravity: 58.86
   hitForce: 5
   knockBackImpulse: 8
   hitMask:
     serializedVersion: 2
     m_Bits: 3281
   rb: {fileID: 729833330588080243}
+  _shockwavePrefab: {fileID: 4131433943479025492, guid: 5b3b04d49bcb61d468d3cf2892382e68, type: 3}
   _projectileShockwaveDamage: 20
   _projectileShockwaveRadius: 20.9
   _projectileShockwaveKnockback: 250
