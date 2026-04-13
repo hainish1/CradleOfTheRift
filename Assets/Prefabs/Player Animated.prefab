@@ -533,7 +533,6 @@ Transform:
   - {fileID: 3458352867005651776}
   - {fileID: 1043042516107467135}
   - {fileID: 7962251389720287771}
-  - {fileID: 1876586932095379834}
   - {fileID: 3222700164973113527}
   - {fileID: 7626462467039816435}
   - {fileID: 3777271165567001104}
@@ -678,7 +677,7 @@ MonoBehaviour:
   _spearModel: {fileID: 8163328970537505730}
   _axeModel: {fileID: 27400618955005024}
   _maceModel: {fileID: 2406224740006013047}
-  HeldWeapon: 0
+  HeldWeapon: 3
 --- !u!114 &146141417271177862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -771,15 +770,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adce49a8bae205c4d823cf38470bc93c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shockwaveEffectSphere: {fileID: 6273781480912069149}
   _shockwaveCameraImpulseSource: {fileID: 4624131168979302280}
-  _cameraShakeIntensity: 1
-  _cameraShakeDropoffDistance: 100
   _playerCenter: {fileID: 8569377081838828647}
+  _shockwavePrefab: {fileID: 4131433943479025492, guid: 5b3b04d49bcb61d468d3cf2892382e68, type: 3}
   _damageableLayerMasks:
     serializedVersion: 2
     m_Bits: 7168
-  _shockEffectExpansionSpeed: 100
 --- !u!114 &1563781849266918951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1570,92 +1566,6 @@ MonoBehaviour:
     m_Bits: 3799
   playerRoot: {fileID: 2692208781826445233}
   aimTargetManager: {fileID: 0}
---- !u!1 &6273781480912069149
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1876586932095379834}
-  - component: {fileID: 1582797670073680497}
-  - component: {fileID: 74043512825136077}
-  m_Layer: 8
-  m_Name: Shockwave Effect
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1876586932095379834
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6273781480912069149}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2692208781826445233}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &1582797670073680497
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6273781480912069149}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &74043512825136077
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6273781480912069149}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 16d010f2864743f4eaad128488432604, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &8572879440829153071
 GameObject:
   m_ObjectHideFlags: 0
