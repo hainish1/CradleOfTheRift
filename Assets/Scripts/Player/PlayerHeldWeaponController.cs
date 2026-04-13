@@ -35,6 +35,7 @@ public class PlayerHeldWeaponController : MonoBehaviour
     /// <param name="weaponChange"> The weapon to change to. </param>
     public void ChangeWeapon(HeldWeaponType weaponChange)
     {
+        HeldWeapon = weaponChange; // keep the serialized field in sync with runtime changes
         _playerShooter.SetProjectileType(weaponChange); // Change the throwable projectile type.
         switch (weaponChange) // Change held weapon model to the corresponding type.
         {

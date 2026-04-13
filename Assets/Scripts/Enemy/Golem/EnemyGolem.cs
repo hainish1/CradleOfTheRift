@@ -9,6 +9,9 @@ using UnityEngine.AI;
 /// </summary>
 public class EnemyGolem : Enemy
 {
+    [Header("Animator")]
+    public Animator golemAnim;
+
     [Header("Movement and Range")]
     public float chaseSpeed = 10f;
     public float shootingRange = 60f;

@@ -9,6 +9,10 @@ using UnityEngine.AI;
 /// </summary>
 public class EnemyMelee : Enemy
 {
+    [Header("Elemental")]
+    [Tooltip("Select element, visuals, damage multiplier and DOT setting")]
+    public ElementalProfile elementalProfile = new ElementalProfile();
+
     [Header("Melee related stuff")]
     public float chaseSpeed = 4f;
     public float attackRange = 1.2f;
@@ -25,8 +29,8 @@ public class EnemyMelee : Enemy
     [Header("Slam attack")]
     public float slamDamage = 1;
     public float windupTime = .15f;
-    public float chargeSpeed = 12f;
-    public float chargeTime = .18f;
+    // public float chargeSpeed = 12f;  
+    // public float chargeTime = .18f;   
 
     [Header("AttackHitbox")]
     [SerializeField] private EnemyMeleeHitbox hitbox;
@@ -36,7 +40,7 @@ public class EnemyMelee : Enemy
     public float leapAttackRange = 5f; // distance to start leap
     public float minAttackDistance = 3f; // min safe dist
     public float leapHeight = 1f; // vertical arc height above start point
-    public float leapDuration = .5f; // time for leap
+    // public float leapDuration = .5f; 
     public float leapOverShootDistance = 4f; // How far past the player to jump
     public float gravityScale = 4f;
     public float startHeightAboveGround = .05f;
@@ -86,7 +90,8 @@ public class EnemyMelee : Enemy
 
         // Debug.Log($"onMesh={agent.isOnNavMesh} onLink={agent.isOnOffMeshLink} posY={transform.position.y}");
 
-        agent.speed = chaseSpeed;
+        agent.speed = chaseSpeed * (elementalProfile != null ? elementalProfile.speedMultiplier : 1f);
+        ApplyElementalVisuals();
 
         var kb = GetComponent<AgentKnockBack>();
         if (kb != null) kb.manageAgentPosition = true; // just in case yk
@@ -131,7 +136,9 @@ public class EnemyMelee : Enemy
             var damageable = pm.GetComponentInParent<IDamageable>();
             if (damageable != null && !damageable.IsDead)
             {
-                damageable.TakeDamage(slamDamage);
+                float mult = elementalProfile != null ? elementalProfile.damageMultiplier : 1f;
+                damageable.TakeDamage(slamDamage * mult);
+                ElementalEffects.TryApplyDOT(this, elementalProfile, damageable);
             }
         }
         hitAppliedThisAttack = true;
@@ -301,6 +308,18 @@ public class EnemyMelee : Enemy
     /// </summary>
     /// <returns></returns>
     public float GetBaseDamage() => slamDamage;
+
+    // enable body VFX for emelental type
+    public void ApplyElementalVisuals()
+    {
+        if (elementalProfile == null) return;
+        if (elementalProfile.modelVariant != null && !elementalProfile.modelVariant.activeSelf)
+            elementalProfile.modelVariant.SetActive(true);
+        if (elementalProfile.bodyVFX != null && !elementalProfile.bodyVFX.activeSelf)
+            elementalProfile.bodyVFX.SetActive(true);
+    }
+
+    public ElementalType GetElementalType() => elementalProfile != null ? elementalProfile.type : ElementalType.None;
 
 
 
