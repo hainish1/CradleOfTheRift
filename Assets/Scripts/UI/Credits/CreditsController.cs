@@ -121,7 +121,7 @@ public class CreditsController : MonoBehaviour
 
         float panelHeight = _scrollView.layout.height;
         _container.style.paddingTop = panelHeight;
-        // _container.style.paddingBottom = panelHeight; // Have it keep scrolling past the logo 
+        _container.style.paddingBottom = panelHeight; // Have it keep scrolling past the logo 
 
         SpawnStars();
         StartCoroutine(StartScrollNextFrame());
