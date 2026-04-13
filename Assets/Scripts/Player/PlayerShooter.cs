@@ -30,6 +30,7 @@ public class PlayerShooter : MonoBehaviour
     private PlayerMovement playerMovement;
     private PlayerHeldWeaponController playerHeldWeaponController;
     private PlayerMeleeControllerV2 meleeController;
+    private PlayerShockwaveController _shockwaveController;
 
     [Header("AimReferences")] [Space]
     [SerializeField] private PlayerAimController aim; // Player AIming core
@@ -95,6 +96,7 @@ public class PlayerShooter : MonoBehaviour
         playerMovement = GetComponentInParent<PlayerMovement>();
         playerHeldWeaponController = GetComponentInParent<PlayerHeldWeaponController>();
         meleeController = GetComponentInParent<PlayerMeleeControllerV2>();
+        _shockwaveController = GetComponentInParent<PlayerShockwaveController>();
         shooterAnim = GetComponent<Animator>();
         audioController = GetComponentInParent<PlayerAudioController>();
 
@@ -270,7 +272,10 @@ public class PlayerShooter : MonoBehaviour
     private void TryToWeaponThrow(bool force = false)
     {
         if (!aim || !muzzle || !currProjectilePrefab || currFireCharges <= 0) return;
-        if (playerMovement.IsDashing || meleeController.IsAttacking) return; // Do not allow throws while dashing or attacking.
+        
+        // Do not allow throws while dashing, attacking or casting shockwave.
+        if (playerMovement.IsDashing || meleeController.IsAttacking || _shockwaveController.IsCastingShockwave) return;
+        
         if (!force) // Force throw regardless of cooldown.
             if (Time.time < nextFireTime) return;
 

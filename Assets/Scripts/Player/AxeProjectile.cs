@@ -49,7 +49,6 @@ public class AxeProjectile : Projectile
         if (_isExpired) return; // Return early if projectile is expired.
         if (!_throwerCenter) DestroyAxe(); // Destroy projectile if player died.
 
-        age += Time.fixedDeltaTime;
         if (age >= lifeTime) // Time out projectile if it did not return quickly enough.
         {
             _isExpired = true;
@@ -70,40 +69,41 @@ public class AxeProjectile : Projectile
 
         // Destroy projectile when thrower is reached.
         if (_isReturning && Vector3.Distance(transform.position, _currTargetPosition) < 0.1) DestroyAxe();
+
+        age += Time.fixedDeltaTime;
     }
 
     public override void Update() {} // Override Update logic.
 
-    public override void OnCollisionEnter(Collision collision) {} // Override OnCollisionEnter logic.
-
-    void OnTriggerEnter(Collider other)
+    public override void OnCollisionEnter(Collision collision)
     {
         if (_isExpired) return; // Do nothing if projectile is expired.
 
-        int collisionLayerResult = (1 << other.gameObject.layer) & hitMask;
+        int collisionLayerResult = (1 << collision.gameObject.layer) & hitMask;
         if (collisionLayerResult == 0) return; // Do nothing if collision layer is not of a valid type.
 
         CreateImpactFX();
 
-        // Get collision point and surface normal.
-        Vector3 hitPoint = other.ClosestPoint(transform.position);
-        Vector3 surfaceNormal = (transform.position - hitPoint).normalized;
+        // Get contact point and surface normal.
+        ContactPoint contact = collision.GetContact(0);
+        Vector3 hitPoint = contact.point;
+        Vector3 surfaceNormal = contact.normal;
 
-        var enemyScript = other.GetComponentInParent<Enemy>();
+        var enemyScript = collision.gameObject.GetComponentInParent<Enemy>();
         if (enemyScript)
         {
-            ApplyEnemyHitCollider(other, enemyScript, passingThrough: true); // Damage enemy and pass through it.
+            ApplyEnemyHit(collision, enemyScript, passingThrough: true); // Damage enemy and pass through it.
             if (selfCollider) // Temporarily ignore future collisions with all colliders of the enemy that was hit.
             {
                 Collider[] enemyColliders = enemyScript.GetComponentsInChildren<Collider>();
                 foreach (Collider col in enemyColliders)
                 {
                     Physics.IgnoreCollision(selfCollider, col, true);
-                    StartCoroutine(ReactivateEnemyColliders(enemyColliders, other.gameObject));
+                    StartCoroutine(ReactivateEnemyColliders(enemyColliders, collision.gameObject));
                 }
             }
         }
-        else if (!other.isTrigger) // Bounce if other collider does not belong to an enemy.
+        else // Bounce if other collider does not belong to an enemy.
         {
             Vector3 reflectedDirection = Vector3.Reflect(transform.forward, surfaceNormal);
             Vector3 offset = 0.1f * surfaceNormal; // Offset projectile away from surface to prevent a double-trigger.
@@ -113,14 +113,60 @@ public class AxeProjectile : Projectile
             rb.position += offset;
             InitializeReturn(); // Start returning immediately upon bounce.
         }
-        
-        Rigidbody otherRigidbody = other.attachedRigidbody;
-        if (otherRigidbody) // Apply kockback force to the object collided with.
+
+        if (collision.rigidbody) // Apply kockback force to the object collided with.
         {
             Vector3 knockback = hitForce * transform.forward;
-            otherRigidbody.AddForceAtPosition(knockback, hitPoint, ForceMode.Impulse);
+            collision.rigidbody.AddForceAtPosition(knockback, hitPoint, ForceMode.Impulse);
         }
+
     }
+
+    //void OnTriggerEnter(Collider other)
+    //{
+    //    if (_isExpired) return; // Do nothing if projectile is expired.
+
+    //    int collisionLayerResult = (1 << other.gameObject.layer) & hitMask;
+    //    if (collisionLayerResult == 0) return; // Do nothing if collision layer is not of a valid type.
+
+    //    CreateImpactFX();
+
+    //    // Get collision point and surface normal.
+    //    Vector3 hitPoint = other.ClosestPoint(transform.position);
+    //    Vector3 surfaceNormal = (transform.position - hitPoint).normalized;
+
+    //    var enemyScript = other.GetComponentInParent<Enemy>();
+    //    if (enemyScript)
+    //    {
+    //        ApplyEnemyHitCollider(other, enemyScript, passingThrough: true); // Damage enemy and pass through it.
+    //        if (selfCollider) // Temporarily ignore future collisions with all colliders of the enemy that was hit.
+    //        {
+    //            Collider[] enemyColliders = enemyScript.GetComponentsInChildren<Collider>();
+    //            foreach (Collider col in enemyColliders)
+    //            {
+    //                Physics.IgnoreCollision(selfCollider, col, true);
+    //                StartCoroutine(ReactivateEnemyColliders(enemyColliders, other.gameObject));
+    //            }
+    //        }
+    //    }
+    //    else if (!other.isTrigger) // Bounce if other collider does not belong to an enemy and is not a trigger.
+    //    {
+    //        Vector3 reflectedDirection = Vector3.Reflect(transform.forward, surfaceNormal);
+    //        Vector3 offset = 0.1f * surfaceNormal; // Offset projectile away from surface to prevent a double-trigger.
+    //        transform.forward = reflectedDirection;
+    //        transform.position += offset;
+    //        rb.rotation = Quaternion.LookRotation(reflectedDirection);
+    //        rb.position += offset;
+    //        InitializeReturn(); // Start returning immediately upon bounce.
+    //    }
+        
+    //    Rigidbody otherRigidbody = other.attachedRigidbody;
+    //    if (otherRigidbody) // Apply kockback force to the object collided with.
+    //    {
+    //        Vector3 knockback = hitForce * transform.forward;
+    //        otherRigidbody.AddForceAtPosition(knockback, hitPoint, ForceMode.Impulse);
+    //    }
+    //}
 
     /// <summary>
     ///   <para>

@@ -35,6 +35,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [Tooltip("Controller for player aim.")] private PlayerAimController _playerAimController;
     private PlayerMovement _playerMovement;
     private PlayerShooter _playerShooter;
+    private PlayerShockwaveController _shockwaveController;
     private Entity _playerEntity;
 
     // Animation Parameters
@@ -69,7 +70,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private Vector3 _prevHitCapsuleCenterPointTemp;
     private RaycastHit[] _objectsHitThisCast = new RaycastHit[32];
     private HashSet<GameObject> _objectsHitThisAttack = new();
-    private bool _prevHitCapsuleTempPointsInitialized = false;
+    private bool _prevHitCapsuleTempPointsInitialized;
 
     // Attack Parameters
 
@@ -80,10 +81,10 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [Tooltip("Knockback force of attacks.")] private float _knockbackForce;
     [SerializeField]
     [Tooltip("The buffer time for inputting attack combos in seconds.")] private float _comboInputBuffer;
-    public bool IsAttacking { get; private set; } = false;
-    private bool _isRegistering = false;
+    public bool IsAttacking { get; private set; }
+    private bool _isRegistering;
     public bool CanAttack { get; set; } = true;
-    private bool _comboInputted = false;
+    private bool _comboInputted;
     private int _maxComboCount;
     private int _currComboCount = 0;
     public event Action<int> OnMeleeComboAttack; /// <summary> Fired when a combo attack starts. Argument: combo index (1=first, 2=second/finisher). </summary>
@@ -104,6 +105,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _playerEntity = GetComponentInParent<Entity>();
         _playerMovement = GetComponentInParent<PlayerMovement>();
         _playerShooter = GetComponentInParent<PlayerShooter>();
+        _shockwaveController = GetComponentInParent<PlayerShockwaveController>();
 
         // Animation Parameters
         _weaponAnim = GetComponent<Animator>();
@@ -132,8 +134,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     void Update()
     {
-        // Do not allow attacks while dashing or throwing.
-        if (_playerMovement.IsDashing || _playerShooter.IsThrowing) return;
+        // Do not allow attacks while dashing, throwing or casting shockwave.
+        if (_playerMovement.IsDashing || _playerShooter.IsThrowing || _shockwaveController.IsCastingShockwave) return;
 
         RecalculateAnimationSpeed();
 
