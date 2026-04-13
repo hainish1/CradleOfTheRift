@@ -481,11 +481,9 @@ public class CreditsController : MonoBehaviour
         Color trunkDark  = new Color(0.08f, 0.05f, 0.18f, 1f);
         Color trunkMid   = new Color(0.13f, 0.09f, 0.26f, 1f);
 
-        Color sapVein    = isRight ? new Color(0.50f, 0.90f, 1.00f, 0.80f) : new Color(0.80f, 0.60f, 1.00f, 0.80f);
-
-        Color canopyDeep = isRight ? new Color(0.18f, 0.38f, 0.62f, 0.95f) : new Color(0.32f, 0.22f, 0.62f, 0.95f);
-        Color canopyMid  = isRight ? new Color(0.30f, 0.58f, 0.82f, 0.92f) : new Color(0.50f, 0.35f, 0.80f, 0.92f);
-        Color canopyGlow = isRight ? new Color(0.65f, 0.88f, 1.00f, 0.88f) : new Color(0.80f, 0.68f, 1.00f, 0.88f);
+        Color canopyDeep = isRight ? new Color(0.28f, 0.52f, 0.80f, 0.95f) : new Color(0.48f, 0.34f, 0.80f, 0.95f);
+        Color canopyMid  = isRight ? new Color(0.42f, 0.68f, 0.92f, 0.92f) : new Color(0.62f, 0.48f, 0.90f, 0.92f);
+        Color canopyGlow = isRight ? new Color(0.65f, 0.88f, 1.00f, 0.88f) : new Color(0.82f, 0.70f, 1.00f, 0.88f);
         Color canopyTip  = isRight ? new Color(0.85f, 0.97f, 1.00f, 0.70f) : new Color(0.92f, 0.85f, 1.00f, 0.70f);
 
         Color orbGold    = new Color(1.00f, 0.95f, 0.60f, 1f);
@@ -531,43 +529,42 @@ public class CreditsController : MonoBehaviour
         DrawCrystal(new Vector2(cx -  8f, by),  4f, 10f,  1f, crystalA, crystalB);
         DrawCrystal(new Vector2(cx + 10f, by),  4f, 12f, -1f, crystalB, crystalA);
 
-        p.fillColor = new Color(crystalA.r, crystalA.g, crystalA.b, 0.20f);
-        p.BeginPath(); p.Arc(new Vector2(cx - 28f, by - 2f), 18f, 0f, 360f); p.Fill();
-        p.BeginPath(); p.Arc(new Vector2(cx + 32f, by - 2f), 15f, 0f, 360f); p.Fill();
+        // Flat perspective oval glows at crystal bases
+        void DrawOvalGlow(Vector2 centre, float rx, float ry, Color c)
+        {
+            p.fillColor = c;
+            p.BeginPath();
+            p.MoveTo(new Vector2(centre.x - rx, centre.y));
+            p.BezierCurveTo(new Vector2(centre.x - rx, centre.y - ry),
+                            new Vector2(centre.x + rx, centre.y - ry),
+                            new Vector2(centre.x + rx, centre.y));
+            p.BezierCurveTo(new Vector2(centre.x + rx, centre.y + ry),
+                            new Vector2(centre.x - rx, centre.y + ry),
+                            new Vector2(centre.x - rx, centre.y));
+            p.Fill();
+        }
+        Color glowCol = new Color(crystalA.r, crystalA.g, crystalA.b, 0.22f);
+        DrawOvalGlow(new Vector2(cx - 26f, by - 1f), 22f,  6f, glowCol);
+        DrawOvalGlow(new Vector2(cx + 30f, by - 1f), 18f,  5f, glowCol);
 
-        // ── 3. Ancient trunk (two-tone, wider base) ───────────────────────────
+        // ── 3. Trunk — tapers naturally into canopy base ─────────────────────
         p.fillColor = trunkDark;
         p.BeginPath();
-        p.MoveTo(new Vector2(cx - 20f, by));
-        p.BezierCurveTo(new Vector2(cx - 10f, by - 22f), new Vector2(cx - 5f, by - 55f), new Vector2(cx - 3f, by - 78f));
-        p.BezierCurveTo(new Vector2(cx + 5f,  by - 55f), new Vector2(cx + 10f, by - 22f), new Vector2(cx + 20f, by));
+        p.MoveTo(new Vector2(cx - 18f, by));
+        p.BezierCurveTo(new Vector2(cx - 10f, by - 40f), new Vector2(cx - 6f, by - 80f), new Vector2(cx - 5f, by - 110f));
+        p.LineTo(new Vector2(cx + 5f, by - 110f));
+        p.BezierCurveTo(new Vector2(cx + 6f, by - 80f), new Vector2(cx + 10f, by - 40f), new Vector2(cx + 18f, by));
         p.Fill();
 
         p.fillColor = trunkMid;
         p.BeginPath();
-        p.MoveTo(new Vector2(cx - 7f, by - 5f));
-        p.BezierCurveTo(new Vector2(cx - 3f, by - 30f), new Vector2(cx - 2f, by - 55f), new Vector2(cx, by - 75f));
-        p.BezierCurveTo(new Vector2(cx + 3f, by - 55f), new Vector2(cx + 3f, by - 30f), new Vector2(cx + 7f, by - 5f));
+        p.MoveTo(new Vector2(cx - 6f, by - 5f));
+        p.BezierCurveTo(new Vector2(cx - 3f, by - 40f), new Vector2(cx - 2f, by - 80f), new Vector2(cx - 2f, by - 108f));
+        p.LineTo(new Vector2(cx + 2f, by - 108f));
+        p.BezierCurveTo(new Vector2(cx + 2f, by - 80f), new Vector2(cx + 3f, by - 40f), new Vector2(cx + 6f, by - 5f));
         p.Fill();
 
-        // ── 4. Glowing sap veins ──────────────────────────────────────────────
-        p.lineWidth = 1.2f;
-        p.strokeColor = sapVein;
-        p.BeginPath();
-        p.MoveTo(new Vector2(cx - 1f, by - 2f));
-        p.BezierCurveTo(new Vector2(cx + 5f, by - 22f), new Vector2(cx - 6f, by - 45f), new Vector2(cx + 2f, by - 68f));
-        p.Stroke();
-        p.lineWidth = 0.8f;
-        p.BeginPath();
-        p.MoveTo(new Vector2(cx - 3f, by - 25f));
-        p.BezierCurveTo(new Vector2(cx - 10f, by - 32f), new Vector2(cx - 16f, by - 38f), new Vector2(cx - 20f, by - 44f));
-        p.Stroke();
-        p.BeginPath();
-        p.MoveTo(new Vector2(cx + 3f, by - 30f));
-        p.BezierCurveTo(new Vector2(cx + 10f, by - 37f), new Vector2(cx + 16f, by - 42f), new Vector2(cx + 19f, by - 48f));
-        p.Stroke();
-
-        // ── 5. Branches (4 total) ─────────────────────────────────────────────
+        // ── 4. Branches (4 total) ─────────────────────────────────────────────
         p.lineWidth = 3.5f;
         p.strokeColor = trunkDark;
         p.BeginPath();
