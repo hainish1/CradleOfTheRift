@@ -46,6 +46,7 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController _characterController;
     private PlayerMeleeControllerV2 _meleeController;
     private PlayerShooter _playerShooter;
+    private PlayerShockwaveController _shockwaveController;
     private float _playerHalfHeight;
     private float _playerRadius;
 
@@ -196,6 +197,7 @@ public class PlayerMovement : MonoBehaviour
         _characterController = GetComponent<CharacterController>();
         _meleeController = GetComponentInChildren<PlayerMeleeControllerV2>();
         _playerShooter = GetComponentInChildren<PlayerShooter>();
+        _shockwaveController = GetComponent<PlayerShockwaveController>();
         _playerAnim = _playerModel.GetComponent<Animator>();
         _playerHalfHeight = _characterController.height / 2;
         _playerRadius = _characterController.radius;
@@ -516,6 +518,8 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void MoveConditions()
     {
+        if (_shockwaveController.IsCastingShockwave) return; // Do not allow movement while casting a shockwave.
+
         // Trigger corresponding move animations.
         Vector2 inputDirection = _moveActions.ReadValue<Vector2>().normalized;
         float moveBlendX = inputDirection.x * (_lateralVelocityVector.magnitude / _moveMaxSpeed);
@@ -750,7 +754,7 @@ public class PlayerMovement : MonoBehaviour
         if (_kbDashLockTimer > 0) return;
 
         // Do not allow dashes while attacking or throwing.
-        if (_meleeController.IsAttacking || _playerShooter.IsThrowing) return;
+        if (_meleeController.IsAttacking || _playerShooter.IsThrowing || _shockwaveController.IsCastingShockwave) return;
 
         if (_currDashCharges != 0 && !IsDashing)
         {

@@ -69,7 +69,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private Vector3 _prevHitCapsuleCenterPointTemp;
     private RaycastHit[] _objectsHitThisCast = new RaycastHit[32];
     private HashSet<GameObject> _objectsHitThisAttack = new();
-    private bool _prevHitCapsuleTempPointsInitialized = false;
+    private bool _prevHitCapsuleTempPointsInitialized;
 
     // Attack Parameters
 
@@ -80,10 +80,10 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [Tooltip("Knockback force of attacks.")] private float _knockbackForce;
     [SerializeField]
     [Tooltip("The buffer time for inputting attack combos in seconds.")] private float _comboInputBuffer;
-    public bool IsAttacking { get; private set; } = false;
-    private bool _isRegistering = false;
+    public bool IsAttacking { get; private set; }
+    private bool _isRegistering;
     public bool CanAttack { get; set; } = true;
-    private bool _comboInputted = false;
+    private bool _comboInputted;
     private int _maxComboCount;
     private int _currComboCount = 0;
     public event Action<int> OnMeleeComboAttack; /// <summary> Fired when a combo attack starts. Argument: combo index (1=first, 2=second/finisher). </summary>

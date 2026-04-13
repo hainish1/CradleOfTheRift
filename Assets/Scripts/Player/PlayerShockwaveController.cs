@@ -23,6 +23,7 @@ public class PlayerShockwaveController : MonoBehaviour
     [Tooltip("The camera impulse source to shake.")] public CinemachineImpulseSource _shockwaveCameraImpulseSource;
     [SerializeField]
     [Tooltip("A transform at the center of the player.")] private Transform _playerCenter;
+    public bool IsCastingShockwave { get; private set; }
     private Entity _playerEntity;
     private Animator _playerAnim;
 
@@ -34,9 +35,13 @@ public class PlayerShockwaveController : MonoBehaviour
     private float ShockwaveCooldown => _playerEntity.Stats.ShockwaveCooldown;
     [Header("Shockwave Parameters")] [Space]
     [SerializeField] private GameObject _shockwavePrefab;
+    [SerializeField] private AnimationClip _shockwaveAnim;
+    [SerializeField] private float _shockwaveAnimSpeedMultiplier;
     [SerializeField]
     [Tooltip("Layers that will be treated as damageable.")] private LayerMask _damageableLayerMasks;
-    private float _shockwaveTimer;
+    private float _shockwaveDuration;
+    private float _shockwaveAnimTimer;
+    private float _shockwaveCooldownTimer;
     public static event System.Action OnShockwaveUsed;
 
     void Awake()
@@ -60,23 +65,33 @@ public class PlayerShockwaveController : MonoBehaviour
 
     void Start()
     {
-        _shockwaveTimer = ShockwaveCooldown;
+        _shockwaveDuration = _shockwaveAnim.length / _shockwaveAnimSpeedMultiplier;
+        _playerAnim.SetFloat("ShockwaveAnimSpeedMultiplier", _shockwaveAnimSpeedMultiplier);
+        _shockwaveCooldownTimer = ShockwaveCooldown;
     }
 
     void Update()
     {
-        if (_shockwaveTimer < ShockwaveCooldown) _shockwaveTimer += Time.deltaTime;
-
         // Perform a player shockwave when inputted.
-        if (_shockwaveActions.WasPressedThisFrame() && _shockwaveTimer >= ShockwaveCooldown)
+        if (_shockwaveActions.WasPressedThisFrame() && _shockwaveCooldownTimer >= ShockwaveCooldown)
         {
-            _shockwaveTimer = 0;
+            IsCastingShockwave = true;
+            _shockwaveAnimTimer = 0;
+            _shockwaveCooldownTimer = 0;
             OnShockwaveUsed?.Invoke();
             _playerAnim.SetTrigger("Shockwave");
             GameObject shockwave = Instantiate(_shockwavePrefab, _playerCenter.position, Quaternion.identity);
             Shockwave shockwaveScript = shockwave.GetComponent<Shockwave>();
             shockwaveScript.Init(_playerCenter.position, _damageableLayerMasks, ShockwaveDamage, ShockwaveKnockback, ShockwaveRadius, _playerEntity);
         }
+
+        if (_shockwaveAnimTimer < _shockwaveDuration)
+        {
+            _shockwaveAnimTimer += Time.deltaTime;
+            if (_shockwaveAnimTimer >= _shockwaveDuration) IsCastingShockwave = false; // Set to false after shockwave duration is reached.
+        }
+
+        if (_shockwaveCooldownTimer < ShockwaveCooldown) _shockwaveCooldownTimer += Time.deltaTime;
     }
 
     /// <summary>
