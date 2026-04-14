@@ -141,9 +141,23 @@
 							</ReferenceList>
 						</Action>
 						<Action Name="" ID="{B6C661D7-6A71-4908-B07B-2DA129872B66}" ShortID="779446078">
+							<PropertyList>
+								<Property Name="Delay" Type="Real64">
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{13120E0A-D258-4004-A83F-32B9F97DA9DC}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Max" Type="Real64" Value="0.8"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+							</PropertyList>
 							<ReferenceList>
 								<Reference Name="Target">
-									<ObjectRef Name="MobSpawn_Digital" ID="{171FFD86-F68C-41ED-8428-D7224585A7B8}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+									<ObjectRef Name="MobSpawn_Digital" ID="{2909056E-C230-4507-8315-B68B45362F01}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
 								</Reference>
 							</ReferenceList>
 						</Action>
