@@ -9,9 +9,6 @@ using UnityEngine.AI;
 /// </summary>
 public class EnemyGolem : Enemy
 {
-    [Header("Animator")]
-    public Animator golemAnim;
-
     [Header("Movement and Range")]
     public float chaseSpeed = 10f;
     public float shootingRange = 60f;
@@ -63,6 +60,9 @@ public class EnemyGolem : Enemy
     RangeAttackStateGolem rangeAttack;
     MeleeAttackStateGolem meleeAttack;
     RecoveryStateGolem recovery;
+
+    public Animator golemAnim;
+
     private void OnEnable()
     {
         EnemyRegistry.RegisterGolem(this);
@@ -88,6 +88,7 @@ public class EnemyGolem : Enemy
         rangeAttack = new RangeAttackStateGolem(this, stateMachine);
         meleeAttack = new MeleeAttackStateGolem(this, stateMachine);
         recovery = new RecoveryStateGolem(this, stateMachine);
+        golemAnim = GetComponentInChildren<Animator>();
 
         stateMachine.Initialize(idle);
     }

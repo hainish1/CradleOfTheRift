@@ -41,6 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 984479434153791223}
   - component: {fileID: 8068391143491128734}
+  - component: {fileID: 2249725770262891461}
   - component: {fileID: 201720854443848597}
   - component: {fileID: 6554202718004137176}
   - component: {fileID: 7738743892704107704}
@@ -95,6 +96,27 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!65 &2249725770262891461
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6223163396465808229}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.75, y: 0.87, z: 0.3}
+  m_Center: {x: 0, y: 0.435, z: -0.01}
 --- !u!114 &201720854443848597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,7 +140,6 @@ MonoBehaviour:
   gizosOn: 1
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
   nextAttackAllowed: 0.5
-  golemAnim: {fileID: 0}
   chaseSpeed: 8
   shootingRange: 100
   minAttackDistance: 8
@@ -150,6 +171,7 @@ MonoBehaviour:
     idInternal: 0
     valueGuidInternal: 
     WwiseObjectReference: {fileID: 0}
+  golemAnim: {fileID: 0}
 --- !u!114 &6554202718004137176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,10 +242,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 200
+  maxHealth: 1000
   cleanupDelay: 0
-  baseHealth: 200
-  xpReward: 50
+  baseHealth: 1000
+  xpReward: 10
   damageVisuals: {fileID: 2533069923019125397}
   deathVFX: {fileID: 676540690991785363, guid: ceee2cd6e8010af4bbcec230578f8910, type: 3}
   deathVFXSpawnPoint: {fileID: 0}
@@ -589,10 +611,40 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8068391206865123432}
   m_SourcePrefab: {fileID: 100100000, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
 --- !u!4 &2545160238402103216 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
   m_PrefabInstance: {fileID: 2655013533814259803}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2889597286417415434 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
+  m_PrefabInstance: {fileID: 2655013533814259803}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &8068391206865123432
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2889597286417415434}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e730b4395810a9d4e8f2a0f26d68cb92, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
