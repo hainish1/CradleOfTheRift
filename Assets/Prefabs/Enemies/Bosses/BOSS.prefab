@@ -809,9 +809,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b7684082c124f45893380d545b25c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  original: {fileID: 2100000, guid: e26cb0109185dc74b8d6bbcc8692268f, type: 2}
   flash: {fileID: 2100000, guid: 679327a50d72c694bab0b63b6b2baec1, type: 2}
   flashDuration: 0.1
+  flashOnlyRootRenderer: 0
 --- !u!114 &2190310424032612533
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -891,7 +891,7 @@ MonoBehaviour:
   maxHealth: 600
   cleanupDelay: 0
   baseHealth: 600
-  xpReward: 50
+  xpReward: 200
   damageVisuals: {fileID: 6878723207774671312}
   deathVFX: {fileID: 676540690991785363, guid: 6c283665d1ae6ce499f23cad2dd44136, type: 3}
   deathVFXSpawnPoint: {fileID: 0}
@@ -926,6 +926,8 @@ MonoBehaviour:
   riseSpeed: 1.5
   takeDamageVFXPrefab: {fileID: 4658278565933542678, guid: 9496ea5f2e79fc8459fb54aabe2a813f, type: 3}
   damageVfxAttachPoint: {fileID: 0}
+  textHeightOffset: 2
+  textSpreadRadius: 0.4
 --- !u!114 &5391762884062940174
 MonoBehaviour:
   m_ObjectHideFlags: 0
