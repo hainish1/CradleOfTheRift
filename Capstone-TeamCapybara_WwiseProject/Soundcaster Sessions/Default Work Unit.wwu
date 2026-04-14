@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WwiseDocument Type="WorkUnit" ID="{5092A1CE-C3B1-4596-8381-33D0CC5C7B24}" SchemaVersion="133">
 	<SoundcasterSessions>
-		<WorkUnit Name="Default Work Unit" ID="{5092A1CE-C3B1-4596-8381-33D0CC5C7B24}" PersistMode="Standalone"/>
+		<WorkUnit Name="Default Work Unit" ID="{5092A1CE-C3B1-4596-8381-33D0CC5C7B24}" PersistMode="Standalone">
+			<ChildrenList>
+				<SoundcasterSession Name="Mixing Session" ID="{D7163818-CCC0-4E79-B0B0-8F78CC4BC657}">
+					<ModuleList>
+						<Module>
+							<ObjectRef Name="Cave" ID="{8B651C66-9B3C-4270-9F3B-A08D4250E7ED}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
+							<Position X="0" Y="0"/>
+						</Module>
+						<Module>
+							<ObjectRef Name="Forest" ID="{99446370-AABF-44F5-83E2-73DF1D8EB86A}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
+							<Position X="1" Y="0"/>
+						</Module>
+					</ModuleList>
+				</SoundcasterSession>
+			</ChildrenList>
+		</WorkUnit>
 	</SoundcasterSessions>
 </WwiseDocument>
