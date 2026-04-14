@@ -35,6 +35,7 @@ public class EnemySpawnerUI : MonoBehaviour
             this.spawner.CurrentMaxEnemyCapChanged += OnCurrentMaxEnemyCapChanged;
             this.spawner.CurrentWaveChanged += OnCurrentWaveChanged;
             this.spawner.DevModeChanged += OnDevModeChanged;
+            this.difficultyScaler.DifficultyScaleChanged += OnDifficultyScaleChanged;
 
             OnDevModeChanged(this.spawner.IsDevModeEnabled);        
         }
@@ -46,6 +47,7 @@ public class EnemySpawnerUI : MonoBehaviour
             this.spawner_2.CurrentMaxEnemyCapChanged += OnCurrentMaxEnemyCapChanged;
             this.spawner_2.CurrentWaveChanged += OnCurrentWaveChanged;
             this.spawner_2.DevModeChanged += OnDevModeChanged;
+            this.difficultyScaler.DifficultyScaleChanged += OnDifficultyScaleChanged;
 
             OnDevModeChanged(this.spawner_2.IsDevModeEnabled);
         }
@@ -56,13 +58,9 @@ public class EnemySpawnerUI : MonoBehaviour
         }
     }
 
-    void Update()
+    private void OnDifficultyScaleChanged(float currentChange)
     {
-        if (difficultyScaler != null && difficultyScaleLabel != null)
-        {
-            float scale = difficultyScaler.GetDifficultyScale();
-            this.difficultyScaleLabel.text = $"Difficulty Scale: {scale:F2}";
-        }
+        this.difficultyScaleLabel.text = $"Difficulty Scale: {currentChange:F2}";
     }
 
     private void OnCurrentEnemyCountChanged(int currentChange) {
