@@ -112,21 +112,11 @@
     align-items: center;
 }
 
-.collab-developer {
-    font-size: 12px;
+.collab-block .game-subtitle {
     color: rgb(200, 169, 110);
-    letter-spacing: 1px;
-    -unity-text-align: middle-center;
-    margin-top: 4px;
 }
 
-.collab-note {
-    font-size: 14px;
-    color: rgb(90, 78, 122);
-    white-space: normal;
-    max-width: 400px;
-    -unity-text-align: middle-center;
-    -unity-font-style: italic;
+.collab-block .special-thanks {
     margin-top: 8px;
 }
 
