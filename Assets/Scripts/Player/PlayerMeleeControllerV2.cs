@@ -48,7 +48,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [SerializeField]
     [Tooltip("The downward pitch limit of attacks in degrees.")] private float _downwardDegreesLimit;
     [SerializeField] private List<AttackInfo> _attacks = new();
-    private Animator _weaponAnim;
+    private Animator _playerAnim;
     private float _degreesPerSecond;
     private bool _isModelHorizontal = true;
 
@@ -108,7 +108,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _shockwaveController = GetComponentInParent<PlayerShockwaveController>();
 
         // Animation Parameters
-        _weaponAnim = GetComponent<Animator>();
+        _playerAnim = GetComponent<Animator>();
         _upwardDegreesLimit = Mathf.Abs(_upwardDegreesLimit);
         _downwardDegreesLimit = -Mathf.Abs(_downwardDegreesLimit);
         _degreesPerSecond = Mathf.Deg2Rad * _attackPitchSpeed;
@@ -164,7 +164,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
             info.BufferedAttackDuration = Mathf.Clamp(info.AttackDuration - _comboInputBuffer, 0, float.MaxValue);
         }
 
-        _weaponAnim.SetFloat("AttackAnimSpeedMultiplier", currAnimationSpeed);
+        _playerAnim.SetFloat("AttackAnimSpeedMultiplier", currAnimationSpeed);
     }
 
     /// <summary>
@@ -191,7 +191,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _comboInputted = false;
         _currComboCount++;
         OnMeleeComboAttack?.Invoke(_currComboCount);
-        _weaponAnim.SetTrigger("Attack" + _currComboCount);
+        _playerAnim.SetTrigger("Attack" + _currComboCount);
 
         // For the weapon sound.
         swingSound.Post(gameObject);
@@ -235,7 +235,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
             }
 
             // Leave attack animation sequence if the combo input time window was missed.
-            _weaponAnim.SetTrigger("ComboMiss");
+            _playerAnim.SetTrigger("ComboMiss");
         }
         // Wait for full attack duration if max combo count is reached.
         else
