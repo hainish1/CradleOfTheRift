@@ -143,11 +143,6 @@ private void OnExtraction()
             // gameObject.SetActive(false);
         }
     }
-    else if (!this.isExtracting && !this.hasFinishedExtracting)
-    {
-        // Decay charge if the player leaves the zone
-        this.currentCharge = Math.Clamp(this.currentCharge - Time.deltaTime, 0, this.chargeTime);
-    }
 
     this.ChargeChanged?.Invoke(this.currentCharge);
 }
