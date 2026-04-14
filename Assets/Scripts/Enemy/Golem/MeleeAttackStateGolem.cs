@@ -9,7 +9,7 @@ public class MeleeAttackStateGolem : EnemyState
     private float stateTimer;
     private bool hasAttacked;
 
-    // Attack animation timing
+    // Temporary attack timing (replace with animation events later)
     private float totalAnimationTime = 1.0f; // How long the whole state lasts
     private float hitFrameTime = 0.5f;       // The exact moment the punch lands
 
