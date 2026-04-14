@@ -38,6 +38,14 @@ public class EnemyGolem : Enemy
     public float turnSpeedWhileAiming = 8f;
     public LayerMask projectileMask = ~0;
 
+    [Header("Rock Barrage Attack Settings")]
+    public GameObject rockBarrageProjectilePrefab;
+    public float barrageDirectDamage = 20f;    // Not used rn
+    public float barrageProjectileVelocity = 12f;
+    public float barrageProjectileKnockback = 100f;
+    public Transform barrageProjectileSpawnPoint; // Where the rock spawns
+    public LayerMask barrageProjectileMask = ~0;
+
     [Header("Melee Attack Settings")]
     public float meleeDamage = 20f;
     public float meleeHorizontalKnockback = 100f;
@@ -230,6 +238,14 @@ public class EnemyGolem : Enemy
                 break; 
             }
         }
+    }
+
+    /// <summary>
+    /// Shoots out a big spread of small rock projectiles in one direction
+    /// </summary>
+    public void RockBarrageBlast()
+    {
+        
     }
 
     //Getters for States that this Melee Enemy has
