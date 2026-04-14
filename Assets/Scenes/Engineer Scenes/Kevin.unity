@@ -945,6 +945,10 @@ PrefabInstance:
       propertyPath: spawner_2
       value: 
       objectReference: {fileID: 772413262}
+    - target: {fileID: 5504009049952780630, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
+      propertyPath: difficultyScaler
+      value: 
+      objectReference: {fileID: 1916174444}
     - target: {fileID: 6171083751830730270, guid: 44956434c0f56794aad9ac513ea7020b, type: 3}
       propertyPath: m_Name
       value: UIDocument
@@ -1268,6 +1272,7 @@ MonoBehaviour:
   dustRiseDistance: 28
   dustFadeDuration: 1.8
   dustPerBurst: 2
+  nextSceneName: MainMenu
 --- !u!1 &1312346801
 GameObject:
   m_ObjectHideFlags: 0
@@ -2137,7 +2142,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22583567468248984, guid: 177ae1a4dbff84524bb5910db7c9fcbd, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 183193264435491579, guid: 177ae1a4dbff84524bb5910db7c9fcbd, type: 3}
       propertyPath: playerLocation
@@ -2153,7 +2158,7 @@ PrefabInstance:
       objectReference: {fileID: 1916174444}
     - target: {fileID: 183193264435491579, guid: 177ae1a4dbff84524bb5910db7c9fcbd, type: 3}
       propertyPath: isDevModeEnabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 183193264435491579, guid: 177ae1a4dbff84524bb5910db7c9fcbd, type: 3}
       propertyPath: timeBetweenWaves
