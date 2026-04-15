@@ -289,11 +289,11 @@ public class EnemyGolem : Enemy
     public void InitializeAllDamage(float multiplier)
     {
         // Kevin was here 
-        Debug.Log($"EnemyGolem Boss Base Damage. Base Direct Damage: {directDamage}, Base AOE Damage: {AOEDamage}, Base Melee Damage: {meleeDamage}");
+        // Debug.Log($"EnemyGolem Boss Base Damage. Base Direct Damage: {directDamage}, Base AOE Damage: {AOEDamage}, Base Melee Damage: {meleeDamage}");
         directDamage *= multiplier;
         AOEDamage *= multiplier;
         meleeDamage *= multiplier;
 
-        Debug.Log($"EnemyGolem: Scaled damage with multiplier {multiplier}. Direct Damage: {directDamage}, AOE Damage: {AOEDamage}, Melee Damage: {meleeDamage}");
+        // Debug.Log($"EnemyGolem: Scaled damage with multiplier {multiplier}. Direct Damage: {directDamage}, AOE Damage: {AOEDamage}, Melee Damage: {meleeDamage}");
     }
 }
