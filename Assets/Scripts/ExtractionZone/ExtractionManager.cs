@@ -12,6 +12,8 @@ public class ExtractionManager : MonoBehaviour
     private bool isAnyZoneActive = false;
     public event Action<ExtractionZone> ExtractionStarted; 
     public event Action AllExtractionsFinished;
+    public int TotalZones     => allZones.Count;
+    public int CompletedZones => completedZones;
 
     private bool isExtractionCompleted = false;
     private ExtractionZone currentActiveZone;
