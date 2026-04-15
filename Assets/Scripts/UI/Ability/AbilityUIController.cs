@@ -8,6 +8,7 @@ public class AbilityUIController : MonoBehaviour
 {
     [SerializeField] private VisualTreeAsset abilitySlotAsset;
     [SerializeField] private PlayerManager playerManager;
+
     private Stats playerStats;
     private PlayerMovement playerMovement;
 
@@ -29,6 +30,8 @@ public class AbilityUIController : MonoBehaviour
     private List<AbilitySlot> abilitySlots = new List<AbilitySlot>();
     private List<AbilityInfo> abilities = new List<AbilityInfo>();
     private VisualElement abilityBar;
+
+    [SerializeField] private WeaponIconSet weaponIconSet;
 
     private void UpdateChargeLabel(Label label, AbilityInfo ability)
     {
@@ -142,6 +145,8 @@ public class AbilityUIController : MonoBehaviour
         // Shockwave / GroundSlam (share the same UI slot)
         PlayerShockwaveController.OnShockwaveUsed += HandleShockwaveUsed;
         PlayerGroundSlam.OnGroundSlamUsed += HandleShockwaveUsed;
+
+        PlayerHeldWeaponController.OnWeaponChanged += HandleWeaponChanged;
     }
 
     private void OnDisable()
@@ -154,6 +159,8 @@ public class AbilityUIController : MonoBehaviour
 
         PlayerShockwaveController.OnShockwaveUsed -= HandleShockwaveUsed;
         PlayerGroundSlam.OnGroundSlamUsed -= HandleShockwaveUsed;
+
+        PlayerHeldWeaponController.OnWeaponChanged -= HandleWeaponChanged;
     }
 
     void Update()
@@ -329,6 +336,24 @@ public class AbilityUIController : MonoBehaviour
             KeyCode.Space => "Space",
             _ => key.ToString()
         };
+    }
+
+    private void HandleWeaponChanged(HeldWeaponType newWeapon)
+    {
+        // Ensure the Ranged ability exists in the UI
+        if (rangedAbilityIndex < 0 || weaponIconSet == null) return;
+
+        Texture2D newIcon = newWeapon switch
+            {
+                HeldWeaponType.Spear => weaponIconSet.spear,
+                HeldWeaponType.Axe   => weaponIconSet.axe,
+                HeldWeaponType.Mace  => weaponIconSet.mace,
+                HeldWeaponType.Staff => weaponIconSet.staff,
+                _                    => abilities[rangedAbilityIndex].icon // fallback to original
+            };
+
+        // Update the data and the VisualElement
+        abilitySlots[rangedAbilityIndex].diamond.Icon = newIcon;
     }
 }
 
