@@ -1,7 +1,15 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public enum SwapEffectType { None, RiftCrackle, ArcaneSpin, ManaPulse }
+public enum SwapEffectType { 
+    None, 
+    RiftCrackle,
+    ArcaneSpin,
+     ManaPulse,
+    PixieDust,       
+    MoonbloomPetal, 
+    FaeRipple
+}
 
 /// <summary>
 /// A custom VisualElement that renders an ability icon clipped to a diamond shape,
@@ -219,6 +227,7 @@ public partial class DiamondAbilityElement : VisualElement
         switch (_activeEffect)
         {
             case SwapEffectType.RiftCrackle:
+            {
                 painter.strokeColor = new Color(0.4f, 0.9f, 1f, _effectIntensity);
                 painter.lineWidth = 1.5f;
                 for (int i = 0; i < 3; i++)
@@ -232,8 +241,10 @@ public partial class DiamondAbilityElement : VisualElement
                     painter.Stroke();
                 }
                 break;
-
+            }
+            
             case SwapEffectType.ArcaneSpin:
+            {
                 // FIX: Matrix transformations are handled via the contentMatrix in Painter2D
                 float angle = (1f - _effectIntensity) * 180f;
                 float s = (w * 0.5f) * 0.8f;
@@ -261,6 +272,7 @@ public partial class DiamondAbilityElement : VisualElement
                 painter.ClosePath();
                 painter.Stroke();
                 break;
+            }
 
             case SwapEffectType.ManaPulse:
                 float burst = (w * 0.5f) + (20f * (1f - _effectIntensity));
@@ -273,6 +285,167 @@ public partial class DiamondAbilityElement : VisualElement
                 painter.ClosePath();
                 painter.Fill();
                 break;
+            
+            case SwapEffectType.PixieDust:
+            {
+                // Seed the positions once per TriggerEffect call so sparks don't
+                // jitter each repaint.  We use a simple deterministic pattern
+                // driven by the intensity bucket rather than Random each frame.
+                int sparkCount = 14;
+                float progress = 1f - _effectIntensity;   // 0 = just triggered, 1 = done
+
+                for (int i = 0; i < sparkCount; i++)
+                {
+                    // Each spark has a fixed angle and a distance that grows with progress.
+                    float angle = (i / (float)sparkCount) * Mathf.PI * 2f
+                                + i * 0.31f;            // slight golden-ratio twist
+                    float maxDist = (w * 0.55f);
+                    float dist = maxDist * progress;
+
+                    // Alternate warm gold / soft pink / white
+                    Color sparkColor = (i % 3) switch
+                    {
+                        0 => new Color(1f,   0.88f, 0.35f, _effectIntensity),   // gold
+                        1 => new Color(0.98f, 0.63f, 0.78f, _effectIntensity),  // pink
+                        _ => new Color(1f,   1f,    1f,    _effectIntensity * 0.9f),
+                    };
+
+                    float sparkSize = Mathf.Lerp(4f, 1.2f, progress);
+                    float sx = center.x + Mathf.Cos(angle) * dist;
+                    float sy = center.y + Mathf.Sin(angle) * dist;
+
+                    painter.fillColor = sparkColor;
+                    painter.BeginPath();
+                    // Draw a tiny diamond for each spark (more thematic than a circle)
+                    painter.MoveTo(new Vector2(sx,              sy - sparkSize));
+                    painter.LineTo(new Vector2(sx + sparkSize,  sy));
+                    painter.LineTo(new Vector2(sx,              sy + sparkSize));
+                    painter.LineTo(new Vector2(sx - sparkSize,  sy));
+                    painter.ClosePath();
+                    painter.Fill();
+                }
+
+                // Central flash that fades quickly
+                painter.fillColor = new Color(1f, 0.97f, 0.7f, _effectIntensity * 0.5f);
+                float flashR = w * 0.28f * _effectIntensity;
+                painter.BeginPath();
+                painter.MoveTo(new Vector2(center.x,           center.y - flashR));
+                painter.LineTo(new Vector2(center.x + flashR,  center.y));
+                painter.LineTo(new Vector2(center.x,           center.y + flashR));
+                painter.LineTo(new Vector2(center.x - flashR,  center.y));
+                painter.ClosePath();
+                painter.Fill();
+                break;
+            }
+            
+            case SwapEffectType.MoonbloomPetal:
+            {
+                int petalCount = 7;
+                float progress = 1f - _effectIntensity;
+                float maxDist   = w * 0.58f;
+
+                for (int i = 0; i < petalCount; i++)
+                {
+                    // Stagger petals so they don't all start at the same frame.
+                    // Petals with a higher stagger index appear slightly later.
+                    float stagger    = i / (float)petalCount * 0.45f;
+                    float localProg  = Mathf.Clamp01((progress - stagger) / (1f - stagger));
+                    if (localProg <= 0f) continue;
+
+                    float baseAngle  = (i / (float)petalCount) * Mathf.PI * 2f;
+                    float spinAngle  = baseAngle + localProg * 0.7f;   // gentle rotation
+
+                    float dist       = maxDist * localProg;
+                    float cx2        = center.x + Mathf.Cos(spinAngle) * dist;
+                    float cy2        = center.y + Mathf.Sin(spinAngle) * dist;
+
+                    float alpha      = Mathf.Sin(localProg * Mathf.PI) * _effectIntensity;
+                    Color petalColor = Color.Lerp(
+                        new Color(0.98f, 0.63f, 0.78f, alpha),   // warm pink
+                        new Color(0.78f, 0.63f, 0.98f, alpha),   // soft lavender
+                        (float)i / petalCount
+                    );
+
+                    // Build a petal outline: narrow elongated diamond rotated along
+                    // the travel direction so it always points away from centre.
+                    float petalLen  = Mathf.Lerp(9f, 5f, localProg);
+                    float petalWid  = petalLen * 0.42f;
+
+                    // Unit vector along travel direction
+                    float dx = Mathf.Cos(spinAngle);
+                    float dy = Mathf.Sin(spinAngle);
+                    // Perpendicular
+                    float px = -dy;
+                    float py =  dx;
+
+                    Vector2 tip  = new Vector2(cx2 + dx * petalLen,  cy2 + dy * petalLen);
+                    Vector2 root = new Vector2(cx2 - dx * petalLen,  cy2 - dy * petalLen);
+                    Vector2 lobe1= new Vector2(cx2 + px * petalWid,  cy2 + py * petalWid);
+                    Vector2 lobe2= new Vector2(cx2 - px * petalWid,  cy2 - py * petalWid);
+
+                    painter.fillColor = petalColor;
+                    painter.BeginPath();
+                    painter.MoveTo(tip);
+                    painter.LineTo(lobe1);
+                    painter.LineTo(root);
+                    painter.LineTo(lobe2);
+                    painter.ClosePath();
+                    painter.Fill();
+                }
+                break;
+            }
+
+            case SwapEffectType.FaeRipple:
+            {
+                int ringCount = 3;
+                float maxRadius = w * 0.62f;
+
+                for (int i = 0; i < ringCount; i++)
+                {
+                    // Stagger: ring 0 leads, ring 2 lags.
+                    float stagger    = i * 0.2f;
+                    float progress   = Mathf.Clamp01((_effectIntensity - stagger) / (1f - stagger));
+                    // _effectIntensity goes 1→0, so invert for expansion.
+                    float expansion  = 1f - progress;
+                    float alpha      = progress * (1f - expansion * 0.6f);
+                    if (alpha <= 0.01f) continue;
+
+                    float radius = maxRadius * expansion;
+
+                    Color ringColor = i switch
+                    {
+                        0 => new Color(0.4f,  0.91f, 1f,   alpha),   // ice cyan
+                        1 => new Color(0.63f, 0.51f, 0.98f,alpha),   // violet
+                        _ => new Color(0.78f, 0.96f, 0.85f,alpha),   // mint shimmer
+                    };
+
+                    float strokeW = Mathf.Lerp(2.5f, 0.8f, expansion);
+
+                    painter.strokeColor = ringColor;
+                    painter.lineWidth   = strokeW;
+                    painter.BeginPath();
+                    painter.MoveTo(new Vector2(center.x,            center.y - radius));
+                    painter.LineTo(new Vector2(center.x + radius,   center.y));
+                    painter.LineTo(new Vector2(center.x,            center.y + radius));
+                    painter.LineTo(new Vector2(center.x - radius,   center.y));
+                    painter.ClosePath();
+                    painter.Stroke();
+
+                    // Subtle inner fill for the innermost ring only
+                    if (i == 0)
+                    {
+                        painter.fillColor = new Color(0.6f, 0.94f, 1f, alpha * 0.12f);
+                        painter.BeginPath();
+                        painter.MoveTo(new Vector2(center.x,            center.y - radius));
+                        painter.LineTo(new Vector2(center.x + radius,   center.y));
+                        painter.LineTo(new Vector2(center.x,            center.y + radius));
+                        painter.LineTo(new Vector2(center.x - radius,   center.y));
+                        painter.ClosePath();
+                        painter.Fill();
+                    }
+                }
+                break; 
+            }
         }
     }
 
