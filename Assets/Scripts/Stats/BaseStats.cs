@@ -92,4 +92,11 @@ public class BaseStats : ScriptableObject
 
     [Header("Character Parameters")]
     public float characterSize = 1f;
+
+    [Header("Per Weapon Values")]
+    [Tooltip("Per-weapon projectile damage")]
+    public float spearProjectileDamage = 10;
+    public float axeProjectileDamage = 10;
+    public float maceProjectileDamage = 10;
+    public float staffProjectileDamage = 10;
 }

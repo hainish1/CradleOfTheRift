@@ -45,7 +45,7 @@ public class RangeAttackStateGolem : EnemyState
         {
             timer -= Time.deltaTime;
 
-            if (timer <= 0f)
+            if (timer <= 0f)    // Hardcoded windup that should get replaced with animation events later
             {
                 enemyGolem.ThrowRock();
                 hasThrown = true;

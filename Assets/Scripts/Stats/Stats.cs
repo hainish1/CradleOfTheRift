@@ -23,6 +23,10 @@ public enum StatType
 
     // Ranged Attack Enums
     ProjectileDamage,
+    SpearProjectileDamage,
+    AxeProjectileDamage,
+    MaceProjectileDamage,
+    StaffProjectileDamage,
     ProjectileFireRate,
     ProjectileAnimationSpeed,
     FireCharges,
@@ -87,6 +91,33 @@ public class Stats
     // Ranged Attack Properties
 
     public float ProjectileDamage { get { return FloatStatQuery(StatType.ProjectileDamage, baseStats.projectileDamage); } }
+
+    public float SpearProjectileDamage => WeaponProjectileDamage(StatType.SpearProjectileDamage, baseStats.spearProjectileDamage);
+    public float AxeProjectileDamage => WeaponProjectileDamage(StatType.AxeProjectileDamage, baseStats.axeProjectileDamage);
+    public float MaceProjectileDamage => WeaponProjectileDamage(StatType.MaceProjectileDamage, baseStats.maceProjectileDamage);
+    public float StaffProjectileDamage => WeaponProjectileDamage(StatType.StaffProjectileDamage, baseStats.staffProjectileDamage);
+
+    // Per-weapon base, then applies weaponspecific modifiers,
+    // then global pickups buff every weapon
+    private float WeaponProjectileDamage(StatType weaponStat, float weaponBaseValue)
+    {
+        float weaponBase = weaponBaseValue > 0f ? weaponBaseValue : baseStats.projectileDamage;
+        float afterWeaponMods = FloatStatQuery(weaponStat, weaponBase);
+        float globalDelta = ProjectileDamage - baseStats.projectileDamage;
+        return afterWeaponMods + globalDelta;
+    }
+
+    public float ProjectileDamageForWeapon(HeldWeaponType weapon)
+    {
+        return weapon switch
+        {
+            HeldWeaponType.Spear => SpearProjectileDamage,
+            HeldWeaponType.Axe => AxeProjectileDamage,
+            HeldWeaponType.Mace => MaceProjectileDamage,
+            HeldWeaponType.Staff => StaffProjectileDamage,
+            _ => ProjectileDamage,
+        };
+    }
 
     public float ProjectileFireRate { get { return FloatStatQuery(StatType.ProjectileFireRate, baseStats.projectileFireRate); } }
 
@@ -184,6 +215,10 @@ public class Stats
             StatType.MeleeAttackRate => baseStats.meleeAttackRate,
             StatType.MeleeAnimationSpeed => baseStats.meleeAnimationSpeed,
             StatType.ProjectileDamage => baseStats.projectileDamage,
+            StatType.SpearProjectileDamage => baseStats.spearProjectileDamage,
+            StatType.AxeProjectileDamage => baseStats.axeProjectileDamage,
+            StatType.MaceProjectileDamage => baseStats.maceProjectileDamage,
+            StatType.StaffProjectileDamage => baseStats.staffProjectileDamage,
             StatType.ProjectileFireRate => baseStats.projectileFireRate,
             StatType.ProjectileAnimationSpeed => baseStats.projectileAnimationSpeed,
             StatType.FireCharges => baseStats.fireCharges,
