@@ -8,7 +8,15 @@ public enum SwapEffectType {
      ManaPulse,
     PixieDust,       
     MoonbloomPetal, 
-    FaeRipple
+    FaeRipple,
+    ChronoShift,
+    EmberBurst,
+    AbyssalBloom,
+    StormSurge,
+    GlitchRemnant,
+    NebulaOverload,
+    RiftShatter,
+    SingularityPulse
 }
 
 /// <summary>
@@ -223,6 +231,13 @@ public partial class DiamondAbilityElement : VisualElement
     private void HandleFantasyEffects(Painter2D painter, float w, float h)
     {
         Vector2 center = new Vector2(w * 0.5f, h * 0.5f);
+        float pad = _borderWidth * 0.5f + 1f;
+
+        // Define vertices locally so effects can reference them
+        Vector2 top = new Vector2(w * 0.5f, pad);
+        Vector2 right = new Vector2(w - pad, h * 0.5f);
+        Vector2 bottom = new Vector2(w * 0.5f, h - pad);
+        Vector2 left = new Vector2(pad, h * 0.5f);
 
         switch (_activeEffect)
         {
@@ -446,6 +461,217 @@ public partial class DiamondAbilityElement : VisualElement
                 }
                 break; 
             }
+
+            case SwapEffectType.ChronoShift:
+            {
+                int ghostCount = 4;
+                for (int i = 0; i < ghostCount; i++)
+                {
+                    // Stagger the ghosts based on intensity
+                    float ghostProg = Mathf.Clamp01(_effectIntensity - (i * 0.15f));
+                    if (ghostProg <= 0) continue;
+
+                    float scale = 1f + (1f - ghostProg) * 0.5f;
+                    painter.strokeColor = new Color(0.3f, 0.7f, 1f, ghostProg * 0.5f);
+                    painter.lineWidth = 1.5f;
+
+                    // Apply scale transformation manually for the ghosting effect
+                    Vector2 gTop = center + (top - center) * scale;
+                    Vector2 gRight = center + (right - center) * scale;
+                    Vector2 gBottom = center + (bottom - center) * scale;
+                    Vector2 gLeft = center + (left - center) * scale;
+
+                    painter.BeginPath();
+                    painter.MoveTo(gTop);
+                    painter.LineTo(gRight);
+                    painter.LineTo(gBottom);
+                    painter.LineTo(gLeft);
+                    painter.ClosePath();
+                    painter.Stroke();
+                }
+                break;
+            }
+
+            case SwapEffectType.EmberBurst:
+            {
+                int sparkCount = 8;
+                float p = 1f - _effectIntensity; // 0 to 1
+                
+                for (int i = 0; i < sparkCount; i++)
+                {
+                    float angle = (i * Mathf.PI * 2f) / sparkCount;
+                    float speed = 40f + (i * 5f);
+                    // Add a bit of "gravity" to the Y axis as it progresses
+                    Vector2 velocity = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * speed * p;
+                    Vector2 gravity = new Vector2(0, p * p * 20f); 
+                    Vector2 sparkPos = center + velocity + gravity;
+
+                    painter.fillColor = Color.Lerp(new Color(1f, 0.6f, 0f), new Color(1f, 0.2f, 0f), p);
+                    painter.fillColor = new Color(painter.fillColor.r, painter.fillColor.g, painter.fillColor.b, _effectIntensity);
+
+                    float s = 3f * _effectIntensity;
+                    painter.BeginPath();
+                    painter.Arc(sparkPos, s, 0, 360);
+                    painter.Fill();
+                }
+                break;
+            }
+
+            case SwapEffectType.AbyssalBloom:
+            {
+                float rot = _effectIntensity * 180f;
+                float pulse = 0.4f + Mathf.Sin(_effectIntensity * Mathf.PI) * 0.4f;
+                
+                painter.fillColor = new Color(0.05f, 0.05f, 0.1f, _effectIntensity * 0.9f);
+                
+                Matrix4x4 bloomMatrix = Matrix4x4.TRS(center, Quaternion.Euler(0, 0, rot), new Vector3(pulse, pulse, 1)) 
+                                    * Matrix4x4.Translate(-center);
+
+                painter.BeginPath();
+                painter.MoveTo(bloomMatrix.MultiplyPoint3x4(top));
+                painter.LineTo(bloomMatrix.MultiplyPoint3x4(right));
+                painter.LineTo(bloomMatrix.MultiplyPoint3x4(bottom));
+                painter.LineTo(bloomMatrix.MultiplyPoint3x4(left));
+                painter.ClosePath();
+                painter.Fill();
+                
+                // Add a glowing rim to the inner bloom
+                painter.strokeColor = new Color(0.6f, 0f, 1f, _effectIntensity);
+                painter.lineWidth = 2f;
+                painter.Stroke();
+                break;
+            }
+
+            case SwapEffectType.StormSurge:
+            {
+                painter.strokeColor = new Color(0.5f, 0.8f, 1f, _effectIntensity);
+                painter.lineWidth = 1.2f;
+                // High-frequency jitter based on time/intensity
+                Random.InitState((int)(_effectIntensity * 500)); 
+
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector2 startPos = center;
+                    Vector2 endPos = i switch { 0 => top, 1 => right, 2 => bottom, 3 => left, _ => top + right * 0.5f };
+
+                    painter.BeginPath();
+                    painter.MoveTo(startPos);
+
+                    // Create jagged segments
+                    int segments = 4;
+                    for (int j = 1; j <= segments; j++)
+                    {
+                        float t = j / (float)segments;
+                        Vector2 point = Vector2.Lerp(startPos, endPos, t);
+                        // Add perpendicular noise
+                        Vector2 offset = new Vector2(Random.Range(-10, 10), Random.Range(-10, 10)) * _effectIntensity;
+                        painter.LineTo(point + offset);
+                    }
+                    painter.Stroke();
+                }
+                break;
+            }
+
+            case SwapEffectType.GlitchRemnant:
+            {
+                float p = 1f - _effectIntensity;
+                painter.fillColor = new Color(1f, 0.1f, 0.4f, _effectIntensity * 0.6f);
+                
+                for (int i = 0; i < 6; i++)
+                {
+                    float sliceY = Mathf.Lerp(0, h, (float)i / 6);
+                    float sliceWidth = w * Random.Range(0.2f, 0.8f);
+                    float xOffset = Mathf.Sin(p * 20f + i) * 15f;
+                    float rectX = center.x - (sliceWidth * 0.5f) + xOffset;
+
+                    painter.BeginPath();
+                    painter.MoveTo(new Vector2(rectX, sliceY));
+                    painter.LineTo(new Vector2(rectX + sliceWidth, sliceY));
+                    painter.LineTo(new Vector2(rectX + sliceWidth, sliceY + 2f));
+                    painter.LineTo(new Vector2(rectX, sliceY + 2f));
+                    painter.ClosePath();
+                    painter.Fill();
+                    
+                    if (i % 2 == 0) painter.fillColor = new Color(0.1f, 0.9f, 1f, _effectIntensity * 0.4f);
+                }
+                break;
+            }
+
+            case SwapEffectType.NebulaOverload:
+            {
+                painter.lineWidth = 2.5f;
+                float rotationSpeed = (1f - _effectIntensity) * 720f;
+                
+                for (int i = 0; i < 3; i++)
+                {
+                    float ringRadius = (w * 0.3f) + (i * 8f * _effectIntensity);
+                    float startAngle = rotationSpeed + (i * 120f);
+                    
+                    painter.strokeColor = i switch {
+                        0 => new Color(0.6f, 0.2f, 1f, _effectIntensity), // Purple
+                        1 => new Color(0.2f, 0.5f, 1f, _effectIntensity), // Blue
+                        _ => new Color(1f, 1f, 1f, _effectIntensity * 0.5f) // White highlight
+                    };
+
+                    painter.BeginPath();
+                    // Drawing an incomplete arc gives it that "spinning energy" look
+                    painter.Arc(center, ringRadius, startAngle, startAngle + 90f);
+                    painter.Stroke();
+                }
+                break;
+            }
+
+            case SwapEffectType.RiftShatter:
+            {
+                painter.strokeColor = new Color(0.8f, 1f, 1f, _effectIntensity);
+                painter.lineWidth = 1.8f;
+                Random.InitState((int)(_effectIntensity * 1000)); // Ultra-fast flicker
+
+                for (int i = 0; i < 8; i++)
+                {
+                    // Pick a random spot on the border
+                    float side = Random.value;
+                    Vector2 start = side switch {
+                        < 0.25f => Vector2.Lerp(top, right, Random.value),
+                        < 0.5f => Vector2.Lerp(right, bottom, Random.value),
+                        < 0.75f => Vector2.Lerp(bottom, left, Random.value),
+                        _ => Vector2.Lerp(left, top, Random.value)
+                    };
+
+                    painter.BeginPath();
+                    painter.MoveTo(start);
+                    // Jagged line toward a slightly offset center
+                    Vector2 mid = Vector2.Lerp(start, center, 0.5f) + (Random.insideUnitCircle * 10f);
+                    painter.LineTo(mid);
+                    painter.LineTo(center + (Random.insideUnitCircle * 5f));
+                    painter.Stroke();
+                }
+                break;
+            }
+
+            case SwapEffectType.SingularityPulse:
+            {
+                float p = 1f - _effectIntensity;
+                painter.strokeColor = new Color(0.4f, 0f, 1f, _effectIntensity);
+                painter.lineWidth = 2.5f;
+
+                for (int i = 0; i < 12; i++)
+                {
+                    float angle = (i * 30f) * Mathf.Deg2Rad;
+                    float dist = Mathf.Lerp(w, 0, (p + (i * 0.1f)) % 1f);
+                    Vector2 pos = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * dist;
+                    
+                    // Draw a small "streak" pointing toward center
+                    Vector2 streakEnd = pos + (center - pos).normalized * 15f;
+                    
+                    painter.BeginPath();
+                    painter.MoveTo(pos);
+                    painter.LineTo(streakEnd);
+                    painter.Stroke();
+                }
+                break;
+            }
+
         }
     }
 
