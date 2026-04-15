@@ -34,6 +34,7 @@ public class EnemyGolem : Enemy
     public Transform projectileSpawnPoint; // Where the rock spawns
     public float turnSpeedWhileAiming = 8f;
     public LayerMask projectileMask = ~0;
+    public float playerAimOffset = 1.5f;
 
     [Header("Ground Slam Melee Settings")]
     public float meleeDamage = 20f;
@@ -146,7 +147,7 @@ public class EnemyGolem : Enemy
             : transform.position + Vector3.up * 1.5f;
 
         // Target the player's center mass rather than their feet
-        Vector3 targetPos = target.position + Vector3.up * 1.5f; 
+        Vector3 targetPos = target.position + Vector3.up * playerAimOffset; 
         
         // Pull from the Object Pool if available, else instantiate normally
         GameObject rockObj;
@@ -231,14 +232,6 @@ public class EnemyGolem : Enemy
                 break; 
             }
         }
-    }
-
-    /// <summary>
-    /// Shoots out a big spread of small rock projectiles in one direction
-    /// </summary>
-    public void RockBarrageBlast()
-    {
-        
     }
 
     //Getters for States that this Melee Enemy has

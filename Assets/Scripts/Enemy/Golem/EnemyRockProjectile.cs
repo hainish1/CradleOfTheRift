@@ -11,7 +11,7 @@ public class EnemyRockProjectile : MonoBehaviour
 
     [Header("flight")]
     [SerializeField] private float lifeTime = 6f;
-    [SerializeField] private float gravity = 9f;
+    //[SerializeField] private float gravity = 9f;
     private float hitForce = 8f;
     private float knockBackImpulse;
     private LayerMask hitMask = ~0; // what can this bullet hit
@@ -63,7 +63,7 @@ public class EnemyRockProjectile : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
+        //rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
     }   
 
     /// <summary>

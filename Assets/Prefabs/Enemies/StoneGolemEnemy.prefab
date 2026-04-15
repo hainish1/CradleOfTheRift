@@ -131,7 +131,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   aggressionRange: 300
-  playerOutOfRange: 300
+  playerOutOfRange: 150
   turnSpeed: 10
   attackCooldown: 0
   playerMask:
@@ -160,14 +160,6 @@ MonoBehaviour:
   projectileMask:
     serializedVersion: 2
     m_Bits: 1344
-  rockBarrageProjectilePrefab: {fileID: 0}
-  barrageDirectDamage: 20
-  barrageProjectileVelocity: 12
-  barrageProjectileKnockback: 100
-  barrageProjectileSpawnPoint: {fileID: 0}
-  barrageProjectileMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
   meleeDamage: 20
   meleeHorizontalKnockback: 100
   meleeVerticalKnockback: 100

@@ -39,9 +39,12 @@ public class EnemyTitan : EnemyGolem
     public GameObject rockBarrageProjectilePrefab;
     public float barrageDirectDamage = 20f;    // Not used rn
     public float barrageProjectileVelocity = 12f;
-    public float barrageProjectileKnockback = 100f;
+    public float barrageProjectileKnockback = 20f;
     public Transform barrageProjectileSpawnPoint; // Where the rock spawns
     public LayerMask barrageProjectileMask = ~0;
+    public int barrageProjectileCount = 8;
+    public float barrageSpreadAngle = 45f; // Total angle of the spread
+    public float barrageAimOffset = 1.5f;
 
     [Header("Double Sweep Melee Settings")]
     public float sweepMeleeDamage = 20f;
@@ -138,11 +141,99 @@ public class EnemyTitan : EnemyGolem
     }
 
     /// <summary>
-    /// Shoots out a big spread of small rock projectiles in one direction
+    /// Shoots out a spread of projectiles in a cone pattern towards one direction 
     /// </summary>
-    public void RockBarrageBlast()
+    public void RockBarrage()
     {
-        
+        if (target == null || rockBarrageProjectilePrefab == null) return;
+
+        Vector3 spawnPos = barrageProjectileSpawnPoint != null 
+            ? barrageProjectileSpawnPoint.position 
+            : transform.position + Vector3.up * 1.5f;
+
+        Vector3 targetPos = target.position + Vector3.up * barrageAimOffset; // Aim for center mass
+
+        Vector3 fallbackDirection = targetPos - spawnPos;
+        if (fallbackDirection.sqrMagnitude <= 0.0001f)
+        {
+            fallbackDirection = transform.forward;
+        }
+
+        Vector3 baseVelocity = TryCalculateBarrageLaunchVelocity(spawnPos, targetPos, barrageProjectileVelocity, out Vector3 solvedVelocity)
+            ? solvedVelocity
+            : fallbackDirection.normalized * Mathf.Max(0.1f, barrageProjectileVelocity);
+
+        // Fire barrage
+        for (int i = 0; i < barrageProjectileCount; i++)
+        {
+            // 1. Get the exact direction of the "perfect" calculated gravity arc
+            Quaternion trajectoryRotation = Quaternion.LookRotation(baseVelocity);
+
+            // 2. Calculate the spread 
+            float randomYaw = UnityEngine.Random.Range(-barrageSpreadAngle, barrageSpreadAngle);
+            
+            // We divide pitch by 2 so it still creates a cone, but limits how hard it shoots into the floor!
+            float randomPitch = UnityEngine.Random.Range(-barrageSpreadAngle / 2f, barrageSpreadAngle / 2f); 
+            
+            Quaternion spreadRotation = Quaternion.Euler(randomPitch, randomYaw, 0);
+
+            // 3. Combine them: Point in the perfect arc direction, then apply the spread tilt!
+            Vector3 finalVelocity = (trajectoryRotation * spreadRotation) * Vector3.forward * baseVelocity.magnitude;
+
+            // Spawn the projectile using pooling if available
+            GameObject rockObj;
+            if (ObjectPool.instance != null)
+            {
+                Transform spawnTransform = barrageProjectileSpawnPoint != null ? barrageProjectileSpawnPoint : transform;
+                rockObj = ObjectPool.instance.GetObject(rockBarrageProjectilePrefab, spawnTransform);
+                rockObj.transform.position = spawnPos;
+                rockObj.transform.rotation = Quaternion.identity;
+            }
+            else
+            {
+                rockObj = Instantiate(rockBarrageProjectilePrefab, spawnPos, Quaternion.identity);
+            }
+
+            // Initialize the projectile 
+            if (rockObj.TryGetComponent<EnemyRockBarrageProjectile>(out EnemyRockBarrageProjectile barrageRock))
+            {
+                barrageRock.Init(finalVelocity, barrageProjectileMask, barrageDirectDamage, barrageProjectileKnockback);
+            }
+        }
+    }
+
+    private bool TryCalculateBarrageLaunchVelocity(Vector3 startPoint, Vector3 targetPoint, float launchSpeed, out Vector3 launchVelocity)
+    {
+        launchSpeed = Mathf.Max(0.1f, launchSpeed);
+
+        Vector3 displacement = targetPoint - startPoint;
+        Vector3 displacementXZ = new Vector3(displacement.x, 0f, displacement.z);
+        float distanceXZ = displacementXZ.magnitude;
+
+        if (distanceXZ <= 0.01f)
+        {
+            launchVelocity = Vector3.up * Mathf.Sign(Mathf.Approximately(displacement.y, 0f) ? 1f : displacement.y) * launchSpeed;
+            return true;
+        }
+
+        float gravity = Mathf.Abs(Physics.gravity.y);
+        float speedSquared = launchSpeed * launchSpeed;
+        float discriminant = (speedSquared * speedSquared)
+            - gravity * ((gravity * distanceXZ * distanceXZ) + (2f * displacement.y * speedSquared));
+
+        if (discriminant < 0f)
+        {
+            launchVelocity = Vector3.zero;
+            return false;
+        }
+
+        float angle = Mathf.Atan((speedSquared - Mathf.Sqrt(discriminant)) / (gravity * distanceXZ));
+        Vector3 horizontalDirection = displacementXZ / distanceXZ;
+        float horizontalSpeed = launchSpeed * Mathf.Cos(angle);
+        float verticalSpeed = launchSpeed * Mathf.Sin(angle);
+
+        launchVelocity = (horizontalDirection * horizontalSpeed) + (Vector3.up * verticalSpeed);
+        return true;
     }
 
     //Getters for States that this Melee Enemy has

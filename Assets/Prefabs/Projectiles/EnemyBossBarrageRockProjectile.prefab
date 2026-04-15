@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1176169503728315719}
   - component: {fileID: 7430822607540931534}
   - component: {fileID: 7752331890889885175}
-  - component: {fileID: 490016554541534604}
+  - component: {fileID: 3785713579738952491}
   - component: {fileID: 4903253203124442273}
   m_Layer: 12
   m_Name: EnemyBossBarrageRockProjectile
@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2235222786583650387}
@@ -66,9 +66,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3232334194741932682}
   serializedVersion: 4
-  m_Mass: 0.1
+  m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -80,12 +80,12 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 2
---- !u!114 &490016554541534604
+--- !u!114 &3785713579738952491
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,12 +94,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 3232334194741932682}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbb0bea56da7b3c498a3b6d0403cba24, type: 3}
+  m_Script: {fileID: 11500000, guid: ed71335a4ee621141a5f4ce916fd2d7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   lifeTime: 6
-  gravity: 9.8
   impactVFX: {fileID: 4994997792314849709, guid: 776b311f5d1598f4496d586fc2ad4c09, type: 3}
+  impactSize: 1
+  effectDuration: 2
 --- !u!96 &4903253203124442273
 TrailRenderer:
   serializedVersion: 3

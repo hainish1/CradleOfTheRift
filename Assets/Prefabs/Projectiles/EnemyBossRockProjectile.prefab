@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 490016554541534604}
   - component: {fileID: 4903253203124442273}
   m_Layer: 12
-  m_Name: EnemyBossRockProjectile 1
+  m_Name: EnemyBossRockProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,7 +80,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
@@ -98,8 +98,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lifeTime: 6
-  gravity: 9.8
   impactVFX: {fileID: 4994997792314849709, guid: 776b311f5d1598f4496d586fc2ad4c09, type: 3}
+  impactSize: 3
+  effectDuration: 2
 --- !u!96 &4903253203124442273
 TrailRenderer:
   serializedVersion: 3
