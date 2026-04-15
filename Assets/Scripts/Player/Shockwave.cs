@@ -31,6 +31,8 @@ public class Shockwave : MonoBehaviour
     private float _expansionTimer;
     private float _shockwaveEffectExpansionDuration;
 
+    [SerializeField] private bool knockbackImmunity = false;
+
     void Start()
     {
         gameObject.transform.localScale = Vector3.zero;

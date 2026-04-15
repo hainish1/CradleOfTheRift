@@ -77,7 +77,7 @@ public class PlayerShooter : MonoBehaviour
     private float flipAnimCompletionTime;
     [SerializeField] private float regainAnimCompletionSeconds;
     [SerializeField] private float regainDelaySeconds;
-    private Animator shooterAnim;
+    private Animator playerAnim;
     private Quaternion weaponOriginalRotation;
     private Quaternion weaponFlippedRotation;
     private Vector3 weaponOriginalScale;
@@ -102,7 +102,7 @@ public class PlayerShooter : MonoBehaviour
         playerHeldWeaponController = GetComponentInParent<PlayerHeldWeaponController>();
         meleeController = GetComponentInParent<PlayerMeleeControllerV2>();
         _shockwaveController = GetComponentInParent<PlayerShockwaveController>();
-        shooterAnim = GetComponent<Animator>();
+        playerAnim = GetComponent<Animator>();
         audioController = GetComponentInParent<PlayerAudioController>();
 
         SetProjectileType(playerHeldWeaponController.HeldWeapon);
@@ -291,7 +291,7 @@ public class PlayerShooter : MonoBehaviour
 
         // Trigger weapon throw animation.
         SetCurrentAnimationSpeed();
-        shooterAnim.SetTrigger("WeaponThrow");
+        playerAnim.SetTrigger("WeaponThrow");
         
         // Stop the current WeaponRegain coroutine if a new throw was performed in the middle of it.
         if (weaponRegainCoroutine != null) StopCoroutine(weaponRegainCoroutine);
@@ -449,7 +449,7 @@ public class PlayerShooter : MonoBehaviour
         float statsThrowAnimSpeed = 1 / playerEntity.Stats.ProjectileAnimationSpeed;
         float secondsUntilThrow = preTransitionAnim.length + throwAnim.events[0].time;
         flipAnimMaxSeconds = scriptFlipAnimSpeed * statsThrowAnimSpeed * secondsUntilThrow;
-        shooterAnim.SetFloat("WeaponThrowAnimSpeedMultiplier", playerEntity.Stats.ProjectileAnimationSpeed);
+        playerAnim.SetFloat("WeaponThrowAnimSpeedMultiplier", playerEntity.Stats.ProjectileAnimationSpeed);
     }
 
     /// <summary>

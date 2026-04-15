@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{D2413B90-2C59-482B-BCA5-8215FBCFE27A}",
     "Language": "SFX",
-    "Hash": "{B51E61C6-13C5-CB1D-CE06-92192DAD507F}",
+    "Hash": "{B18F5A49-A40E-03E6-5B40-DA5D7454950D}",
     "ObjectPath": "Enemy_Spawn",
     "ShortName": "Enemy_Spawn",
     "Path": "Event/Enemy_Spawn.bnk",
@@ -25,6 +25,15 @@
       "CachePath": "1E/{1EE735E7-0E6B-D513-4393-D02EE4EB5754}.wem"
      },
      {
+      "Id": "217729500",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "MobSpawn_Digital.wav",
+      "Path": "Media/217729500.wem",
+      "CachePath": "AD/{AD5439C5-011F-99F7-E1AB-49CC98BE4E41}.wem"
+     },
+     {
       "Id": "600938173",
       "Language": "SFX",
       "Streaming": "false",
@@ -32,6 +41,24 @@
       "ShortName": "MobSpawn_Glitch2.wav",
       "Path": "Media/600938173.wem",
       "CachePath": "8C/{8C99FDEB-70B6-97F7-752B-E850B570145C}.wem"
+     },
+     {
+      "Id": "636995330",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "MobSpawn_Digital.wav",
+      "Path": "Media/636995330.wem",
+      "CachePath": "5B/{5B73D3D2-C610-7703-10BA-E836ED259286}.wem"
+     },
+     {
+      "Id": "660401192",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "MobSpawn_Digital.wav",
+      "Path": "Media/660401192.wem",
+      "CachePath": "41/{41F3A4A1-7457-9CD9-460E-17C9875CF579}.wem"
      },
      {
       "Id": "907344378",
@@ -58,7 +85,6 @@
       "Name": "Enemy_Spawn",
       "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Enemy_Spawn",
       "GUID": "{D2413B90-2C59-482B-BCA5-8215FBCFE27A}",
-      "MaxAttenuation": "160",
       "DurationType": "OneShot",
       "DurationMin": "3.174802",
       "DurationMax": "7.5595264",
@@ -67,7 +93,16 @@
         "Id": "95708307"
        },
        {
+        "Id": "217729500"
+       },
+       {
         "Id": "600938173"
+       },
+       {
+        "Id": "636995330"
+       },
+       {
+        "Id": "660401192"
        },
        {
         "Id": "907344378"
@@ -80,6 +115,6 @@
     ]
    }
   ],
-  "FileHash": "{495959FE-49AC-DB05-2322-796A5C1AB237}"
+  "FileHash": "{CBDD7085-628D-4343-B74E-13A678F5771F}"
  }
 }

@@ -71,10 +71,7 @@ public class ChaseStateGolem : EnemyState
         // Blend golem animation between idle and moving.
         Vector3 worldVelocity = enemy.agent.velocity;
         Vector3 localVelocity = enemy.transform.InverseTransformDirection(worldVelocity);
-        Vector3 localVelocityUnitVector = localVelocity.normalized;
-        float moveBlendX = localVelocityUnitVector.x * (localVelocity.magnitude / enemyGolem.chaseSpeed);
-        float moveBlendY = localVelocityUnitVector.z * (localVelocity.magnitude / enemyGolem.chaseSpeed);
-        enemyGolem.golemAnim.SetFloat("MoveVector_X", moveBlendX, dampTime: 0.03f, Time.deltaTime);
-        enemyGolem.golemAnim.SetFloat("MoveVector_Y", moveBlendY, dampTime: 0.03f, Time.deltaTime);
+        float moveBlend = localVelocity.magnitude / enemyGolem.chaseSpeed;
+        enemyGolem.golemAnim.SetFloat("MoveVector", moveBlend, dampTime: 0.03f, Time.deltaTime);
     }
 }

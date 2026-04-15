@@ -288,60 +288,6 @@
 						</Sound>
 					</ChildrenList>
 				</Folder>
-				<Sound Name="MobSpawn_Digital" ID="{171FFD86-F68C-41ED-8428-D7224585A7B8}" ShortID="498532470">
-					<PropertyList>
-						<Property Name="3DSpatialization" Type="int16" Value="2"/>
-						<Property Name="AttenuationDistanceScaling" Type="Real32" Value="0.8"/>
-						<Property Name="OutputBusVolume" Type="Real64">
-							<ValueList>
-								<Value>18</Value>
-							</ValueList>
-						</Property>
-						<Property Name="Pitch" Type="int32">
-							<ModifierList>
-								<ModifierInfo>
-									<Modifier Name="" ID="{B95BBFD0-0FBB-40E7-844D-D2F6C1149F20}">
-										<PropertyList>
-											<Property Name="Enabled" Type="bool" Value="True"/>
-											<Property Name="Max" Type="Real64" Value="400"/>
-											<Property Name="Min" Type="Real64" Value="-400"/>
-										</PropertyList>
-									</Modifier>
-								</ModifierInfo>
-							</ModifierList>
-						</Property>
-					</PropertyList>
-					<ReferenceList>
-						<Reference Name="Attenuation">
-							<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
-						</Reference>
-						<Reference Name="Conversion">
-							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
-						</Reference>
-						<Reference Name="OutputBus">
-							<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
-						</Reference>
-					</ReferenceList>
-					<ChildrenList>
-						<AudioFileSource Name="MobSpawn_Digital" ID="{4F8D15DA-FA3E-457E-B685-B7C11F95C24B}">
-							<PropertyList>
-								<Property Name="FadeInDuration" Type="Real64" Value="0.22007722007722"/>
-								<Property Name="FadeOutDuration" Type="Real64" Value="0.49034749034749"/>
-								<Property Name="FadeOutShape" Type="int16" Value="6"/>
-								<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
-								<Property Name="TrimEnd" Type="Real64" Value="1.00772200772201"/>
-							</PropertyList>
-							<Language>SFX</Language>
-							<AudioFile>MobSpawn_Digital.wav</AudioFile>
-							<MediaIDList>
-								<MediaID ID="95708307"/>
-							</MediaIDList>
-						</AudioFileSource>
-					</ChildrenList>
-					<ActiveSourceList>
-						<ActiveSource Name="MobSpawn_Digital" ID="{4F8D15DA-FA3E-457E-B685-B7C11F95C24B}" Platform="Linked"/>
-					</ActiveSourceList>
-				</Sound>
 				<RandomSequenceContainer Name="MobSpawn_Glitch" ID="{B9BEDD95-EFBD-4270-8EEF-35BB4048B0C3}" ShortID="876676652">
 					<PropertyList>
 						<Property Name="3DSpatialization" Type="int16" Value="2"/>
@@ -436,6 +382,256 @@
 							</ChildrenList>
 							<ActiveSourceList>
 								<ActiveSource Name="MobSpawn_Glitch3" ID="{65A4F612-189A-4AB3-94F6-2C8DD4C12FCF}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+					</ChildrenList>
+				</RandomSequenceContainer>
+				<RandomSequenceContainer Name="MobSpawn_Digital" ID="{2909056E-C230-4507-8315-B68B45362F01}" ShortID="162081710">
+					<PropertyList>
+						<Property Name="Volume" Type="Real64">
+							<ValueList>
+								<Value>2</Value>
+							</ValueList>
+						</Property>
+					</PropertyList>
+					<ReferenceList>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<Sound Name="MobSpawn_Digital" ID="{171FFD86-F68C-41ED-8428-D7224585A7B8}" ShortID="498532470">
+							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
+								<Property Name="AttenuationDistanceScaling" Type="Real32" Value="0.8"/>
+								<Property Name="OutputBusVolume" Type="Real64">
+									<ValueList>
+										<Value>18</Value>
+									</ValueList>
+								</Property>
+								<Property Name="Pitch" Type="int32">
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{B95BBFD0-0FBB-40E7-844D-D2F6C1149F20}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Max" Type="Real64" Value="400"/>
+													<Property Name="Min" Type="Real64" Value="-400"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+								</Reference>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="MobSpawn_Digital" ID="{4F8D15DA-FA3E-457E-B685-B7C11F95C24B}">
+									<PropertyList>
+										<Property Name="FadeInDuration" Type="Real64" Value="0.22007722007722"/>
+										<Property Name="FadeOutDuration" Type="Real64" Value="0.49034749034749"/>
+										<Property Name="FadeOutShape" Type="int16" Value="6"/>
+										<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+										<Property Name="TrimEnd" Type="Real64" Value="1.00772200772201"/>
+									</PropertyList>
+									<Language>SFX</Language>
+									<AudioFile>MobSpawn_Digital.wav</AudioFile>
+									<MediaIDList>
+										<MediaID ID="95708307"/>
+									</MediaIDList>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="MobSpawn_Digital" ID="{4F8D15DA-FA3E-457E-B685-B7C11F95C24B}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+						<Sound Name="MobSpawn_Digital_01" ID="{053767D8-417E-4D4C-A1BE-FAC10D1AC436}" ShortID="872956698">
+							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
+								<Property Name="AttenuationDistanceScaling" Type="Real32" Value="0.8"/>
+								<Property Name="OutputBusVolume" Type="Real64">
+									<ValueList>
+										<Value>18</Value>
+									</ValueList>
+								</Property>
+								<Property Name="Pitch" Type="int32">
+									<ValueList>
+										<Value>-580</Value>
+									</ValueList>
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{6EF691B9-485D-4650-AFEA-58B3861ADCAF}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Max" Type="Real64" Value="400"/>
+													<Property Name="Min" Type="Real64" Value="-400"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+								</Reference>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="MobSpawn_Digital" ID="{7108AF78-4DD0-43D5-91A5-9E62A012B8B9}">
+									<PropertyList>
+										<Property Name="FadeInDuration" Type="Real64" Value="0.22007722007722"/>
+										<Property Name="FadeOutDuration" Type="Real64" Value="0.310755653612796"/>
+										<Property Name="FadeOutShape" Type="int16" Value="6"/>
+										<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+										<Property Name="TrimEnd" Type="Real64" Value="0.460783232211806"/>
+									</PropertyList>
+									<Language>SFX</Language>
+									<AudioFile>MobSpawn_Digital.wav</AudioFile>
+									<MediaIDList>
+										<MediaID ID="217729500"/>
+									</MediaIDList>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="MobSpawn_Digital" ID="{7108AF78-4DD0-43D5-91A5-9E62A012B8B9}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+						<Sound Name="MobSpawn_Digital_02" ID="{78BBCDDC-5EE7-4543-AC6E-FE4C4085D7B1}" ShortID="355223669">
+							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
+								<Property Name="AttenuationDistanceScaling" Type="Real32" Value="0.8"/>
+								<Property Name="OutputBusVolume" Type="Real64">
+									<ValueList>
+										<Value>18</Value>
+									</ValueList>
+								</Property>
+								<Property Name="Pitch" Type="int32">
+									<ValueList>
+										<Value>670</Value>
+									</ValueList>
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{CC798AAE-3D84-46FF-9FF0-7401B90916A1}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Max" Type="Real64" Value="400"/>
+													<Property Name="Min" Type="Real64" Value="-400"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+								</Reference>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="MobSpawn_Digital" ID="{B157B612-32E1-400E-8426-E3E332E0FEDD}">
+									<PropertyList>
+										<Property Name="FadeInDuration" Type="Real64" Value="0.22007722007722"/>
+										<Property Name="FadeOutDuration" Type="Real64" Value="0.310755653612796"/>
+										<Property Name="FadeOutShape" Type="int16" Value="6"/>
+										<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+										<Property Name="TrimBegin" Type="Real64" Value="0.751020408163265"/>
+										<Property Name="TrimEnd" Type="Real64" Value="1.33425261996691"/>
+									</PropertyList>
+									<Language>SFX</Language>
+									<AudioFile>MobSpawn_Digital.wav</AudioFile>
+									<MediaIDList>
+										<MediaID ID="636995330"/>
+									</MediaIDList>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="MobSpawn_Digital" ID="{B157B612-32E1-400E-8426-E3E332E0FEDD}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+						<Sound Name="MobSpawn_Digital_03" ID="{320C09BC-3954-4E3F-A3EA-93D17B8638BF}" ShortID="1028287607">
+							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
+								<Property Name="AttenuationDistanceScaling" Type="Real32" Value="0.8"/>
+								<Property Name="Lowpass" Type="int16">
+									<ValueList>
+										<Value>37</Value>
+									</ValueList>
+								</Property>
+								<Property Name="OutputBusVolume" Type="Real64">
+									<ValueList>
+										<Value>18</Value>
+									</ValueList>
+								</Property>
+								<Property Name="Pitch" Type="int32">
+									<ValueList>
+										<Value>-610</Value>
+									</ValueList>
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{6D86FD68-32A0-4C4A-88EA-F885EBDCBE5A}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Max" Type="Real64" Value="400"/>
+													<Property Name="Min" Type="Real64" Value="-400"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+								</Reference>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="MobSpawn_Digital" ID="{B47C0236-C27F-41DC-AF37-4A857AA1FF59}">
+									<PropertyList>
+										<Property Name="FadeOutDuration" Type="Real64" Value="0.204081632653061"/>
+										<Property Name="FadeOutShape" Type="int16" Value="6"/>
+										<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+										<Property Name="TrimBegin" Type="Real64" Value="1.11836734693878"/>
+										<Property Name="TrimEnd" Type="Real64" Value="1.63629343629343"/>
+									</PropertyList>
+									<Language>SFX</Language>
+									<AudioFile>MobSpawn_Digital.wav</AudioFile>
+									<MediaIDList>
+										<MediaID ID="660401192"/>
+									</MediaIDList>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="MobSpawn_Digital" ID="{B47C0236-C27F-41DC-AF37-4A857AA1FF59}" Platform="Linked"/>
 							</ActiveSourceList>
 						</Sound>
 					</ChildrenList>
