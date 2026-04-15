@@ -9,10 +9,11 @@ public class AbilityUIController : MonoBehaviour
     [SerializeField] private VisualTreeAsset abilitySlotAsset;
     [SerializeField] private PlayerManager playerManager;
 
+    [SerializeField] private WeaponIconSet weaponIconSet;
+    [SerializeField] private AbilityIconSet abilityIcons;
+
     private Stats playerStats;
     private PlayerMovement playerMovement;
-
-    [SerializeField] private List<Texture2D> images;
 
     private int flyAbilityIndex = -1;
     private int shockwaveAbilityIndex = -1;
@@ -30,8 +31,6 @@ public class AbilityUIController : MonoBehaviour
     private List<AbilitySlot> abilitySlots = new List<AbilitySlot>();
     private List<AbilityInfo> abilities = new List<AbilityInfo>();
     private VisualElement abilityBar;
-
-    [SerializeField] private WeaponIconSet weaponIconSet;
 
     private void UpdateChargeLabel(Label label, AbilityInfo ability)
     {
@@ -74,7 +73,7 @@ public class AbilityUIController : MonoBehaviour
         {
             abilityName = "Dash",
             key = KeyCode.LeftShift,
-            icon = images[0],
+            icon = abilityIcons?.dashIcon,
             maxCharges = playerStats.DashCharges,
             currentCharges = playerStats.DashCharges,
             getCooldown = () => playerStats.DashCooldown,
@@ -88,7 +87,7 @@ public class AbilityUIController : MonoBehaviour
         {
             abilityName = "Fly",
             key = KeyCode.F,
-            icon = images.Count > 1 ? images[1] : null,
+            icon =abilityIcons?.flyIcon,
             maxCharges = 1,
             currentCharges = 1,
             getCooldown = () => 0f,
@@ -104,7 +103,7 @@ public class AbilityUIController : MonoBehaviour
         {
             abilityName = "Ranged",
             key = KeyCode.Mouse1,
-            icon = images.Count > 3 ? images[2] : null,
+            icon = abilityIcons?.defaultRangedIcon,
             maxCharges = playerStats.FireCharges,
             currentCharges = playerStats.FireCharges,
             getCooldown = () => playerStats.FireChargeCooldown,
@@ -120,7 +119,7 @@ public class AbilityUIController : MonoBehaviour
         {
             abilityName = "Shockwave",
             key = KeyCode.X,
-            icon = images.Count > 2 ? images[3] : null,
+            icon = abilityIcons?.shockwaveIcon,
             maxCharges = 1,
             currentCharges = 1,
             getCooldown = () => playerStats.ShockwaveCooldown,
@@ -349,7 +348,7 @@ public class AbilityUIController : MonoBehaviour
                 HeldWeaponType.Axe   => weaponIconSet.axe,
                 HeldWeaponType.Mace  => weaponIconSet.mace,
                 HeldWeaponType.Staff => weaponIconSet.staff,
-                _                    => abilities[rangedAbilityIndex].icon // fallback to original
+                _                    => null // fallback to original
             };
 
         // Update the data and the VisualElement
