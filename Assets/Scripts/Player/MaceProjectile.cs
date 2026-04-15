@@ -43,6 +43,19 @@ public class MaceProjectile : Projectile
         Shockwave shockwaveScript = shockwave.GetComponent<Shockwave>();
         shockwaveScript.Init(transform.position, hitMask, _projectileShockwaveDamage, _projectileShockwaveKnockback, _projectileShockwaveRadius, attacker);
 
+        if (DelayedProjectiles.IsEnabled)
+        {
+            Collider[] hits = Physics.OverlapSphere(transform.position, _projectileShockwaveRadius, hitMask);
+            var marked = new System.Collections.Generic.HashSet<Enemy>();
+            foreach (var col in hits)
+            {
+                var enemy = col.GetComponentInParent<Enemy>();
+                if (enemy == null || marked.Contains(enemy)) continue;
+                marked.Add(enemy);
+                CreateDelayedDamageMark(enemy, col.ClosestPoint(transform.position));
+            }
+        }
+
         ReturnToSource(); // destroy / return to pool
     }
 }

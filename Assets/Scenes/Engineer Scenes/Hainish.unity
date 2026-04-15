@@ -231,9 +231,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 3817689598913385485, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
-      propertyPath: maceProjectilePrefab
+      propertyPath: staffFireballPrefab
       value: 
       objectReference: {fileID: -430357689790887578, guid: beb992516f37b7241885df2f6d5cbc6f, type: 3}
+    - target: {fileID: 3817689598913385485, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: maceProjectilePrefab
+      value: 
+      objectReference: {fileID: 6490759825773957261, guid: 06fd9845d1721ad49ac20d2dd758cf3e, type: 3}
     - target: {fileID: 3817689598913385485, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: explosiveProjectilePrefab
       value: 
@@ -244,7 +248,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7558003053126955156, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: HeldWeapon
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8678201601994762703, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: _cameraTransform
@@ -3429,7 +3433,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectionMode: 0
-  specificWeapon: 0
+  specificWeapon: 4
   randomPool: 010000000200000003000000
   goldPrice: 25
   xpPrice: 50
@@ -9340,7 +9344,7 @@ PrefabInstance:
       objectReference: {fileID: 1464753340}
     - target: {fileID: 2737880262356001210, guid: d2cad68ad46525e4a91157a32a4535da, type: 3}
       propertyPath: m_VersionIndex
-      value: 2062
+      value: 2065
       objectReference: {fileID: 0}
     - target: {fileID: 5629221932387799761, guid: d2cad68ad46525e4a91157a32a4535da, type: 3}
       propertyPath: m_Mesh

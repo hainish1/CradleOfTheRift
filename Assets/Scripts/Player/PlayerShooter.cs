@@ -58,10 +58,13 @@ public class PlayerShooter : MonoBehaviour
     [SerializeField] Projectile spearProjectilePrefab;
     [SerializeField] Projectile axeProjectilePrefab;
     [SerializeField] Projectile maceProjectilePrefab;
-    [SerializeField] private ExplosiveProjectile maceFireballPrefab; // this is the shit to use
+    [SerializeField] private ExplosiveProjectile staffFireballPrefab; // this is the shit now
     [SerializeField] private ExplosiveProjectile explosiveProjectilePrefab;
     [SerializeField] private float projectileSpeed = 50f;
+    [Tooltip("Travel speed for the Staff fireball")]
+    [SerializeField] private float staffFireballSpeed = 10f;
     [SerializeField] private float spawnOffset = 0.1f;
+    [SerializeField] private float maceLobUpwardSpeed = 10f;
     private Projectile currProjectilePrefab;
 
     [Header("Weapon Animation")] [Space]
@@ -216,6 +219,9 @@ public class PlayerShooter : MonoBehaviour
             case HeldWeaponType.Mace:
                 currProjectilePrefab = maceProjectilePrefab;
                 break;
+            case HeldWeaponType.Staff:
+                currProjectilePrefab = staffFireballPrefab;
+                break;
             default:
                 break;
         }
@@ -301,14 +307,14 @@ public class PlayerShooter : MonoBehaviour
         Vector3 spawnPos = muzzle.position + direction * spawnOffset;
         Quaternion spawnRot = Quaternion.LookRotation(direction, Vector3.up);
 
-        float currentDamage = playerEntity.Stats.ProjectileDamage;
-
-        // Mace throws through its fireball projectile
+        // Staff throws through its fireball 
         Projectile prefabToUse = currProjectilePrefab;
         HeldWeaponType firedWeapon = playerHeldWeaponController != null ? playerHeldWeaponController.HeldWeapon : HeldWeaponType.None;
-        if (firedWeapon == HeldWeaponType.Mace && maceFireballPrefab != null)
+
+        float currentDamage = playerEntity.Stats.ProjectileDamageForWeapon(firedWeapon);
+        if (firedWeapon == HeldWeaponType.Staff && staffFireballPrefab != null)
         {
-            prefabToUse = maceFireballPrefab;
+            prefabToUse = staffFireballPrefab;
         }
 
         GameObject proj = SpawnProjectile(prefabToUse.gameObject, spawnPos, spawnRot);
@@ -331,7 +337,15 @@ public class PlayerShooter : MonoBehaviour
         }
         else
         {
+            if (firedWeapon == HeldWeaponType.Staff && staffFireballSpeed > 0f)
+            {
+                speed = staffFireballSpeed;
+            }
             velocity = direction * speed;
+            if (firedWeapon == HeldWeaponType.Mace)
+            {
+                velocity += Vector3.up * maceLobUpwardSpeed;
+            }
         }
 
         // Init the projectile according to weapon
