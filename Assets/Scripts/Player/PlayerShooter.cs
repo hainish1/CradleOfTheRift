@@ -49,6 +49,7 @@ public class PlayerShooter : MonoBehaviour
     private bool isRegeneratingFireCharges;
     public static event Action<int, int> OnFireChargeSpent;      // (current, max)
     public static event Action<int, int> OnFireChargeRestored;   // (current, max)
+    public static event Action<Vector3, Vector3, HeldWeaponType> OnProjectileFired;
     public bool IsThrowing { get; private set; }
     private Coroutine weaponRegainCoroutine;
 
@@ -57,6 +58,7 @@ public class PlayerShooter : MonoBehaviour
     [SerializeField] Projectile spearProjectilePrefab;
     [SerializeField] Projectile axeProjectilePrefab;
     [SerializeField] Projectile maceProjectilePrefab;
+    [SerializeField] private ExplosiveProjectile maceFireballPrefab; // this is the shit to use
     [SerializeField] private ExplosiveProjectile explosiveProjectilePrefab;
     [SerializeField] private float projectileSpeed = 50f;
     [SerializeField] private float spawnOffset = 0.1f;
@@ -299,11 +301,17 @@ public class PlayerShooter : MonoBehaviour
         Vector3 spawnPos = muzzle.position + direction * spawnOffset;
         Quaternion spawnRot = Quaternion.LookRotation(direction, Vector3.up);
 
-        // now stat timeeee 
-
         float currentDamage = playerEntity.Stats.ProjectileDamage;
 
-        GameObject proj = Instantiate(currProjectilePrefab.gameObject, spawnPos, spawnRot);
+        // Mace throws through its fireball projectile
+        Projectile prefabToUse = currProjectilePrefab;
+        HeldWeaponType firedWeapon = playerHeldWeaponController != null ? playerHeldWeaponController.HeldWeapon : HeldWeaponType.None;
+        if (firedWeapon == HeldWeaponType.Mace && maceFireballPrefab != null)
+        {
+            prefabToUse = maceFireballPrefab;
+        }
+
+        GameObject proj = SpawnProjectile(prefabToUse.gameObject, spawnPos, spawnRot);
         var projScript = proj.GetComponent<Projectile>();
 
         float speed = projectileSpeed;
@@ -326,27 +334,53 @@ public class PlayerShooter : MonoBehaviour
             velocity = direction * speed;
         }
 
-        // Initialize the projectile according to its weapon type.
-        if (currProjectilePrefab == spearProjectilePrefab)
-            projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
-        else if (currProjectilePrefab == maceProjectilePrefab)
+        // Init the projectile according to weapon
+        if (firedWeapon == HeldWeaponType.Spear)
         {
-            MaceProjectile maceProjScript = proj.GetComponent<MaceProjectile>();
-            maceProjScript.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
+            projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
+        }
+        else if (firedWeapon == HeldWeaponType.Mace)
+        {
+            // Mace now fires a fireball
+            projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
+        }
+        else if (firedWeapon == HeldWeaponType.Axe)
+        {
+            AxeProjectile axeProjScript = proj.GetComponent<AxeProjectile>();
+            if (axeProjScript != null)
+            {
+                Vector3 targetPos = raycastHit.collider ? raycastHit.point : aim.GetAimIntersectPoint(axeProjScript.MaxTravelDistance);
+                axeProjScript.Init(targetPos, playerCenter, shootMask, currentDamage, flyDistance: 100, playerEntity);
+            }
+            else
+            {
+                projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
+            }
         }
         else
         {
-            AxeProjectile axeProjScript = proj.GetComponent<AxeProjectile>();
-
-            // Initialize target position.
-            Vector3 targetPos = raycastHit.collider ? raycastHit.point : aim.GetAimIntersectPoint(axeProjScript.MaxTravelDistance);
-            axeProjScript.Init(targetPos, playerCenter, shootMask, currentDamage, flyDistance: 100, playerEntity);
+            projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
         }
 
-        // Debug.Log($"Fired projectile with {currentDamage} damage");
-        // Play firing sound
         audioController?.PlayAttackSound();
         fireEvent.Post(gameObject);
+
+        OnProjectileFired?.Invoke(spawnPos, direction, firedWeapon);
+
+        // The projectile has left
+        IsThrowing = false;
+    }
+
+    // gets a projectile instance from the object pool when available, else fall back to Instantiate
+    private GameObject SpawnProjectile(GameObject prefab, Vector3 position, Quaternion rotation)
+    {
+        if (ObjectPool.instance != null)
+        {
+            GameObject pooled = ObjectPool.instance.GetObject(prefab, muzzle);
+            pooled.transform.SetPositionAndRotation(position, rotation);
+            return pooled;
+        }
+        return Instantiate(prefab, position, rotation);
     }
 
     /// <summary>
@@ -489,6 +523,5 @@ public class PlayerShooter : MonoBehaviour
 
         // Ensure weapon scale restoration is exact when done growing.
         weaponPivot.localScale = weaponOriginalScale;
-        IsThrowing = false;
     }
 }
