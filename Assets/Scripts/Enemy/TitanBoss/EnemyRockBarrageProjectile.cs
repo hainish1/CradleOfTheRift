@@ -6,7 +6,7 @@ using UnityEngine;
 /// <summary>
 /// Class - Represents a projectile that arcs towards the ground and creates a delayed area of effect on impact like a grenade.
 /// </summary>
-public class EnemyRockProjectile : MonoBehaviour
+public class EnemyRockBarrageProjectile : MonoBehaviour
 {
 
     [Header("flight")]

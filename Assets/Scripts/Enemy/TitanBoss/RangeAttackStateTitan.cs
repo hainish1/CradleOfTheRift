@@ -5,15 +5,15 @@ using UnityEngine;
 /// Class - Represents the Attack State for Melee Enemy.
 /// Uses swept-sphere collision during the leap
 /// </summary>
-public class RangeAttackStateGolem : EnemyState
+public class RangeAttackStateTitan : EnemyState
 {
-    private EnemyGolem enemyGolem;
+    private EnemyTitan enemyTitan;
     private float timer;
     private bool hasThrown;
 
-    public RangeAttackStateGolem(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
+    public RangeAttackStateTitan(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
-        enemyGolem = enemy as EnemyGolem;
+        enemyTitan = enemy as EnemyTitan;
     }
 
     /// <summary>
@@ -21,8 +21,8 @@ public class RangeAttackStateGolem : EnemyState
     /// </summary>
     public override void Enter()
     {
-        enemyGolem.PauseAgent();
-        timer = Random.Range(enemyGolem.minWindupTime, enemyGolem.maxWindupTime);
+        enemyTitan.PauseAgent();
+        timer = Random.Range(enemyTitan.minWindupTime, enemyTitan.maxWindupTime);
         hasThrown = false;
 
         // Trigger throwing animation (not yet implemented)
@@ -34,12 +34,12 @@ public class RangeAttackStateGolem : EnemyState
     {
         if (enemy.target == null)
         {
-            stateMachine.ChangeState(enemyGolem.GetIdle());
+            stateMachine.ChangeState(enemyTitan.GetIdle());
             return;
         }
 
         // Keep facing the player during windup
-        enemyGolem.FaceTargetSmooth(enemyGolem.turnSpeedWhileAiming);
+        enemyTitan.FaceTargetSmooth(enemyTitan.turnSpeedWhileAiming);
         
         if (!hasThrown)
         {
@@ -47,13 +47,13 @@ public class RangeAttackStateGolem : EnemyState
 
             if (timer <= 0f)    // Hardcoded windup that should get replaced with animation events later
             {
-                enemyGolem.ThrowRock();
+                enemyTitan.ThrowRock();
                 hasThrown = true;
-                enemyGolem.golemAnim.SetTrigger("AttackRanged");
+                enemyTitan.golemAnim.SetTrigger("AttackRanged");
 
                 // Set cooldown and go to recovery
-                enemy.nextAttackAllowed = Time.time + enemyGolem.attackCooldown;
-                stateMachine.ChangeState(enemyGolem.GetRecovery());
+                enemy.nextAttackAllowed = Time.time + enemyTitan.attackCooldown;
+                stateMachine.ChangeState(enemyTitan.GetRecovery());
             }
         }
     }
@@ -118,6 +118,6 @@ public class RangeAttackStateGolem : EnemyState
 
     public override void Exit()
     {
-        enemyGolem.ResumeAgent();
+        enemyTitan.ResumeAgent();
     }
 }
