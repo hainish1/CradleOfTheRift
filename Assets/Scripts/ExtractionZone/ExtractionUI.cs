@@ -36,12 +36,34 @@ public class ExtractionUI : MonoBehaviour
         StopFlash();
 
         zone.ChargeChanged += OnChargeUpdate;
+        zone.ExtractionPaused += OnExtractionPaused;
+        zone.ExtractionResumed += OnExtractionResumed;
+    }
+
+    private void OnExtractionPaused()
+    {
+        if (!wasDecaying)
+        {
+            wasDecaying = true;
+            this.extractionBar.AddToClassList("decaying");
+            flashRoutine = StartCoroutine(FlashLoop());
+        }
+    }
+
+    private void OnExtractionResumed()
+    {
+        StopFlash();
+        wasDecaying = false;
     }
 
     private void OnExtractionFinished()
     {
         if (activeZoneRef != null)
+        {
             activeZoneRef.ChargeChanged -= OnChargeUpdate;
+            activeZoneRef.ExtractionPaused -= OnExtractionPaused;
+            activeZoneRef.ExtractionResumed -= OnExtractionResumed;
+        }
 
         StopFlash();
         this.extractionBar.style.display = DisplayStyle.None;
@@ -55,28 +77,6 @@ public class ExtractionUI : MonoBehaviour
 
         float percent = (currentCharge / activeZoneRef.ChargeTime) * 100f;
         this.extractionBar.title = $"Extraction: [{Mathf.RoundToInt(percent)}%]";
-
-        UpdateDecayVisual(currentCharge);
-    }
-
-    private void UpdateDecayVisual(float currentCharge)
-    {
-        bool isDecaying = currentCharge < lastCharge;
-        lastCharge = currentCharge;
-
-        // Only act when state actually changes — avoids per-frame class churn
-        if (isDecaying == wasDecaying) return;
-        wasDecaying = isDecaying;
-
-        if (isDecaying)
-        {
-            this.extractionBar.AddToClassList("decaying");
-            flashRoutine = StartCoroutine(FlashLoop());
-        }
-        else
-        {
-            StopFlash();
-        }
     }
 
     private void StopFlash()
