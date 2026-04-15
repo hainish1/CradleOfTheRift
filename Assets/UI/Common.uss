@@ -13,3 +13,19 @@
     font-size: 48px;        
     color: black;
 }
+
+.header-end-screen {
+    /* Centering Logic */
+    position: absolute;
+    top: 20px; 
+    left: 0;
+    right: 0;
+    -unity-text-align: middle-center;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerLight-aGnx-Font.ttf?fileID=12800000&guid=353234806b51d43e58d9161acf6d5b78&type=3#CocobikerLight-aGnx-Font");
+    
+    color: rgb(166, 49, 255); 
+    font-size: 200px; 
+    
+    /* Utility */
+    picking-mode: ignore; 
+}
