@@ -54,8 +54,8 @@ public class Shrine : MonoBehaviour, IInteractable, IPromptHeightOverride
         {
             ResolveWeaponIfNeeded();
             string weaponName = selectionMode == WeaponSelectionMode.Random ? "?????" : resolvedWeapon.ToString();
-            return $"<b>{weaponName}</b>\n" +
-                   $"<color=#FFD447>[E]</color> {goldPrice}G \n" +
+            return $"<b>{weaponName}</b>  " +
+                   $"<color=#FFD447>[E]</color> {goldPrice}G  " +
                    $"<color=#9AD5FF>[Ctrl+E]</color> {xpPrice}XP";
         }
     }

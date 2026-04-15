@@ -5492,9 +5492,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b7684082c124f45893380d545b25c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  original: {fileID: 2100000, guid: 6b38742730e330c488cc8d7964788813, type: 2}
   flash: {fileID: 2100000, guid: a4b62a69d54e80347bd546999c6d4b9e, type: 2}
   flashDuration: 0.1
-  flashOnlyRootRenderer: 0
 --- !u!1 &4976772631900724258
 GameObject:
   m_ObjectHideFlags: 0
@@ -6002,19 +6002,6 @@ MonoBehaviour:
   gizosOn: 1
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
   nextAttackAllowed: 1
-  elementalProfile:
-    type: 0
-    modelVariant: {fileID: 0}
-    bodyVFX: {fileID: 0}
-    attackVFX: {fileID: 0}
-    dotHitVFX: {fileID: 0}
-    damageMultiplier: 1
-    speedMultiplier: 1
-    isStrongerVariant: 0
-    dotChance: 0.35
-    dotDamagePerTick: 0.5
-    dotTickInterval: 1
-    dotDuration: 3
   projectileDamage: 10
   flyHeight: 3.7
   verticalSmoothTime: 4.5
@@ -6035,6 +6022,7 @@ MonoBehaviour:
   spreadRadiusJitter: 0.1
   wispSeparationRadius: 1
   wispSeparationStrength: 0.05
+  navSampleDistance: 1
   angleAdaptSpeed: 0.05
   projectileSpeed: 50
   attackDelayMin: 0.3
@@ -6091,9 +6079,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b7684082c124f45893380d545b25c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flash: {fileID: 2100000, guid: 679327a50d72c694bab0b63b6b2baec1, type: 2}
+  original: {fileID: 5561349426305759274, guid: ae87488a8bdfccd44accf997cc91a540, type: 3}
+  flash: {fileID: 2100000, guid: a4b62a69d54e80347bd546999c6d4b9e, type: 2}
   flashDuration: 0.1
-  flashOnlyRootRenderer: 1
 --- !u!114 &3349805392606994707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6113,10 +6101,6 @@ MonoBehaviour:
   damageVisuals: {fileID: 6516409030888228098}
   deathVFX: {fileID: 5162910912013668194, guid: cf82839c411151342a7b2337bda9fb34, type: 3}
   deathVFXSpawnPoint: {fileID: 2550525461421281247}
-  spawnSFX:
-    idInternal: 0
-    valueGuidInternal: 
-    WwiseObjectReference: {fileID: 0}
   deathSFX:
     idInternal: 0
     valueGuidInternal: 
@@ -6161,8 +6145,6 @@ MonoBehaviour:
   riseSpeed: 1.5
   takeDamageVFXPrefab: {fileID: 4658278565933542678, guid: 4af3f4d5c6cd02e4cb7b3d31760090e1, type: 3}
   damageVfxAttachPoint: {fileID: 0}
-  textHeightOffset: 2
-  textSpreadRadius: 0.4
 --- !u!114 &4374450685186104106
 MonoBehaviour:
   m_ObjectHideFlags: 0
