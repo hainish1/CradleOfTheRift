@@ -12,6 +12,10 @@ public class AbilityUIController : MonoBehaviour
     [SerializeField] private WeaponIconSet weaponIconSet;
     [SerializeField] private AbilityIconSet abilityIcons;
 
+    [Header("FX Settings")]
+    [SerializeField] private SwapEffectType weaponSwapEffect = SwapEffectType.RiftCrackle;
+    [SerializeField] private float effectDuration = 500f;
+
     private Stats playerStats;
     private PlayerMovement playerMovement;
 
@@ -351,8 +355,11 @@ public class AbilityUIController : MonoBehaviour
                 _                    => null // fallback to original
             };
 
-        // Update the data and the VisualElement
-        abilitySlots[rangedAbilityIndex].diamond.Icon = newIcon;
+        var diamond = abilitySlots[rangedAbilityIndex].diamond;
+        diamond.Icon = newIcon;
+
+        // Trigger the selected effect
+        diamond.TriggerEffect(weaponSwapEffect, effectDuration);
     }
 }
 

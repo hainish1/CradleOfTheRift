@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
+public enum SwapEffectType { None, RiftCrackle, ArcaneSpin, ManaPulse }
+
 /// <summary>
 /// A custom VisualElement that renders an ability icon clipped to a diamond shape,
 /// a cooldown overlay, and a diamond border.
@@ -109,10 +111,26 @@ public partial class DiamondAbilityElement : VisualElement
         set { _iconOffset = value; MarkDirtyRepaint(); }
     }
 
+    // Effect Logic
+    private SwapEffectType _activeEffect = SwapEffectType.None;
+    private float _effectIntensity = 0f;
+
     public DiamondAbilityElement()
     {
         generateVisualContent += OnGenerateVisualContent;
         RegisterCallback<CustomStyleResolvedEvent>(OnCustomStyleResolved);
+    }
+
+    public void TriggerEffect(SwapEffectType effect, float durationMS)
+    {
+        _activeEffect = effect;
+        this.experimental.animation.Start(1f, 0f, (int)durationMS, (element, val) => {
+            _effectIntensity = val;
+            MarkDirtyRepaint();
+        }).OnCompleted(() => {
+            _activeEffect = SwapEffectType.None;
+            MarkDirtyRepaint();
+        });
     }
 
     private void OnCustomStyleResolved(CustomStyleResolvedEvent e)
@@ -186,6 +204,76 @@ public partial class DiamondAbilityElement : VisualElement
         painter.LineTo(left);
         painter.ClosePath();
         painter.Stroke();
+
+        // Draw Fantasy Effects
+        if (_activeEffect != SwapEffectType.None && _effectIntensity > 0)
+        {
+            HandleFantasyEffects(painter, w, h);
+        }
+    }
+
+    private void HandleFantasyEffects(Painter2D painter, float w, float h)
+    {
+        Vector2 center = new Vector2(w * 0.5f, h * 0.5f);
+
+        switch (_activeEffect)
+        {
+            case SwapEffectType.RiftCrackle:
+                painter.strokeColor = new Color(0.4f, 0.9f, 1f, _effectIntensity);
+                painter.lineWidth = 1.5f;
+                for (int i = 0; i < 3; i++)
+                {
+                    painter.BeginPath();
+                    painter.MoveTo(new Vector2(w * 0.5f + Random.Range(-8, 8), Random.Range(-8, 8)));
+                    painter.LineTo(new Vector2(w + Random.Range(-8, 8), h * 0.5f + Random.Range(-8, 8)));
+                    painter.LineTo(new Vector2(w * 0.5f + Random.Range(-8, 8), h + Random.Range(-8, 8)));
+                    painter.LineTo(new Vector2(Random.Range(-8, 8), h * 0.5f + Random.Range(-8, 8)));
+                    painter.ClosePath();
+                    painter.Stroke();
+                }
+                break;
+
+            case SwapEffectType.ArcaneSpin:
+                // FIX: Matrix transformations are handled via the contentMatrix in Painter2D
+                float angle = (1f - _effectIntensity) * 180f;
+                float s = (w * 0.5f) * 0.8f;
+                
+                // Save and Restore are actually called SaveContentMatrix and RestoreContentMatrix
+                // However, UI Toolkit also supports a matrix approach
+                Matrix4x4 rotationMatrix = Matrix4x4.TRS(center, Quaternion.Euler(0, 0, angle), Vector3.one) * Matrix4x4.Translate(-center);
+                
+                // Note: painter2D uses Save/Restore or similar if using specific versions, 
+                // but setting the matrix directly is the most compatible way
+                painter.strokeColor = new Color(1f, 0.85f, 0.3f, _effectIntensity);
+                painter.lineWidth = 2f;
+                
+                // Drawing the rotating diamond
+                painter.BeginPath();
+                Vector2 p1 = rotationMatrix.MultiplyPoint3x4(new Vector2(center.x, center.y - s));
+                Vector2 p2 = rotationMatrix.MultiplyPoint3x4(new Vector2(center.x + s, center.y));
+                Vector2 p3 = rotationMatrix.MultiplyPoint3x4(new Vector2(center.x, center.y + s));
+                Vector2 p4 = rotationMatrix.MultiplyPoint3x4(new Vector2(center.x - s, center.y));
+                
+                painter.MoveTo(p1);
+                painter.LineTo(p2);
+                painter.LineTo(p3);
+                painter.LineTo(p4);
+                painter.ClosePath();
+                painter.Stroke();
+                break;
+
+            case SwapEffectType.ManaPulse:
+                float burst = (w * 0.5f) + (20f * (1f - _effectIntensity));
+                painter.fillColor = new Color(0.6f, 0.3f, 1f, _effectIntensity * 0.4f);
+                painter.BeginPath();
+                painter.MoveTo(new Vector2(center.x, center.y - burst));
+                painter.LineTo(new Vector2(center.x + burst, center.y));
+                painter.LineTo(new Vector2(center.x, center.y + burst));
+                painter.LineTo(new Vector2(center.x - burst, center.y));
+                painter.ClosePath();
+                painter.Fill();
+                break;
+        }
     }
 
     // ------------------------------------------------------------------ //
