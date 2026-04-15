@@ -25,7 +25,38 @@ Transform:
   m_GameObject: {fileID: 2977173361993762485}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.6, y: 0.2, z: 0}
+  m_LocalPosition: {x: 0.6, y: 0.7, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 984479434153791223}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3675270320392833844
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5590370647265476439}
+  m_Layer: 0
+  m_Name: rockBarragePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5590370647265476439
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3675270320392833844}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.3, z: 0.35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -71,6 +102,7 @@ Transform:
   m_Children:
   - {fileID: 2545160238402103216}
   - {fileID: 6136272082482821300}
+  - {fileID: 5590370647265476439}
   - {fileID: 2795737434573335998}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -149,18 +181,18 @@ MonoBehaviour:
   maxWanderTime: 4
   postAttackCooldown: 1
   rockProjectilePrefab: {fileID: 3232334194741932682, guid: 4cd060ce3e737dd4abe9f2e9eed19ca2, type: 3}
-  directDamage: 40
-  AOEDamage: 40
+  directDamage: 50
+  AOEDamage: 20
   minWindupTime: 2
   maxWindupTime: 2
-  projectileVelocity: 30
+  projectileVelocity: 70
   projectileKnockback: 100
   projectileSpawnPoint: {fileID: 6136272082482821300}
   turnSpeedWhileAiming: 8
   projectileMask:
     serializedVersion: 2
     m_Bits: 1344
-  playerAimOffset: 1.5
+  playerAimOffset: 1
   meleeDamage: 20
   meleeHorizontalKnockback: 100
   meleeVerticalKnockback: 100
@@ -175,15 +207,15 @@ MonoBehaviour:
   golemAnim: {fileID: 0}
   rockBarrageProjectilePrefab: {fileID: 3232334194741932682, guid: 19434ca25bbf57741a7c501f1ee22dc7, type: 3}
   barrageDirectDamage: 20
-  barrageProjectileVelocity: 50
-  barrageProjectileKnockback: 40
-  barrageProjectileSpawnPoint: {fileID: 6136272082482821300}
+  barrageProjectileVelocity: 70
+  barrageProjectileKnockback: 10
+  barrageProjectileSpawnPoint: {fileID: 5590370647265476439}
   barrageProjectileMask:
     serializedVersion: 2
-    m_Bits: 1344
-  barrageProjectileCount: 12
-  barrageSpreadAngle: 30
-  barrageAimOffset: 1.5
+    m_Bits: 320
+  barrageProjectileCount: 20
+  barrageSpreadAngle: 20
+  barrageAimOffset: 3
   sweepMeleeDamage: 20
   sweepHorizontalKnockback: 100
   sweepVerticalKnockback: 100
@@ -260,10 +292,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 150
+  maxHealth: 750
   cleanupDelay: 0
-  baseHealth: 150
-  xpReward: 10
+  baseHealth: 750
+  xpReward: 1000
   damageVisuals: {fileID: 2533069923019125397}
   deathVFX: {fileID: 676540690991785363, guid: ceee2cd6e8010af4bbcec230578f8910, type: 3}
   deathVFXSpawnPoint: {fileID: 0}

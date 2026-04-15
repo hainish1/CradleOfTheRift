@@ -47,7 +47,18 @@ public class RangeAttackStateTitan : EnemyState
 
             if (timer <= 0f)    // Hardcoded windup that should get replaced with animation events later
             {
-                enemyTitan.RockBarrage();
+                float random = Random.value;
+                if (random < 0.5f) // 50% chance to do either attack
+                {
+                    enemyTitan.ThrowRock();
+                    //enemyTitan.golemAnim.SetTrigger("AttackRanged");
+                }
+                else
+                {
+                    enemyTitan.RockBarrage();
+                    //enemyTitan.golemAnim.SetTrigger("AttackRangedBarrage");
+                }
+                
                 hasThrown = true;
                 //enemyTitan.golemAnim.SetTrigger("AttackRanged");
 

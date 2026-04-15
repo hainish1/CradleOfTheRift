@@ -151,6 +151,7 @@ MonoBehaviour:
   rockProjectilePrefab: {fileID: 3232334194741932682, guid: adf349a4643808e428b922062262b364, type: 3}
   directDamage: 35
   AOEDamage: 0
+  AOERadius: 0
   minWindupTime: 2
   maxWindupTime: 2
   projectileVelocity: 100
@@ -160,6 +161,7 @@ MonoBehaviour:
   projectileMask:
     serializedVersion: 2
     m_Bits: 1344
+  playerAimOffset: 1.5
   meleeDamage: 20
   meleeHorizontalKnockback: 100
   meleeVerticalKnockback: 100

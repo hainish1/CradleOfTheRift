@@ -101,6 +101,7 @@ MonoBehaviour:
   impactVFX: {fileID: 4994997792314849709, guid: 776b311f5d1598f4496d586fc2ad4c09, type: 3}
   impactSize: 3
   effectDuration: 2
+  aoeRadius: 0
 --- !u!96 &4903253203124442273
 TrailRenderer:
   serializedVersion: 3
@@ -237,6 +238,7 @@ GameObject:
   - component: {fileID: 5636832670371722785}
   - component: {fileID: 6154229396592584393}
   - component: {fileID: 494878830877373867}
+  - component: {fileID: 6665596914676623261}
   m_Layer: 12
   m_Name: Mesh
   m_TagString: Untagged
@@ -312,6 +314,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6199202630226384469}
   m_Mesh: {fileID: 3127300162012025952, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
+--- !u!114 &6665596914676623261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6199202630226384469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 665ea40d073796d4495298d349ccbb33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeedX: -360
 --- !u!1001 &6890679936422874438
 PrefabInstance:
   m_ObjectHideFlags: 0

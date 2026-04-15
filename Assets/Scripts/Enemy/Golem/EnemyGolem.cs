@@ -25,8 +25,9 @@ public class EnemyGolem : Enemy
 
     [Header("Rock Throw Ranged Settings")]
     public GameObject rockProjectilePrefab;
-    public float directDamage = 20f;    // Not used rn
-    public float AOEDamage = 5f;        // Not used rn
+    public float directDamage = 20f;
+    public float AOEDamage = 20f;
+    //public float AOERadius = 3f; // Moved to the projectile itself
     public float minWindupTime = 1.5f;
     public float maxWindupTime = 2.5f;
     public float projectileVelocity = 12f;
@@ -172,8 +173,8 @@ public class EnemyGolem : Enemy
 
             Vector3 calculatedVelocity = CalculateLaunchVelocity(spawnPos, targetPos, timeToTarget);
 
-            // Init: (Vector3 velocity, LayerMask mask, float damage, float knockback)
-            rock.Init(calculatedVelocity, projectileMask, directDamage, projectileKnockback);
+            // Init: (Vector3 velocity, LayerMask mask, float damage, float knockback, float aoeRadius, float aoeDamage)
+            rock.Init(calculatedVelocity, projectileMask, directDamage, projectileKnockback, AOEDamage);
         }
     }
 
