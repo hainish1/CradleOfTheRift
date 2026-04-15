@@ -37,8 +37,6 @@ public class PoisonCore : IDisposable
     public PoisonCore()
     {
         Active = this;
-        // Allow Fire-element hits (e.g. Staff fireball) to trigger poison on-hit effects.
-        ElementSystem.AddTempRule(ElementType.Fire, ElementType.Poison);
     }
 
     public float BaseDamagePerTick => baseDamagePerTick;
@@ -158,7 +156,6 @@ public class PoisonCore : IDisposable
         if (disposed) return;
         disposed = true;
         contributions.Clear();
-        ElementSystem.RemoveTempRule(ElementType.Fire, ElementType.Poison);
         if (Active == this)
             Active = null;
     }

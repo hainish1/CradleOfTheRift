@@ -96,28 +96,12 @@ public class AbilityUIController : MonoBehaviour
         abilities.Add(flyAbility);
         CreateAbility(flyAbility, fillFromTop: true);
 
-        // ---- Ranged ------------------------------------------------------ //
-        var rangedAbility = new AbilityInfo
-        {
-            abilityName = "Ranged",
-            key = KeyCode.Mouse1,
-            icon = images.Count > 3 ? images[2] : null,
-            maxCharges = playerStats.FireCharges,
-            currentCharges = playerStats.FireCharges,
-            getCooldown = () => playerStats.FireChargeCooldown,
-            iconScale = 1.2f,
-            iconOffset = new Vector2(5f, 0f)
-        };
-        rangedAbilityIndex = abilities.Count;
-        abilities.Add(rangedAbility);
-        CreateAbility(rangedAbility);
-
         // ---- Shockwave --------------------------------------------------- //
         var shockwaveAbility = new AbilityInfo
         {
             abilityName = "Shockwave",
             key = KeyCode.X,
-            icon = images.Count > 2 ? images[3] : null,
+            icon = images.Count > 2 ? images[2] : null,
             maxCharges = 1,
             currentCharges = 1,
             getCooldown = () => playerStats.ShockwaveCooldown,
@@ -127,6 +111,22 @@ public class AbilityUIController : MonoBehaviour
         shockwaveAbilityIndex = abilities.Count;
         abilities.Add(shockwaveAbility);
         CreateAbility(shockwaveAbility);
+
+        // ---- Ranged ------------------------------------------------------ //
+        var rangedAbility = new AbilityInfo
+        {
+            abilityName = "Ranged",
+            key = KeyCode.Mouse1,
+            icon = images.Count > 3 ? images[3] : null,
+            maxCharges = playerStats.FireCharges,
+            currentCharges = playerStats.FireCharges,
+            getCooldown = () => playerStats.FireChargeCooldown,
+            iconScale = 1.2f,
+            iconOffset = new Vector2(5f, 0f)
+        };
+        rangedAbilityIndex = abilities.Count;
+        abilities.Add(rangedAbility);
+        CreateAbility(rangedAbility);
     }
 
     private void OnEnable()

@@ -30,7 +30,6 @@ public class DifficultyScaler : MonoBehaviour
     private bool isRunning = true;
 
     public event Action<float, string> OnDifficultyUIUpdate;
-    public event Action<float> DifficultyScaleChanged;
     public List<TierSettings> GetTiers() => tiers;
 
     void Start()
@@ -48,7 +47,6 @@ public class DifficultyScaler : MonoBehaviour
         totalGrowthAccumulated += currentTier.tierGrowthRate * Time.deltaTime;
 
         OnDifficultyUIUpdate?.Invoke(tierProgress, currentTier.tierName);
-        DifficultyScaleChanged?.Invoke(GetDifficultyScale());
     }
 
     public float GetDifficultyScale()

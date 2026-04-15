@@ -15,7 +15,8 @@ MonoBehaviour:
   objectiveText: Jump and Glide to the next Plate
   hintText: Press SPACE to jump and press and hold SPACE again to glide while in
     air
-  highlightTargets: []
+  highlightTargets:
+  - {fileID: 11400000, guid: 760de52176ae8c24eaa563b2092fe6ed, type: 2}
   completionMode: 1
   keyToPress: 98
   timerDuration: 3

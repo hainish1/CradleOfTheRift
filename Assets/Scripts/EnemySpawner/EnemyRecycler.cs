@@ -61,13 +61,6 @@ public class EnemyRecycler : MonoBehaviour
                 if (walkers[i] != null)
                     ProcessRecycle(walkers[i].gameObject, false);
             }
-
-            var golems = EnemyRegistry.Golems;
-            for (int i = golems.Count - 1; i >= 0; i--)
-            {
-                if (golems[i] != null)
-                    ProcessRecycle(golems[i].gameObject, false);
-            }       
         }
     }
 

@@ -36,7 +36,6 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private PlayerMovement _playerMovement;
     private PlayerShooter _playerShooter;
     private PlayerShockwaveController _shockwaveController;
-    private PlayerHeldWeaponController _heldWeaponController;
     private Entity _playerEntity;
 
     // Animation Parameters
@@ -75,8 +74,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     // Attack Parameters
 
-    private HeldWeaponType CurrentWeapon => _heldWeaponController != null ? _heldWeaponController.HeldWeapon : HeldWeaponType.None;
-    private float MeleeDamage => _playerEntity.Stats.MeleeDamageForWeapon(CurrentWeapon); // get that specific damage
+    private float MeleeDamage => _playerEntity.Stats.MeleeDamage;
     private float AttackCooldown => GetAttackCooldown();
     [Header("Attack Parameters")] [Space]
     [SerializeField]
@@ -108,7 +106,6 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _playerMovement = GetComponentInParent<PlayerMovement>();
         _playerShooter = GetComponentInParent<PlayerShooter>();
         _shockwaveController = GetComponentInParent<PlayerShockwaveController>();
-        _heldWeaponController = GetComponentInParent<PlayerHeldWeaponController>();
 
         // Animation Parameters
         _playerAnim = GetComponent<Animator>();
@@ -179,7 +176,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private float GetAttackCooldown()
     {
         return _attacks[_currComboCount - 1].PostTransitionAnim.length
-               + _playerEntity.Stats.MeleeAttackRateForWeapon(CurrentWeapon);
+               + _playerEntity.Stats.MeleeAttackRate;
     }
 
     /// <summary>

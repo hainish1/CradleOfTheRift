@@ -207,9 +207,8 @@ public class PauseMenu : MonoBehaviour
     private void OnCreditsClick(ClickEvent evt)
     {
         AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX);
-        SceneManager.LoadScene("Credits");
-        // creditsUI.SetActive(true);
-        // mainMenuUI.SetActive(false);
+        creditsUI.SetActive(true);
+        mainMenuUI.SetActive(false);
 
     }
 

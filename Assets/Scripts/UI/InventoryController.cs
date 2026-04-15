@@ -136,17 +136,14 @@ public class InventoryController : MonoBehaviour
 
     private void RefreshInventoryDisplay()
     {
+        // Clear icons and data from all UI slots
         foreach(var slot in itemSlots)
         {
-            // Look for the "Icon" child we added
-            var iconElement = slot.Q<VisualElement>("Icon");
-            if (iconElement != null)
-            {
-                iconElement.style.backgroundImage = null;
-            }
+            slot.style.backgroundImage = null; 
             slot.userData = null;
         }
 
+        // Map items from the logic dictionary to the visual slot grid
         int index = 0;
         foreach(var kvp in playerInventory.Items)
         {
@@ -154,14 +151,8 @@ public class InventoryController : MonoBehaviour
             ItemData data = kvp.Key;
             
             VisualElement slot = itemSlots[index];
-            var iconElement = slot.Q<VisualElement>("Icon");
-
-            if (iconElement != null && data.icon != null) 
-            {
-                iconElement.style.backgroundImage = new StyleBackground(data.icon);
-            }
-
-            slot.userData = data;
+            if (data.icon != null) slot.style.backgroundImage = new StyleBackground(data.icon);
+            slot.userData = data; // Attach data to the UI element for retrieval on click
             index++;
         }
     }

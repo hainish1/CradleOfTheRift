@@ -18,28 +18,12 @@ public enum StatType
 {
     // Melee Attack Enums
     MeleeDamage,
-    SpearMeleeDamage,
-    AxeMeleeDamage,
-    MaceMeleeDamage,
-    StaffMeleeDamage,
     MeleeAttackRate,
-    SpearMeleeAttackRate,
-    AxeMeleeAttackRate,
-    MaceMeleeAttackRate,
-    StaffMeleeAttackRate,
     MeleeAnimationSpeed,
 
     // Ranged Attack Enums
     ProjectileDamage,
-    SpearProjectileDamage,
-    AxeProjectileDamage,
-    MaceProjectileDamage,
-    StaffProjectileDamage,
     ProjectileFireRate,
-    SpearProjectileFireRate,
-    AxeProjectileFireRate,
-    MaceProjectileFireRate,
-    StaffProjectileFireRate,
     ProjectileAnimationSpeed,
     FireCharges,
     FireChargeCooldown,
@@ -96,57 +80,7 @@ public class Stats
     
     public float MeleeDamage { get { return FloatStatQuery(StatType.MeleeDamage, baseStats.meleeDamage); } }
 
-    public float SpearMeleeDamage => WeaponMeleeDamage(StatType.SpearMeleeDamage, baseStats.spearMeleeDamage);
-    public float AxeMeleeDamage => WeaponMeleeDamage(StatType.AxeMeleeDamage, baseStats.axeMeleeDamage);
-    public float MaceMeleeDamage => WeaponMeleeDamage(StatType.MaceMeleeDamage, baseStats.maceMeleeDamage);
-    public float StaffMeleeDamage => WeaponMeleeDamage(StatType.StaffMeleeDamage, baseStats.staffMeleeDamage);
-
-    private float WeaponMeleeDamage(StatType weaponStat, float weaponBaseValue)
-    {
-        float weaponBase = weaponBaseValue > 0f ? weaponBaseValue : baseStats.meleeDamage;
-        float afterWeaponMods = FloatStatQuery(weaponStat, weaponBase);
-        float globalDelta = MeleeDamage - baseStats.meleeDamage;
-        return afterWeaponMods + globalDelta;
-    }
-
-    public float MeleeDamageForWeapon(HeldWeaponType weapon)
-    {
-        return weapon switch
-        {
-            HeldWeaponType.Spear => SpearMeleeDamage,
-            HeldWeaponType.Axe => AxeMeleeDamage,
-            HeldWeaponType.Mace => MaceMeleeDamage,
-            HeldWeaponType.Staff => StaffMeleeDamage,
-            _ => MeleeDamage,
-        };
-    }
-
     public float MeleeAttackRate { get { return FloatStatQuery(StatType.MeleeAttackRate, baseStats.meleeAttackRate); } }
-
-    public float SpearMeleeAttackRate => WeaponMeleeAttackRate(StatType.SpearMeleeAttackRate, baseStats.spearMeleeAttackRate);
-    public float AxeMeleeAttackRate => WeaponMeleeAttackRate(StatType.AxeMeleeAttackRate, baseStats.axeMeleeAttackRate);
-    public float MaceMeleeAttackRate => WeaponMeleeAttackRate(StatType.MaceMeleeAttackRate, baseStats.maceMeleeAttackRate);
-    public float StaffMeleeAttackRate => WeaponMeleeAttackRate(StatType.StaffMeleeAttackRate, baseStats.staffMeleeAttackRate);
-
-    private float WeaponMeleeAttackRate(StatType weaponStat, float weaponBaseValue)
-    {
-        float weaponBase = weaponBaseValue > 0f ? weaponBaseValue : baseStats.meleeAttackRate;
-        float afterWeaponMods = FloatStatQuery(weaponStat, weaponBase);
-        float globalDelta = MeleeAttackRate - baseStats.meleeAttackRate;
-        return afterWeaponMods + globalDelta;
-    }
-
-    public float MeleeAttackRateForWeapon(HeldWeaponType weapon)
-    {
-        return weapon switch
-        {
-            HeldWeaponType.Spear => SpearMeleeAttackRate,
-            HeldWeaponType.Axe => AxeMeleeAttackRate,
-            HeldWeaponType.Mace => MaceMeleeAttackRate,
-            HeldWeaponType.Staff => StaffMeleeAttackRate,
-            _ => MeleeAttackRate,
-        };
-    }
 
     public float MeleeAnimationSpeed { get { return FloatStatQuery(StatType.MeleeAnimationSpeed, baseStats.meleeAnimationSpeed); } }
 
@@ -154,59 +88,7 @@ public class Stats
 
     public float ProjectileDamage { get { return FloatStatQuery(StatType.ProjectileDamage, baseStats.projectileDamage); } }
 
-    public float SpearProjectileDamage => WeaponProjectileDamage(StatType.SpearProjectileDamage, baseStats.spearProjectileDamage);
-    public float AxeProjectileDamage => WeaponProjectileDamage(StatType.AxeProjectileDamage, baseStats.axeProjectileDamage);
-    public float MaceProjectileDamage => WeaponProjectileDamage(StatType.MaceProjectileDamage, baseStats.maceProjectileDamage);
-    public float StaffProjectileDamage => WeaponProjectileDamage(StatType.StaffProjectileDamage, baseStats.staffProjectileDamage);
-
-    // Per-weapon base, then applies weaponspecific modifiers,
-    // then global pickups buff every weapon
-    private float WeaponProjectileDamage(StatType weaponStat, float weaponBaseValue)
-    {
-        float weaponBase = weaponBaseValue > 0f ? weaponBaseValue : baseStats.projectileDamage;
-        float afterWeaponMods = FloatStatQuery(weaponStat, weaponBase);
-        float globalDelta = ProjectileDamage - baseStats.projectileDamage;
-        return afterWeaponMods + globalDelta;
-    }
-
-    public float ProjectileDamageForWeapon(HeldWeaponType weapon)
-    {
-        return weapon switch
-        {
-            HeldWeaponType.Spear => SpearProjectileDamage,
-            HeldWeaponType.Axe => AxeProjectileDamage,
-            HeldWeaponType.Mace => MaceProjectileDamage,
-            HeldWeaponType.Staff => StaffProjectileDamage,
-            _ => ProjectileDamage,
-        };
-    }
-
     public float ProjectileFireRate { get { return FloatStatQuery(StatType.ProjectileFireRate, baseStats.projectileFireRate); } }
-
-    public float SpearProjectileFireRate => WeaponProjectileFireRate(StatType.SpearProjectileFireRate, baseStats.spearProjectileFireRate);
-    public float AxeProjectileFireRate => WeaponProjectileFireRate(StatType.AxeProjectileFireRate, baseStats.axeProjectileFireRate);
-    public float MaceProjectileFireRate => WeaponProjectileFireRate(StatType.MaceProjectileFireRate, baseStats.maceProjectileFireRate);
-    public float StaffProjectileFireRate => WeaponProjectileFireRate(StatType.StaffProjectileFireRate, baseStats.staffProjectileFireRate);
-
-    private float WeaponProjectileFireRate(StatType weaponStat, float weaponBaseValue)
-    {
-        float weaponBase = weaponBaseValue > 0f ? weaponBaseValue : baseStats.projectileFireRate;
-        float afterWeaponMods = FloatStatQuery(weaponStat, weaponBase);
-        float globalDelta = ProjectileFireRate - baseStats.projectileFireRate;
-        return afterWeaponMods + globalDelta;
-    }
-
-    public float ProjectileFireRateForWeapon(HeldWeaponType weapon)
-    {
-        return weapon switch
-        {
-            HeldWeaponType.Spear => SpearProjectileFireRate,
-            HeldWeaponType.Axe => AxeProjectileFireRate,
-            HeldWeaponType.Mace => MaceProjectileFireRate,
-            HeldWeaponType.Staff => StaffProjectileFireRate,
-            _ => ProjectileFireRate,
-        };
-    }
 
     public float ProjectileAnimationSpeed { get { return FloatStatQuery(StatType.ProjectileAnimationSpeed, baseStats.projectileAnimationSpeed); } }
 
@@ -299,26 +181,10 @@ public class Stats
         return type switch
         {
             StatType.MeleeDamage => baseStats.meleeDamage,
-            StatType.SpearMeleeDamage => baseStats.spearMeleeDamage,
-            StatType.AxeMeleeDamage => baseStats.axeMeleeDamage,
-            StatType.MaceMeleeDamage => baseStats.maceMeleeDamage,
-            StatType.StaffMeleeDamage => baseStats.staffMeleeDamage,
             StatType.MeleeAttackRate => baseStats.meleeAttackRate,
-            StatType.SpearMeleeAttackRate => baseStats.spearMeleeAttackRate,
-            StatType.AxeMeleeAttackRate => baseStats.axeMeleeAttackRate,
-            StatType.MaceMeleeAttackRate => baseStats.maceMeleeAttackRate,
-            StatType.StaffMeleeAttackRate => baseStats.staffMeleeAttackRate,
             StatType.MeleeAnimationSpeed => baseStats.meleeAnimationSpeed,
             StatType.ProjectileDamage => baseStats.projectileDamage,
-            StatType.SpearProjectileDamage => baseStats.spearProjectileDamage,
-            StatType.AxeProjectileDamage => baseStats.axeProjectileDamage,
-            StatType.MaceProjectileDamage => baseStats.maceProjectileDamage,
-            StatType.StaffProjectileDamage => baseStats.staffProjectileDamage,
             StatType.ProjectileFireRate => baseStats.projectileFireRate,
-            StatType.SpearProjectileFireRate => baseStats.spearProjectileFireRate,
-            StatType.AxeProjectileFireRate => baseStats.axeProjectileFireRate,
-            StatType.MaceProjectileFireRate => baseStats.maceProjectileFireRate,
-            StatType.StaffProjectileFireRate => baseStats.staffProjectileFireRate,
             StatType.ProjectileAnimationSpeed => baseStats.projectileAnimationSpeed,
             StatType.FireCharges => baseStats.fireCharges,
             StatType.FireChargeCooldown => baseStats.fireChargeCooldown,

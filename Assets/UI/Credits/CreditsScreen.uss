@@ -50,7 +50,7 @@
 
 /* ── Typography ── */
 .studio-badge {
-    font-size: 12px;
+    font-size: 11px;
     color: rgb(200, 169, 110);
     letter-spacing: 4px;
     margin-bottom: 10px;
@@ -75,7 +75,7 @@
 }
 
 .role-title {
-    font-size: 13px;
+    font-size: 10px;
     color: rgb(200, 169, 110);
     -unity-font-style: bold;
     letter-spacing: 4px;
@@ -104,20 +104,6 @@
     max-width: 400px;
     -unity-text-align: middle-center;
     -unity-font-style: italic;
-}
-
-/* ── Collab block ── */
-.collab-block {
-    margin-top: 24px;
-    align-items: center;
-}
-
-.collab-block .game-subtitle {
-    color: rgb(200, 169, 110);
-}
-
-.collab-block .special-thanks {
-    margin-top: 8px;
 }
 
 /* ── CapyCo seal ── */
@@ -185,7 +171,7 @@
 .skip-button {
     position: absolute;
     bottom: 16px;
-    right: 200px;
+    right: 24px;
     background-color: rgb(26, 20, 48);
     color: rgb(160, 144, 200);
     border-color: rgb(58, 47, 86);

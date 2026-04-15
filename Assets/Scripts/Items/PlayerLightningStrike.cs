@@ -55,23 +55,6 @@ public class PlayerLightningStrike : IDisposable
         this.timer = durationSec;
         this.nextStrikeTime = Time.time + this.interval;
         enemyLayer = LayerMask.GetMask("Enemy");
-
-        // now triggers on every projectile throw regardless of weapon
-        PlayerShooter.OnProjectileFired += OnProjectileFired;
-    }
-
-    private void OnProjectileFired(Vector3 origin, Vector3 direction, HeldWeaponType weapon)
-    {
-        if (disposed || owner == null) return;
-
-        Vector3 groundPoint = GetGroundPoint(origin + direction.normalized * Mathf.Max(radius, 2f));
-        pending.Add(new PendingStrike
-        {
-            groundPoint = groundPoint,
-            triggerTime = Time.time + StrikeDelay
-        });
-
-        nextStrikeTime = Time.time + interval;
     }
 
     public void AddStack(int count = 1)
@@ -318,7 +301,6 @@ public class PlayerLightningStrike : IDisposable
     {
         if (disposed) return;
         disposed = true;
-        PlayerShooter.OnProjectileFired -= OnProjectileFired;
         pending.Clear();
     }
 }

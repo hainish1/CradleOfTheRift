@@ -193,13 +193,6 @@ public class UpgradeLevelManager : MonoBehaviour
             currentChoices = PickRandomUpgrades();
         }
 
-        // pool is finished, so don't open the Panel
-        if (currentChoices == null || currentChoices.Count == 0)
-        {
-            Debug.Log("[UpgradeLevelManager] Upgrade pool empty, panel not opened.");
-            return;
-        }
-
         levelUpPending = false;
         panelIsOpen = true;
 

@@ -17,8 +17,6 @@ public class ExtractionZone : MonoBehaviour
     public event Action<float> ChargeChanged;
     public event Action<ExtractionZone> ExtractionInteracted;
     public event Action ExtractionFinished;
-    public event Action ExtractionPaused;
-    public event Action ExtractionResumed;
     public float ChargeTime => this.chargeTime;
 
     [SerializeField] private GameObject extractionBeam;
@@ -104,7 +102,6 @@ public class ExtractionZone : MonoBehaviour
             else if (this.isInteracted) 
             {
                 this.isExtracting = true;
-                this.ExtractionResumed?.Invoke();
             }
         }
     }
@@ -116,9 +113,6 @@ public class ExtractionZone : MonoBehaviour
         if (player != null)
         {
             this.isExtracting = false;
-
-            if (this.isInteracted && !this.hasFinishedExtracting)
-                this.ExtractionPaused?.Invoke();
         }
     }
 private void OnExtraction()
@@ -149,7 +143,12 @@ private void OnExtraction()
             // gameObject.SetActive(false);
         }
     }
-    // Charge holds when the player leaves
+    else if (!this.isExtracting && !this.hasFinishedExtracting)
+    {
+        // Decay charge if the player leaves the zone
+        this.currentCharge = Math.Clamp(this.currentCharge - Time.deltaTime, 0, this.chargeTime);
+    }
+
     this.ChargeChanged?.Invoke(this.currentCharge);
 }
 

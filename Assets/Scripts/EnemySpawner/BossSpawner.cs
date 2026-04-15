@@ -112,12 +112,6 @@ public class BossSpawner : MonoBehaviour
             return;
         }
 
-        EnemyGolem golem = enemyObj.GetComponent<EnemyGolem>();
-        if (golem != null)
-        {
-            golem.InitializeAllDamage(multiplier);
-            return;
-        }
     }
 
     private void OnBossDied(EnemyHealth deadBoss)
