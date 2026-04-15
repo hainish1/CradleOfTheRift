@@ -170,7 +170,8 @@ public class PlayerShooter : MonoBehaviour
         // TESTING : Update fire rate with stats
         if (playerEntity != null)
         {
-            fireRate = playerEntity.Stats.ProjectileFireRate;
+            HeldWeaponType wpnForRate = playerHeldWeaponController != null ? playerHeldWeaponController.HeldWeapon : HeldWeaponType.None;
+            fireRate = playerEntity.Stats.ProjectileFireRateForWeapon(wpnForRate);
             
             if (fireMaxCharges != playerEntity.Stats.FireCharges)
             {

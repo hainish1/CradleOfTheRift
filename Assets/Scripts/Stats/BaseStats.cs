@@ -99,4 +99,22 @@ public class BaseStats : ScriptableObject
     public float axeProjectileDamage = 10;
     public float maceProjectileDamage = 10;
     public float staffProjectileDamage = 10;
+
+    [Tooltip("Per-weapon projectile fire rate")]
+    public float spearProjectileFireRate = 0;
+    public float axeProjectileFireRate = 0;
+    public float maceProjectileFireRate = 0;
+    public float staffProjectileFireRate = 0;
+
+    [Tooltip("Per-weapon melee damage")]
+    public float spearMeleeDamage = 20;
+    public float axeMeleeDamage = 20;
+    public float maceMeleeDamage = 20;
+    public float staffMeleeDamage = 20;
+
+    [Tooltip("Per-weapon melee attack rate")]
+    public float spearMeleeAttackRate = 1;
+    public float axeMeleeAttackRate = 1;
+    public float maceMeleeAttackRate = 1;
+    public float staffMeleeAttackRate = 1;
 }
