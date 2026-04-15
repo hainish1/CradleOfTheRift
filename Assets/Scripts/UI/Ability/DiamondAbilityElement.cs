@@ -16,7 +16,10 @@ public enum SwapEffectType {
     GlitchRemnant,
     NebulaOverload,
     RiftShatter,
-    SingularityPulse
+    SingularityPulse,
+    RiftCascade,
+    QuantumStack,
+    AetherWhip
 }
 
 /// <summary>
@@ -669,6 +672,114 @@ public partial class DiamondAbilityElement : VisualElement
                     painter.LineTo(streakEnd);
                     painter.Stroke();
                 }
+                break;
+            }
+
+            case SwapEffectType.RiftCascade:
+            {
+                float p = 1f - _effectIntensity;
+                int teeth = 8;
+                float tearWidth = w * 0.35f * Mathf.Sin(_effectIntensity * Mathf.PI); // Swells and shrinks
+                
+                // Draw the main jagged tear
+                painter.strokeColor = new Color(0.1f, 1f, 0.8f, _effectIntensity);
+                painter.lineWidth = 2.5f + (2f * _effectIntensity);
+                
+                painter.BeginPath();
+                painter.MoveTo(new Vector2(center.x, top.y));
+                for (int i = 1; i < teeth; i++)
+                {
+                    float ty = Mathf.Lerp(top.y, bottom.y, (float)i / teeth);
+                    float offset = (i % 2 == 0) ? tearWidth : -tearWidth;
+                    // Add high-frequency jitter to the tear edges
+                    offset += Random.Range(-3f, 3f) * _effectIntensity; 
+                    painter.LineTo(new Vector2(center.x + offset, ty));
+                }
+                painter.LineTo(new Vector2(center.x, bottom.y));
+                painter.Stroke();
+
+                // Secondary energy sparks escaping the tear
+                Random.InitState((int)(_effectIntensity * 200));
+                painter.strokeColor = new Color(1f, 1f, 1f, _effectIntensity * 0.8f);
+                painter.lineWidth = 1f;
+                for (int i = 0; i < 5; i++)
+                {
+                    painter.BeginPath();
+                    Vector2 sparkStart = center + new Vector2(Random.Range(-tearWidth, tearWidth), Random.Range(-h * 0.4f, h * 0.4f));
+                    painter.MoveTo(sparkStart);
+                    painter.LineTo(sparkStart + new Vector2(Random.Range(-15f, 15f), Random.Range(-15f, 15f)) * _effectIntensity);
+                    painter.Stroke();
+                }
+                break;
+            }
+
+            case SwapEffectType.QuantumStack:
+            {
+                painter.strokeColor = new Color(1f, 0.4f, 0.1f, _effectIntensity);
+                
+                float baseScale = 0.15f;
+                float stackValue = 1.6f; // The compounding multiplier
+                
+                // Draw up to 4 compounding stacks
+                for (int i = 1; i <= 4; i++)
+                {
+                    // Scale grows exponentially
+                    float currentScale = baseScale * Mathf.Pow(stackValue, i) * (1f - _effectIntensity + 0.1f);
+                    
+                    // Fade out rings that get too large
+                    if (currentScale > 1.5f) continue;
+                    
+                    painter.lineWidth = 1f + (i * 0.5f);
+                    float alphaFade = Mathf.Clamp01(1.5f - currentScale) * _effectIntensity;
+                    painter.strokeColor = new Color(1f, 0.4f, 0.1f, alphaFade);
+                    
+                    Vector2 sTop = center + (top - center) * currentScale;
+                    Vector2 sRight = center + (right - center) * currentScale;
+                    Vector2 sBottom = center + (bottom - center) * currentScale;
+                    Vector2 sLeft = center + (left - center) * currentScale;
+
+                    painter.BeginPath();
+                    painter.MoveTo(sTop);
+                    painter.LineTo(sRight);
+                    painter.LineTo(sBottom);
+                    painter.LineTo(sLeft);
+                    painter.ClosePath();
+                    painter.Stroke();
+                }
+                break;
+            }
+
+            case SwapEffectType.AetherWhip:
+            {
+                float p = 1f - _effectIntensity; 
+                painter.strokeColor = new Color(0.7f, 0.2f, 1f, _effectIntensity); // Deep violet
+                painter.lineWidth = 3f * _effectIntensity;
+                
+                painter.BeginPath();
+                int resolution = 20;
+                
+                for (int i = 0; i <= resolution; i++)
+                {
+                    float t = i / (float)resolution;
+                    // Extend slightly past the left and right edges
+                    float x = Mathf.Lerp(left.x - 10f, right.x + 10f, t);
+                    
+                    // Fast-moving sine wave
+                    float wave = Mathf.Sin(t * Mathf.PI * 5f - (p * 20f)) * 18f * _effectIntensity;
+                    
+                    // Taper the wave so it connects smoothly at the start and end points
+                    float taper = Mathf.Sin(t * Mathf.PI);
+                    float y = center.y + (wave * taper);
+                    
+                    if (i == 0) painter.MoveTo(new Vector2(x, y));
+                    else painter.LineTo(new Vector2(x, y));
+                }
+                painter.Stroke();
+                
+                // Add a bright core to the whip
+                painter.strokeColor = new Color(1f, 0.8f, 1f, _effectIntensity);
+                painter.lineWidth = 1f;
+                painter.Stroke();
                 break;
             }
 
