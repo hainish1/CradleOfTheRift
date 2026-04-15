@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2828107109327209065
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2122814991888120427}
+  m_Layer: 0
+  m_Name: sweepPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2122814991888120427
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2828107109327209065}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.129, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 984479434153791223}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2977173361993762485
 GameObject:
   m_ObjectHideFlags: 0
@@ -104,6 +135,7 @@ Transform:
   - {fileID: 6136272082482821300}
   - {fileID: 5590370647265476439}
   - {fileID: 2795737434573335998}
+  - {fileID: 2122814991888120427}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!195 &8068391143491128734
@@ -217,11 +249,11 @@ MonoBehaviour:
   barrageSpreadAngle: 20
   barrageAimOffset: 3
   sweepMeleeDamage: 20
-  sweepHorizontalKnockback: 100
-  sweepVerticalKnockback: 100
-  sweepRadius: 5
+  sweepSideKnockback: 100
+  sweepUpwardKnockback: 50
+  sweepBoxSize: {x: 10, y: 4, z: 6}
   sweepCooldown: 0.5
-  sweepPosition: {fileID: 2795737434573335998}
+  sweepPosition: {fileID: 2122814991888120427}
 --- !u!114 &6554202718004137176
 MonoBehaviour:
   m_ObjectHideFlags: 0

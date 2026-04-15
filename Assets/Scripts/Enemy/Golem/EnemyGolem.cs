@@ -271,7 +271,7 @@ public class EnemyGolem : Enemy
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, wanderRadius);
 
-        // Draw the melee sphere so you can balance the radius in the editor!
+        // Draw the melee sphere
         if (meleePosition != null)
         {
             Gizmos.color = Color.red;
