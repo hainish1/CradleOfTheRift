@@ -39,7 +39,18 @@ public class MeleeAttackStateTitan : EnemyState
         // Play melee attack once when the timer hits the sweet spot
         if (stateTimer >= hitFrameTime && !hasAttacked)
         {
-            enemyTitan.MeleeSlamAttack();
+            float random = Random.value;
+            if (random < 0.5f) // 50% chance to do either attack
+            {
+                enemyTitan.MeleeSlamAttack();
+            }
+            else
+            {
+                enemyTitan.MeleeSweepAttack(0); // 0 - Left, 1 - Right
+                //enemyTitan.golemAnim.SetTrigger("AttackMeleeSweepRight");
+            }
+            
+            //enemyTitan.MeleeSweepAttack(1);
             hasAttacked = true;
             enemyTitan.golemAnim.SetTrigger("AttackMelee");
         }

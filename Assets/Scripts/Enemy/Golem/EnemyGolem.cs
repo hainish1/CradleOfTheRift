@@ -25,8 +25,9 @@ public class EnemyGolem : Enemy
 
     [Header("Rock Throw Ranged Settings")]
     public GameObject rockProjectilePrefab;
-    public float directDamage = 20f;    // Not used rn
-    public float AOEDamage = 5f;        // Not used rn
+    public float directDamage = 20f;
+    public float AOEDamage = 20f;
+    //public float AOERadius = 3f; // Moved to the projectile itself
     public float minWindupTime = 1.5f;
     public float maxWindupTime = 2.5f;
     public float projectileVelocity = 12f;
@@ -34,6 +35,7 @@ public class EnemyGolem : Enemy
     public Transform projectileSpawnPoint; // Where the rock spawns
     public float turnSpeedWhileAiming = 8f;
     public LayerMask projectileMask = ~0;
+    public float playerAimOffset = 1.5f;
 
     [Header("Ground Slam Melee Settings")]
     public float meleeDamage = 20f;
@@ -146,7 +148,7 @@ public class EnemyGolem : Enemy
             : transform.position + Vector3.up * 1.5f;
 
         // Target the player's center mass rather than their feet
-        Vector3 targetPos = target.position + Vector3.up * 1.5f; 
+        Vector3 targetPos = target.position + Vector3.up * playerAimOffset; 
         
         // Pull from the Object Pool if available, else instantiate normally
         GameObject rockObj;
@@ -171,8 +173,8 @@ public class EnemyGolem : Enemy
 
             Vector3 calculatedVelocity = CalculateLaunchVelocity(spawnPos, targetPos, timeToTarget);
 
-            // Init: (Vector3 velocity, LayerMask mask, float damage, float knockback)
-            rock.Init(calculatedVelocity, projectileMask, directDamage, projectileKnockback);
+            // Init: (Vector3 velocity, LayerMask mask, float damage, float knockback, float aoeRadius, float aoeDamage)
+            rock.Init(calculatedVelocity, projectileMask, directDamage, projectileKnockback, AOEDamage);
         }
     }
 
@@ -233,14 +235,6 @@ public class EnemyGolem : Enemy
         }
     }
 
-    /// <summary>
-    /// Shoots out a big spread of small rock projectiles in one direction
-    /// </summary>
-    public void RockBarrageBlast()
-    {
-        
-    }
-
     //Getters for States that this Melee Enemy has
     public EnemyState GetIdle() => idle;
     public EnemyState GetChase() => chase;
@@ -277,7 +271,7 @@ public class EnemyGolem : Enemy
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, wanderRadius);
 
-        // Draw the melee sphere so you can balance the radius in the editor!
+        // Draw the melee sphere
         if (meleePosition != null)
         {
             Gizmos.color = Color.red;
