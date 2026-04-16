@@ -2330,6 +2330,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Animated
       objectReference: {fileID: 0}
+    - target: {fileID: 2377490915647840013, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2692208781826445233, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2606,7 +2610,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 984479434153791223, guid: 48349f50033eadc49b7957c80cc15f85, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 37.994987
+      value: 41.9
       objectReference: {fileID: 0}
     - target: {fileID: 984479434153791223, guid: 48349f50033eadc49b7957c80cc15f85, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2636,9 +2640,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5709985243048761615, guid: 48349f50033eadc49b7957c80cc15f85, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6223163396465808229, guid: 48349f50033eadc49b7957c80cc15f85, type: 3}
       propertyPath: m_Name
       value: StoneGolemEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 6223163396465808229, guid: 48349f50033eadc49b7957c80cc15f85, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
