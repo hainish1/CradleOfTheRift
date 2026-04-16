@@ -12,7 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a6f5b4149dc11a42bba2755f68ed1df, type: 3}
   m_Name: WeaponIconSet
   m_EditorClassIdentifier: 
-  spear: {fileID: 2800000, guid: 89c7c7eeb3bc31b40bf97b2574fd5254, type: 3}
-  axe: {fileID: 2800000, guid: 43f12c5826678b941aa8c8c7f841b3fd, type: 3}
-  mace: {fileID: 2800000, guid: 27fa223a3091d054086178b5fae1678a, type: 3}
-  staff: {fileID: 2800000, guid: 19a526f1ba785284382f794d145d6023, type: 3}
+  spear:
+    icon: {fileID: 2800000, guid: 89c7c7eeb3bc31b40bf97b2574fd5254, type: 3}
+    scale: 1.2
+    offset: {x: 6, y: 0}
+  axe:
+    icon: {fileID: 2800000, guid: a01f248cdb747da4783cfea14cb826cc, type: 3}
+    scale: 1.1
+    offset: {x: 5, y: 0}
+  mace:
+    icon: {fileID: 2800000, guid: fbf61daf99094bd4a9df9a041f41879d, type: 3}
+    scale: 1.2
+    offset: {x: 6, y: 0}
+  staff:
+    icon: {fileID: 2800000, guid: c1726d1fec4603649ab6056a128f55ce, type: 3}
+    scale: 1
+    offset: {x: 3, y: 0}

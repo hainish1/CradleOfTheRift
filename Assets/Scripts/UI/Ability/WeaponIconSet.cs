@@ -1,10 +1,18 @@
 using UnityEngine;
 
+[System.Serializable]
+public class WeaponIconData
+{
+    public Texture2D icon;
+    public float scale = 1.0f;
+    public Vector2 offset = Vector2.zero;
+}
+
 [CreateAssetMenu(fileName = "WeaponIconSet", menuName = "UI/WeaponIconSet")]
 public class WeaponIconSet : ScriptableObject
 {
-    public Texture2D spear;
-    public Texture2D axe;
-    public Texture2D mace;
-    public Texture2D staff;
+    public WeaponIconData spear;
+    public WeaponIconData axe;
+    public WeaponIconData mace;
+    public WeaponIconData staff;
 }
