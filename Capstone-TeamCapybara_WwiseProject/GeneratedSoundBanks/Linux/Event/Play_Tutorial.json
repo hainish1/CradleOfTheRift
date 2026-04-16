@@ -1,0 +1,58 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "283731184",
+    "Type": "Event",
+    "GUID": "{E0BD367E-0BFC-4352-ADB6-4FBF01C628EC}",
+    "Language": "SFX",
+    "Hash": "{916619E2-4EA7-80C2-36EF-57D106BC040F}",
+    "ObjectPath": "Play_Tutorial",
+    "ShortName": "Play_Tutorial",
+    "Path": "Event/Play_Tutorial.bnk",
+    "Media": [
+     {
+      "Id": "50788500",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "EnotMarimba4_1.wav",
+      "Path": "Media/50788500.wem",
+      "CachePath": "30/{30B4B42A-29A1-1167-82FD-E83D025B53B2}.wem"
+     },
+     {
+      "Id": "399920024",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "EnotPiano4_1.wav",
+      "Path": "Media/399920024.wem",
+      "CachePath": "2D/{2D218CA2-5DC1-082A-C44B-BB52058E15DF}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "283731184",
+      "Name": "Play_Tutorial",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_Tutorial",
+      "GUID": "{E0BD367E-0BFC-4352-ADB6-4FBF01C628EC}",
+      "DurationType": "Infinite",
+      "MediaRefs": [
+       {
+        "Id": "50788500"
+       },
+       {
+        "Id": "399920024"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{788BDB89-454C-5B0F-6228-64285393E0A0}"
+ }
+}
