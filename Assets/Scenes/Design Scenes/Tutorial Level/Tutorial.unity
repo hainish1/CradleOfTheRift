@@ -200,6 +200,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7558003053126955156, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: HeldWeapon
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7558003053126955156, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: _heldWeapon
       value: 1
       objectReference: {fileID: 0}
@@ -2962,7 +2966,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 650f8b37338b44f3981905b561a3fcfd, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

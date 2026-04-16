@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Poison Pool Upgrade
   m_EditorClassIdentifier: 
   itemName: Poison Pool On Dash
-  description: when dashing leave a pool of poison on the ground
+  description: When dashing you leave a pool of poison on the ground
   icon: {fileID: 21300000, guid: 24d36e96c0661c04f822f6935419e712, type: 3}
   rarity: 2
   rarityColor: {r: 0.6392157, g: 0.15686275, b: 1, a: 1}
@@ -43,13 +43,16 @@ MonoBehaviour:
     dotApplyImmediately: 0
     poisonPoolRadius: 10
     poisonPoolLifetime: 6
+    poisonPoolProjectileVFX: {fileID: 0}
     numberOfProjectiles: 0
     projectileDamageMultiplier: 0
     explosiveAoeRadius: 0
     explosiveAoeDamageMultiplier: 0
     explosiveMaxRange: 0
     explosiveFireballSize: 7.5
+    explosiveProjectileSpeed: 0.7
     explosiveVFX: {fileID: 0}
+    explosiveTravelVFX: {fileID: 0}
     chainDamagePercent: 0
     maxChainCount: 0
     chainRange: 0
@@ -75,6 +78,7 @@ MonoBehaviour:
     playerLightningStrikeRadius: 0
     playerLightningStrikeInterval: 0
     playerLightningStrikeElectrifyDamage: 0
+    playerLightningStrikeVFX: {fileID: 0}
     flyingFireDamage: 0
     flyingFireRadius: 0
     flyingFireTickInterval: 0
@@ -86,6 +90,7 @@ MonoBehaviour:
     orbitingFireballDamage: 0
     orbitingFireballRadius: 0
     orbitingFireballRotationSpeed: 0
+    orbitingFireballVFX: {fileID: 0}
     lightningDashDamage: 0
     lightningDashChainCount: 0
     lightningDashChainRange: 0
@@ -109,6 +114,30 @@ MonoBehaviour:
     finisherDamageMultiplier: 0
     finisherRangeMultiplier: 0
     xpGrantAmount: 50
+    pureCoreDamageMultiplier: 1.15
+    pureCoreHealthMultiplier: 1.2
+    lightningStrikeBonusDamage: 5
+    lightningStrikeCooldownReduction: 0.5
+    lightningStrikeBonusCount: 1
+    lightningStrikeSpreadRadius: 8
+    groundSlamDamage: 20
+    zoomUpgradeDamage: 15
+    zoomUpgradeRange: 5
+    zoomUpgradeDashDistanceBonus: 0
+    zoomUpgradeVFX: {fileID: 0}
+    gloomDamagePerTick: 5
+    gloomTickInterval: 0.5
+    gloomPoolRadius: 4
+    gloomPoolLifetime: 6
+    gloomAttackSpeedBuff: 0.3
+    gloomFireCooldownIncrease: 0
+    gloomPoolPrefab: {fileID: 0}
+    orbitingFireballBonusCount: 1
+    orbitingFireballBonusDamage: 3
+    orbitingFireballBonusSpeed: 15
+    orbitingFireballOnKillDuration: 5
+    orbitingFireballOnLightningThreshold: 100
+    orbitingFireballOnLightningDuration: 5
   statType: 13
   operatorType: 0
   value: 1
