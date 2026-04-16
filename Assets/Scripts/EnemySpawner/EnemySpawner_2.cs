@@ -593,7 +593,7 @@ public class EnemySpawner_2 : MonoBehaviour
 
         while (affordableEnemies.Count > 0 && this.currentEnemyCount + enemiesToSpawn.Count < this.currentMaxEnemyCap)
         {
-            EnemyType randomEnemy = affordableEnemies[UnityEngine.Random.Range(0, affordableEnemies.Count)];
+            EnemyType randomEnemy = PickWeightedRandom(affordableEnemies);
             
             this.currentCredits -= randomEnemy.cost;
             this.enemiesToSpawn.Enqueue(randomEnemy);
@@ -601,6 +601,25 @@ public class EnemySpawner_2 : MonoBehaviour
             // Refresh affordable list (in case we can no longer afford the expensive ones)
             affordableEnemies.RemoveAll(e => e.cost > this.currentCredits);
         }
+    }
+
+    /// <summary>
+    /// Selects a random enemy from the pool using each enemy's spawnWeight as a probability.
+    /// Higher weight = more likely to be chosen. Equal weights = uniform distribution.
+    /// </summary>
+    private EnemyType PickWeightedRandom(List<EnemyType> pool)
+    {
+        int totalWeight = 0;
+        foreach (EnemyType e in pool) totalWeight += e.spawnWeight;
+
+        int roll = UnityEngine.Random.Range(0, totalWeight);
+        foreach (EnemyType e in pool)
+        {
+            roll -= e.spawnWeight;
+            if (roll < 0) return e;
+        }
+
+        return pool[pool.Count - 1]; // Fallback — should never be reached
     }
 
     private void EndWave() 
