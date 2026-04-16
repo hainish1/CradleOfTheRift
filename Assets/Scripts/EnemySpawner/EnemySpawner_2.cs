@@ -589,7 +589,9 @@ public class EnemySpawner_2 : MonoBehaviour
     private void GenerateWave()
     {
         // Create a sub-list of what we can actually afford right now
-        List<EnemyType> affordableEnemies = enemies.FindAll(e => e.cost <= this.currentCredits);
+        List<EnemyType> affordableEnemies = enemies.FindAll(
+            e => e.cost <= this.currentCredits && e.minWave <= this.currentWave
+        );
 
         while (affordableEnemies.Count > 0 && this.currentEnemyCount + enemiesToSpawn.Count < this.currentMaxEnemyCap)
         {
