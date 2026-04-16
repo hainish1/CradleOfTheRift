@@ -1051,7 +1051,7 @@ MonoBehaviour:
   _axeModel: {fileID: 8392443258363719532}
   _maceModel: {fileID: 3898923516063130044}
   _staffModel: {fileID: 4296559547040230505}
-  HeldWeapon: 3
+  HeldWeapon: 2
 --- !u!114 &3225160770112030272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1576,7 +1576,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2287553384436728890
 Transform:
   m_ObjectHideFlags: 0
@@ -1922,7 +1922,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &446235672879458076
 Transform:
   m_ObjectHideFlags: 0
@@ -2741,9 +2741,9 @@ Transform:
   m_GameObject: {fileID: 8392443258363719532}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.004, y: 0.131, z: -0}
-  m_LocalScale: {x: 0.26, y: 0.26, z: 0.26}
-  m_ConstrainProportionsScale: 1
+  m_LocalPosition: {x: 0.0040003806, y: 0.13099833, z: 0.0000010430813}
+  m_LocalScale: {x: 0.26, y: 0.26, z: 0.56079054}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4695716311520933976}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3295,6 +3295,10 @@ PrefabInstance:
       propertyPath: 'm_CapsuleColliders.Array.data[0]'
       value: 
       objectReference: {fileID: 2746124171963639324}
+    - target: {fileID: 4332601311037653542, guid: 607539a4845f7fa438ebcc9034794389, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5550929716937084292, guid: 607539a4845f7fa438ebcc9034794389, type: 3}
       propertyPath: m_IsActive
       value: 0
