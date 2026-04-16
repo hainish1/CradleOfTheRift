@@ -33,8 +33,11 @@ public class UpgradeLevelManager : MonoBehaviour
     [Header("Reroll Cost")]
     [Tooltip("Base cost for the first reroll, then rach reroll adds this amount.")]
     [SerializeField] private int baseRerollGoldCost = 5;
+    [Tooltip("Uncheck in the tutorial scene so players can't blow their gold on rerolls before the chest.")]
+    [SerializeField] private bool allowReroll = true;
     private int _rerollGoldCost;
     public int CurrentRerollGoldCost => _rerollGoldCost;
+    public bool AllowReroll => allowReroll;
 
     private bool levelUpPending;
     private bool panelIsOpen;
@@ -217,6 +220,7 @@ public class UpgradeLevelManager : MonoBehaviour
     public void RerollChoices()
     {
         if (!panelIsOpen) return;
+        if (!allowReroll) return;
         if (_rerollGoldCost <= 0)
             _rerollGoldCost = baseRerollGoldCost;
 
