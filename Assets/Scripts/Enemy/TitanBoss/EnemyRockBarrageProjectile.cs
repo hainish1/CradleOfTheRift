@@ -11,7 +11,7 @@ public class EnemyRockBarrageProjectile : MonoBehaviour
 
     [Header("flight")]
     [SerializeField] private float lifeTime = 6f;
-    [SerializeField] private float gravity = 9f;
+    //[SerializeField] private float gravity = 9f;
     private float hitForce = 8f;
     private float knockBackImpulse;
     private LayerMask hitMask = ~0; // what can this bullet hit
@@ -45,11 +45,19 @@ public class EnemyRockBarrageProjectile : MonoBehaviour
     /// <param name="newDamage"> Amount of damage the explosion will do. This projectile will do no direct damage on its own. </param>
     public void Init(Vector3 velocity, LayerMask mask, float damage, float knockback)
     {
+        if (rb == null) rb = GetComponent<Rigidbody>();
+
+        hasHit = false;
+        age = 0f;
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
         rb.linearVelocity = velocity;
         hitMask = mask;
         directDamage = damage;
         knockBackImpulse = knockback;
-        age = 0f;
+
+        TrailRenderer trail = GetComponent<TrailRenderer>();
+        if (trail != null) trail.Clear();
     }
 
     /// <summary>
@@ -63,7 +71,7 @@ public class EnemyRockBarrageProjectile : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
+        //rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
     }   
 
     /// <summary>
