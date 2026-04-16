@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2828107109327209065
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2122814991888120427}
+  m_Layer: 0
+  m_Name: sweepPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2122814991888120427
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2828107109327209065}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.129, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 984479434153791223}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2977173361993762485
 GameObject:
   m_ObjectHideFlags: 0
@@ -25,7 +56,38 @@ Transform:
   m_GameObject: {fileID: 2977173361993762485}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.6, y: 0.2, z: 0}
+  m_LocalPosition: {x: 0.6, y: 0.7, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 984479434153791223}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3675270320392833844
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5590370647265476439}
+  m_Layer: 0
+  m_Name: rockBarragePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5590370647265476439
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3675270320392833844}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.3, z: 0.35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -42,7 +104,7 @@ GameObject:
   - component: {fileID: 984479434153791223}
   - component: {fileID: 8068391143491128734}
   - component: {fileID: 2249725770262891461}
-  - component: {fileID: 201720854443848597}
+  - component: {fileID: 2211758583110730881}
   - component: {fileID: 6554202718004137176}
   - component: {fileID: 7738743892704107704}
   - component: {fileID: 1932630377921340712}
@@ -66,12 +128,14 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 6, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalScale: {x: 15, y: 15, z: 15}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2545160238402103216}
   - {fileID: 6136272082482821300}
+  - {fileID: 5590370647265476439}
   - {fileID: 2795737434573335998}
+  - {fileID: 2122814991888120427}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!195 &8068391143491128734
@@ -117,7 +181,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.75, y: 0.87, z: 0.3}
   m_Center: {x: 0, y: 0.435, z: -0.01}
---- !u!114 &201720854443848597
+--- !u!114 &2211758583110730881
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -126,12 +190,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6223163396465808229}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b6aa5e6557207441bf2b2d9a9bca041, type: 3}
+  m_Script: {fileID: 11500000, guid: eb35e9f3d89ff3746847cd692dfa2b33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  aggressionRange: 300
-  playerOutOfRange: 300
+  aggressionRange: 600
+  playerOutOfRange: 200
   turnSpeed: 10
   attackCooldown: 0
   playerMask:
@@ -139,47 +203,59 @@ MonoBehaviour:
     m_Bits: 256
   gizosOn: 1
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
-  nextAttackAllowed: 0.5
-  chaseSpeed: 8
-  shootingRange: 100
-  minAttackDistance: 8
-  wanderInterval: 4
-  wanderRadius: 40
-  minWanderTime: 3
-  maxWanderTime: 5
+  nextAttackAllowed: 0
+  chaseSpeed: 12
+  shootingRange: 150
+  minAttackDistance: 12
+  wanderInterval: 3
+  wanderRadius: 60
+  minWanderTime: 2
+  maxWanderTime: 4
   postAttackCooldown: 1
-  rockProjectilePrefab: {fileID: 3232334194741932682, guid: adf349a4643808e428b922062262b364, type: 3}
-  directDamage: 35
-  AOEDamage: 0
+  rockProjectilePrefab: {fileID: 3232334194741932682, guid: 4cd060ce3e737dd4abe9f2e9eed19ca2, type: 3}
+  directDamage: 50
+  AOEDamage: 20
   minWindupTime: 2
   maxWindupTime: 2
-  projectileVelocity: 100
-  projectileKnockback: 200
+  projectileVelocity: 70
+  projectileKnockback: 100
   projectileSpawnPoint: {fileID: 6136272082482821300}
-  turnSpeedWhileAiming: 10
+  turnSpeedWhileAiming: 8
   projectileMask:
     serializedVersion: 2
     m_Bits: 1344
-  rockBarrageProjectilePrefab: {fileID: 0}
-  barrageDirectDamage: 20
-  barrageProjectileVelocity: 12
-  barrageProjectileKnockback: 100
-  barrageProjectileSpawnPoint: {fileID: 0}
-  barrageProjectileMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
+  playerAimOffset: 1
   meleeDamage: 20
   meleeHorizontalKnockback: 100
   meleeVerticalKnockback: 100
-  meleeRadius: 3
+  meleeRadius: 5
   meleeCooldown: 0.5
   meleePosition: {fileID: 2795737434573335998}
+  groundSlamPrefab: {fileID: 4994997792314849709, guid: 6bb03b55361ea864da9d2750cc5c1925, type: 3}
   throwRockVFXPrefab: {fileID: 0}
   throwSFX:
     idInternal: 0
     valueGuidInternal: 
     WwiseObjectReference: {fileID: 0}
   golemAnim: {fileID: 0}
+  rockBarrageProjectilePrefab: {fileID: 3232334194741932682, guid: 19434ca25bbf57741a7c501f1ee22dc7, type: 3}
+  barrageDirectDamage: 20
+  barrageProjectileVelocity: 70
+  barrageProjectileKnockback: 10
+  barrageProjectileSpawnPoint: {fileID: 5590370647265476439}
+  barrageProjectileMask:
+    serializedVersion: 2
+    m_Bits: 320
+  barrageProjectileCount: 20
+  barrageSpreadAngle: 20
+  barrageAimOffset: 3
+  sweepMeleeDamage: 20
+  sweepSideKnockback: 100
+  sweepUpwardKnockback: 50
+  sweepBoxSize: {x: 10, y: 4, z: 6}
+  sweepCooldown: 0.5
+  sweepPosition: {fileID: 2122814991888120427}
+  sweepVFXPrefab: {fileID: 0}
 --- !u!114 &6554202718004137176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,7 +278,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6223163396465808229}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b3318528a5d3d464aa454d8a551403ac, type: 3}
   m_Name: 
@@ -250,10 +326,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 150
+  maxHealth: 750
   cleanupDelay: 0
-  baseHealth: 150
-  xpReward: 10
+  baseHealth: 750
+  xpReward: 1000
   damageVisuals: {fileID: 2533069923019125397}
   deathVFX: {fileID: 676540690991785363, guid: ceee2cd6e8010af4bbcec230578f8910, type: 3}
   deathVFXSpawnPoint: {fileID: 0}
@@ -548,6 +624,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 11
       objectReference: {fileID: 0}
+    - target: {fileID: 2589859488109584334, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 87054f48482b2854a8d7f2297a368dd0, type: 2}
     - target: {fileID: 2648626219931203064, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
       propertyPath: m_Layer
       value: 11

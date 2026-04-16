@@ -19,6 +19,12 @@ public class BossSpawner : MonoBehaviour
 
     private EnemyHealth activeBoss;
     public event Action BossDied;
+    public event Action<EnemyHealth> BossSpawned;
+    public EnemyHealth ActiveBoss => activeBoss;
+
+    // [Header("Debug")]
+    // [SerializeField] private bool enableDebugKillHotkey = true;
+    // [SerializeField] private KeyCode debugKillBossKey = KeyCode.K;
 
     private void Awake()
     {
@@ -42,6 +48,17 @@ public class BossSpawner : MonoBehaviour
     {
         extractionZone.BossSpawnRequested -= OnBossSpawnRequested;
     }
+
+    // private void Update()
+    // {
+    //     if (!enableDebugKillHotkey || activeBoss == null)
+    //         return;
+
+    //     if (Input.GetKeyDown(debugKillBossKey))
+    //     {
+    //         activeBoss.TakeDamage(float.MaxValue);
+    //     }
+    // }
 
     private void OnBossSpawnRequested()
     {
@@ -74,6 +91,7 @@ public class BossSpawner : MonoBehaviour
         ScaleBossDamage(boss);
 
         this.activeBoss = boss.GetComponent<EnemyHealth>();
+        BossSpawned?.Invoke(this.activeBoss);
         this.activeBoss.EnemyDied += OnBossDied;
     }
 
@@ -112,10 +130,10 @@ public class BossSpawner : MonoBehaviour
             return;
         }
 
-        EnemyGolem golem = enemyObj.GetComponent<EnemyGolem>();
-        if (golem != null)
+        EnemyTitan titan = enemyObj.GetComponent<EnemyTitan>();
+        if (titan != null)
         {
-            golem.InitializeAllDamage(multiplier);
+            titan.InitializeAllDamage(multiplier);
             return;
         }
     }
