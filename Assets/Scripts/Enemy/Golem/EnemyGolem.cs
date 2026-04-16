@@ -236,7 +236,8 @@ public class EnemyGolem : Enemy
         }
 
         // Play ground slam VFX
-        if (groundSlamPrefab != null)        {
+        if (groundSlamPrefab != null)        
+        {
             GameObject slamVFX = Instantiate(groundSlamPrefab, meleePosition.position, Quaternion.identity);
             slamVFX.transform.localScale = Vector3.one * meleeRadius * 0.5f;
             Destroy(slamVFX, EstimateParticleLifetime(slamVFX));

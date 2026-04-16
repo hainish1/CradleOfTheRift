@@ -129,7 +129,8 @@ public class EnemyTitan : EnemyGolem
         }
 
         // Play sweep VFX
-        if (sweepVFXPrefab != null)        {
+        if (sweepVFXPrefab != null)        
+        {
             GameObject slamVFX = Instantiate(groundSlamPrefab, meleePosition.position, Quaternion.identity);
             Destroy(slamVFX, EstimateParticleLifetime(slamVFX));
         }
