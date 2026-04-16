@@ -1,7 +1,12 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/BossHealthBar.uss?fileID=7433441132597879392&amp;guid=3d585285617154099aeefdba701155d4&amp;type=3#BossHealthBar" />
     <engine:VisualElement name="BossHealthContainer">
-        <engine:ProgressBar name="BossDamageBar" />
-        <engine:ProgressBar name="BossHealthBar" />
+        <engine:VisualElement name="BossHealthContent">
+            <engine:VisualElement name="BossIcon" />
+            <engine:VisualElement name="BossBarStack">
+                <engine:ProgressBar name="BossDamageBar" />
+                <engine:ProgressBar name="BossHealthBar" />
+            </engine:VisualElement>
+        </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

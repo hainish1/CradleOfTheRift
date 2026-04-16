@@ -8,11 +8,15 @@ public class BossHealthUI : MonoBehaviour
 {
     [SerializeField] private float damageHoldDuration = 0.5f;
     [SerializeField] private float damageDrainDuration = 0.4f;
+    [SerializeField] private Texture2D slimeBossIcon;
+    [SerializeField] private Texture2D revenantBossIcon;
+    [SerializeField] private Texture2D rockBossIcon;
 
     private readonly List<BossSpawner> subscribedSpawners = new();
 
     private EnemyHealth currentBoss;
     private VisualElement bossContainer;
+    private VisualElement bossIcon;
     private ProgressBar healthBar;
     private ProgressBar damageBar;
     private Coroutine drainCoroutine;
@@ -82,6 +86,7 @@ public class BossHealthUI : MonoBehaviour
         currentBoss.HealthChanged += OnBossHealthChanged;
         currentBoss.EnemyDied += OnBossDied;
 
+        ApplyBossIcon(currentBoss);
         healthBar.lowValue = 0f;
         damageBar.lowValue = 0f;
         healthBar.highValue = currentBoss.GetMaxHealth();
@@ -174,15 +179,45 @@ public class BossHealthUI : MonoBehaviour
     {
         var root = GetComponent<UIDocument>().rootVisualElement;
         bossContainer = root.Q<VisualElement>("BossHealthContainer");
+        bossIcon = root.Q<VisualElement>("BossIcon");
         healthBar = root.Q<ProgressBar>("BossHealthBar");
         damageBar = root.Q<ProgressBar>("BossDamageBar");
 
-        if (bossContainer == null || healthBar == null || damageBar == null)
+        if (bossContainer == null || bossIcon == null || healthBar == null || damageBar == null)
         {
             Debug.LogWarning("[BossHealthUI] Boss health elements were not found in the active HUD document.");
             return;
         }
 
         Hide();
+    }
+
+    private void ApplyBossIcon(EnemyHealth boss)
+    {
+        if (bossIcon == null)
+            return;
+
+        var icon = ResolveBossIcon(boss);
+        if (icon != null)
+        {
+            bossIcon.style.backgroundImage = new StyleBackground(icon);
+        }
+    }
+
+    private Texture2D ResolveBossIcon(EnemyHealth boss)
+    {
+        if (boss == null)
+            return null;
+
+        if (boss.GetComponent<RevenantBossRange>() != null)
+            return revenantBossIcon;
+
+        if (boss.GetComponent<EnemyBoss_SS>() != null)
+            return slimeBossIcon;
+
+        if (boss.GetComponent<EnemyTitan>() != null || boss.GetComponent<EnemyGolem>() != null)
+            return rockBossIcon;
+
+        return null;
     }
 }
