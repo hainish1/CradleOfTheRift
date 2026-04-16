@@ -6,6 +6,8 @@ using UnityEngine.UIElements;
 [RequireComponent(typeof(UIDocument))]
 public class BossHealthUI : MonoBehaviour
 {
+    private const string SlimeIconClass = "boss-icon-slime";
+
     [SerializeField] private float damageHoldDuration = 0.5f;
     [SerializeField] private float damageDrainDuration = 0.4f;
     [SerializeField] private Texture2D slimeBossIcon;
@@ -197,10 +199,17 @@ public class BossHealthUI : MonoBehaviour
         if (bossIcon == null)
             return;
 
+        bossIcon.RemoveFromClassList(SlimeIconClass);
+
         var icon = ResolveBossIcon(boss);
         if (icon != null)
         {
             bossIcon.style.backgroundImage = new StyleBackground(icon);
+        }
+
+        if (boss != null && boss.GetComponent<EnemyBoss_SS>() != null)
+        {
+            bossIcon.AddToClassList(SlimeIconClass);
         }
     }
 

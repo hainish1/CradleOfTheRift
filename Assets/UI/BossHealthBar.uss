@@ -15,12 +15,12 @@
 }
 
 #BossIconFrame {
-    width: 68px;
-    height: 68px;
+    width: 82px;
+    height: 82px;
     margin-right: -8px;
     position: relative;
-    left: -8px;
-    top: -12px;
+    left: -18px;
+    top: -16px;
 }
 
 #BossIconFire,
@@ -34,12 +34,16 @@
     -unity-background-scale-mode: scale-to-fit;
 }
 
+#BossIcon.boss-icon-slime {
+    translate: -8px 0;
+}
+
 #BossIconFire {
     background-image: url('project://database/Assets/Art%20Assets/2D/UI%20assets%202/Boss/Boss_Fire.png?fileID=2800000&amp;guid=5bbb8a57f03424627a4c43be8ec54af5&amp;type=3#Boss_Fire');
-    width: 100px;
-    height: 124px;
-    left: -20px;
-    top: -40px;
+    width: 118px;
+    height: 142px;
+    left: -24px;
+    top: -46px;
 }
 
 #BossBarStack {
