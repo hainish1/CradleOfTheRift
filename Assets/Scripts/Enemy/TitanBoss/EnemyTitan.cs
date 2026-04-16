@@ -309,4 +309,19 @@ public class EnemyTitan : EnemyGolem
             Gizmos.matrix = previousMatrix;
         }
     }
+
+
+    // Called by BossSpawner to initialize damage based on difficulty scaler
+    public void InitializeAllDamage(float multiplier)
+    {
+        // Kevin was here 
+        Debug.Log($"Titan Boss Base Damage. Base Direct Damage: {directDamage}, Base AOE Damage: {AOEDamage}, Base Melee Damage: {meleeDamage}, barrage Direct Damage: {barrageDirectDamage}, sweep Melee Damage: {sweepMeleeDamage}");
+
+        base.InitializeAllDamage(multiplier);
+
+        barrageDirectDamage *= multiplier;
+        sweepMeleeDamage *= multiplier;
+
+        Debug.Log($"Titan Boss: Scaled damage with multiplier {multiplier}. Direct Damage: {directDamage}, AOE Damage: {AOEDamage}, Melee Damage: {meleeDamage}, Barrage Direct Damage: {barrageDirectDamage}, Sweep Melee Damage: {sweepMeleeDamage}");
+    }
 }

@@ -112,10 +112,10 @@ public class BossSpawner : MonoBehaviour
             return;
         }
 
-        EnemyGolem golem = enemyObj.GetComponent<EnemyGolem>();
-        if (golem != null)
+        EnemyTitan titan = enemyObj.GetComponent<EnemyTitan>();
+        if (titan != null)
         {
-            golem.InitializeAllDamage(multiplier);
+            titan.InitializeAllDamage(multiplier);
             return;
         }
     }
