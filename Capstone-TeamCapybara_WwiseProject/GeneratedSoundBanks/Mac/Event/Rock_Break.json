@@ -1,0 +1,73 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Mac",
+  "BasePlatform": "Mac",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "756826226",
+    "Type": "Event",
+    "GUID": "{030D56D2-A574-40E6-8F6C-861E25BA094E}",
+    "Language": "SFX",
+    "Hash": "{62133CFC-DDCE-FE0A-DA22-A555877DB7E3}",
+    "ObjectPath": "Rock_Break",
+    "ShortName": "Rock_Break",
+    "Path": "Event/Rock_Break.bnk",
+    "Media": [
+     {
+      "Id": "45735907",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_008[1].wav",
+      "Path": "Media/45735907.wem",
+      "CachePath": "76/{768CBD6F-765C-B40A-11C4-4C86E1CCB475}.wem"
+     },
+     {
+      "Id": "383163207",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0287_annihilation_debris_falling_rock_001[1].wav",
+      "Path": "Media/383163207.wem",
+      "CachePath": "41/{41C17CE9-8EE0-4169-35EC-A4DFAF1947E1}.wem"
+     },
+     {
+      "Id": "458130202",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_rubble_008[1].wav",
+      "Path": "Media/458130202.wem",
+      "CachePath": "47/{47F7C315-0855-8819-8364-9A162E613A00}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "756826226",
+      "Name": "Rock_Break",
+      "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Golem\\Rock_Break",
+      "GUID": "{030D56D2-A574-40E6-8F6C-861E25BA094E}",
+      "MaxAttenuation": "200",
+      "DurationType": "OneShot",
+      "DurationMin": "1.2727921",
+      "DurationMax": "2.5455842",
+      "MediaRefs": [
+       {
+        "Id": "45735907"
+       },
+       {
+        "Id": "383163207"
+       },
+       {
+        "Id": "458130202"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{3B8A1F4C-069A-A5E2-4EBF-8E1E1D30B97B}"
+ }
+}

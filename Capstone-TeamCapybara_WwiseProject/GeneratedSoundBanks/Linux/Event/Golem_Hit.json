@@ -1,0 +1,73 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "2529293365",
+    "Type": "Event",
+    "GUID": "{DDED019A-AA83-4DF5-96C4-EF5C4435B063}",
+    "Language": "SFX",
+    "Hash": "{F20BA83A-09A3-5208-0D17-CC116EF40FA8}",
+    "ObjectPath": "Golem_Hit",
+    "ShortName": "Golem_Hit",
+    "Path": "Event/Golem_Hit.bnk",
+    "Media": [
+     {
+      "Id": "45735907",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_008[1].wav",
+      "Path": "Media/45735907.wem",
+      "CachePath": "76/{768CBD6F-765C-B40A-11C4-4C86E1CCB475}.wem"
+     },
+     {
+      "Id": "458130202",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_rubble_008[1].wav",
+      "Path": "Media/458130202.wem",
+      "CachePath": "47/{47F7C315-0855-8819-8364-9A162E613A00}.wem"
+     },
+     {
+      "Id": "823439582",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_rubble_008[1].wav",
+      "Path": "Media/823439582.wem",
+      "CachePath": "30/{302A8799-2919-1B98-D152-D85C7BD98EE1}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "2529293365",
+      "Name": "Golem_Hit",
+      "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Golem\\Golem_Hit",
+      "GUID": "{DDED019A-AA83-4DF5-96C4-EF5C4435B063}",
+      "MaxAttenuation": "200",
+      "DurationType": "OneShot",
+      "DurationMin": "0.6827569",
+      "DurationMax": "1.3655138",
+      "MediaRefs": [
+       {
+        "Id": "45735907"
+       },
+       {
+        "Id": "458130202"
+       },
+       {
+        "Id": "823439582"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{29F92D02-6C24-C6BC-DF56-D25FB72C4714}"
+ }
+}

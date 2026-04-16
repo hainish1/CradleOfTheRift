@@ -35,6 +35,9 @@ public class EnemyRockProjectile : MonoBehaviour
     Rigidbody rb;
     private float age;
 
+    [SerializeField]
+    private AK.Wwise.Event hitSFX;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -80,6 +83,10 @@ public class EnemyRockProjectile : MonoBehaviour
         if (hasHit) return; // prevent multiple collisions from one throw
         if (((1 << collision.gameObject.layer) & hitMask) == 0)
             return;
+        
+        // Play the SFX.
+        if(hitSFX.IsValid())
+            hitSFX.Post(gameObject);
 
         hasHit = true;
 

@@ -50,6 +50,7 @@ public class EnemyGolem : Enemy
     [Header("VFX / SFX")]
     public GameObject throwRockVFXPrefab;
     [SerializeField] private AK.Wwise.Event throwSFX;
+    [SerializeField] private AK.Wwise.Event groundSlamSFX;
     IdleStateGolem idle;
     ChaseStateGolem chase;
     RangeAttackStateGolem rangeAttack;
@@ -138,11 +139,19 @@ public class EnemyGolem : Enemy
 
     public void PlayThrowSFX()
     {
-        throwSFX?.Post(gameObject);
+        print("Playing Throw SFX");
+        if (throwSFX.IsValid())
+        {
+            print("Posting SFX");
+            throwSFX.Post(gameObject);
+        }
     }
 
     public void ThrowRock()
     {
+        // Play the SFX.
+        PlayThrowSFX();
+        
         // Use the defined spawn point or default to slightly above the golem
         Vector3 spawnPos = projectileSpawnPoint != null 
             ? projectileSpawnPoint.position 
@@ -241,6 +250,12 @@ public class EnemyGolem : Enemy
             GameObject slamVFX = Instantiate(groundSlamPrefab, meleePosition.position, Quaternion.identity);
             slamVFX.transform.localScale = Vector3.one * meleeRadius * 0.5f;
             Destroy(slamVFX, EstimateParticleLifetime(slamVFX));
+        }
+        
+        // Play the ground slam SFX
+        if (groundSlamSFX.IsValid())
+        {
+            groundSlamSFX.Post(gameObject);
         }
     }
 
