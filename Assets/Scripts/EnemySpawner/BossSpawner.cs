@@ -22,6 +22,10 @@ public class BossSpawner : MonoBehaviour
     public event Action<EnemyHealth> BossSpawned;
     public EnemyHealth ActiveBoss => activeBoss;
 
+    // [Header("Debug")]
+    // [SerializeField] private bool enableDebugKillHotkey = true;
+    // [SerializeField] private KeyCode debugKillBossKey = KeyCode.K;
+
     private void Awake()
     {
         extractionZone = GetComponent<ExtractionZone>();
@@ -44,6 +48,17 @@ public class BossSpawner : MonoBehaviour
     {
         extractionZone.BossSpawnRequested -= OnBossSpawnRequested;
     }
+
+    // private void Update()
+    // {
+    //     if (!enableDebugKillHotkey || activeBoss == null)
+    //         return;
+
+    //     if (Input.GetKeyDown(debugKillBossKey))
+    //     {
+    //         activeBoss.TakeDamage(float.MaxValue);
+    //     }
+    // }
 
     private void OnBossSpawnRequested()
     {
