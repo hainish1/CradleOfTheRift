@@ -141,9 +141,23 @@
 							</ReferenceList>
 						</Action>
 						<Action Name="" ID="{B6C661D7-6A71-4908-B07B-2DA129872B66}" ShortID="779446078">
+							<PropertyList>
+								<Property Name="Delay" Type="Real64">
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{13120E0A-D258-4004-A83F-32B9F97DA9DC}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Max" Type="Real64" Value="0.8"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+							</PropertyList>
 							<ReferenceList>
 								<Reference Name="Target">
-									<ObjectRef Name="MobSpawn_Digital" ID="{171FFD86-F68C-41ED-8428-D7224585A7B8}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+									<ObjectRef Name="MobSpawn_Digital" ID="{2909056E-C230-4507-8315-B68B45362F01}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
 								</Reference>
 							</ReferenceList>
 						</Action>
@@ -205,6 +219,85 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Folder Name="Golem" ID="{9AFDF148-E3A1-494D-8EF2-6ECB75FE7082}" ShortID="212157387">
+					<ChildrenList>
+						<Event Name="Rock_Break" ID="{030D56D2-A574-40E6-8F6C-861E25BA094E}">
+							<ChildrenList>
+								<Action Name="" ID="{3DDBDBF6-6B4F-4E74-AC70-676AF208EC73}" ShortID="380177645">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockShards" ID="{F829E7A5-107C-4407-AC77-4ECBD68EA089}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{DAF5C91A-6757-4645-9D88-E98B63BB7306}" ShortID="635793497">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockImpact" ID="{6E778498-E5EB-406A-9D4F-80BB9D2C290B}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{C3311D86-7C25-4186-A99D-17C55BF3D765}" ShortID="248327686">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockBreak" ID="{3C6607DE-E090-47A4-9185-1E239223C48A}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+						<Event Name="Golem_Hit" ID="{DDED019A-AA83-4DF5-96C4-EF5C4435B063}">
+							<ChildrenList>
+								<Action Name="" ID="{8A5A6BD1-653B-44C9-A8E8-96C18F2F350E}" ShortID="913055444">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockBreak3" ID="{E8B78ED2-8F63-4748-8ED1-56F2AC56CCD9}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{E6753EC7-B711-4BA3-929F-235CD78DE558}" ShortID="542671731">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockShards" ID="{F829E7A5-107C-4407-AC77-4ECBD68EA089}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{A86BBD85-23C7-4B45-B123-E43029B9F058}" ShortID="71227543">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockImpact" ID="{6E778498-E5EB-406A-9D4F-80BB9D2C290B}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+						<Event Name="Golem_Throw" ID="{4A5F8FF6-B24C-4A80-91A7-1B402D6D0F99}">
+							<ChildrenList>
+								<Action Name="" ID="{F5EBA3FE-27E2-4B44-A4FB-573BCC25F28B}" ShortID="99050950">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="GolemThrow" ID="{D5C749E4-7583-438D-85DA-749700444A5B}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{847A715D-1A26-4330-B4C3-AB2282DD2A52}" ShortID="179625760">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockBreak2" ID="{C2ED643E-A25A-4438-8AA7-E13036638205}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{38CDC020-A9E7-41B1-9565-DD114931508C}" ShortID="746844948">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockShards" ID="{F829E7A5-107C-4407-AC77-4ECBD68EA089}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+					</ChildrenList>
+				</Folder>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

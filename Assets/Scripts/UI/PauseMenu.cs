@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
-using static UnityEditor.Recorder.OutputPath;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -208,8 +207,9 @@ public class PauseMenu : MonoBehaviour
     private void OnCreditsClick(ClickEvent evt)
     {
         AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX);
-        creditsUI.SetActive(true);
-        mainMenuUI.SetActive(false);
+        SceneManager.LoadScene("Credits");
+        // creditsUI.SetActive(true);
+        // mainMenuUI.SetActive(false);
 
     }
 

@@ -1,0 +1,73 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "3954951306",
+    "Type": "Event",
+    "GUID": "{4A5F8FF6-B24C-4A80-91A7-1B402D6D0F99}",
+    "Language": "SFX",
+    "Hash": "{0DDAB079-FC74-D466-E69A-A3C9DB8CC8CB}",
+    "ObjectPath": "Golem_Throw",
+    "ShortName": "Golem_Throw",
+    "Path": "Event/Golem_Throw.bnk",
+    "Media": [
+     {
+      "Id": "45735907",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_008[1].wav",
+      "Path": "Media/45735907.wem",
+      "CachePath": "7D/{7D99BE6C-2A01-8885-4793-DDF8AD2BBD70}.wem"
+     },
+     {
+      "Id": "341902791",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_008[1].wav",
+      "Path": "Media/341902791.wem",
+      "CachePath": "23/{236CDA54-61C5-CA9B-0338-93F4EF418074}.wem"
+     },
+     {
+      "Id": "749795668",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "GolemThrow.wav",
+      "Path": "Media/749795668.wem",
+      "CachePath": "6A/{6AEB2E6D-2305-64F3-82CF-E2A70430A1A4}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "3954951306",
+      "Name": "Golem_Throw",
+      "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Golem\\Golem_Throw",
+      "GUID": "{4A5F8FF6-B24C-4A80-91A7-1B402D6D0F99}",
+      "MaxAttenuation": "200",
+      "DurationType": "OneShot",
+      "DurationMin": "0.62411475",
+      "DurationMax": "1.2482295",
+      "MediaRefs": [
+       {
+        "Id": "45735907"
+       },
+       {
+        "Id": "341902791"
+       },
+       {
+        "Id": "749795668"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{E4882F44-6C06-9B08-D515-F1635E8BB313}"
+ }
+}

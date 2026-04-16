@@ -13,6 +13,7 @@ using UnityEngine;
 public class MaceProjectile : Projectile
 {
     [Header("Mace Projectile Parameters")]
+    [SerializeField] private GameObject _shockwavePrefab;
     [SerializeField]
     [Tooltip("How much damage the projectile impact shockwave deals.")] private float _projectileShockwaveDamage;
     [SerializeField]
@@ -38,10 +39,22 @@ public class MaceProjectile : Projectile
 
         CreateImpactFX();
 
-        if (_shockwaveController) _shockwaveController.InstantiateShockwave(transform.position,
-                                                                            _projectileShockwaveDamage,
-                                                                            _projectileShockwaveRadius,
-                                                                            _projectileShockwaveKnockback);
+        GameObject shockwave = Instantiate(_shockwavePrefab, transform.position, Quaternion.identity);
+        Shockwave shockwaveScript = shockwave.GetComponent<Shockwave>();
+        shockwaveScript.Init(transform.position, hitMask, _projectileShockwaveDamage, _projectileShockwaveKnockback, _projectileShockwaveRadius, attacker);
+
+        if (DelayedProjectiles.IsEnabled)
+        {
+            Collider[] hits = Physics.OverlapSphere(transform.position, _projectileShockwaveRadius, hitMask);
+            var marked = new System.Collections.Generic.HashSet<Enemy>();
+            foreach (var col in hits)
+            {
+                var enemy = col.GetComponentInParent<Enemy>();
+                if (enemy == null || marked.Contains(enemy)) continue;
+                marked.Add(enemy);
+                CreateDelayedDamageMark(enemy, col.ClosestPoint(transform.position));
+            }
+        }
 
         ReturnToSource(); // destroy / return to pool
     }

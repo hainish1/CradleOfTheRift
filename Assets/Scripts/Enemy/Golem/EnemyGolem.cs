@@ -23,10 +23,11 @@ public class EnemyGolem : Enemy
     public float maxWanderTime = 1f;
     public float postAttackCooldown = 1f;
 
-    [Header("Rock Throw Attack Settings")]
+    [Header("Rock Throw Ranged Settings")]
     public GameObject rockProjectilePrefab;
-    public float directDamage = 20f;    // Not used rn
-    public float AOEDamage = 5f;        // Not used rn
+    public float directDamage = 20f;
+    public float AOEDamage = 20f;
+    //public float AOERadius = 3f; // Moved to the projectile itself
     public float minWindupTime = 1.5f;
     public float maxWindupTime = 2.5f;
     public float projectileVelocity = 12f;
@@ -34,8 +35,9 @@ public class EnemyGolem : Enemy
     public Transform projectileSpawnPoint; // Where the rock spawns
     public float turnSpeedWhileAiming = 8f;
     public LayerMask projectileMask = ~0;
+    public float playerAimOffset = 1.5f;
 
-    [Header("Melee Attack Settings")]
+    [Header("Ground Slam Melee Settings")]
     public float meleeDamage = 20f;
     public float meleeHorizontalKnockback = 100f;
     public float meleeVerticalKnockback = 100f;
@@ -43,21 +45,26 @@ public class EnemyGolem : Enemy
     //public LayerMask meleeMask = ~0;
     public float meleeCooldown = 0.5f;
     public Transform meleePosition;
+    public GameObject groundSlamPrefab;
 
     [Header("VFX / SFX")]
     public GameObject throwRockVFXPrefab;
     [SerializeField] private AK.Wwise.Event throwSFX;
+    [SerializeField] private AK.Wwise.Event groundSlamSFX;
     IdleStateGolem idle;
     ChaseStateGolem chase;
     RangeAttackStateGolem rangeAttack;
     MeleeAttackStateGolem meleeAttack;
     RecoveryStateGolem recovery;
-    private void OnEnable()
+
+    public Animator golemAnim;
+
+    protected void OnEnable()
     {
         EnemyRegistry.RegisterGolem(this);
     }
 
-    private void OnDisable()
+    protected void OnDisable()
     {
         EnemyRegistry.UnregisterGolem(this);
     }
@@ -77,11 +84,12 @@ public class EnemyGolem : Enemy
         rangeAttack = new RangeAttackStateGolem(this, stateMachine);
         meleeAttack = new MeleeAttackStateGolem(this, stateMachine);
         recovery = new RecoveryStateGolem(this, stateMachine);
+        golemAnim = GetComponentInChildren<Animator>();
 
         stateMachine.Initialize(idle);
     }
 
-    private void SnapToNavMesh()
+    protected void SnapToNavMesh()
     {
         if (agent == null) return;
         const float maxDistance = 100f;
@@ -131,18 +139,26 @@ public class EnemyGolem : Enemy
 
     public void PlayThrowSFX()
     {
-        throwSFX?.Post(gameObject);
+        print("Playing Throw SFX");
+        if (throwSFX.IsValid())
+        {
+            print("Posting SFX");
+            throwSFX.Post(gameObject);
+        }
     }
 
     public void ThrowRock()
     {
+        // Play the SFX.
+        PlayThrowSFX();
+        
         // Use the defined spawn point or default to slightly above the golem
         Vector3 spawnPos = projectileSpawnPoint != null 
             ? projectileSpawnPoint.position 
             : transform.position + Vector3.up * 1.5f;
 
         // Target the player's center mass rather than their feet
-        Vector3 targetPos = target.position + Vector3.up * 1.5f; 
+        Vector3 targetPos = target.position + Vector3.up * playerAimOffset; 
         
         // Pull from the Object Pool if available, else instantiate normally
         GameObject rockObj;
@@ -167,15 +183,15 @@ public class EnemyGolem : Enemy
 
             Vector3 calculatedVelocity = CalculateLaunchVelocity(spawnPos, targetPos, timeToTarget);
 
-            // Init: (Vector3 velocity, LayerMask mask, float damage, float knockback)
-            rock.Init(calculatedVelocity, projectileMask, directDamage, projectileKnockback);
+            // Init: (Vector3 velocity, LayerMask mask, float damage, float knockback, float aoeRadius, float aoeDamage)
+            rock.Init(calculatedVelocity, projectileMask, directDamage, projectileKnockback, AOEDamage);
         }
     }
 
     /// <summary>
     /// Calculates the precise 3D velocity required to hit a target point over a specific duration, factoring in Unity's gravity.
     /// </summary>
-    private Vector3 CalculateLaunchVelocity(Vector3 startPoint, Vector3 targetPoint, float timeToTarget)
+    protected Vector3 CalculateLaunchVelocity(Vector3 startPoint, Vector3 targetPoint, float timeToTarget)
     {
         // Calculate displacement
         Vector3 displacement = targetPoint - startPoint;
@@ -227,6 +243,20 @@ public class EnemyGolem : Enemy
                 break; 
             }
         }
+
+        // Play ground slam VFX
+        if (groundSlamPrefab != null)        
+        {
+            GameObject slamVFX = Instantiate(groundSlamPrefab, meleePosition.position, Quaternion.identity);
+            slamVFX.transform.localScale = Vector3.one * meleeRadius * 0.5f;
+            Destroy(slamVFX, EstimateParticleLifetime(slamVFX));
+        }
+        
+        // Play the ground slam SFX
+        if (groundSlamSFX.IsValid())
+        {
+            groundSlamSFX.Post(gameObject);
+        }
     }
 
     //Getters for States that this Melee Enemy has
@@ -236,7 +266,7 @@ public class EnemyGolem : Enemy
     public EnemyState GetMeleeAttack() => meleeAttack;
     public EnemyState GetRecovery() => recovery;
 
-    private float EstimateParticleLifetime(GameObject fx)
+    protected float EstimateParticleLifetime(GameObject fx)
     {
         float max = 0.25f;
 
@@ -265,7 +295,7 @@ public class EnemyGolem : Enemy
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, wanderRadius);
 
-        // Draw the melee sphere so you can balance the radius in the editor!
+        // Draw the melee sphere
         if (meleePosition != null)
         {
             Gizmos.color = Color.red;
@@ -273,142 +303,15 @@ public class EnemyGolem : Enemy
         }
     }
 
-    // /// <summary>
-    // /// Try to apply damage and impulse to the player GameObject caught in colliders 
-    // /// </summary>
-    // /// <param name="playerCol"></param>
-    // public void TryApplyHit(Collider playerCol)
-    // {
-    //     if (hitAppliedThisAttack) return;
-    //     if (Time.time < nextAttackAllowed) return;
+    // Called by BossSpawner to initialize damage based on difficulty scaler
+    public void InitializeAllDamage(float multiplier)
+    {
+        // Kevin was here 
+        // Debug.Log($"EnemyGolem Boss Base Damage. Base Direct Damage: {directDamage}, Base AOE Damage: {AOEDamage}, Base Melee Damage: {meleeDamage}");
+        directDamage *= multiplier;
+        AOEDamage *= multiplier;
+        meleeDamage *= multiplier;
 
-    //     Vector3 toPlayer = playerCol.transform.position - transform.position;
-    //     toPlayer.y = 0f;
-
-    //     var pm = playerCol.GetComponentInParent<PlayerMovement>();
-    //     if (pm != null)
-    //     {
-    //         pm.ApplyImpulse(toPlayer.normalized * knockbackPower);
-
-    //         var damageable = pm.GetComponentInParent<IDamageable>();
-    //         if (damageable != null && !damageable.IsDead)
-    //         {
-    //             damageable.TakeDamage(slamDamage);
-    //         }
-    //     }
-    //     hitAppliedThisAttack = true;
-    //     nextAttackAllowed = Time.time + attackCooldown; // ehhh do I need this here
-    //     EnableHitBox(false);
-
-    // }
-
-    // /// <summary>
-    // /// Initialize damage done by this enemy, can be updated by enemy spawner
-    // /// </summary>
-    // /// <param name="newDamage"></param>
-    // public void InitializeSlamDamage(float newDamage)
-    // {
-    //     // this.slamDamage = Mathf.CeilToInt(newDamage);
-    //     this.slamDamage = newDamage;
-    //     Debug.Log("Slam Damage: " + this.slamDamage);
-    // }
-
-    // public Vector3 CalculateBallisticVelocity(Vector3 startPoint, Vector3 endPoint, float height, out float duration)
-    // {
-    //     float gravity = Physics.gravity.y * gravityScale;
-
-    //     // Flatten the target to same Y 
-    //     endPoint.y = startPoint.y;
-    //     float displacementY = 0f;
-
-    //     Vector3 displacementXZ = new Vector3(endPoint.x - startPoint.x, 0, endPoint.z - startPoint.z);
-
-    //     // vertical velocity: v = sqrt(-2gh)
-    //     float velocityY = Mathf.Sqrt(-2 * gravity * height);
-
-    //     // time calcs
-    //     float timeToPeak = -velocityY / gravity;
-    //     float timeToFall = Mathf.Sqrt(2 * (displacementY - height) / gravity);
-
-    //     duration = timeToPeak + timeToFall; // total flight time
-
-    //     // horizontal velocity
-    //     Vector3 velocityXZ = displacementXZ / duration;
-
-    //     return velocityXZ + Vector3.up * velocityY;
-    // }
-
-    // /// <summary>
-    // /// Move with swept-sphere collision
-    // /// </summary>
-    // public Vector3 SweepMove(Vector3 vel, float dt)
-    // {
-    //     Vector3 delta = vel * dt;
-    //     float dist = delta.magnitude;
-    //     if (dist < 1e-5f) return vel;
-
-    //     Vector3 origin = transform.position + Vector3.up * (collisionRadius + 0.02f);
-    //     Vector3 dir = delta.normalized;
-
-    //     if (Physics.SphereCast(origin, collisionRadius, dir, out RaycastHit sweepHit,
-    //             dist, groundMask, QueryTriggerInteraction.Ignore))
-    //     {
-    //         // Stop just before the hit surface
-    //         float safeDist = Mathf.Max(0f, sweepHit.distance - 0.01f);
-    //         transform.position += dir * safeDist;
-
-    //         // Ground hit, snap center to correct height above surface
-    //         if (sweepHit.normal.y > 0.6f)
-    //         {
-    //             float halfH = agent != null ? agent.height * 0.7f : 0f;
-    //             Vector3 pos = transform.position;
-    //             pos.y = sweepHit.point.y + (halfH + startHeightAboveGround);
-    //             transform.position = pos;
-    //         }
-
-    //         // remove the component going into the surface
-    //         float velIntoSurface = Vector3.Dot(vel, -sweepHit.normal);
-    //         if (velIntoSurface > 0f)
-    //             vel += sweepHit.normal * velIntoSurface;
-    //     }
-    //     else
-    //     {
-    //         transform.position += delta;
-    //     }
-
-    //     return vel;
-    // }
-
-    // /// <summary>
-    // /// Get Base Damage for this enemy
-    // /// </summary>
-    // /// <returns></returns>
-    // public float GetBaseDamage() => slamDamage;
-    // public void PlayMeleePSVFX(GameObject vfxPrefab, Transform spawnPos)
-    // {
-    //     if (vfxPrefab == null) return;
-
-    //     spawnPos = spawnPos != null ? spawnPos : transform;
-
-    //     GameObject fx;
-    //     if (ObjectPool.instance != null)
-    //     {
-    //         fx = ObjectPool.instance.GetObject(vfxPrefab, spawnPos);
-    //     }
-    //     else
-    //     {
-    //         fx = Instantiate(vfxPrefab, spawnPos.position, Quaternion.identity, spawnPos);
-    //     }
-
-    //     float lifetime = EstimateParticleLifetime(fx);
-
-    //     if (ObjectPool.instance != null)
-    //     {
-    //         ObjectPool.instance.ReturnObject(fx, lifetime);
-    //     }
-    //     else
-    //     {
-    //         Destroy(fx, lifetime);
-    //     }
-    // }
+        // Debug.Log($"EnemyGolem: Scaled damage with multiplier {multiplier}. Direct Damage: {directDamage}, AOE Damage: {AOEDamage}, Melee Damage: {meleeDamage}");
+    }
 }

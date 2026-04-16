@@ -3,17 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Drives the tutorial. Place this GameObject ONLY in your tutorial scene.
-///
-/// Wire up:
-///   steps[]      → drag your TutorialStep SOs in order
-///   objectiveUI  → TutorialObjectiveUI component (auto-found if not set)
-///   highlighter  → TutorialHighlighter component  (auto-found if not set)
-///
-/// To complete a step from gameplay code:
-///   TutorialSceneManager.Instance?.CompleteCurrentStep();
-/// </summary>
 public class TutorialSceneManager : MonoBehaviour
 {
     public static TutorialSceneManager Instance { get; private set; }
@@ -40,10 +29,6 @@ public class TutorialSceneManager : MonoBehaviour
     public int  CurrentStepIndex => _currentIndex;
     public int  TotalSteps       => steps.Count;
     public bool IsComplete       => _currentIndex >= steps.Count;
-
-    // ────────────────────────────────────────────────────────────────────
-    //  Unity
-    // ────────────────────────────────────────────────────────────────────
 
     void Awake()
     {
@@ -81,10 +66,6 @@ public class TutorialSceneManager : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
-    // ────────────────────────────────────────────────────────────────────
-    //  Public API
-    // ────────────────────────────────────────────────────────────────────
-
     /// <summary>
     /// Complete the currently active step. Safe to call from any gameplay script.
     /// No-op if no step is active or TutorialManager doesn't exist.
@@ -94,10 +75,6 @@ public class TutorialSceneManager : MonoBehaviour
         if (!_stepActive) return;
         FinishStep();
     }
-
-    // ────────────────────────────────────────────────────────────────────
-    //  Internal
-    // ────────────────────────────────────────────────────────────────────
 
     private void AdvanceToNextStep()
     {

@@ -103,6 +103,23 @@ public class PlayerXP : MonoBehaviour
         }
     }
 
+    // attempt to spend XP for shrines
+    public bool SpendXP(int amount)
+    {
+        if (amount <= 0) return false;
+        if (currentXP < amount) return false;
+
+        currentXP -= amount;
+        if (currentXP < 0) currentXP = 0;
+
+        if (levelUpReady && currentXP < xpToLevelUp)
+            levelUpReady = false;
+
+        XPChanged?.Invoke(currentXP, xpToLevelUp);
+        Debug.Log($"[PlayerXP] Spent {amount} XP ({currentXP}/{xpToLevelUp})");
+        return true;
+    }
+
     /// <summary>
     /// Reset all values - XP and levels for the new run
     /// </summary>

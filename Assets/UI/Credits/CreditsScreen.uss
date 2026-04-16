@@ -1,0 +1,212 @@
+.credits-root {
+    flex-grow: 1;
+    background-color: rgb(15, 12, 26);
+    overflow: hidden;
+}
+
+.credits-scroll {
+    flex-grow: 1;
+}
+
+.credits-scroll > #unity-content-container {
+    padding: 0;
+}
+
+.credits-container {
+    align-items: center;
+    padding-bottom: 80px;
+}
+
+/* ── Sections ── */
+.section {
+    align-items: center;
+    margin-bottom: 48px;
+}
+
+.end-spacer {
+    height: 120px;
+}
+
+/* ── Rune divider ── */
+.rune-divider {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 36px;
+    margin-bottom: 36px;
+    justify-content: center;
+    width: 160px;
+    height: 40px;
+}
+
+.rune-line {
+    width: 0;
+    height: 0;
+}
+
+.rune-gem {
+    width: 0;
+    height: 0;
+}
+
+/* ── Typography ── */
+.studio-badge {
+    font-size: 12px;
+    color: rgb(200, 169, 110);
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+    -unity-text-align: middle-center;
+}
+
+.game-title {
+    font-size: 34px;
+    color: rgb(240, 232, 208);
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    -unity-text-align: middle-center;
+}
+
+.game-subtitle {
+    font-size: 12px;
+    color: rgb(122, 106, 154);
+    letter-spacing: 1px;
+    -unity-text-align: middle-center;
+    margin-top: 4px;
+}
+
+.role-title {
+    font-size: 13px;
+    color: rgb(200, 169, 110);
+    -unity-font-style: bold;
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+    -unity-text-align: middle-center;
+}
+
+.name {
+    font-size: 20px;
+    color: rgb(212, 200, 240);
+    -unity-text-align: middle-center;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.name.lead {
+    font-size: 26px;
+    color: rgb(240, 232, 208);
+    -unity-font-style: bold;
+}
+
+.special-thanks {
+    font-size: 14px;
+    color: rgb(90, 78, 122);
+    white-space: normal;
+    max-width: 400px;
+    -unity-text-align: middle-center;
+    -unity-font-style: italic;
+}
+
+/* ── Collab block ── */
+.collab-block {
+    margin-top: 24px;
+    align-items: center;
+}
+
+.collab-block .game-subtitle {
+    color: rgb(200, 169, 110);
+}
+
+.collab-block .special-thanks {
+    margin-top: 8px;
+}
+
+/* ── CapyCo seal ── */
+.capyco-seal {
+    align-items: center;
+    margin-top: 8px;
+    margin-bottom: 44px;
+}
+
+.seal-ring {
+    width: 72px;
+    height: 72px;
+    border-radius: 36px;
+    border-color: rgb(74, 61, 106);
+    border-width: 1px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.seal-inner {
+    width: 52px;
+    height: 52px;
+    border-radius: 26px;
+    border-color: rgb(58, 47, 86);
+    border-width: 1px;
+}
+
+.seal-name {
+    font-size: 13px;
+    color: rgb(122, 106, 154);
+    letter-spacing: 3px;
+    -unity-text-align: middle-center;
+}
+
+/* ── Fades ── */
+.fade-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+}
+
+.fade-bottom {
+    position: absolute;
+    bottom: 44px;
+    left: 0;
+    right: 0;
+    height: 100px;
+}
+
+/* ── Trees ── */
+.tree {
+    position: absolute;
+    bottom: 0; /* Planted on the ground */
+    width: 200px;
+    height: 180px;
+}
+
+.tree-left  { left: 0px; }
+.tree-right { right: 0px; }
+
+/* ── Skip button ── */
+.skip-button {
+    position: absolute;
+    bottom: 16px;
+    right: 200px;
+    background-color: rgb(26, 20, 48);
+    color: rgb(160, 144, 200);
+    border-color: rgb(58, 47, 86);
+    border-width: 1px;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 13px;
+}
+
+.skip-button:hover {
+    background-color: rgb(42, 32, 80);
+    color: rgb(212, 200, 240);
+}
+
+.seal-logo {
+    width: 150px;
+    height: 108px;
+
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    background-image: url("project://database/Assets/Art%20Assets/2D/UI/Logos/CapyLogo.png?fileID=2800000&amp;guid=1a71528bb554f4d4584d1342815e51dd&amp;type=3#CapyLogo");
+    -unity-background-scale-mode: scale-to-fit;
+}

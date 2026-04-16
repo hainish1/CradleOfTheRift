@@ -1,16 +1,9 @@
-using Mono.Cecil.Cil;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class SettingsMenuController : MonoBehaviour
 {
-    [Header("Wwise RTPC Names")]
-    [SerializeField] private string masterVolumeRTPC  = "MasterVolume";
-    [SerializeField] private string musicVolumeRTPC   = "MusicVolume";
-    [SerializeField] private string sfxVolumeRTPC     = "SFXVolume";
-    [SerializeField] private string ambientVolumeRTPC = "AmbientVolume";
-
     [Header("Sound Effects")]
     [SerializeField] private AK.Wwise.Event clickSFX;
 
@@ -90,8 +83,7 @@ public class SettingsMenuController : MonoBehaviour
         root = settingsRoot;
 
         // Create the service
-        service = new SettingsService(masterVolumeRTPC, musicVolumeRTPC,
-                                      sfxVolumeRTPC, ambientVolumeRTPC);
+        service = GlobalSettingsManager.Instance.Service;
 
         // Bind the click sfx to the root.
         // Hopefully through event propogation,
@@ -154,9 +146,6 @@ public class SettingsMenuController : MonoBehaviour
         buttonBack?.RegisterCallback<ClickEvent>(_ => AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX));
         buttonBack?.RegisterCallback<ClickEvent>(_ => OnBackPressed?.Invoke());
         
-
-        // Load saved settings and push to all pages
-        service.Load();
         RefreshAllPages();
 
         SwitchToTab(tabAudio, snap: true);

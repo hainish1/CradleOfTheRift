@@ -41,6 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 984479434153791223}
   - component: {fileID: 8068391143491128734}
+  - component: {fileID: 2249725770262891461}
   - component: {fileID: 201720854443848597}
   - component: {fileID: 6554202718004137176}
   - component: {fileID: 7738743892704107704}
@@ -95,6 +96,27 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!65 &2249725770262891461
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6223163396465808229}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.75, y: 0.87, z: 0.3}
+  m_Center: {x: 0, y: 0.435, z: -0.01}
 --- !u!114 &201720854443848597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,7 +131,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   aggressionRange: 300
-  playerOutOfRange: 300
+  playerOutOfRange: 150
   turnSpeed: 10
   attackCooldown: 0
   playerMask:
@@ -138,17 +160,24 @@ MonoBehaviour:
   projectileMask:
     serializedVersion: 2
     m_Bits: 1344
+  playerAimOffset: 1.5
   meleeDamage: 20
   meleeHorizontalKnockback: 100
   meleeVerticalKnockback: 100
   meleeRadius: 3
   meleeCooldown: 0.5
   meleePosition: {fileID: 2795737434573335998}
+  groundSlamPrefab: {fileID: 4994997792314849709, guid: 6bb03b55361ea864da9d2750cc5c1925, type: 3}
   throwRockVFXPrefab: {fileID: 0}
   throwSFX:
     idInternal: 0
     valueGuidInternal: 
-    WwiseObjectReference: {fileID: 0}
+    WwiseObjectReference: {fileID: 11400000, guid: 75a2d1b3fc07c154db5a3b03e2583b35, type: 2}
+  groundSlamSFX:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: 5ee6f3262bcde9e4d95cf8d57bd690b2, type: 2}
+  golemAnim: {fileID: 0}
 --- !u!114 &6554202718004137176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,9 +190,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b7684082c124f45893380d545b25c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  original: {fileID: 2100000, guid: 44558294a5163784889ae79a608ea67f, type: 2}
   flash: {fileID: 2100000, guid: 679327a50d72c694bab0b63b6b2baec1, type: 2}
   flashDuration: 0.1
+  flashOnlyRootRenderer: 0
 --- !u!114 &7738743892704107704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,7 +200,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6223163396465808229}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b3318528a5d3d464aa454d8a551403ac, type: 3}
   m_Name: 
@@ -219,9 +248,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 40
+  maxHealth: 150
   cleanupDelay: 0
-  baseHealth: 40
+  baseHealth: 150
   xpReward: 10
   damageVisuals: {fileID: 2533069923019125397}
   deathVFX: {fileID: 676540690991785363, guid: ceee2cd6e8010af4bbcec230578f8910, type: 3}
@@ -233,11 +262,11 @@ MonoBehaviour:
   deathSFX:
     idInternal: 0
     valueGuidInternal: 
-    WwiseObjectReference: {fileID: 11400000, guid: d374e5a4ff86e584b8ad1c9d3b58d644, type: 2}
+    WwiseObjectReference: {fileID: 11400000, guid: 7790389c737f4e248b45a01d03a58158, type: 2}
   damagedSFX:
     idInternal: 0
     valueGuidInternal: 
-    WwiseObjectReference: {fileID: 11400000, guid: d374e5a4ff86e584b8ad1c9d3b58d644, type: 2}
+    WwiseObjectReference: {fileID: 11400000, guid: 7790389c737f4e248b45a01d03a58158, type: 2}
 --- !u!114 &2533069923019125397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,6 +286,8 @@ MonoBehaviour:
   riseSpeed: 1.5
   takeDamageVFXPrefab: {fileID: 4658278565933542678, guid: 86d031785bde0a149bba6d699b1227b6, type: 3}
   damageVfxAttachPoint: {fileID: 0}
+  textHeightOffset: 2
+  textSpreadRadius: 0.4
 --- !u!114 &4348034529348328701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -586,10 +617,40 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8068391206865123432}
   m_SourcePrefab: {fileID: 100100000, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
 --- !u!4 &2545160238402103216 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
   m_PrefabInstance: {fileID: 2655013533814259803}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2889597286417415434 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a14f107a44ad23642b33df5c538a98bb, type: 3}
+  m_PrefabInstance: {fileID: 2655013533814259803}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &8068391206865123432
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2889597286417415434}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e730b4395810a9d4e8f2a0f26d68cb92, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

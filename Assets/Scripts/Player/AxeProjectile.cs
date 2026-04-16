@@ -9,6 +9,7 @@
 // </summary>
 
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class AxeProjectile : Projectile
@@ -37,23 +38,17 @@ public class AxeProjectile : Projectile
     private Vector3 _attackPosition;
     private Vector3 _throwerOriginOnReturn;
     private Transform _throwerCenter;
-    private Coroutine _whirlCoroutine;
-
-    void Start()
-    {
-        _whirlCoroutine = StartCoroutine(InitializeModelWhirl());
-    }
 
     protected override void FixedUpdate()
     {
         if (!_isInitialized) return; // Do nothing if initialization has not occured.
 
+        _modelTransform.Rotate(xAngle: 0, yAngle: 0, Time.fixedDeltaTime * _whirlSpeed); // Rotate the axe model for whirl effect.
         FadeTrailVisuals();
 
         if (_isExpired) return; // Return early if projectile is expired.
         if (!_throwerCenter) DestroyAxe(); // Destroy projectile if player died.
 
-        age += Time.fixedDeltaTime;
         if (age >= lifeTime) // Time out projectile if it did not return quickly enough.
         {
             _isExpired = true;
@@ -74,40 +69,41 @@ public class AxeProjectile : Projectile
 
         // Destroy projectile when thrower is reached.
         if (_isReturning && Vector3.Distance(transform.position, _currTargetPosition) < 0.1) DestroyAxe();
+
+        age += Time.fixedDeltaTime;
     }
 
     public override void Update() {} // Override Update logic.
 
-    public override void OnCollisionEnter(Collision collision) {} // Override OnCollisionEnter logic.
-
-    void OnTriggerEnter(Collider other)
+    public override void OnCollisionEnter(Collision collision)
     {
         if (_isExpired) return; // Do nothing if projectile is expired.
 
-        int collisionLayerResult = (1 << other.gameObject.layer) & hitMask;
+        int collisionLayerResult = (1 << collision.gameObject.layer) & hitMask;
         if (collisionLayerResult == 0) return; // Do nothing if collision layer is not of a valid type.
 
         CreateImpactFX();
 
-        // Get collision point and surface normal.
-        Vector3 hitPoint = other.ClosestPoint(transform.position);
-        Vector3 surfaceNormal = (transform.position - hitPoint).normalized;
+        // Get contact point and surface normal.
+        ContactPoint contact = collision.GetContact(0);
+        Vector3 hitPoint = contact.point;
+        Vector3 surfaceNormal = contact.normal;
 
-        var enemyScript = other.GetComponentInParent<Enemy>();
+        var enemyScript = collision.gameObject.GetComponentInParent<Enemy>();
         if (enemyScript)
         {
-            ApplyEnemyHitCollider(other, enemyScript, passingThrough: true); // Damage enemy and pass through it.
+            ApplyEnemyHit(collision, enemyScript, passingThrough: true); // Damage enemy and pass through it.
             if (selfCollider) // Temporarily ignore future collisions with all colliders of the enemy that was hit.
             {
                 Collider[] enemyColliders = enemyScript.GetComponentsInChildren<Collider>();
                 foreach (Collider col in enemyColliders)
                 {
                     Physics.IgnoreCollision(selfCollider, col, true);
-                    StartCoroutine(ReactivateEnemyColliders(enemyColliders, other.gameObject, delaySeconds: 1));
+                    StartCoroutine(ReactivateEnemyColliders(enemyColliders, collision.gameObject));
                 }
             }
         }
-        else if (!other.isTrigger) // Bounce if other collider does not belong to an enemy.
+        else // Bounce if other collider does not belong to an enemy.
         {
             Vector3 reflectedDirection = Vector3.Reflect(transform.forward, surfaceNormal);
             Vector3 offset = 0.1f * surfaceNormal; // Offset projectile away from surface to prevent a double-trigger.
@@ -117,13 +113,13 @@ public class AxeProjectile : Projectile
             rb.position += offset;
             InitializeReturn(); // Start returning immediately upon bounce.
         }
-        
-        Rigidbody otherRigidbody = other.attachedRigidbody;
-        if (otherRigidbody) // Apply kockback force to the object collided with.
+
+        if (collision.rigidbody) // Apply kockback force to the object collided with.
         {
             Vector3 knockback = hitForce * transform.forward;
-            otherRigidbody.AddForceAtPosition(knockback, hitPoint, ForceMode.Impulse);
+            collision.rigidbody.AddForceAtPosition(knockback, hitPoint, ForceMode.Impulse);
         }
+
     }
 
     /// <summary>
@@ -152,6 +148,9 @@ public class AxeProjectile : Projectile
         trail.time = lifeTime * 5;
         startPos = transform.position;
         this.flyDistance = flyDistance + 1;
+
+        // Initialize model rotation.
+        _modelTransform.rotation = Quaternion.Euler(90, 0, 0);
 
         // Initialize arcing logic.
         InitializeArcPath(_attackPosition);
@@ -228,35 +227,37 @@ public class AxeProjectile : Projectile
 
     /// <summary>
     ///   <para>
-    ///     Whirls the axe model indefinitely until stopped.
-    ///   </para>
-    /// </summary>
-    /// <returns> IEnumerator object. </returns>
-    private IEnumerator InitializeModelWhirl()
-    {
-        while (true)
-        {
-            _modelTransform.Rotate(xAngle: 0, yAngle: 0, Time.deltaTime * _whirlSpeed);
-            yield return null;
-        }
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Reactivates collision for an enemy's colliders after a certain delay in order to make getting
-    ///     damaged on the return path possible.
+    ///     Reactivates collision for an enemy's colliders after they are all no longer overlapping the axe projectile
+    ///     in order to make getting damaged on the return path possible.
     ///   </para>
     /// </summary>
     /// <param name="enemyColliders"> All colliders of the enemy. </param>
     /// <param name="enemy"> Enemy script of the enemy. </param>
-    /// <param name="delaySeconds"> Seconds before reactivating collision. </param>
     /// <returns> IEnumerator object. </returns>
-    private IEnumerator ReactivateEnemyColliders(Collider[] enemyColliders, GameObject enemy, float delaySeconds)
+    private IEnumerator ReactivateEnemyColliders(Collider[] enemyColliders, GameObject enemy)
     {
-        yield return new WaitForSeconds(delaySeconds);
+        // Wait until either the enemy is dead or all of its colliders are no longer overlapping the projectile.
+        yield return new WaitUntil(() => !enemy || !enemyColliders.Any(col => IsTouching(selfCollider, col)));
         if (!enemy) yield break; // Do nothing and end coroutine if enemy is dead.
         foreach (Collider col in enemyColliders)
-            Physics.IgnoreCollision(selfCollider, col, false);
+            if (col != null)
+                Physics.IgnoreCollision(selfCollider, col, false);
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Checks if two colliders are overlapping.
+    ///   </para>
+    /// </summary>
+    /// <param name="a"> Collider a. </param>
+    /// <param name="b"> Collider b. </param>
+    /// <returns> True if colliders are overlapping, false otherwise. </returns>
+    private bool IsTouching(Collider a, Collider b)
+    {
+        if (a == null || b == null) return false;
+        return Physics.ComputePenetration(a, a.transform.position, a.transform.rotation,
+                                          b, b.transform.position, b.transform.rotation,
+                                          out _, out _);
     }
 
     /// <summary>
@@ -302,7 +303,6 @@ public class AxeProjectile : Projectile
         _isInitialized = false;
         _isExpired = false;
         _isReturning = false;
-        StopCoroutine(_whirlCoroutine);
         ReturnToSource(); // Destroy.
     }
 }

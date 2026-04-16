@@ -23,6 +23,8 @@ namespace AK
         static const AkUniqueID CHEST_OPEN = 2728948375U;
         static const AkUniqueID ENEMY_LIGHTNING_DAMAGED = 608341856U;
         static const AkUniqueID ENEMY_SPAWN = 1526102535U;
+        static const AkUniqueID GOLEM_HIT = 2529293365U;
+        static const AkUniqueID GOLEM_THROW = 3954951306U;
         static const AkUniqueID PICK_UP_ITEM = 4229230304U;
         static const AkUniqueID PLAY_AMBIENCE = 278617630U;
         static const AkUniqueID PLAY_PLAYER_CROWN_SHOOT = 1245563929U;
@@ -41,6 +43,7 @@ namespace AK
         static const AkUniqueID PLAY_SONG_ICEY = 3808693238U;
         static const AkUniqueID PLAY_TELEPORTER_AMBIENCE = 1203559441U;
         static const AkUniqueID PLAY_UI_BUTTON_CLICK = 1661558166U;
+        static const AkUniqueID ROCK_BREAK = 756826226U;
         static const AkUniqueID SKULL_DEATH = 2252982343U;
         static const AkUniqueID SLIME_BOSS_DAMAGE = 804704067U;
         static const AkUniqueID SLIME_BOSS_JUMP = 1864203916U;
