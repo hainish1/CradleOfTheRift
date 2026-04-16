@@ -8,14 +8,18 @@
 // </summary>
 
 using UnityEngine;
+using System;
 
 public class PlayerHeldWeaponController : MonoBehaviour
 {
     [SerializeField] private GameObject _spearModel;
     [SerializeField] private GameObject _axeModel;
     [SerializeField] private GameObject _maceModel;
+    [SerializeField] private GameObject _staffModel;
     [SerializeField] public HeldWeaponType HeldWeapon;
     private PlayerShooter _playerShooter;
+
+    public static event Action<HeldWeaponType> OnWeaponChanged;
 
     void Awake()
     {
@@ -37,27 +41,38 @@ public class PlayerHeldWeaponController : MonoBehaviour
     {
         HeldWeapon = weaponChange; // keep the serialized field in sync with runtime changes
         _playerShooter.SetProjectileType(weaponChange); // Change the throwable projectile type.
+        OnWeaponChanged?.Invoke(weaponChange);
         switch (weaponChange) // Change held weapon model to the corresponding type.
         {
             case HeldWeaponType.None:
                 _spearModel.SetActive(false);
                 _axeModel.SetActive(false);
                 _maceModel.SetActive(false);
+                if (_staffModel != null) _staffModel.SetActive(false);
                 break;
             case HeldWeaponType.Spear:
                 _spearModel.SetActive(true);
                 _axeModel.SetActive(false);
                 _maceModel.SetActive(false);
+                if (_staffModel != null) _staffModel.SetActive(false);
                 break;
             case HeldWeaponType.Axe:
                 _spearModel.SetActive(false);
                 _axeModel.SetActive(true);
                 _maceModel.SetActive(false);
+                if (_staffModel != null) _staffModel.SetActive(false);
                 break;
             case HeldWeaponType.Mace:
                 _spearModel.SetActive(false);
                 _axeModel.SetActive(false);
                 _maceModel.SetActive(true);
+                if (_staffModel != null) _staffModel.SetActive(false);
+                break;
+            case HeldWeaponType.Staff:
+                _spearModel.SetActive(false);
+                _axeModel.SetActive(false);
+                _maceModel.SetActive(false);
+                if (_staffModel != null) _staffModel.SetActive(true);
                 break;
             default:
                 break;
@@ -75,5 +90,6 @@ public enum HeldWeaponType
     None,
     Spear,
     Axe,
-    Mace
+    Mace,
+    Staff
 }

@@ -11,7 +11,7 @@ public class EnemyRockProjectile : MonoBehaviour
 
     [Header("flight")]
     [SerializeField] private float lifeTime = 6f;
-    [SerializeField] private float gravity = 9f;
+    //[SerializeField] private float gravity = 9f;
     private float hitForce = 8f;
     private float knockBackImpulse;
     private LayerMask hitMask = ~0; // what can this bullet hit
@@ -19,13 +19,18 @@ public class EnemyRockProjectile : MonoBehaviour
 
     [Header("Effects")]
     [SerializeField] private GameObject impactVFX;
+    [SerializeField] private float impactSize = 3f;
+    [SerializeField] private float effectDuration = 2f;
 
     //[Header("Damage")]
     //[SerializeField] private float AOERadius = 8f;
     //private float AOEDamage = 5f;
     //[SerializeField] private float AOEDelay = 1f;
     //[SerializeField] private EnemyDelayedAOE delayedAOE;
+    [Header("Damage and AOE Radius")]
     private float directDamage;
+    private float aoeDamage;
+    [SerializeField] private float aoeRadius = 0f;
 
     Rigidbody rb;
     private float age;
@@ -41,12 +46,14 @@ public class EnemyRockProjectile : MonoBehaviour
     /// <param name="velocity"> Velocity of the projectile. </param>
     /// <param name="mask"> Collection of what types of objects this projectile can interact with. </param>
     /// <param name="newDamage"> Amount of damage the explosion will do. This projectile will do no direct damage on its own. </param>
-    public void Init(Vector3 velocity, LayerMask mask, float damage, float knockback)
+    public void Init(Vector3 velocity, LayerMask mask, float damage, float knockback, float aoeDamage)
     {
         rb.linearVelocity = velocity;
         hitMask = mask;
         directDamage = damage;
         knockBackImpulse = knockback;
+        this.aoeDamage = aoeDamage;
+        //this.aoeRadius = aoeRadius;
         age = 0f;
     }
 
@@ -61,7 +68,7 @@ public class EnemyRockProjectile : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
+        //rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
     }   
 
     /// <summary>
@@ -104,7 +111,7 @@ public class EnemyRockProjectile : MonoBehaviour
             damageable.TakeDamage(directDamage);
         }
 
-
+        CreateAOEDamage();
         // add impact effects later
         CreateImpactVFX();
 
@@ -123,20 +130,43 @@ public class EnemyRockProjectile : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Spawn the AOE effect at the current position and deal damage to players within the radius    
+    void CreateAOEDamage()
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, aoeRadius, hitMask);
+        HashSet<IDamageable> damagedTargets = new HashSet<IDamageable>();
+        foreach (var col in hits)
+        {
+            var dmg = col.GetComponentInParent<IDamageable>();
+            if (dmg != null && !dmg.IsDead && !damagedTargets.Contains(dmg))
+            {
+                var pm = col.GetComponentInParent<PlayerMovement>();
+                if (pm != null)
+                {
+                    dmg.TakeDamage(aoeDamage);
+
+                    damagedTargets.Add(dmg);
+                    //Debug.Log(aoeDamage + " AOE Damage dealt to " + dmg.ToString() + " by " + this.ToString());
+                }
+            }
+        }
+    }
+
     public void CreateImpactVFX()
     {
         if (impactVFX == null) return;
         GameObject newFx = Instantiate(impactVFX);
         newFx.transform.position = transform.position;
         newFx.transform.rotation = Quaternion.identity;
-        newFx.transform.localScale = Vector3.one * 3;
+        newFx.transform.localScale = Vector3.one * impactSize;
 
-        Destroy(newFx, 1); // destroy after one second
+        Destroy(newFx, effectDuration);
     }
 
-    // void OnDrawGizmos()
-    // {
-    //     Gizmos.color = Color.red;
-    //     Gizmos.DrawWireSphere(transform.position, AOERadius);
-    // }
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, aoeRadius);
+    }
 }

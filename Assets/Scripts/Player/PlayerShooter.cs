@@ -49,6 +49,7 @@ public class PlayerShooter : MonoBehaviour
     private bool isRegeneratingFireCharges;
     public static event Action<int, int> OnFireChargeSpent;      // (current, max)
     public static event Action<int, int> OnFireChargeRestored;   // (current, max)
+    public static event Action<Vector3, Vector3, HeldWeaponType> OnProjectileFired;
     public bool IsThrowing { get; private set; }
     private Coroutine weaponRegainCoroutine;
 
@@ -57,9 +58,13 @@ public class PlayerShooter : MonoBehaviour
     [SerializeField] Projectile spearProjectilePrefab;
     [SerializeField] Projectile axeProjectilePrefab;
     [SerializeField] Projectile maceProjectilePrefab;
+    [SerializeField] private ExplosiveProjectile staffFireballPrefab; // this is the shit now
     [SerializeField] private ExplosiveProjectile explosiveProjectilePrefab;
     [SerializeField] private float projectileSpeed = 50f;
+    [Tooltip("Travel speed for the Staff fireball")]
+    [SerializeField] private float staffFireballSpeed = 10f;
     [SerializeField] private float spawnOffset = 0.1f;
+    [SerializeField] private float maceLobUpwardSpeed = 10f;
     private Projectile currProjectilePrefab;
 
     [Header("Weapon Animation")] [Space]
@@ -72,7 +77,7 @@ public class PlayerShooter : MonoBehaviour
     private float flipAnimCompletionTime;
     [SerializeField] private float regainAnimCompletionSeconds;
     [SerializeField] private float regainDelaySeconds;
-    private Animator shooterAnim;
+    private Animator playerAnim;
     private Quaternion weaponOriginalRotation;
     private Quaternion weaponFlippedRotation;
     private Vector3 weaponOriginalScale;
@@ -97,7 +102,7 @@ public class PlayerShooter : MonoBehaviour
         playerHeldWeaponController = GetComponentInParent<PlayerHeldWeaponController>();
         meleeController = GetComponentInParent<PlayerMeleeControllerV2>();
         _shockwaveController = GetComponentInParent<PlayerShockwaveController>();
-        shooterAnim = GetComponent<Animator>();
+        playerAnim = GetComponent<Animator>();
         audioController = GetComponentInParent<PlayerAudioController>();
 
         SetProjectileType(playerHeldWeaponController.HeldWeapon);
@@ -165,7 +170,8 @@ public class PlayerShooter : MonoBehaviour
         // TESTING : Update fire rate with stats
         if (playerEntity != null)
         {
-            fireRate = playerEntity.Stats.ProjectileFireRate;
+            HeldWeaponType wpnForRate = playerHeldWeaponController != null ? playerHeldWeaponController.HeldWeapon : HeldWeaponType.None;
+            fireRate = playerEntity.Stats.ProjectileFireRateForWeapon(wpnForRate);
             
             if (fireMaxCharges != playerEntity.Stats.FireCharges)
             {
@@ -213,6 +219,9 @@ public class PlayerShooter : MonoBehaviour
                 break;
             case HeldWeaponType.Mace:
                 currProjectilePrefab = maceProjectilePrefab;
+                break;
+            case HeldWeaponType.Staff:
+                currProjectilePrefab = staffFireballPrefab;
                 break;
             default:
                 break;
@@ -283,7 +292,7 @@ public class PlayerShooter : MonoBehaviour
 
         // Trigger weapon throw animation.
         SetCurrentAnimationSpeed();
-        shooterAnim.SetTrigger("WeaponThrow");
+        playerAnim.SetTrigger("WeaponThrow");
         
         // Stop the current WeaponRegain coroutine if a new throw was performed in the middle of it.
         if (weaponRegainCoroutine != null) StopCoroutine(weaponRegainCoroutine);
@@ -299,11 +308,17 @@ public class PlayerShooter : MonoBehaviour
         Vector3 spawnPos = muzzle.position + direction * spawnOffset;
         Quaternion spawnRot = Quaternion.LookRotation(direction, Vector3.up);
 
-        // now stat timeeee 
+        // Staff throws through its fireball 
+        Projectile prefabToUse = currProjectilePrefab;
+        HeldWeaponType firedWeapon = playerHeldWeaponController != null ? playerHeldWeaponController.HeldWeapon : HeldWeaponType.None;
 
-        float currentDamage = playerEntity.Stats.ProjectileDamage;
+        float currentDamage = playerEntity.Stats.ProjectileDamageForWeapon(firedWeapon);
+        if (firedWeapon == HeldWeaponType.Staff && staffFireballPrefab != null)
+        {
+            prefabToUse = staffFireballPrefab;
+        }
 
-        GameObject proj = Instantiate(currProjectilePrefab.gameObject, spawnPos, spawnRot);
+        GameObject proj = SpawnProjectile(prefabToUse.gameObject, spawnPos, spawnRot);
         var projScript = proj.GetComponent<Projectile>();
 
         float speed = projectileSpeed;
@@ -323,30 +338,64 @@ public class PlayerShooter : MonoBehaviour
         }
         else
         {
+            if (firedWeapon == HeldWeaponType.Staff && staffFireballSpeed > 0f)
+            {
+                speed = staffFireballSpeed;
+            }
             velocity = direction * speed;
+            if (firedWeapon == HeldWeaponType.Mace)
+            {
+                velocity += Vector3.up * maceLobUpwardSpeed;
+            }
         }
 
-        // Initialize the projectile according to its weapon type.
-        if (currProjectilePrefab == spearProjectilePrefab)
-            projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
-        else if (currProjectilePrefab == maceProjectilePrefab)
+        // Init the projectile according to weapon
+        if (firedWeapon == HeldWeaponType.Spear)
         {
-            MaceProjectile maceProjScript = proj.GetComponent<MaceProjectile>();
-            maceProjScript.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
+            projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
+        }
+        else if (firedWeapon == HeldWeaponType.Mace)
+        {
+            // Mace now fires a fireball
+            projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
+        }
+        else if (firedWeapon == HeldWeaponType.Axe)
+        {
+            AxeProjectile axeProjScript = proj.GetComponent<AxeProjectile>();
+            if (axeProjScript != null)
+            {
+                Vector3 targetPos = raycastHit.collider ? raycastHit.point : aim.GetAimIntersectPoint(axeProjScript.MaxTravelDistance);
+                axeProjScript.Init(targetPos, playerCenter, shootMask, currentDamage, flyDistance: 100, playerEntity);
+            }
+            else
+            {
+                projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
+            }
         }
         else
         {
-            AxeProjectile axeProjScript = proj.GetComponent<AxeProjectile>();
-
-            // Initialize target position.
-            Vector3 targetPos = raycastHit.collider ? raycastHit.point : aim.GetAimIntersectPoint(axeProjScript.MaxTravelDistance);
-            axeProjScript.Init(targetPos, playerCenter, shootMask, currentDamage, flyDistance: 100, playerEntity);
+            projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
         }
 
-        // Debug.Log($"Fired projectile with {currentDamage} damage");
-        // Play firing sound
         audioController?.PlayAttackSound();
         fireEvent.Post(gameObject);
+
+        OnProjectileFired?.Invoke(spawnPos, direction, firedWeapon);
+
+        // The projectile has left
+        IsThrowing = false;
+    }
+
+    // gets a projectile instance from the object pool when available, else fall back to Instantiate
+    private GameObject SpawnProjectile(GameObject prefab, Vector3 position, Quaternion rotation)
+    {
+        if (ObjectPool.instance != null)
+        {
+            GameObject pooled = ObjectPool.instance.GetObject(prefab, muzzle);
+            pooled.transform.SetPositionAndRotation(position, rotation);
+            return pooled;
+        }
+        return Instantiate(prefab, position, rotation);
     }
 
     /// <summary>
@@ -401,7 +450,7 @@ public class PlayerShooter : MonoBehaviour
         float statsThrowAnimSpeed = 1 / playerEntity.Stats.ProjectileAnimationSpeed;
         float secondsUntilThrow = preTransitionAnim.length + throwAnim.events[0].time;
         flipAnimMaxSeconds = scriptFlipAnimSpeed * statsThrowAnimSpeed * secondsUntilThrow;
-        shooterAnim.SetFloat("WeaponThrowAnimSpeedMultiplier", playerEntity.Stats.ProjectileAnimationSpeed);
+        playerAnim.SetFloat("WeaponThrowAnimSpeedMultiplier", playerEntity.Stats.ProjectileAnimationSpeed);
     }
 
     /// <summary>
@@ -489,6 +538,5 @@ public class PlayerShooter : MonoBehaviour
 
         // Ensure weapon scale restoration is exact when done growing.
         weaponPivot.localScale = weaponOriginalScale;
-        IsThrowing = false;
     }
 }

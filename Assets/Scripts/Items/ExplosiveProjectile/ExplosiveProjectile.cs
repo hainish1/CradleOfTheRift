@@ -3,7 +3,16 @@ using UnityEngine;
 
 public class ExplosiveProjectile : Projectile
 {
-    //[SerializeField] private GameObject travelVfxPrefab;
+    [SerializeField] private bool alwaysExplosive = false;
+
+    [Tooltip("Used when alwaysExplosive is true and the upgrade thing is not active. Otherwise values come from the upgrade")]
+    [SerializeField] private float standaloneAoeRadius = 4f;
+    [SerializeField] private float standaloneAoeDamageMultiplier = 1f;
+    [SerializeField] private float standaloneMaxRange = 0f;
+    [SerializeField] private float standaloneFireballVisualScale = 1f;
+    [SerializeField] private GameObject standaloneExplosionVFX;
+    [SerializeField] private GameObject standaloneTravelVFX;
+
     private GameObject fireballVisual;
     private static Shader cachedShader;
 
@@ -12,12 +21,24 @@ public class ExplosiveProjectile : Projectile
 
     private const string FireballVisualLayerName = "Projectile";
 
-    void Start()
+    private bool IsActive => alwaysExplosive || ExplosiveProjectiles.IsEnabled;
+    private float CurrentAoeRadius => alwaysExplosive && !ExplosiveProjectiles.IsEnabled ? standaloneAoeRadius : ExplosiveProjectiles.AoeRadius;
+    private float CurrentAoeDamageMultiplier => alwaysExplosive && !ExplosiveProjectiles.IsEnabled ? standaloneAoeDamageMultiplier : ExplosiveProjectiles.AoeDamageMultiplier;
+    private float CurrentMaxRange => alwaysExplosive && !ExplosiveProjectiles.IsEnabled ? standaloneMaxRange : ExplosiveProjectiles.MaxRange;
+    private float CurrentFireballScale => alwaysExplosive && !ExplosiveProjectiles.IsEnabled ? standaloneFireballVisualScale : ExplosiveProjectiles.FireballVisualScale;
+    private GameObject CurrentExplosionVFX => alwaysExplosive && !ExplosiveProjectiles.IsEnabled ? standaloneExplosionVFX : ExplosiveProjectiles.ExplosionVFX;
+    private GameObject CurrentTravelVFX => alwaysExplosive && !ExplosiveProjectiles.IsEnabled ? standaloneTravelVFX : ExplosiveProjectiles.FireballTravelVFX;
+
+    protected override void OnEnable()
     {
-        if (ExplosiveProjectiles.IsEnabled)
+        base.OnEnable();
+        if (IsActive)
         {
-            HideOriginalProjectileModel();
-            CreateFireballVisual();
+            // For alwaysExplosive (Mace), the prefab itself is already the fireball
+            if (!alwaysExplosive) HideOriginalProjectileModel();
+
+            if (fireballVisual == null) CreateFireballVisual();
+            else fireballVisual.SetActive(true);
         }
     }
 
@@ -25,18 +46,22 @@ public class ExplosiveProjectile : Projectile
     {
         base.Init(velocity, mask, damage, flyDistance, attacker);
 
-        if (ExplosiveProjectiles.IsEnabled && fireballVisual == null)
+        if (IsActive && fireballVisual == null)
         {
-            HideOriginalProjectileModel();
+            if (!alwaysExplosive) HideOriginalProjectileModel();
             CreateFireballVisual();
         }
 
         ResetTravelVFX();
 
-        if (!ExplosiveProjectiles.IsEnabled || rb == null) return;
+        if (!IsActive || rb == null) return;
 
-        Vector3 dir = velocity.sqrMagnitude > 0.0001f ? velocity.normalized : transform.forward;
-        rb.linearVelocity = dir * ExplosiveProjectiles.ProjectileSpeed;
+        // override speed when the upgrade proivides one, otherwise use from Shooter
+        if (ExplosiveProjectiles.IsEnabled)
+        {
+            Vector3 dir = velocity.sqrMagnitude > 0.0001f ? velocity.normalized : transform.forward;
+            rb.linearVelocity = dir * ExplosiveProjectiles.ProjectileSpeed;
+        }
     }
 
     private void HideOriginalProjectileModel()
@@ -50,12 +75,12 @@ public class ExplosiveProjectile : Projectile
 
     private void CreateFireballVisual()
     {
-        bool usingTravelVFX = ExplosiveProjectiles.FireballTravelVFX != null;
+        bool usingTravelVFX = CurrentTravelVFX != null;
 
         if (usingTravelVFX)
         {
             Debug.Log("Using assigned travel VFX prefab for ExplosiveProjectile.");
-            fireballVisual = Instantiate(ExplosiveProjectiles.FireballTravelVFX, transform);
+            fireballVisual = Instantiate(CurrentTravelVFX, transform);
             fireballVisual.name = "FireballVisual";
             fireballVisual.transform.localPosition = Vector3.zero;
             fireballVisual.transform.localScale = Vector3.one;
@@ -68,7 +93,7 @@ public class ExplosiveProjectile : Projectile
             fireballVisual.name = "FireballVisual";
             fireballVisual.transform.SetParent(transform);
             fireballVisual.transform.localPosition = Vector3.zero;
-            fireballVisual.transform.localScale = Vector3.one * ExplosiveProjectiles.FireballVisualScale;
+            fireballVisual.transform.localScale = Vector3.one * CurrentFireballScale;
             //CreateSimpleFireballVisual();
 
             // int layer = LayerMask.NameToLayer(FireballVisualLayerName);
@@ -141,10 +166,11 @@ public class ExplosiveProjectile : Projectile
     {
         FadeTrailVisuals();
         age += Time.deltaTime;
-        
-        if (ExplosiveProjectiles.IsEnabled)
+
+        if (IsActive)
         {
-            float maxRange = ExplosiveProjectiles.MaxRange > 0f ? ExplosiveProjectiles.MaxRange : flyDistance;
+            float configuredMaxRange = CurrentMaxRange;
+            float maxRange = configuredMaxRange > 0f ? configuredMaxRange : flyDistance;
             if (maxRange > 0f)
             {
                 float dist = Vector3.Distance(startPos, transform.position);
@@ -156,10 +182,10 @@ public class ExplosiveProjectile : Projectile
                 }
             }
         }
-        
+
         if (age >= lifeTime)
         {
-            if (ExplosiveProjectiles.IsEnabled) SpawnExplosionEffect();
+            if (IsActive) SpawnExplosionEffect();
             ReturnToSource();
             return;
         }
@@ -198,7 +224,7 @@ public class ExplosiveProjectile : Projectile
         CreateImpactFX();
 
         var enemy = collision.collider.GetComponentInParent<Enemy>();
-        if (enemy != null && ExplosiveProjectiles.IsEnabled)
+        if (enemy != null && IsActive)
         {
             SpawnExplosionEffect();
             ReturnToSource();
@@ -224,6 +250,12 @@ public class ExplosiveProjectile : Projectile
             {
                 damageable.TakeDamage(actualDamage);
                 CombatEvents.ReportDamage(attacker, enemy, actualDamage, ElementType.Fire);
+
+                if (DelayedProjectiles.IsEnabled)
+                {
+                    CreateDelayedDamageMark(enemy, collision.GetContact(0).point);
+                }
+
                 hasHit = true;
             }
         }
@@ -234,7 +266,7 @@ public class ExplosiveProjectile : Projectile
             collision.rigidbody.AddForceAtPosition(force, collision.contacts[0].point, ForceMode.Impulse);
         }
 
-        if (enemy == null && ExplosiveProjectiles.IsEnabled)
+        if (enemy == null && IsActive)
             SpawnExplosionEffect();
 
         ReturnToSource();
@@ -242,8 +274,8 @@ public class ExplosiveProjectile : Projectile
 
     private void SpawnExplosionEffect()
     {
-        float radius = ExplosiveProjectiles.AoeRadius;
-        float aoeDamage = actualDamage * ExplosiveProjectiles.AoeDamageMultiplier;
+        float radius = CurrentAoeRadius;
+        float aoeDamage = actualDamage * CurrentAoeDamageMultiplier;
 
         int hitCount = Physics.OverlapSphereNonAlloc(transform.position, radius, overlapBuffer, hitMask);
         hitBuffer.Clear();
@@ -261,6 +293,11 @@ public class ExplosiveProjectile : Projectile
                 CombatEvents.ReportDamage(attacker, enemy, aoeDamage, ElementType.Fire);
                 hitBuffer.Add(damageable);
 
+                if (DelayedProjectiles.IsEnabled)
+                {
+                    CreateDelayedDamageMark(enemy, col.ClosestPoint(transform.position));
+                }
+
                 var dotDebuff = enemy.GetComponent<DotDebuff>();
                 if (dotDebuff != null)
                 {
@@ -275,9 +312,9 @@ public class ExplosiveProjectile : Projectile
             }
         }
 
-        if (ExplosiveProjectiles.ExplosionVFX != null)
+        if (CurrentExplosionVFX != null)
         {
-            var fx = Instantiate(ExplosiveProjectiles.ExplosionVFX);
+            var fx = Instantiate(CurrentExplosionVFX);
             fx.transform.position = transform.position;
             float scale = Mathf.Clamp(radius * 0.025f, 0.5f, 0.625f) * 2;   // idk its really not big enough so i added a x2
             fx.transform.localScale = Vector3.one * scale;
@@ -352,10 +389,10 @@ public class ExplosiveProjectile : Projectile
 
     void OnDrawGizmos()
     {
-        if (ExplosiveProjectiles.IsEnabled)
+        if (IsActive)
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, ExplosiveProjectiles.AoeRadius);
+            Gizmos.DrawWireSphere(transform.position, CurrentAoeRadius);
         }
     }
 
