@@ -4,9 +4,9 @@
         <ui:VisualElement name="BannerBox" picking-mode="Ignore" class="banner-box">
             <ui:VisualElement name="BannerIcon" picking-mode="Ignore" class="banner-icon" />
             <ui:VisualElement name="BannerTextColumn" picking-mode="Ignore" class="banner-text-column">
-                <ui:Label name="BannerRarity" text="RARE" picking-mode="Ignore" class="banner-rarity" />
-                <ui:Label name="BannerItemName" text="ITEM NAME" picking-mode="Ignore" class="banner-item-name" />
-                <ui:Label name="BannerDescription" text="Item description goes here." picking-mode="Ignore" class="banner-description" />
+                <ui:Label name="BannerRarity" text="RARE" picking-mode="Ignore" class="banner-rarity" style="font-size: 20px;" />
+                <ui:Label name="BannerItemName" text="ITEM NAME" picking-mode="Ignore" class="banner-item-name" style="font-size: 22px;" />
+                <ui:Label name="BannerDescription" text="Item description goes here." picking-mode="Ignore" class="banner-description" style="font-size: 25px;" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

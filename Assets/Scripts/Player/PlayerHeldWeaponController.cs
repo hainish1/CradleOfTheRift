@@ -8,6 +8,7 @@
 // </summary>
 
 using UnityEngine;
+using System;
 
 public class PlayerHeldWeaponController : MonoBehaviour
 {
@@ -17,6 +18,8 @@ public class PlayerHeldWeaponController : MonoBehaviour
     [SerializeField] private GameObject _staffModel;
     [SerializeField] public HeldWeaponType HeldWeapon;
     private PlayerShooter _playerShooter;
+
+    public static event Action<HeldWeaponType> OnWeaponChanged;
 
     void Awake()
     {
@@ -38,6 +41,7 @@ public class PlayerHeldWeaponController : MonoBehaviour
     {
         HeldWeapon = weaponChange; // keep the serialized field in sync with runtime changes
         _playerShooter.SetProjectileType(weaponChange); // Change the throwable projectile type.
+        OnWeaponChanged?.Invoke(weaponChange);
         switch (weaponChange) // Change held weapon model to the corresponding type.
         {
             case HeldWeaponType.None:

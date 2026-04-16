@@ -25,8 +25,9 @@ public class EnemyGolem : Enemy
 
     [Header("Rock Throw Ranged Settings")]
     public GameObject rockProjectilePrefab;
-    public float directDamage = 20f;    // Not used rn
-    public float AOEDamage = 5f;        // Not used rn
+    public float directDamage = 20f;
+    public float AOEDamage = 20f;
+    //public float AOERadius = 3f; // Moved to the projectile itself
     public float minWindupTime = 1.5f;
     public float maxWindupTime = 2.5f;
     public float projectileVelocity = 12f;
@@ -34,6 +35,7 @@ public class EnemyGolem : Enemy
     public Transform projectileSpawnPoint; // Where the rock spawns
     public float turnSpeedWhileAiming = 8f;
     public LayerMask projectileMask = ~0;
+    public float playerAimOffset = 1.5f;
 
     [Header("Ground Slam Melee Settings")]
     public float meleeDamage = 20f;
@@ -43,10 +45,12 @@ public class EnemyGolem : Enemy
     //public LayerMask meleeMask = ~0;
     public float meleeCooldown = 0.5f;
     public Transform meleePosition;
+    public GameObject groundSlamPrefab;
 
     [Header("VFX / SFX")]
     public GameObject throwRockVFXPrefab;
     [SerializeField] private AK.Wwise.Event throwSFX;
+    [SerializeField] private AK.Wwise.Event groundSlamSFX;
     IdleStateGolem idle;
     ChaseStateGolem chase;
     RangeAttackStateGolem rangeAttack;
@@ -135,18 +139,26 @@ public class EnemyGolem : Enemy
 
     public void PlayThrowSFX()
     {
-        throwSFX?.Post(gameObject);
+        print("Playing Throw SFX");
+        if (throwSFX.IsValid())
+        {
+            print("Posting SFX");
+            throwSFX.Post(gameObject);
+        }
     }
 
     public void ThrowRock()
     {
+        // Play the SFX.
+        PlayThrowSFX();
+        
         // Use the defined spawn point or default to slightly above the golem
         Vector3 spawnPos = projectileSpawnPoint != null 
             ? projectileSpawnPoint.position 
             : transform.position + Vector3.up * 1.5f;
 
         // Target the player's center mass rather than their feet
-        Vector3 targetPos = target.position + Vector3.up * 1.5f; 
+        Vector3 targetPos = target.position + Vector3.up * playerAimOffset; 
         
         // Pull from the Object Pool if available, else instantiate normally
         GameObject rockObj;
@@ -171,8 +183,8 @@ public class EnemyGolem : Enemy
 
             Vector3 calculatedVelocity = CalculateLaunchVelocity(spawnPos, targetPos, timeToTarget);
 
-            // Init: (Vector3 velocity, LayerMask mask, float damage, float knockback)
-            rock.Init(calculatedVelocity, projectileMask, directDamage, projectileKnockback);
+            // Init: (Vector3 velocity, LayerMask mask, float damage, float knockback, float aoeRadius, float aoeDamage)
+            rock.Init(calculatedVelocity, projectileMask, directDamage, projectileKnockback, AOEDamage);
         }
     }
 
@@ -231,14 +243,20 @@ public class EnemyGolem : Enemy
                 break; 
             }
         }
-    }
 
-    /// <summary>
-    /// Shoots out a big spread of small rock projectiles in one direction
-    /// </summary>
-    public void RockBarrageBlast()
-    {
+        // Play ground slam VFX
+        if (groundSlamPrefab != null)        
+        {
+            GameObject slamVFX = Instantiate(groundSlamPrefab, meleePosition.position, Quaternion.identity);
+            slamVFX.transform.localScale = Vector3.one * meleeRadius * 0.5f;
+            Destroy(slamVFX, EstimateParticleLifetime(slamVFX));
+        }
         
+        // Play the ground slam SFX
+        if (groundSlamSFX.IsValid())
+        {
+            groundSlamSFX.Post(gameObject);
+        }
     }
 
     //Getters for States that this Melee Enemy has
@@ -277,7 +295,7 @@ public class EnemyGolem : Enemy
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, wanderRadius);
 
-        // Draw the melee sphere so you can balance the radius in the editor!
+        // Draw the melee sphere
         if (meleePosition != null)
         {
             Gizmos.color = Color.red;

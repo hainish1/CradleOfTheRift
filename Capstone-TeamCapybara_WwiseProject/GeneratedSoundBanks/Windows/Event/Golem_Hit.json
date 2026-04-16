@@ -1,0 +1,73 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "2529293365",
+    "Type": "Event",
+    "GUID": "{DDED019A-AA83-4DF5-96C4-EF5C4435B063}",
+    "Language": "SFX",
+    "Hash": "{29D469D5-AE95-BAF2-5DF2-6BE512FAB8C1}",
+    "ObjectPath": "Golem_Hit",
+    "ShortName": "Golem_Hit",
+    "Path": "Event/Golem_Hit.bnk",
+    "Media": [
+     {
+      "Id": "45735907",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_008[1].wav",
+      "Path": "Media/45735907.wem",
+      "CachePath": "7D/{7D99BE6C-2A01-8885-4793-DDF8AD2BBD70}.wem"
+     },
+     {
+      "Id": "458130202",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_rubble_008[1].wav",
+      "Path": "Media/458130202.wem",
+      "CachePath": "C2/{C2999C67-AB96-75BA-F798-C124ECFEA9A3}.wem"
+     },
+     {
+      "Id": "823439582",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_rubble_008[1].wav",
+      "Path": "Media/823439582.wem",
+      "CachePath": "20/{20F7217C-6096-83D5-C1EB-98223C5830FA}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "2529293365",
+      "Name": "Golem_Hit",
+      "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Golem\\Golem_Hit",
+      "GUID": "{DDED019A-AA83-4DF5-96C4-EF5C4435B063}",
+      "MaxAttenuation": "200",
+      "DurationType": "OneShot",
+      "DurationMin": "0.6827569",
+      "DurationMax": "1.3655138",
+      "MediaRefs": [
+       {
+        "Id": "45735907"
+       },
+       {
+        "Id": "458130202"
+       },
+       {
+        "Id": "823439582"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{B9AF8B53-55D7-1994-0324-1D41D9325C9F}"
+ }
+}

@@ -21,6 +21,14 @@ public class ItemPickup : MonoBehaviour
     {
         startPosition = transform.position;
 
+        // Force every collider on this pickup to be a trigger so the player
+        // can walk through it 
+        foreach (var col in GetComponentsInChildren<Collider>(true))
+        {
+            if (col is MeshCollider mc && !mc.convex) mc.convex = true;
+            col.isTrigger = true;
+        }
+
         // Set visual based on rarity
         if (itemData != null)
         {
@@ -61,12 +69,12 @@ public class ItemPickup : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        // Check for PlayerMovement 
-        if (!other.GetComponent<PlayerMovement>())
+        // Search up the hierarchy so child colliders on the player still count.
+        if (other.GetComponentInParent<PlayerMovement>() == null)
         {
             return;
         }
-        var inventory = other.GetComponent<PlayerInventory>();
+        var inventory = other.GetComponentInParent<PlayerInventory>();
         if (inventory != null && itemData != null)
         {
             // hide tooltip when pickup

@@ -500,6 +500,9 @@ public class PlayerShooter : MonoBehaviour
         // Disappear the weapon by shrinking it to 0.
         weaponPivot.localScale = new Vector3(0, 0, 0);
         Fire();
+        // safety net so the weapon always comes back,
+        if (weaponRegainCoroutine != null) StopCoroutine(weaponRegainCoroutine);
+        weaponRegainCoroutine = StartCoroutine(WeaponRegain());
     }
 
     /// <summary>
@@ -509,6 +512,7 @@ public class PlayerShooter : MonoBehaviour
     /// </summary>
     public void OnWeaponThrowAnimEnd()
     {
+        if (weaponRegainCoroutine != null) StopCoroutine(weaponRegainCoroutine);
         weaponRegainCoroutine = StartCoroutine(WeaponRegain());
     }
 

@@ -44,6 +44,14 @@ unity-content {
     left: 100px;
 }
 
+#BossHealthRoot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
 
 #InventoryContainer {
     width: 500px;        /* match scroll-view width */
@@ -66,6 +74,71 @@ unity-content {
     display: flex;
     flex-direction: column;
     gap: 5px;          /* spacing between inventory and extraction bar */
+}
+
+#PassiveInventoryStripRoot {
+    position: absolute;
+    top: 72px;
+    left: 280px;
+    right: 360px;
+    height: 76px;
+    display: none;
+}
+
+#PassiveInventoryPanel {
+    height: 100%;
+    flex-grow: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    background-color: rgba(0, 0, 0, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+
+#PassiveInventoryContent {
+    width: 100%;
+    height: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.passive-inventory-slot {
+    position: relative;
+    flex-shrink: 0;
+    background-color: rgba(0, 0, 0, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+
+.passive-inventory-icon {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    top: 4px;
+    bottom: 4px;
+    background-color: transparent;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.passive-inventory-count {
+    position: absolute;
+    right: 2px;
+    bottom: 0;
+    min-width: 14px;
+    padding-left: 3px;
+    padding-right: 3px;
+    font-size: 10px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+    background-color: rgba(0, 0, 0, 0.72);
+    -unity-text-align: middle-center;
 }
 
 #ChestRoot {

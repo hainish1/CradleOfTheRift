@@ -9,6 +9,7 @@ public class EnemyHealth : HealthController
 {
 
     [SerializeField] private float cleanupDelay = 0f;
+    public event Action<float, float> HealthChanged;
     public event Action<EnemyHealth> EnemyDied;
     public float baseHealth = 3;
 
@@ -85,6 +86,7 @@ public class EnemyHealth : HealthController
         // this.maxHealth = Mathf.CeilToInt(newHealth);
         this.maxHealth = newHealth;
         this.currentHealth = this.maxHealth;
+        HealthChanged?.Invoke(currentHealth, maxHealth);
         Debug.Log("Max Health: " + this.maxHealth); // not needed anymore
     }
 
@@ -97,9 +99,15 @@ public class EnemyHealth : HealthController
         return this.maxHealth;
     }
 
+    public float GetCurrentHealth()
+    {
+        return this.currentHealth;
+    }
+
     public override void TakeDamage(float damage)
     {
         base.TakeDamage(damage);
+        HealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (damageVisuals != null && !IsDead)
         {
