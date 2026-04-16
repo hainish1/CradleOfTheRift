@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3809615221376158281}
   - component: {fileID: 7261361923895687204}
   - component: {fileID: 5514351028250213520}
-  m_Layer: 4
+  m_Layer: 7
   m_Name: text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -188,7 +188,7 @@ GameObject:
   - component: {fileID: 926515194460410893}
   - component: {fileID: 3360869034688634940}
   - component: {fileID: 4942384886590108861}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PlaneBack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -280,7 +280,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -297,7 +297,7 @@ GameObject:
   - component: {fileID: 7894807223087678802}
   - component: {fileID: 1674421907289244062}
   - component: {fileID: 9145874124151068757}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -389,7 +389,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -408,7 +408,7 @@ GameObject:
   - component: {fileID: 6985120980423297015}
   - component: {fileID: 8339700932389908569}
   - component: {fileID: 1845844544276222190}
-  m_Layer: 4
+  m_Layer: 7
   m_Name: HealOnDamage1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -537,3 +537,7 @@ MonoBehaviour:
   itemData: {fileID: 11400000, guid: 6202988241e4a6f4fbc575dfe4845681, type: 2}
   destroyOnPickup: 1
   tooltipRange: 20
+  pickupSound:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: ac87061022f868643b320e315521cc44, type: 2}

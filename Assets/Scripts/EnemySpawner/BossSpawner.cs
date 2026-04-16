@@ -19,15 +19,21 @@ public class BossSpawner : MonoBehaviour
 
     private EnemyHealth activeBoss;
     public event Action BossDied;
+    public event Action<EnemyHealth> BossSpawned;
+    public EnemyHealth ActiveBoss => activeBoss;
+
+    // [Header("Debug")]
+    // [SerializeField] private bool enableDebugKillHotkey = true;
+    // [SerializeField] private KeyCode debugKillBossKey = KeyCode.K;
 
     private void Awake()
     {
         extractionZone = GetComponent<ExtractionZone>();
         if (extractionZone == null)
-            Debug.LogError("BossSpawner: ExtractionZone component not found!");
+            Debug.LogWarning("BossSpawner: ExtractionZone component not found!");
         
         if (difficultyScaler == null) {
-            Debug.LogError("BossSpawner: DifficultyScaler reference not set!");
+            Debug.LogWarning("BossSpawner: DifficultyScaler reference not set!");
             return;
         }
 
@@ -42,6 +48,17 @@ public class BossSpawner : MonoBehaviour
     {
         extractionZone.BossSpawnRequested -= OnBossSpawnRequested;
     }
+
+    // private void Update()
+    // {
+    //     if (!enableDebugKillHotkey || activeBoss == null)
+    //         return;
+
+    //     if (Input.GetKeyDown(debugKillBossKey))
+    //     {
+    //         activeBoss.TakeDamage(float.MaxValue);
+    //     }
+    // }
 
     private void OnBossSpawnRequested()
     {
@@ -74,6 +91,7 @@ public class BossSpawner : MonoBehaviour
         ScaleBossDamage(boss);
 
         this.activeBoss = boss.GetComponent<EnemyHealth>();
+        BossSpawned?.Invoke(this.activeBoss);
         this.activeBoss.EnemyDied += OnBossDied;
     }
 

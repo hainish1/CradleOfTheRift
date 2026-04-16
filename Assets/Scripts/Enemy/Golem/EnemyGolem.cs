@@ -125,6 +125,33 @@ public class EnemyGolem : Enemy
         agent.isStopped = true;
         agent.ResetPath();
     }
+    public void FaceMovementDirectionSmooth(float speed)
+    {
+        Vector3 dir = Vector3.zero;
+
+        if (agent != null && agent.enabled)
+        {
+            dir = agent.desiredVelocity;
+
+            if (dir.sqrMagnitude < 0.0001f)
+            {
+                dir = agent.velocity;
+            }
+
+            if (dir.sqrMagnitude < 0.0001f && agent.hasPath)
+            {
+                dir = agent.steeringTarget - transform.position;
+            }
+        }
+
+        dir.y = 0f;
+        if (dir.sqrMagnitude < 0.0001f) return;
+
+        dir.Normalize();
+        Quaternion lookRot = Quaternion.LookRotation(dir);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * speed);
+    }
+
     public void FaceTargetSmooth(float speed)
     {
         if (target == null) return;
