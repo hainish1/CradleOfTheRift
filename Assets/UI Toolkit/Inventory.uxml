@@ -4,22 +4,70 @@
         <engine:Label text="Inventory" name="InventoryHeader" class="header h1" style="background-position-x: center 0; justify-content: flex-start; padding-left: 2px; -unity-text-align: middle-left; white-space: nowrap; translate: 0 0; font-size: 75px;" />
         <engine:VisualElement name="ItemsVisual" enabled="true" class="listBox" style="flex-grow: 1; opacity: 1; visibility: visible; overflow: visible; position: absolute; top: 214px; left: 105px; height: 695px; width: 1046px; margin-top: 4px; margin-right: 4px; margin-bottom: 4px; margin-left: 4px; padding-top: 4px; padding-right: 4px; padding-bottom: 4px; padding-left: 4px; background-image: url(&quot;project://database/Assets/Art%20Assets/2D/UI%20assets%202/Tab%20Menu/Tab_Menu_Full.png?fileID=2800000&amp;guid=1225dac24ab7443f09be443b0bebca89&amp;type=3#Tab_Menu_Full&quot;);">
             <engine:Label text="Items" name="ItemsHeader" class="h2" style="white-space: pre-wrap; position: absolute; translate: 20px 20px; font-size: 100px; top: -12px; left: 30px;" />
-            <engine:VisualElement name="Item1" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 27px; left: 355px;" />
-            <engine:VisualElement name="Item2" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 28px; left: 522px;" />
-            <engine:VisualElement name="Item3" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 29px; left: 694px;" />
-            <engine:VisualElement name="Item4" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 28px; left: 865px;" />
-            <engine:VisualElement name="Item5" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 168px; left: 39px;" />
-            <engine:VisualElement name="Item6" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 168px; left: 195px;" />
-            <engine:VisualElement name="Item7" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 168px; left: 355px;" />
-            <engine:VisualElement name="Item8" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 168px; left: 524px;" />
-            <engine:VisualElement name="Item9" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 168px; left: 699px;" />
-            <engine:VisualElement name="Item10" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 168px; left: 865px;" />
-            <engine:VisualElement name="Item11" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 316px; left: 40px;" />
-            <engine:VisualElement name="Item12" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 316px; left: 191px;" />
-            <engine:VisualElement name="Item13" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 318px; left: 357px;" />
-            <engine:VisualElement name="Item14" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 316px; left: 524px;" />
-            <engine:VisualElement name="Item15" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 316px; left: 699px;" />
-            <engine:VisualElement name="Item16" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 316px; left: 865px;" />
+            <engine:VisualElement name="Item1" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 27px; left: 355px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="Item2" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 28px; left: 522px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="Item3" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 29px; left: 694px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="Item4" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 28px; left: 865px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="Item5" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 168px; left: 39px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="Item6" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 168px; left: 195px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="Item7" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 168px; left: 355px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+            
+            <engine:VisualElement name="Item8" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 168px; left: 524px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="Item9" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 168px; left: 699px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="Item10" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 168px; left: 865px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="Item11" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 316px; left: 40px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="Item12" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 316px; left: 191px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="Item13" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 318px; left: 357px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="Item14" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 316px; left: 524px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="Item15" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 316px; left: 699px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="Item16" class="item" style="flex-grow: 1; position: absolute; height: 115px; width: 134px; top: 316px; left: 865px;" >
+                <engine:VisualElement name="Icon" picking-mode="Ignore" style="flex-grow: 1; margin: 10px;" />
+            </engine:VisualElement>
+            
         </engine:VisualElement>
         <engine:VisualElement name="DescriptionVisual" enabled="true" class="descBox" style="flex-grow: 1; opacity: 1; visibility: visible; overflow: visible; position: absolute; top: 215px; left: 1224px; height: 694px; width: 638px; margin-top: 4px; margin-right: 4px; margin-bottom: 4px; margin-left: 4px; padding-top: 4px; padding-right: 4px; padding-bottom: 4px; padding-left: 4px; background-image: url(&quot;project://database/Assets/Art%20Assets/2D/UI%20assets%202/Tab%20Menu/Description_Full.png?fileID=2800000&amp;guid=88af0b77ed87440dc954be8fc73858d2&amp;type=3#Description_Full&quot;);">
             <engine:Label text="Description&#10;" name="DescriptionHeader" class="h2" style="white-space: pre-wrap; position: absolute; top: 4px; left: 4px; translate: 25px 0;" />

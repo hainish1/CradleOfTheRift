@@ -19,6 +19,8 @@ public class EnemyRockProjectile : MonoBehaviour
 
     [Header("Effects")]
     [SerializeField] private GameObject impactVFX;
+    [SerializeField] private float impactSize = 3f;
+    [SerializeField] private float effectDuration = 2f;
 
     //[Header("Damage")]
     //[SerializeField] private float AOERadius = 8f;
@@ -129,9 +131,9 @@ public class EnemyRockProjectile : MonoBehaviour
         GameObject newFx = Instantiate(impactVFX);
         newFx.transform.position = transform.position;
         newFx.transform.rotation = Quaternion.identity;
-        newFx.transform.localScale = Vector3.one * 3;
+        newFx.transform.localScale = Vector3.one * impactSize;
 
-        Destroy(newFx, 1); // destroy after one second
+        Destroy(newFx, effectDuration);
     }
 
     // void OnDrawGizmos()

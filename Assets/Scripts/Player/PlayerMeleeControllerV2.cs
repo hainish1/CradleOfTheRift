@@ -36,6 +36,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private PlayerMovement _playerMovement;
     private PlayerShooter _playerShooter;
     private PlayerShockwaveController _shockwaveController;
+    private PlayerHeldWeaponController _heldWeaponController;
     private Entity _playerEntity;
 
     // Animation Parameters
@@ -48,7 +49,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [SerializeField]
     [Tooltip("The downward pitch limit of attacks in degrees.")] private float _downwardDegreesLimit;
     [SerializeField] private List<AttackInfo> _attacks = new();
-    private Animator _weaponAnim;
+    private Animator _playerAnim;
     private float _degreesPerSecond;
     private bool _isModelHorizontal = true;
 
@@ -74,7 +75,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     // Attack Parameters
 
-    private float MeleeDamage => _playerEntity.Stats.MeleeDamage;
+    private HeldWeaponType CurrentWeapon => _heldWeaponController != null ? _heldWeaponController.HeldWeapon : HeldWeaponType.None;
+    private float MeleeDamage => _playerEntity.Stats.MeleeDamageForWeapon(CurrentWeapon); // get that specific damage
     private float AttackCooldown => GetAttackCooldown();
     [Header("Attack Parameters")] [Space]
     [SerializeField]
@@ -106,9 +108,10 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _playerMovement = GetComponentInParent<PlayerMovement>();
         _playerShooter = GetComponentInParent<PlayerShooter>();
         _shockwaveController = GetComponentInParent<PlayerShockwaveController>();
+        _heldWeaponController = GetComponentInParent<PlayerHeldWeaponController>();
 
         // Animation Parameters
-        _weaponAnim = GetComponent<Animator>();
+        _playerAnim = GetComponent<Animator>();
         _upwardDegreesLimit = Mathf.Abs(_upwardDegreesLimit);
         _downwardDegreesLimit = -Mathf.Abs(_downwardDegreesLimit);
         _degreesPerSecond = Mathf.Deg2Rad * _attackPitchSpeed;
@@ -164,7 +167,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
             info.BufferedAttackDuration = Mathf.Clamp(info.AttackDuration - _comboInputBuffer, 0, float.MaxValue);
         }
 
-        _weaponAnim.SetFloat("AttackAnimSpeedMultiplier", currAnimationSpeed);
+        _playerAnim.SetFloat("AttackAnimSpeedMultiplier", currAnimationSpeed);
     }
 
     /// <summary>
@@ -176,7 +179,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private float GetAttackCooldown()
     {
         return _attacks[_currComboCount - 1].PostTransitionAnim.length
-               + _playerEntity.Stats.MeleeAttackRate;
+               + _playerEntity.Stats.MeleeAttackRateForWeapon(CurrentWeapon);
     }
 
     /// <summary>
@@ -191,7 +194,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _comboInputted = false;
         _currComboCount++;
         OnMeleeComboAttack?.Invoke(_currComboCount);
-        _weaponAnim.SetTrigger("Attack" + _currComboCount);
+        _playerAnim.SetTrigger("Attack" + _currComboCount);
 
         // For the weapon sound.
         swingSound.Post(gameObject);
@@ -235,7 +238,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
             }
 
             // Leave attack animation sequence if the combo input time window was missed.
-            _weaponAnim.SetTrigger("ComboMiss");
+            _playerAnim.SetTrigger("ComboMiss");
         }
         // Wait for full attack duration if max combo count is reached.
         else
