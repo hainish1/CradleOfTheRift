@@ -1,0 +1,93 @@
+#BossHealthContainer {
+    position: absolute;
+    bottom: 78px;
+    left: 26%;
+    width: 40%;
+    height: 56px;
+    display: none;
+}
+
+#BossHealthContent {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+#BossIconFrame {
+    width: 82px;
+    height: 82px;
+    margin-right: -8px;
+    position: relative;
+    left: -18px;
+    top: -16px;
+}
+
+#BossIconFire,
+#BossIcon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+#BossIcon.boss-icon-slime {
+    translate: -8px 0;
+}
+
+#BossIconFire {
+    background-image: url('project://database/Assets/Art%20Assets/2D/UI%20assets%202/Boss/Boss_Fire.png?fileID=2800000&amp;guid=5bbb8a57f03424627a4c43be8ec54af5&amp;type=3#Boss_Fire');
+    width: 118px;
+    height: 142px;
+    left: -24px;
+    top: -46px;
+}
+
+#BossBarStack {
+    position: relative;
+    flex-grow: 1;
+    height: 42px;
+}
+
+#BossHealthBar,
+#BossDamageBar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+}
+
+#BossHealthBar .unity-progress-bar__background,
+#BossDamageBar .unity-progress-bar__background {
+    background-color: rgba(0, 0, 0, 0.45);
+    border-color: rgba(255, 255, 255, 0.14);
+    border-width: 1px;
+    border-radius: 4px;
+}
+
+#BossHealthBar .unity-progress-bar__progress {
+    background-color: rgba(180, 45, 45, 0.95);
+    border-radius: 4px;
+}
+
+#BossDamageBar .unity-progress-bar__progress {
+    background-color: rgba(255, 215, 110, 0.8);
+    border-radius: 4px;
+}
+
+#BossHealthBar .unity-progress-bar__title {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 14px;
+    -unity-font-style: bold;
+}
+
+#BossDamageBar .unity-progress-bar__title {
+    color: rgba(0, 0, 0, 0);
+}

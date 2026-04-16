@@ -6,9 +6,9 @@
                 <ui:Label name="PickupAction" text="PICK UP" picking-mode="Ignore" class="pickup-action" />
             </ui:VisualElement>
             <ui:VisualElement name="TooltipBody" picking-mode="Ignore" class="tooltip-body">
-                <ui:Label name="RarityLabel" text="Rare" picking-mode="Ignore" class="rarity-label" />
-                <ui:Label name="ItemName" text="ITEM NAME" picking-mode="Ignore" class="item-name" />
-                <ui:Label name="ItemDescription" text="Item description goes here" picking-mode="Ignore" class="item-description" />
+                <ui:Label name="RarityLabel" text="Rare" picking-mode="Ignore" class="rarity-label" style="font-size: 20px; height: 32px;" />
+                <ui:Label name="ItemName" text="ITEM NAME" picking-mode="Ignore" class="item-name" style="font-size: 22px;" />
+                <ui:Label name="ItemDescription" text="Item description goes here" picking-mode="Ignore" class="item-description" style="font-size: 25px;" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
