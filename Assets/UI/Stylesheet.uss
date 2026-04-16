@@ -44,6 +44,14 @@ unity-content {
     left: 100px;
 }
 
+#BossHealthRoot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
 
 #InventoryContainer {
     width: 500px;        /* match scroll-view width */
