@@ -30,6 +30,11 @@ public class ChestTutorial : MonoBehaviour, IInteractable
             TutorialSceneManager.Instance?.CurrentStepIndex != expectedStepIndex)
         {
             Debug.Log("[Tutorial] Chest interaction blocked — wrong tutorial step.");
+            // Play the sfx.
+            if (TooExpensiveSound.IsValid())
+            {
+                TooExpensiveSound.Post(gameObject);
+            }
             return false;
         }
 
