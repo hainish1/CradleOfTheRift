@@ -151,7 +151,6 @@ MonoBehaviour:
   rockProjectilePrefab: {fileID: 3232334194741932682, guid: adf349a4643808e428b922062262b364, type: 3}
   directDamage: 35
   AOEDamage: 0
-  AOERadius: 0
   minWindupTime: 2
   maxWindupTime: 2
   projectileVelocity: 100
@@ -168,6 +167,7 @@ MonoBehaviour:
   meleeRadius: 3
   meleeCooldown: 0.5
   meleePosition: {fileID: 2795737434573335998}
+  groundSlamPrefab: {fileID: 4994997792314849709, guid: 6bb03b55361ea864da9d2750cc5c1925, type: 3}
   throwRockVFXPrefab: {fileID: 0}
   throwSFX:
     idInternal: 0

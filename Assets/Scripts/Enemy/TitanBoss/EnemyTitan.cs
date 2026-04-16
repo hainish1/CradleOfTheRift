@@ -33,6 +33,7 @@ public class EnemyTitan : EnemyGolem
     public int barrageProjectileCount = 8;
     public float barrageSpreadAngle = 45f; // Total angle of the spread
     public float barrageAimOffset = 1.5f;
+    
 
     [Header("Double Sweep Melee Settings")]
     public float sweepMeleeDamage = 20f;
@@ -42,6 +43,7 @@ public class EnemyTitan : EnemyGolem
     //public LayerMask meleeMask = ~0;
     public float sweepCooldown = 0.5f;
     public Transform sweepPosition;
+    public GameObject sweepVFXPrefab;
 
     IdleStateTitan idle;
     ChaseStateTitan chase;
@@ -124,6 +126,12 @@ public class EnemyTitan : EnemyGolem
 
             // Once the player has been hit, break out of the loop so we don't accidentally hit them twice.
             break;
+        }
+
+        // Play sweep VFX
+        if (sweepVFXPrefab != null)        {
+            GameObject slamVFX = Instantiate(groundSlamPrefab, meleePosition.position, Quaternion.identity);
+            Destroy(slamVFX, EstimateParticleLifetime(slamVFX));
         }
     }
 

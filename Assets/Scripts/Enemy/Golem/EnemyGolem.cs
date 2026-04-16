@@ -45,6 +45,7 @@ public class EnemyGolem : Enemy
     //public LayerMask meleeMask = ~0;
     public float meleeCooldown = 0.5f;
     public Transform meleePosition;
+    public GameObject groundSlamPrefab;
 
     [Header("VFX / SFX")]
     public GameObject throwRockVFXPrefab;
@@ -232,6 +233,13 @@ public class EnemyGolem : Enemy
                 // Once the player has been hit, break out of the loop so we don't accidentally hit them twice
                 break; 
             }
+        }
+
+        // Play ground slam VFX
+        if (groundSlamPrefab != null)        {
+            GameObject slamVFX = Instantiate(groundSlamPrefab, meleePosition.position, Quaternion.identity);
+            slamVFX.transform.localScale = Vector3.one * meleeRadius * 0.5f;
+            Destroy(slamVFX, EstimateParticleLifetime(slamVFX));
         }
     }
 

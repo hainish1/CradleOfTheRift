@@ -231,6 +231,7 @@ MonoBehaviour:
   meleeRadius: 5
   meleeCooldown: 0.5
   meleePosition: {fileID: 2795737434573335998}
+  groundSlamPrefab: {fileID: 4994997792314849709, guid: 6bb03b55361ea864da9d2750cc5c1925, type: 3}
   throwRockVFXPrefab: {fileID: 0}
   throwSFX:
     idInternal: 0
@@ -254,6 +255,7 @@ MonoBehaviour:
   sweepBoxSize: {x: 10, y: 4, z: 6}
   sweepCooldown: 0.5
   sweepPosition: {fileID: 2122814991888120427}
+  sweepVFXPrefab: {fileID: 0}
 --- !u!114 &6554202718004137176
 MonoBehaviour:
   m_ObjectHideFlags: 0
