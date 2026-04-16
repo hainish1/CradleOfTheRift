@@ -1,0 +1,48 @@
+#BossHealthContainer {
+    position: absolute;
+    top: 200px;
+    left: 25%;
+    width: 50%;
+    height: 30px;
+    display: none;
+}
+
+#BossHealthBar,
+#BossDamageBar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+}
+
+#BossHealthBar .unity-progress-bar__background,
+#BossDamageBar .unity-progress-bar__background {
+    background-color: rgba(0, 0, 0, 0.45);
+    border-color: rgba(255, 255, 255, 0.14);
+    border-width: 1px;
+    border-radius: 4px;
+}
+
+#BossHealthBar .unity-progress-bar__progress {
+    background-color: rgba(180, 45, 45, 0.95);
+    border-radius: 4px;
+}
+
+#BossDamageBar .unity-progress-bar__progress {
+    background-color: rgba(255, 215, 110, 0.8);
+    border-radius: 4px;
+}
+
+#BossHealthBar .unity-progress-bar__title {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 14px;
+    -unity-font-style: bold;
+}
+
+#BossDamageBar .unity-progress-bar__title {
+    color: rgba(0, 0, 0, 0);
+}

@@ -19,6 +19,8 @@ public class BossSpawner : MonoBehaviour
 
     private EnemyHealth activeBoss;
     public event Action BossDied;
+    public event Action<EnemyHealth> BossSpawned;
+    public EnemyHealth ActiveBoss => activeBoss;
 
     private void Awake()
     {
@@ -74,6 +76,7 @@ public class BossSpawner : MonoBehaviour
         ScaleBossDamage(boss);
 
         this.activeBoss = boss.GetComponent<EnemyHealth>();
+        BossSpawned?.Invoke(this.activeBoss);
         this.activeBoss.EnemyDied += OnBossDied;
     }
 
