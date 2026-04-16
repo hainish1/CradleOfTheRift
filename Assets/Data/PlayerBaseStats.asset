@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: PlayerBaseStats
   m_EditorClassIdentifier: 
   meleeDamage: 25
-  meleeAttackRate: 0.25
-  meleeAnimationSpeed: 1.2
+  meleeAttackRate: 0.15
+  meleeAnimationSpeed: 1.5
   projectileDamage: 40
   projectileFireRate: 2
   projectileAnimationSpeed: 2
@@ -29,18 +29,34 @@ MonoBehaviour:
   health: 100
   gravityMultiplier: 4
   gravityAirDrag: 1
-  moveSpeed: 18
+  moveSpeed: 22
   kbDamping: 0.125
   kbControlsLockTime: 0.18
   kbDashLockTime: 0.12
-  dashDistance: 14
+  dashDistance: 20
   dashSpeed: 100
   dashCooldown: 4
   dashCharges: 3
   jumpForce: 25
   driftDescentDivisor: 0.25
   flightMaxSpeed: 35
-  flightMaxEnergy: 160
-  flightRegenerationRate: 30
+  flightMaxEnergy: 40
+  flightRegenerationRate: 15
   flightDepletionRate: 20
   characterSize: 1
+  spearProjectileDamage: 40
+  axeProjectileDamage: 50
+  maceProjectileDamage: 40
+  staffProjectileDamage: 40
+  spearProjectileFireRate: 2
+  axeProjectileFireRate: 2
+  maceProjectileFireRate: 2
+  staffProjectileFireRate: 2
+  spearMeleeDamage: 25
+  axeMeleeDamage: 25
+  maceMeleeDamage: 25
+  staffMeleeDamage: 25
+  spearMeleeAttackRate: 0.15
+  axeMeleeAttackRate: 0.15
+  maceMeleeAttackRate: 0.15
+  staffMeleeAttackRate: 0.15

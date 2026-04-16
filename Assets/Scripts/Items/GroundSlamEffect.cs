@@ -3,14 +3,14 @@ using UnityEngine;
 
 public class GroundSlamEffect : IDisposable
 {
-    private PlayerShockwave shockwave;
+    private PlayerShockwaveController shockwave;
     private PlayerGroundSlam groundSlam;
     private bool disposed;
     public bool IsDisposed => disposed;
 
     public GroundSlamEffect(Entity owner, float slamDamage)
     {
-        shockwave = owner.GetComponent<PlayerShockwave>();
+        shockwave = owner.GetComponent<PlayerShockwaveController>();
         groundSlam = owner.GetComponent<PlayerGroundSlam>();
 
         if (shockwave != null) shockwave.enabled = false;

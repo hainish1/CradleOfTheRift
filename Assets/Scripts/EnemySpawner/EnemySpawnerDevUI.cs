@@ -6,11 +6,13 @@ public class EnemySpawnerUI : MonoBehaviour
 {
     [SerializeField] private EnemySpawner spawner;
     [SerializeField] private EnemySpawner_2 spawner_2;
+    [SerializeField] private DifficultyScaler difficultyScaler;
 
     private Label currentEnemyCountLabel;
     private Label currentCreditsLabel;
     private Label currentMaxEnemyCapLabel;
     private Label currentWaveLabel;
+    private Label difficultyScaleLabel;
     private VisualElement devContainer;
 
     void Start()
@@ -23,6 +25,7 @@ public class EnemySpawnerUI : MonoBehaviour
         this.currentCreditsLabel = root.Q<Label>("CurrentCredits");
         this.currentMaxEnemyCapLabel = root.Q<Label>("CurrentMaxEnemyCap");
         this.currentWaveLabel = root.Q<Label>("CurrentWave");
+        this.difficultyScaleLabel = root.Q<Label>("DifficultyScale");
 
         // Logic for Original Spawner
         if (this.spawner != null)
@@ -32,6 +35,7 @@ public class EnemySpawnerUI : MonoBehaviour
             this.spawner.CurrentMaxEnemyCapChanged += OnCurrentMaxEnemyCapChanged;
             this.spawner.CurrentWaveChanged += OnCurrentWaveChanged;
             this.spawner.DevModeChanged += OnDevModeChanged;
+            this.difficultyScaler.DifficultyScaleChanged += OnDifficultyScaleChanged;
 
             OnDevModeChanged(this.spawner.IsDevModeEnabled);        
         }
@@ -43,6 +47,7 @@ public class EnemySpawnerUI : MonoBehaviour
             this.spawner_2.CurrentMaxEnemyCapChanged += OnCurrentMaxEnemyCapChanged;
             this.spawner_2.CurrentWaveChanged += OnCurrentWaveChanged;
             this.spawner_2.DevModeChanged += OnDevModeChanged;
+            this.difficultyScaler.DifficultyScaleChanged += OnDifficultyScaleChanged;
 
             OnDevModeChanged(this.spawner_2.IsDevModeEnabled);
         }
@@ -51,6 +56,11 @@ public class EnemySpawnerUI : MonoBehaviour
             // Debug.LogError("EnemySpawnerUI: No spawner assigned in the inspector!");
             Debug.Log("Enemy Spawner is not assigned");
         }
+    }
+
+    private void OnDifficultyScaleChanged(float currentChange)
+    {
+        this.difficultyScaleLabel.text = $"Difficulty Scale: {currentChange:F2}";
     }
 
     private void OnCurrentEnemyCountChanged(int currentChange) {

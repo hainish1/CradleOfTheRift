@@ -8,10 +8,16 @@ public class AbilityUIController : MonoBehaviour
 {
     [SerializeField] private VisualTreeAsset abilitySlotAsset;
     [SerializeField] private PlayerManager playerManager;
+
+    [SerializeField] private WeaponIconSet weaponIconSet;
+    [SerializeField] private AbilityIconSet abilityIcons;
+
+    [Header("FX Settings")]
+    [SerializeField] private SwapEffectType weaponSwapEffect = SwapEffectType.RiftCrackle;
+    [SerializeField] private float effectDuration = 500f;
+
     private Stats playerStats;
     private PlayerMovement playerMovement;
-
-    [SerializeField] private List<Texture2D> images;
 
     private int flyAbilityIndex = -1;
     private int shockwaveAbilityIndex = -1;
@@ -71,7 +77,7 @@ public class AbilityUIController : MonoBehaviour
         {
             abilityName = "Dash",
             key = KeyCode.LeftShift,
-            icon = images[0],
+            icon = abilityIcons?.dashIcon,
             maxCharges = playerStats.DashCharges,
             currentCharges = playerStats.DashCharges,
             getCooldown = () => playerStats.DashCooldown,
@@ -85,7 +91,7 @@ public class AbilityUIController : MonoBehaviour
         {
             abilityName = "Fly",
             key = KeyCode.F,
-            icon = images.Count > 1 ? images[1] : null,
+            icon =abilityIcons?.flyIcon,
             maxCharges = 1,
             currentCharges = 1,
             getCooldown = () => 0f,
@@ -96,28 +102,12 @@ public class AbilityUIController : MonoBehaviour
         abilities.Add(flyAbility);
         CreateAbility(flyAbility, fillFromTop: true);
 
-        // ---- Shockwave --------------------------------------------------- //
-        var shockwaveAbility = new AbilityInfo
-        {
-            abilityName = "Shockwave",
-            key = KeyCode.X,
-            icon = images.Count > 2 ? images[2] : null,
-            maxCharges = 1,
-            currentCharges = 1,
-            getCooldown = () => playerStats.ShockwaveCooldown,
-            showCharges = false,
-            iconScale = 1.3f
-        };
-        shockwaveAbilityIndex = abilities.Count;
-        abilities.Add(shockwaveAbility);
-        CreateAbility(shockwaveAbility);
-
         // ---- Ranged ------------------------------------------------------ //
         var rangedAbility = new AbilityInfo
         {
             abilityName = "Ranged",
             key = KeyCode.Mouse1,
-            icon = images.Count > 3 ? images[3] : null,
+            icon = abilityIcons?.defaultRangedIcon,
             maxCharges = playerStats.FireCharges,
             currentCharges = playerStats.FireCharges,
             getCooldown = () => playerStats.FireChargeCooldown,
@@ -127,6 +117,22 @@ public class AbilityUIController : MonoBehaviour
         rangedAbilityIndex = abilities.Count;
         abilities.Add(rangedAbility);
         CreateAbility(rangedAbility);
+
+        // ---- Shockwave --------------------------------------------------- //
+        var shockwaveAbility = new AbilityInfo
+        {
+            abilityName = "Shockwave",
+            key = KeyCode.X,
+            icon = abilityIcons?.shockwaveIcon,
+            maxCharges = 1,
+            currentCharges = 1,
+            getCooldown = () => playerStats.ShockwaveCooldown,
+            showCharges = false,
+            iconScale = 1.3f
+        };
+        shockwaveAbilityIndex = abilities.Count;
+        abilities.Add(shockwaveAbility);
+        CreateAbility(shockwaveAbility);
     }
 
     private void OnEnable()
@@ -140,8 +146,10 @@ public class AbilityUIController : MonoBehaviour
         PlayerShooter.OnFireChargeRestored += HandleFireChargeRestored;
 
         // Shockwave / GroundSlam (share the same UI slot)
-        PlayerShockwave.OnShockwaveUsed += HandleShockwaveUsed;
+        PlayerShockwaveController.OnShockwaveUsed += HandleShockwaveUsed;
         PlayerGroundSlam.OnGroundSlamUsed += HandleShockwaveUsed;
+
+        PlayerHeldWeaponController.OnWeaponChanged += HandleWeaponChanged;
     }
 
     private void OnDisable()
@@ -152,8 +160,10 @@ public class AbilityUIController : MonoBehaviour
         PlayerShooter.OnFireChargeSpent -= HandleFireChargeSpent;
         PlayerShooter.OnFireChargeRestored -= HandleFireChargeRestored;
 
-        PlayerShockwave.OnShockwaveUsed -= HandleShockwaveUsed;
+        PlayerShockwaveController.OnShockwaveUsed -= HandleShockwaveUsed;
         PlayerGroundSlam.OnGroundSlamUsed -= HandleShockwaveUsed;
+
+        PlayerHeldWeaponController.OnWeaponChanged -= HandleWeaponChanged;
     }
 
     void Update()
@@ -329,6 +339,27 @@ public class AbilityUIController : MonoBehaviour
             KeyCode.Space => "Space",
             _ => key.ToString()
         };
+    }
+
+    private void HandleWeaponChanged(HeldWeaponType newWeapon)
+    {
+        // Ensure the Ranged ability exists in the UI
+        if (rangedAbilityIndex < 0 || weaponIconSet == null) return;
+
+        Texture2D newIcon = newWeapon switch
+            {
+                HeldWeaponType.Spear => weaponIconSet.spear,
+                HeldWeaponType.Axe   => weaponIconSet.axe,
+                HeldWeaponType.Mace  => weaponIconSet.mace,
+                HeldWeaponType.Staff => weaponIconSet.staff,
+                _                    => null // fallback to original
+            };
+
+        var diamond = abilitySlots[rangedAbilityIndex].diamond;
+        diamond.Icon = newIcon;
+
+        // Trigger the selected effect
+        diamond.TriggerEffect(weaponSwapEffect, effectDuration);
     }
 }
 

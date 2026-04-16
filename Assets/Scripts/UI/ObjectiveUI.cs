@@ -40,12 +40,13 @@ public class ObjectiveUI : MonoBehaviour
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
         objectivesPanel = root.Q<VisualElement>("ObjectivesPanel");
-        locateRow       = root.Q<VisualElement>("LocateRow");
-        chargeRow       = root.Q<VisualElement>("ChargeRow");
-        killRow         = root.Q<VisualElement>("KillRow");
-        locateLabel     = root.Q<Label>("LocateLabel");
-        chargeLabel     = root.Q<Label>("ChargeLabel");
-        killLabel       = root.Q<Label>("KillLabel");
+
+        locateRow       = objectivesPanel.Q<VisualElement>("LocateRow");
+        chargeRow       = objectivesPanel.Q<VisualElement>("ChargeRow");
+        killRow         = objectivesPanel.Q<VisualElement>("KillRow");
+        locateLabel     = objectivesPanel.Q<Label>("LocateLabel");
+        chargeLabel     = objectivesPanel.Q<Label>("ChargeLabel");
+        killLabel       = objectivesPanel.Q<Label>("KillLabel");
 
         if (ExtractionManager.Instance != null)
         {
@@ -77,7 +78,7 @@ public class ObjectiveUI : MonoBehaviour
         chargeRowComplete = false;
         killRowComplete   = false;
 
-        SetRowState(locateRow, locateLabel, "Locate Extraction Site", RowState.Active);
+        SetRowState(locateRow, locateLabel, LocateText(), RowState.Active);
 
         locateRow.style.opacity   = 1f;
         locateRow.style.display   = DisplayStyle.Flex;
@@ -97,7 +98,7 @@ public class ObjectiveUI : MonoBehaviour
         activeZone = zone;
         SubscribeToZone(zone);
 
-        TickOffRow(locateRow, locateLabel, "Locate Extraction Site", delayMs: 0, onComplete: () =>
+        TickOffRow(locateRow, locateLabel, LocateText(), delayMs: 0, onComplete: () =>
         {
             RevealRow(chargeRow, chargeLabel, "Charge the Extraction Site", delayMs: 0, onComplete: () =>
             {
@@ -240,8 +241,6 @@ public class ObjectiveUI : MonoBehaviour
 
     private static float EaseOutCubic(float t) => 1f - Mathf.Pow(1f - t, 3f);
 
-    // ── Zone subscriptions ────────────────────────────────────────────────────
-
     private void SubscribeToZone(ExtractionZone zone)
     {
         zone.ExtractionFinished += OnZoneChargeFinished;
@@ -262,7 +261,18 @@ public class ObjectiveUI : MonoBehaviour
             spawner.BossDied -= OnBossDied;
     }
 
-    // ── Row state helper ──────────────────────────────────────────────────────
+    /// <summary>Returns the locate objective text with a live completion counter.</summary>
+    private string LocateText()
+    {
+        if (ExtractionManager.Instance == null) return "Locate Extraction Site";
+        int completed = ExtractionManager.Instance.CompletedZones;
+        int total     = ExtractionManager.Instance.TotalZones;
+
+        // Total may be 0 on the very first frame before zones register; omit counter then.
+        return total > 0
+            ? $"Locate Extraction Site {completed}/{total}"
+            : "Locate Extraction Site";
+    }
 
     private enum RowState { Active, Complete }
 

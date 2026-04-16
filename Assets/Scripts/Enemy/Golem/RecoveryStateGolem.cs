@@ -6,9 +6,10 @@ using UnityEngine;
 public class RecoveryStateGolem : EnemyState
 {
     private EnemyGolem enemyGolem;
-
-    float endTime;
-    private bool needsRetreat;
+    private float endTime;
+    private float startWanderTime;
+    private float wanderTimer;
+    private bool isWandering;
 
     public RecoveryStateGolem(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
@@ -21,23 +22,16 @@ public class RecoveryStateGolem : EnemyState
     /// </summary>
     public override void Enter()
     {
-        endTime = Time.time + enemyGolem.recoveryTime; // post attack pause
+        endTime = Time.time + Random.Range(enemyGolem.minWanderTime, enemyGolem.maxWanderTime); // post rock attack wandering
+        startWanderTime = Time.time + enemyGolem.postAttackCooldown; // time before it starts wandering around
+        
+        wanderTimer = 0f;
+        isWandering = false;
         if (enemy.agent != null)
         {
             enemy.agent.isStopped = true;
             enemy.agent.velocity = Vector3.zero;
             enemy.agent.ResetPath();
-        }
-
-        //check if too close to the player
-        if (enemy.target != null)
-        {
-            float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.target.position);
-            needsRetreat = distanceToPlayer < enemyGolem.minAttackDistance;
-        }
-        else
-        {
-            needsRetreat = false;
         }
     }
 
@@ -46,52 +40,72 @@ public class RecoveryStateGolem : EnemyState
     /// </summary>
     public override void Update()
     {
-
         if (enemy.target == null)
         {
-            if (Time.time >= endTime)
-            {
-                stateMachine.ChangeState(enemyGolem.GetIdle());
-            }
+            stateMachine.ChangeState(enemyGolem.GetIdle());
             return;
         }
 
-        float currentDistance = Vector3.Distance(enemy.transform.position, enemy.target.position);
-        if (needsRetreat && currentDistance < enemyGolem.minAttackDistance)
+        float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.target.position);
+        // Interrupt wandering if player gets too close -> trigger melee attack immediately
+        if (distanceToPlayer <= enemyGolem.minAttackDistance)
         {
+            stateMachine.ChangeState(enemyGolem.GetMeleeAttack());
+            return;
+        }
 
-            // calc retreat position
-            Vector3 awayFromPlayer = enemy.transform.position - enemy.target.position;
-            awayFromPlayer.y = 0f;
-            if (awayFromPlayer.sqrMagnitude > 0.0001f)
+        // Interrupt wandering if player ran out of range -> chase them until in range
+        if (distanceToPlayer > enemyGolem.shootingRange)
+        {
+            stateMachine.ChangeState(enemyGolem.GetChase());
+            return;
+        }
+
+        // Wander while waiting for the pause timer to end
+        if (Time.time < endTime)
+        {
+            // First pause after attack
+            if (Time.time >= startWanderTime) 
             {
-                awayFromPlayer.Normalize();
-                Vector3 retreatPosition = enemy.target.position + awayFromPlayer * enemyGolem.leapAttackRange;
-
-                if (enemy.agent != null && enemy.agent.enabled)
+                //enemyGolem.FaceTargetSmooth(enemyGolem.turnSpeedWhileAiming);   // could get rid of this to prevent constnatly facing the player
+                if (!isWandering || wanderTimer <= 0f)
                 {
-                    enemy.agent.SetDestination(retreatPosition);
-                    enemy.agent.isStopped = false;
+                    PickWanderPoint();
+                }
+                else
+                {
+                    wanderTimer -= Time.deltaTime;
+                    // Keep facing the player while sidestepping (maybe we dont have the animations for this)
+                    enemyGolem.FaceTargetSmooth(enemyGolem.turnSpeedWhileAiming);
                 }
             }
-
         }
         else
-            {
-                needsRetreat = false;
-                if (Time.time >= endTime)
-                {
-                    if (PlayerInAggressionRange())
-                    {
-                        stateMachine.ChangeState(enemyGolem.GetChase());
-                    }
-                    else
-                    {
-                        stateMachine.ChangeState(enemyGolem.GetIdle());
-                    }
-                }
-            }
+        {
+            // Pause time is over, go back to chase (which will immediately trigger a new attack)
+            stateMachine.ChangeState(enemyGolem.GetChase());
+        }
     }
+    private void PickWanderPoint()
+    {
+        Vector2 randomCircle = Random.insideUnitCircle * enemyGolem.wanderRadius;
+        Vector3 randomPos = enemyGolem.transform.position + new Vector3(randomCircle.x, 0, randomCircle.y);
 
+        if (UnityEngine.AI.NavMesh.SamplePosition(randomPos, out UnityEngine.AI.NavMeshHit hit, enemyGolem.wanderRadius, UnityEngine.AI.NavMesh.AllAreas))
+        {
+            if (enemy.agent != null && enemy.agent.isOnNavMesh)
+            {
+                enemy.agent.isStopped = false;
+                enemy.agent.SetDestination(hit.position);
+            }
+            isWandering = true;
+            wanderTimer = enemyGolem.wanderInterval; 
+        }
+        else
+        {
+            // If invalid spot, wait half a second before checking again
+            wanderTimer = 0.5f; 
+        }
+    }
 
 }

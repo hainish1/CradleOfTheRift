@@ -35,6 +35,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [Tooltip("Controller for player aim.")] private PlayerAimController _playerAimController;
     private PlayerMovement _playerMovement;
     private PlayerShooter _playerShooter;
+    private PlayerShockwaveController _shockwaveController;
+    private PlayerHeldWeaponController _heldWeaponController;
     private Entity _playerEntity;
 
     // Animation Parameters
@@ -47,7 +49,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     [SerializeField]
     [Tooltip("The downward pitch limit of attacks in degrees.")] private float _downwardDegreesLimit;
     [SerializeField] private List<AttackInfo> _attacks = new();
-    private Animator _weaponAnim;
+    private Animator _playerAnim;
     private float _degreesPerSecond;
     private bool _isModelHorizontal = true;
 
@@ -69,21 +71,22 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private Vector3 _prevHitCapsuleCenterPointTemp;
     private RaycastHit[] _objectsHitThisCast = new RaycastHit[32];
     private HashSet<GameObject> _objectsHitThisAttack = new();
-    private bool _prevHitCapsuleTempPointsInitialized = false;
+    private bool _prevHitCapsuleTempPointsInitialized;
 
     // Attack Parameters
 
-    private float MeleeDamage => _playerEntity.Stats.MeleeDamage;
+    private HeldWeaponType CurrentWeapon => _heldWeaponController != null ? _heldWeaponController.HeldWeapon : HeldWeaponType.None;
+    private float MeleeDamage => _playerEntity.Stats.MeleeDamageForWeapon(CurrentWeapon); // get that specific damage
     private float AttackCooldown => GetAttackCooldown();
     [Header("Attack Parameters")] [Space]
     [SerializeField]
     [Tooltip("Knockback force of attacks.")] private float _knockbackForce;
     [SerializeField]
     [Tooltip("The buffer time for inputting attack combos in seconds.")] private float _comboInputBuffer;
-    public bool IsAttacking { get; private set; } = false;
-    private bool _isRegistering = false;
+    public bool IsAttacking { get; private set; }
+    private bool _isRegistering;
     public bool CanAttack { get; set; } = true;
-    private bool _comboInputted = false;
+    private bool _comboInputted;
     private int _maxComboCount;
     private int _currComboCount = 0;
     public event Action<int> OnMeleeComboAttack; /// <summary> Fired when a combo attack starts. Argument: combo index (1=first, 2=second/finisher). </summary>
@@ -104,9 +107,11 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _playerEntity = GetComponentInParent<Entity>();
         _playerMovement = GetComponentInParent<PlayerMovement>();
         _playerShooter = GetComponentInParent<PlayerShooter>();
+        _shockwaveController = GetComponentInParent<PlayerShockwaveController>();
+        _heldWeaponController = GetComponentInParent<PlayerHeldWeaponController>();
 
         // Animation Parameters
-        _weaponAnim = GetComponent<Animator>();
+        _playerAnim = GetComponent<Animator>();
         _upwardDegreesLimit = Mathf.Abs(_upwardDegreesLimit);
         _downwardDegreesLimit = -Mathf.Abs(_downwardDegreesLimit);
         _degreesPerSecond = Mathf.Deg2Rad * _attackPitchSpeed;
@@ -132,8 +137,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     void Update()
     {
-        // Do not allow attacks while dashing or throwing.
-        if (_playerMovement.IsDashing || _playerShooter.IsThrowing) return;
+        // Do not allow attacks while dashing, throwing or casting shockwave.
+        if (_playerMovement.IsDashing || _playerShooter.IsThrowing || _shockwaveController.IsCastingShockwave) return;
 
         RecalculateAnimationSpeed();
 
@@ -162,7 +167,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
             info.BufferedAttackDuration = Mathf.Clamp(info.AttackDuration - _comboInputBuffer, 0, float.MaxValue);
         }
 
-        _weaponAnim.SetFloat("AttackAnimSpeedMultiplier", currAnimationSpeed);
+        _playerAnim.SetFloat("AttackAnimSpeedMultiplier", currAnimationSpeed);
     }
 
     /// <summary>
@@ -174,7 +179,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     private float GetAttackCooldown()
     {
         return _attacks[_currComboCount - 1].PostTransitionAnim.length
-               + _playerEntity.Stats.MeleeAttackRate;
+               + _playerEntity.Stats.MeleeAttackRateForWeapon(CurrentWeapon);
     }
 
     /// <summary>
@@ -189,7 +194,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _comboInputted = false;
         _currComboCount++;
         OnMeleeComboAttack?.Invoke(_currComboCount);
-        _weaponAnim.SetTrigger("Attack" + _currComboCount);
+        _playerAnim.SetTrigger("Attack" + _currComboCount);
 
         // For the weapon sound.
         swingSound.Post(gameObject);
@@ -233,7 +238,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
             }
 
             // Leave attack animation sequence if the combo input time window was missed.
-            _weaponAnim.SetTrigger("ComboMiss");
+            _playerAnim.SetTrigger("ComboMiss");
         }
         // Wait for full attack duration if max combo count is reached.
         else
@@ -268,9 +273,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
             _isModelHorizontal = false;
         }
-
-        // Gradually reset player model alignment while not attacking or if no damageable target is being aimed at.
-        if (!IsAttacking && !_isModelHorizontal)
+        else if (!IsAttacking && !_isModelHorizontal) // Gradually reset player model alignment while not attacking or if no damageable target is being aimed at.
         {
             Vector3 worldHorizontal = new Vector3(_playerCamera.forward.x, 0, _playerCamera.forward.z).normalized;
             _playerModelPivot.forward = Vector3.RotateTowards(_playerModelPivot.forward, worldHorizontal, Time.deltaTime * _degreesPerSecond, 0);
@@ -279,6 +282,10 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
                 _playerModelPivot.localRotation = Quaternion.Euler(0, 0, 0); // Zero out pivot rotation for exactness.
                 _isModelHorizontal = true;
             }
+        }
+        else
+        {
+            _playerModelPivot.localRotation = Quaternion.Euler(0, 0, 0); // Safety measure on every frame to ensure default alignment.
         }
     }
 

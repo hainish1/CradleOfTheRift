@@ -1,6 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Template name="ExtractionBar" src="project://database/Assets/UI/ExtractionBar/ExtractionBar.uxml?fileID=9197481963319205126&amp;guid=730ca545a71bf2149a78152fcca054c0&amp;type=3#ExtractionBar" />
     <Style src="project://database/Assets/UI/ObjectivesPanel/ObjectivesStylesheet.uss?fileID=7433441132597879392&amp;guid=9ebd1f1b485800d4481ecd007cd0e000&amp;type=3#ObjectivesStylesheet" />
-    <ui:VisualElement name="ObjectivesPanel" picking-mode="Ignore" style="background-image: url(&quot;project://database/Assets/Art%20Assets/2D/UI%20assets%202/Timer/Timer_Full.png?fileID=2800000&amp;guid=8b998bc8202f546358ba1f8d2aa13fb6&amp;type=3#Timer_Full&quot;); width: 318px;">
+    <ui:VisualElement name="ObjectivesPanel" picking-mode="Ignore">
         <ui:Label text="OBJECTIVES" name="ObjectivesHeader" style="font-size: 15px;" />
         <ui:VisualElement name="LocateRow" class="objective-row objective-active">
             <ui:Label text="•  Locate Extraction Site" name="LocateLabel" class="objective-label" style="font-size: 20px;" />
@@ -8,6 +9,7 @@
         <ui:VisualElement name="ChargeRow" class="objective-row objective-inactive" style="display: none;">
             <ui:Label text="•  Charge the Extraction Site" name="ChargeLabel" class="objective-label" />
         </ui:VisualElement>
+        <ui:Instance template="ExtractionBar" name="ExtractionBarRoot" />
         <ui:VisualElement name="KillRow" class="objective-row objective-inactive" style="display: none;">
             <ui:Label text="•  Eliminate the Boss" name="KillLabel" class="objective-label" />
         </ui:VisualElement>

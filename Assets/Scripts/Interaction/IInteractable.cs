@@ -8,3 +8,8 @@ public interface IInteractable
     public bool SingleActivation { get; }
     public bool Interact(Interactor interactor);
 }
+
+public interface IPromptHeightOverride
+{
+    float PromptHeightOffset { get; }
+}

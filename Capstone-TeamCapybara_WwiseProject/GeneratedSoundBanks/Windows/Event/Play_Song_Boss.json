@@ -1,0 +1,96 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "2758397059",
+    "Type": "Event",
+    "GUID": "{80973DF7-D85B-4625-A837-4DA900EB803B}",
+    "Language": "SFX",
+    "Hash": "{840D41D9-BB01-2D87-F9DC-973F367F65DD}",
+    "ObjectPath": "Play_Song_Boss",
+    "ShortName": "Play_Song_Boss",
+    "Path": "Event/Play_Song_Boss.bnk",
+    "Media": [
+     {
+      "Id": "741799909",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Body.wav",
+      "Path": "Media/741799909.wem",
+      "CachePath": "80/{80B458F1-C69C-DE55-378D-BB13B0F1D906}.wem"
+     },
+     {
+      "Id": "854864051",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Intro.wav",
+      "Path": "Media/854864051.wem",
+      "CachePath": "9C/{9CBB8F62-6C36-D81C-5043-3326F7C1AE51}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "2758397059",
+      "Name": "Play_Song_Boss",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_Song_Boss",
+      "GUID": "{80973DF7-D85B-4625-A837-4DA900EB803B}",
+      "DurationType": "Infinite",
+      "SwitchContainers": [
+       {
+        "SwitchValue": {
+         "GroupType": "State",
+         "GroupId": "4265060404",
+         "Id": "655265632",
+         "GUID": "{A4FB7019-7BE2-4B55-B62E-D9CFEDF363CC}"
+        },
+        "MediaRefs": [
+         {
+          "Id": "741799909"
+         },
+         {
+          "Id": "854864051"
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "StateGroups": [
+     {
+      "Id": "4265060404",
+      "Name": "Boss_Alive",
+      "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive",
+      "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}",
+      "States": [
+       {
+        "Id": "655265632",
+        "Name": "Alive",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Alive",
+        "GUID": "{A4FB7019-7BE2-4B55-B62E-D9CFEDF363CC}"
+       },
+       {
+        "Id": "748895195",
+        "Name": "None",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\None",
+        "GUID": "{DEECE8B4-6DDE-47CF-8B9E-899088C3DA0D}"
+       },
+       {
+        "Id": "2044049779",
+        "Name": "Dead",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Dead",
+        "GUID": "{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{A71B63DD-1CB6-44BE-B69D-CDCA13CA1DBD}"
+ }
+}
