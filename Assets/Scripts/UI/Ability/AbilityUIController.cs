@@ -71,6 +71,7 @@ public class AbilityUIController : MonoBehaviour
 
         // Remove placeholder abilities from playerUI.uxml
         abilityBar.Clear();
+        WeaponIconData spearData = weaponIconSet?.spear;
 
         // ---- Dash -------------------------------------------------------- //
         var dashAbility = new AbilityInfo
@@ -111,8 +112,8 @@ public class AbilityUIController : MonoBehaviour
             maxCharges = playerStats.FireCharges,
             currentCharges = playerStats.FireCharges,
             getCooldown = () => playerStats.FireChargeCooldown,
-            iconScale = 1.2f,
-            iconOffset = new Vector2(5f, 0f)
+            iconScale = spearData != null ? spearData.scale : 1.2f,
+            iconOffset = spearData != null ? spearData.offset : new Vector2(5f, 0f)
         };
         rangedAbilityIndex = abilities.Count;
         abilities.Add(rangedAbility);
@@ -346,7 +347,7 @@ public class AbilityUIController : MonoBehaviour
         // Ensure the Ranged ability exists in the UI
         if (rangedAbilityIndex < 0 || weaponIconSet == null) return;
 
-        Texture2D newIcon = newWeapon switch
+        WeaponIconData data = newWeapon switch
             {
                 HeldWeaponType.Spear => weaponIconSet.spear,
                 HeldWeaponType.Axe   => weaponIconSet.axe,
@@ -355,8 +356,17 @@ public class AbilityUIController : MonoBehaviour
                 _                    => null // fallback to original
             };
 
+        if (data == null || data.icon == null)
+        {
+            Debug.LogWarning($"WeaponIconSet missing data for {newWeapon}, using default icon.");
+        }
+
         var diamond = abilitySlots[rangedAbilityIndex].diamond;
-        diamond.Icon = newIcon;
+
+
+        diamond.Icon = data?.icon;
+        diamond.IconScale = data?.scale ?? 1.0f;
+        diamond.IconOffset = data?.offset ?? Vector2.zero;
 
         // Trigger the selected effect
         diamond.TriggerEffect(weaponSwapEffect, effectDuration);
