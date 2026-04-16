@@ -2,7 +2,10 @@
     <Style src="project://database/Assets/UI/BossHealthBar.uss?fileID=7433441132597879392&amp;guid=3d585285617154099aeefdba701155d4&amp;type=3#BossHealthBar" />
     <engine:VisualElement name="BossHealthContainer">
         <engine:VisualElement name="BossHealthContent">
-            <engine:VisualElement name="BossIcon" />
+            <engine:VisualElement name="BossIconFrame">
+                <engine:VisualElement name="BossIconFire" />
+                <engine:VisualElement name="BossIcon" />
+            </engine:VisualElement>
             <engine:VisualElement name="BossBarStack">
                 <engine:ProgressBar name="BossDamageBar" />
                 <engine:ProgressBar name="BossHealthBar" />
