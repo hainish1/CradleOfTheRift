@@ -16,6 +16,11 @@
             <ui:Instance template="Timer" name="TimerRoot" />
             <ui:Instance template="DifficultyScaler" name="DifficultyScalerRoot" />
         </ui:VisualElement>
+        <ui:VisualElement name="PassiveInventoryStripRoot" picking-mode="Ignore">
+            <ui:VisualElement name="PassiveInventoryPanel" picking-mode="Ignore">
+                <ui:VisualElement name="PassiveInventoryContent" picking-mode="Ignore" />
+            </ui:VisualElement>
+        </ui:VisualElement>
         <ui:VisualElement name="InventoryGroup" style="flex-grow: 1; top: -34px; left: 1px;">
             <ui:VisualElement name="InventoryContainer" style="flex-grow: 1;">
                 <ui:Instance template="InventoryUI" />
