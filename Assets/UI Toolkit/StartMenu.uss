@@ -42,9 +42,9 @@
 /* Menu buttons */
 .menu-button {
     -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
-    background-color: rgba(255, 182, 193, 0);
+    background-color: rgba(185, 110, 102, 0);
     color: rgb(0, 0, 0);
-    border-color: rgba(255, 182, 193, 0);
+    border-color: rgba(185, 110, 102, 0);
     border-width: 0;
     margin-bottom: 24px;
     padding: 12px 24px;
@@ -57,7 +57,7 @@
 }
 
 .menu-button:hover {
-    background-color: rgba(255, 182, 193, 0.75);
+    background-color: rgba(185, 110, 102, 0.75);
     border-color: rgba(0, 0, 0, 0);
     scale: 1.08 1.08;
 }
