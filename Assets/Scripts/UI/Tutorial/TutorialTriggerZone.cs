@@ -23,6 +23,9 @@ public class TutorialTriggerZone : MonoBehaviour
 
     [Tooltip("The tag used to identify the player. Must match the Player GameObject's tag.")]
     [SerializeField] private string playerTag = "Player";
+    [Header("Sound Effects")]
+    [SerializeField]
+    private AK.Wwise.Event activateSFX;
 
     private bool _fired = false;
 
@@ -39,6 +42,8 @@ public class TutorialTriggerZone : MonoBehaviour
             return;
 
         _fired = true;
+        if (activateSFX.IsValid())
+            activateSFX.Post(gameObject);
         TutorialSceneManager.Instance?.CompleteCurrentStep();
     }
 
