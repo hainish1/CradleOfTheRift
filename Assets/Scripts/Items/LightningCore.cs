@@ -178,6 +178,15 @@ public static class LightningCore
     private static HashSet<Enemy> findEnemiesSeenBuffer = new HashSet<Enemy>();
     private static List<(Enemy enemy, float distance)> findEnemiesCandidatesBuffer = new List<(Enemy, float)>();
     private static List<Color> colorCalculationBuffer = new List<Color>(4);
+
+    public static void PostSFXAtPosition(AK.Wwise.Event sfx, Vector3 position)
+    {
+        if (sfx == null || !sfx.IsValid()) return;
+        var emitter = new GameObject("LightningSFXEmitter");
+        emitter.transform.position = position;
+        sfx.Post(emitter);
+        Object.Destroy(emitter, 3f);
+    }
     
     private struct TreeChainNode
     {

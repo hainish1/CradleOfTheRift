@@ -16,7 +16,12 @@ public class ElementReactionExplosion : IDisposable
     
     private readonly Dictionary<Enemy, float> explosionCooldowns = new Dictionary<Enemy, float>();
     private GameObject explosionVFX;
+    private AK.Wwise.Event explosionSFX;
     private bool isProcessingExplosion = false;
+
+    private static readonly Collider[] s_overlapBuffer = new Collider[64];
+    private readonly List<Enemy> _expiredEnemies = new List<Enemy>();
+    private readonly HashSet<Enemy> _explosionHitEnemies = new HashSet<Enemy>();
     
     public ElementReactionExplosion(
         Entity owner, 
@@ -25,7 +30,8 @@ public class ElementReactionExplosion : IDisposable
         float cooldownPerEnemy = 1f,
         int initialStacks = 1, 
         float durationSec = -1f,
-        GameObject explosionVFX = null)
+        GameObject explosionVFX = null,
+        AK.Wwise.Event explosionSFX = null)
     {
         this.owner = owner;
         this.explosionDamage = explosionDamage;
@@ -35,6 +41,7 @@ public class ElementReactionExplosion : IDisposable
         this.duration = durationSec;
         this.timer = durationSec;
         this.explosionVFX = explosionVFX;
+        this.explosionSFX = explosionSFX;
         
         enemyLayer = LayerMask.GetMask("Enemy");
         CombatEvents.DamageDealt += OnDamageDealt;
@@ -65,15 +72,15 @@ public class ElementReactionExplosion : IDisposable
     
     private void UpdateCooldowns()
     {
-        var toRemove = new List<Enemy>();
+        _expiredEnemies.Clear();
         foreach (var kvp in explosionCooldowns)
         {
             if (Time.time >= kvp.Value)
-                toRemove.Add(kvp.Key);
+                _expiredEnemies.Add(kvp.Key);
         }
 
-        foreach (var enemy in toRemove)
-            explosionCooldowns.Remove(enemy);
+        for (int i = 0; i < _expiredEnemies.Count; i++)
+            explosionCooldowns.Remove(_expiredEnemies[i]);
     }
     
     private void OnDamageDealt(Entity attacker, Component target, float damage, ElementType element)
@@ -115,27 +122,29 @@ public class ElementReactionExplosion : IDisposable
         Vector3 explosionPos = centerEnemy.transform.position;
         float damage = explosionDamage * stacks;
         
-        Collider[] hits = Physics.OverlapSphere(explosionPos, explosionRadius, enemyLayer);
-        HashSet<Enemy> hitEnemies = new HashSet<Enemy>();
+        int hitCount = Physics.OverlapSphereNonAlloc(explosionPos, explosionRadius, s_overlapBuffer, enemyLayer);
+        _explosionHitEnemies.Clear();
         
-        foreach (var col in hits)
+        for (int i = 0; i < hitCount; i++)
         {
+            var col = s_overlapBuffer[i];
             var enemy = col.GetComponentInParent<Enemy>();
-            if (enemy == null || hitEnemies.Contains(enemy)) continue;
+            if (enemy == null || _explosionHitEnemies.Contains(enemy)) continue;
             
             var damageable = enemy.GetComponent<IDamageable>();
             if (damageable != null && !damageable.IsDead)
             {
                 damageable.TakeDamage(damage);
-                hitEnemies.Add(enemy);
+                _explosionHitEnemies.Add(enemy);
             }
         }
         
-        foreach (var enemy in hitEnemies)
+        foreach (var enemy in _explosionHitEnemies)
         {
             CombatEvents.ReportDamage(owner, enemy, damage, ElementType.Fire);
         }
         
+        GameObject sfxEmitter = null;
         if (explosionVFX != null)
         {
             var fx = UnityEngine.Object.Instantiate(explosionVFX);
@@ -143,14 +152,18 @@ public class ElementReactionExplosion : IDisposable
             float scale = Mathf.Clamp(explosionRadius * 0.025f, 0.5f, 0.625f);
             fx.transform.localScale = Vector3.one * scale;
             UnityEngine.Object.Destroy(fx, 1f);
+            sfxEmitter = fx;
         }
         else
         {
-            CreateSimpleExplosionVFX(explosionPos, explosionRadius);
+            sfxEmitter = CreateSimpleExplosionVFX(explosionPos, explosionRadius);
         }
+
+        if (explosionSFX != null && explosionSFX.IsValid() && sfxEmitter != null)
+            explosionSFX.Post(sfxEmitter);
     }
     
-    private void CreateSimpleExplosionVFX(Vector3 position, float radius)
+    private GameObject CreateSimpleExplosionVFX(Vector3 position, float radius)
     {
         var explosion = new GameObject("ElementReactionExplosion");
         explosion.transform.position = position;
@@ -203,6 +216,7 @@ public class ElementReactionExplosion : IDisposable
         
         ps.Play();
         UnityEngine.Object.Destroy(explosion, 1f);
+        return explosion;
     }
     
     public void Dispose()

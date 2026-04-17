@@ -398,7 +398,7 @@ public class PlayerInventory : MonoBehaviour
                     EnsureLightningStrikeChainBuff(effect);
                     break;
                 case ItemEffectKind.LightningStrikePlayerChain:
-                    EnsureLightningStrikePlayerChain();
+                    EnsureLightningStrikePlayerChain(effect);
                     break;
                 case ItemEffectKind.LightningStrikeElectrify:
                     EnsureLightningStrikeElectrify(effect);
@@ -469,7 +469,8 @@ public class PlayerInventory : MonoBehaviour
                 damage: effect.playerLightningStrikeDamage,
                 radius: effect.playerLightningStrikeRadius,
                 interval: effect.playerLightningStrikeInterval,
-                strikeVFX: effect.playerLightningStrikeVFX
+                strikeVFX: effect.playerLightningStrikeVFX,
+                lightningSFX: effect.onLightning
             );
             Debug.Log("[Effect] LightningStrikeBase created");
         }
@@ -522,17 +523,18 @@ public class PlayerInventory : MonoBehaviour
                 chainDamagePercent: effect.chainLightningTestChainDamagePercent,
                 maxDepth: effect.chainLightningTestMaxDepth,
                 branchesPerNode: effect.chainLightningTestBranchesPerNode,
-                chainRange: effect.chainLightningTestChainRange
+                chainRange: effect.chainLightningTestChainRange,
+                lightningSFX: effect.onLightning
             );
             Debug.Log("[Effect] LightningStrikeChainBuff created");
         }
     }
 
-    private void EnsureLightningStrikePlayerChain()
+    private void EnsureLightningStrikePlayerChain(EffectSpec effect)
     {
         if (lightningStrikePlayerChainEffect == null || lightningStrikePlayerChainEffect.IsDisposed)
         {
-            lightningStrikePlayerChainEffect = new LightningStrikePlayerChain(playerEntity);
+            lightningStrikePlayerChainEffect = new LightningStrikePlayerChain(playerEntity, effect.onLightning);
             Debug.Log("[Effect] LightningStrikePlayerChain created");
         }
     }
@@ -558,7 +560,8 @@ public class PlayerInventory : MonoBehaviour
                 damage: effect.orbitingFireballDamage,
                 orbitRadius: effect.orbitingFireballRadius,
                 rotationSpeed: effect.orbitingFireballRotationSpeed,
-                fireballVFX: effect.orbitingFireballVFX
+                fireballVFX: effect.orbitingFireballVFX,
+                fireSFX: effect.onFire
             );
             Debug.Log("[Effect] OrbitingFireballBase created");
         }
@@ -1049,7 +1052,8 @@ public class PlayerInventory : MonoBehaviour
                 range: effect.arcStrikeRange,
                 poissonLambda: effect.arcStrikePoissonLambda,
                 initialStacks: initialStacks,
-                durationSec: effect.duration
+                durationSec: effect.duration,
+                lightningSFX: effect.onLightning
             );
             if (effect.duration > 0f) tickingEffects.Add(arcStrikeEffect);
             Debug.Log($"[Effect] Arc Strike created : {effect.arcStrikeDamage} damage, {effect.arcStrikeRange}m range, {effect.arcStrikePoissonLambda} lambda, Stacks{initialStacks}");
@@ -1145,7 +1149,8 @@ public class PlayerInventory : MonoBehaviour
                 cooldownPerEnemy: effect.elementReactionExplosionCooldown,
                 initialStacks: initialStacks,
                 durationSec: effect.duration,
-                explosionVFX: effect.elementReactionExplosionVFX
+                explosionVFX: effect.elementReactionExplosionVFX,
+                explosionSFX: effect.onExplosion
             );
             if (effect.duration > 0f) tickingEffects.Add(elementReactionExplosionEffect);
             Debug.Log($"[Effect] Element Reaction Explosion created : {effect.elementReactionExplosionDamage} damage, {effect.elementReactionExplosionRadius}m radius, Stacks{initialStacks}");
@@ -1170,7 +1175,8 @@ public class PlayerInventory : MonoBehaviour
                 orbitRadius: effect.orbitingFireballRadius,
                 rotationSpeed: effect.orbitingFireballRotationSpeed,
                 initialStacks: initialStacks,
-                durationSec: effect.duration
+                durationSec: effect.duration,
+                fireSFX: effect.onFire
             );
             if (effect.duration > 0f) tickingEffects.Add(orbitingFireballsEffect);
             Debug.Log($"[Effect] Orbiting Fireballs created : {effect.orbitingFireballDamage} damage, {effect.orbitingFireballRadius}m radius, Stacks {initialStacks}");
@@ -1195,7 +1201,8 @@ public class PlayerInventory : MonoBehaviour
                 chainCount: effect.lightningDashChainCount,
                 range: effect.lightningDashChainRange,
                 initialStacks: initialStacks,
-                durationSec: effect.duration
+                durationSec: effect.duration,
+                lightningSFX: effect.onLightning
             );
             if (effect.duration > 0f) tickingEffects.Add(lightningDashEffect);
             Debug.Log($"[Effect] Lightning Dash created : {effect.lightningDashDamage} damage, {effect.lightningDashChainCount} chains, Stacks {initialStacks}");

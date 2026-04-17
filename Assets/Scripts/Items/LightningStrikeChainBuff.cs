@@ -28,13 +28,16 @@ public class LightningStrikeChainBuff : IDisposable
     private GameObject[] arcStartPool;
     private GameObject[] arcEndPool;
 
+    private readonly AK.Wwise.Event lightningSFX;
+
     public LightningStrikeChainBuff(
         Entity owner,
         float buffDuration,
         float chainDamagePercent,
         int maxDepth,
         int branchesPerNode,
-        float chainRange)
+        float chainRange,
+        AK.Wwise.Event lightningSFX = null)
     {
         this.owner = owner;
         this.buffDuration = buffDuration;
@@ -42,6 +45,7 @@ public class LightningStrikeChainBuff : IDisposable
         this.maxTreeDepth = maxDepth;
         this.branchesPerNode = branchesPerNode;
         this.chainRange = chainRange;
+        this.lightningSFX = lightningSFX;
 
         buffArcContainer = new GameObject("BuffArcContainer");
         buffArcContainer.transform.SetParent(owner.transform);
@@ -135,6 +139,8 @@ public class LightningStrikeChainBuff : IDisposable
             vfxDuration: 0.35f,
             skipRootProcessing: true
         );
+
+        LightningCore.PostSFXAtPosition(lightningSFX, enemy.transform.position);
 
         ChainLightningTest.IsProcessingChain = false;
     }

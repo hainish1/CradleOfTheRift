@@ -266,6 +266,14 @@ public class EffectSpec
     public float poisonCloudLifetime = 5f;
     public float poisonCloudBehindDistance = 1.25f;
     public GameObject poisonCloudVfxPrefab;
+
+    [Header("Wwise SFX")]
+    [Tooltip("Lightning sound")]
+    public AK.Wwise.Event onLightning;
+    [Tooltip("Fire/Fireball sound")]
+    public AK.Wwise.Event onFire;
+    [Tooltip("Explosion sound ")]
+    public AK.Wwise.Event onExplosion;
 }
 
 public enum ItemRarity

@@ -156,12 +156,14 @@ public class EffectSpecDrawer : PropertyDrawer
         ItemEffectKind.ArcStrike => new[]
         {
             "arcStrikeDamage", "arcStrikeRange", "arcStrikePoissonLambda",
+            "onLightning",
         },
 
         ItemEffectKind.ElementReactionExplosion => new[]
         {
             "elementReactionExplosionDamage", "elementReactionExplosionRadius",
             "elementReactionExplosionCooldown", "elementReactionExplosionVFX",
+            "onExplosion",
         },
 
         ItemEffectKind.LightningStrike => new[]
@@ -179,11 +181,13 @@ public class EffectSpecDrawer : PropertyDrawer
         ItemEffectKind.OrbitingFireballs => new[]
         {
             "orbitingFireballDamage", "orbitingFireballRadius", "orbitingFireballRotationSpeed",
+            "onFire",
         },
 
         ItemEffectKind.LightningDash => new[]
         {
             "lightningDashDamage", "lightningDashChainCount", "lightningDashChainRange",
+            "onLightning",
         },
 
         ItemEffectKind.OrbitingFireballsTest => new[]
@@ -235,6 +239,7 @@ public class EffectSpecDrawer : PropertyDrawer
         {
             "playerLightningStrikeDamage", "playerLightningStrikeRadius",
             "playerLightningStrikeInterval", "playerLightningStrikeVFX",
+            "onLightning",
         },
         ItemEffectKind.LightningStrikeDamage => new[]
         {
@@ -245,8 +250,9 @@ public class EffectSpecDrawer : PropertyDrawer
             "chainLightningTestBuffDuration", "chainLightningTestChainDamagePercent",
             "chainLightningTestMaxDepth", "chainLightningTestBranchesPerNode",
             "chainLightningTestChainRange",
+            "onLightning",
         },
-        ItemEffectKind.LightningStrikePlayerChain => Array.Empty<string>(),
+        ItemEffectKind.LightningStrikePlayerChain => new[] { "onLightning" },
         ItemEffectKind.LightningStrikeElectrify => new[]
         {
             "playerLightningStrikeElectrifyDamage",
@@ -265,6 +271,7 @@ public class EffectSpecDrawer : PropertyDrawer
         {
             "orbitingFireballDamage", "orbitingFireballRadius", "orbitingFireballRotationSpeed",
             "orbitingFireballVFX",
+            "onFire",
         },
         ItemEffectKind.OrbitingFireballBonusCount => new[]
         {

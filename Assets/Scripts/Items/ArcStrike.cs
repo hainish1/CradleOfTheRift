@@ -30,7 +30,9 @@ public class ArcStrike : IDisposable
         public float triggerTime;
     }
 
-    public ArcStrike(Entity owner, float damage, float range, float poissonLambda = 5.5f, int initialStacks = 1, float durationSec = -1f)
+    private readonly AK.Wwise.Event lightningSFX;
+
+    public ArcStrike(Entity owner, float damage, float range, float poissonLambda = 5.5f, int initialStacks = 1, float durationSec = -1f, AK.Wwise.Event lightningSFX = null)
     {
         this.owner = owner;
         this.baseDamage = damage;
@@ -39,6 +41,7 @@ public class ArcStrike : IDisposable
         this.stacks = initialStacks > 0 ? initialStacks : 1;
         this.duration = durationSec;
         this.timer = durationSec;
+        this.lightningSFX = lightningSFX;
         
         enemyLayer = LayerMask.GetMask("Enemy");
         nextTriggerTime = Time.time + GetNextPoissonInterval();
@@ -182,6 +185,7 @@ public class ArcStrike : IDisposable
             
             
             LightningCore.CreateLightningVFX(owner.transform, arc.target.transform, range, flightTime, null, startHeight, 0.5f, extendTime, enableArcBend: true);
+            LightningCore.PostSFXAtPosition(lightningSFX, arc.target.transform.position);
         }
     }
 

@@ -38,13 +38,16 @@ public class LightningStrikeBase : IDisposable
     private GameObject strikeStartObj;
     private GameObject strikeEndObj;
 
-    public LightningStrikeBase(Entity owner, float damage, float radius, float interval, GameObject strikeVFX = null)
+    private readonly AK.Wwise.Event lightningSFX;
+
+    public LightningStrikeBase(Entity owner, float damage, float radius, float interval, GameObject strikeVFX = null, AK.Wwise.Event lightningSFX = null)
     {
         this.owner = owner;
         this.baseDamage = damage;
         this.radius = radius;
         this.interval = Mathf.Max(0.1f, interval);
         this.strikeVFX = strikeVFX;
+        this.lightningSFX = lightningSFX;
         this.nextStrikeTime = Time.time + this.interval;
         enemyLayer = LayerMask.GetMask("Enemy");
 
@@ -145,6 +148,7 @@ public class LightningStrikeBase : IDisposable
         }
 
         CreateStrikeVfx(position);
+        LightningCore.PostSFXAtPosition(lightningSFX, position);
         LightningStrikeEvents.FireStrikeLanded(owner, position, damage);
 
         if (playerHit)
