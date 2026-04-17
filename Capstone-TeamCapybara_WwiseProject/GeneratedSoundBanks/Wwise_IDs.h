@@ -29,12 +29,16 @@ namespace AK
         static const AkUniqueID PLAY_AMBIENCE = 278617630U;
         static const AkUniqueID PLAY_PLAYER_CROWN_SHOOT = 1245563929U;
         static const AkUniqueID PLAY_PLAYER_DASH = 2175711460U;
+        static const AkUniqueID PLAY_PLAYER_EXPLOSION = 2417773581U;
         static const AkUniqueID PLAY_PLAYER_FIRE = 1408288908U;
         static const AkUniqueID PLAY_PLAYER_FIREBALL = 1959126323U;
+        static const AkUniqueID PLAY_PLAYER_FIREBALLS = 109563706U;
         static const AkUniqueID PLAY_PLAYER_GROUND_SLAM = 1163424219U;
         static const AkUniqueID PLAY_PLAYER_JUMP = 562256996U;
+        static const AkUniqueID PLAY_PLAYER_LIGHTNING_EXPLOSION = 3008676426U;
         static const AkUniqueID PLAY_PLAYER_MAJOR_LIGHTNING_ATTACK = 865153475U;
         static const AkUniqueID PLAY_PLAYER_MELEE = 3619611380U;
+        static const AkUniqueID PLAY_PLAYER_ZAP = 1666518157U;
         static const AkUniqueID PLAY_RIVER1 = 2332603225U;
         static const AkUniqueID PLAY_RIVER2 = 2332603226U;
         static const AkUniqueID PLAY_SONG_BOSS = 2758397059U;
@@ -42,6 +46,7 @@ namespace AK
         static const AkUniqueID PLAY_SONG_FOREST = 3919329323U;
         static const AkUniqueID PLAY_SONG_ICEY = 3808693238U;
         static const AkUniqueID PLAY_TELEPORTER_AMBIENCE = 1203559441U;
+        static const AkUniqueID PLAY_TUTORIAL = 283731184U;
         static const AkUniqueID PLAY_UI_BUTTON_CLICK = 1661558166U;
         static const AkUniqueID ROCK_BREAK = 756826226U;
         static const AkUniqueID SKULL_DEATH = 2252982343U;
@@ -100,9 +105,9 @@ namespace AK
 
     namespace GAME_PARAMETERS
     {
+        static const AkUniqueID AMBIENTVOLUME = 3546521921U;
         static const AkUniqueID DISTANCETOEXTRACTIONPOINT = 3040750302U;
         static const AkUniqueID ENEMYVOLUME = 535618029U;
-        static const AkUniqueID ENVIRONMENTVOLUME = 3211196718U;
         static const AkUniqueID MASTERVOLUME = 2918011349U;
         static const AkUniqueID MUSICVOLUME = 2346531308U;
         static const AkUniqueID PLAYERVOLUME = 1399119200U;
@@ -110,8 +115,8 @@ namespace AK
 
     namespace BUSSES
     {
+        static const AkUniqueID AMBIENT_BUS = 1207363161U;
         static const AkUniqueID ENEMY_BUS = 963934797U;
-        static const AkUniqueID ENVIRONMENT_BUS = 2833159698U;
         static const AkUniqueID MAIN_AUDIO_BUS = 2246998526U;
         static const AkUniqueID MUSIC_BUS = 3127962312U;
         static const AkUniqueID PLAYER_BUS = 174537428U;

@@ -116,6 +116,13 @@
 										</Reference>
 									</ReferenceList>
 								</Action>
+								<Action Name="" ID="{EAF3152C-E29A-4FED-9A2B-232FB9196755}" ShortID="91927138">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Chain Variety" ID="{DF456E0B-5335-430F-939B-495DCD609EA9}" WorkUnitID="{8ADB7485-E0A9-4F0D-A14F-7ED951DF96EF}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
 							</ChildrenList>
 						</Event>
 						<Event Name="Chest_Locked" ID="{45515A68-3C88-4BE3-9E9F-1CEF6A8B5019}">

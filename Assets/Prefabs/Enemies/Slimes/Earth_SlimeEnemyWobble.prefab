@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2997473194786262736}
   - component: {fileID: 1925427071477824813}
   - component: {fileID: 4354173360419943369}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: log
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 3800606555554990263}
   - component: {fileID: 7519621778853395552}
   - component: {fileID: 764943545564980238}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Slimebody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -273,7 +273,7 @@ GameObject:
   - component: {fileID: 4965577006596635735}
   - component: {fileID: 3005521180559448487}
   - component: {fileID: 8241821847668570066}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Slimebody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -416,7 +416,7 @@ GameObject:
   - component: {fileID: 4346726154947910398}
   - component: {fileID: 4570234721035861101}
   - component: {fileID: 1650417560511715342}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: core
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -502,7 +502,7 @@ GameObject:
   - component: {fileID: 5692927614907603706}
   - component: {fileID: 3120596949644808447}
   - component: {fileID: 2001834640733383671}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: PS_Stone (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5351,7 +5351,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7461143257313615174}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: M_SlimeEarth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5389,7 +5389,7 @@ GameObject:
   - component: {fileID: 6678414249379333011}
   - component: {fileID: 2828191073236527495}
   - component: {fileID: 6504205288705335807}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5473,7 +5473,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3499075357429604681}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: jumpVFXPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5504,7 +5504,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4480229957562130121}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: M_Slime
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5650,7 +5650,7 @@ GameObject:
   - component: {fileID: 2252713168224781418}
   - component: {fileID: 2388984242397454508}
   - component: {fileID: 5776766342113176922}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5912,7 +5912,7 @@ MonoBehaviour:
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
   nextAttackAllowed: 0.5
   elementalProfile:
-    type: 0
+    type: 3
     modelVariant: {fileID: 0}
     bodyVFX: {fileID: 0}
     attackVFX: {fileID: 0}
@@ -5968,7 +5968,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flash: {fileID: 2100000, guid: 679327a50d72c694bab0b63b6b2baec1, type: 2}
   flashDuration: 0.1
-  flashOnlyRootRenderer: 0
+  flashOnlyRootRenderer: 1
 --- !u!114 &5778575427221138315
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6151,7 +6151,7 @@ GameObject:
   - component: {fileID: 6846626168150153685}
   - component: {fileID: 5346464171872607501}
   - component: {fileID: 1692183563942105527}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6237,7 +6237,7 @@ GameObject:
   - component: {fileID: 3837367955027982885}
   - component: {fileID: 7088380902339983658}
   - component: {fileID: 5283120306285222704}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: big_rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6323,7 +6323,7 @@ GameObject:
   - component: {fileID: 6034308714461281169}
   - component: {fileID: 3162843230659585158}
   - component: {fileID: 681172187700653682}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: core
   m_TagString: Untagged
   m_Icon: {fileID: 0}

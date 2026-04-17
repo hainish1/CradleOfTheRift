@@ -10,8 +10,28 @@
 							<Position X="0" Y="0"/>
 						</Module>
 						<Module>
+							<ObjectRef Name="Chest_Ambient" ID="{B07D8A07-9A9F-4666-8681-16F236C411D2}" WorkUnitID="{3965F864-7315-4D51-BF9F-405BFDDB9631}"/>
+							<Position X="0" Y="1"/>
+						</Module>
+						<Module>
 							<ObjectRef Name="Forest" ID="{99446370-AABF-44F5-83E2-73DF1D8EB86A}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
 							<Position X="1" Y="0"/>
+						</Module>
+						<Module>
+							<ObjectRef Name="Chest_Open" ID="{E8ACB5E9-C9AC-4B80-97EF-9A825FC9C893}" WorkUnitID="{3965F864-7315-4D51-BF9F-405BFDDB9631}"/>
+							<Position X="1" Y="1"/>
+						</Module>
+						<Module>
+							<ObjectRef Name="Chest_Open" ID="{E8ACB5E9-C9AC-4B80-97EF-9A825FC9C893}" WorkUnitID="{3965F864-7315-4D51-BF9F-405BFDDB9631}"/>
+							<Position X="2" Y="0"/>
+						</Module>
+						<Module>
+							<ObjectRef Name="Chest_Locked" ID="{45515A68-3C88-4BE3-9E9F-1CEF6A8B5019}" WorkUnitID="{3965F864-7315-4D51-BF9F-405BFDDB9631}"/>
+							<Position X="2" Y="1"/>
+						</Module>
+						<Module>
+							<ObjectRef Name="Pick_Up_Item" ID="{32445DB7-BBAA-4391-93C2-913AFFFF7125}" WorkUnitID="{3965F864-7315-4D51-BF9F-405BFDDB9631}"/>
+							<Position X="3" Y="1"/>
 						</Module>
 					</ModuleList>
 				</SoundcasterSession>

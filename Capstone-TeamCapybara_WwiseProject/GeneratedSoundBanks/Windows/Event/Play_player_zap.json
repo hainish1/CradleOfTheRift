@@ -1,0 +1,72 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "1666518157",
+    "Type": "Event",
+    "GUID": "{2F002754-8B9E-45A8-978F-C7E343E482B2}",
+    "Language": "SFX",
+    "Hash": "{EB800D0F-4A0B-1A9F-C0C4-1348CEC3225E}",
+    "ObjectPath": "Play_player_zap",
+    "ShortName": "Play_player_zap",
+    "Path": "Event/Play_player_zap.bnk",
+    "Media": [
+     {
+      "Id": "287669474",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "MagicPack2_ElectricitySpells_Spell2-002[1].wav",
+      "Path": "Media/287669474.wem",
+      "CachePath": "03/{033BCA89-7CA2-CBB9-046E-48DAD6CED709}.wem"
+     },
+     {
+      "Id": "579772068",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "MagicPack2_ElectricitySpells_Spell2-002[1].wav",
+      "Path": "Media/579772068.wem",
+      "CachePath": "48/{48F48F87-5B62-FC4F-2755-660CA2331977}.wem"
+     },
+     {
+      "Id": "842134105",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "MagicPack2_ElectricitySpells_Spell2-002[1].wav",
+      "Path": "Media/842134105.wem",
+      "CachePath": "FD/{FDB6B8CC-53A4-BA75-266D-38D4BB12C697}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "1666518157",
+      "Name": "Play_player_zap",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_zap",
+      "GUID": "{2F002754-8B9E-45A8-978F-C7E343E482B2}",
+      "DurationType": "OneShot",
+      "DurationMin": "0.6349344",
+      "DurationMax": "0.8056732",
+      "MediaRefs": [
+       {
+        "Id": "287669474"
+       },
+       {
+        "Id": "579772068"
+       },
+       {
+        "Id": "842134105"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{D879A832-C75E-FCD8-BC15-532380D0267D}"
+ }
+}
