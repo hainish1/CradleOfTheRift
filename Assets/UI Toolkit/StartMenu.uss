@@ -26,7 +26,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-bottom: 60px;
+    /* padding-bottom: 0px; */
 }
 
 /* Title label */
@@ -34,7 +34,7 @@
     width: 810px;
     -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerLight-aGnx-Font.ttf?fileID=12800000&guid=353234806b51d43e58d9161acf6d5b78&type=3#CocobikerLight-aGnx-Font");
     color: rgb(0, 0, 0);
-    margin-bottom: 48px;
+    margin-bottom: 30px;
     white-space: nowrap;
     font-size: 96px;
 }
@@ -49,7 +49,6 @@
     margin-bottom: 24px;
     padding: 12px 24px;
     font-size: 70px;
-    -unity-font-style: bold;
     border-radius: 8px;
     -unity-text-align: middle-center;
     transition-duration: 0.15s;
