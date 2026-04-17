@@ -18,10 +18,13 @@ public class OrbitingFireballs : IDisposable
     private bool isPaused;
     private GameObject fireballVFX;
 
+    private readonly AK.Wwise.Event fireSFX;
+    private uint loopPlayingId;
+
     private static readonly int[] RingCapacity = { 6, 12, 24 };
     private const int MaxFireballs = 6 + 12 + 24;
 
-    public OrbitingFireballs(Entity owner, float damage, float orbitRadius, float rotationSpeed, int initialStacks = 1, float durationSec = -1f, GameObject fireballVFX = null)
+    public OrbitingFireballs(Entity owner, float damage, float orbitRadius, float rotationSpeed, int initialStacks = 1, float durationSec = -1f, GameObject fireballVFX = null, AK.Wwise.Event fireSFX = null)
     {
         this.owner = owner;
         this.stacks = Mathf.Max(1, initialStacks);
@@ -31,9 +34,13 @@ public class OrbitingFireballs : IDisposable
         this.orbitRadius = orbitRadius;
         this.rotationSpeed = rotationSpeed;
         this.fireballVFX = fireballVFX;
+        this.fireSFX = fireSFX;
 
         for (int i = 0; i < 3; i++)
             SpawnFireball(-1f);
+
+        if (fireSFX != null && fireSFX.IsValid() && owner != null)
+            loopPlayingId = fireSFX.Post(owner.gameObject);
     }
 
     public bool IsDisposed => disposed;
@@ -220,6 +227,12 @@ public class OrbitingFireballs : IDisposable
     {
         if (disposed) return;
         disposed = true;
+
+        if (loopPlayingId != 0)
+        {
+            AkUnitySoundEngine.StopPlayingID(loopPlayingId);
+            loopPlayingId = 0;
+        }
 
         foreach (var ball in fireballs)
             if (ball != null) ball.Destroy();

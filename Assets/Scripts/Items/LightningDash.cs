@@ -40,7 +40,9 @@ public class LightningDash : IDisposable
     private PlayerShockwaveController shockwave;
     private PlayerHealth playerHealth;
 
-    public LightningDash(Entity owner, float damage, int chainCount, float range, int initialStacks = 1, float durationSec = -1f)
+    private readonly AK.Wwise.Event lightningSFX;
+
+    public LightningDash(Entity owner, float damage, int chainCount, float range, int initialStacks = 1, float durationSec = -1f, AK.Wwise.Event lightningSFX = null)
     {
         this.owner = owner;
         this.stacks = Mathf.Max(1, initialStacks);
@@ -49,6 +51,7 @@ public class LightningDash : IDisposable
         this.chainDamage = damage;
         this.maxChains = chainCount;
         this.chainRange = range;
+        this.lightningSFX = lightningSFX;
 
         playerMovement = owner.GetComponent<PlayerMovement>();
         characterController = owner.GetComponent<CharacterController>();
@@ -323,6 +326,7 @@ public class LightningDash : IDisposable
             lastHitEnemy = target;
 
             LightningCore.ApplyLightningDamage(owner, target, damage);
+            LightningCore.PostSFXAtPosition(lightningSFX, target.transform.position);
 
             var flash = target.GetComponentInChildren<TargetFlash>();
             if (flash != null) flash.Flash();

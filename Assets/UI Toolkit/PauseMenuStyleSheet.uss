@@ -160,22 +160,3 @@
     align-items: center;
 }
 
-/* Base Background Layer */
-.bg-layer-base {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-image: url("project://database/Assets/Art%20Assets/2D/UI/MainMenu/BackgroundStart.jpg?fileID=2800000&amp;guid=bdc19787db477462eaf6c01afdd7b062&amp;type=3#BackgroundStart");
-    -unity-background-scale-mode: scale-and-crop;
-}
-
-/* Midground Layer (Second Image) */
-.bg-layer-mid {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-image: url("project://database/Assets/Art%20Assets/2D/UI/MainMenu/FairyStart.png?fileID=2800000&amp;guid=703e5081abe9245048e31ad968d5a794&amp;type=3#FairyStart");
-    -unity-background-scale-mode: scale-and-crop;
-    /* Optional: If you need to force it behind buttons regardless of UXML order */
-    /* z-index: -1; */ 
-}

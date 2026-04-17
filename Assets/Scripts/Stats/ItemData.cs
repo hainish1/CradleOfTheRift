@@ -61,6 +61,7 @@ public enum ItemEffectKind
     ZoomUpgrade,
     GloomUpgrade,
     OrbitingFireballOnLightning,
+    PoisonCloud,
 }
 
 [Serializable]
@@ -257,6 +258,22 @@ public class EffectSpec
     public float orbitingFireballOnKillDuration = 5f;
     public float orbitingFireballOnLightningThreshold = 100f;
     public float orbitingFireballOnLightningDuration = 5f;
+
+    // Poison cloud 
+    public float poisonCloudDamagePerTick = 3f;
+    public float poisonCloudDamageTickInterval = 1f;
+    public float poisonCloudRadius = 3f;
+    public float poisonCloudLifetime = 5f;
+    public float poisonCloudBehindDistance = 1.25f;
+    public GameObject poisonCloudVfxPrefab;
+
+    [Header("Wwise SFX")]
+    [Tooltip("Lightning sound")]
+    public AK.Wwise.Event onLightning;
+    [Tooltip("Fire/Fireball sound")]
+    public AK.Wwise.Event onFire;
+    [Tooltip("Explosion sound ")]
+    public AK.Wwise.Event onExplosion;
 }
 
 public enum ItemRarity

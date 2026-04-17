@@ -1,12 +1,16 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI%20Toolkit/PauseMenuStyleSheet.uss?fileID=7433441132597879392&amp;guid=e780f1131c06d4602ab181ccec82676f&amp;type=3#PauseMenuStyleSheet" />
+    <Style src="project://database/Assets/UI%20Toolkit/StartMenu.uss?fileID=7433441132597879392&amp;guid=911726ce08c7e094aa83c61bc355971c&amp;type=3#StartMenu" />
     <engine:VisualElement name="Canvas" class="Background" style="flex-grow: 1; width: 1920px; height: 1080px; background-color: rgb(14, 0, 29);">
         <engine:VisualElement name="BackgroundBase" class="bg-layer-base" />
         <engine:VisualElement name="BackgroundMid" class="bg-layer-mid" />
-        <engine:Label text="Cradle of the Rift" name="LabelStartMenu" class="header" style="font-size: 150px;" />
-        <engine:Button text="Start Game" name="ButtonStartGame" class="button unityButtonHover" style="position: absolute; top: 264px; left: 705px; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; scale: 1.5 1.5; background-color: rgba(21, 7, 34, 0);" />
-        <engine:Button text="Settings" name="ButtonSettings" class="button unityButtonHover" style="position: absolute; top: 485px; left: 708px; scale: 1.5 1.5; background-color: rgba(21, 7, 34, 0);" />
-        <engine:Button text="Quit Game" name="ButtonQuitGame" class="button unityButtonHover" style="position: absolute; top: 706px; left: 708px; scale: 1.5 1.5; background-color: rgba(21, 7, 34, 0);" />
-        <engine:Button text="Credits" name="ButtonCredits" class="unityButtonHover button" style="position: absolute; scale: 1.5 1.5; top: 927px; left: 713px; background-color: rgba(21, 7, 34, 0);" />
+
+        <!-- Left panel: ~1/3 of screen width -->
+        <engine:VisualElement name="LeftPanel" class="left-panel">
+            <engine:Label text="Cradle of the Rift" name="LabelStartMenu" class="header" />
+            <engine:Button text="start Game" name="ButtonStartGame" class="menu-button" />
+            <engine:Button text="settings" name="ButtonSettings" class="menu-button" />
+            <engine:Button text="Credits" name="ButtonCredits" class="menu-button" />
+            <engine:Button text="Quit Game" name="ButtonQuitGame" class="menu-button" />
+        </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

@@ -1,0 +1,63 @@
+/* Base Background Layer */
+.bg-layer-base {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: url("project://database/Assets/Art%20Assets/2D/UI/MainMenu/BackgroundStart.jpg?fileID=2800000&guid=bdc19787db477462eaf6c01afdd7b062&type=3#BackgroundStart");
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+/* Midground Layer (Second Image) */
+.bg-layer-mid {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: url("project://database/Assets/Art%20Assets/2D/UI/MainMenu/FairyStart.png?fileID=2800000&guid=703e5081abe9245048e31ad968d5a794&type=3#FairyStart");
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+/* Left panel occupying ~1/3 of the screen */
+.left-panel {
+    position: absolute;
+    left: 20px;
+    top: 0;
+    width: 900px;
+    height: 1080px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* padding-bottom: 0px; */
+}
+
+/* Title label */
+.left-panel .header {
+    width: 810px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerLight-aGnx-Font.ttf?fileID=12800000&guid=353234806b51d43e58d9161acf6d5b78&type=3#CocobikerLight-aGnx-Font");
+    color: rgb(0, 0, 0);
+    margin-bottom: 30px;
+    white-space: nowrap;
+    font-size: 96px;
+}
+
+/* Menu buttons */
+.menu-button {
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/CocobikerUltralight-Egx4-Font.ttf?fileID=12800000&guid=c1ec8293e05204e50923774ef50aedf1&type=3#CocobikerUltralight-Egx4-Font");
+    background-color: rgba(255, 182, 193, 0);
+    color: rgb(0, 0, 0);
+    border-color: rgba(255, 182, 193, 0);
+    border-width: 0;
+    margin-bottom: 24px;
+    padding: 12px 24px;
+    font-size: 70px;
+    border-radius: 8px;
+    -unity-text-align: middle-center;
+    transition-duration: 0.2s, 0.2s;
+    transition-property: background-color, scale;
+    scale: 1 1;
+}
+
+.menu-button:hover {
+    background-color: rgba(255, 182, 193, 0.75);
+    border-color: rgba(0, 0, 0, 0);
+    scale: 1.08 1.08;
+}

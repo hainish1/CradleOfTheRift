@@ -34,6 +34,16 @@ public class PlayerLightningStrike : IDisposable
 
     private readonly List<PendingStrike> pending = new List<PendingStrike>();
 
+    private static readonly Collider[] s_overlapBuffer = new Collider[64];
+    private static readonly RaycastHit[] s_raycastBuffer = new RaycastHit[16];
+
+    private readonly HashSet<Enemy> _strikeUniqueEnemies = new HashSet<Enemy>();
+    private readonly HashSet<PoisonPool> _electrifyUniquePools = new HashSet<PoisonPool>();
+    private readonly HashSet<Enemy> _chainHitEnemies = new HashSet<Enemy>();
+
+    private readonly Collider[] _ownerColliders;
+    private readonly IDamageable _ownerDamageable;
+
     public PlayerLightningStrike(
         Entity owner,
         float damage,
@@ -55,6 +65,9 @@ public class PlayerLightningStrike : IDisposable
         this.timer = durationSec;
         this.nextStrikeTime = Time.time + this.interval;
         enemyLayer = LayerMask.GetMask("Enemy");
+
+        _ownerColliders = owner != null ? owner.GetComponentsInChildren<Collider>() : System.Array.Empty<Collider>();
+        _ownerDamageable = owner != null ? owner.GetComponent<IDamageable>() : null;
 
         // now triggers on every projectile throw regardless of weapon
         PlayerShooter.OnProjectileFired += OnProjectileFired;
@@ -127,22 +140,21 @@ public class PlayerLightningStrike : IDisposable
     private void ExecuteStrike(Vector3 position)
     {
         float damage = baseDamage * stacks;
-        Collider[] hits = Physics.OverlapSphere(position, radius, enemyLayer);
-        HashSet<Enemy> unique = new HashSet<Enemy>();
+        int hitCount = Physics.OverlapSphereNonAlloc(position, radius, s_overlapBuffer, enemyLayer);
+        _strikeUniqueEnemies.Clear();
 
-        foreach (var col in hits)
+        for (int i = 0; i < hitCount; i++)
         {
+            var col = s_overlapBuffer[i];
             var enemy = col.GetComponentInParent<Enemy>();
-            if (enemy == null || unique.Contains(enemy)) continue;
-            unique.Add(enemy);
+            if (enemy == null || !_strikeUniqueEnemies.Add(enemy)) continue;
             LightningCore.ApplyLightningDamage(owner, enemy, damage);
         }
 
-        var playerDamageable = owner.GetComponent<IDamageable>();
         bool playerHit = IsPlayerHit(position);
-        if (playerDamageable != null && !playerDamageable.IsDead && playerHit)
+        if (_ownerDamageable != null && !_ownerDamageable.IsDead && playerHit)
         {
-            playerDamageable.TakeDamage(damage);
+            _ownerDamageable.TakeDamage(damage);
             TriggerChainFromPlayer(damage * ChainOnPlayerHitDamagePercent);
         }
 
@@ -154,39 +166,39 @@ public class PlayerLightningStrike : IDisposable
     {
         if (electrifyDamage <= 0f) return;
 
-        Collider[] hits = Physics.OverlapSphere(position, ElectrifyPoolSearchRadius);
-        HashSet<PoisonPool> unique = new HashSet<PoisonPool>();
+        int hitCount = Physics.OverlapSphereNonAlloc(position, ElectrifyPoolSearchRadius, s_overlapBuffer);
+        _electrifyUniquePools.Clear();
 
-        foreach (var col in hits)
+        for (int i = 0; i < hitCount; i++)
         {
+            var col = s_overlapBuffer[i];
             var pool = col.GetComponentInParent<PoisonPool>();
-            if (pool == null || unique.Contains(pool)) continue;
-            unique.Add(pool);
+            if (pool == null || !_electrifyUniquePools.Add(pool)) continue;
             pool.Electrify(electrifyDamage);
         }
     }
 
     private Vector3 GetGroundPoint(Vector3 origin)
     {
-        Collider[] ownerCols = owner != null ? owner.GetComponentsInChildren<Collider>() : null;
         Vector3 start = origin + Vector3.up * 2f;
         Vector3 end = origin + Vector3.down * 5f;
         Vector3 dir = (end - start).normalized;
         float distance = Vector3.Distance(start, end);
 
-        RaycastHit[] hits = Physics.RaycastAll(start, dir, distance, ~0, QueryTriggerInteraction.Ignore);
-        if (hits.Length == 0) return GetFallbackPoint(origin);
+        int hitCount = Physics.RaycastNonAlloc(start, dir, s_raycastBuffer, distance, ~0, QueryTriggerInteraction.Ignore);
+        if (hitCount == 0) return GetFallbackPoint(origin);
 
-        RaycastHit best = hits[0];
+        RaycastHit best = default;
         float bestDist = float.MaxValue;
-        for (int i = 0; i < hits.Length; i++)
+        for (int i = 0; i < hitCount; i++)
         {
-            if (IsOwnerCollider(hits[i].collider, ownerCols)) continue;
-            if (hits[i].normal.y < 0.2f) continue;
-            if (hits[i].distance < bestDist)
+            RaycastHit h = s_raycastBuffer[i];
+            if (IsOwnerCollider(h.collider)) continue;
+            if (h.normal.y < 0.2f) continue;
+            if (h.distance < bestDist)
             {
-                bestDist = hits[i].distance;
-                best = hits[i];
+                bestDist = h.distance;
+                best = h;
             }
         }
 
@@ -194,12 +206,12 @@ public class PlayerLightningStrike : IDisposable
         return best.point + Vector3.up * 0.02f;
     }
 
-    private bool IsOwnerCollider(Collider col, Collider[] ownerCols)
+    private bool IsOwnerCollider(Collider col)
     {
-        if (col == null || ownerCols == null) return false;
-        for (int i = 0; i < ownerCols.Length; i++)
+        if (col == null || _ownerColliders == null) return false;
+        for (int i = 0; i < _ownerColliders.Length; i++)
         {
-            if (ownerCols[i] == col) return true;
+            if (_ownerColliders[i] == col) return true;
         }
         return false;
     }
@@ -264,15 +276,15 @@ public class PlayerLightningStrike : IDisposable
         if (chainDamage <= 0f || owner == null) return;
 
         float chainRange = ChainLightning.DefaultRange;
-        HashSet<Enemy> hit = new HashSet<Enemy>();
-        Enemy first = FindClosestEnemy(owner.transform.position, chainRange, hit);
+        _chainHitEnemies.Clear();
+        Enemy first = FindClosestEnemy(owner.transform.position, chainRange, _chainHitEnemies);
         if (first == null) return;
 
-        hit.Add(first);
+        _chainHitEnemies.Add(first);
         LightningCore.ApplyLightningDamage(owner, first, chainDamage);
         LightningCore.CreateLightningVFX(owner.transform, first.transform, chainRange, 0.2f, null, 0.5f, 0.5f, 0.18f);
 
-        ChainFromEnemy(first, first.transform.position, chainDamage, 0, chainRange, hit);
+        ChainFromEnemy(first, first.transform.position, chainDamage, 0, chainRange, _chainHitEnemies);
     }
 
     private void ChainFromEnemy(Enemy from, Vector3 fromPos, float damage, int chainNum, float chainRange, HashSet<Enemy> hit)
@@ -291,12 +303,13 @@ public class PlayerLightningStrike : IDisposable
 
     private Enemy FindClosestEnemy(Vector3 fromPos, float chainRange, HashSet<Enemy> hit)
     {
-        Collider[] nearby = Physics.OverlapSphere(fromPos, chainRange, enemyLayer);
+        int hitCount = Physics.OverlapSphereNonAlloc(fromPos, chainRange, s_overlapBuffer, enemyLayer);
         Enemy closest = null;
         float minDist = float.MaxValue;
 
-        foreach (Collider col in nearby)
+        for (int i = 0; i < hitCount; i++)
         {
+            Collider col = s_overlapBuffer[i];
             Enemy enemy = col.GetComponentInParent<Enemy>();
             if (enemy == null || hit.Contains(enemy)) continue;
 
