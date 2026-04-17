@@ -10,7 +10,7 @@
     "Type": "User",
     "GUID": "{701ECBBD-9C7B-4030-8CDB-749EE5D1C7B9}",
     "Language": "SFX",
-    "Hash": "{08B7B885-9F0C-5C54-F7CA-8FB16CFC4961}",
+    "Hash": "{D7D8F2A4-33C6-85F7-ADFC-DF6670329917}",
     "ObjectPath": "Init",
     "ShortName": "Init",
     "Path": "Init.bnk",
@@ -66,16 +66,16 @@
       "GUID": "{3F756F82-66A0-4FC8-9130-1250A77F4FA9}"
      },
      {
+      "Id": "1207363161",
+      "Name": "Ambient Bus",
+      "ObjectPath": "\\Busses\\Default Work Unit\\Main Audio Bus\\Ambient Bus",
+      "GUID": "{6394759C-6F2E-46EB-9732-B9DCE99AC92C}"
+     },
+     {
       "Id": "2246998526",
       "Name": "Main Audio Bus",
       "ObjectPath": "\\Busses\\Default Work Unit\\Main Audio Bus",
       "GUID": "{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}"
-     },
-     {
-      "Id": "2833159698",
-      "Name": "Environment Bus",
-      "ObjectPath": "\\Busses\\Default Work Unit\\Main Audio Bus\\Environment Bus",
-      "GUID": "{6394759C-6F2E-46EB-9732-B9DCE99AC92C}"
      },
      {
       "Id": "3127962312",
@@ -134,9 +134,9 @@
       "GUID": "{07D46845-C40B-40D5-9C40-99C958D0F115}"
      },
      {
-      "Id": "3211196718",
-      "Name": "EnvironmentVolume",
-      "ObjectPath": "\\Game Parameters\\Default Work Unit\\EnvironmentVolume",
+      "Id": "3546521921",
+      "Name": "AmbientVolume",
+      "ObjectPath": "\\Game Parameters\\Default Work Unit\\AmbientVolume",
       "GUID": "{46C91C02-66E9-4367-8108-C1C5B7DA4B53}"
      }
     ],
@@ -230,6 +230,6 @@
     ]
    }
   ],
-  "FileHash": "{2163D9E9-F147-5696-035F-3D85007683F6}"
+  "FileHash": "{530ACE5C-D4EE-D89D-82FE-B0ED5C627ED6}"
  }
 }
