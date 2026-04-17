@@ -18723,6 +18723,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 48156382}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1419131422 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4796950993963872410, guid: ef94aee2860b50543adbd86217b57a09, type: 3}
+  m_PrefabInstance: {fileID: 5564253056018138494}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1423585199
 GameObject:
   m_ObjectHideFlags: 0
@@ -21570,6 +21575,80 @@ MonoBehaviour:
   m_Bidirectional: 1
   m_AutoUpdatePosition: 0
   m_Area: 0
+--- !u!1001 &1613597022
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1419131422}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.37
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.38268363
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.92387944
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -135
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+      propertyPath: m_Name
+      value: M_Axe_Shrine_CO (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+--- !u!4 &1613597023 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 117af1534cf6ae04bb1bc512c4ccb0e9, type: 3}
+  m_PrefabInstance: {fileID: 1613597022}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1617743608
 GameObject:
   m_ObjectHideFlags: 0
@@ -30393,6 +30472,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 436099340166419955, guid: ef94aee2860b50543adbd86217b57a09, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4255160037174134715, guid: ef94aee2860b50543adbd86217b57a09, type: 3}
       propertyPath: m_Name
       value: Shrine_AXE
@@ -30439,7 +30522,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4796950993963872410, guid: ef94aee2860b50543adbd86217b57a09, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1613597023}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ef94aee2860b50543adbd86217b57a09, type: 3}
 --- !u!4 &5585596763706325070
