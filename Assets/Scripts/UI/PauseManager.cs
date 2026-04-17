@@ -13,6 +13,7 @@ public class PauseManager : MonoBehaviour
     }
     public static bool GameIsPaused; 
     public static PauseState CurrentPauseState = PauseState.None;
+    [SerializeField] private bool isMainMenu = false;
 
     // Reset statics when entering play mode 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -108,6 +109,11 @@ public class PauseManager : MonoBehaviour
     }
     private void TogglePauseMenu()
     {
+        if (this.isMainMenu)
+        {
+            return;
+        }
+
         if (PlayerHealth.GameIsOver) return;
         if (CurrentPauseState == PauseState.EndGame) return;
         if (CurrentPauseState == PauseState.Upgrade) return; // don't interfere with upgrade panel
