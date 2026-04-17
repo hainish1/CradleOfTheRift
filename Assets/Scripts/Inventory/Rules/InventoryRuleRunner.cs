@@ -11,27 +11,53 @@ public class InventoryRuleRunner : MonoBehaviour
     [SerializeField] private RunLootState runLootState;
 
     private bool isApplying;
+    private bool subscribedToInventory;
 
     private void Awake()
     {
         if (inventory == null) inventory = GetComponent<PlayerInventory>();
+        if (inventory == null) inventory = FindFirstObjectByType<PlayerInventory>();
         if (runLootState == null) runLootState = RunLootState.Instance;
     }
+
     private void OnEnable()
     {
-        if (inventory == null) return;
-        inventory.OnItemAdded += OnInventoryChanged;
-        inventory.OnItemRemoved += OnInventoryChanged;
-        inventory.OnItemStackChanged += OnInventoryChanged;
-        EvaluateAll();
+        TrySubscribeToInventory();
     }
 
     private void OnDisable()
     {
-        if (inventory == null) return;
+        if (inventory == null || !subscribedToInventory) return;
         inventory.OnItemAdded -= OnInventoryChanged;
         inventory.OnItemRemoved -= OnInventoryChanged;
         inventory.OnItemStackChanged -= OnInventoryChanged;
+        subscribedToInventory = false;
+    }
+
+    private void Update()
+    {
+        if (!subscribedToInventory)
+            TrySubscribeToInventory();
+    }
+
+    private bool TrySubscribeToInventory()
+    {
+        if (subscribedToInventory) return true;
+
+        if (inventory == null)
+        {
+            inventory = FindFirstObjectByType<PlayerInventory>();
+            if (inventory == null) return false;
+        }
+
+        inventory.OnItemAdded += OnInventoryChanged;
+        inventory.OnItemRemoved += OnInventoryChanged;
+        inventory.OnItemStackChanged += OnInventoryChanged;
+        subscribedToInventory = true;
+
+        Debug.Log("[InventoryRuleRunner] Subscribed to PlayerInventory.");
+        EvaluateAll();
+        return true;
     }
 
     private void OnInventoryChanged(ItemData _, PlayerInventory.ItemStack __)
@@ -72,6 +98,9 @@ public class InventoryRuleRunner : MonoBehaviour
 
         isApplying = true;
 
+
+        bool allActionsSucceeded = true;
+
         foreach (var action in rule.actions)
         {
             switch (action.type)
@@ -82,21 +111,25 @@ public class InventoryRuleRunner : MonoBehaviour
                         int n = action.SafeAmount;
                         for (int i = 0; i < n; i++) inventory.AddItem(action.item);
                     }
+                    else allActionsSucceeded = false;
                     break;
 
                 case InventoryRuleActionType.RemoveStacks:
                     if (action.item != null)
                         inventory.TryRemoveStacks(action.item, action.SafeAmount);
+                    else allActionsSucceeded = false;
                     break;
 
                 case InventoryRuleActionType.RemoveAllStacks:
                     if (action.item != null)
                         inventory.TryRemoveStacks(action.item, inventory.GetItemCount(action.item));
+                    else allActionsSucceeded = false;
                     break;
 
                 case InventoryRuleActionType.SetCount:
                     if (action.item != null)
                         inventory.SetItemCount(action.item, Mathf.Max(0, action.amount));
+                    else allActionsSucceeded = false;
                     break;
 
                 case InventoryRuleActionType.TransformItem:
@@ -106,32 +139,54 @@ public class InventoryRuleRunner : MonoBehaviour
                         if (inventory.TryRemoveStacks(action.item, n))
                             for (int i = 0; i < n; i++) inventory.AddItem(action.otherItem);
                     }
+                    else allActionsSucceeded = false;
                     break;
 
                 case InventoryRuleActionType.UnlockLootItem:
+                    if (runLootState == null) runLootState = RunLootState.Instance;
                     if (action.item != null && runLootState != null)
                         runLootState.Unlock(action.item);
+                    else
+                    {
+                        Debug.LogWarning($"[InventoryRuleRunner] UnlockLootItem skipped (runLootState={(runLootState==null?"null":"ok")}, item={(action.item==null?"null":action.item.itemName)}). Will retry.");
+                        allActionsSucceeded = false;
+                    }
                     break;
 
                 case InventoryRuleActionType.BlockLootItem:
+                    if (runLootState == null) runLootState = RunLootState.Instance;
                     if (action.item != null && runLootState != null)
                         runLootState.Block(action.item);
+                    else
+                    {
+                        Debug.LogWarning($"[InventoryRuleRunner] BlockLootItem skipped (runLootState={(runLootState==null?"null":"ok")}, item={(action.item==null?"null":action.item.itemName)}). Will retry.");
+                        allActionsSucceeded = false;
+                    }
                     break;
 
                 case InventoryRuleActionType.AddToUpgradePool:
                     if (action.item != null && UpgradeLevelManager.Instance != null)
                         UpgradeLevelManager.Instance.UnlockForUpgrade(action.item);
+                    else
+                    {
+                        Debug.LogWarning($"[InventoryRuleRunner] AddToUpgradePool skipped (UpgradeLevelManager.Instance={(UpgradeLevelManager.Instance==null?"null":"ok")}, item={(action.item==null?"null":action.item.itemName)}). Will retry.");
+                        allActionsSucceeded = false;
+                    }
                     break;
 
                 case InventoryRuleActionType.RemoveFromUpgradePool:
                     if (action.item != null && UpgradeLevelManager.Instance != null)
                         UpgradeLevelManager.Instance.LockFromUpgrade(action.item);
+                    else
+                    {
+                        Debug.LogWarning($"[InventoryRuleRunner] RemoveFromUpgradePool skipped (UpgradeLevelManager.Instance={(UpgradeLevelManager.Instance==null?"null":"ok")}, item={(action.item==null?"null":action.item.itemName)}). Will retry.");
+                        allActionsSucceeded = false;
+                    }
                     break;
             }
         }
 
-        // mark as applied so one-way rules don't fire again
-        if (rule.oneWayUnlock)
+        if (rule.oneWayUnlock && allActionsSucceeded)
             applied.Add(rule);
 
         isApplying = false;

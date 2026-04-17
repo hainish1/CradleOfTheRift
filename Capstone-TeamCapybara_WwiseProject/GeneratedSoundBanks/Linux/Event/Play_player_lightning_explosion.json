@@ -1,0 +1,190 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "3008676426",
+    "Type": "Event",
+    "GUID": "{F0AF57D0-C3CD-48E4-B82D-6E3ADE963AF8}",
+    "Language": "SFX",
+    "Hash": "{73591340-37D7-6481-1A0D-53A8FB507B80}",
+    "ObjectPath": "Play_player_lightning_explosion",
+    "ShortName": "Play_player_lightning_explosion",
+    "Path": "Event/Play_player_lightning_explosion.bnk",
+    "Media": [
+     {
+      "Id": "203142451",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "LASRMisc_Beam Transient_04_SFRMS_SCIWPNS.wav",
+      "Path": "Media/203142451.wem",
+      "CachePath": "6D/{6DE11572-3DC8-6CD1-E5F6-A0C7026210B4}.wem"
+     },
+     {
+      "Id": "328375010",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "ThunderPowerful.wav",
+      "Path": "Media/328375010.wem",
+      "CachePath": "98/{98D404E7-750B-6FC1-3A74-CE573F498CD0}.wem"
+     },
+     {
+      "Id": "330325000",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "FRWKComr_InsJ_Fireworks_Launch_Close_01-03.wav",
+      "Path": "Media/330325000.wem",
+      "CachePath": "26/{262BD1DD-CE66-F631-389F-F14B6CE60233}.wem"
+     },
+     {
+      "Id": "411406703",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "ThunderPowerful.wav",
+      "Path": "Media/411406703.wem",
+      "CachePath": "A5/{A5C00998-00FE-CDE5-BAA2-4AE12560DBA3}.wem"
+     },
+     {
+      "Id": "565804503",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0277_explosion_urban_004_02[1].wav",
+      "Path": "Media/565804503.wem",
+      "CachePath": "CD/{CD59CCD3-7C81-B164-F69F-84693DC1C644}.wem"
+     },
+     {
+      "Id": "635746896",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "ELECZap_Bug zapper zapping, electricity, crackle,_RogueWaves_DruidMagic_37.wav",
+      "Path": "Media/635746896.wem",
+      "CachePath": "36/{36377865-E8CD-9A8D-1970-058A0B82E4BD}.wem"
+     },
+     {
+      "Id": "717902266",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "MagicPack2_ElectricitySpells_Spell2-002[1].wav",
+      "Path": "Media/717902266.wem",
+      "CachePath": "E5/{E54C65E1-09A1-FD32-092E-163FD4B79470}.wem"
+     },
+     {
+      "Id": "946455381",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "FRWKComr_InsJ_Fireworks_Launch_Close_01-03.wav",
+      "Path": "Media/946455381.wem",
+      "CachePath": "4F/{4F40197A-F70F-2F34-7C00-715F294B2A9E}.wem"
+     },
+     {
+      "Id": "958849886",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "FRWKComr_InsJ_Fireworks_Launch_Close_01-03.wav",
+      "Path": "Media/958849886.wem",
+      "CachePath": "C7/{C71CABC7-7E64-7A3C-C76B-BE60430B27CA}.wem"
+     },
+     {
+      "Id": "990834503",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "MagicPack2_ElectricitySpells_Spell2-002[1].wav",
+      "Path": "Media/990834503.wem",
+      "CachePath": "22/{2278AFB9-259B-5F79-7116-E82284AEBAF9}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "2417773581",
+      "Name": "Play_player_explosion",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_explosion",
+      "GUID": "{45B050AF-1B04-4A27-8F67-96D7859A1E9E}",
+      "DurationType": "OneShot",
+      "DurationMin": "4",
+      "DurationMax": "4",
+      "MediaRefs": [
+       {
+        "Id": "565804503"
+       }
+      ]
+     },
+     {
+      "Id": "3008676426",
+      "Name": "Play_player_lightning_explosion",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_lightning_explosion",
+      "GUID": "{F0AF57D0-C3CD-48E4-B82D-6E3ADE963AF8}",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0",
+      "ActionPostEvent": [
+       {
+        "Id": "865153475",
+        "Name": "Play_player_major_lightning_attack",
+        "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_major_lightning_attack",
+        "GUID": "{8383BF7C-0465-4E1E-95BB-86767C952073}"
+       },
+       {
+        "Id": "2417773581",
+        "Name": "Play_player_explosion",
+        "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_explosion",
+        "GUID": "{45B050AF-1B04-4A27-8F67-96D7859A1E9E}"
+       }
+      ]
+     },
+     {
+      "Id": "865153475",
+      "Name": "Play_player_major_lightning_attack",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_major_lightning_attack",
+      "GUID": "{8383BF7C-0465-4E1E-95BB-86767C952073}",
+      "DurationType": "OneShot",
+      "DurationMin": "1.4555943",
+      "DurationMax": "3.6085477",
+      "MediaRefs": [
+       {
+        "Id": "203142451"
+       },
+       {
+        "Id": "328375010"
+       },
+       {
+        "Id": "330325000"
+       },
+       {
+        "Id": "411406703"
+       },
+       {
+        "Id": "635746896"
+       },
+       {
+        "Id": "717902266"
+       },
+       {
+        "Id": "946455381"
+       },
+       {
+        "Id": "958849886"
+       },
+       {
+        "Id": "990834503"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{38F03217-36E7-55C6-C3B0-43ECB59FACBF}"
+ }
+}

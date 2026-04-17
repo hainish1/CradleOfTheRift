@@ -74,6 +74,17 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Play_Tutorial" ID="{E0BD367E-0BFC-4352-ADB6-4FBF01C628EC}">
+					<ChildrenList>
+						<Action Name="" ID="{7AAEB37E-79F5-46E1-96C1-99552D989368}" ShortID="1007226982">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Tutorial" ID="{1AA39017-FCB0-4FDD-94B6-3D0D00464C8E}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

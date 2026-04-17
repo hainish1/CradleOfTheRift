@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
   m_Name: Lightning Spear Upgrade
   m_EditorClassIdentifier: 
-  itemName: Lightning Spear
-  description: Your spear summon lightning
+  itemName: Lightning Projectile
+  description: Enemies you hit with your projectile attack get struck by lightning
   icon: {fileID: 21300000, guid: 24d36e96c0661c04f822f6935419e712, type: 3}
   rarity: 1
   rarityColor: {r: 0, g: 0.5283019, b: 0.06516498, a: 1}
@@ -142,4 +142,4 @@ MonoBehaviour:
   operatorType: 0
   value: 1
   duration: -1
-  itemId: 7e809300be9e4ac7bc0c98e6847171dc
+  itemId: 1678de851e5c462da5ff43ab4eecb2ee

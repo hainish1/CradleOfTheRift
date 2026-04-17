@@ -10,12 +10,15 @@ public class LightningStrikePlayerChain : IDisposable
     private readonly HashSet<Enemy> hitBuffer = new HashSet<Enemy>();
     private bool disposed;
 
+    private readonly AK.Wwise.Event lightningSFX;
+
     private const int MaxChainCount = 3;
     private const float DamagePercent = 0.5f;
 
-    public LightningStrikePlayerChain(Entity owner)
+    public LightningStrikePlayerChain(Entity owner, AK.Wwise.Event lightningSFX = null)
     {
         this.owner = owner;
+        this.lightningSFX = lightningSFX;
         enemyLayer = LayerMask.GetMask("Enemy");
         LightningStrikeEvents.PlayerSelfHit += OnPlayerSelfHit;
     }
@@ -37,6 +40,7 @@ public class LightningStrikePlayerChain : IDisposable
         hitBuffer.Add(first);
         LightningCore.ApplyLightningDamage(owner, first, chainDamage);
         LightningCore.CreateLightningVFX(owner.transform, first.transform, chainRange, 0.2f, null, 0.5f, 0.5f, 0.18f);
+        LightningCore.PostSFXAtPosition(lightningSFX, first.transform.position);
 
         ChainFromEnemy(first, chainDamage, 0, chainRange);
     }

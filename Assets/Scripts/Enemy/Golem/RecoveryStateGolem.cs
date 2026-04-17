@@ -67,7 +67,6 @@ public class RecoveryStateGolem : EnemyState
             // First pause after attack
             if (Time.time >= startWanderTime) 
             {
-                //enemyGolem.FaceTargetSmooth(enemyGolem.turnSpeedWhileAiming);   // could get rid of this to prevent constnatly facing the player
                 if (!isWandering || wanderTimer <= 0f)
                 {
                     PickWanderPoint();
@@ -75,9 +74,10 @@ public class RecoveryStateGolem : EnemyState
                 else
                 {
                     wanderTimer -= Time.deltaTime;
-                    // Keep facing the player while sidestepping (maybe we dont have the animations for this)
-                    enemyGolem.FaceTargetSmooth(enemyGolem.turnSpeedWhileAiming);
                 }
+
+                // Keep the body aligned with travel so one forward walk animation works for wandering.
+                enemyGolem.FaceMovementDirectionSmooth(enemyGolem.turnSpeedWhileAiming);
             }
         }
         else

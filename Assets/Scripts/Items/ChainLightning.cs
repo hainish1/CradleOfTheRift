@@ -24,6 +24,8 @@ public class ChainLightning : IDisposable
     
     private HashSet<Enemy> hitEnemiesCache = new HashSet<Enemy>();
 
+    private static readonly Collider[] s_overlapBuffer = new Collider[64];
+
     public float CurrentRange => chainRange;
 
     public ChainLightning(Entity owner, float chainDamagePercent, int maxChainCount, float chainRange, int initialStacks = 1, float durationSec = -1f, GameObject lightningVFX = null)
@@ -84,12 +86,13 @@ public class ChainLightning : IDisposable
 
         IsProcessingChain = true;
 
-        Collider[] nearby = Physics.OverlapSphere(fromPos, chainRange, enemyLayer);
+        int hitCount = Physics.OverlapSphereNonAlloc(fromPos, chainRange, s_overlapBuffer, enemyLayer);
         Enemy closest = null;
         float minDist = float.MaxValue;
 
-        foreach (Collider col in nearby)
+        for (int i = 0; i < hitCount; i++)
         {
+            Collider col = s_overlapBuffer[i];
             Enemy enemy = col.GetComponentInParent<Enemy>();
             if (enemy == null || hit.Contains(enemy)) continue;
 

@@ -18,6 +18,8 @@ public class TutorialProjectileTarget : MonoBehaviour
     [Tooltip("The index of the step this target completes (0-based).")]
     [SerializeField] private int expectedStepIndex = -1;
     private bool _fired = false;
+    [Header("Sound Effects")]
+    [SerializeField] private AK.Wwise.Event activateSFX;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -33,6 +35,9 @@ public class TutorialProjectileTarget : MonoBehaviour
             return;
 
         _fired = true;
+
+        if (activateSFX.IsValid())
+            activateSFX.Post(gameObject);
         
         TutorialSceneManager.Instance?.CompleteCurrentStep();
     }

@@ -30,10 +30,10 @@ public class BossSpawner : MonoBehaviour
     {
         extractionZone = GetComponent<ExtractionZone>();
         if (extractionZone == null)
-            Debug.LogError("BossSpawner: ExtractionZone component not found!");
+            Debug.LogWarning("BossSpawner: ExtractionZone component not found!");
         
         if (difficultyScaler == null) {
-            Debug.LogError("BossSpawner: DifficultyScaler reference not set!");
+            Debug.LogWarning("BossSpawner: DifficultyScaler reference not set!");
             return;
         }
 

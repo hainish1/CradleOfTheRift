@@ -91,7 +91,7 @@
 								</ObjectList>
 							</ObjectLists>
 						</Bus>
-						<Bus Name="Environment Bus" ID="{6394759C-6F2E-46EB-9732-B9DCE99AC92C}">
+						<Bus Name="Ambient Bus" ID="{6394759C-6F2E-46EB-9732-B9DCE99AC92C}">
 							<ObjectLists>
 								<ObjectList Name="RTPC">
 									<RTPC Name="" ID="{8AC27255-75C3-4978-AD69-193575F95039}" ShortID="175983395">
@@ -100,7 +100,7 @@
 										</PropertyList>
 										<ReferenceList>
 											<Reference Name="ControlInput">
-												<ObjectRef Name="EnvironmentVolume" ID="{46C91C02-66E9-4367-8108-C1C5B7DA4B53}" WorkUnitID="{B719F7EC-DD1A-4EA5-B036-A4820D075031}"/>
+												<ObjectRef Name="AmbientVolume" ID="{46C91C02-66E9-4367-8108-C1C5B7DA4B53}" WorkUnitID="{B719F7EC-DD1A-4EA5-B036-A4820D075031}"/>
 											</Reference>
 											<Reference Name="Curve">
 												<Custom>

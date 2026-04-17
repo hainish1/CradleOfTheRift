@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5757594223093847543}
   - component: {fileID: 3427902893727585113}
   - component: {fileID: 6201824582093479809}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 5349853246527351632}
   - component: {fileID: 8898098101234596872}
   - component: {fileID: 996617940348397949}
-  m_Layer: 4
+  m_Layer: 7
   m_Name: text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -299,7 +299,7 @@ GameObject:
   - component: {fileID: 2741066558937216800}
   - component: {fileID: 744110140018586927}
   - component: {fileID: 3360540463499519484}
-  m_Layer: 4
+  m_Layer: 7
   m_Name: Damage_Inventory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -427,3 +427,7 @@ MonoBehaviour:
   itemData: {fileID: 11400000, guid: 4f2f213141ed4974fb18474b6964362d, type: 2}
   destroyOnPickup: 1
   tooltipRange: 20
+  pickupSound:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: ac87061022f868643b320e315521cc44, type: 2}
