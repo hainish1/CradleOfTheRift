@@ -7,8 +7,8 @@
         <!-- Left panel: ~1/3 of screen width -->
         <engine:VisualElement name="LeftPanel" class="left-panel">
             <engine:Label text="Cradle of the Rift" name="LabelStartMenu" class="header" />
-            <engine:Button text="Start Game" name="ButtonStartGame" class="menu-button" />
-            <engine:Button text="Settings" name="ButtonSettings" class="menu-button" />
+            <engine:Button text="start Game" name="ButtonStartGame" class="menu-button" />
+            <engine:Button text="settings" name="ButtonSettings" class="menu-button" />
             <engine:Button text="Credits" name="ButtonCredits" class="menu-button" />
             <engine:Button text="Quit Game" name="ButtonQuitGame" class="menu-button" />
         </engine:VisualElement>
