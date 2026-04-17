@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{E8ACB5E9-C9AC-4B80-97EF-9A825FC9C893}",
     "Language": "SFX",
-    "Hash": "{4849468F-65EC-7C23-1E22-F2D2B4DD98BC}",
+    "Hash": "{F048C6D3-8F76-48D4-BCB9-AF2B9F5D86B3}",
     "ObjectPath": "Chest_Open",
     "ShortName": "Chest_Open",
     "Path": "Event/Chest_Open.bnk",
@@ -23,25 +23,79 @@
       "ShortName": "Chest.wav",
       "Path": "Media/4361091.wem",
       "CachePath": "8A/{8A8F0717-CAC2-27C2-5E30-638883B9B5E1}.wem"
+     },
+     {
+      "Id": "120070202",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Chain3.wav",
+      "Path": "Media/120070202.wem",
+      "CachePath": "FA/{FA63F2CA-95B5-50BD-8619-1A3A621E79DC}.wem"
+     },
+     {
+      "Id": "773593140",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Chain2.wav",
+      "Path": "Media/773593140.wem",
+      "CachePath": "04/{04B1B06A-6AE6-BDCF-FFD5-9E220B86BEA8}.wem"
+     },
+     {
+      "Id": "908695156",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Chain1.wav",
+      "Path": "Media/908695156.wem",
+      "CachePath": "A0/{A0AAFAB0-5EA7-9A9A-81E1-9CF350B8C8AB}.wem"
      }
     ],
+    "Plugins": {
+     "ShareSets": [
+      {
+       "Id": "415841907",
+       "Name": "Space_Garage",
+       "ObjectPath": "\\Effects\\Factory Effects\\RoomVerb\\Huge Spaces\\Space_Garage",
+       "GUID": "{1AF92D84-49DD-4BBC-8F29-6C6D10082B6E}",
+       "LibName": "Wwise RoomVerb",
+       "LibId": "7733251"
+      }
+     ]
+    },
     "Events": [
      {
       "Id": "2728948375",
       "Name": "Chest_Open",
       "ObjectPath": "\\Events\\Default Work Unit\\Environment\\Chest\\Chest_Open",
       "GUID": "{E8ACB5E9-C9AC-4B80-97EF-9A825FC9C893}",
-      "MaxAttenuation": "30",
       "DurationType": "Infinite",
       "MediaRefs": [
        {
         "Id": "4361091"
+       },
+       {
+        "Id": "120070202"
+       },
+       {
+        "Id": "773593140"
+       },
+       {
+        "Id": "908695156"
        }
-      ]
+      ],
+      "PluginRefs": {
+       "ShareSets": [
+        {
+         "Id": "415841907"
+        }
+       ]
+      }
      }
     ]
    }
   ],
-  "FileHash": "{639F20BB-CC0D-E4A8-93F6-FA2FD15362C3}"
+  "FileHash": "{B1D7100A-17B0-7423-96CA-1C6F775B2F0D}"
  }
 }

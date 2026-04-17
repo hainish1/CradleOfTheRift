@@ -42,6 +42,7 @@ namespace AK
         static const AkUniqueID PLAY_SONG_FOREST = 3919329323U;
         static const AkUniqueID PLAY_SONG_ICEY = 3808693238U;
         static const AkUniqueID PLAY_TELEPORTER_AMBIENCE = 1203559441U;
+        static const AkUniqueID PLAY_TUTORIAL = 283731184U;
         static const AkUniqueID PLAY_UI_BUTTON_CLICK = 1661558166U;
         static const AkUniqueID ROCK_BREAK = 756826226U;
         static const AkUniqueID SKULL_DEATH = 2252982343U;
