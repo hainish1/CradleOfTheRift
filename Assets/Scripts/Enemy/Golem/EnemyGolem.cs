@@ -2,6 +2,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEngine.EventSystems.EventTrigger;
 
 /// <summary>
 /// Class - Represents a Golem, inherits from Base Enemy class 
@@ -24,6 +25,7 @@ public class EnemyGolem : Enemy
     public float postAttackCooldown = 1f;
 
     [Header("Rock Throw Ranged Settings")]
+    [SerializeField] private GameObject rockHand;
     public GameObject rockProjectilePrefab;
     public float directDamage = 20f;
     public float AOEDamage = 20f;
@@ -36,6 +38,8 @@ public class EnemyGolem : Enemy
     public float turnSpeedWhileAiming = 8f;
     public LayerMask projectileMask = ~0;
     public float playerAimOffset = 1.5f;
+    public float throwAnimSpeedMultiplier = 1f;
+    public AnimationClip throwAnim;
 
     [Header("Ground Slam Melee Settings")]
     public float meleeDamage = 20f;
@@ -46,6 +50,8 @@ public class EnemyGolem : Enemy
     public float meleeCooldown = 0.5f;
     public Transform meleePosition;
     public GameObject groundSlamPrefab;
+    public float meleeAnimSpeedMultiplier = 1f;
+    public AnimationClip meleeAnim;
 
     [Header("VFX / SFX")]
     public GameObject throwRockVFXPrefab;
@@ -85,8 +91,18 @@ public class EnemyGolem : Enemy
         meleeAttack = new MeleeAttackStateGolem(this, stateMachine);
         recovery = new RecoveryStateGolem(this, stateMachine);
         golemAnim = GetComponentInChildren<Animator>();
+        RecalculateAttackAnimationSpeeds();
 
         stateMachine.Initialize(idle);
+    }
+
+    public override void Update()
+    {
+        stateMachine.Tick();
+
+        // Blend golem animation between idle and moving.
+        float moveBlend = agent.velocity.magnitude / chaseSpeed;
+        golemAnim.SetFloat("MoveVector", moveBlend, dampTime: 0.03f, Time.deltaTime);
     }
 
     protected void SnapToNavMesh()
@@ -214,6 +230,32 @@ public class EnemyGolem : Enemy
             rock.Init(calculatedVelocity, projectileMask, directDamage, projectileKnockback, AOEDamage);
         }
     }
+
+    /// <summary>
+    ///   <para>
+    ///     Hides the golem's right hand.
+    ///   </para>
+    /// </summary>
+    public void HideRockHand() => rockHand.SetActive(false);
+
+    /// <summary>
+    ///   <para>
+    ///     Shows the golem's right hand.
+    ///   </para>
+    /// </summary>
+    public void ShowRockHand() => rockHand.SetActive(true);
+
+    /// <summary>
+    ///   <para>
+    ///     Recalulates the melee and throw attack animation speeds.
+    ///   </para>
+    /// </summary>
+    protected void RecalculateAttackAnimationSpeeds()
+    {
+        golemAnim.SetFloat("MeleeAnimSpeedMultiplier", meleeAnimSpeedMultiplier);
+        golemAnim.SetFloat("ThrowAnimSpeedMultiplier", throwAnimSpeedMultiplier);
+    }
+
 
     /// <summary>
     /// Calculates the precise 3D velocity required to hit a target point over a specific duration, factoring in Unity's gravity.

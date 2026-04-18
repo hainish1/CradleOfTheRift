@@ -38,8 +38,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     [Tooltip("The player camera object.")] private Transform _cameraTransform;
     [SerializeField]
-    [Tooltip("The player model object.")] private GameObject _playerModel;
-    [SerializeField]
     [Tooltip("Reference to the player jump animation to get its duration.")] private AnimationClip _jumpAnim;
     public Entity PlayerEntity { get; private set; }
     private Animator _playerAnim;
@@ -140,7 +138,6 @@ public class PlayerMovement : MonoBehaviour
     private float _jumpBufferTimer;
     private Vector3 _verticalVelocityVector;
     public bool IsJumping { get; private set; }
-    private Coroutine _jumpAnimationCoroutine;
 
     // Drift Parameters
 
@@ -198,7 +195,7 @@ public class PlayerMovement : MonoBehaviour
         _meleeController = GetComponentInChildren<PlayerMeleeControllerV2>();
         _playerShooter = GetComponentInChildren<PlayerShooter>();
         _shockwaveController = GetComponent<PlayerShockwaveController>();
-        _playerAnim = _playerModel.GetComponent<Animator>();
+        _playerAnim = GetComponentInChildren<Animator>();
         _playerHalfHeight = _characterController.height / 2;
         _playerRadius = _characterController.radius;
 
@@ -919,9 +916,6 @@ public class PlayerMovement : MonoBehaviour
         _characterController.Move(Time.deltaTime * _verticalVelocityVector);
 
         jumpSoundEvent.Post(gameObject); // Play the jump sound effect.
-        //_playerAnim.SetTrigger("Jump");
-        //if (_jumpAnimationCoroutine == null)
-        //    StartCoroutine(JumpAnimationDuration());
     }
 
     /// <summary>

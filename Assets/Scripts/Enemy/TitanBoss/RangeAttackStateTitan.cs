@@ -9,7 +9,6 @@ public class RangeAttackStateTitan : EnemyState
 {
     private EnemyTitan enemyTitan;
     private float timer;
-    private bool hasThrown;
 
     public RangeAttackStateTitan(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
@@ -22,11 +21,8 @@ public class RangeAttackStateTitan : EnemyState
     public override void Enter()
     {
         enemyTitan.PauseAgent();
-        timer = Random.Range(enemyTitan.minWindupTime, enemyTitan.maxWindupTime);
-        hasThrown = false;
-
-        // Trigger throwing animation (not yet implemented)
-        //enemy.animator.SetTrigger("ThrowRock");
+        timer = enemyTitan.throwAnim.length / enemyTitan.golemAnim.GetFloat("ThrowAnimSpeedMultiplier");
+        enemyTitan.golemAnim.SetTrigger("AttackThrow");
     }
 
 
@@ -40,32 +36,13 @@ public class RangeAttackStateTitan : EnemyState
 
         // Keep facing the player during windup
         enemyTitan.FaceTargetSmooth(enemyTitan.turnSpeedWhileAiming);
-        
-        if (!hasThrown)
+
+        timer -= Time.deltaTime;
+        if (timer <= 0f)
         {
-            timer -= Time.deltaTime;
-
-            if (timer <= 0f)    // Hardcoded windup that should get replaced with animation events later
-            {
-                float random = Random.value;
-                if (random < 0.5f) // 50% chance to do either attack
-                {
-                    enemyTitan.ThrowRock();
-                    //enemyTitan.golemAnim.SetTrigger("AttackRanged");
-                }
-                else
-                {
-                    enemyTitan.RockBarrage();
-                    //enemyTitan.golemAnim.SetTrigger("AttackRangedBarrage");
-                }
-                
-                hasThrown = true;
-                //enemyTitan.golemAnim.SetTrigger("AttackRanged");
-
-                // Set cooldown and go to recovery
-                enemy.nextAttackAllowed = Time.time + enemyTitan.attackCooldown;
-                stateMachine.ChangeState(enemyTitan.GetRecovery());
-            }
+            // Set cooldown and go to recovery
+            enemy.nextAttackAllowed = Time.time + enemyTitan.attackCooldown;
+            stateMachine.ChangeState(enemyTitan.GetRecovery());
         }
     }
 

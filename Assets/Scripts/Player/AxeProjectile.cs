@@ -3,7 +3,7 @@
 //     Samuel Rigby, Hainish Acharya
 //   </authors>
 //   <para>
-//     Written by Samuel Rigby for GAMES 4500, University of Utah.
+//     Written by Samuel Rigby for GAMES 4510, University of Utah.
 //     Projectile base class written by Hainish Acharya for GAMES 4500, University of Utah.
 //   </para>
 // </summary>

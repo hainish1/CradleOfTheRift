@@ -97,13 +97,13 @@ public class PlayerShooter : MonoBehaviour
         input.performed += _ => ToggleFullAuto();
         input.Enable();
 
-        playerEntity = GetComponentInParent<Entity>();
-        playerMovement = GetComponentInParent<PlayerMovement>();
-        playerHeldWeaponController = GetComponentInParent<PlayerHeldWeaponController>();
-        meleeController = GetComponentInParent<PlayerMeleeControllerV2>();
-        _shockwaveController = GetComponentInParent<PlayerShockwaveController>();
-        playerAnim = GetComponent<Animator>();
-        audioController = GetComponentInParent<PlayerAudioController>();
+        playerEntity = GetComponent<Entity>();
+        playerMovement = GetComponent<PlayerMovement>();
+        playerHeldWeaponController = GetComponent<PlayerHeldWeaponController>();
+        meleeController = GetComponent<PlayerMeleeControllerV2>();
+        _shockwaveController = GetComponent<PlayerShockwaveController>();
+        playerAnim = GetComponentInChildren<Animator>();
+        audioController = GetComponent<PlayerAudioController>();
 
         SetProjectileType(playerHeldWeaponController.HeldWeapon);
         fireMaxCharges = playerEntity.Stats.FireCharges;
@@ -226,6 +226,97 @@ public class PlayerShooter : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Begins the WeaponFlip animation coroutine.
+    ///   </para>
+    /// </summary>
+    public void WeaponThrowAnimBegin()
+    {
+        // Do not flip the axe.
+        if (currProjectilePrefab != axeProjectilePrefab) StartCoroutine(WeaponFlip());
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Shoots a projectile and makes the weapon disappear.
+    ///   </para>
+    /// </summary>
+    public void WeaponThrow()
+    {
+        // Disappear the weapon by shrinking it to 0.
+        weaponPivot.localScale = new Vector3(0, 0, 0);
+        Fire();
+        // safety net so the weapon always comes back,
+        if (weaponRegainCoroutine != null) StopCoroutine(weaponRegainCoroutine);
+        weaponRegainCoroutine = StartCoroutine(WeaponRegain());
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Begins the WeaponRegain animation coroutine.
+    ///   </para>
+    /// </summary>
+    public void WeaponThrowAnimEnd()
+    {
+        if (weaponRegainCoroutine != null) StopCoroutine(weaponRegainCoroutine);
+        weaponRegainCoroutine = StartCoroutine(WeaponRegain());
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Makes the weapon flip 180 degrees around its Z-axis in the designated amount of time.
+    ///   </para>
+    /// </summary>
+    /// <returns> IEnumerator object. </returns>
+    private IEnumerator WeaponFlip()
+    {
+        // Ensure weapon is visible and oriented correctly in the case of multiple quick consecutive throws.
+        weaponPivot.localRotation = weaponOriginalRotation;
+        weaponPivot.localScale = weaponOriginalScale;
+
+        float timer = 0;
+        while (timer < flipAnimMaxSeconds)
+        {
+            float completion = timer / flipAnimMaxSeconds;
+            weaponPivot.localRotation = Quaternion.Lerp(weaponOriginalRotation, weaponFlippedRotation, completion);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure weapon rotation is exact when done rotating.
+        weaponPivot.localRotation = weaponFlippedRotation;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Makes the weapon grow back to its original scale in the designated amount of time.
+    ///   </para>
+    /// </summary>
+    /// <returns> IEnumerator object. </returns>
+    private IEnumerator WeaponRegain()
+    {
+        yield return new WaitForSeconds(regainDelaySeconds);
+
+        // Set weapon to original orientation and shrunk scale since the flip animation is complete.
+        weaponPivot.localRotation = weaponOriginalRotation;
+        weaponPivot.localScale = weaponShrunkScale;
+
+        float timer = 0;
+        while (timer < regainAnimCompletionSeconds)
+        {
+            float completion = timer / regainAnimCompletionSeconds;
+            weaponPivot.localScale = Vector3.Lerp(weaponShrunkScale, weaponOriginalScale, completion);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure weapon scale restoration is exact when done growing.
+        weaponPivot.localScale = weaponOriginalScale;
     }
 
     private void OnFireStarted(InputAction.CallbackContext _)
@@ -451,96 +542,5 @@ public class PlayerShooter : MonoBehaviour
         float secondsUntilThrow = preTransitionAnim.length + throwAnim.events[0].time;
         flipAnimMaxSeconds = scriptFlipAnimSpeed * statsThrowAnimSpeed * secondsUntilThrow;
         playerAnim.SetFloat("WeaponThrowAnimSpeedMultiplier", playerEntity.Stats.ProjectileAnimationSpeed);
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Animation event to begin the WeaponFlip animation coroutine.
-    ///   </para>
-    /// </summary>
-    public void OnWeaponThrowAnimBegin()
-    {
-        // Do not flip the axe.
-        if (currProjectilePrefab != axeProjectilePrefab) StartCoroutine(WeaponFlip());
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Makes the weapon flip 180 degrees around its Z-axis in the designated amount of time.
-    ///   </para>
-    /// </summary>
-    /// <returns> IEnumerator object. </returns>
-    private IEnumerator WeaponFlip()
-    {
-        // Ensure weapon is visible and oriented correctly in the case of multiple quick consecutive throws.
-        weaponPivot.localRotation = weaponOriginalRotation;
-        weaponPivot.localScale = weaponOriginalScale;
-        
-        float timer = 0;
-        while (timer < flipAnimMaxSeconds)
-        {
-            float completion = timer / flipAnimMaxSeconds;
-            weaponPivot.localRotation = Quaternion.Lerp(weaponOriginalRotation, weaponFlippedRotation, completion);
-
-            timer += Time.deltaTime;
-            yield return null;
-        }
-
-        // Ensure weapon rotation is exact when done rotating.
-        weaponPivot.localRotation = weaponFlippedRotation;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Animation event to shoot a projectile and make the weapon disappear.
-    ///   </para>
-    /// </summary>
-    public void OnWeaponThrow()
-    {
-        // Disappear the weapon by shrinking it to 0.
-        weaponPivot.localScale = new Vector3(0, 0, 0);
-        Fire();
-        // safety net so the weapon always comes back,
-        if (weaponRegainCoroutine != null) StopCoroutine(weaponRegainCoroutine);
-        weaponRegainCoroutine = StartCoroutine(WeaponRegain());
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Animation event to begin the WeaponRegain animation coroutine.
-    ///   </para>
-    /// </summary>
-    public void OnWeaponThrowAnimEnd()
-    {
-        if (weaponRegainCoroutine != null) StopCoroutine(weaponRegainCoroutine);
-        weaponRegainCoroutine = StartCoroutine(WeaponRegain());
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Makes the weapon grow back to its original scale in the designated amount of time.
-    ///   </para>
-    /// </summary>
-    /// <returns> IEnumerator object. </returns>
-    private IEnumerator WeaponRegain()
-    {
-        yield return new WaitForSeconds(regainDelaySeconds);
-        
-        // Set weapon to original orientation and shrunk scale since the flip animation is complete.
-        weaponPivot.localRotation = weaponOriginalRotation;
-        weaponPivot.localScale = weaponShrunkScale;
-
-        float timer = 0;
-        while (timer < regainAnimCompletionSeconds)
-        {  
-            float completion = timer / regainAnimCompletionSeconds;
-            weaponPivot.localScale = Vector3.Lerp(weaponShrunkScale, weaponOriginalScale, completion);
-
-            timer += Time.deltaTime;
-            yield return null;
-        }
-
-        // Ensure weapon scale restoration is exact when done growing.
-        weaponPivot.localScale = weaponOriginalScale;
     }
 }
