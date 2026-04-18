@@ -263,6 +263,66 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Folder Name="Axe" ID="{1559A524-92CB-42F4-860B-1BF9581D4F74}" ShortID="17078704">
+					<ChildrenList>
+						<Event Name="Play_Axe_Orbit" ID="{8590E0DC-D34B-4820-A809-1ED4B995ACA8}">
+							<ChildrenList>
+								<Action Name="" ID="{343DFD59-9F25-4F38-BFBB-ED711220C773}" ShortID="827810092">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Orbit Swoosh" ID="{F1D77677-AB7F-42FD-894E-4975A15FC149}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{DF867E7A-8762-4ACF-930C-F41DBA6767B2}" ShortID="67010981">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Orbit Swoosh 2" ID="{F929B442-43FF-41E8-8146-C6A9E78B3E30}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+						<Event Name="Play_Axe_Destroy" ID="{8811ED59-7332-4348-BAD6-F518F3040183}">
+							<ChildrenList>
+								<Action Name="" ID="{93937CC7-45D7-4F4B-8251-518DDC793565}" ShortID="704906981">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="2"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Orbit Swoosh" ID="{F1D77677-AB7F-42FD-894E-4975A15FC149}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{969C7314-0C76-42ED-AAAD-62A63ECE6909}" ShortID="1049731405">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Shatter" ID="{DE2DE1C5-0067-4B45-8F0D-7B48B9D2CA9F}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{3FC1B067-6ECA-4F4A-A813-77813AC3AC10}" ShortID="570563486">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="2"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Orbit Swoosh 2" ID="{F929B442-43FF-41E8-8146-C6A9E78B3E30}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{A9F0E1E8-8351-43C8-9C6B-2E707162B14A}" ShortID="438896967">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="SWSH_Sword Slash Impact V2 Assorted 18_DDUMAIS_NONE" ID="{FEA32038-A1C8-4688-8F3C-FBB5A145A1C4}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+					</ChildrenList>
+				</Folder>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>
