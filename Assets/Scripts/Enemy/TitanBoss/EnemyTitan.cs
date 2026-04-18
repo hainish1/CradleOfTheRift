@@ -257,6 +257,11 @@ public class EnemyTitan : EnemyGolem
         golemAnim.SetFloat("BarrageAnimSpeedMultiplier", barrageAnimSpeedMultiplier);
         golemAnim.SetFloat("SlamAnimSpeedMultiplier", slamAnimSpeedMultiplier);
         golemAnim.SetFloat("SweepAnimSpeedMultiplier", sweepAnimSpeedMultiplier);
+
+        print($"Throw: {golemAnim.GetFloat("ThrowAnimSpeedMultiplier")}" +
+            $"Barrage: {golemAnim.GetFloat("BarrageAnimSpeedMultiplier")}" +
+            $"Slam: {golemAnim.GetFloat("SlamAnimSpeedMultiplier")}" +
+            $"Sweep: {golemAnim.GetFloat("SweepAnimSpeedMultiplier")}");
     }
 
     //Getters for States that this Melee Enemy has

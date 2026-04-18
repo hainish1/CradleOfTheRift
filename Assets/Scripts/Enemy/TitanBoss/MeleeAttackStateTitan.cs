@@ -25,14 +25,14 @@ public class MeleeAttackStateTitan : EnemyState
         float rand = Random.value;
         if (rand < 0.5f) // Slam attack.
         {
-            totalAnimationTime = enemyTitan.slamAnim.length;
-            hitFrameTime = enemyTitan.slamAnim.events[0].time;
+            totalAnimationTime = enemyTitan.slamAnim.length / enemyTitan.golemAnim.GetFloat("SlamAnimSpeedMultiplier");
+            hitFrameTime = enemyTitan.slamAnim.events[0].time / enemyTitan.golemAnim.GetFloat("SlamAnimSpeedMultiplier");
             enemyTitan.golemAnim.SetTrigger("AttackSlam");
         }
         else // Sweep attack.
         {
-            totalAnimationTime = enemyTitan.sweepAnim.length;
-            hitFrameTime = enemyTitan.sweepAnim.events[0].time;
+            totalAnimationTime = enemyTitan.sweepAnim.length / enemyTitan.golemAnim.GetFloat("SweepAnimSpeedMultiplier");
+            hitFrameTime = enemyTitan.sweepAnim.events[0].time / enemyTitan.golemAnim.GetFloat("SweepAnimSpeedMultiplier");
             enemyTitan.golemAnim.SetTrigger("AttackSweep");
         }
     }

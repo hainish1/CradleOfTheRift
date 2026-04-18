@@ -9,6 +9,8 @@ public class RangeAttackStateGolem : EnemyState
 {
     private EnemyGolem enemyGolem;
     private float timer;
+    private float totalAnimationTime; // How long the whole state lasts
+    private float hitFrameTime; // The exact moment the throw happens
 
     public RangeAttackStateGolem(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
@@ -22,9 +24,10 @@ public class RangeAttackStateGolem : EnemyState
     {
         enemyGolem.PauseAgent();
         timer = enemyGolem.throwAnim.length / enemyGolem.golemAnim.GetFloat("ThrowAnimSpeedMultiplier");
+        //totalAnimationTime = enemyGolem.throwAnim.length / enemyGolem.golemAnim.GetFloat("ThrowAnimSpeedMultiplier");
+        //hitFrameTime = enemyGolem.throwAnim.events[0].time / enemyGolem.golemAnim.GetFloat("ThrowAnimSpeedMultiplier");
         enemyGolem.golemAnim.SetTrigger("AttackThrow");
     }
-
 
     public override void Update()
     {
