@@ -22,7 +22,7 @@ public class Shrine : MonoBehaviour, IInteractable, IPromptHeightOverride
     [SerializeField]
     private List<HeldWeaponType> randomPool = new List<HeldWeaponType>
     {
-        HeldWeaponType.Spear, HeldWeaponType.Axe, HeldWeaponType.Mace
+        HeldWeaponType.Spear, HeldWeaponType.Axe, HeldWeaponType.Mace, HeldWeaponType.Staff
     };
 
     [Header("Cost")]
@@ -52,7 +52,10 @@ public class Shrine : MonoBehaviour, IInteractable, IPromptHeightOverride
     {
         get
         {
-            ResolveWeaponIfNeeded();
+            if (selectionMode == WeaponSelectionMode.Specific)
+            {
+                ResolveWeaponIfNeeded();
+            }
             string weaponName = selectionMode == WeaponSelectionMode.Random ? "?????" : resolvedWeapon.ToString();
             return $"<b>{weaponName}</b>\n" +
                    $"<color=#FFD447>[E]</color> {goldPrice}G \n" +
@@ -62,7 +65,12 @@ public class Shrine : MonoBehaviour, IInteractable, IPromptHeightOverride
 
     private void Awake()
     {
-        ResolveWeaponIfNeeded();
+        // Random mode resolves at interact time
+        // so it can exclude the players currently held weapon
+        if (selectionMode == WeaponSelectionMode.Specific)
+        {
+            ResolveWeaponIfNeeded();
+        }
     }
 
     private void ResolveWeaponIfNeeded()
@@ -86,16 +94,52 @@ public class Shrine : MonoBehaviour, IInteractable, IPromptHeightOverride
         weaponResolved = true;
     }
 
+    private bool ResolveRandomExcluding(HeldWeaponType excluded)
+    {
+        if (randomPool == null || randomPool.Count == 0)
+        {
+            resolvedWeapon = HeldWeaponType.Spear;
+            weaponResolved = true;
+            return resolvedWeapon != excluded;
+        }
+        var filtered = new List<HeldWeaponType>(randomPool.Count);
+        foreach (var weapon in randomPool)
+        {
+            if (weapon != excluded) filtered.Add(weapon);
+        }
+        if (filtered.Count == 0)
+        {
+            return false;
+        }
+        resolvedWeapon = filtered[Random.Range(0, filtered.Count)];
+        weaponResolved = true;
+        return true;
+    }
+
     public bool Interact(Interactor interactor)
     {
         if (!canInteract) return false;
-        ResolveWeaponIfNeeded();
 
         var heldController = interactor.GetComponent<PlayerHeldWeaponController>();
         if (heldController == null)
         {
             Debug.LogWarning("[Shrine] Interactor has no PlayerHeldWeaponController.");
             return false;
+        }
+
+        // Random mode: reroll excluding the players current weapon
+        if (selectionMode == WeaponSelectionMode.Random)
+        {
+            weaponResolved = false;
+            if (!ResolveRandomExcluding(heldController.HeldWeapon))
+            {
+                Debug.Log("[Shrine] Random pool has no weapon the player doesnt already have");
+                return false;
+            }
+        }
+        else
+        {
+            ResolveWeaponIfNeeded();
         }
 
         if (blockIfAlreadyEquipped && heldController.HeldWeapon == resolvedWeapon)
