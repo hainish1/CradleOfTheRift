@@ -1,3 +1,12 @@
+// <summary>
+//   <authors>
+//     Samuel Rigby
+//   </authors>
+//   <para>
+//     Written by Samuel Rigby for GAMES 4510, University of Utah.
+//   </para>
+// </summary>
+
 using UnityEngine;
 
 public class OnAnimationTriggered : MonoBehaviour

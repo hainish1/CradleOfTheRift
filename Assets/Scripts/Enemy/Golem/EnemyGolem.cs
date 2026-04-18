@@ -1,4 +1,14 @@
-// using UnityEditor.UI;
+// <summary>
+//   <authors>
+//     Jeidi Mo, Samuel Rigby
+//   </authors>
+//   <para>
+//     Written by Jeidi Mo for GAMES 4510, University of Utah.
+//     Contributed to by Samuel Rigby.
+//          -Added compatability with golem animations.
+//   </para>
+// </summary>
+
 using System;
 using UnityEngine;
 using UnityEngine.AI;

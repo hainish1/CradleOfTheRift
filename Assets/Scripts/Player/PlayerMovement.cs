@@ -64,7 +64,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     [Tooltip("Seconds needed to fully stop after moving at Max Speed.")] private float _moveDecelerationSeconds;
     [SerializeField]
-    [Tooltip("The lowest percent in units per second which player velocity can be reduced to when turning.")] private float _moveTurnDampingFloor;
+    [Tooltip("The lowest percent in units per second which player velocity can be reduced to when turning.")] private float _moveSpeedTurnDampingFloor;
+    [SerializeField]
+    [Tooltip("How quickly in degrees per second the player character turns toward a new move direction.")] private float _turnSpeed;
     [SerializeField]
     [Tooltip("How quickly in seconds the player character move animations blend when turning.")] private float _moveBlendSpeed;
     [SerializeField]
@@ -519,8 +521,9 @@ public class PlayerMovement : MonoBehaviour
 
         // Trigger corresponding move animations.
         Vector2 inputDirection = _moveActions.ReadValue<Vector2>().normalized;
-        float moveBlendX = inputDirection.x * (_lateralVelocityVector.magnitude / _moveMaxSpeed);
-        float moveBlendY = inputDirection.y * (_lateralVelocityVector.magnitude / _moveMaxSpeed);
+        Vector3 localVelocityDirection = transform.InverseTransformDirection(_lateralVelocityVector);
+        float moveBlendX = localVelocityDirection.x / _moveMaxSpeed;
+        float moveBlendY = localVelocityDirection.z / _moveMaxSpeed;
         _playerAnim.SetFloat("MoveVector_X", moveBlendX, _moveBlendSpeed, Time.deltaTime);
         _playerAnim.SetFloat("MoveVector_Y", moveBlendY, _moveBlendSpeed, Time.deltaTime);
 
@@ -530,18 +533,21 @@ public class PlayerMovement : MonoBehaviour
 
         GroundClampInterpolate(ref moveDirectionUnitVector);
 
-        // Lose velocity proportional to the severity of the angle of direction change.
-        if (_lateralVelocityVector.magnitude > 1e-3f && moveDirectionUnitVector != Vector3.zero)
+        float dot = _lateralVelocityVector.sqrMagnitude == 0 ? 1 : Vector3.Dot(_lateralVelocityVector.normalized, moveDirectionUnitVector);
+
+        // Perform logic that accounts for directional change.
+        if (moveDirectionUnitVector != Vector3.zero && dot >= -0.99f && _lateralVelocityVector.magnitude > 1e-3f)
         {
-            float dot = Vector3.Dot(_lateralVelocityVector.normalized, moveDirectionUnitVector);
-            
-            // Never reset velocity below the turn damping floor.
-            float turnDamp = Mathf.Lerp(_moveTurnDampingFloor, 1, (dot + 1) / 2);
-            _lateralVelocityVector *= turnDamp;
+            // Turn current lateral velocity vector towards the movement direction.
+            float degreesPerSecond = Time.deltaTime * _turnSpeed;
+            _lateralVelocityVector = Vector3.RotateTowards(_lateralVelocityVector,
+                                                           _lateralVelocityVector.magnitude * moveDirectionUnitVector,
+                                                           Mathf.Deg2Rad * degreesPerSecond,
+                                                           0);
         }
 
-        // Accelerate if movement is being inputted and sprint has not been canceled.
-        if (_moveActions.ReadValue<Vector2>() != Vector2.zero && _lateralVelocityVector.magnitude <= _moveMaxSpeed)
+        // Accelerate if movement is being inputted, move directions are not opposite and max move speed is not reached.
+        if (_moveActions.ReadValue<Vector2>() != Vector2.zero && dot >= -0.99f && _lateralVelocityVector.magnitude <= _moveMaxSpeed)
             MoveAccelerate(moveDirectionUnitVector);
         else
             MoveDecelerate();
@@ -612,8 +618,8 @@ public class PlayerMovement : MonoBehaviour
 
                     if (_moveActions.ReadValue<Vector2>() == _moveInputTemp)
                     {
-                        float degreesPerSecond = Time.deltaTime * Mathf.Deg2Rad * 120;
-                        moveDirectionUnitVector = Vector3.RotateTowards(moveDirectionUnitVector, groundPlaneMoveUnitVector, degreesPerSecond, 0);
+                        float degreesPerSecond = Time.deltaTime * 120;
+                        moveDirectionUnitVector = Vector3.RotateTowards(moveDirectionUnitVector, groundPlaneMoveUnitVector, Mathf.Deg2Rad * degreesPerSecond, 0);
                     }
                 }
 
@@ -658,14 +664,10 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="moveDirectionUnitVector"> The world direction of the most recent move input. </param>
     private void MoveAccelerate(Vector3 moveDirectionUnitVector)
     {
-        if (_lateralVelocityVector.magnitude < _moveMaxSpeed)
-        {
-            float aggregateAccelIncrement = Time.deltaTime * _moveAcceleration;
-            float newVelocityMagnitude = Mathf.Clamp(_lateralVelocityVector.magnitude + aggregateAccelIncrement, 0, _moveMaxSpeed);
-            _lateralVelocityVector = newVelocityMagnitude * moveDirectionUnitVector;
-        }
-        else
-            _lateralVelocityVector = _moveMaxSpeed * moveDirectionUnitVector;
+        float aggregateAccelIncrement = Time.deltaTime * _moveAcceleration;
+        float newVelocityMagnitude = Mathf.Clamp(_lateralVelocityVector.magnitude + aggregateAccelIncrement, 0, _moveMaxSpeed);
+        Vector3 direction = _lateralVelocityVector.sqrMagnitude > 1e-3f ? _lateralVelocityVector.normalized : moveDirectionUnitVector;
+        _lateralVelocityVector = newVelocityMagnitude * direction;
     }
 
     /// <summary>

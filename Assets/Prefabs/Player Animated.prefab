@@ -1005,8 +1005,9 @@ MonoBehaviour:
   _gravityMultiplier: 3
   _gravityAirDrag: 1
   _moveAccelerationSeconds: 0.4
-  _moveDecelerationSeconds: 0.2
-  _moveTurnDampingFloor: 0.2
+  _moveDecelerationSeconds: 0.1
+  _moveSpeedTurnDampingFloor: 0.2
+  _turnSpeed: 480
   _moveBlendSpeed: 0.03
   _characterRotationDamping: 0.25
   _lateralVelocityVector: {x: 0, y: 0, z: 0}
