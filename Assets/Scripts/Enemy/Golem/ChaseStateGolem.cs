@@ -17,15 +17,13 @@ public class ChaseStateGolem : EnemyState
 
     public override void Enter()
     {
-        if (enemy?.agent != null)
-        {
-            enemy.agent.isStopped = false;
-        }
+        enemyGolem.TryResumePathing();
     }
 
     public override void Update()
     {
         if (enemy.target == null) return; 
+        if (knockBack != null && knockBack.IsKnockbackActive) return;
 
         float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.target.position);
 
@@ -45,18 +43,18 @@ public class ChaseStateGolem : EnemyState
         // Player is out of range -> Chase them until in range
         if (distanceToPlayer > enemyGolem.shootingRange)
         {
-            if (enemy.agent != null)
+            if (!enemyGolem.TrySetChaseDestination() && enemy.agent != null)
             {
-                enemy.agent.isStopped = false;
-                SetAgentDestination(enemy.target.position); 
+                enemy.agent.isStopped = true;
+                enemy.agent.velocity = Vector3.zero;
             }
+
+            return;
         }
         
         // Player is in range -> throw rock at player forehead
         else
         {
-            if (knockBack != null && knockBack.IsKnockbackActive) return;
-
             if (enemy.agent != null)
             {
                 enemy.agent.isStopped = true;
@@ -66,6 +64,7 @@ public class ChaseStateGolem : EnemyState
             FaceTarget(enemy.turnSpeed);
 
             stateMachine.ChangeState(enemyGolem.GetAttack());
+            return;
         }
     }
 }
