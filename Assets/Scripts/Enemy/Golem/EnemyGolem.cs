@@ -20,6 +20,8 @@ using static UnityEngine.EventSystems.EventTrigger;
 /// </summary>
 public class EnemyGolem : Enemy
 {
+    private static readonly float[] chaseProbeFractions = { 1f, 0.85f, 0.65f, 0.45f, 0.25f };
+
     [Header("Movement and Range")]
     public float chaseSpeed = 10f;
     public float shootingRange = 60f;
@@ -149,9 +151,109 @@ public class EnemyGolem : Enemy
         if (agent == null || !agent.isActiveAndEnabled) return;
         agent.updatePosition = true;
         agent.updateRotation = true;
+        EnsureAgentOnNavMesh();
         agent.isStopped = true;
+        agent.velocity = Vector3.zero;
         agent.ResetPath();
     }
+
+    public bool EnsureAgentOnNavMesh(float maxDistance = 8f)
+    {
+        if (agent == null || !agent.isActiveAndEnabled) return false;
+
+        if (agent.isOnNavMesh)
+        {
+            agent.nextPosition = transform.position;
+            return true;
+        }
+
+        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, maxDistance, NavMesh.AllAreas))
+        {
+            return false;
+        }
+
+        transform.position = hit.position;
+        agent.Warp(hit.position);
+        agent.nextPosition = hit.position;
+        return true;
+    }
+
+    public bool TryResumePathing()
+    {
+        if (agent == null || !agent.isActiveAndEnabled) return false;
+
+        agent.updatePosition = true;
+        agent.updateRotation = true;
+
+        if (!EnsureAgentOnNavMesh())
+        {
+            return false;
+        }
+
+        agent.isStopped = false;
+        return true;
+    }
+
+    public bool TrySetChaseDestination()
+    {
+        if (target == null || !TryResumePathing())
+        {
+            return false;
+        }
+
+        Vector3 flatTargetOffset = target.position - transform.position;
+        flatTargetOffset.y = 0f;
+
+        if (flatTargetOffset.sqrMagnitude < 0.0001f)
+        {
+            agent.ResetPath();
+            return true;
+        }
+
+        for (int i = 0; i < chaseProbeFractions.Length; i++)
+        {
+            Vector3 probePoint = transform.position + (flatTargetOffset * chaseProbeFractions[i]);
+            float sampleRadius = i == 0 ? 8f : 4f;
+
+            if (TrySetPathToPoint(probePoint, sampleRadius))
+            {
+                return true;
+            }
+        }
+
+        agent.isStopped = true;
+        agent.velocity = Vector3.zero;
+        agent.ResetPath();
+        return false;
+    }
+
+    private bool TrySetPathToPoint(Vector3 desiredPoint, float sampleRadius)
+    {
+        if (agent == null || !agent.isActiveAndEnabled || !agent.isOnNavMesh)
+        {
+            return false;
+        }
+
+        if (!NavMesh.SamplePosition(desiredPoint, out NavMeshHit hit, sampleRadius, NavMesh.AllAreas))
+        {
+            return false;
+        }
+
+        NavMeshPath path = new NavMeshPath();
+        if (!agent.CalculatePath(hit.position, path))
+        {
+            return false;
+        }
+
+        if (path.status == NavMeshPathStatus.PathInvalid || path.corners.Length == 0)
+        {
+            return false;
+        }
+
+        agent.isStopped = false;
+        return agent.SetPath(path);
+    }
+
     public void FaceMovementDirectionSmooth(float speed)
     {
         Vector3 dir = Vector3.zero;
