@@ -26,12 +26,6 @@ public class MaceProjectile : Projectile
     [Tooltip("Radius of the projectile impact shockwave.")] private float _projectileShockwaveRadius;
     [SerializeField]
     [Tooltip("Knockback force of the projectile impact shockwave.")] private float _projectileShockwaveKnockback;
-    private PlayerShockwaveController _shockwaveController;
-
-    void Start()
-    {
-        _shockwaveController = attacker.gameObject.GetComponent<PlayerShockwaveController>();
-    }
 
     public override void Update()
     {
