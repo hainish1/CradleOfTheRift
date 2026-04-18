@@ -365,8 +365,16 @@ public class EnemyGolem : Enemy
     /// </summary>
     protected virtual void RecalculateAttackAnimationSpeeds()
     {
-        golemAnim.SetFloat("ThrowAnimSpeedMultiplier", throwAnimSpeedMultiplier);
-        golemAnim.SetFloat("SlamAnimSpeedMultiplier", slamAnimSpeedMultiplier);
+        float safeThrowSpeed = throwAnimSpeedMultiplier > 0f ? throwAnimSpeedMultiplier : 1f;
+        float safeSlamSpeed = slamAnimSpeedMultiplier > 0f ? slamAnimSpeedMultiplier : 1f;
+        golemAnim.SetFloat("ThrowAnimSpeedMultiplier", safeThrowSpeed);
+        golemAnim.SetFloat("SlamAnimSpeedMultiplier", safeSlamSpeed);
+    }
+
+    public void RefreshAttackAnimationSpeeds()
+    {
+        if (golemAnim == null) return;
+        RecalculateAttackAnimationSpeeds();
     }
 
 
