@@ -86,15 +86,47 @@ public class OnAnimationTriggered : MonoBehaviour
 
     /// <summary>
     ///   <para>
+    ///     Animation event to make a golem throw a rock.
+    ///   </para>
+    /// </summary>
+    private void TitanRockThrow()
+    {
+        _enemyGolem.ThrowRock();
+        _enemyGolem.HideRockHand();
+    }
+
+    /// <summary>
+    ///   <para>
     ///     Animation event to make a titan fling a rock barrage.
     ///   </para>
     /// </summary>
-    private void TitanRockThrow() => _enemyTitan.RockBarrage();
+    private void TitanRockBarrage() => _enemyTitan.RockBarrage();
+
+    /// <summary>
+    ///   <para>
+    ///     Animation event to make a golem regain its rock hand.
+    ///   </para>
+    /// </summary>
+    private void TitanHandRegain() => _enemyTitan.ShowRockHand();
+
+    /// <summary>
+    ///   <para>
+    ///     Animation event to make a golem deal slam damage.
+    ///   </para>
+    /// </summary>
+    private void TitanSlamDamage() => _enemyTitan.MeleeSlamAttack();
 
     /// <summary>
     ///   <para>
     ///     Animation event to make a titan deal sweep damage.
     ///   </para>
     /// </summary>
-    private void TitanSlamDamage() => _enemyTitan.MeleeSweepAttack(0);
+    private void TitanSweepDamageLeft() => _enemyTitan.MeleeSweepAttack(0);
+
+    /// <summary>
+    ///   <para>
+    ///     Animation event to make a titan deal sweep damage.
+    ///   </para>
+    /// </summary>
+    private void TitanSweepDamageRight() => _enemyTitan.MeleeSweepAttack(1);
 }

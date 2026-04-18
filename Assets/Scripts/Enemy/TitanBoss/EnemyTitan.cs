@@ -45,32 +45,22 @@ public class EnemyTitan : EnemyGolem
     public Transform sweepPosition;
     public GameObject sweepVFXPrefab;
 
+    [Header("Titan Animation Settings")]
+    public AnimationClip barrageAnim;
+    public AnimationClip sweepAnim;
+    public float barrageAnimSpeedMultiplier = 1f;
+    public float sweepAnimSpeedMultiplier = 1f;
+
     IdleStateTitan idle;
     ChaseStateTitan chase;
     RangeAttackStateTitan rangeAttack;
     MeleeAttackStateTitan meleeAttack;
     RecoveryStateTitan recovery;
 
-    // [Header("VFX / SFX")]
-    // public GameObject throwRockVFXPrefab;
-    // [SerializeField] private AK.Wwise.Event throwSFX;
-    // IdleStateTitan idle;
-    // ChaseStateTitan chase;
-    // RangeAttackStateTitan rangeAttack;
-    // MeleeAttackStateTitan meleeAttack;
-    // RecoveryStateTitan recovery;
+    protected override void OnEnable() {}
 
-    //public Animator golemAnim;
+    protected override void OnDisable() {}
 
-    // private void OnEnable()
-    // {
-    //     EnemyRegistry.RegisterGolem(this);
-    // }
-
-    // private void OnDisable()
-    // {
-    //     EnemyRegistry.UnregisterGolem(this);
-    // }
 
     public override void Start()
     {
@@ -88,6 +78,7 @@ public class EnemyTitan : EnemyGolem
         meleeAttack = new MeleeAttackStateTitan(this, stateMachine);
         recovery = new RecoveryStateTitan(this, stateMachine);
         golemAnim = GetComponentInChildren<Animator>();
+        RecalculateAttackAnimationSpeeds();
 
         stateMachine.Initialize(idle);
     }
@@ -253,6 +244,19 @@ public class EnemyTitan : EnemyGolem
 
         launchVelocity = (horizontalDirection * horizontalSpeed) + (Vector3.up * verticalSpeed);
         return true;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Recalulates the melee and ranged attack animation speeds.
+    ///   </para>
+    /// </summary>
+    protected override void RecalculateAttackAnimationSpeeds()
+    {
+        golemAnim.SetFloat("ThrowAnimSpeedMultiplier", throwAnimSpeedMultiplier);
+        golemAnim.SetFloat("BarrageAnimSpeedMultiplier", barrageAnimSpeedMultiplier);
+        golemAnim.SetFloat("SlamAnimSpeedMultiplier", slamAnimSpeedMultiplier);
+        golemAnim.SetFloat("SweepAnimSpeedMultiplier", sweepAnimSpeedMultiplier);
     }
 
     //Getters for States that this Melee Enemy has
