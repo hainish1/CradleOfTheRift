@@ -75,15 +75,15 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     // Attack Parameters
 
-    private HeldWeaponType CurrentWeapon => _heldWeaponController != null ? _heldWeaponController.HeldWeapon : HeldWeaponType.None;
-    private float MeleeDamage => _playerEntity.Stats.MeleeDamageForWeapon(CurrentWeapon); // get that specific damage
-    private float AttackCooldown => GetAttackCooldown();
     [Header("Attack Parameters")] [Space]
     [SerializeField]
     [Tooltip("Knockback force of attacks.")] private float _knockbackForce;
     [SerializeField]
     [Tooltip("The buffer time for inputting attack combos in seconds.")] private float _comboInputBuffer;
     public bool IsAttacking { get; private set; }
+    private HeldWeaponType CurrWeapon => _heldWeaponController != null ? _heldWeaponController.HeldWeapon : HeldWeaponType.None;
+    private float MeleeDamage => _playerEntity.Stats.MeleeDamageForWeapon(CurrWeapon);
+    private float AttackCooldown => GetAttackCooldown();
     private bool _isRegistering;
     public bool CanAttack { get; set; } = true;
     private bool _comboInputted;
@@ -199,11 +199,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     ///   </para>
     /// </summary>
     /// <returns> The caluclated attack cooldown. </returns>
-    private float GetAttackCooldown()
-    {
-        return _attacks[_currComboCount - 1].PostTransitionAnim.length
-               + _playerEntity.Stats.MeleeAttackRateForWeapon(CurrentWeapon);
-    }
+    private float GetAttackCooldown() => _attacks[_currComboCount - 1].PostTransitionAnim.length
+                                         + _playerEntity.Stats.MeleeAttackRateForWeapon(CurrWeapon);
 
     /// <summary>
     ///   <para>

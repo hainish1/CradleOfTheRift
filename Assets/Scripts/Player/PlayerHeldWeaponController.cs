@@ -21,15 +21,9 @@ public class PlayerHeldWeaponController : MonoBehaviour
 
     public static event Action<HeldWeaponType> OnWeaponChanged;
 
-    void Awake()
-    {
-        _playerShooter = GetComponentInChildren<PlayerShooter>();
-    }
+    void Awake() => _playerShooter = GetComponentInChildren<PlayerShooter>();
 
-    void Start()
-    {
-        ChangeWeapon(HeldWeapon);
-    }
+    void Start() => ChangeWeapon(HeldWeapon);
 
     /// <summary>
     ///   <para>

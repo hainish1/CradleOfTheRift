@@ -17,6 +17,7 @@ using System;
 using System.Collections;
 using Unity.Cinemachine;
 using Unity.Cinemachine.Samples;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -55,17 +56,18 @@ public class PlayerShooter : MonoBehaviour
 
     [Header("Projectiles")] [Space]
     [SerializeField] private Transform playerCenter;
-    [SerializeField] Projectile spearProjectilePrefab;
-    [SerializeField] Projectile axeProjectilePrefab;
-    [SerializeField] Projectile maceProjectilePrefab;
-    [SerializeField] private ExplosiveProjectile staffFireballPrefab; // this is the shit now
-    [SerializeField] private ExplosiveProjectile explosiveProjectilePrefab;
+    [SerializeField] private GameObject spearProjectilePrefab;
+    [SerializeField] private GameObject axeProjectilePrefab;
+    [SerializeField] private GameObject maceProjectilePrefab;
+    [SerializeField] private GameObject staffFireballPrefab; // this is the shit now
+    [SerializeField] private GameObject explosiveProjectilePrefab;
     [SerializeField] private float projectileSpeed = 50f;
     [Tooltip("Travel speed for the Staff fireball")]
     [SerializeField] private float staffFireballSpeed = 10f;
     [SerializeField] private float spawnOffset = 0.1f;
     [SerializeField] private float maceLobUpwardSpeed = 10f;
-    private Projectile currProjectilePrefab;
+    private GameObject currProjectilePrefab;
+    private HeldWeaponType CurrWeapon => playerHeldWeaponController != null ? playerHeldWeaponController.HeldWeapon : HeldWeaponType.None;
 
     [Header("Weapon Animation")] [Space]
     [SerializeField] private Transform weaponPivot;
@@ -395,60 +397,62 @@ public class PlayerShooter : MonoBehaviour
     private void Fire()
     {
         Vector3 direction = aim.GetAimDirection(muzzle.position, muzzle.forward, out RaycastHit raycastHit);
-
         Vector3 spawnPos = muzzle.position + direction * spawnOffset;
         Quaternion spawnRot = Quaternion.LookRotation(direction, Vector3.up);
 
-        // Staff throws through its fireball 
-        Projectile prefabToUse = currProjectilePrefab;
         HeldWeaponType firedWeapon = playerHeldWeaponController != null ? playerHeldWeaponController.HeldWeapon : HeldWeaponType.None;
-
         float currentDamage = playerEntity.Stats.ProjectileDamageForWeapon(firedWeapon);
-        if (firedWeapon == HeldWeaponType.Staff && staffFireballPrefab != null)
-        {
-            prefabToUse = staffFireballPrefab;
-        }
+        GameObject proj = CurrWeapon == HeldWeaponType.None ? null : SpawnProjectile(currProjectilePrefab, spawnPos, spawnRot);
+        var projScript = CurrWeapon == HeldWeaponType.None ? null : proj.GetComponent<Projectile>();
 
-        GameObject proj = SpawnProjectile(prefabToUse.gameObject, spawnPos, spawnRot);
-        var projScript = proj.GetComponent<Projectile>();
+        // Change collider to a sphere collider if the pooled object was an axe projectile and the held weapon is not an axe.
+        if (projScript is AxeProjectile && CurrWeapon != HeldWeaponType.Axe)
+        {
+            BoxCollider currCollider = proj.GetComponent<BoxCollider>();
+            if (currCollider)
+            {
+                Destroy(currCollider);
+                SphereCollider newCollider = proj.AddComponent<SphereCollider>();
+                newCollider.radius = 0.6f;
+            }
+        }
 
         float speed = projectileSpeed;
-        Vector3 velocity;
-        if (GloomUpgrade.IsEnabled && projScript is GloomProjectile)
+        Vector3 velocity = Vector3.zero;
+        
+        if (projScript)
         {
-            proj.transform.position = playerEntity.transform.position + Vector3.up * 5f;
-            velocity = Vector3.down * 2f;
-        }
-        else if (PoisonPoolProjectiles.IsEnabled && projScript is PoisonPoolBottleProjectile)
-        {
-            Vector3 dirXZ = direction;
-            dirXZ.y = 0f;
-            if (dirXZ.sqrMagnitude < 0.01f) dirXZ = Vector3.forward;
-            else dirXZ.Normalize();
-            velocity = dirXZ * 20f + Vector3.up * 15f;
-        }
-        else
-        {
-            if (firedWeapon == HeldWeaponType.Staff && staffFireballSpeed > 0f)
+            if (GloomUpgrade.IsEnabled && projScript is GloomProjectile)
             {
-                speed = staffFireballSpeed;
+                proj.transform.position = playerEntity.transform.position + Vector3.up * 5f;
+                velocity = Vector3.down * 2f;
             }
-            velocity = direction * speed;
-            if (firedWeapon == HeldWeaponType.Mace)
+            else if (PoisonPoolProjectiles.IsEnabled && projScript is PoisonPoolBottleProjectile)
             {
-                velocity += Vector3.up * maceLobUpwardSpeed;
+                Vector3 dirXZ = direction;
+                dirXZ.y = 0f;
+                if (dirXZ.sqrMagnitude < 0.01f) dirXZ = Vector3.forward;
+                else dirXZ.Normalize();
+                velocity = dirXZ * 20f + Vector3.up * 15f;
+            }
+            else
+            {
+                if (firedWeapon == HeldWeaponType.Staff && staffFireballSpeed > 0f)
+                {
+                    speed = staffFireballSpeed;
+                }
+                velocity = direction * speed;
+                if (firedWeapon == HeldWeaponType.Mace)
+                {
+                    velocity += Vector3.up * maceLobUpwardSpeed;
+                }
             }
         }
 
-        // Init the projectile according to weapon
-        if (firedWeapon == HeldWeaponType.Spear)
+        // Initialize the projectile according to held weapon.
+        if (firedWeapon == HeldWeaponType.Spear || firedWeapon == HeldWeaponType.Mace || firedWeapon == HeldWeaponType.Staff)
         {
-            projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
-        }
-        else if (firedWeapon == HeldWeaponType.Mace)
-        {
-            // Mace now fires a fireball
-            projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
+            if (projScript) projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
         }
         else if (firedWeapon == HeldWeaponType.Axe)
         {
@@ -460,12 +464,9 @@ public class PlayerShooter : MonoBehaviour
             }
             else
             {
-                projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
+                velocity = projectileSpeed * direction;
+                if (projScript) projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
             }
-        }
-        else
-        {
-            projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
         }
 
         audioController?.PlayAttackSound();
