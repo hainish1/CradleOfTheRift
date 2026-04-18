@@ -71,19 +71,19 @@ public class EnemyGolem : Enemy
     MeleeAttackStateGolem meleeAttack;
     RecoveryStateGolem recovery;
 
-    [Header("Animation Settings")]
+    [Header("Golem Animation Settings")]
     public AnimationClip throwAnim;
-    public AnimationClip meleeAnim;
+    public AnimationClip slamAnim;
     public float throwAnimSpeedMultiplier = 1f;
-    public float meleeAnimSpeedMultiplier = 1f;
+    public float slamAnimSpeedMultiplier = 1f;
     [HideInInspector] public Animator golemAnim;
 
-    protected void OnEnable()
+    protected virtual void OnEnable()
     {
         EnemyRegistry.RegisterGolem(this);
     }
 
-    protected void OnDisable()
+    protected virtual void OnDisable()
     {
         EnemyRegistry.UnregisterGolem(this);
     }
@@ -360,13 +360,13 @@ public class EnemyGolem : Enemy
 
     /// <summary>
     ///   <para>
-    ///     Recalulates the melee and throw attack animation speeds.
+    ///     Recalulates the melee and ranged attack animation speeds.
     ///   </para>
     /// </summary>
-    protected void RecalculateAttackAnimationSpeeds()
+    protected virtual void RecalculateAttackAnimationSpeeds()
     {
-        golemAnim.SetFloat("MeleeAnimSpeedMultiplier", meleeAnimSpeedMultiplier);
         golemAnim.SetFloat("ThrowAnimSpeedMultiplier", throwAnimSpeedMultiplier);
+        golemAnim.SetFloat("SlamAnimSpeedMultiplier", slamAnimSpeedMultiplier);
     }
 
 

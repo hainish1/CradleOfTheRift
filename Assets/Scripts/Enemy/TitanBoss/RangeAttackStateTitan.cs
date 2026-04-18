@@ -9,6 +9,8 @@ public class RangeAttackStateTitan : EnemyState
 {
     private EnemyTitan enemyTitan;
     private float timer;
+    private float totalAnimationTime; // How long the whole state lasts
+    private float hitFrameTime; // The exact moment the punch lands
 
     public RangeAttackStateTitan(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
@@ -21,10 +23,26 @@ public class RangeAttackStateTitan : EnemyState
     public override void Enter()
     {
         enemyTitan.PauseAgent();
-        timer = enemyTitan.throwAnim.length / enemyTitan.golemAnim.GetFloat("ThrowAnimSpeedMultiplier");
-        enemyTitan.golemAnim.SetTrigger("AttackThrow");
-    }
 
+        // 50% chance to perform throw attack or barrage attack.
+        float rand = Random.value;
+        if (rand < 0.5f) // Throw attack.
+        {
+            timer = enemyTitan.throwAnim.length / enemyTitan.golemAnim.GetFloat("ThrowAnimSpeedMultiplier");
+            //hitFrameTime = enemyTitan.throwAnim.events[0].time;
+            enemyTitan.golemAnim.SetTrigger("AttackThrow");
+        }
+        else // Barrage attack.
+        {
+            timer = enemyTitan.barrageAnim.length / enemyTitan.golemAnim.GetFloat("BarrageAnimSpeedMultiplier");
+            //hitFrameTime = enemyTitan.barrageAnim.events[0].time;
+            enemyTitan.golemAnim.SetTrigger("AttackBarrage");
+        }
+
+        Debug.Log($"timer: {timer}");
+        Debug.Log($"enemyTitan.throwAnim.length: {enemyTitan.throwAnim.length} | enemyTitan.golemAnim.GetFloat(\"ThrowAnimSpeedMultiplier\"): {enemyTitan.golemAnim.GetFloat("ThrowAnimSpeedMultiplier")}");
+        Debug.Log($"enemyTitan.barrageAnim.length: {enemyTitan.barrageAnim.length} | enemyTitan.golemAnim.GetFloat(\"BarrageAnimSpeedMultiplier\"): {enemyTitan.golemAnim.GetFloat("BarrageAnimSpeedMultiplier")}");
+    }
 
     public override void Update()
     {

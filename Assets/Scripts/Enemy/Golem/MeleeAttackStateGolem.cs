@@ -25,8 +25,8 @@ public class MeleeAttackStateGolem : EnemyState
     {
         stateTimer += Time.deltaTime;
 
-        float totalAnimationTime = enemyGolem.meleeAnim.length; // How long the whole state lasts
-        float hitFrameTime = enemyGolem.meleeAnim.events[0].time; // The exact moment the punch lands
+        float totalAnimationTime = enemyGolem.slamAnim.length; // How long the whole state lasts
+        float hitFrameTime = enemyGolem.slamAnim.events[0].time; // The exact moment the punch lands
 
         // Keep turning to face the player until melee attack
         if (stateTimer < hitFrameTime)
