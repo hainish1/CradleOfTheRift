@@ -5538,9 +5538,9 @@ MonoBehaviour:
     damageMultiplier: 1
     speedMultiplier: 1
     isStrongerVariant: 0
-    dotChance: 0.35
-    dotDamagePerTick: 0.5
-    dotTickInterval: 1
+    dotChance: 0.5
+    dotDamagePerTick: 2
+    dotTickInterval: 0.5
     dotDuration: 3
   chaseSpeed: 30
   attackRange: 5
@@ -5666,7 +5666,7 @@ MonoBehaviour:
   maxHealth: 40
   cleanupDelay: 0
   baseHealth: 40
-  xpReward: 10
+  xpReward: 20
   damageVisuals: {fileID: 4693780905273578455}
   deathVFX: {fileID: 676540690991785363, guid: 4d01bc6d99d92944eba5ce07eee9d031, type: 3}
   deathVFXSpawnPoint: {fileID: 0}

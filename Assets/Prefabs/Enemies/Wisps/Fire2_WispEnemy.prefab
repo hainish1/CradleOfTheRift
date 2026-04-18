@@ -5527,7 +5527,7 @@ MonoBehaviour:
     bodyVFX: {fileID: 0}
     attackVFX: {fileID: 0}
     dotHitVFX: {fileID: 0}
-    damageMultiplier: 1
+    damageMultiplier: 1.5
     speedMultiplier: 1
     isStrongerVariant: 0
     dotChance: 0.35
@@ -5556,10 +5556,10 @@ MonoBehaviour:
   wispSeparationStrength: 0.05
   angleAdaptSpeed: 0.05
   projectileSpeed: 50
-  attackDelayMin: 0.3
-  attackDelayMax: 0.8
-  recoveryDurationMin: 1.5
-  recoveryDurationMax: 2.5
+  attackDelayMin: 0.2
+  attackDelayMax: 0.5
+  recoveryDurationMin: 1.2
+  recoveryDurationMax: 2
   shotsPerSet: 4
   firePoint: {fileID: 3848236117275874575}
   projectilePrefab: {fileID: 377849133140131786, guid: bf6bc8d9b890a9941a8b234c70635f87, type: 3}
@@ -5628,7 +5628,7 @@ MonoBehaviour:
   maxHealth: 35
   cleanupDelay: 0
   baseHealth: 35
-  xpReward: 10
+  xpReward: 30
   damageVisuals: {fileID: 8049770428588659851}
   deathVFX: {fileID: 5162910912013668194, guid: b280fe170b50a3d44b75c3924e9977e9, type: 3}
   deathVFXSpawnPoint: {fileID: 1590124114010494994}

@@ -266,19 +266,19 @@ MonoBehaviour:
     bodyVFX: {fileID: 0}
     attackVFX: {fileID: 0}
     dotHitVFX: {fileID: 0}
-    damageMultiplier: 1
+    damageMultiplier: 1.5
     speedMultiplier: 1
     isStrongerVariant: 0
-    dotChance: 0.35
-    dotDamagePerTick: 0.5
+    dotChance: 0.5
+    dotDamagePerTick: 3
     dotTickInterval: 1
-    dotDuration: 3
+    dotDuration: 4
   projectileDamage: 10
   flyHeight: 3.7
   verticalSmoothTime: 4.5
   horizontalSmoothTime: 2.5
-  maxHorizontalSpeed: 20
-  maxVerticalSpeed: 10
+  maxHorizontalSpeed: 10
+  maxVerticalSpeed: 5
   chaseSpeed: 6
   attackRange: 75
   desiredDistance: 60
@@ -367,7 +367,7 @@ MonoBehaviour:
   maxHealth: 35
   cleanupDelay: 0
   baseHealth: 35
-  xpReward: 10
+  xpReward: 30
   damageVisuals: {fileID: 6006767459273302376}
   deathVFX: {fileID: 5162910912013668194, guid: 1cdd7b800d2b8954d9790492066202b9, type: 3}
   deathVFXSpawnPoint: {fileID: 5497956912933035178}
