@@ -1,0 +1,73 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "911400610",
+    "Type": "Event",
+    "GUID": "{CD85A0CB-D7DE-411D-8325-3A62F23935DC}",
+    "Language": "SFX",
+    "Hash": "{71433F44-8080-6D7D-A877-2D6BBAC8814F}",
+    "ObjectPath": "Play_Mace_Hit",
+    "ShortName": "Play_Mace_Hit",
+    "Path": "Event/Play_Mace_Hit.bnk",
+    "Media": [
+     {
+      "Id": "45735907",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_008[1].wav",
+      "Path": "Media/45735907.wem",
+      "CachePath": "7D/{7D99BE6C-2A01-8885-4793-DDF8AD2BBD70}.wem"
+     },
+     {
+      "Id": "86528835",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "magic_explosion.wav",
+      "Path": "Media/86528835.wem",
+      "CachePath": "A3/{A366B138-7E95-D305-4387-07B4FF677A87}.wem"
+     },
+     {
+      "Id": "565804503",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0277_explosion_urban_004_02[1].wav",
+      "Path": "Media/565804503.wem",
+      "CachePath": "CD/{CD59CCD3-7C81-B164-F69F-84693DC1C644}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "911400610",
+      "Name": "Play_Mace_Hit",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Mace\\Play_Mace_Hit",
+      "GUID": "{CD85A0CB-D7DE-411D-8325-3A62F23935DC}",
+      "MaxAttenuation": "300",
+      "DurationType": "OneShot",
+      "DurationMin": "4",
+      "DurationMax": "4",
+      "MediaRefs": [
+       {
+        "Id": "45735907"
+       },
+       {
+        "Id": "86528835"
+       },
+       {
+        "Id": "565804503"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{E3CC6F8C-52B1-5248-003C-A177E3718860}"
+ }
+}

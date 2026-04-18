@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 1416220504560699282}
   - component: {fileID: 6457636619401332259}
   - component: {fileID: 4260245142432982276}
-  - component: {fileID: -430357689790887578}
   - component: {fileID: 1342931207619941553}
   - component: {fileID: 7824996519183071695}
   m_Layer: 9
@@ -106,41 +105,12 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.6
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-430357689790887578
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5567662292661809767}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: debd81f15bb158d458837b25eeb3c22b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bulletImpactFX: {fileID: 8296457393497080562, guid: 83ff99043eb56d54099c28f25d33f0ab, type: 3}
-  trail: {fileID: 0}
-  lifeTime: 12.46
-  gravity: 0
-  hitForce: 8
-  knockBackImpulse: 8
-  hitMask:
-    serializedVersion: 2
-    m_Bits: 302145
-  rb: {fileID: 0}
-  alwaysExplosive: 1
-  standaloneAoeRadius: 4
-  standaloneAoeDamageMultiplier: 1
-  standaloneMaxRange: 100
-  standaloneFireballVisualScale: 3
-  standaloneExplosionVFX: {fileID: 676540690991785363, guid: a2018f62fc3c3344b881fabb897f74d3, type: 3}
-  standaloneTravelVFX: {fileID: 676540690991785363, guid: 846106adc37bb5246855378169630538, type: 3}
 --- !u!96 &1342931207619941553
 TrailRenderer:
   serializedVersion: 3
@@ -149,7 +119,7 @@ TrailRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5567662292661809767}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1

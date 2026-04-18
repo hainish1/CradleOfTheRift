@@ -9,6 +9,9 @@
 						<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
 					</PropertyList>
 					<ReferenceList>
+						<Reference Name="Attenuation">
+							<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+						</Reference>
 						<Reference Name="Conversion">
 							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
 						</Reference>
@@ -35,6 +38,9 @@
 						<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
 					</PropertyList>
 					<ReferenceList>
+						<Reference Name="Attenuation">
+							<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+						</Reference>
 						<Reference Name="Conversion">
 							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
 						</Reference>
@@ -61,6 +67,9 @@
 						<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
 					</PropertyList>
 					<ReferenceList>
+						<Reference Name="Attenuation">
+							<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+						</Reference>
 						<Reference Name="Conversion">
 							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
 						</Reference>
@@ -100,6 +109,9 @@
 						<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
 					</PropertyList>
 					<ReferenceList>
+						<Reference Name="Attenuation">
+							<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+						</Reference>
 						<Reference Name="Conversion">
 							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
 						</Reference>
@@ -155,6 +167,9 @@
 						</Property>
 					</PropertyList>
 					<ReferenceList>
+						<Reference Name="Attenuation">
+							<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+						</Reference>
 						<Reference Name="Conversion">
 							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
 						</Reference>
@@ -236,6 +251,9 @@
 								</Property>
 							</PropertyList>
 							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+								</Reference>
 								<Reference Name="Conversion">
 									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
 								</Reference>
@@ -304,6 +322,9 @@
 								</Property>
 							</PropertyList>
 							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+								</Reference>
 								<Reference Name="Conversion">
 									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
 								</Reference>
@@ -330,6 +351,9 @@
 								<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
 							</PropertyList>
 							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+								</Reference>
 								<Reference Name="Conversion">
 									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
 								</Reference>
@@ -350,6 +374,396 @@
 								<ActiveSource Name="Weapon Sparkle" ID="{EC5AAF63-C321-4E38-8BFF-D31C4F219C67}" Platform="Linked"/>
 							</ActiveSourceList>
 						</Sound>
+						<Folder Name="axe" ID="{1387BD11-0C7D-4B05-A033-B0D8596D44C1}" ShortID="251579182">
+							<ChildrenList>
+								<Sound Name="Orbit Ring" ID="{71D70F82-4771-4E1B-9805-5B1F72CB1834}" ShortID="186057024">
+									<PropertyList>
+										<Property Name="3DSpatialization" Type="int16" Value="2"/>
+										<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Attenuation">
+											<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+										</Reference>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Player Bus" ID="{46F84140-CFD0-4A90-8BDF-8B64612BA7B8}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="AxeThrow Orbit" ID="{3AEC9E24-D4F3-4B46-80F7-F3D9AFEF35D5}">
+											<Language>SFX</Language>
+											<AudioFile>AxeThrow Orbit.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="80803776"/>
+											</MediaIDList>
+										</AudioFileSource>
+										<AudioFileSource Name="AxeThrow OrbitRing" ID="{66C6A9D0-D1A0-469F-ABFF-EC3CB96DAFF4}">
+											<Language>SFX</Language>
+											<AudioFile>AxeThrow OrbitRing.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="752364184"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="AxeThrow OrbitRing" ID="{66C6A9D0-D1A0-469F-ABFF-EC3CB96DAFF4}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+								<Sound Name="Orbit Swoosh" ID="{F1D77677-AB7F-42FD-894E-4975A15FC149}" ShortID="778781264">
+									<PropertyList>
+										<Property Name="3DSpatialization" Type="int16" Value="2"/>
+										<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Attenuation">
+											<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+										</Reference>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Player Bus" ID="{46F84140-CFD0-4A90-8BDF-8B64612BA7B8}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="AxeThrow-Swoosh" ID="{1524E753-5CB6-4374-9D0C-BC95FB25BD98}">
+											<Language>SFX</Language>
+											<AudioFile>AxeThrow-Swoosh.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="887436694"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="AxeThrow-Swoosh" ID="{1524E753-5CB6-4374-9D0C-BC95FB25BD98}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+								<Sound Name="Orbit Intense" ID="{9F617D6E-9A5B-4EAF-931C-BA0EAC634C10}" ShortID="425986093">
+									<PropertyList>
+										<Property Name="3DSpatialization" Type="int16" Value="2"/>
+										<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Attenuation">
+											<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+										</Reference>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Player Bus" ID="{46F84140-CFD0-4A90-8BDF-8B64612BA7B8}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="AxeThrow-Intense" ID="{2BE5C299-D37A-4900-A8C0-644F829D61F7}">
+											<Language>SFX</Language>
+											<AudioFile>AxeThrow-Intense.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="515677697"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="AxeThrow-Intense" ID="{2BE5C299-D37A-4900-A8C0-644F829D61F7}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+								<Sound Name="Shatter" ID="{DE2DE1C5-0067-4B45-8F0D-7B48B9D2CA9F}" ShortID="787489738">
+									<PropertyList>
+										<Property Name="3DSpatialization" Type="int16" Value="2"/>
+										<Property Name="Pitch" Type="int32">
+											<ModifierList>
+												<ModifierInfo>
+													<Modifier Name="" ID="{A20ED53A-F347-4591-8C60-05DE520AE955}">
+														<PropertyList>
+															<Property Name="Enabled" Type="bool" Value="True"/>
+															<Property Name="Max" Type="Real64" Value="400"/>
+															<Property Name="Min" Type="Real64" Value="-400"/>
+														</PropertyList>
+													</Modifier>
+												</ModifierInfo>
+											</ModifierList>
+										</Property>
+										<Property Name="Volume" Type="Real64">
+											<ValueList>
+												<Value>-9</Value>
+											</ValueList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Attenuation">
+											<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+										</Reference>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Player Bus" ID="{46F84140-CFD0-4A90-8BDF-8B64612BA7B8}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="METLFric_Designed Metal Sword Sheath 04_DDUMAIS_NONE" ID="{577DCE71-1097-4C8E-BA37-C91E16A125B6}">
+											<PropertyList>
+												<Property Name="FadeOutDuration" Type="Real64" Value="0.101474079136884"/>
+												<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+												<Property Name="TrimBegin" Type="Real64" Value="0.0415121232832709"/>
+												<Property Name="TrimEnd" Type="Real64" Value="0.431264811695172"/>
+											</PropertyList>
+											<Language>SFX</Language>
+											<AudioFile>METLFric_Designed Metal Sword Sheath 04_DDUMAIS_NONE.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="254076809"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="METLFric_Designed Metal Sword Sheath 04_DDUMAIS_NONE" ID="{577DCE71-1097-4C8E-BA37-C91E16A125B6}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+								<Sound Name="Orbit Swoosh 2" ID="{F929B442-43FF-41E8-8146-C6A9E78B3E30}" ShortID="129177420">
+									<PropertyList>
+										<Property Name="3DSpatialization" Type="int16" Value="2"/>
+										<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+										<Property Name="Lowpass" Type="int16">
+											<ValueList>
+												<Value>6</Value>
+											</ValueList>
+										</Property>
+										<Property Name="Pitch" Type="int32">
+											<ValueList>
+												<Value>450</Value>
+											</ValueList>
+											<ModifierList>
+												<ModifierInfo>
+													<Modifier Name="" ID="{1CF7ACCE-17C8-4900-BFFF-D33AADD83424}">
+														<PropertyList>
+															<Property Name="Enabled" Type="bool" Value="True"/>
+															<Property Name="Max" Type="Real64" Value="800"/>
+														</PropertyList>
+													</Modifier>
+												</ModifierInfo>
+											</ModifierList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Attenuation">
+											<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+										</Reference>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Player Bus" ID="{46F84140-CFD0-4A90-8BDF-8B64612BA7B8}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="SWSH_Swing 3 Large 03_DDUMAIS_NONE" ID="{47F471C7-1B5D-43D0-B518-52830D60C356}">
+											<PropertyList>
+												<Property Name="FadeInDuration" Type="Real64" Value="0.367520565237121"/>
+												<Property Name="FadeOutDuration" Type="Real64" Value="0.494739222434586"/>
+												<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+												<Property Name="TrimBegin" Type="Real64" Value="0.0449762929485987"/>
+												<Property Name="TrimEnd" Type="Real64" Value="0.545498194176144"/>
+											</PropertyList>
+											<Language>SFX</Language>
+											<AudioFile>SWSH_Swing 3 Large 03_DDUMAIS_NONE.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="804858838"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="SWSH_Swing 3 Large 03_DDUMAIS_NONE" ID="{47F471C7-1B5D-43D0-B518-52830D60C356}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+								<Sound Name="SWSH_Sword Slash Impact V2 Assorted 18_DDUMAIS_NONE" ID="{FEA32038-A1C8-4688-8F3C-FBB5A145A1C4}" ShortID="648955607">
+									<PropertyList>
+										<Property Name="Pitch" Type="int32">
+											<ModifierList>
+												<ModifierInfo>
+													<Modifier Name="" ID="{FA1B5881-A094-4179-B1E4-268666060C31}">
+														<PropertyList>
+															<Property Name="Enabled" Type="bool" Value="True"/>
+															<Property Name="Max" Type="Real64" Value="400"/>
+															<Property Name="Min" Type="Real64" Value="-400"/>
+														</PropertyList>
+													</Modifier>
+												</ModifierInfo>
+											</ModifierList>
+										</Property>
+										<Property Name="Volume" Type="Real64">
+											<ValueList>
+												<Value>-12</Value>
+											</ValueList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Attenuation">
+											<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+										</Reference>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Player Bus" ID="{46F84140-CFD0-4A90-8BDF-8B64612BA7B8}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="SWSH_Sword Slash Impact V2 Assorted 18_DDUMAIS_NONE" ID="{CC62BF96-0251-4187-85AA-8747EDEEB8F1}">
+											<PropertyList>
+												<Property Name="LoopBegin" Type="Real64" Value="0.0712496843986607"/>
+												<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+												<Property Name="TrimBegin" Type="Real64" Value="0.0712496843986607"/>
+											</PropertyList>
+											<Language>SFX</Language>
+											<AudioFile>SWSH_Sword Slash Impact V2 Assorted 18_DDUMAIS_NONE.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="865575945"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="SWSH_Sword Slash Impact V2 Assorted 18_DDUMAIS_NONE" ID="{CC62BF96-0251-4187-85AA-8747EDEEB8F1}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+							</ChildrenList>
+						</Folder>
+						<Folder Name="mace" ID="{ECCED0A8-BD88-412F-B3F5-1786EFBA08B1}" ShortID="847206915">
+							<ChildrenList>
+								<Sound Name="Mace Explosion" ID="{9BA484F0-C92F-4018-9BC2-9C1BEF070960}" ShortID="244980464">
+									<PropertyList>
+										<Property Name="3DSpatialization" Type="int16" Value="2"/>
+										<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
+										<Property Name="Volume" Type="Real64">
+											<ValueList>
+												<Value>-18</Value>
+											</ValueList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Attenuation">
+											<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+										</Reference>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Player Bus" ID="{46F84140-CFD0-4A90-8BDF-8B64612BA7B8}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="Bluezone_BC0277_explosion_urban_004_02[1]" ID="{4DD143E5-CD43-40E5-8638-78B02D610A60}">
+											<Language>SFX</Language>
+											<AudioFile>Bluezone_BC0277_explosion_urban_004_02[1].wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="565804503"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="Bluezone_BC0277_explosion_urban_004_02[1]" ID="{4DD143E5-CD43-40E5-8638-78B02D610A60}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+								<Sound Name="Mace Shards" ID="{D66B0F88-F081-4824-A522-E7CC799EC9A7}" ShortID="587388738">
+									<PropertyList>
+										<Property Name="3DSpatialization" Type="int16" Value="2"/>
+										<Property Name="Pitch" Type="int32">
+											<ModifierList>
+												<ModifierInfo>
+													<Modifier Name="" ID="{E4CA6B9D-EB3F-4E70-B835-B223A09D42F6}">
+														<PropertyList>
+															<Property Name="Enabled" Type="bool" Value="True"/>
+															<Property Name="Max" Type="Real64" Value="600"/>
+															<Property Name="Min" Type="Real64" Value="-600"/>
+														</PropertyList>
+													</Modifier>
+												</ModifierInfo>
+											</ModifierList>
+										</Property>
+										<Property Name="Volume" Type="Real64">
+											<ValueList>
+												<Value>-12</Value>
+											</ValueList>
+											<ModifierList>
+												<ModifierInfo>
+													<Modifier Name="" ID="{54CE386F-FF54-498B-9C91-9AF68FF69BA4}">
+														<PropertyList>
+															<Property Name="Enabled" Type="bool" Value="True"/>
+															<Property Name="Min" Type="Real64" Value="-3"/>
+														</PropertyList>
+													</Modifier>
+												</ModifierInfo>
+											</ModifierList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Attenuation">
+											<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+										</Reference>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Player Bus" ID="{46F84140-CFD0-4A90-8BDF-8B64612BA7B8}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="Bluezone_BC0275_building_collapse_debris_falling_rock_008[1]" ID="{CC3BA4F0-ADBF-4F1A-A33A-D8003544DA9B}">
+											<PropertyList>
+												<Property Name="FadeOutDuration" Type="Real64" Value="0.317195722034999"/>
+												<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+												<Property Name="TrimBegin" Type="Real64" Value="1.59976972852434"/>
+												<Property Name="TrimEnd" Type="Real64" Value="2.48240134102958"/>
+											</PropertyList>
+											<Language>SFX</Language>
+											<AudioFile>Bluezone_BC0275_building_collapse_debris_falling_rock_008[1].wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="45735907"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="Bluezone_BC0275_building_collapse_debris_falling_rock_008[1]" ID="{CC3BA4F0-ADBF-4F1A-A33A-D8003544DA9B}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+								<Sound Name="Mace Explosion Magic" ID="{6359C822-87ED-469D-B4FB-5C96F470A392}" ShortID="297327643">
+									<PropertyList>
+										<Property Name="3DSpatialization" Type="int16" Value="2"/>
+										<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
+										<Property Name="Volume" Type="Real64">
+											<ValueList>
+												<Value>-6</Value>
+											</ValueList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Attenuation">
+											<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+										</Reference>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Player Bus" ID="{46F84140-CFD0-4A90-8BDF-8B64612BA7B8}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="magic_explosion" ID="{B862679D-8874-462B-8257-E7D0B8B496A8}">
+											<Language>SFX</Language>
+											<AudioFile>magic_explosion.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="86528835"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="magic_explosion" ID="{B862679D-8874-462B-8257-E7D0B8B496A8}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+							</ChildrenList>
+						</Folder>
 					</ChildrenList>
 				</Folder>
 				<Sound Name="player_jump" ID="{A14AA23A-33DC-480B-8E86-CABEB2366C64}" ShortID="654693844">
@@ -384,6 +798,9 @@
 						</Property>
 					</PropertyList>
 					<ReferenceList>
+						<Reference Name="Attenuation">
+							<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+						</Reference>
 						<Reference Name="Conversion">
 							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
 						</Reference>

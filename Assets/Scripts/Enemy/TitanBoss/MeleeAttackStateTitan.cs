@@ -7,11 +7,6 @@ public class MeleeAttackStateTitan : EnemyState
 {
     private EnemyTitan enemyTitan;
     private float stateTimer;
-    private bool hasAttacked;
-
-    // Temporary attack timing (replace with animation events later)
-    private float totalAnimationTime = 1.0f; // How long the whole state lasts
-    private float hitFrameTime = 0.5f;       // The exact moment the punch lands
 
     public MeleeAttackStateTitan(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
@@ -23,36 +18,20 @@ public class MeleeAttackStateTitan : EnemyState
         enemyTitan.PauseAgent();
         //Debug.Log("Titan boss entered Melee Attack State");
         stateTimer = 0f;
-        hasAttacked = false;
+        enemyTitan.golemAnim.SetTrigger("AttackMelee");
     }
 
     public override void Update()
     {
-       stateTimer += Time.deltaTime;
+        stateTimer += Time.deltaTime;
+
+        float totalAnimationTime = enemyTitan.meleeAnim.length; // How long the whole state lasts
+        float hitFrameTime = enemyTitan.meleeAnim.events[0].time; // The exact moment the punch lands
 
         // Keep turning to face the player until melee attack
         if (stateTimer < hitFrameTime)
         {
             enemyTitan.FaceTargetSmooth(enemyTitan.turnSpeedWhileAiming);
-        }
-
-        // Play melee attack once when the timer hits the sweet spot
-        if (stateTimer >= hitFrameTime && !hasAttacked)
-        {
-            float random = Random.value;
-            if (random < 0.5f) // 50% chance to do either attack
-            {
-                enemyTitan.MeleeSlamAttack();
-            }
-            else
-            {
-                enemyTitan.MeleeSweepAttack(0); // 0 - Left, 1 - Right
-                //enemyTitan.golemAnim.SetTrigger("AttackMeleeSweepRight");
-            }
-            
-            //enemyTitan.MeleeSweepAttack(1);
-            hasAttacked = true;
-            enemyTitan.golemAnim.SetTrigger("AttackMelee");
         }
 
         // Leave the state when the full animation time is over

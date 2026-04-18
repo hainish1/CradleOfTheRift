@@ -17,6 +17,7 @@ using System;
 using System.Collections;
 using Unity.Cinemachine;
 using Unity.Cinemachine.Samples;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -55,17 +56,18 @@ public class PlayerShooter : MonoBehaviour
 
     [Header("Projectiles")] [Space]
     [SerializeField] private Transform playerCenter;
-    [SerializeField] Projectile spearProjectilePrefab;
-    [SerializeField] Projectile axeProjectilePrefab;
-    [SerializeField] Projectile maceProjectilePrefab;
-    [SerializeField] private ExplosiveProjectile staffFireballPrefab; // this is the shit now
-    [SerializeField] private ExplosiveProjectile explosiveProjectilePrefab;
+    [SerializeField] private GameObject spearProjectilePrefab;
+    [SerializeField] private GameObject axeProjectilePrefab;
+    [SerializeField] private GameObject maceProjectilePrefab;
+    [SerializeField] private GameObject staffFireballPrefab; // this is the shit now
+    [SerializeField] private GameObject explosiveProjectilePrefab;
     [SerializeField] private float projectileSpeed = 50f;
     [Tooltip("Travel speed for the Staff fireball")]
     [SerializeField] private float staffFireballSpeed = 10f;
     [SerializeField] private float spawnOffset = 0.1f;
     [SerializeField] private float maceLobUpwardSpeed = 10f;
-    private Projectile currProjectilePrefab;
+    private GameObject currProjectilePrefab;
+    private HeldWeaponType CurrWeapon => playerHeldWeaponController != null ? playerHeldWeaponController.HeldWeapon : HeldWeaponType.None;
 
     [Header("Weapon Animation")] [Space]
     [SerializeField] private Transform weaponPivot;
@@ -97,13 +99,13 @@ public class PlayerShooter : MonoBehaviour
         input.performed += _ => ToggleFullAuto();
         input.Enable();
 
-        playerEntity = GetComponentInParent<Entity>();
-        playerMovement = GetComponentInParent<PlayerMovement>();
-        playerHeldWeaponController = GetComponentInParent<PlayerHeldWeaponController>();
-        meleeController = GetComponentInParent<PlayerMeleeControllerV2>();
-        _shockwaveController = GetComponentInParent<PlayerShockwaveController>();
-        playerAnim = GetComponent<Animator>();
-        audioController = GetComponentInParent<PlayerAudioController>();
+        playerEntity = GetComponent<Entity>();
+        playerMovement = GetComponent<PlayerMovement>();
+        playerHeldWeaponController = GetComponent<PlayerHeldWeaponController>();
+        meleeController = GetComponent<PlayerMeleeControllerV2>();
+        _shockwaveController = GetComponent<PlayerShockwaveController>();
+        playerAnim = GetComponentInChildren<Animator>();
+        audioController = GetComponent<PlayerAudioController>();
 
         SetProjectileType(playerHeldWeaponController.HeldWeapon);
         fireMaxCharges = playerEntity.Stats.FireCharges;
@@ -228,6 +230,97 @@ public class PlayerShooter : MonoBehaviour
         }
     }
 
+    /// <summary>
+    ///   <para>
+    ///     Begins the WeaponFlip animation coroutine.
+    ///   </para>
+    /// </summary>
+    public void WeaponThrowAnimBegin()
+    {
+        // Do not flip the axe.
+        if (currProjectilePrefab != axeProjectilePrefab) StartCoroutine(WeaponFlip());
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Shoots a projectile and makes the weapon disappear.
+    ///   </para>
+    /// </summary>
+    public void WeaponThrow()
+    {
+        // Disappear the weapon by shrinking it to 0.
+        weaponPivot.localScale = new Vector3(0, 0, 0);
+        Fire();
+        // safety net so the weapon always comes back,
+        if (weaponRegainCoroutine != null) StopCoroutine(weaponRegainCoroutine);
+        weaponRegainCoroutine = StartCoroutine(WeaponRegain());
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Begins the WeaponRegain animation coroutine.
+    ///   </para>
+    /// </summary>
+    public void WeaponThrowAnimEnd()
+    {
+        if (weaponRegainCoroutine != null) StopCoroutine(weaponRegainCoroutine);
+        weaponRegainCoroutine = StartCoroutine(WeaponRegain());
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Makes the weapon flip 180 degrees around its Z-axis in the designated amount of time.
+    ///   </para>
+    /// </summary>
+    /// <returns> IEnumerator object. </returns>
+    private IEnumerator WeaponFlip()
+    {
+        // Ensure weapon is visible and oriented correctly in the case of multiple quick consecutive throws.
+        weaponPivot.localRotation = weaponOriginalRotation;
+        weaponPivot.localScale = weaponOriginalScale;
+
+        float timer = 0;
+        while (timer < flipAnimMaxSeconds)
+        {
+            float completion = timer / flipAnimMaxSeconds;
+            weaponPivot.localRotation = Quaternion.Lerp(weaponOriginalRotation, weaponFlippedRotation, completion);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure weapon rotation is exact when done rotating.
+        weaponPivot.localRotation = weaponFlippedRotation;
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Makes the weapon grow back to its original scale in the designated amount of time.
+    ///   </para>
+    /// </summary>
+    /// <returns> IEnumerator object. </returns>
+    private IEnumerator WeaponRegain()
+    {
+        yield return new WaitForSeconds(regainDelaySeconds);
+
+        // Set weapon to original orientation and shrunk scale since the flip animation is complete.
+        weaponPivot.localRotation = weaponOriginalRotation;
+        weaponPivot.localScale = weaponShrunkScale;
+
+        float timer = 0;
+        while (timer < regainAnimCompletionSeconds)
+        {
+            float completion = timer / regainAnimCompletionSeconds;
+            weaponPivot.localScale = Vector3.Lerp(weaponShrunkScale, weaponOriginalScale, completion);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure weapon scale restoration is exact when done growing.
+        weaponPivot.localScale = weaponOriginalScale;
+    }
+
     private void OnFireStarted(InputAction.CallbackContext _)
     {
         if (fullAuto)
@@ -304,60 +397,62 @@ public class PlayerShooter : MonoBehaviour
     private void Fire()
     {
         Vector3 direction = aim.GetAimDirection(muzzle.position, muzzle.forward, out RaycastHit raycastHit);
-
         Vector3 spawnPos = muzzle.position + direction * spawnOffset;
         Quaternion spawnRot = Quaternion.LookRotation(direction, Vector3.up);
 
-        // Staff throws through its fireball 
-        Projectile prefabToUse = currProjectilePrefab;
         HeldWeaponType firedWeapon = playerHeldWeaponController != null ? playerHeldWeaponController.HeldWeapon : HeldWeaponType.None;
-
         float currentDamage = playerEntity.Stats.ProjectileDamageForWeapon(firedWeapon);
-        if (firedWeapon == HeldWeaponType.Staff && staffFireballPrefab != null)
-        {
-            prefabToUse = staffFireballPrefab;
-        }
+        GameObject proj = CurrWeapon == HeldWeaponType.None ? null : SpawnProjectile(currProjectilePrefab, spawnPos, spawnRot);
+        var projScript = CurrWeapon == HeldWeaponType.None ? null : proj.GetComponent<Projectile>();
 
-        GameObject proj = SpawnProjectile(prefabToUse.gameObject, spawnPos, spawnRot);
-        var projScript = proj.GetComponent<Projectile>();
+        // Change collider to a sphere collider if the pooled object was an axe projectile and the held weapon is not an axe.
+        if (projScript is AxeProjectile && CurrWeapon != HeldWeaponType.Axe)
+        {
+            BoxCollider currCollider = proj.GetComponent<BoxCollider>();
+            if (currCollider)
+            {
+                Destroy(currCollider);
+                SphereCollider newCollider = proj.AddComponent<SphereCollider>();
+                newCollider.radius = 0.6f;
+            }
+        }
 
         float speed = projectileSpeed;
-        Vector3 velocity;
-        if (GloomUpgrade.IsEnabled && projScript is GloomProjectile)
+        Vector3 velocity = Vector3.zero;
+        
+        if (projScript)
         {
-            proj.transform.position = playerEntity.transform.position + Vector3.up * 5f;
-            velocity = Vector3.down * 2f;
-        }
-        else if (PoisonPoolProjectiles.IsEnabled && projScript is PoisonPoolBottleProjectile)
-        {
-            Vector3 dirXZ = direction;
-            dirXZ.y = 0f;
-            if (dirXZ.sqrMagnitude < 0.01f) dirXZ = Vector3.forward;
-            else dirXZ.Normalize();
-            velocity = dirXZ * 20f + Vector3.up * 15f;
-        }
-        else
-        {
-            if (firedWeapon == HeldWeaponType.Staff && staffFireballSpeed > 0f)
+            if (GloomUpgrade.IsEnabled && projScript is GloomProjectile)
             {
-                speed = staffFireballSpeed;
+                proj.transform.position = playerEntity.transform.position + Vector3.up * 5f;
+                velocity = Vector3.down * 2f;
             }
-            velocity = direction * speed;
-            if (firedWeapon == HeldWeaponType.Mace)
+            else if (PoisonPoolProjectiles.IsEnabled && projScript is PoisonPoolBottleProjectile)
             {
-                velocity += Vector3.up * maceLobUpwardSpeed;
+                Vector3 dirXZ = direction;
+                dirXZ.y = 0f;
+                if (dirXZ.sqrMagnitude < 0.01f) dirXZ = Vector3.forward;
+                else dirXZ.Normalize();
+                velocity = dirXZ * 20f + Vector3.up * 15f;
+            }
+            else
+            {
+                if (firedWeapon == HeldWeaponType.Staff && staffFireballSpeed > 0f)
+                {
+                    speed = staffFireballSpeed;
+                }
+                velocity = direction * speed;
+                if (firedWeapon == HeldWeaponType.Mace)
+                {
+                    velocity += Vector3.up * maceLobUpwardSpeed;
+                }
             }
         }
 
-        // Init the projectile according to weapon
-        if (firedWeapon == HeldWeaponType.Spear)
+        // Initialize the projectile according to held weapon.
+        if (firedWeapon == HeldWeaponType.Spear || firedWeapon == HeldWeaponType.Mace || firedWeapon == HeldWeaponType.Staff)
         {
-            projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
-        }
-        else if (firedWeapon == HeldWeaponType.Mace)
-        {
-            // Mace now fires a fireball
-            projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
+            if (projScript) projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
         }
         else if (firedWeapon == HeldWeaponType.Axe)
         {
@@ -369,12 +464,9 @@ public class PlayerShooter : MonoBehaviour
             }
             else
             {
-                projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
+                velocity = projectileSpeed * direction;
+                if (projScript) projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
             }
-        }
-        else
-        {
-            projScript?.Init(velocity, shootMask, currentDamage, flyDistance: 100, playerEntity);
         }
 
         audioController?.PlayAttackSound();
@@ -451,96 +543,5 @@ public class PlayerShooter : MonoBehaviour
         float secondsUntilThrow = preTransitionAnim.length + throwAnim.events[0].time;
         flipAnimMaxSeconds = scriptFlipAnimSpeed * statsThrowAnimSpeed * secondsUntilThrow;
         playerAnim.SetFloat("WeaponThrowAnimSpeedMultiplier", playerEntity.Stats.ProjectileAnimationSpeed);
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Animation event to begin the WeaponFlip animation coroutine.
-    ///   </para>
-    /// </summary>
-    public void OnWeaponThrowAnimBegin()
-    {
-        // Do not flip the axe.
-        if (currProjectilePrefab != axeProjectilePrefab) StartCoroutine(WeaponFlip());
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Makes the weapon flip 180 degrees around its Z-axis in the designated amount of time.
-    ///   </para>
-    /// </summary>
-    /// <returns> IEnumerator object. </returns>
-    private IEnumerator WeaponFlip()
-    {
-        // Ensure weapon is visible and oriented correctly in the case of multiple quick consecutive throws.
-        weaponPivot.localRotation = weaponOriginalRotation;
-        weaponPivot.localScale = weaponOriginalScale;
-        
-        float timer = 0;
-        while (timer < flipAnimMaxSeconds)
-        {
-            float completion = timer / flipAnimMaxSeconds;
-            weaponPivot.localRotation = Quaternion.Lerp(weaponOriginalRotation, weaponFlippedRotation, completion);
-
-            timer += Time.deltaTime;
-            yield return null;
-        }
-
-        // Ensure weapon rotation is exact when done rotating.
-        weaponPivot.localRotation = weaponFlippedRotation;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Animation event to shoot a projectile and make the weapon disappear.
-    ///   </para>
-    /// </summary>
-    public void OnWeaponThrow()
-    {
-        // Disappear the weapon by shrinking it to 0.
-        weaponPivot.localScale = new Vector3(0, 0, 0);
-        Fire();
-        // safety net so the weapon always comes back,
-        if (weaponRegainCoroutine != null) StopCoroutine(weaponRegainCoroutine);
-        weaponRegainCoroutine = StartCoroutine(WeaponRegain());
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Animation event to begin the WeaponRegain animation coroutine.
-    ///   </para>
-    /// </summary>
-    public void OnWeaponThrowAnimEnd()
-    {
-        if (weaponRegainCoroutine != null) StopCoroutine(weaponRegainCoroutine);
-        weaponRegainCoroutine = StartCoroutine(WeaponRegain());
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Makes the weapon grow back to its original scale in the designated amount of time.
-    ///   </para>
-    /// </summary>
-    /// <returns> IEnumerator object. </returns>
-    private IEnumerator WeaponRegain()
-    {
-        yield return new WaitForSeconds(regainDelaySeconds);
-        
-        // Set weapon to original orientation and shrunk scale since the flip animation is complete.
-        weaponPivot.localRotation = weaponOriginalRotation;
-        weaponPivot.localScale = weaponShrunkScale;
-
-        float timer = 0;
-        while (timer < regainAnimCompletionSeconds)
-        {  
-            float completion = timer / regainAnimCompletionSeconds;
-            weaponPivot.localScale = Vector3.Lerp(weaponShrunkScale, weaponOriginalScale, completion);
-
-            timer += Time.deltaTime;
-            yield return null;
-        }
-
-        // Ensure weapon scale restoration is exact when done growing.
-        weaponPivot.localScale = weaponOriginalScale;
     }
 }

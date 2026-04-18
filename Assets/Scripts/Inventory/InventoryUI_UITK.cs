@@ -12,6 +12,7 @@ public class InventoryUI_UITK : MonoBehaviour
     [SerializeField] private Color uncommonColor = Color.green;
     [SerializeField] private Color rareColor = Color.red;
     [SerializeField] private Color legendaryColor = Color.yellow;
+    [SerializeField] private Color crossoverColor = Color.cyan;
 
     [Header("Settings")]
     [SerializeField] private int maxVisibleItems = 50;
@@ -131,6 +132,7 @@ public class InventoryUI_UITK : MonoBehaviour
             ItemRarity.Uncommon => uncommonColor,
             ItemRarity.Rare => rareColor,
             ItemRarity.Legendary => legendaryColor,
+            ItemRarity.Crossover => crossoverColor,
             _ => Color.white
         };
     }

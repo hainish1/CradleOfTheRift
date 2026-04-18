@@ -13,6 +13,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] Color uncommonColor = Color.green;
     [SerializeField] Color rareColor = Color.red;
     [SerializeField] Color legendaryColor = Color.yellow;
+    [SerializeField] Color crossoverColor = Color.cyan;
 
     private PlayerInventory inventory;
     private Dictionary<ItemData, ItemSlot> itemSlots = new Dictionary<ItemData, ItemSlot>();
@@ -95,6 +96,7 @@ public class InventoryUI : MonoBehaviour
             ItemRarity.Uncommon => uncommonColor,
             ItemRarity.Rare => rareColor,
             ItemRarity.Legendary => legendaryColor,
+            ItemRarity.Crossover => crossoverColor,
             _ => Color.white
         };
     }
