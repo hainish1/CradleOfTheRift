@@ -5856,7 +5856,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7265313692589177349}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.9984335, z: -0, w: 0.0559526}
+  m_LocalRotation: {x: 0, y: -0.9984335, z: 0, w: 0.055952173}
   m_LocalPosition: {x: 137.70578, y: 0.99, z: -368.5088}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 1
@@ -5917,19 +5917,19 @@ MonoBehaviour:
     bodyVFX: {fileID: 0}
     attackVFX: {fileID: 0}
     dotHitVFX: {fileID: 0}
-    damageMultiplier: 1
+    damageMultiplier: 1.4
     speedMultiplier: 1
     isStrongerVariant: 0
     dotChance: 0.35
     dotDamagePerTick: 0.5
     dotTickInterval: 1
     dotDuration: 3
-  chaseSpeed: 30
+  chaseSpeed: 20
   attackRange: 5
-  knockbackPower: 50
-  dragSpeed: 17
+  knockbackPower: 70
+  dragSpeed: 14
   dragDuration: 1
-  restDuration: 0.18
+  restDuration: 0.25
   slamDamage: 15
   windupTime: 0.5
   hitbox: {fileID: 5505064893278039021}
@@ -6045,10 +6045,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 40
+  maxHealth: 60
   cleanupDelay: 0
-  baseHealth: 40
-  xpReward: 10
+  baseHealth: 60
+  xpReward: 20
   damageVisuals: {fileID: 7029286899795773146}
   deathVFX: {fileID: 676540690991785363, guid: ac6b304960e323049b9f3161916d8b05, type: 3}
   deathVFXSpawnPoint: {fileID: 0}
