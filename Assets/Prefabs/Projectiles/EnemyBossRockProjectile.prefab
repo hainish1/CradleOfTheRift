@@ -243,6 +243,7 @@ GameObject:
   - component: {fileID: 8776285270930422113}
   - component: {fileID: 897031164101301537}
   - component: {fileID: 8421260450594503624}
+  - component: {fileID: 5470151137014530743}
   m_Layer: 0
   m_Name: RightHand_Geo
   m_TagString: Untagged
@@ -318,6 +319,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5470151137014530743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5325537227304235457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 665ea40d073796d4495298d349ccbb33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeedX: -360
 --- !u!1 &6199202630226384469
 GameObject:
   m_ObjectHideFlags: 0

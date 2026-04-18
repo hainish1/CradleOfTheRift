@@ -253,15 +253,15 @@ public class EnemyTitan : EnemyGolem
     /// </summary>
     protected override void RecalculateAttackAnimationSpeeds()
     {
-        golemAnim.SetFloat("ThrowAnimSpeedMultiplier", throwAnimSpeedMultiplier);
-        golemAnim.SetFloat("BarrageAnimSpeedMultiplier", barrageAnimSpeedMultiplier);
-        golemAnim.SetFloat("SlamAnimSpeedMultiplier", slamAnimSpeedMultiplier);
-        golemAnim.SetFloat("SweepAnimSpeedMultiplier", sweepAnimSpeedMultiplier);
+        float safeThrowSpeed = throwAnimSpeedMultiplier > 0f ? throwAnimSpeedMultiplier : 1f;
+        float safeBarrageSpeed = barrageAnimSpeedMultiplier > 0f ? barrageAnimSpeedMultiplier : 1f;
+        float safeSlamSpeed = slamAnimSpeedMultiplier > 0f ? slamAnimSpeedMultiplier : 1f;
+        float safeSweepSpeed = sweepAnimSpeedMultiplier > 0f ? sweepAnimSpeedMultiplier : 1f;
 
-        print($"Throw: {golemAnim.GetFloat("ThrowAnimSpeedMultiplier")}" +
-            $"Barrage: {golemAnim.GetFloat("BarrageAnimSpeedMultiplier")}" +
-            $"Slam: {golemAnim.GetFloat("SlamAnimSpeedMultiplier")}" +
-            $"Sweep: {golemAnim.GetFloat("SweepAnimSpeedMultiplier")}");
+        golemAnim.SetFloat("ThrowAnimSpeedMultiplier", safeThrowSpeed);
+        golemAnim.SetFloat("BarrageAnimSpeedMultiplier", safeBarrageSpeed);
+        golemAnim.SetFloat("SlamAnimSpeedMultiplier", safeSlamSpeed);
+        golemAnim.SetFloat("SweepAnimSpeedMultiplier", safeSweepSpeed);
     }
 
     //Getters for States that this Melee Enemy has
