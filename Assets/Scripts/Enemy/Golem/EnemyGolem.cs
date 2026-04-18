@@ -48,8 +48,6 @@ public class EnemyGolem : Enemy
     public float turnSpeedWhileAiming = 8f;
     public LayerMask projectileMask = ~0;
     public float playerAimOffset = 1.5f;
-    public float throwAnimSpeedMultiplier = 1f;
-    public AnimationClip throwAnim;
 
     [Header("Ground Slam Melee Settings")]
     public float meleeDamage = 20f;
@@ -60,8 +58,6 @@ public class EnemyGolem : Enemy
     public float meleeCooldown = 0.5f;
     public Transform meleePosition;
     public GameObject groundSlamPrefab;
-    public float meleeAnimSpeedMultiplier = 1f;
-    public AnimationClip meleeAnim;
 
     [Header("VFX / SFX")]
     public GameObject throwRockVFXPrefab;
@@ -73,7 +69,12 @@ public class EnemyGolem : Enemy
     MeleeAttackStateGolem meleeAttack;
     RecoveryStateGolem recovery;
 
-    public Animator golemAnim;
+    [Header("Animation Settings")]
+    public AnimationClip throwAnim;
+    public AnimationClip meleeAnim;
+    public float throwAnimSpeedMultiplier = 1f;
+    public float meleeAnimSpeedMultiplier = 1f;
+    [HideInInspector] public Animator golemAnim;
 
     protected void OnEnable()
     {
@@ -111,7 +112,7 @@ public class EnemyGolem : Enemy
         stateMachine.Tick();
 
         // Blend golem animation between idle and moving.
-        float moveBlend = agent.velocity.magnitude / chaseSpeed;
+        float moveBlend = agent.velocity.magnitude / agent.speed;
         golemAnim.SetFloat("MoveVector", moveBlend, dampTime: 0.03f, Time.deltaTime);
     }
 

@@ -45,17 +45,17 @@ BlendTree:
     m_Mirror: 0
   - serializedVersion: 2
     m_Motion: {fileID: 7400000, guid: ab3db6321becb6e49b9ee9a33171f4c8, type: 2}
-    m_Threshold: 0.5
+    m_Threshold: 1
     m_Position: {x: 1, y: 0}
-    m_TimeScale: 1
+    m_TimeScale: 3.7
     m_CycleOffset: 0
     m_DirectBlendParameter: MoveVector_X
     m_Mirror: 0
   m_BlendParameter: MoveVector
   m_BlendParameterY: MoveVector
   m_MinThreshold: 0
-  m_MaxThreshold: 0.5
-  m_UseAutomaticThresholds: 1
+  m_MaxThreshold: 1
+  m_UseAutomaticThresholds: 0
   m_NormalizedBlendValues: 0
   m_BlendType: 0
 --- !u!1101 &-3438470375683914321

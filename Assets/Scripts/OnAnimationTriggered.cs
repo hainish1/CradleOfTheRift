@@ -75,10 +75,7 @@ public class OnAnimationTriggered : MonoBehaviour
     ///     Animation event to make a golem regain its rock hand.
     ///   </para>
     /// </summary>
-    private void GolemHandRegain()
-    {
-        _enemyGolem.ShowRockHand();
-    }
+    private void GolemHandRegain() => _enemyGolem.ShowRockHand();
 
     /// <summary>
     ///   <para>
