@@ -206,6 +206,63 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Play_player_zap" ID="{2F002754-8B9E-45A8-978F-C7E343E482B2}">
+					<ChildrenList>
+						<Action Name="" ID="{BC25F965-ECD4-4098-B8D8-8C520B347170}" ShortID="610152921">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="ElectricityShortRandom" ID="{359872F9-8A87-4F23-8A27-26F3AB8BCFE6}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_player_explosion" ID="{45B050AF-1B04-4A27-8F67-96D7859A1E9E}">
+					<ChildrenList>
+						<Action Name="" ID="{F72388CC-227A-4E74-B0A1-473CF1928C9E}" ShortID="194662370">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Bluezone_BC0277_explosion_urban_004_02[1]" ID="{19ACE42F-5202-427B-90D5-C27C34B99CAE}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_player_lightning_explosion" ID="{F0AF57D0-C3CD-48E4-B82D-6E3ADE963AF8}">
+					<ChildrenList>
+						<Action Name="" ID="{EFA96382-3C4E-4682-9DA0-B6D5F0418D84}" ShortID="323468124">
+							<PropertyList>
+								<Property Name="ActionType" Type="int16" Value="41"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Play_player_major_lightning_attack" ID="{8383BF7C-0465-4E1E-95BB-86767C952073}" WorkUnitID="{691DB035-59FA-42BD-8C22-AF773BE39B09}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{49777A40-7CE0-4481-8A4E-8F0C2DD10937}" ShortID="566783960">
+							<PropertyList>
+								<Property Name="ActionType" Type="int16" Value="41"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Play_player_explosion" ID="{45B050AF-1B04-4A27-8F67-96D7859A1E9E}" WorkUnitID="{691DB035-59FA-42BD-8C22-AF773BE39B09}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_Player_Fireballs" ID="{3781B272-550D-478A-9063-7EDFABFAD986}">
+					<ChildrenList>
+						<Action Name="" ID="{2F70D69C-C2FE-4B09-95F8-DD719D114AAF}" ShortID="407019959">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="FireForever" ID="{6DAD0F28-889F-4DBD-869B-45B40C27B93F}" WorkUnitID="{EC64771F-8609-46C0-8A4E-00D19054CB84}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

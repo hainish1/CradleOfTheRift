@@ -1,0 +1,46 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "109563706",
+    "Type": "Event",
+    "GUID": "{3781B272-550D-478A-9063-7EDFABFAD986}",
+    "Language": "SFX",
+    "Hash": "{049D8801-A970-AE67-0F6C-BDF832BC4A24}",
+    "ObjectPath": "Play_Player_Fireballs",
+    "ShortName": "Play_Player_Fireballs",
+    "Path": "Event/Play_Player_Fireballs.bnk",
+    "Media": [
+     {
+      "Id": "423541166",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Campfire[1].wav",
+      "Path": "Media/423541166.wem",
+      "CachePath": "32/{326D5B19-8931-3A6C-D1F2-7AFCE42DC48A}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "109563706",
+      "Name": "Play_Player_Fireballs",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_Player_Fireballs",
+      "GUID": "{3781B272-550D-478A-9063-7EDFABFAD986}",
+      "DurationType": "Infinite",
+      "MediaRefs": [
+       {
+        "Id": "423541166"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{E8C4DAB3-52A9-08B8-912D-5C76DFDF714F}"
+ }
+}

@@ -29,7 +29,7 @@
 
         <!-- SFX Volume -->
         <engine:VisualElement class="settings-row">
-            <engine:Label text="SFX Volume" class="settings-label" />
+            <engine:Label text="sFX Volume" class="settings-label" />
             <engine:Slider
                 name="SliderSFXVolume"
                 low-value="0"
