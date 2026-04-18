@@ -360,7 +360,7 @@ public class EnemyRange : Enemy
 
         GameObject projObj = GetPooledProjectile(spawnPoint, rotation);
         EnemyProjectile projectile = projObj.GetComponent<EnemyProjectile>();
-        projectile.Init(direction * projectileSpeed, projectileMask, projectileDamage);
+        projectile.Init(direction * projectileSpeed, projectileMask, GetEffectiveProjectileDamage(), this);
 		
         shootSFX.Post(gameObject);
         if (shootVFX != null)
