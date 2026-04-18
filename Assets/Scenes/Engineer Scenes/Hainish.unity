@@ -524,6 +524,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2926408692809233150, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3222700164973113527, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: m_LocalPosition.y
       value: 2.951
@@ -540,6 +544,10 @@ PrefabInstance:
       propertyPath: maceFireballPrefab
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5281640815684181532, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7406825927314750401, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: playerSpawnPoint
       value: 
@@ -555,11 +563,15 @@ PrefabInstance:
     - target: {fileID: 7558003053126955156, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: _maceModel
       value: 
-      objectReference: {fileID: 1581398944066206880}
+      objectReference: {fileID: 1459278727}
     - target: {fileID: 7558003053126955156, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: _staffModel
       value: 
-      objectReference: {fileID: 6868356551902796796}
+      objectReference: {fileID: 1459278726}
+    - target: {fileID: 8067327959696294508, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+      propertyPath: _playerCamera
+      value: 
+      objectReference: {fileID: 1000527980}
     - target: {fileID: 8163328970537505730, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -19559,6 +19571,16 @@ Transform:
   - {fileID: 599326231}
   m_Father: {fileID: 717639519}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1459278726 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5281640815684181532, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+  m_PrefabInstance: {fileID: 31477495}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1459278727 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2926408692809233150, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
+  m_PrefabInstance: {fileID: 31477495}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1464753340
 Mesh:
   m_ObjectHideFlags: 0
@@ -29852,11 +29874,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1581398944066206880 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3898923516063130044, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
-  m_PrefabInstance: {fileID: 31477495}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1598546578571441018
 GameObject:
   m_ObjectHideFlags: 0
@@ -30220,6 +30237,14 @@ PrefabInstance:
     - target: {fileID: 621623115088811677, guid: 8dc394063ce64024db536af0e370f0a2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3660152953622255515, guid: 8dc394063ce64024db536af0e370f0a2, type: 3}
+      propertyPath: randomPool.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3660152953622255515, guid: 8dc394063ce64024db536af0e370f0a2, type: 3}
+      propertyPath: 'randomPool.Array.data[3]'
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3922490658260142443, guid: 8dc394063ce64024db536af0e370f0a2, type: 3}
       propertyPath: m_Name
@@ -37834,11 +37859,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4480229958095581837}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &6868356551902796796 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4296559547040230505, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
-  m_PrefabInstance: {fileID: 31477495}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &6880174750361343941
 GameObject:
   m_ObjectHideFlags: 0
