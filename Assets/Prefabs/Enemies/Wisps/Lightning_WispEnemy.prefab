@@ -20667,7 +20667,7 @@ MonoBehaviour:
     bodyVFX: {fileID: 0}
     attackVFX: {fileID: 0}
     dotHitVFX: {fileID: 0}
-    damageMultiplier: 1
+    damageMultiplier: 1.5
     speedMultiplier: 1
     isStrongerVariant: 0
     dotChance: 0.35
@@ -20765,10 +20765,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 35
+  maxHealth: 60
   cleanupDelay: 0
-  baseHealth: 35
-  xpReward: 10
+  baseHealth: 60
+  xpReward: 30
   damageVisuals: {fileID: 8636185086613853661}
   deathVFX: {fileID: 5162910912013668194, guid: e7a99ea12a467154faf8ea654b0d1ed7, type: 3}
   deathVFXSpawnPoint: {fileID: 4674512687473327288}
