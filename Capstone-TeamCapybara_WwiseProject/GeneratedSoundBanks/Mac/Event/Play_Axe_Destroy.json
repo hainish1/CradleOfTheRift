@@ -1,0 +1,61 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Mac",
+  "BasePlatform": "Mac",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "184370657",
+    "Type": "Event",
+    "GUID": "{8811ED59-7332-4348-BAD6-F518F3040183}",
+    "Language": "SFX",
+    "Hash": "{F3E47CB7-B92E-774D-2E83-1F3B3283764F}",
+    "ObjectPath": "Play_Axe_Destroy",
+    "ShortName": "Play_Axe_Destroy",
+    "Path": "Event/Play_Axe_Destroy.bnk",
+    "Media": [
+     {
+      "Id": "254076809",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "METLFric_Designed Metal Sword Sheath 04_DDUMAIS_NONE.wav",
+      "Path": "Media/254076809.wem",
+      "CachePath": "A1/{A157CA22-0852-818F-20AA-12C39BE332D2}.wem"
+     },
+     {
+      "Id": "865575945",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "SWSH_Sword Slash Impact V2 Assorted 18_DDUMAIS_NONE.wav",
+      "Path": "Media/865575945.wem",
+      "CachePath": "58/{58A82610-5A52-86F1-5627-0EB08D3E4BC8}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "184370657",
+      "Name": "Play_Axe_Destroy",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Axe\\Play_Axe_Destroy",
+      "GUID": "{8811ED59-7332-4348-BAD6-F518F3040183}",
+      "MaxAttenuation": "200",
+      "DurationType": "OneShot",
+      "DurationMin": "0.74526024",
+      "DurationMax": "1.1830269",
+      "MediaRefs": [
+       {
+        "Id": "254076809"
+       },
+       {
+        "Id": "865575945"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{E2511587-99E7-3C0A-0779-B26F7F4C375A}"
+ }
+}

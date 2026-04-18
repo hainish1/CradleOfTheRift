@@ -1,0 +1,59 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "3891402599",
+    "Type": "Event",
+    "GUID": "{8590E0DC-D34B-4820-A809-1ED4B995ACA8}",
+    "Language": "SFX",
+    "Hash": "{6DF68B6C-B998-7DB2-928B-6336E9749933}",
+    "ObjectPath": "Play_Axe_Orbit",
+    "ShortName": "Play_Axe_Orbit",
+    "Path": "Event/Play_Axe_Orbit.bnk",
+    "Media": [
+     {
+      "Id": "804858838",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "SWSH_Swing 3 Large 03_DDUMAIS_NONE.wav",
+      "Path": "Media/804858838.wem",
+      "CachePath": "A3/{A39E211F-81BA-5341-7A23-691DC49296CF}.wem"
+     },
+     {
+      "Id": "887436694",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "AxeThrow-Swoosh.wav",
+      "Path": "Media/887436694.wem",
+      "CachePath": "44/{44097CF2-FD85-A8C2-EC49-A30B565B96FA}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "3891402599",
+      "Name": "Play_Axe_Orbit",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Axe\\Play_Axe_Orbit",
+      "GUID": "{8590E0DC-D34B-4820-A809-1ED4B995ACA8}",
+      "MaxAttenuation": "200",
+      "DurationType": "Infinite",
+      "MediaRefs": [
+       {
+        "Id": "804858838"
+       },
+       {
+        "Id": "887436694"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{04F7B436-2BE1-DBC5-273A-11267C6BEA41}"
+ }
+}
