@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Lightning Projectile
   description: Enemies you hit with your projectile attack get struck by lightning
-  icon: {fileID: 21300000, guid: 24d36e96c0661c04f822f6935419e712, type: 3}
+  icon: {fileID: 21300000, guid: 54c2e0e1f98cc18448b731de7d4b8117, type: 3}
   rarity: 1
   rarityColor: {r: 0, g: 0.5283019, b: 0.06516498, a: 1}
   canStack: 0
@@ -138,6 +138,24 @@ MonoBehaviour:
     orbitingFireballOnKillDuration: 5
     orbitingFireballOnLightningThreshold: 100
     orbitingFireballOnLightningDuration: 5
+    poisonCloudDamagePerTick: 3
+    poisonCloudDamageTickInterval: 1
+    poisonCloudRadius: 3
+    poisonCloudLifetime: 5
+    poisonCloudBehindDistance: 1.25
+    poisonCloudVfxPrefab: {fileID: 0}
+    onLightning:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    onFire:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    onExplosion:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
   statType: 13
   operatorType: 0
   value: 1
