@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PoisonCloudEffect : IDisposable
 {
     private const float GroundSnapMaxVerticalGap = 14f;
+    private const float MinSpawnInterval = 0.15f;
+    private const int MaxActiveClouds = 20;
+    private const float GroundRayMaxDist = 40f;
 
     private readonly Entity owner;
     private readonly float damagePerTick;
@@ -11,16 +15,21 @@ public class PoisonCloudEffect : IDisposable
     private readonly float cloudRadius;
     private readonly float cloudLifetime;
     private readonly float trailSpacing;
+    private readonly float trailSpacingSqr;
     private readonly float behindDistance;
     private readonly GameObject vfxPrefab;
     private readonly float effectDurationSec;
 
-    private readonly RaycastHit[] groundHitBuffer = new RaycastHit[32];
+    private readonly RaycastHit[] groundHitBuffer = new RaycastHit[8];
     private Collider[] ownerColliders;
+    private readonly Queue<GameObject> activeClouds = new Queue<GameObject>();
+    private LayerMask groundLayerMask;
 
     private Vector3 lastSpawnPosition;
+    private Vector3 lastCheckedPlayerPos;
     private bool hasSpawnedOnce;
     private float lifeTimer;
+    private float spawnCooldown;
     private bool disposed;
 
     public bool IsDisposed => disposed;
@@ -46,13 +55,18 @@ public class PoisonCloudEffect : IDisposable
         this.cloudRadius = Mathf.Max(0.25f, cloudRadius);
         this.cloudLifetime = Mathf.Max(0.2f, cloudLifetime);
         this.trailSpacing = TrailSpacingForRadius(this.cloudRadius);
+        this.trailSpacingSqr = this.trailSpacing * this.trailSpacing;
         this.behindDistance = Mathf.Max(0f, behindDistance);
         this.vfxPrefab = vfxPrefab;
         this.effectDurationSec = durationSec;
 
         lifeTimer = durationSec;
+        groundLayerMask = ~LayerMask.GetMask("Enemy", "Player", "Ignore Raycast");
         if (owner != null)
+        {
             ownerColliders = owner.GetComponentsInChildren<Collider>();
+            lastCheckedPlayerPos = owner.transform.position;
+        }
     }
 
     public void Update(float dt)
@@ -69,11 +83,21 @@ public class PoisonCloudEffect : IDisposable
             }
         }
 
+        spawnCooldown -= dt;
         TrySpawnAlongTrail();
     }
 
     private void TrySpawnAlongTrail()
     {
+        if (spawnCooldown > 0f) return;
+
+        Vector3 playerPos = owner.transform.position;
+        float movedSqr = (playerPos - lastCheckedPlayerPos).sqrMagnitude;
+        lastCheckedPlayerPos = playerPos;
+
+        if (hasSpawnedOnce && movedSqr < 0.01f)
+            return;
+
         Vector3 flatFwd = owner.transform.forward;
         flatFwd.y = 0f;
         if (flatFwd.sqrMagnitude < 1e-6f)
@@ -81,30 +105,35 @@ public class PoisonCloudEffect : IDisposable
         else
             flatFwd.Normalize();
 
-        Vector3 trailOrigin = owner.transform.position - flatFwd * behindDistance;
-        Vector3 pos = GetSpawnPoint(trailOrigin);
+        Vector3 trailOrigin = playerPos - flatFwd * behindDistance;
 
-        if (!hasSpawnedOnce)
+        if (hasSpawnedOnce)
         {
-            SpawnCloud(pos);
-            hasSpawnedOnce = true;
-            lastSpawnPosition = pos;
-            return;
+            float dxz = (trailOrigin - lastSpawnPosition).sqrMagnitude;
+            if (dxz < trailSpacingSqr)
+                return;
         }
 
-        if (Vector3.Distance(pos, lastSpawnPosition) < trailSpacing)
-            return;
-
+        Vector3 pos = GetSpawnPoint(trailOrigin);
         SpawnCloud(pos);
         lastSpawnPosition = pos;
+        hasSpawnedOnce = true;
+        spawnCooldown = MinSpawnInterval;
     }
 
     private void SpawnCloud(Vector3 worldPos)
     {
+        while (activeClouds.Count >= MaxActiveClouds)
+        {
+            var oldest = activeClouds.Dequeue();
+            if (oldest != null) UnityEngine.Object.Destroy(oldest);
+        }
+
         var obj = new GameObject("PoisonCloud");
         obj.transform.position = worldPos;
         var cloud = obj.AddComponent<PoisonCloud>();
         cloud.Initialize(owner, damagePerTick, cloudRadius, cloudLifetime, damageTickInterval, vfxPrefab);
+        activeClouds.Enqueue(obj);
     }
 
     private Vector3 GetSpawnPoint(Vector3 trailOrigin)
@@ -125,11 +154,10 @@ public class PoisonCloudEffect : IDisposable
         groundWorld = default;
         groundY = float.NegativeInfinity;
 
-        float startY = Mathf.Max(playerY, xzRef.y) + 6f;
+        float startY = Mathf.Max(playerY, xzRef.y) + 4f;
         Vector3 start = new Vector3(xzRef.x, startY, xzRef.z);
-        float maxDist = Mathf.Max(320f, startY + 120f);
 
-        int n = Physics.RaycastNonAlloc(start, Vector3.down, groundHitBuffer, maxDist, ~0, QueryTriggerInteraction.Ignore);
+        int n = Physics.RaycastNonAlloc(start, Vector3.down, groundHitBuffer, GroundRayMaxDist, groundLayerMask, QueryTriggerInteraction.Ignore);
         if (n <= 0) return false;
 
         int best = -1;
