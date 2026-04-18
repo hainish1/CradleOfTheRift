@@ -3,6 +3,15 @@ using UnityEngine;
 
 public class PoisonPool : MonoBehaviour
 {
+    private static readonly Collider[] s_overlapBuffer = new Collider[64];
+    private static readonly HashSet<Enemy> s_uniqueEnemies = new HashSet<Enemy>();
+
+    private static Shader s_cachedShader;
+    private static Mesh s_unitCircleMesh;
+    private static Material s_poolMaterial;
+    private static MaterialPropertyBlock s_mpb;
+    private static readonly int s_colorPropId = Shader.PropertyToID("_Color");
+
     [SerializeField] private float radius = 4f;
     [SerializeField] private float lifetime = 4f;
 
@@ -15,15 +24,23 @@ public class PoisonPool : MonoBehaviour
     private float nextArcTime;
     private SphereCollider trigger;
     private ParticleSystem bubbleSystem;
+    private LayerMask enemyLayerMask;
 
     private const float ArcInterval = 0.2f;
     private const int ArcCount = 3;
     private const float ArcHeight = 0.2f;
+    private const int ArcPoolSize = ArcCount * 2;
+
+    private GameObject[] _arcStartPool;
+    private GameObject[] _arcEndPool;
+    private int _arcPoolIndex;
     public void Initialize(Entity owner, float radius, float lifetime)
     {
         this.owner = owner;
         this.radius = radius;
         this.lifetime = lifetime;
+
+        enemyLayerMask = LayerMask.GetMask("Enemy");
 
         var core = PoisonCore.Active;
         float interval = core != null ? core.TickInterval : 1f;
@@ -31,6 +48,7 @@ public class PoisonPool : MonoBehaviour
         endTime = Time.time + lifetime;
         SetupTrigger();
         BuildVfx();
+        InitArcPool();
 
         if (core != null && core.HasData)
         {
@@ -74,21 +92,21 @@ public class PoisonPool : MonoBehaviour
         if (owner == null) return;
 
         Vector3 center = transform.position;
-        Collider[] hits = Physics.OverlapSphere(center, radius);
-        HashSet<Enemy> unique = new HashSet<Enemy>();
+        int hitCount = Physics.OverlapSphereNonAlloc(
+            center, radius, s_overlapBuffer,
+            enemyLayerMask, QueryTriggerInteraction.Collide);
+        s_uniqueEnemies.Clear();
 
-        foreach (var col in hits)
+        for (int i = 0; i < hitCount; i++)
         {
+            var col = s_overlapBuffer[i];
+            if (col == null) continue;
             var enemy = col.GetComponentInParent<Enemy>();
-            if (enemy == null || unique.Contains(enemy)) continue;
-            unique.Add(enemy);
+            if (enemy == null || !s_uniqueEnemies.Add(enemy)) continue;
             core.ApplyTo(enemy, owner, true);
             if (electrified && electrifyDamage > 0f)
-            {
                 LightningCore.ApplyLightningDamage(owner, enemy, electrifyDamage);
-            }
         }
-
     }
 
     private void BuildVfx()
@@ -104,25 +122,41 @@ public class PoisonPool : MonoBehaviour
         CreateBubbles(baseObj.transform);
     }
 
+    private static Mesh GetUnitCircleMesh()
+    {
+        if (s_unitCircleMesh != null) return s_unitCircleMesh;
+        s_unitCircleMesh = BuildCircleMesh(1f, 32);
+        s_unitCircleMesh.hideFlags = HideFlags.DontSave;
+        return s_unitCircleMesh;
+    }
+
     private void CreatePoolMesh(Transform parent, float meshRadius, Color color)
     {
         var obj = new GameObject("PoolMesh");
         obj.transform.SetParent(parent);
         obj.transform.localPosition = Vector3.up * 0.02f;
         obj.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-        obj.transform.localScale = Vector3.one;
+        obj.transform.localScale = Vector3.one * meshRadius;
 
         var meshFilter = obj.AddComponent<MeshFilter>();
         var meshRenderer = obj.AddComponent<MeshRenderer>();
+        meshFilter.sharedMesh = GetUnitCircleMesh();
 
-        meshFilter.mesh = BuildCircleMesh(meshRadius, 32);
+        if (s_poolMaterial == null)
+        {
+            if (s_cachedShader == null)
+                s_cachedShader = Shader.Find("Sprites/Default");
+            s_poolMaterial = new Material(s_cachedShader) { hideFlags = HideFlags.DontSave };
+        }
+        meshRenderer.sharedMaterial = s_poolMaterial;
 
-        var mat = new Material(Shader.Find("Sprites/Default"));
-        mat.color = color;
-        meshRenderer.material = mat;
+        if (s_mpb == null) s_mpb = new MaterialPropertyBlock();
+        s_mpb.Clear();
+        s_mpb.SetColor(s_colorPropId, color);
+        meshRenderer.SetPropertyBlock(s_mpb);
     }
 
-    private Mesh BuildCircleMesh(float r, int segments)
+    private static Mesh BuildCircleMesh(float r, int segments)
     {
         Mesh mesh = new Mesh();
         int vertCount = segments + 1;
@@ -228,24 +262,35 @@ public class PoisonPool : MonoBehaviour
         }
     }
 
+    private void InitArcPool()
+    {
+        _arcStartPool = new GameObject[ArcPoolSize];
+        _arcEndPool = new GameObject[ArcPoolSize];
+        for (int i = 0; i < ArcPoolSize; i++)
+        {
+            _arcStartPool[i] = new GameObject($"ArcS_{i}");
+            _arcStartPool[i].transform.SetParent(transform);
+            _arcEndPool[i] = new GameObject($"ArcE_{i}");
+            _arcEndPool[i].transform.SetParent(transform);
+        }
+    }
+
     private void SpawnElectricArcs()
     {
+        if (_arcStartPool == null) return;
         Vector3 center = transform.position;
         for (int i = 0; i < ArcCount; i++)
         {
+            int idx = _arcPoolIndex % ArcPoolSize;
+            _arcPoolIndex++;
+
             Vector2 rnd = Random.insideUnitCircle * radius;
-            Vector3 start = center + new Vector3(rnd.x, ArcHeight, rnd.y);
-            Vector3 end = center + new Vector3(-rnd.y, ArcHeight, rnd.x);
+            _arcStartPool[idx].transform.position = center + new Vector3(rnd.x, ArcHeight, rnd.y);
+            _arcEndPool[idx].transform.position = center + new Vector3(-rnd.y, ArcHeight, rnd.x);
 
-            GameObject startObj = new GameObject("PoolArcStart");
-            startObj.transform.position = start;
-
-            GameObject endObj = new GameObject("PoolArcEnd");
-            endObj.transform.position = end;
-
-            LightningCore.CreateLightningVFX(startObj.transform, endObj.transform, radius, 0.2f, null, 0f, 0f, 0.1f, true);
-            Destroy(startObj, 0.3f);
-            Destroy(endObj, 0.3f);
+            LightningCore.CreateLightningVFX(
+                _arcStartPool[idx].transform, _arcEndPool[idx].transform,
+                radius, 0.2f, null, 0f, 0f, 0.1f, true);
         }
     }
 }

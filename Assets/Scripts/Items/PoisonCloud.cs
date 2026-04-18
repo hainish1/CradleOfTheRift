@@ -5,6 +5,8 @@ public class PoisonCloud : MonoBehaviour
 {
     private static readonly Dictionary<long, float> s_nextPoisonCloudDamageAllowed = new Dictionary<long, float>(256);
     private static float s_lastGatePruneTime;
+    private static readonly List<long> s_pruneKeyBuffer = new List<long>(64);
+    private static readonly HashSet<Enemy> s_enemyDedup = new HashSet<Enemy>();
 
     private static long PackOwnerEnemyIds(Entity attacker, Component target)
     {
@@ -28,14 +30,14 @@ public class PoisonCloud : MonoBehaviour
         if (Time.time - s_lastGatePruneTime < 4f) return;
         s_lastGatePruneTime = Time.time;
         if (s_nextPoisonCloudDamageAllowed.Count < 400) return;
-        var keys = new List<long>(s_nextPoisonCloudDamageAllowed.Count);
+        s_pruneKeyBuffer.Clear();
         foreach (var kv in s_nextPoisonCloudDamageAllowed)
         {
             if (kv.Value < Time.time - 2f)
-                keys.Add(kv.Key);
+                s_pruneKeyBuffer.Add(kv.Key);
         }
-        foreach (long k in keys)
-            s_nextPoisonCloudDamageAllowed.Remove(k);
+        for (int i = 0; i < s_pruneKeyBuffer.Count; i++)
+            s_nextPoisonCloudDamageAllowed.Remove(s_pruneKeyBuffer[i]);
     }
 
     private static Material s_billboardParticleMat;
@@ -78,12 +80,6 @@ public class PoisonCloud : MonoBehaviour
         _nextDamageTick = Time.time + this.damageTickInterval;
         initialized = true;
 
-        var trigger = GetComponent<SphereCollider>();
-        if (trigger == null) trigger = gameObject.AddComponent<SphereCollider>();
-        trigger.isTrigger = true;
-        trigger.radius = this.radius;
-        trigger.center = VerticalCenterOffset;
-
         if (vfxPrefab != null)
         {
             var fx = Instantiate(vfxPrefab, transform);
@@ -116,7 +112,7 @@ public class PoisonCloud : MonoBehaviour
 
         Vector3 center = transform.position + VerticalCenterOffset;
         int hitCount = Physics.OverlapSphereNonAlloc(center, radius, overlapBuffer, enemyLayerMask, QueryTriggerInteraction.Collide);
-        var unique = new HashSet<Enemy>();
+        s_enemyDedup.Clear();
 
         for (int i = 0; i < hitCount; i++)
         {
@@ -124,8 +120,7 @@ public class PoisonCloud : MonoBehaviour
             if (col == null) continue;
 
             var enemy = col.GetComponentInParent<Enemy>();
-            if (enemy == null || unique.Contains(enemy)) continue;
-            unique.Add(enemy);
+            if (enemy == null || !s_enemyDedup.Add(enemy)) continue;
 
             var damageable = enemy.GetComponent<IDamageable>();
             if (damageable != null && !damageable.IsDead)
@@ -147,8 +142,8 @@ public class PoisonCloud : MonoBehaviour
         float lift = VerticalCenterOffset.y;
         root.transform.localPosition = new Vector3(0f, lift, 0f);
 
-        CreateFogLayer(root.transform, radius, emission: 62f, startSize: 0.14f, speed: 0.28f, alpha: 0.5f);
-        CreateFogLayer(root.transform, radius * 0.85f, emission: 42f, startSize: 0.09f, speed: 0.42f, alpha: 0.38f);
+        CreateFogLayer(root.transform, radius, emission: 240f, startSize: 0.1f, speed: 0.14f, alpha: 0.55f);
+        CreateFogLayer(root.transform, radius * 0.85f, emission: 160f, startSize: 0.07f, speed: 0.2f, alpha: 0.42f);
     }
 
     private static void CreateFogLayer(Transform parent, float shapeRadius, float emission, float startSize, float speed, float alpha)
@@ -161,10 +156,10 @@ public class PoisonCloud : MonoBehaviour
         var main = ps.main;
         main.loop = true;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.startLifetime = new ParticleSystem.MinMaxCurve(1.2f, 2f);
-        main.startSpeed = new ParticleSystem.MinMaxCurve(speed * 0.6f, speed);
+        main.startLifetime = new ParticleSystem.MinMaxCurve(0.8f, 1.4f);
+        main.startSpeed = new ParticleSystem.MinMaxCurve(speed * 0.5f, speed);
         main.startSize = new ParticleSystem.MinMaxCurve(startSize * 0.65f, startSize);
-        main.maxParticles = 280;
+        main.maxParticles = 400;
         main.gravityModifier = -0.04f;
 
         var startCol = new Color(0.2f, 0.85f, 0.22f, alpha);

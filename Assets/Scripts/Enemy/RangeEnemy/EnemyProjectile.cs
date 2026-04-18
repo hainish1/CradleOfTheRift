@@ -21,6 +21,7 @@ public class EnemyProjectile : MonoBehaviour
     Rigidbody rb;
     private float age;
     private bool hasHit;
+    private EnemyRange owner;
 
     void Awake()
     {
@@ -49,12 +50,18 @@ public class EnemyProjectile : MonoBehaviour
     /// <param name="newDamage"></param>
     public void Init(Vector3 velocity, LayerMask mask, float newDamage)
     {
+        Init(velocity, mask, newDamage, null);
+    }
+
+    public void Init(Vector3 velocity, LayerMask mask, float newDamage, EnemyRange shooter)
+    {
         if (rb == null) rb = GetComponent<Rigidbody>();
         rb.linearVelocity = velocity;
         hitMask = mask;
         age = 0f;
         hasHit = false;
         this.damage = newDamage;
+        this.owner = shooter;
     }
 
     /// <summary>
@@ -112,6 +119,7 @@ public class EnemyProjectile : MonoBehaviour
         if (damageable != null && !damageable.IsDead)
         {
             damageable.TakeDamage(damage);
+            if (owner != null) owner.TryApplyElementalOnHit(damageable);
         }
 
 
