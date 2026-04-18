@@ -90,7 +90,7 @@ public class EnemyMelee : Enemy
 
         // Debug.Log($"onMesh={agent.isOnNavMesh} onLink={agent.isOnOffMeshLink} posY={transform.position.y}");
 
-        agent.speed = chaseSpeed * (elementalProfile != null ? elementalProfile.speedMultiplier : 1f);
+        agent.speed = dragSpeed * (elementalProfile != null ? elementalProfile.speedMultiplier : 1f);
         ApplyElementalVisuals();
 
         var kb = GetComponent<AgentKnockBack>();
