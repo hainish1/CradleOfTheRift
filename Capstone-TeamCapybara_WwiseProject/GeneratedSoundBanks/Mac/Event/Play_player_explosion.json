@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{45B050AF-1B04-4A27-8F67-96D7859A1E9E}",
     "Language": "SFX",
-    "Hash": "{65446073-1E66-9DFE-410B-67E019B34BF8}",
+    "Hash": "{DDA0A291-84B8-349D-AFCD-D8ABC2E68270}",
     "ObjectPath": "Play_player_explosion",
     "ShortName": "Play_player_explosion",
     "Path": "Event/Play_player_explosion.bnk",
@@ -31,6 +31,7 @@
       "Name": "Play_player_explosion",
       "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_explosion",
       "GUID": "{45B050AF-1B04-4A27-8F67-96D7859A1E9E}",
+      "MaxAttenuation": "300",
       "DurationType": "OneShot",
       "DurationMin": "4",
       "DurationMax": "4",
@@ -43,6 +44,6 @@
     ]
    }
   ],
-  "FileHash": "{2477B1CD-B88A-45A5-D121-CD20224B6D2E}"
+  "FileHash": "{2CF41B89-6433-B661-A553-DA6E5086C7C0}"
  }
 }

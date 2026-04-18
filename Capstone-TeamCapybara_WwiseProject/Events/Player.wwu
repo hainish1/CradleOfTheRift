@@ -323,6 +323,35 @@
 						</Event>
 					</ChildrenList>
 				</Folder>
+				<Folder Name="Mace" ID="{5CDC3DEC-F1C4-4404-89FE-C7A4610A8008}" ShortID="927698775">
+					<ChildrenList>
+						<Event Name="Play_Mace_Hit" ID="{CD85A0CB-D7DE-411D-8325-3A62F23935DC}">
+							<ChildrenList>
+								<Action Name="" ID="{42DFBCEE-8BA8-4C5B-AB7E-08C5E0DA774B}" ShortID="108034755">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Mace Explosion" ID="{9BA484F0-C92F-4018-9BC2-9C1BEF070960}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{AD220C95-3AD4-4D32-A2C3-3012CA628D02}" ShortID="690557433">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Mace Explosion Magic" ID="{6359C822-87ED-469D-B4FB-5C96F470A392}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{B0C0F879-5066-47DE-8A2B-6C400081B595}" ShortID="635323493">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Mace Shards" ID="{D66B0F88-F081-4824-A522-E7CC799EC9A7}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+					</ChildrenList>
+				</Folder>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

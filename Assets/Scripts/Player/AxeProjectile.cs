@@ -38,14 +38,7 @@ public class AxeProjectile : Projectile
     private Vector3 _attackPosition;
     private Vector3 _throwerOriginOnReturn;
     private Transform _throwerCenter;
-
-    [Header("Sound Effects")]
-    [SerializeField]
-    private AK.Wwise.Event _throwSoundEvent;
-    [SerializeField]
-    private AK.Wwise.Event _destroySoundEvent;
     
-
     protected override void FixedUpdate()
     {
         if (!_isInitialized) return; // Do nothing if initialization has not occured.
@@ -315,27 +308,5 @@ public class AxeProjectile : Projectile
         _isReturning = false;
         PlayDestorySound();
         ReturnToSource(); // Destroy.
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Plays the Axe Destroy sfx if set.
-    ///   </para>
-    /// </summary>
-    private void PlayDestorySound()
-    {
-        if (_destroySoundEvent.IsValid())
-            _destroySoundEvent.Post(gameObject);
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Plays the Axe Throw sfx if set.
-    ///   </para>
-    /// </summary>
-    private void PlayThrowSound()
-    {
-        if(_throwSoundEvent.IsValid())
-            _throwSoundEvent.Post(gameObject);
     }
 }

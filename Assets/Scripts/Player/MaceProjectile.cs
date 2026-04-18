@@ -22,6 +22,10 @@ public class MaceProjectile : Projectile
     [Tooltip("Knockback force of the projectile impact shockwave.")] private float _projectileShockwaveKnockback;
     private PlayerShockwaveController _shockwaveController;
 
+    [Header("Sound Effects")]
+    [SerializeField]
+    private AK.Wwise.Event _hitSFX;
+
     void Start()
     {
         _shockwaveController = attacker.gameObject.GetComponent<PlayerShockwaveController>();
@@ -38,7 +42,8 @@ public class MaceProjectile : Projectile
             return;
 
         CreateImpactFX();
-
+        PlayDestorySound();
+        
         GameObject shockwave = Instantiate(_shockwavePrefab, transform.position, Quaternion.identity);
         Shockwave shockwaveScript = shockwave.GetComponent<Shockwave>();
         shockwaveScript.Init(transform.position, hitMask, _projectileShockwaveDamage, _projectileShockwaveKnockback, _projectileShockwaveRadius, attacker);

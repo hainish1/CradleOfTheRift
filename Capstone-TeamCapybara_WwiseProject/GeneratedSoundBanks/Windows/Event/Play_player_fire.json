@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{C486BF1C-C3E4-44E7-A646-AF33A7FDB7C8}",
     "Language": "SFX",
-    "Hash": "{6E1AC409-AD05-7139-8B7D-0E4BB2607F3B}",
+    "Hash": "{0AEA41C6-DD98-F6DC-7D2D-5E08EB65DB13}",
     "ObjectPath": "Play_player_fire",
     "ShortName": "Play_player_fire",
     "Path": "Event/Play_player_fire.bnk",
@@ -40,6 +40,7 @@
       "Name": "Play_player_fire",
       "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_fire",
       "GUID": "{C486BF1C-C3E4-44E7-A646-AF33A7FDB7C8}",
+      "MaxAttenuation": "300",
       "DurationType": "OneShot",
       "DurationMin": "1.5780962",
       "DurationMax": "2.5050716",
@@ -55,6 +56,6 @@
     ]
    }
   ],
-  "FileHash": "{DE4C8366-D042-AC2A-4D81-8F31A7855381}"
+  "FileHash": "{2CCA1322-07BF-7E36-97D3-C81C01DE8099}"
  }
 }
