@@ -220,6 +220,14 @@ MonoBehaviour:
   hitMask:
     serializedVersion: 2
     m_Bits: 3281
+  _throwSoundEvent:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
+  _destroySoundEvent:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: c9217d9da139c2a4baa66c2476633b4d, type: 2}
   rb: {fileID: 729833330588080243}
   _modelTransform: {fileID: 7473671420166333959}
   _spinSpeed: 750
@@ -227,6 +235,10 @@ MonoBehaviour:
   _projectileShockwaveDamage: 20
   _projectileShockwaveRadius: 20.9
   _projectileShockwaveKnockback: 250
+  _hitSFX:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
 --- !u!54 &729833330588080243
 Rigidbody:
   m_ObjectHideFlags: 0

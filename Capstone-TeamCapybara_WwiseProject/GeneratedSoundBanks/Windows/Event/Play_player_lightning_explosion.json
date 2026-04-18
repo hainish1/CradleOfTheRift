@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{F0AF57D0-C3CD-48E4-B82D-6E3ADE963AF8}",
     "Language": "SFX",
-    "Hash": "{73591340-37D7-6481-1A0D-53A8FB507B80}",
+    "Hash": "{406D0D03-CB13-90FA-928C-86439F95139F}",
     "ObjectPath": "Play_player_lightning_explosion",
     "ShortName": "Play_player_lightning_explosion",
     "Path": "Event/Play_player_lightning_explosion.bnk",
@@ -112,6 +112,7 @@
       "Name": "Play_player_explosion",
       "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_explosion",
       "GUID": "{45B050AF-1B04-4A27-8F67-96D7859A1E9E}",
+      "MaxAttenuation": "300",
       "DurationType": "OneShot",
       "DurationMin": "4",
       "DurationMax": "4",
@@ -185,6 +186,6 @@
     ]
    }
   ],
-  "FileHash": "{58EE6277-ECE5-2521-39DC-8FB47700426A}"
+  "FileHash": "{28CEF1D6-B864-360E-7CAD-CAA915C5EB87}"
  }
 }

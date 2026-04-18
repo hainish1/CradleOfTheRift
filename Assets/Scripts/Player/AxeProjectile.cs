@@ -38,7 +38,7 @@ public class AxeProjectile : Projectile
     private Vector3 _attackPosition;
     private Vector3 _throwerOriginOnReturn;
     private Transform _throwerCenter;
-
+    
     protected override void FixedUpdate()
     {
         if (!_isInitialized) return; // Do nothing if initialization has not occured.
@@ -155,6 +155,9 @@ public class AxeProjectile : Projectile
         // Initialize arcing logic.
         InitializeArcPath(_attackPosition);
         _isInitialized = true;
+        
+        // Play the sfx.
+        PlayThrowSound();
     }
 
     /// <summary>
@@ -303,6 +306,7 @@ public class AxeProjectile : Projectile
         _isInitialized = false;
         _isExpired = false;
         _isReturning = false;
+        PlayDestorySound();
         ReturnToSource(); // Destroy.
     }
 }

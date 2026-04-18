@@ -20,6 +20,12 @@ public class Projectile : MonoBehaviour
     [SerializeField] protected float hitForce = 8f;
     [SerializeField] protected float knockBackImpulse = 8f;
     [SerializeField] protected LayerMask hitMask = ~0; // what can this bullet hit
+    
+    [Header("Sound Effects")]
+    [SerializeField]
+    private AK.Wwise.Event _throwSoundEvent;
+    [SerializeField]
+    private AK.Wwise.Event _destroySoundEvent;
 
     protected float actualDamage; // THIS WILL STORE DAMAGE FROM STATS SYSTEM
 
@@ -400,6 +406,28 @@ public class Projectile : MonoBehaviour
         {
             mark.SetParticles(ps);
         }
+    }
+    
+    /// <summary>
+    ///   <para>
+    ///     Plays the Axe Destroy sfx if set.
+    ///   </para>
+    /// </summary>
+    protected void PlayDestorySound()
+    {
+        if (_destroySoundEvent.IsValid())
+            _destroySoundEvent.Post(gameObject);
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Plays the Axe Throw sfx if set.
+    ///   </para>
+    /// </summary>
+    protected void PlayThrowSound()
+    {
+        if(_throwSoundEvent.IsValid())
+            _throwSoundEvent.Post(gameObject);
     }
 
 }

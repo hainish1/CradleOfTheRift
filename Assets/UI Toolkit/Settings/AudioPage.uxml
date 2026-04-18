@@ -1,55 +1,25 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI%20Toolkit/SettingsStyleSheet.uss?fileID=7433441132597879392&amp;guid=4e331d6e341bfd245aadb0e434e7894e&amp;type=3#SettingsStyleSheet" />
-    
+    <Style src="project://database/Assets/UI%20Toolkit/Settings/SettingsStyleSheet.uss?fileID=7433441132597879392&amp;guid=4e331d6e341bfd245aadb0e434e7894e&amp;type=3#SettingsStyleSheet" />
     <engine:VisualElement name="PageAudio" class="settings-page">
-
-        <!-- Master Volume -->
         <engine:VisualElement class="settings-row">
             <engine:Label text="Master Volume" class="settings-label" />
-            <engine:Slider
-                name="SliderMasterVolume"
-                low-value="0"
-                high-value="100"
-                value="100"
-                class="settings-slider" />
+            <engine:Slider name="SliderMasterVolume" low-value="0" high-value="100" value="100" class="settings-slider" />
             <engine:Label text="100" name="LabelMasterVolume" class="settings-value-label" />
         </engine:VisualElement>
-
-        <!-- Music Volume -->
         <engine:VisualElement class="settings-row">
             <engine:Label text="Music Volume" class="settings-label" />
-            <engine:Slider
-                name="SliderMusicVolume"
-                low-value="0"
-                high-value="100"
-                value="75"
-                class="settings-slider" />
+            <engine:Slider name="SliderMusicVolume" low-value="0" high-value="100" value="75" class="settings-slider" />
             <engine:Label text="75" name="LabelMusicVolume" class="settings-value-label" />
         </engine:VisualElement>
-
-        <!-- SFX Volume -->
         <engine:VisualElement class="settings-row">
-            <engine:Label text="sFX Volume" class="settings-label" />
-            <engine:Slider
-                name="SliderSFXVolume"
-                low-value="0"
-                high-value="100"
-                value="100"
-                class="settings-slider" />
+            <engine:Label text="Player Volume" class="settings-label" />
+            <engine:Slider name="SliderSFXVolume" low-value="0" high-value="100" value="100" class="settings-slider" />
             <engine:Label text="100" name="LabelSFXVolume" class="settings-value-label" />
         </engine:VisualElement>
-
-        <!-- Ambient Volume -->
         <engine:VisualElement class="settings-row">
             <engine:Label text="Ambient Volume" class="settings-label" />
-            <engine:Slider
-                name="SliderAmbientVolume"
-                low-value="0"
-                high-value="100"
-                value="50"
-                class="settings-slider" />
+            <engine:Slider name="SliderAmbientVolume" low-value="0" high-value="100" value="50" class="settings-slider" />
             <engine:Label text="50" name="LabelAmbientVolume" class="settings-value-label" />
         </engine:VisualElement>
-
     </engine:VisualElement>
 </engine:UXML>

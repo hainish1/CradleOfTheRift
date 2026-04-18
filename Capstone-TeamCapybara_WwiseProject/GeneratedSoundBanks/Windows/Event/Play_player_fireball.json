@@ -10,11 +10,20 @@
     "Type": "Event",
     "GUID": "{1F51F437-6E41-4EAD-9D88-C22303E4B417}",
     "Language": "SFX",
-    "Hash": "{CD41313A-6470-D24A-BC52-014D20B5DA5D}",
+    "Hash": "{5D777107-1406-D1B1-FFAF-265498DABB4B}",
     "ObjectPath": "Play_player_fireball",
     "ShortName": "Play_player_fireball",
     "Path": "Event/Play_player_fireball.bnk",
     "Media": [
+     {
+      "Id": "20979908",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Campfire[1].wav",
+      "Path": "Media/20979908.wem",
+      "CachePath": "87/{87B9FC20-42ED-8F8C-21DD-390B7C603C51}.wem"
+     },
      {
       "Id": "132331391",
       "Language": "SFX",
@@ -41,15 +50,6 @@
       "ShortName": "FRWKComr_InsJ_Fireworks_Launch_Close_01-03.wav",
       "Path": "Media/330325000.wem",
       "CachePath": "26/{262BD1DD-CE66-F631-389F-F14B6CE60233}.wem"
-     },
-     {
-      "Id": "423541166",
-      "Language": "SFX",
-      "Streaming": "false",
-      "Location": "Loose",
-      "ShortName": "Campfire[1].wav",
-      "Path": "Media/423541166.wem",
-      "CachePath": "87/{87B9FC20-42ED-8F8C-21DD-390B7C603C51}.wem"
      },
      {
       "Id": "946455381",
@@ -81,6 +81,9 @@
       "DurationMax": "7.0234556",
       "MediaRefs": [
        {
+        "Id": "20979908"
+       },
+       {
         "Id": "132331391"
        },
        {
@@ -88,9 +91,6 @@
        },
        {
         "Id": "330325000"
-       },
-       {
-        "Id": "423541166"
        },
        {
         "Id": "946455381"
@@ -103,6 +103,6 @@
     ]
    }
   ],
-  "FileHash": "{E979BF8A-D3D7-4C3A-2170-8BC77FFFB23A}"
+  "FileHash": "{079220EB-A825-A066-486A-75C134A7B818}"
  }
 }
