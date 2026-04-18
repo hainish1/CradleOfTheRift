@@ -518,7 +518,7 @@ Transform:
   m_GameObject: {fileID: 2506952691020443637}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.99985254, w: -0.017172582}
-  m_LocalPosition: {x: 0.0065, y: 0.0375, z: 0.0015996624}
+  m_LocalPosition: {x: 0.0017, y: 0.0373, z: 0.0016}
   m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -1095,7 +1095,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 20
+    maxNumParticles: 30
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -1362,7 +1362,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 3
       scalar: 20
-      minScalar: 10
+      minScalar: 15
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -5856,8 +5856,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7265313692589177349}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.9984335, z: -0, w: 0.0559526}
-  m_LocalPosition: {x: 137.70578, y: 0.99, z: -368.5088}
+  m_LocalRotation: {x: -0, y: 0.055363983, z: -0, w: 0.9984663}
+  m_LocalPosition: {x: 35.09, y: 15.54, z: -330.6}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -5865,7 +5865,7 @@ Transform:
   - {fileID: 6419535152154952152}
   - {fileID: 3499075357429604681}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -173.585, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 6.347, z: 0}
 --- !u!195 &2508447518259249908
 NavMeshAgent:
   m_ObjectHideFlags: 0
