@@ -24,8 +24,14 @@ public class OrbitingFireballs : IDisposable
     private static readonly int[] RingCapacity = { 6, 12, 24 };
     private const int MaxFireballs = 6 + 12 + 24;
 
+    private readonly int[] _ringStart;
+    private readonly int[] _ringCounts;
+
     public OrbitingFireballs(Entity owner, float damage, float orbitRadius, float rotationSpeed, int initialStacks = 1, float durationSec = -1f, GameObject fireballVFX = null, AK.Wwise.Event fireSFX = null)
     {
+        _ringStart = new int[RingCapacity.Length];
+        _ringCounts = new int[RingCapacity.Length];
+
         this.owner = owner;
         this.stacks = Mathf.Max(1, initialStacks);
         this.duration = durationSec;
@@ -135,39 +141,35 @@ public class OrbitingFireballs : IDisposable
         float scale = CalculateFireballScale(activeCount);
 
         int ringCount = RingCapacity.Length;
-        int[] ringStart = new int[ringCount];
-        int[] ringCounts = new int[ringCount];
         int cumulative = 0;
         for (int r = 0; r < ringCount; r++)
         {
-            ringStart[r] = cumulative;
+            _ringStart[r] = cumulative;
             int inThisRing = Mathf.Min(Mathf.Max(activeCount - cumulative, 0), RingCapacity[r]);
-            ringCounts[r] = inThisRing;
+            _ringCounts[r] = inThisRing;
             cumulative += RingCapacity[r];
         }
 
-        for (int i = 0; i < activeCount; i++)
+        for (int r = 0; r < ringCount; r++)
         {
-            int ring = 0;
-            for (int r = 0; r < ringCount; r++)
-            {
-                if (i < ringStart[r] + ringCounts[r]) { ring = r; break; }
-            }
-            int indexInRing = i - ringStart[ring];
-            int countInRing = ringCounts[ring];
-
-            float ringRadius = orbitRadius * (1f + ring * 1.0f);
+            int countInRing = _ringCounts[r];
+            if (countInRing == 0) continue;
+            float ringRadius = orbitRadius * (1f + r * 1.0f);
             float angleStep = 360f / countInRing;
+            int baseIdx = _ringStart[r];
 
-            fireballs[i].transform.localScale = Vector3.one * scale;
-            float angle = (Time.time * effectiveSpeed + angleStep * indexInRing) % 360f;
-            float rad = angle * Mathf.Deg2Rad;
-            Vector3 offset = new Vector3(
-                Mathf.Cos(rad) * ringRadius * 0.75f,
-                0.8f,
-                Mathf.Sin(rad) * ringRadius * 0.75f
-            );
-            fireballs[i].transform.position = playerPos + offset;
+            for (int k = 0; k < countInRing; k++)
+            {
+                int i = baseIdx + k;
+                fireballs[i].transform.localScale = Vector3.one * scale;
+                float angle = (Time.time * effectiveSpeed + angleStep * k) % 360f;
+                float rad = angle * Mathf.Deg2Rad;
+                Vector3 offset = new Vector3(
+                    Mathf.Cos(rad) * ringRadius * 0.75f,
+                    0.8f,
+                    Mathf.Sin(rad) * ringRadius * 0.75f);
+                fireballs[i].transform.position = playerPos + offset;
+            }
         }
     }
 
@@ -244,13 +246,16 @@ public class OrbitingFireballs : IDisposable
 public class Fireball : MonoBehaviour
 {
     private static Shader cachedShader;
+    private static readonly List<int> s_expiredKeys = new List<int>(16);
+
     private Entity playerEntity;
     private float damage;
     private float lifetime;
     private float elapsed;
     private bool destroyed;
     private Material fireballMaterial;
-    private Dictionary<Enemy, float> lastHit = new Dictionary<Enemy, float>();
+    private float _lastPruneTime;
+    private Dictionary<int, float> lastHit = new Dictionary<int, float>();
 
     public bool IsDestroyed => destroyed;
     public bool IsExpired => lifetime > 0f && elapsed >= lifetime;
@@ -278,6 +283,19 @@ public class Fireball : MonoBehaviour
     public void UpdateLifetime(float dt)
     {
         if (lifetime > 0f) elapsed += dt;
+
+        if (lifetime <= 0f && Time.time - _lastPruneTime > 2f)
+        {
+            _lastPruneTime = Time.time;
+            s_expiredKeys.Clear();
+            foreach (var kv in lastHit)
+            {
+                if (Time.time - kv.Value > 2f)
+                    s_expiredKeys.Add(kv.Key);
+            }
+            for (int i = 0; i < s_expiredKeys.Count; i++)
+                lastHit.Remove(s_expiredKeys[i]);
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -287,7 +305,8 @@ public class Fireball : MonoBehaviour
         Enemy enemy = other.GetComponentInParent<Enemy>();
         if (enemy == null) return;
 
-        if (lastHit.TryGetValue(enemy, out float last) && Time.time - last < 1.0f)
+        int id = enemy.GetInstanceID();
+        if (lastHit.TryGetValue(id, out float last) && Time.time - last < 1.0f)
             return;
 
         var dmg = enemy.GetComponent<IDamageable>();
@@ -295,7 +314,7 @@ public class Fireball : MonoBehaviour
         {
             dmg.TakeDamage(damage);
             CombatEvents.ReportDamage(playerEntity, enemy, damage, ElementType.Fire);
-            lastHit[enemy] = Time.time;
+            lastHit[id] = Time.time;
 
             var flash = enemy.GetComponentInChildren<TargetFlash>();
             if (flash != null) flash.Flash();
