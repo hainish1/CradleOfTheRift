@@ -536,7 +536,7 @@ public class PlayerMovement : MonoBehaviour
         float dot = _lateralVelocityVector.sqrMagnitude == 0 ? 1 : Vector3.Dot(_lateralVelocityVector.normalized, moveDirectionUnitVector);
 
         // Perform logic that accounts for directional change.
-        if (moveDirectionUnitVector != Vector3.zero && dot >= -0.99f && _lateralVelocityVector.magnitude > 1e-3f)
+        if (moveDirectionUnitVector != Vector3.zero && dot >= -0.8f && _lateralVelocityVector.magnitude > 1e-3f)
         {
             // Turn current lateral velocity vector towards the movement direction.
             float degreesPerSecond = Time.deltaTime * _turnSpeed;
@@ -547,7 +547,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Accelerate if movement is being inputted, move directions are not opposite and max move speed is not reached.
-        if (_moveActions.ReadValue<Vector2>() != Vector2.zero && dot >= -0.99f && _lateralVelocityVector.magnitude <= _moveMaxSpeed)
+        if (_moveActions.ReadValue<Vector2>() != Vector2.zero && dot >= -0.8f && _lateralVelocityVector.magnitude <= _moveMaxSpeed)
             MoveAccelerate(moveDirectionUnitVector);
         else
             MoveDecelerate();
