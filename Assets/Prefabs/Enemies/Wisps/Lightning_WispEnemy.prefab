@@ -20678,8 +20678,8 @@ MonoBehaviour:
   flyHeight: 3.7
   verticalSmoothTime: 4.5
   horizontalSmoothTime: 2.5
-  maxHorizontalSpeed: 20
-  maxVerticalSpeed: 10
+  maxHorizontalSpeed: 35
+  maxVerticalSpeed: 20
   chaseSpeed: 6
   attackRange: 75
   desiredDistance: 60
@@ -20695,7 +20695,7 @@ MonoBehaviour:
   wispSeparationRadius: 1
   wispSeparationStrength: 0.05
   angleAdaptSpeed: 0.05
-  projectileSpeed: 50
+  projectileSpeed: 80
   attackDelayMin: 0.3
   attackDelayMax: 0.8
   recoveryDurationMin: 1.5

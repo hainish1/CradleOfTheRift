@@ -5535,13 +5535,13 @@ MonoBehaviour:
     bodyVFX: {fileID: 0}
     attackVFX: {fileID: 0}
     dotHitVFX: {fileID: 0}
-    damageMultiplier: 1
+    damageMultiplier: 1.5
     speedMultiplier: 1
     isStrongerVariant: 0
-    dotChance: 0.5
-    dotDamagePerTick: 2
-    dotTickInterval: 0.5
-    dotDuration: 3
+    dotChance: 1
+    dotDamagePerTick: 0.5
+    dotTickInterval: 1
+    dotDuration: 16
   chaseSpeed: 30
   attackRange: 5
   knockbackPower: 50
