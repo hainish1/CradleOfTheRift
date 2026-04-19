@@ -5,11 +5,15 @@ using UnityEngine;
 /// </summary>
 public class RecoveryStateTitan : EnemyState
 {
+    // give up wandering after this many failed picks and just chase tbh
+    private const int _maxConsecutiveWanderFailures = 4;
+
     private EnemyTitan enemyTitan;
     private float endTime;
     private float startWanderTime;
     private float wanderTimer;
     private bool isWandering;
+    private int wanderFailures;
 
     public RecoveryStateTitan(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
@@ -22,12 +26,14 @@ public class RecoveryStateTitan : EnemyState
     /// </summary>
     public override void Enter()
     {
-        endTime = Time.time + Random.Range(enemyTitan.minWanderTime, enemyTitan.maxWanderTime); // post rock attack wandering
-        startWanderTime = Time.time + enemyTitan.postAttackCooldown; // time before it starts wandering around
-        
+        float wanderDuration = Random.Range(enemyTitan.minWanderTime, enemyTitan.maxWanderTime);
+        startWanderTime = Time.time + enemyTitan.postAttackCooldown;
+        endTime = startWanderTime + wanderDuration;
+
         wanderTimer = 0f;
         isWandering = false;
-        if (enemy.agent != null)
+        wanderFailures = 0;
+        if (enemy.agent != null && enemy.agent.isActiveAndEnabled && enemy.agent.isOnNavMesh)
         {
             enemy.agent.isStopped = true;
             enemy.agent.velocity = Vector3.zero;
@@ -48,7 +54,7 @@ public class RecoveryStateTitan : EnemyState
 
         float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.target.position);
         // Interrupt wandering if player gets too close -> trigger melee attack immediately
-        if (distanceToPlayer <= enemyTitan.minAttackDistance && enemyTitan.CanStartAttack())
+        if (distanceToPlayer <= enemyTitan.minAttackDistance && enemyTitan.CanStartAttack() && Time.time >= enemy.nextAttackAllowed)
         {
             stateMachine.ChangeState(enemyTitan.GetMeleeAttack());
             return;
@@ -61,49 +67,62 @@ public class RecoveryStateTitan : EnemyState
             return;
         }
 
-        // Wander while waiting for the pause timer to end
-        if (Time.time < endTime)
+        if (Time.time >= endTime)
         {
-            // First pause after attack
-            if (Time.time >= startWanderTime) 
-            {
-                if (!isWandering || wanderTimer <= 0f)
-                {
-                    PickWanderPoint();
-                }
-                else
-                {
-                    wanderTimer -= Time.deltaTime;
-                }
+            stateMachine.ChangeState(enemyTitan.GetChase());
+            return;
+        }
 
-                // Keep the body aligned with travel so one forward walk animation works for wandering.
-                enemyTitan.FaceMovementDirectionSmooth(enemyTitan.turnSpeedWhileAiming);
-            }
+        // stand still
+        if (Time.time < startWanderTime) return;
+
+        bool needsNewPoint = !isWandering || wanderTimer <= 0f || HasArrivedAtDestination();
+        if (needsNewPoint)
+        {
+            PickWanderPoint();
         }
         else
         {
-            // Pause time is over, go back to chase (which will immediately trigger a new attack)
-            stateMachine.ChangeState(enemyTitan.GetChase());
+            wanderTimer -= Time.deltaTime;
         }
+
+        enemyTitan.FaceMovementDirectionSmooth(enemyTitan.turnSpeedWhileAiming);
     }
+
+    private bool HasArrivedAtDestination()
+    {
+        var agent = enemy.agent;
+        if (agent == null || !agent.isActiveAndEnabled || !agent.isOnNavMesh) return false;
+        if (agent.pathPending) return false;
+        if (agent.remainingDistance > agent.stoppingDistance + 0.25f) return false;
+        return !agent.hasPath || agent.velocity.sqrMagnitude < 0.05f;
+    }
+
     private void PickWanderPoint()
     {
         Vector2 randomCircle = Random.insideUnitCircle * enemyTitan.wanderRadius;
         Vector3 randomPos = enemyTitan.transform.position + new Vector3(randomCircle.x, 0, randomCircle.y);
 
-        if (UnityEngine.AI.NavMesh.SamplePosition(randomPos, out UnityEngine.AI.NavMeshHit hit, enemyTitan.wanderRadius, UnityEngine.AI.NavMesh.AllAreas))
+        float sampleRadius = Mathf.Max(2f, enemyTitan.wanderRadius * 0.25f);
+        if (UnityEngine.AI.NavMesh.SamplePosition(randomPos, out UnityEngine.AI.NavMeshHit hit, sampleRadius, UnityEngine.AI.NavMesh.AllAreas))
         {
             if (enemy.agent != null && enemyTitan.TryResumePathing() && enemy.agent.SetDestination(hit.position))
             {
                 isWandering = true;
                 wanderTimer = enemyTitan.wanderInterval;
+                wanderFailures = 0;
                 return;
             }
         }
 
         isWandering = false;
-        // If invalid spot or pathing isn't ready, wait half a second before checking again.
         wanderTimer = 0.5f;
+        wanderFailures++;
+        // same stuff
+        if (wanderFailures >= _maxConsecutiveWanderFailures)
+        {
+            stateMachine.ChangeState(enemyTitan.GetChase());
+        }
     }
 
 }

@@ -45,7 +45,7 @@ public class MeleeAttackStateTitan : EnemyState
         stateTimer += Time.deltaTime;
 
         // Keep turning to face the player until melee attack
-        if (stateTimer < hitFrameTime)
+        if (enemy.target != null && stateTimer < hitFrameTime)
         {
             enemyTitan.FaceTargetSmooth(enemyTitan.turnSpeedWhileAiming);
         }
@@ -55,9 +55,15 @@ public class MeleeAttackStateTitan : EnemyState
         {
             // Set melee cooldown
             enemyTitan.nextAttackAllowed = Time.time + enemyTitan.attackCooldown;
-            
-            // Go to recovery to pause and wander
-            stateMachine.ChangeState(enemyTitan.GetRecovery());
+
+            if (enemy.target == null)
+            {
+                stateMachine.ChangeState(enemyTitan.GetIdle());
+            }
+            else
+            {
+                stateMachine.ChangeState(enemyTitan.GetRecovery());
+            }
         }
     }
 
