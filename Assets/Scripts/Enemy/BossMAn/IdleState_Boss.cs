@@ -34,9 +34,9 @@ public class IdleState_Boss : EnemyState
 
             // alrgith now here I am keeping it pretty random, which attack is chosen, but we can like mess with it if we want
             float random = Random.value;
-            if (random < 0.5f)
+            if (random < 0.3f)
             {
-                stateMachine.ChangeState(boss.GetBombState());
+                stateMachine.ChangeState(boss.GetExploisionState());
             }
             else if (random < 0.8f && !boss.IsPlayerTooFar() && !boss.IsPlayerTooClose() && !boss.IsPlayerTooHighOrLow()) // ensure player is not too far, too close, or too high to leap
             {
@@ -44,7 +44,7 @@ public class IdleState_Boss : EnemyState
             }
             else
             {
-                stateMachine.ChangeState(boss.GetExploisionState());
+                stateMachine.ChangeState(boss.GetBombState());
             }
             return;
         }

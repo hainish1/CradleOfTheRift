@@ -1,0 +1,121 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "2234824985",
+    "Type": "Event",
+    "GUID": "{D8C22D24-9145-4E23-8F0E-52E49D056A4A}",
+    "Language": "SFX",
+    "Hash": "{A019552E-EC9B-5DB1-DBA5-BCB7B9E95EA3}",
+    "ObjectPath": "Boss_Golem_Hit",
+    "ShortName": "Boss_Golem_Hit",
+    "Path": "Event/Boss_Golem_Hit.bnk",
+    "Media": [
+     {
+      "Id": "45735907",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_008[1].wav",
+      "Path": "Media/45735907.wem",
+      "CachePath": "7D/{7D99BE6C-2A01-8885-4793-DDF8AD2BBD70}.wem"
+     },
+     {
+      "Id": "79691968",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "EnemyHit.wav",
+      "Path": "Media/79691968.wem",
+      "CachePath": "5D/{5DF26DD8-D683-7607-EA9C-5C32CC078B76}.wem"
+     },
+     {
+      "Id": "90414965",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "EnemyHit.wav",
+      "Path": "Media/90414965.wem",
+      "CachePath": "4D/{4D12D2D4-4EB3-2755-4408-498B812B5130}.wem"
+     },
+     {
+      "Id": "159403511",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "EnemyHit.wav",
+      "Path": "Media/159403511.wem",
+      "CachePath": "67/{670A8C5E-B54A-8F7C-9A21-F0F0034F04CE}.wem"
+     },
+     {
+      "Id": "340724869",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "EnemyHit.wav",
+      "Path": "Media/340724869.wem",
+      "CachePath": "57/{577CFD7E-3DA4-11A0-978C-5FD96F23EA1F}.wem"
+     },
+     {
+      "Id": "458130202",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_rubble_008[1].wav",
+      "Path": "Media/458130202.wem",
+      "CachePath": "C2/{C2999C67-AB96-75BA-F798-C124ECFEA9A3}.wem"
+     },
+     {
+      "Id": "823439582",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_rubble_008[1].wav",
+      "Path": "Media/823439582.wem",
+      "CachePath": "20/{20F7217C-6096-83D5-C1EB-98223C5830FA}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "2234824985",
+      "Name": "Boss_Golem_Hit",
+      "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Golem\\Boss_Golem_Hit",
+      "GUID": "{D8C22D24-9145-4E23-8F0E-52E49D056A4A}",
+      "MaxAttenuation": "200",
+      "DurationType": "OneShot",
+      "DurationMin": "1.1237339",
+      "DurationMax": "1.4495683",
+      "MediaRefs": [
+       {
+        "Id": "45735907"
+       },
+       {
+        "Id": "79691968"
+       },
+       {
+        "Id": "90414965"
+       },
+       {
+        "Id": "159403511"
+       },
+       {
+        "Id": "340724869"
+       },
+       {
+        "Id": "458130202"
+       },
+       {
+        "Id": "823439582"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{7991E98B-D9FD-7297-C6A9-6ADE4A8F39C8}"
+ }
+}

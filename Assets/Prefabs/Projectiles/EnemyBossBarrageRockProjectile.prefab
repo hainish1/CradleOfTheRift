@@ -101,6 +101,14 @@ MonoBehaviour:
   impactVFX: {fileID: 4994997792314849709, guid: 776b311f5d1598f4496d586fc2ad4c09, type: 3}
   impactSize: 1
   effectDuration: 2
+  hitSFX:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: 5ee6f3262bcde9e4d95cf8d57bd690b2, type: 2}
+  flySFX:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: 2b0b59766f8e8a840b4c145936da6385, type: 2}
 --- !u!96 &4903253203124442273
 TrailRenderer:
   serializedVersion: 3

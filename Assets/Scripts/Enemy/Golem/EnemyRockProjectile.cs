@@ -35,8 +35,11 @@ public class EnemyRockProjectile : MonoBehaviour
     Rigidbody rb;
     private float age;
 
+    [Header("Sounds")]
     [SerializeField]
     private AK.Wwise.Event hitSFX;
+    [SerializeField]
+    private AK.Wwise.Event flySFX;
 
     void Awake()
     {
@@ -58,6 +61,13 @@ public class EnemyRockProjectile : MonoBehaviour
         this.aoeDamage = aoeDamage;
         //this.aoeRadius = aoeRadius;
         age = 0f;
+        
+        // Play the rock flying sfx.
+        if (flySFX != null)
+        {
+            if(flySFX.IsValid())
+                flySFX.Post(gameObject);
+        }
     }
 
     /// <summary>

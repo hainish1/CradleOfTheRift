@@ -129,6 +129,17 @@
 							</ObjectLists>
 						</Bus>
 						<Bus Name="Player Bus" ID="{46F84140-CFD0-4A90-8BDF-8B64612BA7B8}">
+							<ChildrenList>
+								<Bus Name="Lightning Bus" ID="{DDECB7D0-4505-4885-90FA-DFFF8EF0BF0E}">
+									<PropertyList>
+										<Property Name="BusVolume" Type="Real64">
+											<ValueList>
+												<Value>-6</Value>
+											</ValueList>
+										</Property>
+									</PropertyList>
+								</Bus>
+							</ChildrenList>
 							<ObjectLists>
 								<ObjectList Name="RTPC">
 									<RTPC Name="" ID="{E1EAD713-D6DA-4D88-A14E-79C4B2FB9F2A}" ShortID="413270480">
@@ -171,13 +182,6 @@
 							</PropertyList>
 							<ObjectLists>
 								<ObjectList Name="Effects">
-									<EffectSlot Name="" ID="{5A35CFE3-0EEF-4A13-A90F-3BB6C18516D2}" ShortID="176117759">
-										<ReferenceList>
-											<Reference Name="Effect" PluginName="Wwise Delay" CompanyID="0" PluginID="106" PluginType="3">
-												<ObjectRef Name="Echoes_Linear" ID="{D20F3717-EBA2-4E3A-84F8-C8BD431563FB}" WorkUnitID="{E8613F7D-BAD3-45CD-A3ED-505576F31277}"/>
-											</Reference>
-										</ReferenceList>
-									</EffectSlot>
 									<EffectSlot Name="" ID="{DB3D8218-10BF-4D30-9C58-AB8D9F85F94F}" ShortID="50126906">
 										<ReferenceList>
 											<Reference Name="Effect" PluginName="Wwise Delay" CompanyID="0" PluginID="106" PluginType="3">

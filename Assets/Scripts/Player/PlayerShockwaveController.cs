@@ -43,6 +43,9 @@ public class PlayerShockwaveController : MonoBehaviour
     private float _shockwaveAnimTimer;
     private float _shockwaveCooldownTimer;
     public static event System.Action OnShockwaveUsed;
+    
+    [Header("Sounds")]
+    [SerializeField] private AK.Wwise.Event _shockwaveSound;
 
     void Awake()
     {
@@ -83,6 +86,11 @@ public class PlayerShockwaveController : MonoBehaviour
             GameObject shockwave = Instantiate(_shockwavePrefab, _playerCenter.position, Quaternion.identity);
             Shockwave shockwaveScript = shockwave.GetComponent<Shockwave>();
             shockwaveScript.Init(_playerCenter.position, _damageableLayerMasks, ShockwaveDamage, ShockwaveKnockback, ShockwaveRadius, _playerEntity);
+            
+            // Play the sound.
+            if(_shockwaveSound != null)
+                if (_shockwaveSound.IsValid())
+                    _shockwaveSound.Post(gameObject);
         }
 
         if (_shockwaveAnimTimer < _shockwaveDuration)

@@ -10,20 +10,35 @@
     "Type": "Event",
     "GUID": "{10CD570A-9903-4AF4-8C4C-1863DCB33574}",
     "Language": "SFX",
-    "Hash": "{36EC4B29-1553-BA68-FFD6-83C58070987F}",
+    "Hash": "{5B9C052E-1268-FF78-0A21-BE42E0169B7F}",
     "ObjectPath": "Boss_SlimeDead",
     "ShortName": "Boss_SlimeDead",
     "Path": "Event/Boss_SlimeDead.bnk",
+    "Media": [
+     {
+      "Id": "445053667",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "EnemyHit.wav",
+      "Path": "Media/445053667.wem",
+      "CachePath": "C1/{C14064BF-A8F3-44D7-45AB-E59F733BD857}.wem"
+     }
+    ],
     "Events": [
      {
       "Id": "3430058625",
       "Name": "Boss_SlimeDead",
       "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Boss_SlimeDead",
       "GUID": "{10CD570A-9903-4AF4-8C4C-1863DCB33574}",
-      "MaxAttenuation": "0",
       "DurationType": "OneShot",
-      "DurationMin": "0",
-      "DurationMax": "0",
+      "DurationMin": "1.5987881",
+      "DurationMax": "1.5987881",
+      "MediaRefs": [
+       {
+        "Id": "445053667"
+       }
+      ],
       "ActionSetState": [
        {
         "GroupId": "4265060404",
@@ -65,6 +80,6 @@
     ]
    }
   ],
-  "FileHash": "{79BD5D89-A384-E0D6-E643-51D6D53A9D43}"
+  "FileHash": "{83B85913-DFE0-BDA1-C665-42F803FA3EFC}"
  }
 }

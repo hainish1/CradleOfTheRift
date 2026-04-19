@@ -34,7 +34,6 @@ public class RangeAttackStateGolem : EnemyState
         enemyGolem.TryPlayAttackTrigger("AttackThrow", "AttackThrow", "AttackSlam");
     }
 
-
     public override void Update()
     {
         if (enemy.target == null)

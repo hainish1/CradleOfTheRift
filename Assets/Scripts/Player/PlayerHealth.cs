@@ -28,18 +28,22 @@ public class PlayerHealth : HealthController
     [SerializeField] private GameObject healthRegenVFXPrefab;
     [SerializeField] private Transform regenVfxAttachPoint;
     [SerializeField] private float normalHealVFXDuration = 4f;
+
+    [Header("Sounds")]
+    [SerializeField]
+    private AK.Wwise.Event hurtSound;
+    
     private GameObject activeRegenVFX;
 
     private float regenTimer = 0f;
     private float timeSinceLastDamage = 0f;
     private bool isRegenerating = false;
     private Coroutine regenCoroutine;
-
-
-
+    
     private bool canTakeDamage = true;
 
     public static PlayerHealth instance;
+    
 
     
 
@@ -154,6 +158,9 @@ public class PlayerHealth : HealthController
 
         // Play VFX for taking damage
         PlayTakeDamageVFX();
+        
+        // Play the sound effects :D
+        hurtSound.Post(gameObject);
         
         Debug.Log($"[PLAYER HEALTH] Player took {damage} damage, current health: {currentHealth}/{maxHealth}");
     

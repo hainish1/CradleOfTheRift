@@ -182,7 +182,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// </summary>
     private void RecalculateAnimationSpeed()
     {
-        float currAnimationSpeed = _playerEntity.Stats.MeleeAnimationSpeed;
+        float currAnimationSpeed = _playerEntity.Stats.AnimationSpeedForWeapon(CurrWeapon);
         foreach (AttackInfo info in _attacks)
         {
             float duration = info.PreTransitionAnim.length + info.AttackAnim.length;
@@ -199,7 +199,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     ///   </para>
     /// </summary>
     /// <returns> The caluclated attack cooldown. </returns>
-    private float GetAttackCooldown() => _attacks[_currComboCount - 1].PostTransitionAnim.length
+    private float GetAttackCooldown() => _attacks[_currComboCount - 1].PostTransitionAnim.length / _playerAnim.GetFloat("AttackAnimSpeedMultiplier")
                                          + _playerEntity.Stats.MeleeAttackRateForWeapon(CurrWeapon);
 
     /// <summary>

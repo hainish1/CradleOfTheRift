@@ -131,20 +131,11 @@ public class LightningStrikeBase : IDisposable
         }
 
         bool playerHit = IsPlayerHit(position);
-        if (playerHit)
+        if (playerHit && selfHeal)
         {
-            if (selfHeal)
-            {
-                var health = owner.GetComponent<HealthController>();
-                if (health != null && !health.IsDead)
-                    health.Heal(damage);
-            }
-            else
-            {
-                var playerDamageable = owner.GetComponent<IDamageable>();
-                if (playerDamageable != null && !playerDamageable.IsDead)
-                    playerDamageable.TakeDamage(damage);
-            }
+            var health = owner.GetComponent<HealthController>();
+            if (health != null && !health.IsDead)
+                health.Heal(damage);
         }
 
         CreateStrikeVfx(position);

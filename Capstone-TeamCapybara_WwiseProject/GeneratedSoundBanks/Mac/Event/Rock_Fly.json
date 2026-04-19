@@ -1,0 +1,59 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Mac",
+  "BasePlatform": "Mac",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "4000648528",
+    "Type": "Event",
+    "GUID": "{C8D94844-1777-43C2-AEAA-ED979FCEDD50}",
+    "Language": "SFX",
+    "Hash": "{C8C09D65-412D-AE85-3F44-7247973A27DC}",
+    "ObjectPath": "Rock_Fly",
+    "ShortName": "Rock_Fly",
+    "Path": "Event/Rock_Fly.bnk",
+    "Media": [
+     {
+      "Id": "656886713",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "GolemThrow.wav",
+      "Path": "Media/656886713.wem",
+      "CachePath": "4D/{4D6231FE-52EC-7DF9-26D1-B026462439FC}.wem"
+     },
+     {
+      "Id": "979522838",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_008[1].wav",
+      "Path": "Media/979522838.wem",
+      "CachePath": "CD/{CD4B27B1-F15C-E917-152E-762EFDAD9CED}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "4000648528",
+      "Name": "Rock_Fly",
+      "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Golem\\Rock_Fly",
+      "GUID": "{C8D94844-1777-43C2-AEAA-ED979FCEDD50}",
+      "MaxAttenuation": "200",
+      "DurationType": "Infinite",
+      "MediaRefs": [
+       {
+        "Id": "656886713"
+       },
+       {
+        "Id": "979522838"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{3EF87CFB-8A5B-D862-9CDB-3C043723AC4D}"
+ }
+}

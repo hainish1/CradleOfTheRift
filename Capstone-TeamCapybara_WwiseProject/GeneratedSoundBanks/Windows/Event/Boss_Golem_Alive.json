@@ -1,0 +1,70 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "444807393",
+    "Type": "Event",
+    "GUID": "{9CB0C492-48B7-4650-A5FB-E94FF39362C0}",
+    "Language": "SFX",
+    "Hash": "{6D20B8DF-A7A8-A9E9-D5F9-AF3140D56DB6}",
+    "ObjectPath": "Boss_Golem_Alive",
+    "ShortName": "Boss_Golem_Alive",
+    "Path": "Event/Boss_Golem_Alive.bnk",
+    "Events": [
+     {
+      "Id": "444807393",
+      "Name": "Boss_Golem_Alive",
+      "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Golem\\Boss_Golem_Alive",
+      "GUID": "{9CB0C492-48B7-4650-A5FB-E94FF39362C0}",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0",
+      "ActionSetState": [
+       {
+        "GroupId": "4265060404",
+        "Id": "655265632",
+        "Name": "Alive",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Alive",
+        "GUID": "{A4FB7019-7BE2-4B55-B62E-D9CFEDF363CC}"
+       }
+      ]
+     }
+    ],
+    "StateGroups": [
+     {
+      "Id": "4265060404",
+      "Name": "Boss_Alive",
+      "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive",
+      "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}",
+      "States": [
+       {
+        "Id": "655265632",
+        "Name": "Alive",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Alive",
+        "GUID": "{A4FB7019-7BE2-4B55-B62E-D9CFEDF363CC}"
+       },
+       {
+        "Id": "748895195",
+        "Name": "None",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\None",
+        "GUID": "{DEECE8B4-6DDE-47CF-8B9E-899088C3DA0D}"
+       },
+       {
+        "Id": "2044049779",
+        "Name": "Dead",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Dead",
+        "GUID": "{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{CA754C86-EE0B-0E65-B230-8E91FFB63E82}"
+ }
+}

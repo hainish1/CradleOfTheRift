@@ -13,6 +13,9 @@ namespace AK
 {
     namespace EVENTS
     {
+        static const AkUniqueID BOSS_GOLEM_ALIVE = 444807393U;
+        static const AkUniqueID BOSS_GOLEM_DEAD = 3605684640U;
+        static const AkUniqueID BOSS_GOLEM_HIT = 2234824985U;
         static const AkUniqueID BOSS_SLIMEALIVE = 215348046U;
         static const AkUniqueID BOSS_SLIMEDEAD = 3430058625U;
         static const AkUniqueID BOSS_WISPALIVE = 3209282391U;
@@ -37,6 +40,7 @@ namespace AK
         static const AkUniqueID PLAY_PLAYER_FIREBALL = 1959126323U;
         static const AkUniqueID PLAY_PLAYER_FIREBALLS = 109563706U;
         static const AkUniqueID PLAY_PLAYER_GROUND_SLAM = 1163424219U;
+        static const AkUniqueID PLAY_PLAYER_HURT = 887999531U;
         static const AkUniqueID PLAY_PLAYER_JUMP = 562256996U;
         static const AkUniqueID PLAY_PLAYER_LIGHTNING_EXPLOSION = 3008676426U;
         static const AkUniqueID PLAY_PLAYER_MAJOR_LIGHTNING_ATTACK = 865153475U;
@@ -52,6 +56,8 @@ namespace AK
         static const AkUniqueID PLAY_TUTORIAL = 283731184U;
         static const AkUniqueID PLAY_UI_BUTTON_CLICK = 1661558166U;
         static const AkUniqueID ROCK_BREAK = 756826226U;
+        static const AkUniqueID ROCK_FLY = 4000648528U;
+        static const AkUniqueID ROCK_FLY_SMALL = 532024140U;
         static const AkUniqueID SKULL_DEATH = 2252982343U;
         static const AkUniqueID SLIME_BOSS_DAMAGE = 804704067U;
         static const AkUniqueID SLIME_BOSS_JUMP = 1864203916U;
@@ -120,6 +126,7 @@ namespace AK
     {
         static const AkUniqueID AMBIENT_BUS = 1207363161U;
         static const AkUniqueID ENEMY_BUS = 963934797U;
+        static const AkUniqueID LIGHTNING_BUS = 3437816711U;
         static const AkUniqueID MAIN_AUDIO_BUS = 2246998526U;
         static const AkUniqueID MUSIC_BUS = 3127962312U;
         static const AkUniqueID PLAYER_BUS = 174537428U;
