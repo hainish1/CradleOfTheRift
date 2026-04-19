@@ -15,6 +15,9 @@ public class AgentKnockBack : MonoBehaviour
     [Tooltip("If true, this script will snap the agent to navmesh after knockback")]
     public bool manageAgentPosition = true; // DEFAULT TRUE for GROUND Enemies
 
+    [Tooltip("If true, ApplyImpulse is ignored. Use for golems")]
+    public bool ignoreKnockback = false;
+
     NavMeshAgent agent;
     Vector3 externalVelocity;
     float timer;
@@ -86,6 +89,12 @@ public class AgentKnockBack : MonoBehaviour
     /// <param name="impulse"></param>
     public void ApplyImpulse(Vector3 impulse)
     {
+        if (ignoreKnockback)
+        {
+            if (softBody != null) softBody.Impulse();
+            return;
+        }
+
         // If the enemy is mid leap (in air), redirect impulse into flight velocity
         // so the attack states swept collision physics handles it smoothly
         if (melee != null && melee.isInAir)
@@ -140,19 +149,22 @@ public class AgentKnockBack : MonoBehaviour
 
         if (agent == null || !agent.isActiveAndEnabled) return;
 
-        if (manageAgentPosition && melee != null)
+        if (manageAgentPosition)
         {
-            // first find the true physics ground 
+            // first find the true physics ground
             Vector3 correctedPos = transform.position;
             Vector3 rayOrigin = correctedPos + Vector3.up * 5f;
             float halfHeight = agent != null ? agent.height * 0.7f : 0f;
+            // for golem n all : just place at the ground hit
+            float groundOffset = melee != null ? melee.startHeightAboveGround : 0f;
             if (Physics.Raycast(rayOrigin, Vector3.down, out var groundHit, 10f,
                     collisionMask, QueryTriggerInteraction.Ignore))
             {
-                correctedPos.y = groundHit.point.y + (halfHeight + melee.startHeightAboveGround);
+                correctedPos.y = groundHit.point.y + (halfHeight + groundOffset);
             }
 
-            const float snapRadius = 6f;
+            // wider search
+            const float snapRadius = 12f;
             if (NavMesh.SamplePosition(correctedPos, out var hit, snapRadius, NavMesh.AllAreas))
             {
                 // Use NavMesh for XZ but keep the physics-ground Y
@@ -169,7 +181,7 @@ public class AgentKnockBack : MonoBehaviour
                 agent.nextPosition = correctedPos;
             }
         }
-        else if (!manageAgentPosition)
+        else
         {
             // For Flying enemy, warp agent back to navmesh without moving actual transform
             NavMeshHit navHit;

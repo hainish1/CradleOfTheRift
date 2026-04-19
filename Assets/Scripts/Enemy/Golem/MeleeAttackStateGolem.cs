@@ -34,7 +34,7 @@ public class MeleeAttackStateGolem : EnemyState
         stateTimer += Time.deltaTime;
 
         // Keep turning to face the player until melee attack
-        if (stateTimer < hitFrameTime)
+        if (enemy.target != null && stateTimer < hitFrameTime)
         {
             enemyGolem.FaceTargetSmooth(enemyGolem.turnSpeedWhileAiming);
         }
@@ -44,9 +44,16 @@ public class MeleeAttackStateGolem : EnemyState
         {
             // Set melee cooldown
             enemyGolem.nextAttackAllowed = Time.time + enemyGolem.attackCooldown;
-            
-            // Go to recovery to pause and wander
-            stateMachine.ChangeState(enemyGolem.GetRecovery());
+
+            // If no player then idle, otherwise go to recovery to pause and wander
+            if (enemy.target == null)
+            {
+                stateMachine.ChangeState(enemyGolem.GetIdle());
+            }
+            else
+            {
+                stateMachine.ChangeState(enemyGolem.GetRecovery());
+            }
         }
     }
 
