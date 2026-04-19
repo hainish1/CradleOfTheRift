@@ -22,6 +22,26 @@ MonoBehaviour:
   fireChargeCooldown: 4
   projectileSpread: 0.5
   enableHomingProjectiles: 0
+  spearMeleeDamage: 30
+  axeMeleeDamage: 30
+  maceMeleeDamage: 30
+  staffMeleeDamage: 30
+  spearMeleeAttackRate: 0.15
+  axeMeleeAttackRate: 0.15
+  maceMeleeAttackRate: 0.15
+  staffMeleeAttackRate: 0.15
+  spearMeleeAnimationSpeed: 1.5
+  axeMeleeAnimationSpeed: 1.5
+  maceMeleeAnimationSpeed: 1.5
+  staffMeleeAnimationSpeed: 1.5
+  spearProjectileDamage: 40
+  axeProjectileDamage: 50
+  maceProjectileDamage: 50
+  staffProjectileDamage: 80
+  spearProjectileFireRate: 2
+  axeProjectileFireRate: 2
+  maceProjectileFireRate: 2
+  staffProjectileFireRate: 2
   shockwaveDamage: 35
   shockwaveRadius: 20.9
   shockwaveKnockback: 500
@@ -44,19 +64,3 @@ MonoBehaviour:
   flightRegenerationRate: 15
   flightDepletionRate: 20
   characterSize: 1
-  spearProjectileDamage: 40
-  axeProjectileDamage: 50
-  maceProjectileDamage: 50
-  staffProjectileDamage: 80
-  spearProjectileFireRate: 2
-  axeProjectileFireRate: 2
-  maceProjectileFireRate: 2
-  staffProjectileFireRate: 2
-  spearMeleeDamage: 30
-  axeMeleeDamage: 30
-  maceMeleeDamage: 30
-  staffMeleeDamage: 30
-  spearMeleeAttackRate: 0.15
-  axeMeleeAttackRate: 100
-  maceMeleeAttackRate: 0.15
-  staffMeleeAttackRate: 0.15
