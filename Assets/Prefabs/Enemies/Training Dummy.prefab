@@ -247,20 +247,13 @@ MonoBehaviour:
   gizosOn: 1
   aggressionColor: {r: 1, g: 0, b: 0, a: 1}
   nextAttackAllowed: 0
-  maxHealth: 100
-  invincible: 0
-  autoHeal: 1
-  healDelay: 3
-  showDamageNumbers: 1
   damageColor: {r: 1, g: 0, b: 0, a: 1}
   hitFlashMaterial: {fileID: 0}
   flashDuration: 0.1
-  damageFontSize: 50
-  damageTextDuration: 1.5
-  damageTextRiseSpeed: 1.5
-  damageTextSpread: 0.5
-  damageTextFadeOut: 1
-  logDamageToConsole: 1
+  fontSize: 120
+  textDuration: 1.5
+  riseSpeed: 1.5
+  logDamage: 1
 --- !u!1 &2319210336607804849
 GameObject:
   m_ObjectHideFlags: 0

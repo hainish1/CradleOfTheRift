@@ -199,7 +199,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     ///   </para>
     /// </summary>
     /// <returns> The caluclated attack cooldown. </returns>
-    private float GetAttackCooldown() => _attacks[_currComboCount - 1].PostTransitionAnim.length
+    private float GetAttackCooldown() => _attacks[_currComboCount - 1].PostTransitionAnim.length / _playerAnim.GetFloat("AttackAnimSpeedMultiplier")
                                          + _playerEntity.Stats.MeleeAttackRateForWeapon(CurrWeapon);
 
     /// <summary>

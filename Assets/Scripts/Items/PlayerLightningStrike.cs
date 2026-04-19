@@ -42,7 +42,6 @@ public class PlayerLightningStrike : IDisposable
     private readonly HashSet<Enemy> _chainHitEnemies = new HashSet<Enemy>();
 
     private readonly Collider[] _ownerColliders;
-    private readonly IDamageable _ownerDamageable;
 
     public PlayerLightningStrike(
         Entity owner,
@@ -67,7 +66,6 @@ public class PlayerLightningStrike : IDisposable
         enemyLayer = LayerMask.GetMask("Enemy");
 
         _ownerColliders = owner != null ? owner.GetComponentsInChildren<Collider>() : System.Array.Empty<Collider>();
-        _ownerDamageable = owner != null ? owner.GetComponent<IDamageable>() : null;
 
         // now triggers on every projectile throw regardless of weapon
         PlayerShooter.OnProjectileFired += OnProjectileFired;
@@ -151,10 +149,8 @@ public class PlayerLightningStrike : IDisposable
             LightningCore.ApplyLightningDamage(owner, enemy, damage);
         }
 
-        bool playerHit = IsPlayerHit(position);
-        if (_ownerDamageable != null && !_ownerDamageable.IsDead && playerHit)
+        if (IsPlayerHit(position))
         {
-            _ownerDamageable.TakeDamage(damage);
             TriggerChainFromPlayer(damage * ChainOnPlayerHitDamagePercent);
         }
 

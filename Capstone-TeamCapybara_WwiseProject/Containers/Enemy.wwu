@@ -844,7 +844,7 @@
 								</Property>
 								<Property Name="Volume" Type="Real64">
 									<ValueList>
-										<Value>-6</Value>
+										<Value>-3</Value>
 									</ValueList>
 									<ModifierList>
 										<ModifierInfo>
@@ -1011,8 +1011,403 @@
 								<ActiveSource Name="GolemThrow" ID="{CFD27261-E392-4FF9-AF87-1EC6F29E38E5}" Platform="Linked"/>
 							</ActiveSourceList>
 						</Sound>
+						<Sound Name="GolemDie" ID="{B490CB12-22D0-45D7-986A-2A435A8217A5}" ShortID="540633563">
+							<PropertyList>
+								<Property Name="Pitch" Type="int32">
+									<ValueList>
+										<Value>-1050</Value>
+									</ValueList>
+								</Property>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="EnemyHit" ID="{9A325C1B-990C-4257-B0FB-5917B7BE7F94}">
+									<PropertyList>
+										<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+										<Property Name="TrimBegin" Type="Real64" Value="3.14754098360656"/>
+										<Property Name="TrimEnd" Type="Real64" Value="4.01928640308583"/>
+									</PropertyList>
+									<Language>SFX</Language>
+									<AudioFile>EnemyHit.wav</AudioFile>
+									<MediaIDList>
+										<MediaID ID="445053667"/>
+									</MediaIDList>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="EnemyHit" ID="{9A325C1B-990C-4257-B0FB-5917B7BE7F94}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+						<RandomSequenceContainer Name="GolemGrunts" ID="{68EB7722-3E13-4C33-846C-129F05D006F6}" ShortID="1071238744">
+							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+								</Reference>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<Sound Name="GolemGrunt" ID="{8395D4DE-6AE3-4470-B309-DF40A2059D7F}" ShortID="58365668">
+									<PropertyList>
+										<Property Name="Pitch" Type="int32">
+											<ValueList>
+												<Value>-400</Value>
+											</ValueList>
+											<ModifierList>
+												<ModifierInfo>
+													<Modifier Name="" ID="{15E3DCCC-61F3-4001-B7BC-65957C909564}">
+														<PropertyList>
+															<Property Name="Max" Type="Real64" Value="300"/>
+															<Property Name="Min" Type="Real64" Value="-300"/>
+														</PropertyList>
+													</Modifier>
+												</ModifierInfo>
+											</ModifierList>
+										</Property>
+										<Property Name="Volume" Type="Real64">
+											<ValueList>
+												<Value>8</Value>
+											</ValueList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="EnemyHit" ID="{1ED9672D-5E22-40B6-8BDA-B48D666CABAD}">
+											<PropertyList>
+												<Property Name="FadeOutDuration" Type="Real64" Value="0.77145612343298"/>
+												<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+												<Property Name="TrimBegin" Type="Real64" Value="0.694310511089681"/>
+												<Property Name="TrimEnd" Type="Real64" Value="1.84378013500482"/>
+											</PropertyList>
+											<Language>SFX</Language>
+											<AudioFile>EnemyHit.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="79691968"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="EnemyHit" ID="{1ED9672D-5E22-40B6-8BDA-B48D666CABAD}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+								<Sound Name="GolemGrunt_01" ID="{B113BCAB-C869-42E3-B430-E7F1EF2CAC67}" ShortID="361643540">
+									<PropertyList>
+										<Property Name="Pitch" Type="int32">
+											<ValueList>
+												<Value>-850</Value>
+											</ValueList>
+											<ModifierList>
+												<ModifierInfo>
+													<Modifier Name="" ID="{45E1682F-918E-42FF-8C91-0CA0BC628624}">
+														<PropertyList>
+															<Property Name="Max" Type="Real64" Value="600"/>
+															<Property Name="Min" Type="Real64" Value="-600"/>
+														</PropertyList>
+													</Modifier>
+												</ModifierInfo>
+											</ModifierList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="EnemyHit" ID="{5CCA6DDD-C35A-4F20-9B7D-33C485787A95}">
+											<PropertyList>
+												<Property Name="FadeOutDuration" Type="Real64" Value="0.77145612343298"/>
+												<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+												<Property Name="TrimBegin" Type="Real64" Value="1.85149469623915"/>
+												<Property Name="TrimEnd" Type="Real64" Value="2.73866923818708"/>
+											</PropertyList>
+											<Language>SFX</Language>
+											<AudioFile>EnemyHit.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="159403511"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="EnemyHit" ID="{5CCA6DDD-C35A-4F20-9B7D-33C485787A95}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+								<Sound Name="GolemGrunt_02" ID="{BEB78CBD-E4A2-4CE6-9150-34FCCEF16ED7}" ShortID="42181244">
+									<PropertyList>
+										<Property Name="Pitch" Type="int32">
+											<ValueList>
+												<Value>-600</Value>
+											</ValueList>
+											<ModifierList>
+												<ModifierInfo>
+													<Modifier Name="" ID="{45AE1DC8-F24A-4A95-BEA8-0AF9222D4235}">
+														<PropertyList>
+															<Property Name="Max" Type="Real64" Value="600"/>
+															<Property Name="Min" Type="Real64" Value="-600"/>
+														</PropertyList>
+													</Modifier>
+												</ModifierInfo>
+											</ModifierList>
+										</Property>
+										<Property Name="Volume" Type="Real64">
+											<ValueList>
+												<Value>7</Value>
+											</ValueList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="EnemyHit" ID="{E41F9022-71D8-4BB7-930B-CA5662262247}">
+											<PropertyList>
+												<Property Name="FadeOutDuration" Type="Real64" Value="0.702025072324018"/>
+												<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+												<Property Name="TrimBegin" Type="Real64" Value="5.63162970106075"/>
+												<Property Name="TrimEnd" Type="Real64" Value="6.45708775313404"/>
+											</PropertyList>
+											<Language>SFX</Language>
+											<AudioFile>EnemyHit.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="340724869"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="EnemyHit" ID="{E41F9022-71D8-4BB7-930B-CA5662262247}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+								<Sound Name="GolemGrunt_03" ID="{E58D6FC8-18D8-41AB-BF26-18F9EA461445}" ShortID="578531492">
+									<PropertyList>
+										<Property Name="Pitch" Type="int32">
+											<ValueList>
+												<Value>-600</Value>
+											</ValueList>
+											<ModifierList>
+												<ModifierInfo>
+													<Modifier Name="" ID="{7077A8D6-A981-4E25-B687-8A4E647D5AE9}">
+														<PropertyList>
+															<Property Name="Max" Type="Real64" Value="600"/>
+															<Property Name="Min" Type="Real64" Value="-600"/>
+														</PropertyList>
+													</Modifier>
+												</ModifierInfo>
+											</ModifierList>
+										</Property>
+										<Property Name="Volume" Type="Real64">
+											<ValueList>
+												<Value>6</Value>
+											</ValueList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="EnemyHit" ID="{0F82DC1D-AD0C-487B-98E8-9817A9D56956}">
+											<PropertyList>
+												<Property Name="FadeOutDuration" Type="Real64" Value="0.702025072324018"/>
+												<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+												<Property Name="TrimBegin" Type="Real64" Value="6.81967213114754"/>
+												<Property Name="TrimEnd" Type="Real64" Value="7.61427193828351"/>
+											</PropertyList>
+											<Language>SFX</Language>
+											<AudioFile>EnemyHit.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="90414965"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="EnemyHit" ID="{0F82DC1D-AD0C-487B-98E8-9817A9D56956}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+							</ChildrenList>
+						</RandomSequenceContainer>
+						<Sound Name="RockShardsLoop" ID="{6F00EDFA-F213-4F9F-98E4-AF99D51E59D8}" ShortID="604520158">
+							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
+								<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+								<Property Name="Pitch" Type="int32">
+									<ValueList>
+										<Value>-300</Value>
+									</ValueList>
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{51D0030E-BFA2-474A-BEB9-A108FA6AEA73}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Max" Type="Real64" Value="500"/>
+													<Property Name="Min" Type="Real64" Value="-500"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+								<Property Name="Volume" Type="Real64">
+									<ValueList>
+										<Value>-6</Value>
+									</ValueList>
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{A6A0224A-87F1-4696-AF4F-AD57A4B0905B}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Min" Type="Real64" Value="-3"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+								</Reference>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="Bluezone_BC0275_building_collapse_debris_falling_rock_008[1]" ID="{59F3F93F-C61B-4A63-80C8-B32EECF0AAC0}">
+									<PropertyList>
+										<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+										<Property Name="TrimBegin" Type="Real64" Value="1.53448051863021"/>
+										<Property Name="TrimEnd" Type="Real64" Value="2.48240134102958"/>
+									</PropertyList>
+									<Language>SFX</Language>
+									<AudioFile>Bluezone_BC0275_building_collapse_debris_falling_rock_008[1].wav</AudioFile>
+									<MediaIDList>
+										<MediaID ID="979522838"/>
+									</MediaIDList>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="Bluezone_BC0275_building_collapse_debris_falling_rock_008[1]" ID="{59F3F93F-C61B-4A63-80C8-B32EECF0AAC0}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+						<Sound Name="RockSpin" ID="{AD20B069-A784-41D6-86A1-0DCF1013422E}" ShortID="23106492">
+							<PropertyList>
+								<Property Name="3DSpatialization" Type="int16" Value="2"/>
+								<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+								<Property Name="Pitch" Type="int32">
+									<ValueList>
+										<Value>550</Value>
+									</ValueList>
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{52235D8C-A193-4160-8F61-4F6B3EA2DF70}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Max" Type="Real64" Value="600"/>
+													<Property Name="Min" Type="Real64" Value="-600"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+								<Property Name="Volume" Type="Real64">
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{20B42474-02E7-482A-A258-3B2DB07C9E20}">
+												<PropertyList>
+													<Property Name="Enabled" Type="bool" Value="True"/>
+													<Property Name="Min" Type="Real64" Value="-3"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Enemy Attenuation" ID="{3BBF6156-885E-43A6-98E8-87E573D2F51D}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+								</Reference>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="GolemThrow" ID="{F59DB8C1-5D8D-4A03-8D56-F2AF30DE6DCD}">
+									<PropertyList>
+										<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+										<Property Name="TrimEnd" Type="Real64" Value="0.458600617227162"/>
+									</PropertyList>
+									<Language>SFX</Language>
+									<AudioFile>GolemThrow.wav</AudioFile>
+									<MediaIDList>
+										<MediaID ID="656886713"/>
+									</MediaIDList>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="GolemThrow" ID="{F59DB8C1-5D8D-4A03-8D56-F2AF30DE6DCD}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
 					</ChildrenList>
 				</Folder>
+				<Sound Name="EnemyHits" ID="{B534B952-8B83-470A-9DD5-DA41CE744295}" ShortID="611626006">
+					<ReferenceList>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Enemy Bus" ID="{3F756F82-66A0-4FC8-9130-1250A77F4FA9}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="EnemyHit" ID="{1A2AD4F5-B81C-4F5E-85B3-0DE6DA6C9B42}">
+							<Language>SFX</Language>
+							<AudioFile>EnemyHit.wav</AudioFile>
+							<MediaIDList>
+								<MediaID ID="319527730"/>
+							</MediaIDList>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="EnemyHit" ID="{1A2AD4F5-B81C-4F5E-85B3-0DE6DA6C9B42}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
 			</ChildrenList>
 		</WorkUnit>
 	</Containers>

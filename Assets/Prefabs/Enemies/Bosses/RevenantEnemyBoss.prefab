@@ -15264,9 +15264,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b7684082c124f45893380d545b25c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  original: {fileID: 2100000, guid: 6b38742730e330c488cc8d7964788813, type: 2}
   flash: {fileID: 2100000, guid: a4b62a69d54e80347bd546999c6d4b9e, type: 2}
   flashDuration: 0.1
+  flashOnlyRootRenderer: 0
 --- !u!1 &4789172711462024998
 GameObject:
   m_ObjectHideFlags: 0
@@ -20759,6 +20759,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 768
   manageAgentPosition: 1
+  ignoreKnockback: 1
   softBody: {fileID: 0}
 --- !u!114 &2851529993679917071
 MonoBehaviour:
@@ -20772,9 +20773,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b7684082c124f45893380d545b25c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  original: {fileID: 5561349426305759274, guid: ae87488a8bdfccd44accf997cc91a540, type: 3}
   flash: {fileID: 2100000, guid: a4b62a69d54e80347bd546999c6d4b9e, type: 2}
   flashDuration: 0.1
+  flashOnlyRootRenderer: 1
 --- !u!114 &3349805392606994707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20787,10 +20788,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 600
+  maxHealth: 1500
   cleanupDelay: 0
-  baseHealth: 600
-  xpReward: 200
+  baseHealth: 1500
+  xpReward: 50
   damageVisuals: {fileID: 6516409030888228098}
   deathVFX: {fileID: 5162910912013668194, guid: ba7e23d9af918ba4a94525d88d9a8fc4, type: 3}
   deathVFXSpawnPoint: {fileID: 4263888278091598567}
@@ -20837,11 +20838,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitFlashMaterial: {fileID: 2100000, guid: 679327a50d72c694bab0b63b6b2baec1, type: 2}
   flashDuration: 0.1
-  fontSize: 36
+  fontSize: 150
   textDuration: 1.5
   riseSpeed: 1.5
   takeDamageVFXPrefab: {fileID: 4658278565933542678, guid: de2e62541d660f943807b06d7ffa0e73, type: 3}
   damageVfxAttachPoint: {fileID: 0}
+  textHeightOffset: 2
+  textSpreadRadius: 0.4
 --- !u!114 &2761777855947941824
 MonoBehaviour:
   m_ObjectHideFlags: 0
