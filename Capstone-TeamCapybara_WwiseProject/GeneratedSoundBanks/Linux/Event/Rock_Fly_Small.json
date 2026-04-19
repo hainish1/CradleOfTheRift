@@ -1,0 +1,59 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "532024140",
+    "Type": "Event",
+    "GUID": "{7BC61838-E38D-4AED-897A-899C464A54C9}",
+    "Language": "SFX",
+    "Hash": "{6341A9A7-2FCC-9502-EF46-8BFDDCAD9E8E}",
+    "ObjectPath": "Rock_Fly_Small",
+    "ShortName": "Rock_Fly_Small",
+    "Path": "Event/Rock_Fly_Small.bnk",
+    "Media": [
+     {
+      "Id": "656886713",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "GolemThrow.wav",
+      "Path": "Media/656886713.wem",
+      "CachePath": "6D/{6D210DD0-5856-2914-F07C-2CFE900BFE62}.wem"
+     },
+     {
+      "Id": "979522838",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_008[1].wav",
+      "Path": "Media/979522838.wem",
+      "CachePath": "B1/{B157EE5A-2190-F2C4-66CF-E811FA7BCFE8}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "532024140",
+      "Name": "Rock_Fly_Small",
+      "ObjectPath": "\\Events\\Default Work Unit\\Enemy\\Golem\\Rock_Fly_Small",
+      "GUID": "{7BC61838-E38D-4AED-897A-899C464A54C9}",
+      "MaxAttenuation": "200",
+      "DurationType": "Infinite",
+      "MediaRefs": [
+       {
+        "Id": "656886713"
+       },
+       {
+        "Id": "979522838"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{C11598E8-8672-E9D5-93DD-C2F45D90607C}"
+ }
+}
