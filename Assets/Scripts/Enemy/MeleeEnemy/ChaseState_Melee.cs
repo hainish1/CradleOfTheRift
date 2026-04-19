@@ -27,7 +27,7 @@ public class ChaseState_Melee : EnemyState
             if (enemy.agent != null)
             {
                 enemy.agent.isStopped = false;
-                enemy.agent.speed = enemyMelee.dragSpeed;
+                enemy.agent.speed = enemyMelee.EffectiveDragSpeed;
                 dragging = true;
                 phaseTimer = enemyMelee.dragDuration;
             }
@@ -53,9 +53,9 @@ public class ChaseState_Melee : EnemyState
                 if(enemy.agent != null)
                 {
                     enemy.agent.isStopped = false;
-                    enemy.agent.speed = enemyMelee.dragSpeed;
+                    enemy.agent.speed = enemyMelee.EffectiveDragSpeed;
                     SetAgentDestination(enemy.target.position); // give the AI a position to chase
-                }  
+                }
             }
             else
             {

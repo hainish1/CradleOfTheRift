@@ -25,6 +25,9 @@ public class EnemyMelee : Enemy
     public float dragDuration = 0.35f;
     public float restDuration = 0.25f;
 
+    // okay now this should actually apply it
+    public float EffectiveDragSpeed => dragSpeed * (elementalProfile != null ? elementalProfile.speedMultiplier : 1f);
+
 
     [Header("Slam attack")]
     public float slamDamage = 1;
@@ -90,7 +93,12 @@ public class EnemyMelee : Enemy
 
         // Debug.Log($"onMesh={agent.isOnNavMesh} onLink={agent.isOnOffMeshLink} posY={transform.position.y}");
 
-        agent.speed = dragSpeed * (elementalProfile != null ? elementalProfile.speedMultiplier : 1f);
+        agent.speed = EffectiveDragSpeed;
+        //scale acceleration with the target speed so the dragSpeed value actually matters.
+        float safeDragDuration = Mathf.Max(0.05f, dragDuration);
+        float requiredAcceleration = (EffectiveDragSpeed / safeDragDuration) * 2f;
+        agent.acceleration = Mathf.Max(agent.acceleration, requiredAcceleration);
+        agent.autoBraking = true; // slow down approaching the player
         ApplyElementalVisuals();
 
         var kb = GetComponent<AgentKnockBack>();
