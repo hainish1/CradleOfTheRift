@@ -14,7 +14,7 @@ public class EnemyMelee : Enemy
     public ElementalProfile elementalProfile = new ElementalProfile();
 
     [Header("Melee related stuff")]
-    public float chaseSpeed = 4f;
+    // public float chaseSpeed = 4f;
     public float attackRange = 1.2f;
     // public int damage = 10; 
     public float knockbackPower = 10f; // how far can push the enemy

@@ -5491,7 +5491,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.75
-  m_Speed: 3.5
+  m_Speed: 10
   m_Acceleration: 18
   avoidancePriority: 50
   m_AngularSpeed: 150
@@ -5533,16 +5533,16 @@ MonoBehaviour:
     attackVFX: {fileID: 0}
     dotHitVFX: {fileID: 0}
     damageMultiplier: 1.5
-    speedMultiplier: 1
+    speedMultiplier: 10
     isStrongerVariant: 0
     dotChance: 1
     dotDamagePerTick: 10
     dotTickInterval: 1
     dotDuration: 1
-  chaseSpeed: 30
+  chaseSpeed: 20
   attackRange: 5
   knockbackPower: 50
-  dragSpeed: 17
+  dragSpeed: 10000
   dragDuration: 1
   restDuration: 0.18
   slamDamage: 15
