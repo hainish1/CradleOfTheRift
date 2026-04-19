@@ -10,7 +10,7 @@
     "Type": "Event",
     "GUID": "{DDED019A-AA83-4DF5-96C4-EF5C4435B063}",
     "Language": "SFX",
-    "Hash": "{29D469D5-AE95-BAF2-5DF2-6BE512FAB8C1}",
+    "Hash": "{A8011EBD-630B-AD67-B49E-B2D3960C5E7E}",
     "ObjectPath": "Golem_Hit",
     "ShortName": "Golem_Hit",
     "Path": "Event/Golem_Hit.bnk",
@@ -23,6 +23,42 @@
       "ShortName": "Bluezone_BC0275_building_collapse_debris_falling_rock_008[1].wav",
       "Path": "Media/45735907.wem",
       "CachePath": "7D/{7D99BE6C-2A01-8885-4793-DDF8AD2BBD70}.wem"
+     },
+     {
+      "Id": "79691968",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "EnemyHit.wav",
+      "Path": "Media/79691968.wem",
+      "CachePath": "B3/{B3512CA5-E5F5-14DE-6C38-582069473BD7}.wem"
+     },
+     {
+      "Id": "90414965",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "EnemyHit.wav",
+      "Path": "Media/90414965.wem",
+      "CachePath": "8E/{8E02C179-5463-898B-20F0-05C12DBECE7D}.wem"
+     },
+     {
+      "Id": "159403511",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "EnemyHit.wav",
+      "Path": "Media/159403511.wem",
+      "CachePath": "58/{58347EE3-EC84-96C7-88E0-8199BA1692C5}.wem"
+     },
+     {
+      "Id": "340724869",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "EnemyHit.wav",
+      "Path": "Media/340724869.wem",
+      "CachePath": "EE/{EE38A47D-9CB2-1868-096E-ACC0FBB05C82}.wem"
      },
      {
       "Id": "458130202",
@@ -51,11 +87,23 @@
       "GUID": "{DDED019A-AA83-4DF5-96C4-EF5C4435B063}",
       "MaxAttenuation": "200",
       "DurationType": "OneShot",
-      "DurationMin": "0.6827569",
-      "DurationMax": "1.3655138",
+      "DurationMin": "1.1237339",
+      "DurationMax": "1.4495683",
       "MediaRefs": [
        {
         "Id": "45735907"
+       },
+       {
+        "Id": "79691968"
+       },
+       {
+        "Id": "90414965"
+       },
+       {
+        "Id": "159403511"
+       },
+       {
+        "Id": "340724869"
        },
        {
         "Id": "458130202"
@@ -68,6 +116,6 @@
     ]
    }
   ],
-  "FileHash": "{B9AF8B53-55D7-1994-0324-1D41D9325C9F}"
+  "FileHash": "{AAA4B393-A625-7E2B-F98A-30BF2D6F3458}"
  }
 }
