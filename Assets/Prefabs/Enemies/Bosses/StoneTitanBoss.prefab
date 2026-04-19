@@ -341,10 +341,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030922ac2b86744bbaff4745bcaf1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 750
+  maxHealth: 1800
   cleanupDelay: 0
-  baseHealth: 750
-  xpReward: 1000
+  baseHealth: 1800
+  xpReward: 50
   damageVisuals: {fileID: 2533069923019125397}
   deathVFX: {fileID: 4658278565933542678, guid: e7d265248064cb041b6104aaa343727e, type: 3}
   deathVFXSpawnPoint: {fileID: 0}
@@ -374,7 +374,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitFlashMaterial: {fileID: 2100000, guid: 679327a50d72c694bab0b63b6b2baec1, type: 2}
   flashDuration: 0.1
-  fontSize: 36
+  fontSize: 150
   textDuration: 1.5
   riseSpeed: 1.5
   takeDamageVFXPrefab: {fileID: 4658278565933542678, guid: c847fd36f72d18c4aa553abd2807a74f, type: 3}

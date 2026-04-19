@@ -5605,6 +5605,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   manageAgentPosition: 1
+  ignoreKnockback: 0
   softBody: {fileID: 315860184194653744}
 --- !u!65 &2944468201939486083
 BoxCollider:
@@ -5696,7 +5697,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitFlashMaterial: {fileID: 2100000, guid: 679327a50d72c694bab0b63b6b2baec1, type: 2}
   flashDuration: 0.1
-  fontSize: 36
+  fontSize: 150
   textDuration: 1.5
   riseSpeed: 1.5
   takeDamageVFXPrefab: {fileID: 4658278565933542678, guid: 08f73d28d011ad6499065dd67fa4f2e9, type: 3}

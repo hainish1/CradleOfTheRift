@@ -20737,6 +20737,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 768
   manageAgentPosition: 0
+  ignoreKnockback: 0
   softBody: {fileID: 0}
 --- !u!114 &7073846054041510464
 MonoBehaviour:
@@ -20815,7 +20816,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitFlashMaterial: {fileID: 2100000, guid: 679327a50d72c694bab0b63b6b2baec1, type: 2}
   flashDuration: 0.1
-  fontSize: 36
+  fontSize: 150
   textDuration: 1.5
   riseSpeed: 1.5
   takeDamageVFXPrefab: {fileID: 4658278565933542678, guid: 813e0cf28493e1d43ae1f6f8d5b8ef99, type: 3}

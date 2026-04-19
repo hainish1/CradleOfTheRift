@@ -10740,6 +10740,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 768
   manageAgentPosition: 0
+  ignoreKnockback: 0
   softBody: {fileID: 0}
 --- !u!114 &4619320666644970320
 MonoBehaviour:
@@ -10771,7 +10772,7 @@ MonoBehaviour:
   maxHealth: 60
   cleanupDelay: 0
   baseHealth: 60
-  xpReward: 30
+  xpReward: 20
   damageVisuals: {fileID: 6360044642338491246}
   deathVFX: {fileID: 5162910912013668194, guid: 7672036a46aa03945ab6b53c330584c9, type: 3}
   deathVFXSpawnPoint: {fileID: 1012283100066688014}
@@ -10818,7 +10819,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitFlashMaterial: {fileID: 2100000, guid: 679327a50d72c694bab0b63b6b2baec1, type: 2}
   flashDuration: 0.1
-  fontSize: 36
+  fontSize: 150
   textDuration: 1.5
   riseSpeed: 1.5
   takeDamageVFXPrefab: {fileID: 4658278565933542678, guid: a58dc5f3c592ac8499d7d1561023e701, type: 3}
