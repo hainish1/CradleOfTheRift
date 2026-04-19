@@ -182,7 +182,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     /// </summary>
     private void RecalculateAnimationSpeed()
     {
-        float currAnimationSpeed = _playerEntity.Stats.MeleeAnimationSpeed;
+        float currAnimationSpeed = _playerEntity.Stats.AnimationSpeedForWeapon(CurrWeapon);
         foreach (AttackInfo info in _attacks)
         {
             float duration = info.PreTransitionAnim.length + info.AttackAnim.length;
