@@ -20,6 +20,13 @@ public class EnemyRange : Enemy
     public float maxHorizontalSpeed = 12f; // cap prevents runaway drift
     public float maxVerticalSpeed = 10f; // cap vertical speed
 
+
+    private float SpeedMultiplier => elementalProfile != null ? elementalProfile.speedMultiplier : 1f;
+
+    // alright now these lot should actually change now 
+    public float EffectiveMaxHorizontalSpeed => maxHorizontalSpeed * SpeedMultiplier;
+    public float EffectiveMaxVerticalSpeed => maxVerticalSpeed * SpeedMultiplier;
+
     [Header("Hover and movement")]
     public float chaseSpeed = 3.5f;
     public float attackRange = 12f; // start shooting from this far
@@ -245,9 +252,10 @@ public class EnemyRange : Enemy
 
         // Cap horizontal speed to prevent runaway drift
         Vector3 hDelta = new Vector3(nextPos.x - transform.position.x, 0f, nextPos.z - transform.position.z);
-        if (hDelta.magnitude > maxHorizontalSpeed * Time.deltaTime)
+        float maxHStep = EffectiveMaxHorizontalSpeed * Time.deltaTime;
+        if (hDelta.magnitude > maxHStep)
         {
-            hDelta = hDelta.normalized * maxHorizontalSpeed * Time.deltaTime;
+            hDelta = hDelta.normalized * maxHStep;
             nextPos.x = transform.position.x + hDelta.x;
             nextPos.z = transform.position.z + hDelta.z;
         }
@@ -287,11 +295,12 @@ public class EnemyRange : Enemy
         // Vertical SmoothDamp
         nextPos.y = Mathf.SmoothDamp(transform.position.y, finalTargetY, ref currentYVelocity, verticalSmoothTime);
         float vDelta = nextPos.y - transform.position.y;
-        float maxVStep = maxVerticalSpeed * Time.deltaTime;
+        float effectiveMaxV = EffectiveMaxVerticalSpeed;
+        float maxVStep = effectiveMaxV * Time.deltaTime;
         if (Mathf.Abs(vDelta) > maxVStep)
         {
             nextPos.y = transform.position.y + Mathf.Sign(vDelta) * maxVStep;
-            currentYVelocity = Mathf.Clamp(currentYVelocity, -maxVerticalSpeed, maxVerticalSpeed);
+            currentYVelocity = Mathf.Clamp(currentYVelocity, -effectiveMaxV, effectiveMaxV);
         }
 
         transform.position = nextPos;
