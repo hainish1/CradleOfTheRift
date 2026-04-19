@@ -203,6 +203,13 @@
 								</Reference>
 							</ReferenceList>
 						</Action>
+						<Action Name="" ID="{E95D48E4-E875-4E51-A0B9-CA1AA3E711BA}" ShortID="778226509">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="GolemDie" ID="{B490CB12-22D0-45D7-986A-2A435A8217A5}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
 					</ChildrenList>
 				</Event>
 				<Event Name="Boss_WispDead" ID="{306718A8-F0E7-4E06-A9BE-06FB053C516A}">
@@ -214,6 +221,13 @@
 							<ReferenceList>
 								<Reference Name="Target">
 									<ObjectRef Name="Dead" ID="{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}" WorkUnitID="{D51EFDF0-CE93-44D2-AEF6-831B3064CA87}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{6FD4307A-E563-44C2-832D-3EEB4DC9F606}" ShortID="763476276">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="GolemDie" ID="{B490CB12-22D0-45D7-986A-2A435A8217A5}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
 								</Reference>
 							</ReferenceList>
 						</Action>
@@ -466,6 +480,11 @@
 						</Event>
 						<Event Name="Rock_Fly_Small" ID="{7BC61838-E38D-4AED-897A-899C464A54C9}">
 							<PropertyList>
+								<Property Name="InstanceLimit" Type="int16">
+									<ValueList>
+										<Value>3</Value>
+									</ValueList>
+								</Property>
 								<Property Name="LimitScope" Type="int16">
 									<ValueList>
 										<Value>1</Value>

@@ -83,6 +83,13 @@
 					</ChildrenList>
 				</Event>
 				<Event Name="Play_player_major_lightning_attack" ID="{8383BF7C-0465-4E1E-95BB-86767C952073}">
+					<PropertyList>
+						<Property Name="InstanceLimit" Type="int16">
+							<ValueList>
+								<Value>3</Value>
+							</ValueList>
+						</Property>
+					</PropertyList>
 					<ChildrenList>
 						<Action Name="" ID="{7224A17A-F338-475B-8356-CE8BA67D9893}" ShortID="938065366">
 							<ReferenceList>
@@ -207,6 +214,13 @@
 					</ChildrenList>
 				</Event>
 				<Event Name="Play_player_zap" ID="{2F002754-8B9E-45A8-978F-C7E343E482B2}">
+					<PropertyList>
+						<Property Name="InstanceLimit" Type="int16">
+							<ValueList>
+								<Value>3</Value>
+							</ValueList>
+						</Property>
+					</PropertyList>
 					<ChildrenList>
 						<Action Name="" ID="{BC25F965-ECD4-4098-B8D8-8C520B347170}" ShortID="610152921">
 							<ReferenceList>
@@ -229,6 +243,13 @@
 					</ChildrenList>
 				</Event>
 				<Event Name="Play_player_lightning_explosion" ID="{F0AF57D0-C3CD-48E4-B82D-6E3ADE963AF8}">
+					<PropertyList>
+						<Property Name="InstanceLimit" Type="int16">
+							<ValueList>
+								<Value>3</Value>
+							</ValueList>
+						</Property>
+					</PropertyList>
 					<ChildrenList>
 						<Action Name="" ID="{EFA96382-3C4E-4682-9DA0-B6D5F0418D84}" ShortID="323468124">
 							<PropertyList>
@@ -352,6 +373,24 @@
 						</Event>
 					</ChildrenList>
 				</Folder>
+				<Event Name="Play_player_hurt" ID="{59A0E2CB-AA53-42CF-A929-C61E50C846B4}">
+					<PropertyList>
+						<Property Name="InstanceLimit" Type="int16">
+							<ValueList>
+								<Value>1</Value>
+							</ValueList>
+						</Property>
+					</PropertyList>
+					<ChildrenList>
+						<Action Name="" ID="{CA489F17-4D57-4E45-9654-45E09AB835B1}" ShortID="155901834">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="FairyHurt" ID="{608C046E-EA37-4B35-B515-7348A5933B39}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

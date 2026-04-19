@@ -8,6 +8,11 @@
 						<Sound Name="River1" ID="{BC580BF9-A91F-474C-B09F-76A65813AB49}" ShortID="1032619235">
 							<PropertyList>
 								<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+								<Property Name="Volume" Type="Real64">
+									<ValueList>
+										<Value>-9</Value>
+									</ValueList>
+								</Property>
 							</PropertyList>
 							<ReferenceList>
 								<Reference Name="Attenuation">
@@ -36,6 +41,11 @@
 						<Sound Name="River2" ID="{166E8137-6F37-43E2-AD9E-8DB86A18088F}" ShortID="437330544">
 							<PropertyList>
 								<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+								<Property Name="Volume" Type="Real64">
+									<ValueList>
+										<Value>-9</Value>
+									</ValueList>
+								</Property>
 							</PropertyList>
 							<ReferenceList>
 								<Reference Name="Attenuation">

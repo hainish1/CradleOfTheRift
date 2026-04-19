@@ -40,6 +40,7 @@ namespace AK
         static const AkUniqueID PLAY_PLAYER_FIREBALL = 1959126323U;
         static const AkUniqueID PLAY_PLAYER_FIREBALLS = 109563706U;
         static const AkUniqueID PLAY_PLAYER_GROUND_SLAM = 1163424219U;
+        static const AkUniqueID PLAY_PLAYER_HURT = 887999531U;
         static const AkUniqueID PLAY_PLAYER_JUMP = 562256996U;
         static const AkUniqueID PLAY_PLAYER_LIGHTNING_EXPLOSION = 3008676426U;
         static const AkUniqueID PLAY_PLAYER_MAJOR_LIGHTNING_ATTACK = 865153475U;
@@ -125,6 +126,7 @@ namespace AK
     {
         static const AkUniqueID AMBIENT_BUS = 1207363161U;
         static const AkUniqueID ENEMY_BUS = 963934797U;
+        static const AkUniqueID LIGHTNING_BUS = 3437816711U;
         static const AkUniqueID MAIN_AUDIO_BUS = 2246998526U;
         static const AkUniqueID MUSIC_BUS = 3127962312U;
         static const AkUniqueID PLAYER_BUS = 174537428U;

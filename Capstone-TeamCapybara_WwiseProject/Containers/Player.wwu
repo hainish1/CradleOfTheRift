@@ -822,6 +822,157 @@
 					</ActiveSourceList>
 				</Sound>
 				<WorkUnit Name="Elements" ID="{EC64771F-8609-46C0-8A4E-00D19054CB84}" PersistMode="Reference"/>
+				<Folder Name="Fairy Hurt" ID="{912C50AF-58DA-42CE-A813-CF007527D4D0}" ShortID="164595284">
+					<ChildrenList>
+						<RandomSequenceContainer Name="FairyHurt" ID="{608C046E-EA37-4B35-B515-7348A5933B39}" ShortID="1040725609">
+							<PropertyList>
+								<Property Name="Pitch" Type="int32">
+									<ModifierList>
+										<ModifierInfo>
+											<Modifier Name="" ID="{372DC8F9-BEAB-40FF-B4A3-A2A3DF54950E}">
+												<PropertyList>
+													<Property Name="Max" Type="Real64" Value="100"/>
+												</PropertyList>
+											</Modifier>
+										</ModifierInfo>
+									</ModifierList>
+								</Property>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Player Bus" ID="{46F84140-CFD0-4A90-8BDF-8B64612BA7B8}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<Sound Name="FairyHurt" ID="{17AB3823-C45B-424A-AB1F-56CFB1BBCAEC}" ShortID="195125809">
+									<PropertyList>
+										<Property Name="CenterPercentage" Type="int32">
+											<ValueList>
+												<Value>100</Value>
+											</ValueList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Player Bus" ID="{46F84140-CFD0-4A90-8BDF-8B64612BA7B8}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="FairyHurt" ID="{00BF66D0-E0C3-401C-9002-94EDF635A049}">
+											<PropertyList>
+												<Property Name="FadeInDuration" Type="Real64" Value="0.199219081626761"/>
+												<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+												<Property Name="TrimBegin" Type="Real64" Value="0.0729751449143724"/>
+												<Property Name="TrimEnd" Type="Real64" Value="1.17831786796131"/>
+											</PropertyList>
+											<Language>SFX</Language>
+											<AudioFile>FairyHurt.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="593025645"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="FairyHurt" ID="{00BF66D0-E0C3-401C-9002-94EDF635A049}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+								<Sound Name="FairyHurt_02" ID="{19E6A8E9-E977-4B72-A325-56CCACDB780A}" ShortID="377013091">
+									<PropertyList>
+										<Property Name="CenterPercentage" Type="int32">
+											<ValueList>
+												<Value>100</Value>
+											</ValueList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Player Bus" ID="{46F84140-CFD0-4A90-8BDF-8B64612BA7B8}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="FairyHurt" ID="{D0A56C31-C421-4EBD-BB64-EBB6E187927F}">
+											<PropertyList>
+												<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+												<Property Name="TrimBegin" Type="Real64" Value="4.1797902112897"/>
+												<Property Name="TrimEnd" Type="Real64" Value="4.94981803623508"/>
+											</PropertyList>
+											<Language>SFX</Language>
+											<AudioFile>FairyHurt.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="75531029"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="FairyHurt" ID="{D0A56C31-C421-4EBD-BB64-EBB6E187927F}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+								<Sound Name="FairyHurt_03" ID="{BD5E50D4-5E8C-463C-8996-1EC3057EDA5E}" ShortID="441768911">
+									<PropertyList>
+										<Property Name="CenterPercentage" Type="int32">
+											<ValueList>
+												<Value>100</Value>
+											</ValueList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Player Bus" ID="{46F84140-CFD0-4A90-8BDF-8B64612BA7B8}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="FairyHurt" ID="{D2647EEF-18CE-4EE6-9E29-76491F7EEBA9}">
+											<PropertyList>
+												<Property Name="FadeOutDuration" Type="Real64" Value="0.770027824945374"/>
+												<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+												<Property Name="TrimBegin" Type="Real64" Value="8.15826730684081"/>
+												<Property Name="TrimEnd" Type="Real64" Value="9.56998498590733"/>
+											</PropertyList>
+											<Language>SFX</Language>
+											<AudioFile>FairyHurt.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="596307022"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="FairyHurt" ID="{D2647EEF-18CE-4EE6-9E29-76491F7EEBA9}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+							</ChildrenList>
+							<ObjectLists>
+								<ObjectList Name="Effects">
+									<EffectSlot Name="" ID="{60338FC7-111B-4D5C-910F-1AE24FB94D30}" ShortID="28656284">
+										<ReferenceList>
+											<Reference Name="Effect">
+												<Custom>
+													<Effect Name="Delay (Custom)" ID="{F7F2B72D-C2C6-4B60-A040-20639DC57B35}" ShortID="260983516" PluginName="Wwise Delay" CompanyID="0" PluginID="106" PluginType="3">
+														<PropertyList>
+															<Property Name="DelayTime" Type="Real32" Value="0.13"/>
+															<Property Name="Feedback" Type="Real32" Value="27.5"/>
+														</PropertyList>
+													</Effect>
+												</Custom>
+											</Reference>
+										</ReferenceList>
+									</EffectSlot>
+								</ObjectList>
+							</ObjectLists>
+						</RandomSequenceContainer>
+					</ChildrenList>
+				</Folder>
 			</ChildrenList>
 		</WorkUnit>
 	</Containers>

@@ -1,0 +1,91 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "887999531",
+    "Type": "Event",
+    "GUID": "{59A0E2CB-AA53-42CF-A929-C61E50C846B4}",
+    "Language": "SFX",
+    "Hash": "{1A91857B-8AF4-60FF-9C41-13075A657C34}",
+    "ObjectPath": "Play_player_hurt",
+    "ShortName": "Play_player_hurt",
+    "Path": "Event/Play_player_hurt.bnk",
+    "Media": [
+     {
+      "Id": "75531029",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "FairyHurt.wav",
+      "Path": "Media/75531029.wem",
+      "CachePath": "5E/{5EE5716B-8D5E-B371-DB60-630C721BC7B2}.wem"
+     },
+     {
+      "Id": "593025645",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "FairyHurt.wav",
+      "Path": "Media/593025645.wem",
+      "CachePath": "FF/{FF41052E-4CDF-FE27-F0C6-3D5B1FB4647D}.wem"
+     },
+     {
+      "Id": "596307022",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "FairyHurt.wav",
+      "Path": "Media/596307022.wem",
+      "CachePath": "95/{951E3EC0-0A53-83FA-89A9-D06D33AF5EE5}.wem"
+     }
+    ],
+    "Plugins": {
+     "Custom": [
+      {
+       "Id": "260983516",
+       "Name": "Delay (Custom)",
+       "ObjectPath": "\\Containers\\Default Work Unit\\Player\\Fairy Hurt\\FairyHurt\\[Effect Slot [0]: (Delay)]\\Delay (Custom)",
+       "GUID": "{F7F2B72D-C2C6-4B60-A040-20639DC57B35}",
+       "LibName": "Wwise Delay",
+       "LibId": "6946819"
+      }
+     ]
+    },
+    "Events": [
+     {
+      "Id": "887999531",
+      "Name": "Play_player_hurt",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Play_player_hurt",
+      "GUID": "{59A0E2CB-AA53-42CF-A929-C61E50C846B4}",
+      "DurationType": "OneShot",
+      "DurationMin": "0.7700278",
+      "DurationMax": "1.4117177",
+      "MediaRefs": [
+       {
+        "Id": "75531029"
+       },
+       {
+        "Id": "593025645"
+       },
+       {
+        "Id": "596307022"
+       }
+      ],
+      "PluginRefs": {
+       "Custom": [
+        {
+         "Id": "260983516"
+        }
+       ]
+      }
+     }
+    ]
+   }
+  ],
+  "FileHash": "{1446503F-30E9-5B58-A59A-62EB664E424B}"
+ }
+}
