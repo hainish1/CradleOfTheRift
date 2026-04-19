@@ -222,7 +222,20 @@
 				<Folder Name="Golem" ID="{9AFDF148-E3A1-494D-8EF2-6ECB75FE7082}" ShortID="212157387">
 					<ChildrenList>
 						<Event Name="Rock_Break" ID="{030D56D2-A574-40E6-8F6C-861E25BA094E}">
+							<PropertyList>
+								<Property Name="LimitScope" Type="int16">
+									<ValueList>
+										<Value>1</Value>
+									</ValueList>
+								</Property>
+							</PropertyList>
 							<ChildrenList>
+								<Action Name="" ID="{A423E81A-FE38-49F0-8DFE-330472B89A6B}" ShortID="660581816">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="3"/>
+									</PropertyList>
+									<ReferenceList/>
+								</Action>
 								<Action Name="" ID="{3DDBDBF6-6B4F-4E74-AC70-676AF208EC73}" ShortID="380177645">
 									<ReferenceList>
 										<Reference Name="Target">
@@ -269,6 +282,13 @@
 										</Reference>
 									</ReferenceList>
 								</Action>
+								<Action Name="" ID="{BE6A3BC9-57C1-47ED-98B6-C63CA3D7877B}" ShortID="766820336">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="GolemGrunts" ID="{68EB7722-3E13-4C33-846C-129F05D006F6}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
 							</ChildrenList>
 						</Event>
 						<Event Name="Golem_Throw" ID="{4A5F8FF6-B24C-4A80-91A7-1B402D6D0F99}">
@@ -293,6 +313,252 @@
 											<ObjectRef Name="RockShards" ID="{F829E7A5-107C-4407-AC77-4ECBD68EA089}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
 										</Reference>
 									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+						<Event Name="Boss_Golem_Alive" ID="{9CB0C492-48B7-4650-A5FB-E94FF39362C0}">
+							<ChildrenList>
+								<Action Name="" ID="{842AC479-3E59-4E1B-96CC-7627022868F0}" ShortID="380664420">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="22"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Alive" ID="{A4FB7019-7BE2-4B55-B62E-D9CFEDF363CC}" WorkUnitID="{D51EFDF0-CE93-44D2-AEF6-831B3064CA87}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+						<Event Name="Boss_Golem_Dead" ID="{08D5D286-2457-4BEC-9482-F7027E3A0934}">
+							<ChildrenList>
+								<Action Name="" ID="{E52D687B-D8FE-4CDB-AAE9-5C1656594811}" ShortID="938915682">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="22"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Dead" ID="{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}" WorkUnitID="{D51EFDF0-CE93-44D2-AEF6-831B3064CA87}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{87C11E32-2C17-46FD-8D22-B0AF5EB8B12E}" ShortID="1072562008">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="GolemDie" ID="{B490CB12-22D0-45D7-986A-2A435A8217A5}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+						<Event Name="Boss_Golem_Hit" ID="{D8C22D24-9145-4E23-8F0E-52E49D056A4A}">
+							<PropertyList>
+								<Property Name="LimitScope" Type="int16">
+									<ValueList>
+										<Value>1</Value>
+									</ValueList>
+								</Property>
+							</PropertyList>
+							<ChildrenList>
+								<Action Name="" ID="{DCAAC307-6818-47F6-B850-A2EB3E9C0908}" ShortID="17711201">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockBreak3" ID="{E8B78ED2-8F63-4748-8ED1-56F2AC56CCD9}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{62AF0308-690E-42EF-B279-62C9D9F9984D}" ShortID="925690894">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockShards" ID="{F829E7A5-107C-4407-AC77-4ECBD68EA089}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{6FC45F68-0B9B-4159-A478-BF27025B5F9A}" ShortID="749265694">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockImpact" ID="{6E778498-E5EB-406A-9D4F-80BB9D2C290B}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{781C3242-7675-4962-B6EE-2A5797F12415}" ShortID="313570004">
+									<PropertyList>
+										<Property Name="AbsoluteOrRelative" Type="int16" Value="1"/>
+										<Property Name="ActionType" Type="int16" Value="13"/>
+										<Property Name="Pitch" Type="int32" Value="-800"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="GolemGrunts" ID="{68EB7722-3E13-4C33-846C-129F05D006F6}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{E722868C-8BD8-4C84-AC52-0249706B9F79}" ShortID="197972445">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="GolemGrunts" ID="{68EB7722-3E13-4C33-846C-129F05D006F6}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{AF7CF7DE-B338-4AC6-88A9-DA32528C3101}" ShortID="288187648">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="18"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="GolemGrunts" ID="{68EB7722-3E13-4C33-846C-129F05D006F6}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+						<Event Name="Rock_Fly" ID="{C8D94844-1777-43C2-AEAA-ED979FCEDD50}">
+							<PropertyList>
+								<Property Name="LimitScope" Type="int16">
+									<ValueList>
+										<Value>1</Value>
+									</ValueList>
+								</Property>
+							</PropertyList>
+							<ChildrenList>
+								<Action Name="" ID="{2CCA2A94-ABE6-49BF-B131-439D589816FD}" ShortID="807728609">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockShardsLoop" ID="{6F00EDFA-F213-4F9F-98E4-AF99D51E59D8}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{14954D59-B933-4660-A437-293EEE6570BA}" ShortID="960306726">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="13"/>
+										<Property Name="Pitch" Type="int32" Value="-200"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockShardsLoop" ID="{6F00EDFA-F213-4F9F-98E4-AF99D51E59D8}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{EA9B6FBA-8F47-4D64-A5C8-FBD0B0128F6D}" ShortID="380071236">
+									<PropertyList>
+										<Property Name="Delay" Type="Real64" Value="2.5"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockShardsLoop" ID="{6F00EDFA-F213-4F9F-98E4-AF99D51E59D8}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{A540CC9D-688C-477B-9787-83FCB27C2610}" ShortID="401681954">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockSpin" ID="{AD20B069-A784-41D6-86A1-0DCF1013422E}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{90F9AA20-F451-4BEE-9D48-D4C4C0EFF28B}" ShortID="833414908">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="19"/>
+									</PropertyList>
+									<ReferenceList/>
+								</Action>
+							</ChildrenList>
+						</Event>
+						<Event Name="Rock_Fly_Small" ID="{7BC61838-E38D-4AED-897A-899C464A54C9}">
+							<PropertyList>
+								<Property Name="LimitScope" Type="int16">
+									<ValueList>
+										<Value>1</Value>
+									</ValueList>
+								</Property>
+							</PropertyList>
+							<ChildrenList>
+								<Action Name="" ID="{3F496232-C50C-4F7F-8543-033CD765F8CA}" ShortID="812599218">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="12"/>
+										<Property Name="Volume" Type="Real64" Value="-6"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockShardsLoop" ID="{6F00EDFA-F213-4F9F-98E4-AF99D51E59D8}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{E0C88836-D1F5-4D8D-891A-F4572270F717}" ShortID="384929054">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="12"/>
+										<Property Name="Volume" Type="Real64" Value="-12"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockSpin" ID="{AD20B069-A784-41D6-86A1-0DCF1013422E}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{4638294C-AAB6-4AF7-A114-A641B09C5448}" ShortID="35868932">
+									<PropertyList>
+										<Property Name="AbsoluteOrRelative" Type="int16" Value="1"/>
+										<Property Name="ActionType" Type="int16" Value="13"/>
+										<Property Name="Pitch" Type="int32" Value="1000"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockShardsLoop" ID="{6F00EDFA-F213-4F9F-98E4-AF99D51E59D8}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{D36676D8-8EB2-485D-A0E0-4D0A210E02A0}" ShortID="121983656">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockShardsLoop" ID="{6F00EDFA-F213-4F9F-98E4-AF99D51E59D8}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{E9B32C8A-E4B7-46B1-A30D-C04CB1A6304D}" ShortID="466346487">
+									<PropertyList>
+										<Property Name="Delay" Type="Real64" Value="2.5"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockShardsLoop" ID="{6F00EDFA-F213-4F9F-98E4-AF99D51E59D8}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{86BFE631-8993-4360-BFB3-ADAE97A1B55D}" ShortID="681181882">
+									<PropertyList>
+										<Property Name="AbsoluteOrRelative" Type="int16" Value="1"/>
+										<Property Name="ActionType" Type="int16" Value="13"/>
+										<Property Name="Pitch" Type="int32" Value="1000"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockSpin" ID="{AD20B069-A784-41D6-86A1-0DCF1013422E}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{77E90481-08DF-4C68-94C1-77455F2D1AD0}" ShortID="281049259">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RockSpin" ID="{AD20B069-A784-41D6-86A1-0DCF1013422E}" WorkUnitID="{DA8F7334-CD72-48B5-9C17-CD3D6EE9407D}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{40B2BE81-3525-40B9-9CBD-D9D869F25334}" ShortID="814430595">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="19"/>
+									</PropertyList>
+									<ReferenceList/>
+								</Action>
+								<Action Name="" ID="{E93D47CA-BCEF-4839-8EC3-92B2B55E9ECA}" ShortID="616432653">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="17"/>
+										<Property Name="Inclusion" Type="bool">
+											<ValueList>
+												<Value>False</Value>
+											</ValueList>
+										</Property>
+									</PropertyList>
+									<ReferenceList/>
 								</Action>
 							</ChildrenList>
 						</Event>

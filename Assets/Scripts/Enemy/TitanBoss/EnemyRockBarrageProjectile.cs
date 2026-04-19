@@ -31,6 +31,12 @@ public class EnemyRockBarrageProjectile : MonoBehaviour
 
     Rigidbody rb;
     private float age;
+    
+    [Header("Sounds")]
+    [SerializeField]
+    private AK.Wwise.Event hitSFX;
+    [SerializeField]
+    private AK.Wwise.Event flySFX;
 
     void Awake()
     {
@@ -58,6 +64,13 @@ public class EnemyRockBarrageProjectile : MonoBehaviour
 
         TrailRenderer trail = GetComponent<TrailRenderer>();
         if (trail != null) trail.Clear();
+        
+        // Play the rock flying sfx.
+        if (flySFX != null)
+        {
+            if(flySFX.IsValid())
+                flySFX.Post(gameObject);
+        }
     }
 
     /// <summary>
@@ -85,6 +98,10 @@ public class EnemyRockBarrageProjectile : MonoBehaviour
             return;
 
         hasHit = true;
+        
+        // Play the SFX.
+        if(hitSFX.IsValid())
+            hitSFX.Post(gameObject);
 
         // check if collided with enemy and if yes then damage it
         var pm = collision.collider.GetComponentInParent<PlayerMovement>();
