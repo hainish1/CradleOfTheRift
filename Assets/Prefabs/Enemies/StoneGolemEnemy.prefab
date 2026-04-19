@@ -133,7 +133,7 @@ MonoBehaviour:
   target: {fileID: 0}
   aggressionRange: 800
   playerOutOfRange: 800
-  turnSpeed: 10
+  turnSpeed: 7
   attackCooldown: 0
   playerMask:
     serializedVersion: 2
@@ -163,10 +163,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1344
   playerAimOffset: 1.5
-  meleeDamage: 20
+  meleeDamage: 30
   meleeHorizontalKnockback: 100
   meleeVerticalKnockback: 100
-  meleeRadius: 3
+  meleeRadius: 5
   meleeCooldown: 0.5
   meleePosition: {fileID: 2795737434573335998}
   groundSlamPrefab: {fileID: 4994997792314849709, guid: 6bb03b55361ea864da9d2750cc5c1925, type: 3}

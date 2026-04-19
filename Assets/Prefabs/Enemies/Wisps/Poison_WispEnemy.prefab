@@ -269,10 +269,10 @@ MonoBehaviour:
     damageMultiplier: 1.5
     speedMultiplier: 1
     isStrongerVariant: 0
-    dotChance: 0.5
-    dotDamagePerTick: 3
-    dotTickInterval: 1
-    dotDuration: 4
+    dotChance: 1
+    dotDamagePerTick: 0.5
+    dotTickInterval: 0.5
+    dotDuration: 8
   projectileDamage: 10
   flyHeight: 3.7
   verticalSmoothTime: 4.5
