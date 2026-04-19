@@ -18,22 +18,25 @@ public class MeleeAttackStateTitan : EnemyState
 
     public override void Enter()
     {
+        enemyTitan.BeginAttackLock();
         enemyTitan.PauseAgent();
+        enemyTitan.RefreshAttackAnimationSpeeds();
         stateTimer = 0f;
 
         // 50% chance to perform slam attack or sweep attack.
-        float rand = Random.value;
-        if (rand < 0.5f) // Slam attack.
+        if (Random.value < 0.5f) // Slam attack.
         {
-            totalAnimationTime = enemyTitan.slamAnim.length;
-            hitFrameTime = enemyTitan.slamAnim.events[0].time;
-            enemyTitan.golemAnim.SetTrigger("AttackSlam");
+            float slamSpeed = enemyTitan.slamAnimSpeedMultiplier > 0f ? enemyTitan.slamAnimSpeedMultiplier : 1f;
+            totalAnimationTime = enemyTitan.GetAnimationDuration(enemyTitan.slamAnim, slamSpeed);
+            hitFrameTime = enemyTitan.GetAnimationEventTime(enemyTitan.slamAnim, slamSpeed, "TitanSlamDamage", "GolemSlamDamage");
+            enemyTitan.TryPlayAttackTrigger("AttackSlam", "AttackThrow", "AttackBarrage", "AttackSlam", "AttackSweep");
         }
         else // Sweep attack.
         {
-            totalAnimationTime = enemyTitan.sweepAnim.length;
-            hitFrameTime = enemyTitan.sweepAnim.events[0].time;
-            enemyTitan.golemAnim.SetTrigger("AttackSweep");
+            float sweepSpeed = enemyTitan.sweepAnimSpeedMultiplier > 0f ? enemyTitan.sweepAnimSpeedMultiplier : 1f;
+            totalAnimationTime = enemyTitan.GetAnimationDuration(enemyTitan.sweepAnim, sweepSpeed);
+            hitFrameTime = enemyTitan.GetAnimationEventTime(enemyTitan.sweepAnim, sweepSpeed, "TitanSweepDamageLeft", "TitanSweepDamageRight");
+            enemyTitan.TryPlayAttackTrigger("AttackSweep", "AttackThrow", "AttackBarrage", "AttackSlam", "AttackSweep");
         }
     }
 
@@ -60,6 +63,7 @@ public class MeleeAttackStateTitan : EnemyState
 
     public override void Exit()
     {
+        enemyTitan.EndAttackLock();
         enemyTitan.ResumeAgent();
     }
 }

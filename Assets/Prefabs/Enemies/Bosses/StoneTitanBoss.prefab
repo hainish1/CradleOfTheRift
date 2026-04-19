@@ -211,7 +211,7 @@ MonoBehaviour:
   wanderRadius: 60
   minWanderTime: 2
   maxWanderTime: 4
-  postAttackCooldown: 1
+  postAttackCooldown: 0.2
   rockHand: {fileID: 2102491633771335356}
   rockProjectilePrefab: {fileID: 3232334194741932682, guid: 4cd060ce3e737dd4abe9f2e9eed19ca2, type: 3}
   directDamage: 50
@@ -226,10 +226,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1344
   playerAimOffset: 1
-  meleeDamage: 20
+  meleeDamage: 50
   meleeHorizontalKnockback: 100
   meleeVerticalKnockback: 100
-  meleeRadius: 5
+  meleeRadius: 8
   meleeCooldown: 0.5
   meleePosition: {fileID: 2795737434573335998}
   groundSlamPrefab: {fileID: 4994997792314849709, guid: 6bb03b55361ea864da9d2750cc5c1925, type: 3}
@@ -258,7 +258,7 @@ MonoBehaviour:
   barrageProjectileCount: 20
   barrageSpreadAngle: 20
   barrageAimOffset: 3
-  sweepMeleeDamage: 25
+  sweepMeleeDamage: 35
   sweepSideKnockback: 150
   sweepUpwardKnockback: 75
   sweepBoxSize: {x: 10, y: 4, z: 9}
@@ -459,7 +459,7 @@ Transform:
   m_GameObject: {fileID: 9022291176114985123}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.9333334}
+  m_LocalPosition: {x: 0, y: 0, z: 0.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -48,7 +48,7 @@ public class RecoveryStateTitan : EnemyState
 
         float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.target.position);
         // Interrupt wandering if player gets too close -> trigger melee attack immediately
-        if (distanceToPlayer <= enemyTitan.minAttackDistance)
+        if (distanceToPlayer <= enemyTitan.minAttackDistance && enemyTitan.CanStartAttack())
         {
             stateMachine.ChangeState(enemyTitan.GetMeleeAttack());
             return;
@@ -93,19 +93,17 @@ public class RecoveryStateTitan : EnemyState
 
         if (UnityEngine.AI.NavMesh.SamplePosition(randomPos, out UnityEngine.AI.NavMeshHit hit, enemyTitan.wanderRadius, UnityEngine.AI.NavMesh.AllAreas))
         {
-            if (enemy.agent != null && enemy.agent.isOnNavMesh)
+            if (enemy.agent != null && enemyTitan.TryResumePathing() && enemy.agent.SetDestination(hit.position))
             {
-                enemy.agent.isStopped = false;
-                enemy.agent.SetDestination(hit.position);
+                isWandering = true;
+                wanderTimer = enemyTitan.wanderInterval;
+                return;
             }
-            isWandering = true;
-            wanderTimer = enemyTitan.wanderInterval; 
         }
-        else
-        {
-            // If invalid spot, wait half a second before checking again
-            wanderTimer = 0.5f; 
-        }
+
+        isWandering = false;
+        // If invalid spot or pathing isn't ready, wait half a second before checking again.
+        wanderTimer = 0.5f;
     }
 
 }

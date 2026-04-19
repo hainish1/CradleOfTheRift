@@ -147,7 +147,7 @@ MonoBehaviour:
   wanderRadius: 40
   minWanderTime: 3
   maxWanderTime: 5
-  postAttackCooldown: 1
+  postAttackCooldown: 0.2
   rockHand: {fileID: 5709985243048761615}
   rockProjectilePrefab: {fileID: 3232334194741932682, guid: adf349a4643808e428b922062262b364, type: 3}
   directDamage: 35

@@ -29,35 +29,65 @@ public class OnAnimationTriggered : MonoBehaviour
     ///     Animation event to activate player melee registration.
     ///   </para>
     /// </summary>
-    private void StartRegistering() => _playerMeleeController.StartRegistering();
+    private void StartRegistering()
+    {
+        if (_playerMeleeController != null)
+        {
+            _playerMeleeController.StartRegistering();
+        }
+    }
 
     /// <summary>
     ///   <para>
     ///     Animation event to deactivate player melee registration.
     ///   </para>
     /// </summary>
-    private void StopRegistering() => _playerMeleeController.StopRegistering();
+    private void StopRegistering()
+    {
+        if (_playerMeleeController != null)
+        {
+            _playerMeleeController.StopRegistering();
+        }
+    }
 
     /// <summary>
     ///   <para>
     ///     Animation event to begin the player weapon flip animation coroutine.
     ///   </para>
     /// </summary>
-    private void WeaponThrowAnimBegin() => _playerShooter.WeaponThrowAnimBegin();
+    private void WeaponThrowAnimBegin()
+    {
+        if (_playerShooter != null)
+        {
+            _playerShooter.WeaponThrowAnimBegin();
+        }
+    }
 
     /// <summary>
     ///   <para>
     ///     Animation event to shoot a player projectile and make the player's weapon disappear.
     ///   </para>
     /// </summary>
-    private void WeaponThrow() => _playerShooter.WeaponThrow();
+    private void WeaponThrow()
+    {
+        if (_playerShooter != null)
+        {
+            _playerShooter.WeaponThrow();
+        }
+    }
 
     /// <summary>
     ///   <para>
     ///     Animation event to begin the player's weapon regain animation coroutine.
     ///   </para>
     /// </summary>
-    private void WeaponThrowAnimEnd() => _playerShooter.WeaponThrowAnimEnd();
+    private void WeaponThrowAnimEnd()
+    {
+        if (_playerShooter != null)
+        {
+            _playerShooter.WeaponThrowAnimEnd();
+        }
+    }
 
     /// <summary>
     ///   <para>
@@ -66,8 +96,11 @@ public class OnAnimationTriggered : MonoBehaviour
     /// </summary>
     private void GolemRockThrow()
     {
-        _enemyGolem.ThrowRock();
-        _enemyGolem.HideRockHand();
+        if (_enemyGolem != null)
+        {
+            _enemyGolem.ThrowRock();
+            _enemyGolem.HideRockHand();
+        }
     }
 
     /// <summary>
@@ -75,14 +108,26 @@ public class OnAnimationTriggered : MonoBehaviour
     ///     Animation event to make a golem regain its rock hand.
     ///   </para>
     /// </summary>
-    private void GolemHandRegain() => _enemyGolem.ShowRockHand();
+    private void GolemHandRegain()
+    {
+        if (_enemyGolem != null)
+        {
+            _enemyGolem.ShowRockHand();
+        }
+    }
 
     /// <summary>
     ///   <para>
     ///     Animation event to make a golem deal slam damage.
     ///   </para>
     /// </summary>
-    private void GolemSlamDamage() => _enemyGolem.MeleeSlamAttack();
+    private void GolemSlamDamage()
+    {
+        if (_enemyGolem != null)
+        {
+            _enemyGolem.MeleeSlamAttack();
+        }
+    }
 
     /// <summary>
     ///   <para>
@@ -91,8 +136,12 @@ public class OnAnimationTriggered : MonoBehaviour
     /// </summary>
     private void TitanRockThrow()
     {
-        _enemyGolem.ThrowRock();
-        _enemyGolem.HideRockHand();
+        EnemyGolem throwOwner = _enemyTitan != null ? _enemyTitan : _enemyGolem;
+        if (throwOwner != null)
+        {
+            throwOwner.ThrowRock();
+            throwOwner.HideRockHand();
+        }
     }
 
     /// <summary>
@@ -100,33 +149,63 @@ public class OnAnimationTriggered : MonoBehaviour
     ///     Animation event to make a titan fling a rock barrage.
     ///   </para>
     /// </summary>
-    private void TitanRockBarrage() => _enemyTitan.RockBarrage();
+    private void TitanRockBarrage()
+    {
+        if (_enemyTitan != null)
+        {
+            _enemyTitan.RockBarrage();
+        }
+    }
 
     /// <summary>
     ///   <para>
     ///     Animation event to make a golem regain its rock hand.
     ///   </para>
     /// </summary>
-    private void TitanHandRegain() => _enemyTitan.ShowRockHand();
+    private void TitanHandRegain()
+    {
+        if (_enemyTitan != null)
+        {
+            _enemyTitan.ShowRockHand();
+        }
+    }
 
     /// <summary>
     ///   <para>
     ///     Animation event to make a golem deal slam damage.
     ///   </para>
     /// </summary>
-    private void TitanSlamDamage() => _enemyTitan.MeleeSlamAttack();
+    private void TitanSlamDamage()
+    {
+        if (_enemyTitan != null)
+        {
+            _enemyTitan.MeleeSlamAttack();
+        }
+    }
 
     /// <summary>
     ///   <para>
     ///     Animation event to make a titan deal sweep damage.
     ///   </para>
     /// </summary>
-    private void TitanSweepDamageLeft() => _enemyTitan.MeleeSweepAttack(0);
+    private void TitanSweepDamageLeft()
+    {
+        if (_enemyTitan != null)
+        {
+            _enemyTitan.MeleeSweepAttack(0);
+        }
+    }
 
     /// <summary>
     ///   <para>
     ///     Animation event to make a titan deal sweep damage.
     ///   </para>
     /// </summary>
-    private void TitanSweepDamageRight() => _enemyTitan.MeleeSweepAttack(1);
+    private void TitanSweepDamageRight()
+    {
+        if (_enemyTitan != null)
+        {
+            _enemyTitan.MeleeSweepAttack(1);
+        }
+    }
 }

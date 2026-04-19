@@ -22,6 +22,7 @@ public class RangeAttackStateTitan : EnemyState
     /// </summary>
     public override void Enter()
     {
+        enemyTitan.BeginAttackLock();
         enemyTitan.PauseAgent();
         enemyTitan.RefreshAttackAnimationSpeeds();
         stateTimer = 0f;
@@ -33,16 +34,14 @@ public class RangeAttackStateTitan : EnemyState
             float safeThrowSpeed = enemyTitan.throwAnimSpeedMultiplier > 0f ? enemyTitan.throwAnimSpeedMultiplier : 1f;
             totalAnimationTime = GetAnimationDuration(enemyTitan.throwAnim, safeThrowSpeed);
             aimDuration = GetAnimationEventTime(enemyTitan.throwAnim, safeThrowSpeed, "TitanRockThrow", "GolemRockThrow", "ThrowRock");
-            enemyTitan.golemAnim.ResetTrigger("AttackBarrage");
-            enemyTitan.golemAnim.SetTrigger("AttackThrow");
+            enemyTitan.TryPlayAttackTrigger("AttackThrow", "AttackThrow", "AttackBarrage", "AttackSlam", "AttackSweep");
         }
         else // Barrage attack.
         {
             float safeBarrageSpeed = enemyTitan.barrageAnimSpeedMultiplier > 0f ? enemyTitan.barrageAnimSpeedMultiplier : 1f;
             totalAnimationTime = GetAnimationDuration(enemyTitan.barrageAnim, safeBarrageSpeed);
             aimDuration = GetAnimationEventTime(enemyTitan.barrageAnim, safeBarrageSpeed, "TitanRockBarrage", "RockBarrage");
-            enemyTitan.golemAnim.ResetTrigger("AttackThrow");
-            enemyTitan.golemAnim.SetTrigger("AttackBarrage");
+            enemyTitan.TryPlayAttackTrigger("AttackBarrage", "AttackThrow", "AttackBarrage", "AttackSlam", "AttackSweep");
         }
     }
 
@@ -72,39 +71,17 @@ public class RangeAttackStateTitan : EnemyState
 
     public override void Exit()
     {
+        enemyTitan.EndAttackLock();
         enemyTitan.ResumeAgent();
     }
 
     private float GetAnimationDuration(AnimationClip clip, float speedMultiplier)
     {
-        if (clip == null)
-        {
-            return 0.1f;
-        }
-
-        float safeSpeed = speedMultiplier > 0f ? speedMultiplier : 1f;
-        return clip.length / safeSpeed;
+        return enemyTitan.GetAnimationDuration(clip, speedMultiplier);
     }
 
     private float GetAnimationEventTime(AnimationClip clip, float speedMultiplier, params string[] functionNames)
     {
-        if (clip == null)
-        {
-            return 0f;
-        }
-
-        AnimationEvent[] events = clip.events;
-        for (int i = 0; i < events.Length; i++)
-        {
-            for (int j = 0; j < functionNames.Length; j++)
-            {
-                if (events[i].functionName == functionNames[j])
-                {
-                    return events[i].time / Mathf.Max(0.01f, speedMultiplier);
-                }
-            }
-        }
-
-        return GetAnimationDuration(clip, speedMultiplier);
+        return enemyTitan.GetAnimationEventTime(clip, speedMultiplier, functionNames);
     }
 }

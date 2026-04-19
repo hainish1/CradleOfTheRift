@@ -30,6 +30,12 @@ public class ChaseStateTitan : EnemyState
         // Player is in melee range -> Go directly to melee attack
         if (distanceToPlayer <= enemyTitan.minAttackDistance)
         {
+            if (!enemyTitan.CanStartAttack())
+            {
+                FaceTarget(enemy.turnSpeed);
+                return;
+            }
+
             if (enemy.agent != null)
             {
                 enemy.agent.isStopped = true;
@@ -55,6 +61,12 @@ public class ChaseStateTitan : EnemyState
         // Player is in range -> throw rock at player forehead
         else
         {
+            if (!enemyTitan.CanStartAttack())
+            {
+                FaceTarget(enemy.turnSpeed);
+                return;
+            }
+
             if (enemy.agent != null)
             {
                 enemy.agent.isStopped = true;
