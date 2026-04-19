@@ -308,19 +308,20 @@ public class UpgradeLevelManager : MonoBehaviour
     }
 
     // added weight per rarity tier 
-    private static int RarityWeight(ItemRarity r) => r switch
+    private static float RarityWeight(ItemRarity r) => r switch
     {
-        ItemRarity.Common    => 60,
-        ItemRarity.Uncommon  => 25,
-        ItemRarity.Rare      => 12,
-        ItemRarity.Legendary =>  3,
-        _                    =>  1,
+        ItemRarity.Common    => 60f,
+        ItemRarity.Uncommon  => 25f,
+        ItemRarity.Rare      => 12f,
+        ItemRarity.Legendary =>  2.99f,
+        ItemRarity.Crossover =>  0.01f,
+        _                    =>  1f,
     };
 
     private List<ItemData> PickRandomUpgrades()
     {
         var available = new List<ItemData>();
-        int totalWeight = 0;
+        float totalWeight = 0f;
 
         var combined = new List<ItemData>(upgradePool);
         foreach (var item in runtimePool)
@@ -351,12 +352,12 @@ public class UpgradeLevelManager : MonoBehaviour
 
         while (result.Count < count && available.Count > 0)
         {
-            int roll = UnityEngine.Random.Range(0, totalWeight);
-            int bucket = 0;
+            float roll = UnityEngine.Random.Range(0f, totalWeight);
+            float bucket = 0f;
             for (int i = 0; i < available.Count; i++)
             {
                 bucket += RarityWeight(available[i].rarity);
-                if (roll < bucket)
+                if (roll <= bucket)
                 {
                     result.Add(available[i]);
                     totalWeight -= RarityWeight(available[i].rarity);

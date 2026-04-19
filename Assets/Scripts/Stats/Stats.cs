@@ -18,28 +18,12 @@ public enum StatType
 {
     // Melee Attack Enums
     MeleeDamage,
-    SpearMeleeDamage,
-    AxeMeleeDamage,
-    MaceMeleeDamage,
-    StaffMeleeDamage,
     MeleeAttackRate,
-    SpearMeleeAttackRate,
-    AxeMeleeAttackRate,
-    MaceMeleeAttackRate,
-    StaffMeleeAttackRate,
     MeleeAnimationSpeed,
 
     // Ranged Attack Enums
     ProjectileDamage,
-    SpearProjectileDamage,
-    AxeProjectileDamage,
-    MaceProjectileDamage,
-    StaffProjectileDamage,
     ProjectileFireRate,
-    SpearProjectileFireRate,
-    AxeProjectileFireRate,
-    MaceProjectileFireRate,
-    StaffProjectileFireRate,
     ProjectileAnimationSpeed,
     FireCharges,
     FireChargeCooldown,
@@ -82,7 +66,24 @@ public enum StatType
     FlightDepletionRate,
 
     // Character Enums
-    CharacterSize
+    CharacterSize,
+
+    SpearMeleeDamage,
+    AxeMeleeDamage,
+    MaceMeleeDamage,
+    StaffMeleeDamage,
+    SpearMeleeAttackRate,
+    AxeMeleeAttackRate,
+    MaceMeleeAttackRate,
+    StaffMeleeAttackRate,
+    SpearProjectileDamage,
+    AxeProjectileDamage,
+    MaceProjectileDamage,
+    StaffProjectileDamage,
+    SpearProjectileFireRate,
+    AxeProjectileFireRate,
+    MaceProjectileFireRate,
+    StaffProjectileFireRate,
 }
 
 public class Stats

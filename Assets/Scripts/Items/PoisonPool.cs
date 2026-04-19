@@ -3,6 +3,15 @@ using UnityEngine;
 
 public class PoisonPool : MonoBehaviour
 {
+    private static readonly Collider[] s_overlapBuffer = new Collider[64];
+    private static readonly HashSet<Enemy> s_uniqueEnemies = new HashSet<Enemy>();
+
+    private static Shader s_cachedShader;
+    private static Mesh s_unitCircleMesh;
+    private static Material s_poolMaterial;
+    private static MaterialPropertyBlock s_mpb;
+    private static readonly int s_colorPropId = Shader.PropertyToID("_Color");
+
     [SerializeField] private float radius = 4f;
     [SerializeField] private float lifetime = 4f;
 
@@ -15,15 +24,23 @@ public class PoisonPool : MonoBehaviour
     private float nextArcTime;
     private SphereCollider trigger;
     private ParticleSystem bubbleSystem;
+    private LayerMask enemyLayerMask;
 
     private const float ArcInterval = 0.2f;
     private const int ArcCount = 3;
     private const float ArcHeight = 0.2f;
+    private const int ArcPoolSize = ArcCount * 2;
+
+    private GameObject[] _arcStartPool;
+    private GameObject[] _arcEndPool;
+    private int _arcPoolIndex;
     public void Initialize(Entity owner, float radius, float lifetime)
     {
         this.owner = owner;
         this.radius = radius;
         this.lifetime = lifetime;
+
+        enemyLayerMask = LayerMask.GetMask("Enemy");
 
         var core = PoisonCore.Active;
         float interval = core != null ? core.TickInterval : 1f;
@@ -31,6 +48,7 @@ public class PoisonPool : MonoBehaviour
         endTime = Time.time + lifetime;
         SetupTrigger();
         BuildVfx();
+        InitArcPool();
 
         if (core != null && core.HasData)
         {
@@ -74,21 +92,21 @@ public class PoisonPool : MonoBehaviour
         if (owner == null) return;
 
         Vector3 center = transform.position;
-        Collider[] hits = Physics.OverlapSphere(center, radius);
-        HashSet<Enemy> unique = new HashSet<Enemy>();
+        int hitCount = Physics.OverlapSphereNonAlloc(
+            center, radius, s_overlapBuffer,
+            enemyLayerMask, QueryTriggerInteraction.Collide);
+        s_uniqueEnemies.Clear();
 
-        foreach (var col in hits)
+        for (int i = 0; i < hitCount; i++)
         {
+            var col = s_overlapBuffer[i];
+            if (col == null) continue;
             var enemy = col.GetComponentInParent<Enemy>();
-            if (enemy == null || unique.Contains(enemy)) continue;
-            unique.Add(enemy);
+            if (enemy == null || !s_uniqueEnemies.Add(enemy)) continue;
             core.ApplyTo(enemy, owner, true);
             if (electrified && electrifyDamage > 0f)
-            {
                 LightningCore.ApplyLightningDamage(owner, enemy, electrifyDamage);
-            }
         }
-
     }
 
     private void BuildVfx()
@@ -98,100 +116,67 @@ public class PoisonPool : MonoBehaviour
         baseObj.transform.localPosition = Vector3.zero;
         baseObj.transform.localRotation = Quaternion.identity;
 
-        CreatePoolMesh(baseObj.transform, radius * 2f, new Color(0.05f, 0.25f, 0.08f, 1f), 0.15f, 0f);
-        CreatePoolMesh(baseObj.transform, radius * 1.6f, new Color(0.04f, 0.2f, 0.06f, 0.95f), 0.2f, 25f);
+        CreatePoolMesh(baseObj.transform, radius, new Color(0.25f, 0.05f, 0.3f, 1f));
+        CreatePoolMesh(baseObj.transform, radius * 0.8f, new Color(0.2f, 0.04f, 0.25f, 0.95f));
 
         CreateBubbles(baseObj.transform);
     }
 
-    private void CreatePoolMesh(Transform parent, float size, Color color, float jitter, float rotation)
+    private static Mesh GetUnitCircleMesh()
+    {
+        if (s_unitCircleMesh != null) return s_unitCircleMesh;
+        s_unitCircleMesh = BuildCircleMesh(1f, 32);
+        s_unitCircleMesh.hideFlags = HideFlags.DontSave;
+        return s_unitCircleMesh;
+    }
+
+    private void CreatePoolMesh(Transform parent, float meshRadius, Color color)
     {
         var obj = new GameObject("PoolMesh");
         obj.transform.SetParent(parent);
-        obj.transform.localPosition = Vector3.zero;
-        obj.transform.localRotation = Quaternion.identity;
-        obj.transform.localScale = Vector3.one;
+        obj.transform.localPosition = Vector3.up * 0.02f;
+        obj.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+        obj.transform.localScale = Vector3.one * meshRadius;
 
         var meshFilter = obj.AddComponent<MeshFilter>();
         var meshRenderer = obj.AddComponent<MeshRenderer>();
+        meshFilter.sharedMesh = GetUnitCircleMesh();
 
-        meshFilter.mesh = BuildTerrainAdaptiveMesh(size * 0.5f, jitter, 24, rotation);
+        if (s_poolMaterial == null)
+        {
+            if (s_cachedShader == null)
+                s_cachedShader = Shader.Find("Sprites/Default");
+            s_poolMaterial = new Material(s_cachedShader) { hideFlags = HideFlags.DontSave };
+        }
+        meshRenderer.sharedMaterial = s_poolMaterial;
 
-        var mat = new Material(Shader.Find("Sprites/Default"));
-        mat.color = color;
-        meshRenderer.material = mat;
-
+        if (s_mpb == null) s_mpb = new MaterialPropertyBlock();
+        s_mpb.Clear();
+        s_mpb.SetColor(s_colorPropId, color);
+        meshRenderer.SetPropertyBlock(s_mpb);
     }
 
-    private Mesh BuildTerrainAdaptiveMesh(float radius, float jitter, int segments, float rotation)
+    private static Mesh BuildCircleMesh(float r, int segments)
     {
         Mesh mesh = new Mesh();
-        int rings = 2;
-        int totalVerts = 1 + segments * rings;
-        Vector3[] verts = new Vector3[totalVerts];
-        int triCount = segments * 3 + (rings - 1) * segments * 6;
-        int[] tris = new int[triCount];
+        int vertCount = segments + 1;
+        Vector3[] verts = new Vector3[vertCount];
+        int[] tris = new int[segments * 3];
 
-        Vector3 center = transform.position;
-        verts[0] = GetGroundOffset(center);
-        
+        verts[0] = Vector3.zero;
         float angleStep = Mathf.PI * 2f / segments;
-        float rotRad = rotation * Mathf.Deg2Rad;
-        int vertIndex = 1;
-
-        for (int ring = 1; ring <= rings; ring++)
+        for (int i = 0; i < segments; i++)
         {
-            float ringRadius = (radius / rings) * ring;
-            bool isOuterRing = (ring == rings);
-            
-            for (int i = 0; i < segments; i++)
-            {
-                float angle = angleStep * i + rotRad;
-                float r = ringRadius * (1f + Random.Range(-jitter, jitter));
-                Vector3 worldPos = center + new Vector3(Mathf.Cos(angle) * r, 0f, Mathf.Sin(angle) * r);
-                
-                if (isOuterRing || i % 4 == 0)
-                {
-                    verts[vertIndex] = GetGroundOffset(worldPos);
-                }
-                else
-                {
-                    int prevKey = vertIndex - (i % 4);
-                    int nextKey = (i % 4 == 3) ? vertIndex - 3 : vertIndex + (4 - i % 4);
-                    if (nextKey >= totalVerts) nextKey = vertIndex;
-                    float t = (i % 4) / 4f;
-                    verts[vertIndex] = Vector3.Lerp(verts[prevKey], verts[0], t);
-                }
-                vertIndex++;
-            }
+            float angle = angleStep * i;
+            verts[i + 1] = new Vector3(Mathf.Cos(angle) * r, Mathf.Sin(angle) * r, 0f);
         }
 
-        int triIndex = 0;
         for (int i = 0; i < segments; i++)
         {
             int next = (i + 1) % segments;
-            tris[triIndex++] = 0;
-            tris[triIndex++] = 1 + next;
-            tris[triIndex++] = 1 + i;
-        }
-
-        for (int ring = 0; ring < rings - 1; ring++)
-        {
-            int currentRingStart = 1 + ring * segments;
-            int nextRingStart = 1 + (ring + 1) * segments;
-            
-            for (int i = 0; i < segments; i++)
-            {
-                int next = (i + 1) % segments;
-                
-                tris[triIndex++] = currentRingStart + i;
-                tris[triIndex++] = nextRingStart + i;
-                tris[triIndex++] = currentRingStart + next;
-                
-                tris[triIndex++] = currentRingStart + next;
-                tris[triIndex++] = nextRingStart + i;
-                tris[triIndex++] = nextRingStart + next;
-            }
+            tris[i * 3] = 0;
+            tris[i * 3 + 1] = i + 1;
+            tris[i * 3 + 2] = next + 1;
         }
 
         mesh.vertices = verts;
@@ -199,21 +184,6 @@ public class PoisonPool : MonoBehaviour
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
         return mesh;
-    }
-
-    private Vector3 GetGroundOffset(Vector3 worldPos)
-    {
-        Vector3 rayStart = worldPos + Vector3.up * 2f;
-        Vector3 rayEnd = worldPos + Vector3.down * 5f;
-        float rayDistance = 7f;
-
-        if (Physics.Raycast(rayStart, Vector3.down, out RaycastHit hit, rayDistance, ~0, QueryTriggerInteraction.Ignore))
-        {
-            Vector3 localPos = transform.InverseTransformPoint(hit.point + Vector3.up * 0.5f);
-            return localPos;
-        }
-
-        return transform.InverseTransformPoint(worldPos);
     }
 
     private void CreateBubbles(Transform parent)
@@ -228,7 +198,7 @@ public class PoisonPool : MonoBehaviour
         main.startLifetime = 1.2f;
         main.startSpeed = 0.4f;
         main.startSize = 0.08f;
-        main.startColor = new Color(0.1f, 0.6f, 0.15f, 0.9f);
+        main.startColor = new Color(0.5f, 0.1f, 0.6f, 0.9f);
         main.loop = true;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
         main.maxParticles = 80;
@@ -246,8 +216,8 @@ public class PoisonPool : MonoBehaviour
         Gradient gradient = new Gradient();
         gradient.SetKeys(
             new GradientColorKey[] { 
-                new GradientColorKey(new Color(0.05f, 0.35f, 0.1f), 0f),
-                new GradientColorKey(new Color(0.08f, 0.4f, 0.15f), 1f)
+                new GradientColorKey(new Color(0.3f, 0.05f, 0.35f), 0f),
+                new GradientColorKey(new Color(0.35f, 0.08f, 0.4f), 1f)
             },
             new GradientAlphaKey[] { 
                 new GradientAlphaKey(0.9f, 0f), 
@@ -292,24 +262,35 @@ public class PoisonPool : MonoBehaviour
         }
     }
 
+    private void InitArcPool()
+    {
+        _arcStartPool = new GameObject[ArcPoolSize];
+        _arcEndPool = new GameObject[ArcPoolSize];
+        for (int i = 0; i < ArcPoolSize; i++)
+        {
+            _arcStartPool[i] = new GameObject($"ArcS_{i}");
+            _arcStartPool[i].transform.SetParent(transform);
+            _arcEndPool[i] = new GameObject($"ArcE_{i}");
+            _arcEndPool[i].transform.SetParent(transform);
+        }
+    }
+
     private void SpawnElectricArcs()
     {
+        if (_arcStartPool == null) return;
         Vector3 center = transform.position;
         for (int i = 0; i < ArcCount; i++)
         {
+            int idx = _arcPoolIndex % ArcPoolSize;
+            _arcPoolIndex++;
+
             Vector2 rnd = Random.insideUnitCircle * radius;
-            Vector3 start = center + new Vector3(rnd.x, ArcHeight, rnd.y);
-            Vector3 end = center + new Vector3(-rnd.y, ArcHeight, rnd.x);
+            _arcStartPool[idx].transform.position = center + new Vector3(rnd.x, ArcHeight, rnd.y);
+            _arcEndPool[idx].transform.position = center + new Vector3(-rnd.y, ArcHeight, rnd.x);
 
-            GameObject startObj = new GameObject("PoolArcStart");
-            startObj.transform.position = start;
-
-            GameObject endObj = new GameObject("PoolArcEnd");
-            endObj.transform.position = end;
-
-            LightningCore.CreateLightningVFX(startObj.transform, endObj.transform, radius, 0.2f, null, 0f, 0f, 0.1f, true);
-            Destroy(startObj, 0.3f);
-            Destroy(endObj, 0.3f);
+            LightningCore.CreateLightningVFX(
+                _arcStartPool[idx].transform, _arcEndPool[idx].transform,
+                radius, 0.2f, null, 0f, 0f, 0.1f, true);
         }
     }
 }

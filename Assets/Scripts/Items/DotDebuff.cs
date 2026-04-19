@@ -46,6 +46,7 @@ public class DotDebuff : MonoBehaviour
 
     private List<DotEffect> activeDots = new List<DotEffect>();
     private IDamageable damageable;
+    private Enemy cachedEnemy;
 
     [Header("Visual Feedback")]
     [SerializeField] private bool showDotNumbers = true;
@@ -54,6 +55,7 @@ public class DotDebuff : MonoBehaviour
     void Awake()
     {
         damageable = GetComponent<IDamageable>();
+        cachedEnemy = GetComponent<Enemy>();
     }
 
     void Update()
@@ -64,10 +66,7 @@ public class DotDebuff : MonoBehaviour
     public void AddDot(float baseDamagePerTick, float damagePerStack, float tickInterval, float duration, Entity source, bool canStack = true, string id = "", int maxStacks = 5, bool applyImmediately = false)
     {
         if (string.IsNullOrEmpty(id))
-        {
-            Debug.LogWarning("[DOT] Cannot add DOT without ID");
             return;
-        }
 
         var existing = activeDots.Find(dot => dot.id == id);
         
@@ -77,7 +76,6 @@ public class DotDebuff : MonoBehaviour
             {
                 existing.RefreshDuration(duration);
                 existing.baseDamagePerTick = Mathf.Max(existing.baseDamagePerTick, baseDamagePerTick);
-                Debug.Log($"[DOT] Refreshed (no stack) on {gameObject.name}");
                 return;
             }
 
@@ -88,7 +86,6 @@ public class DotDebuff : MonoBehaviour
                 {
                     existing.nextTickTime = Time.time;
                 }
-                Debug.Log($"[DOT] Max stacks ({existing.stackCount}/{maxStacks}), refreshed on {gameObject.name}");
                 return;
             }
 
@@ -98,14 +95,10 @@ public class DotDebuff : MonoBehaviour
             {
                 existing.nextTickTime = Time.time;
             }
-            float totalDamage = existing.GetTotalDamagePerTick();
-            Debug.Log($"[DOT] Stacked: {totalDamage}dmg/tick ({existing.stackCount}/{maxStacks} stacks) on {gameObject.name}");
             return;
         }
 
         activeDots.Add(new DotEffect(baseDamagePerTick, damagePerStack, tickInterval, duration, source, canStack, id, applyImmediately, initialStacks: 1));
-        string immediateText = applyImmediately ? " [instant]" : "";
-        Debug.Log($"[DOT] Added: {baseDamagePerTick}dmg/tick every {tickInterval}s for {duration}s (1/{maxStacks} stacks){immediateText} on {gameObject.name}");
     }
 
     private void ProcessDots()
@@ -143,21 +136,17 @@ public class DotDebuff : MonoBehaviour
         float totalDamage = dot.GetTotalDamagePerTick();
         damageable.TakeDamage(totalDamage);
         
-        var enemy = GetComponent<Enemy>();
-        if (enemy && dot.source)
-            CombatEvents.ReportDamage(dot.source, enemy, totalDamage, ElementType.Poison);
+        if (cachedEnemy != null && dot.source != null)
+            CombatEvents.ReportDamage(dot.source, cachedEnemy, totalDamage, ElementType.Poison);
 
         if (showDotNumbers)
             ShowDotNumber(totalDamage);
-
-        Debug.Log($"[DOT] {gameObject.name} took {totalDamage} damage ({dot.stackCount} stacks)");
         
         IsProcessingDotDamage = false;
     }
 
     private void ShowDotNumber(float damage)
     {
-        Debug.Log($"[DOT Visual] {gameObject.name} -{damage:F1}", gameObject);
     }
 
     public int GetActiveDotCount() => activeDots.Count;

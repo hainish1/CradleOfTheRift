@@ -75,15 +75,15 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
     // Attack Parameters
 
-    private HeldWeaponType CurrentWeapon => _heldWeaponController != null ? _heldWeaponController.HeldWeapon : HeldWeaponType.None;
-    private float MeleeDamage => _playerEntity.Stats.MeleeDamageForWeapon(CurrentWeapon); // get that specific damage
-    private float AttackCooldown => GetAttackCooldown();
     [Header("Attack Parameters")] [Space]
     [SerializeField]
     [Tooltip("Knockback force of attacks.")] private float _knockbackForce;
     [SerializeField]
     [Tooltip("The buffer time for inputting attack combos in seconds.")] private float _comboInputBuffer;
     public bool IsAttacking { get; private set; }
+    private HeldWeaponType CurrWeapon => _heldWeaponController != null ? _heldWeaponController.HeldWeapon : HeldWeaponType.None;
+    private float MeleeDamage => _playerEntity.Stats.MeleeDamageForWeapon(CurrWeapon);
+    private float AttackCooldown => GetAttackCooldown();
     private bool _isRegistering;
     public bool CanAttack { get; set; } = true;
     private bool _comboInputted;
@@ -104,14 +104,14 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _playerActions = _playerInput.Player;
 
         // Player Parameters
-        _playerEntity = GetComponentInParent<Entity>();
-        _playerMovement = GetComponentInParent<PlayerMovement>();
-        _playerShooter = GetComponentInParent<PlayerShooter>();
-        _shockwaveController = GetComponentInParent<PlayerShockwaveController>();
-        _heldWeaponController = GetComponentInParent<PlayerHeldWeaponController>();
+        _playerEntity = GetComponent<Entity>();
+        _playerMovement = GetComponent<PlayerMovement>();
+        _playerShooter = GetComponent<PlayerShooter>();
+        _shockwaveController = GetComponent<PlayerShockwaveController>();
+        _heldWeaponController = GetComponent<PlayerHeldWeaponController>();
 
         // Animation Parameters
-        _playerAnim = GetComponent<Animator>();
+        _playerAnim = GetComponentInChildren<Animator>();
         _upwardDegreesLimit = Mathf.Abs(_upwardDegreesLimit);
         _downwardDegreesLimit = -Mathf.Abs(_downwardDegreesLimit);
         _degreesPerSecond = Mathf.Deg2Rad * _attackPitchSpeed;
@@ -120,7 +120,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _maxComboCount = _attacks.Count;
 
         // Audio Parameters
-        _audioController = GetComponentInParent<PlayerAudioController>();
+        _audioController = GetComponent<PlayerAudioController>();
 
     }
 
@@ -128,7 +128,7 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     {
         _attackActions = _playerActions.Attack;
         _attackActions.Enable();
-    }
+}
 
     void OnDisable()
     {
@@ -150,6 +150,29 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
 
         // Continually register targets while an attack is active.
         if (_isRegistering) ExecuteHitRegistrationCast();
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Activates melee registration and plays a swing sound.
+    ///   </para>
+    /// </summary>
+    public void StartRegistering()
+    {
+        _isRegistering = true;
+        swingSound.Post(gameObject); // For the weapon sound.
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Deactivates and clears melee registration.
+    ///   </para>
+    /// </summary>
+    public void StopRegistering()
+    {
+        _isRegistering = false;
+        _prevHitCapsuleTempPointsInitialized = false;
+        _objectsHitThisAttack.Clear();
     }
 
     /// <summary>
@@ -176,11 +199,8 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
     ///   </para>
     /// </summary>
     /// <returns> The caluclated attack cooldown. </returns>
-    private float GetAttackCooldown()
-    {
-        return _attacks[_currComboCount - 1].PostTransitionAnim.length
-               + _playerEntity.Stats.MeleeAttackRateForWeapon(CurrentWeapon);
-    }
+    private float GetAttackCooldown() => _attacks[_currComboCount - 1].PostTransitionAnim.length
+                                         + _playerEntity.Stats.MeleeAttackRateForWeapon(CurrWeapon);
 
     /// <summary>
     ///   <para>
@@ -195,10 +215,6 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
         _currComboCount++;
         OnMeleeComboAttack?.Invoke(_currComboCount);
         _playerAnim.SetTrigger("Attack" + _currComboCount);
-
-        // For the weapon sound.
-        swingSound.Post(gameObject);
-
         StartCoroutine(DelayAttack());
     }
 
@@ -459,38 +475,6 @@ public class PlayerMeleeControllerV2 : MonoBehaviour
             Vector3 impulseDirection = (enemyScript.transform.position - transform.position).normalized;
             enemyKbScript.ApplyImpulse(_knockbackForce * impulseDirection);
         }
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Animation event to activate registration.
-    ///   </para>
-    /// </summary>
-    private void StartRegistering()
-    {
-        _isRegistering = true;
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Animation event to deactivate registration.
-    ///   </para>
-    /// </summary>
-    private void StopRegistering()
-    {
-        _isRegistering = false;
-        _prevHitCapsuleTempPointsInitialized = false;
-        _objectsHitThisAttack.Clear();
-    }
-
-    /// <summary>
-    ///   <para>
-    ///     Animation event to play an attack sound.
-    ///   </para>
-    /// </summary>
-    private void PlaySound()
-    {
-        _audioController.PlayMeleeSound();
     }
 }
 

@@ -61,7 +61,6 @@ MonoBehaviour:
   upgradePool:
   - {fileID: 11400000, guid: f223ef6a917f26544b0776dad932d885, type: 2}
   - {fileID: 11400000, guid: 7afb0aa16fb19584c83740d0cca36980, type: 2}
-  - {fileID: 11400000, guid: c12de57ccf5472940b033904e566fa20, type: 2}
   - {fileID: 11400000, guid: ce6d3cffddbd395459f9b7eda101661a, type: 2}
   - {fileID: 11400000, guid: e98e3c8ef67d7d74db06c840028d0beb, type: 2}
   - {fileID: 11400000, guid: 022c7e9ca83e2c74fabd7023d6f26d47, type: 2}
@@ -72,9 +71,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3425e035c515c3540a87b1edbb29d603, type: 2}
   - {fileID: 11400000, guid: 8e4a63fb9ca2b6c4a97a688319b1bb45, type: 2}
   - {fileID: 11400000, guid: 266f0ca9050c7b4479c65ef760708f4f, type: 2}
+  - {fileID: 11400000, guid: eec4630ddf45d0a4e96d19760687d362, type: 2}
   autoOpenOnLevelUp: 0
   maxChoices: 3
   baseRerollGoldCost: 5
+  allowReroll: 1
 --- !u!114 &2136630369514476196
 MonoBehaviour:
   m_ObjectHideFlags: 0

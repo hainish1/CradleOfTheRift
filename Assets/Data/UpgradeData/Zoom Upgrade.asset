@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Zoom
   description: xxxx
   icon: {fileID: 21300000, guid: 5424ba5000377db4da7cb34d43726191, type: 3}
-  rarity: 3
+  rarity: 4
   rarityColor: {r: 0.021381378, g: 1, b: 0, a: 1}
   canStack: 0
   maxStacks: 1
@@ -138,6 +138,24 @@ MonoBehaviour:
     orbitingFireballOnKillDuration: 5
     orbitingFireballOnLightningThreshold: 100
     orbitingFireballOnLightningDuration: 5
+    poisonCloudDamagePerTick: 3
+    poisonCloudDamageTickInterval: 1
+    poisonCloudRadius: 3
+    poisonCloudLifetime: 5
+    poisonCloudBehindDistance: 1.25
+    poisonCloudVfxPrefab: {fileID: 0}
+    onLightning:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    onFire:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    onExplosion:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
   statType: 13
   operatorType: 0
   value: 1

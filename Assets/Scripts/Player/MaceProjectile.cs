@@ -3,7 +3,7 @@
 //     Samuel Rigby, Hainish Acharya
 //   </authors>
 //   <para>
-//     Written by Samuel Rigby for GAMES 4500, University of Utah.
+//     Written by Samuel Rigby for GAMES 4510, University of Utah.
 //     Projectile base class written by Hainish Acharya for GAMES 4500, University of Utah.
 //   </para>
 // </summary>
@@ -12,6 +12,12 @@ using UnityEngine;
 
 public class MaceProjectile : Projectile
 {
+    [Header("Axe Model Parameters")]
+    [SerializeField]
+    [Tooltip("Transform of the weapon model.")] private Transform _modelTransform;
+    [SerializeField]
+    [Tooltip("How quickly the weapon whirls in units per second.")] private float _spinSpeed;
+
     [Header("Mace Projectile Parameters")]
     [SerializeField] private GameObject _shockwavePrefab;
     [SerializeField]
@@ -20,15 +26,28 @@ public class MaceProjectile : Projectile
     [Tooltip("Radius of the projectile impact shockwave.")] private float _projectileShockwaveRadius;
     [SerializeField]
     [Tooltip("Knockback force of the projectile impact shockwave.")] private float _projectileShockwaveKnockback;
-    private PlayerShockwaveController _shockwaveController;
 
     [Header("Sound Effects")]
     [SerializeField]
     private AK.Wwise.Event _hitSFX;
 
-    void Start()
+    public override void Update()
     {
-        _shockwaveController = attacker.gameObject.GetComponent<PlayerShockwaveController>();
+        FadeTrailVisuals();
+        
+        age += Time.deltaTime;
+        if (age >= lifeTime)
+        {
+            ReturnToSource();
+            return;
+        }
+
+        if (gravity != 0f) rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
+
+        // Look along new direction if something was hit.
+        if (!hasHit && rb.linearVelocity.sqrMagnitude > 0.1f) transform.rotation = Quaternion.LookRotation(rb.linearVelocity);
+
+        _modelTransform.Rotate(xAngle: 0, Time.deltaTime * _spinSpeed, zAngle: 0); // Rotate the mace model for spinning effect.
     }
 
     public override void OnCollisionEnter(Collision collision)

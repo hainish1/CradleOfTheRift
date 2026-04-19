@@ -16,6 +16,7 @@ public class ItemPickup : MonoBehaviour
     private Vector3 startPosition;
     private Transform playerTransform;
     private bool isShowingTooltip;
+    private bool wasPickedUp;
 
     void Start()
     {
@@ -69,6 +70,8 @@ public class ItemPickup : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        if (wasPickedUp) return;
+
         // Search up the hierarchy so child colliders on the player still count.
         if (other.GetComponentInParent<PlayerMovement>() == null)
         {
@@ -77,6 +80,8 @@ public class ItemPickup : MonoBehaviour
         var inventory = other.GetComponentInParent<PlayerInventory>();
         if (inventory != null && itemData != null)
         {
+            wasPickedUp = true;
+
             // hide tooltip when pickup
             if (isShowingTooltip && ItemPickupTooltipUI.Instance != null)
             {
@@ -89,7 +94,7 @@ public class ItemPickup : MonoBehaviour
             // show pickup banner after pickupin up item
             if (ItemPickupBannerUI.Instance != null)
                 ItemPickupBannerUI.Instance.Show(itemData);
-            
+
             // Play the sound!
             PlaySound();
 

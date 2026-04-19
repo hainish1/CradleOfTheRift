@@ -133,6 +133,14 @@ MonoBehaviour:
   hitMask:
     serializedVersion: 2
     m_Bits: 3281
+  _throwSoundEvent:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
+  _destroySoundEvent:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
   rb: {fileID: 729833330588080243}
 --- !u!54 &729833330588080243
 Rigidbody:
@@ -337,6 +345,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 5dc790861fa740f4fb3395a6d87ed205, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 197723e180f370b4bbc752e2f17592f9, type: 2}
     - target: {fileID: 919132149155446097, guid: 5dc790861fa740f4fb3395a6d87ed205, type: 3}
       propertyPath: m_Name
       value: M_Spear_CO

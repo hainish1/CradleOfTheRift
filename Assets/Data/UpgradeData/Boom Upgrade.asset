@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Boom
   description: xxxx
   icon: {fileID: 21300000, guid: ac0994702bf67334fb34f429afeacde1, type: 3}
-  rarity: 3
+  rarity: 4
   rarityColor: {r: 1, g: 0.15686274, b: 0.9258407, a: 1}
   canStack: 0
   maxStacks: 1
@@ -123,11 +123,39 @@ MonoBehaviour:
     groundSlamDamage: 10
     zoomUpgradeDamage: 15
     zoomUpgradeRange: 5
+    zoomUpgradeDashDistanceBonus: 0
     zoomUpgradeVFX: {fileID: 0}
+    gloomDamagePerTick: 5
+    gloomTickInterval: 0.5
+    gloomPoolRadius: 4
+    gloomPoolLifetime: 6
+    gloomAttackSpeedBuff: 0.3
+    gloomFireCooldownIncrease: 0
+    gloomPoolPrefab: {fileID: 0}
     orbitingFireballBonusCount: 1
     orbitingFireballBonusDamage: 3
     orbitingFireballBonusSpeed: 15
     orbitingFireballOnKillDuration: 5
+    orbitingFireballOnLightningThreshold: 100
+    orbitingFireballOnLightningDuration: 5
+    poisonCloudDamagePerTick: 3
+    poisonCloudDamageTickInterval: 1
+    poisonCloudRadius: 3
+    poisonCloudLifetime: 5
+    poisonCloudBehindDistance: 1.25
+    poisonCloudVfxPrefab: {fileID: 0}
+    onLightning:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    onFire:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    onExplosion:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
   - kind: 4
     description: 
     duration: -1
@@ -228,11 +256,39 @@ MonoBehaviour:
     groundSlamDamage: 20
     zoomUpgradeDamage: 15
     zoomUpgradeRange: 5
+    zoomUpgradeDashDistanceBonus: 0
     zoomUpgradeVFX: {fileID: 0}
+    gloomDamagePerTick: 5
+    gloomTickInterval: 0.5
+    gloomPoolRadius: 4
+    gloomPoolLifetime: 6
+    gloomAttackSpeedBuff: 0.3
+    gloomFireCooldownIncrease: 0
+    gloomPoolPrefab: {fileID: 0}
     orbitingFireballBonusCount: 1
     orbitingFireballBonusDamage: 3
     orbitingFireballBonusSpeed: 15
     orbitingFireballOnKillDuration: 5
+    orbitingFireballOnLightningThreshold: 100
+    orbitingFireballOnLightningDuration: 5
+    poisonCloudDamagePerTick: 3
+    poisonCloudDamageTickInterval: 1
+    poisonCloudRadius: 3
+    poisonCloudLifetime: 5
+    poisonCloudBehindDistance: 1.25
+    poisonCloudVfxPrefab: {fileID: 0}
+    onLightning:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    onFire:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    onExplosion:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
   statType: 13
   operatorType: 0
   value: 1

@@ -281,7 +281,8 @@ public enum ItemRarity
     Common,
     Uncommon,
     Rare,
-    Legendary   // Do we need 4 tiers?
+    Legendary,
+    Crossover
 }
 
 public enum StackingType
