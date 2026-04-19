@@ -576,6 +576,9 @@
 					</CurveUsageInfoList>
 				</Attenuation>
 				<Attenuation Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" ShortID="383345146">
+					<PropertyList>
+						<Property Name="RadiusMax" Type="Real64" Value="300"/>
+					</PropertyList>
 					<CurveUsageInfoList>
 						<VolumeDryUsage>
 							<CurveUsageInfo Platform="Linked" CurveToUse="Custom">
@@ -590,7 +593,7 @@
 											<Flags>5</Flags>
 										</Point>
 										<Point>
-											<XPos>100</XPos>
+											<XPos>300</XPos>
 											<YPos>-200</YPos>
 											<Flags>37</Flags>
 										</Point>
