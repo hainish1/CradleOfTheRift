@@ -41,6 +41,10 @@ public class Shrine : MonoBehaviour, IInteractable, IPromptHeightOverride
     [Header("Prompt")]
     [SerializeField] private float promptHeightOffset = 2.5f;
     public float PromptHeightOffset => promptHeightOffset;
+    
+    [Header("Sounds")]
+    [SerializeField] private AK.Wwise.Event activateSound;
+    [SerializeField] private AK.Wwise.Event cantAffordSound;
 
     private HeldWeaponType resolvedWeapon;
     private bool weaponResolved;
@@ -118,12 +122,17 @@ public class Shrine : MonoBehaviour, IInteractable, IPromptHeightOverride
 
     public bool Interact(Interactor interactor)
     {
-        if (!canInteract) return false;
+        if (!canInteract)
+        {
+            PlayCantAffordSound();
+            return false;
+        }
 
         var heldController = interactor.GetComponent<PlayerHeldWeaponController>();
         if (heldController == null)
         {
             Debug.LogWarning("[Shrine] Interactor has no PlayerHeldWeaponController.");
+            PlayCantAffordSound();
             return false;
         }
 
@@ -134,6 +143,7 @@ public class Shrine : MonoBehaviour, IInteractable, IPromptHeightOverride
             if (!ResolveRandomExcluding(heldController.HeldWeapon))
             {
                 Debug.Log("[Shrine] Random pool has no weapon the player doesnt already have");
+                PlayCantAffordSound();
                 return false;
             }
         }
@@ -145,6 +155,7 @@ public class Shrine : MonoBehaviour, IInteractable, IPromptHeightOverride
         if (blockIfAlreadyEquipped && heldController.HeldWeapon == resolvedWeapon)
         {
             Debug.Log("[Shrine] Player already has this weapon.");
+            PlayCantAffordSound();
             return false;
         }
 
@@ -153,6 +164,7 @@ public class Shrine : MonoBehaviour, IInteractable, IPromptHeightOverride
 
         if (!TrySpendCurrency(interactor, useXP))
         {
+            PlayCantAffordSound();
             return false;
         }
 
@@ -163,9 +175,24 @@ public class Shrine : MonoBehaviour, IInteractable, IPromptHeightOverride
         if (singleActivation)
         {
             canInteract = false;
+            PlayCantAffordSound();
             Destroy(gameObject, 1f);
         }
+        PlayActivateSound();
         return true;
+    }
+
+    private void PlayActivateSound()
+    {
+        if(activateSound != null)
+            if(activateSound.IsValid())
+                activateSound.Post(gameObject);
+    }
+    private void PlayCantAffordSound()
+    {
+        if(cantAffordSound != null)
+            if(cantAffordSound.IsValid())
+                cantAffordSound.Post(gameObject);
     }
 
     private bool TrySpendCurrency(Interactor interactor, bool useXP)
