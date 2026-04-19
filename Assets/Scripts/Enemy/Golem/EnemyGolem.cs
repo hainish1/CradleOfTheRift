@@ -20,6 +20,9 @@ using static UnityEngine.EventSystems.EventTrigger;
 /// </summary>
 public class EnemyGolem : Enemy
 {
+    private static readonly float[] chaseProbeFractions = { 1f, 0.85f, 0.65f, 0.45f, 0.25f };
+    public bool IsAttackInProgress { get; private set; }
+
     [Header("Movement and Range")]
     public float chaseSpeed = 10f;
     public float shootingRange = 60f;
@@ -69,19 +72,19 @@ public class EnemyGolem : Enemy
     MeleeAttackStateGolem meleeAttack;
     RecoveryStateGolem recovery;
 
-    [Header("Animation Settings")]
+    [Header("Golem Animation Settings")]
     public AnimationClip throwAnim;
-    public AnimationClip meleeAnim;
+    public AnimationClip slamAnim;
     public float throwAnimSpeedMultiplier = 1f;
-    public float meleeAnimSpeedMultiplier = 1f;
+    public float slamAnimSpeedMultiplier = 1f;
     [HideInInspector] public Animator golemAnim;
 
-    protected void OnEnable()
+    protected virtual void OnEnable()
     {
         EnemyRegistry.RegisterGolem(this);
     }
 
-    protected void OnDisable()
+    protected virtual void OnDisable()
     {
         EnemyRegistry.UnregisterGolem(this);
     }
@@ -112,8 +115,11 @@ public class EnemyGolem : Enemy
         stateMachine.Tick();
 
         // Blend golem animation between idle and moving.
-        float moveBlend = agent.velocity.magnitude / agent.speed;
-        golemAnim.SetFloat("MoveVector", moveBlend, dampTime: 0.03f, Time.deltaTime);
+        if (agent != null && golemAnim != null && agent.speed > 0f)
+        {
+            float moveBlend = agent.velocity.magnitude / agent.speed;
+            golemAnim.SetFloat("MoveVector", moveBlend, dampTime: 0.03f, Time.deltaTime);
+        }
     }
 
     protected void SnapToNavMesh()
@@ -149,9 +155,118 @@ public class EnemyGolem : Enemy
         if (agent == null || !agent.isActiveAndEnabled) return;
         agent.updatePosition = true;
         agent.updateRotation = true;
+        EnsureAgentOnNavMesh();
         agent.isStopped = true;
+        agent.velocity = Vector3.zero;
         agent.ResetPath();
     }
+
+    public bool EnsureAgentOnNavMesh(float maxDistance = 8f)
+    {
+        if (agent == null || !agent.isActiveAndEnabled) return false;
+
+        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, maxDistance, NavMesh.AllAreas))
+        {
+            Vector3 hitPosition = hit.position;
+            Vector3 flatDelta = hitPosition - transform.position;
+            flatDelta.y = 0f;
+
+            if (!agent.isOnNavMesh || flatDelta.sqrMagnitude > 0.0001f)
+            {
+                transform.position = hitPosition;
+                agent.Warp(hitPosition);
+            }
+
+            agent.nextPosition = hitPosition;
+            return true;
+        }
+
+        if (agent.isOnNavMesh)
+        {
+            agent.nextPosition = transform.position;
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool TryResumePathing()
+    {
+        if (agent == null || !agent.isActiveAndEnabled) return false;
+
+        agent.updatePosition = true;
+        agent.updateRotation = true;
+
+        if (!EnsureAgentOnNavMesh())
+        {
+            return false;
+        }
+
+        agent.velocity = Vector3.zero;
+        agent.isStopped = false;
+        return true;
+    }
+
+    public bool TrySetChaseDestination()
+    {
+        if (target == null || !TryResumePathing())
+        {
+            return false;
+        }
+
+        Vector3 flatTargetOffset = target.position - transform.position;
+        flatTargetOffset.y = 0f;
+
+        if (flatTargetOffset.sqrMagnitude < 0.0001f)
+        {
+            agent.ResetPath();
+            return true;
+        }
+
+        for (int i = 0; i < chaseProbeFractions.Length; i++)
+        {
+            Vector3 probePoint = transform.position + (flatTargetOffset * chaseProbeFractions[i]);
+            float sampleRadius = i == 0 ? 8f : 4f;
+
+            if (TrySetPathToPoint(probePoint, sampleRadius))
+            {
+                return true;
+            }
+        }
+
+        agent.isStopped = true;
+        agent.velocity = Vector3.zero;
+        agent.ResetPath();
+        return false;
+    }
+
+    private bool TrySetPathToPoint(Vector3 desiredPoint, float sampleRadius)
+    {
+        if (agent == null || !agent.isActiveAndEnabled || !agent.isOnNavMesh)
+        {
+            return false;
+        }
+
+        if (!NavMesh.SamplePosition(desiredPoint, out NavMeshHit hit, sampleRadius, NavMesh.AllAreas))
+        {
+            return false;
+        }
+
+        NavMeshPath path = new NavMeshPath();
+        if (!agent.CalculatePath(hit.position, path))
+        {
+            return false;
+        }
+
+        if (path.status == NavMeshPathStatus.PathInvalid || path.corners.Length == 0)
+        {
+            return false;
+        }
+
+        agent.isStopped = false;
+        return agent.SetPath(path);
+    }
+
     public void FaceMovementDirectionSmooth(float speed)
     {
         Vector3 dir = Vector3.zero;
@@ -191,6 +306,21 @@ public class EnemyGolem : Enemy
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * speed);
     }
 
+    public bool CanStartAttack()
+    {
+        return !IsAttackInProgress;
+    }
+
+    public void BeginAttackLock()
+    {
+        IsAttackInProgress = true;
+    }
+
+    public void EndAttackLock()
+    {
+        IsAttackInProgress = false;
+    }
+
     public void PlayThrowSFX()
     {
         print("Playing Throw SFX");
@@ -203,6 +333,11 @@ public class EnemyGolem : Enemy
 
     public void ThrowRock()
     {
+        if (target == null || rockProjectilePrefab == null)
+        {
+            return;
+        }
+
         // Play the SFX.
         PlayThrowSFX();
         
@@ -247,24 +382,161 @@ public class EnemyGolem : Enemy
     ///     Hides the golem's right hand.
     ///   </para>
     /// </summary>
-    public void HideRockHand() => rockHand.SetActive(false);
+    public void HideRockHand()
+    {
+        if (rockHand != null)
+        {
+            rockHand.SetActive(false);
+        }
+    }
 
     /// <summary>
     ///   <para>
     ///     Shows the golem's right hand.
     ///   </para>
     /// </summary>
-    public void ShowRockHand() => rockHand.SetActive(true);
+    public void ShowRockHand()
+    {
+        if (rockHand != null)
+        {
+            rockHand.SetActive(true);
+        }
+    }
+
+    public Animator GetAttackAnimator()
+    {
+        if (golemAnim == null)
+        {
+            golemAnim = GetComponentInChildren<Animator>();
+        }
+
+        return golemAnim;
+    }
+
+    public bool HasAnimatorParameter(string parameterName, AnimatorControllerParameterType parameterType)
+    {
+        Animator animator = GetAttackAnimator();
+        return HasAnimatorParameter(animator, parameterName, parameterType);
+    }
+
+    public bool TrySetAnimatorFloat(string parameterName, float value)
+    {
+        Animator animator = GetAttackAnimator();
+        if (!HasAnimatorParameter(animator, parameterName, AnimatorControllerParameterType.Float))
+        {
+            return false;
+        }
+
+        animator.SetFloat(parameterName, value);
+        return true;
+    }
+
+    public bool TryResetAnimatorTrigger(string triggerName)
+    {
+        Animator animator = GetAttackAnimator();
+        if (!HasAnimatorParameter(animator, triggerName, AnimatorControllerParameterType.Trigger))
+        {
+            return false;
+        }
+
+        animator.ResetTrigger(triggerName);
+        return true;
+    }
+
+    public bool TryPlayAttackTrigger(string triggerName, params string[] triggerNamesToReset)
+    {
+        Animator animator = GetAttackAnimator();
+        if (animator == null)
+        {
+            return false;
+        }
+
+        if (triggerNamesToReset != null)
+        {
+            for (int i = 0; i < triggerNamesToReset.Length; i++)
+            {
+                string otherTrigger = triggerNamesToReset[i];
+                if (string.IsNullOrEmpty(otherTrigger))
+                {
+                    continue;
+                }
+
+                if (HasAnimatorParameter(animator, otherTrigger, AnimatorControllerParameterType.Trigger))
+                {
+                    animator.ResetTrigger(otherTrigger);
+                }
+            }
+        }
+
+        if (!HasAnimatorParameter(animator, triggerName, AnimatorControllerParameterType.Trigger))
+        {
+            return false;
+        }
+
+        animator.SetTrigger(triggerName);
+        return true;
+    }
+
+    public float GetAnimationDuration(AnimationClip clip, float speedMultiplier)
+    {
+        if (clip == null)
+        {
+            return 0.1f;
+        }
+
+        float safeSpeed = speedMultiplier > 0f ? speedMultiplier : 1f;
+        return clip.length / safeSpeed;
+    }
+
+    public float GetAnimationEventTime(AnimationClip clip, float speedMultiplier, params string[] functionNames)
+    {
+        if (clip == null)
+        {
+            return 0f;
+        }
+
+        AnimationEvent[] events = clip.events;
+        for (int i = 0; i < events.Length; i++)
+        {
+            for (int j = 0; j < functionNames.Length; j++)
+            {
+                if (events[i].functionName == functionNames[j])
+                {
+                    return events[i].time / Mathf.Max(0.01f, speedMultiplier);
+                }
+            }
+        }
+
+        return GetAnimationDuration(clip, speedMultiplier);
+    }
+
+    public float GetFirstAnimationEventTime(AnimationClip clip, float speedMultiplier)
+    {
+        if (clip == null || clip.events == null || clip.events.Length == 0)
+        {
+            return GetAnimationDuration(clip, speedMultiplier);
+        }
+
+        return clip.events[0].time / Mathf.Max(0.01f, speedMultiplier);
+    }
 
     /// <summary>
     ///   <para>
-    ///     Recalulates the melee and throw attack animation speeds.
+    ///     Recalulates the melee and ranged attack animation speeds.
     ///   </para>
     /// </summary>
-    protected void RecalculateAttackAnimationSpeeds()
+    protected virtual void RecalculateAttackAnimationSpeeds()
     {
-        golemAnim.SetFloat("MeleeAnimSpeedMultiplier", meleeAnimSpeedMultiplier);
-        golemAnim.SetFloat("ThrowAnimSpeedMultiplier", throwAnimSpeedMultiplier);
+        float safeThrowSpeed = throwAnimSpeedMultiplier > 0f ? throwAnimSpeedMultiplier : 1f;
+        float safeSlamSpeed = slamAnimSpeedMultiplier > 0f ? slamAnimSpeedMultiplier : 1f;
+        TrySetAnimatorFloat("ThrowAnimSpeedMultiplier", safeThrowSpeed);
+        TrySetAnimatorFloat("SlamAnimSpeedMultiplier", safeSlamSpeed);
+    }
+
+    public void RefreshAttackAnimationSpeeds()
+    {
+        if (GetAttackAnimator() == null) return;
+        RecalculateAttackAnimationSpeeds();
     }
 
 
@@ -293,8 +565,10 @@ public class EnemyGolem : Enemy
     /// </summary>
     public void MeleeSlamAttack()
     {
+        Transform slamTransform = meleePosition != null ? meleePosition : transform;
+
         // Sphere for now, maybe use box later
-        Collider[] hitColliders = Physics.OverlapSphere(meleePosition.position, meleeRadius);
+        Collider[] hitColliders = Physics.OverlapSphere(slamTransform.position, meleeRadius);
 
         foreach (Collider hit in hitColliders)
         {
@@ -327,7 +601,7 @@ public class EnemyGolem : Enemy
         // Play ground slam VFX
         if (groundSlamPrefab != null)        
         {
-            GameObject slamVFX = Instantiate(groundSlamPrefab, meleePosition.position, Quaternion.identity);
+            GameObject slamVFX = Instantiate(groundSlamPrefab, slamTransform.position, Quaternion.identity);
             slamVFX.transform.localScale = Vector3.one * meleeRadius * 0.5f;
             Destroy(slamVFX, EstimateParticleLifetime(slamVFX));
         }
@@ -393,5 +667,24 @@ public class EnemyGolem : Enemy
         meleeDamage *= multiplier;
 
         // Debug.Log($"EnemyGolem: Scaled damage with multiplier {multiplier}. Direct Damage: {directDamage}, AOE Damage: {AOEDamage}, Melee Damage: {meleeDamage}");
+    }
+
+    private bool HasAnimatorParameter(Animator animator, string parameterName, AnimatorControllerParameterType parameterType)
+    {
+        if (animator == null || string.IsNullOrEmpty(parameterName))
+        {
+            return false;
+        }
+
+        AnimatorControllerParameter[] parameters = animator.parameters;
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            if (parameters[i].type == parameterType && parameters[i].name == parameterName)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -15,9 +15,7 @@
 
 using System;
 using System.Collections;
-using Unity.Cinemachine;
 using Unity.Cinemachine.Samples;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 

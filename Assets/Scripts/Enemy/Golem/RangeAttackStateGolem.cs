@@ -8,7 +8,9 @@ using UnityEngine;
 public class RangeAttackStateGolem : EnemyState
 {
     private EnemyGolem enemyGolem;
-    private float timer;
+    private float stateTimer;
+    private float totalAnimationTime;
+    private float aimDuration;
 
     public RangeAttackStateGolem(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
@@ -20,9 +22,16 @@ public class RangeAttackStateGolem : EnemyState
     /// </summary>
     public override void Enter()
     {
+        enemyGolem.BeginAttackLock();
         enemyGolem.PauseAgent();
-        timer = enemyGolem.throwAnim.length / enemyGolem.golemAnim.GetFloat("ThrowAnimSpeedMultiplier");
-        enemyGolem.golemAnim.SetTrigger("AttackThrow");
+        enemyGolem.RefreshAttackAnimationSpeeds();
+
+        float throwSpeed = enemyGolem.throwAnimSpeedMultiplier > 0f ? enemyGolem.throwAnimSpeedMultiplier : 1f;
+        totalAnimationTime = GetAnimationDuration(enemyGolem.throwAnim, throwSpeed);
+        aimDuration = GetAnimationEventTime(enemyGolem.throwAnim, throwSpeed, "GolemRockThrow", "ThrowRock");
+        stateTimer = 0f;
+
+        enemyGolem.TryPlayAttackTrigger("AttackThrow", "AttackThrow", "AttackSlam");
     }
 
 
@@ -34,11 +43,15 @@ public class RangeAttackStateGolem : EnemyState
             return;
         }
 
-        // Keep facing the player during windup
-        enemyGolem.FaceTargetSmooth(enemyGolem.turnSpeedWhileAiming);
+        stateTimer += Time.deltaTime;
 
-        timer -= Time.deltaTime;
-        if (timer <= 0f)
+        // Aim during the windup and release, but stop tracking during the hand-regain phase.
+        if (stateTimer < aimDuration)
+        {
+            enemyGolem.FaceTargetSmooth(enemyGolem.turnSpeedWhileAiming);
+        }
+
+        if (stateTimer >= totalAnimationTime)
         {
             // Set cooldown and go to recovery
             enemy.nextAttackAllowed = Time.time + enemyGolem.attackCooldown;
@@ -48,6 +61,17 @@ public class RangeAttackStateGolem : EnemyState
 
     public override void Exit()
     {
+        enemyGolem.EndAttackLock();
         enemyGolem.ResumeAgent();
+    }
+
+    private float GetAnimationDuration(AnimationClip clip, float speedMultiplier)
+    {
+        return enemyGolem.GetAnimationDuration(clip, speedMultiplier);
+    }
+
+    private float GetAnimationEventTime(AnimationClip clip, float speedMultiplier, params string[] functionNames)
+    {
+        return enemyGolem.GetAnimationEventTime(clip, speedMultiplier, functionNames);
     }
 }

@@ -7,6 +7,8 @@ public class MeleeAttackStateGolem : EnemyState
 {
     private EnemyGolem enemyGolem;
     private float stateTimer;
+    private float totalAnimationTime;
+    private float hitFrameTime;
 
     public MeleeAttackStateGolem(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
@@ -15,18 +17,21 @@ public class MeleeAttackStateGolem : EnemyState
 
     public override void Enter()
     {
+        enemyGolem.BeginAttackLock();
         enemyGolem.PauseAgent();
-        //Debug.Log("Golem entered Melee Attack State");
+        enemyGolem.RefreshAttackAnimationSpeeds();
         stateTimer = 0f;
-        enemyGolem.golemAnim.SetTrigger("AttackMelee");
+
+        float slamSpeed = enemyGolem.slamAnimSpeedMultiplier > 0f ? enemyGolem.slamAnimSpeedMultiplier : 1f;
+        totalAnimationTime = enemyGolem.GetAnimationDuration(enemyGolem.slamAnim, slamSpeed);
+        hitFrameTime = enemyGolem.GetAnimationEventTime(enemyGolem.slamAnim, slamSpeed, "GolemSlamDamage");
+
+        enemyGolem.TryPlayAttackTrigger("AttackSlam", "AttackThrow", "AttackSlam");
     }
 
     public override void Update()
     {
         stateTimer += Time.deltaTime;
-
-        float totalAnimationTime = enemyGolem.meleeAnim.length; // How long the whole state lasts
-        float hitFrameTime = enemyGolem.meleeAnim.events[0].time; // The exact moment the punch lands
 
         // Keep turning to face the player until melee attack
         if (stateTimer < hitFrameTime)
@@ -47,6 +52,7 @@ public class MeleeAttackStateGolem : EnemyState
 
     public override void Exit()
     {
+        enemyGolem.EndAttackLock();
         enemyGolem.ResumeAgent();
     }
 }

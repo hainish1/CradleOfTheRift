@@ -17,21 +17,25 @@ public class ChaseStateTitan : EnemyState
 
     public override void Enter()
     {
-        if (enemy?.agent != null)
-        {
-            enemy.agent.isStopped = false;
-        }
+        enemyTitan.TryResumePathing();
     }
 
     public override void Update()
     {
         if (enemy.target == null) return; 
+        if (knockBack != null && knockBack.IsKnockbackActive) return;
 
         float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.target.position);
 
         // Player is in melee range -> Go directly to melee attack
         if (distanceToPlayer <= enemyTitan.minAttackDistance)
         {
+            if (!enemyTitan.CanStartAttack())
+            {
+                FaceTarget(enemy.turnSpeed);
+                return;
+            }
+
             if (enemy.agent != null)
             {
                 enemy.agent.isStopped = true;
@@ -45,17 +49,23 @@ public class ChaseStateTitan : EnemyState
         // Player is out of range -> Chase them until in range
         if (distanceToPlayer > enemyTitan.shootingRange)
         {
-            if (enemy.agent != null)
+            if (!enemyTitan.TrySetChaseDestination() && enemy.agent != null)
             {
-                enemy.agent.isStopped = false;
-                SetAgentDestination(enemy.target.position); 
+                enemy.agent.isStopped = true;
+                enemy.agent.velocity = Vector3.zero;
             }
+
+            return;
         }
         
         // Player is in range -> throw rock at player forehead
         else
         {
-            if (knockBack != null && knockBack.IsKnockbackActive) return;
+            if (!enemyTitan.CanStartAttack())
+            {
+                FaceTarget(enemy.turnSpeed);
+                return;
+            }
 
             if (enemy.agent != null)
             {
@@ -66,12 +76,7 @@ public class ChaseStateTitan : EnemyState
             FaceTarget(enemy.turnSpeed);
 
             stateMachine.ChangeState(enemyTitan.GetAttack());
+            return;
         }
-
-        // Blend golem animation between idle and moving.
-        Vector3 worldVelocity = enemy.agent.velocity;
-        Vector3 localVelocity = enemy.transform.InverseTransformDirection(worldVelocity);
-        float moveBlend = localVelocity.magnitude / enemyTitan.chaseSpeed;
-        enemyTitan.golemAnim.SetFloat("MoveVector", moveBlend, dampTime: 0.03f, Time.deltaTime);
     }
 }
