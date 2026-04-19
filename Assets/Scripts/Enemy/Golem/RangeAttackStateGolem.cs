@@ -22,6 +22,7 @@ public class RangeAttackStateGolem : EnemyState
     /// </summary>
     public override void Enter()
     {
+        enemyGolem.BeginAttackLock();
         enemyGolem.PauseAgent();
         enemyGolem.RefreshAttackAnimationSpeeds();
 
@@ -30,7 +31,7 @@ public class RangeAttackStateGolem : EnemyState
         aimDuration = GetAnimationEventTime(enemyGolem.throwAnim, throwSpeed, "GolemRockThrow", "ThrowRock");
         stateTimer = 0f;
 
-        enemyGolem.golemAnim.SetTrigger("AttackThrow");
+        enemyGolem.TryPlayAttackTrigger("AttackThrow", "AttackThrow", "AttackSlam");
     }
 
     public override void Update()
@@ -59,39 +60,17 @@ public class RangeAttackStateGolem : EnemyState
 
     public override void Exit()
     {
+        enemyGolem.EndAttackLock();
         enemyGolem.ResumeAgent();
     }
 
     private float GetAnimationDuration(AnimationClip clip, float speedMultiplier)
     {
-        if (clip == null)
-        {
-            return 0.1f;
-        }
-
-        float safeSpeed = speedMultiplier > 0f ? speedMultiplier : 1f;
-        return clip.length / safeSpeed;
+        return enemyGolem.GetAnimationDuration(clip, speedMultiplier);
     }
 
     private float GetAnimationEventTime(AnimationClip clip, float speedMultiplier, params string[] functionNames)
     {
-        if (clip == null)
-        {
-            return 0f;
-        }
-
-        AnimationEvent[] events = clip.events;
-        for (int i = 0; i < events.Length; i++)
-        {
-            for (int j = 0; j < functionNames.Length; j++)
-            {
-                if (events[i].functionName == functionNames[j])
-                {
-                    return events[i].time / Mathf.Max(0.01f, speedMultiplier);
-                }
-            }
-        }
-
-        return GetAnimationDuration(clip, speedMultiplier);
+        return enemyGolem.GetAnimationEventTime(clip, speedMultiplier, functionNames);
     }
 }

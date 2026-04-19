@@ -122,8 +122,8 @@ public class EnemyTitan : EnemyGolem
         // Play sweep VFX
         if (sweepVFXPrefab != null)        
         {
-            GameObject slamVFX = Instantiate(groundSlamPrefab, meleePosition.position, Quaternion.identity);
-            Destroy(slamVFX, EstimateParticleLifetime(slamVFX));
+            GameObject sweepVFX = Instantiate(sweepVFXPrefab, sweepTransform.position, sweepTransform.rotation);
+            Destroy(sweepVFX, EstimateParticleLifetime(sweepVFX));
         }
     }
 
@@ -258,10 +258,10 @@ public class EnemyTitan : EnemyGolem
         float safeSlamSpeed = slamAnimSpeedMultiplier > 0f ? slamAnimSpeedMultiplier : 1f;
         float safeSweepSpeed = sweepAnimSpeedMultiplier > 0f ? sweepAnimSpeedMultiplier : 1f;
 
-        golemAnim.SetFloat("ThrowAnimSpeedMultiplier", safeThrowSpeed);
-        golemAnim.SetFloat("BarrageAnimSpeedMultiplier", safeBarrageSpeed);
-        golemAnim.SetFloat("SlamAnimSpeedMultiplier", safeSlamSpeed);
-        golemAnim.SetFloat("SweepAnimSpeedMultiplier", safeSweepSpeed);
+        TrySetAnimatorFloat("ThrowAnimSpeedMultiplier", safeThrowSpeed);
+        TrySetAnimatorFloat("BarrageAnimSpeedMultiplier", safeBarrageSpeed);
+        TrySetAnimatorFloat("SlamAnimSpeedMultiplier", safeSlamSpeed);
+        TrySetAnimatorFloat("SweepAnimSpeedMultiplier", safeSweepSpeed);
     }
 
     //Getters for States that this Melee Enemy has

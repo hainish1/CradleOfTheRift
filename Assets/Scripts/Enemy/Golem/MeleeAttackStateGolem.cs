@@ -7,8 +7,8 @@ public class MeleeAttackStateGolem : EnemyState
 {
     private EnemyGolem enemyGolem;
     private float stateTimer;
-    private float totalAnimationTime; // How long the whole state lasts
-    private float hitFrameTime; // The exact moment the punch lands
+    private float totalAnimationTime;
+    private float hitFrameTime;
 
     public MeleeAttackStateGolem(Enemy enemy, EnemyStateMachine stateMachine) : base(enemy, stateMachine)
     {
@@ -17,12 +17,16 @@ public class MeleeAttackStateGolem : EnemyState
 
     public override void Enter()
     {
+        enemyGolem.BeginAttackLock();
         enemyGolem.PauseAgent();
-        //Debug.Log("Golem entered Melee Attack State");
+        enemyGolem.RefreshAttackAnimationSpeeds();
         stateTimer = 0f;
-        totalAnimationTime = enemyGolem.slamAnim.length / enemyGolem.golemAnim.GetFloat("SlamAnimSpeedMultiplier");
-        hitFrameTime = enemyGolem.slamAnim.events[0].time / enemyGolem.golemAnim.GetFloat("SlamAnimSpeedMultiplier");
-        enemyGolem.golemAnim.SetTrigger("AttackMelee");
+
+        float slamSpeed = enemyGolem.slamAnimSpeedMultiplier > 0f ? enemyGolem.slamAnimSpeedMultiplier : 1f;
+        totalAnimationTime = enemyGolem.GetAnimationDuration(enemyGolem.slamAnim, slamSpeed);
+        hitFrameTime = enemyGolem.GetAnimationEventTime(enemyGolem.slamAnim, slamSpeed, "GolemSlamDamage");
+
+        enemyGolem.TryPlayAttackTrigger("AttackSlam", "AttackThrow", "AttackSlam");
     }
 
     public override void Update()
@@ -30,7 +34,7 @@ public class MeleeAttackStateGolem : EnemyState
         stateTimer += Time.deltaTime;
 
         // Keep turning to face the player until melee attack
-        if (stateTimer < hitFrameTime)
+        if (enemy.target != null && stateTimer < hitFrameTime)
         {
             enemyGolem.FaceTargetSmooth(enemyGolem.turnSpeedWhileAiming);
         }
@@ -40,14 +44,22 @@ public class MeleeAttackStateGolem : EnemyState
         {
             // Set melee cooldown
             enemyGolem.nextAttackAllowed = Time.time + enemyGolem.attackCooldown;
-            
-            // Go to recovery to pause and wander
-            stateMachine.ChangeState(enemyGolem.GetRecovery());
+
+            // If no player then idle, otherwise go to recovery to pause and wander
+            if (enemy.target == null)
+            {
+                stateMachine.ChangeState(enemyGolem.GetIdle());
+            }
+            else
+            {
+                stateMachine.ChangeState(enemyGolem.GetRecovery());
+            }
         }
     }
 
     public override void Exit()
     {
+        enemyGolem.EndAttackLock();
         enemyGolem.ResumeAgent();
     }
 }
