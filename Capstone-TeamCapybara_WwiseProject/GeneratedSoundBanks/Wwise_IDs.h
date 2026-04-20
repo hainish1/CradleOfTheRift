@@ -32,6 +32,7 @@ namespace AK
         static const AkUniqueID PLAY_AMBIENCE = 278617630U;
         static const AkUniqueID PLAY_AXE_DESTROY = 184370657U;
         static const AkUniqueID PLAY_AXE_ORBIT = 3891402599U;
+        static const AkUniqueID PLAY_LOST_SCREEN = 3732957359U;
         static const AkUniqueID PLAY_MACE_HIT = 911400610U;
         static const AkUniqueID PLAY_PLAYER_CROWN_SHOOT = 1245563929U;
         static const AkUniqueID PLAY_PLAYER_DASH = 2175711460U;
@@ -59,6 +60,7 @@ namespace AK
         static const AkUniqueID PLAY_TELEPORTER_AMBIENCE = 1203559441U;
         static const AkUniqueID PLAY_TUTORIAL = 283731184U;
         static const AkUniqueID PLAY_UI_BUTTON_CLICK = 1661558166U;
+        static const AkUniqueID PLAY_WIN_SCREEN = 835002611U;
         static const AkUniqueID ROCK_BREAK = 756826226U;
         static const AkUniqueID ROCK_FLY = 4000648528U;
         static const AkUniqueID ROCK_FLY_SMALL = 532024140U;

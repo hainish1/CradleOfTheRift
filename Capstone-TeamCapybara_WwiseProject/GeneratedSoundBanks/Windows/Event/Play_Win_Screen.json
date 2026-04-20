@@ -1,0 +1,135 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "835002611",
+    "Type": "Event",
+    "GUID": "{1A6363CC-8DA2-4FD5-B9F9-75C4F5395AA6}",
+    "Language": "SFX",
+    "Hash": "{BE6CFAB7-69E4-0FCC-A4B0-5104CC18CF90}",
+    "ObjectPath": "Play_Win_Screen",
+    "ShortName": "Play_Win_Screen",
+    "Path": "Event/Play_Win_Screen.bnk",
+    "Media": [
+     {
+      "Id": "325838643",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "CaveJamSynth.wav",
+      "Path": "Media/325838643.wem",
+      "CachePath": "87/{878226FD-668B-694E-C68E-654AE5873D9F}.wem"
+     },
+     {
+      "Id": "553245426",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "CaveJamBells.wav",
+      "Path": "Media/553245426.wem",
+      "CachePath": "90/{901CB6AB-AFA8-9ADF-0D8C-E84D6838B536}.wem"
+     },
+     {
+      "Id": "781041820",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "CaveJam.wav",
+      "Path": "Media/781041820.wem",
+      "CachePath": "1D/{1D127F80-CAE5-6B2C-B125-748EF7205CDE}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "835002611",
+      "Name": "Play_Win_Screen",
+      "ObjectPath": "\\Events\\Default Work Unit\\UI\\Play_Win_Screen",
+      "GUID": "{1A6363CC-8DA2-4FD5-B9F9-75C4F5395AA6}",
+      "DurationType": "Infinite",
+      "SwitchContainers": [
+       {
+        "SwitchValue": {
+         "GroupType": "State",
+         "GroupId": "4265060404",
+         "Id": "0",
+         "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}"
+        },
+        "MediaRefs": [
+         {
+          "Id": "325838643"
+         },
+         {
+          "Id": "553245426"
+         },
+         {
+          "Id": "781041820"
+         }
+        ]
+       }
+      ],
+      "ActionPostEvent": [
+       {
+        "Id": "452547817",
+        "Name": "Stop_All",
+        "ObjectPath": "\\Events\\Default Work Unit\\Stop_All",
+        "GUID": "{E10F8F55-1AD6-48A6-8544-94E10C94EC2E}"
+       }
+      ],
+      "ActionSetState": [
+       {
+        "GroupId": "4265060404",
+        "Id": "2044049779",
+        "Name": "Dead",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Dead",
+        "GUID": "{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}"
+       }
+      ]
+     },
+     {
+      "Id": "452547817",
+      "Name": "Stop_All",
+      "ObjectPath": "\\Events\\Default Work Unit\\Stop_All",
+      "GUID": "{E10F8F55-1AD6-48A6-8544-94E10C94EC2E}",
+      "MaxAttenuation": "0",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0"
+     }
+    ],
+    "StateGroups": [
+     {
+      "Id": "4265060404",
+      "Name": "Boss_Alive",
+      "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive",
+      "GUID": "{BC04C632-B236-4F49-B8B1-30D73127C2AD}",
+      "States": [
+       {
+        "Id": "655265632",
+        "Name": "Alive",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Alive",
+        "GUID": "{A4FB7019-7BE2-4B55-B62E-D9CFEDF363CC}"
+       },
+       {
+        "Id": "748895195",
+        "Name": "None",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\None",
+        "GUID": "{DEECE8B4-6DDE-47CF-8B9E-899088C3DA0D}"
+       },
+       {
+        "Id": "2044049779",
+        "Name": "Dead",
+        "ObjectPath": "\\States\\Default Work Unit\\Boss_Alive\\Dead",
+        "GUID": "{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{6DEFB54F-F3A9-715A-12BA-8ADAEC470AF9}"
+ }
+}

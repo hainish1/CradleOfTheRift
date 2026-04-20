@@ -413,6 +413,12 @@
 						</Event>
 						<Event Name="Play_Staff_Explode" ID="{89206CEB-1E69-459B-8692-DE5DB8A9E143}">
 							<ChildrenList>
+								<Action Name="" ID="{0B910360-A429-4A59-B5C3-FBA0CF989295}" ShortID="232431903">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="3"/>
+									</PropertyList>
+									<ReferenceList/>
+								</Action>
 								<Action Name="" ID="{036FC540-F12A-406A-96ED-93D0380D81F5}" ShortID="497515762">
 									<ReferenceList>
 										<Reference Name="Target">
@@ -435,6 +441,30 @@
 									<ReferenceList>
 										<Reference Name="Target">
 											<ObjectRef Name="RandomFireBallLaunch" ID="{27FF8E79-7732-4D9A-9342-A15B66A8EFC0}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+						<Event Name="Play_Staff_Cast" ID="{CEA6C90C-9882-499E-BB9C-B6416C01D6E4}">
+							<ChildrenList>
+								<Action Name="" ID="{F849C435-8890-442A-A01C-6E39EA50C88B}" ShortID="974934198">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="41"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Play_Staff_Trail" ID="{227ADAF3-35A4-41E5-ADC9-C44FD424B935}" WorkUnitID="{691DB035-59FA-42BD-8C22-AF773BE39B09}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{5A728A70-5617-4D5A-B373-F6E3EFFED32F}" ShortID="782794121">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="41"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Play_Staff_Shoot" ID="{44F2075D-C1E6-4E29-8482-58E985B9D144}" WorkUnitID="{691DB035-59FA-42BD-8C22-AF773BE39B09}"/>
 										</Reference>
 									</ReferenceList>
 								</Action>
