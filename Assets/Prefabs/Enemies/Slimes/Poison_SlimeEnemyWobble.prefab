@@ -433,7 +433,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.006, y: 0.0573, z: -0.002}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7504619845667794225}
@@ -5539,9 +5539,9 @@ MonoBehaviour:
     speedMultiplier: 1.2
     isStrongerVariant: 0
     dotChance: 1
-    dotDamagePerTick: 0.5
+    dotDamagePerTick: 2
     dotTickInterval: 1
-    dotDuration: 16
+    dotDuration: 12
   attackRange: 5
   knockbackPower: 50
   dragSpeed: 17

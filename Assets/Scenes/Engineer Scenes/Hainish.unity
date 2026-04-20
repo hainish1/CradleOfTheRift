@@ -558,7 +558,7 @@ PrefabInstance:
       objectReference: {fileID: 3715700434769693119}
     - target: {fileID: 7558003053126955156, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: HeldWeapon
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7558003053126955156, guid: 27fa57d1d87da7942a5ff45d6e9fef09, type: 3}
       propertyPath: _maceModel
@@ -6484,6 +6484,9 @@ MonoBehaviour:
   singleActivation: 1
   audioData: {fileID: 0}
   lootTable: {fileID: 487428407}
+  closedChestVisual: {fileID: 0}
+  openChestVisual: {fileID: 0}
+  destroyDelay: 2
   OpenSound:
     idInternal: 0
     valueGuidInternal: 
@@ -13780,6 +13783,9 @@ MonoBehaviour:
   singleActivation: 1
   audioData: {fileID: 0}
   lootTable: {fileID: 1047306115}
+  closedChestVisual: {fileID: 0}
+  openChestVisual: {fileID: 0}
+  destroyDelay: 2
   OpenSound:
     idInternal: 0
     valueGuidInternal: 
@@ -14901,6 +14907,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 579890953250092411, guid: 865e351dd5f3d6f43bf406f61705722a, type: 3}
+      propertyPath: dragDuration
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 579890953250092411, guid: 865e351dd5f3d6f43bf406f61705722a, type: 3}
+      propertyPath: elementalProfile.speedMultiplier
+      value: 1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 3718974384298892497, guid: 865e351dd5f3d6f43bf406f61705722a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 132.30206
@@ -14944,6 +14958,10 @@ PrefabInstance:
     - target: {fileID: 4774255412431179575, guid: 865e351dd5f3d6f43bf406f61705722a, type: 3}
       propertyPath: m_Name
       value: Poison_SlimeEnemyWobble
+      objectReference: {fileID: 0}
+    - target: {fileID: 4774255412431179575, guid: 865e351dd5f3d6f43bf406f61705722a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21238,6 +21256,9 @@ MonoBehaviour:
   singleActivation: 1
   audioData: {fileID: 0}
   lootTable: {fileID: 1571125219}
+  closedChestVisual: {fileID: 0}
+  openChestVisual: {fileID: 0}
+  destroyDelay: 2
   OpenSound:
     idInternal: 0
     valueGuidInternal: 
@@ -30111,7 +30132,7 @@ PrefabInstance:
       objectReference: {fileID: 1464753340}
     - target: {fileID: 2737880262356001210, guid: d2cad68ad46525e4a91157a32a4535da, type: 3}
       propertyPath: m_VersionIndex
-      value: 2065
+      value: 2068
       objectReference: {fileID: 0}
     - target: {fileID: 5629221932387799761, guid: d2cad68ad46525e4a91157a32a4535da, type: 3}
       propertyPath: m_Mesh
@@ -37386,6 +37407,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5880799857429628871, guid: ef94aee2860b50543adbd86217b57a09, type: 3}
+      propertyPath: destroyVFX
+      value: 
+      objectReference: {fileID: 4658278565933542678, guid: ff5d79a7753d5c84f9208277978247a1, type: 3}
+    - target: {fileID: 5880799857429628871, guid: ef94aee2860b50543adbd86217b57a09, type: 3}
+      propertyPath: activateVFX
+      value: 
+      objectReference: {fileID: 9017484664307500583, guid: 55235a7ea8adfee41bbb8c5e7f6fc65d, type: 3}
+    - target: {fileID: 5880799857429628871, guid: ef94aee2860b50543adbd86217b57a09, type: 3}
+      propertyPath: destroyDelay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5880799857429628871, guid: ef94aee2860b50543adbd86217b57a09, type: 3}
+      propertyPath: destroyVFXLifetime
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -38319,6 +38356,9 @@ MonoBehaviour:
   singleActivation: 1
   audioData: {fileID: 0}
   lootTable: {fileID: 8095773939692875425}
+  closedChestVisual: {fileID: 0}
+  openChestVisual: {fileID: 0}
+  destroyDelay: 2
   OpenSound:
     idInternal: 0
     valueGuidInternal: 
