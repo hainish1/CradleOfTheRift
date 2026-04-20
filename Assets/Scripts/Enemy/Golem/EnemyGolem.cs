@@ -599,11 +599,26 @@ public class EnemyGolem : Enemy
         }
 
         // Play ground slam VFX
-        if (groundSlamPrefab != null)        
+        if (groundSlamPrefab != null)
         {
-            GameObject slamVFX = Instantiate(groundSlamPrefab, slamTransform.position, Quaternion.identity);
+            GameObject slamVFX;
+            if (ObjectPool.instance != null)
+            {
+                slamVFX = ObjectPool.instance.GetObject(groundSlamPrefab, slamTransform);
+            }
+            else
+            {
+                slamVFX = Instantiate(groundSlamPrefab);
+            }
+            slamVFX.transform.position = slamTransform.position;
+            slamVFX.transform.rotation = Quaternion.identity;
             slamVFX.transform.localScale = Vector3.one * meleeRadius * 0.5f;
-            Destroy(slamVFX, EstimateParticleLifetime(slamVFX));
+
+            float slamLifetime = EstimateParticleLifetime(slamVFX);
+            if (ObjectPool.instance != null)
+                ObjectPool.instance.ReturnObject(slamVFX, slamLifetime);
+            else
+                Destroy(slamVFX, slamLifetime);
         }
         
         // Play the ground slam SFX
