@@ -143,12 +143,23 @@ public class EnemyAOEProjectile : MonoBehaviour
     public void CreateExplosionVFX()
     {
         if (explosionVFX == null) return;
-        GameObject newFx = Instantiate(explosionVFX);
-        newFx.transform.position = transform.position;
-        newFx.transform.rotation = Quaternion.identity;
+
+        GameObject newFx;
+        if (ObjectPool.instance != null)
+        {
+            newFx = ObjectPool.instance.GetObject(explosionVFX, transform);
+        }
+        else
+        {
+            newFx = Instantiate(explosionVFX);
+        }
+        newFx.transform.SetPositionAndRotation(transform.position, Quaternion.identity);
         newFx.transform.localScale = Vector3.one * aoeRadius;
 
-        Destroy(newFx, 1); // destroy after one second
+        if (ObjectPool.instance != null)
+            ObjectPool.instance.ReturnObject(newFx, 1f);
+        else
+            Destroy(newFx, 1f);
     }
 
     // public void PlayExplosionSound()
