@@ -69,11 +69,23 @@ public class EnemyDelayedAOE : MonoBehaviour
             Debug.LogError("No explosion VFX has been assigned!");
             return;
         }
-        GameObject newFx = Instantiate(explosionVFX);
-        newFx.transform.position = transform.position;
-        newFx.transform.rotation = Quaternion.identity;
+
+        GameObject newFx;
+        if (ObjectPool.instance != null)
+        {
+            newFx = ObjectPool.instance.GetObject(explosionVFX, transform);
+        }
+        else
+        {
+            newFx = Instantiate(explosionVFX);
+        }
+        newFx.transform.SetPositionAndRotation(transform.position, Quaternion.identity);
         newFx.transform.localScale = Vector3.one * radius * 0.25f;
-        Destroy(newFx, 2f); // destroy after two second
+
+        if (ObjectPool.instance != null)
+            ObjectPool.instance.ReturnObject(newFx, 2f);
+        else
+            Destroy(newFx, 2f);
     }
 
     void OnDrawGizmos()
