@@ -314,13 +314,12 @@ MonoBehaviour:
     attackVFX: {fileID: 0}
     dotHitVFX: {fileID: 0}
     damageMultiplier: 1.5
-    speedMultiplier: 1
+    speedMultiplier: 0.8
     isStrongerVariant: 0
     dotChance: 0.7
     dotDamagePerTick: 4
     dotTickInterval: 1
     dotDuration: 3
-  chaseSpeed: 30
   attackRange: 5
   knockbackPower: 50
   dragSpeed: 17

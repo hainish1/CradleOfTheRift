@@ -20668,7 +20668,7 @@ MonoBehaviour:
     attackVFX: {fileID: 0}
     dotHitVFX: {fileID: 0}
     damageMultiplier: 1.5
-    speedMultiplier: 1
+    speedMultiplier: 1.33
     isStrongerVariant: 0
     dotChance: 0.35
     dotDamagePerTick: 0.5
@@ -20678,8 +20678,8 @@ MonoBehaviour:
   flyHeight: 3.7
   verticalSmoothTime: 4.5
   horizontalSmoothTime: 2.5
-  maxHorizontalSpeed: 35
-  maxVerticalSpeed: 20
+  maxHorizontalSpeed: 20
+  maxVerticalSpeed: 10
   chaseSpeed: 6
   attackRange: 75
   desiredDistance: 60

@@ -11,6 +11,14 @@ public class Chest : MonoBehaviour, IInteractable
     [SerializeField] private AudioSource audioData;
     [SerializeField] private LootTable lootTable;
 
+    [Header("Visuals")]
+    [Tooltip("The closed chest")]
+    [SerializeField] private GameObject closedChestVisual;
+    [Tooltip("The open chest")]
+    [SerializeField] private GameObject openChestVisual;
+    [Tooltip("How long the open chest stays visible before being obliterated")]
+    [SerializeField] private float destroyDelay = 2f;
+
     [Header("Audio Settings")]
     [SerializeField] private AK.Wwise.Event OpenSound;
     [SerializeField] private AK.Wwise.Event TooExpensiveSound;
@@ -47,11 +55,14 @@ public class Chest : MonoBehaviour, IInteractable
                     //Instantiate(item, transform.position + Vector3.up, Quaternion.identity);
                     Debug.Log("No loot table.");
                 }
+                if (closedChestVisual != null) closedChestVisual.SetActive(false);
+                if (openChestVisual != null) openChestVisual.SetActive(true);
+
                 if (SingleActivation)
                 {
                     canInteract = false;
-                    Destroy(gameObject, 1f); // Add a Delay to allow sound to play and block subsequent interactions
-                }   
+                    Destroy(gameObject, destroyDelay); // Add a Delay to allow sound to play and block subsequent interactions
+                }
                 return true;
             }
             else
