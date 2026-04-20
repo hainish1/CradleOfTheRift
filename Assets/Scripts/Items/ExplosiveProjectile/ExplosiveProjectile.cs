@@ -14,7 +14,6 @@ public class ExplosiveProjectile : Projectile
     [SerializeField] private GameObject standaloneTravelVFX;
 
     private GameObject fireballVisual;
-    private static Shader cachedShader;
 
     private static Collider[] overlapBuffer = new Collider[64];
     private static HashSet<IDamageable> hitBuffer = new HashSet<IDamageable>();
@@ -77,43 +76,41 @@ public class ExplosiveProjectile : Projectile
     {
         bool usingTravelVFX = CurrentTravelVFX != null;
 
-        if (usingTravelVFX)
-        {
-            Debug.Log("Using assigned travel VFX prefab for ExplosiveProjectile.");
-            fireballVisual = Instantiate(CurrentTravelVFX, transform);
-            fireballVisual.name = "FireballVisual";
-            fireballVisual.transform.localPosition = Vector3.zero;
-            fireballVisual.transform.localScale = Vector3.one;
+        if (!usingTravelVFX) return;
 
-        }
-        else
-        {
-            Debug.LogWarning("Travel VFX prefab not assigned for ExplosiveProjectile. Using simple sphere visual.");
-            fireballVisual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            fireballVisual.name = "FireballVisual";
-            fireballVisual.transform.SetParent(transform);
-            fireballVisual.transform.localPosition = Vector3.zero;
-            fireballVisual.transform.localScale = Vector3.one * CurrentFireballScale;
-            //CreateSimpleFireballVisual();
+        Debug.Log("Using assigned travel VFX prefab for ExplosiveProjectile.");
+        fireballVisual = Instantiate(CurrentTravelVFX, transform);
+        fireballVisual.name = "FireballVisual";
+        fireballVisual.transform.localPosition = Vector3.zero;
+        fireballVisual.transform.localScale = Vector3.one;
+        // else
+        // {
+        //     // Debug.LogWarning("Travel VFX prefab not assigned for ExplosiveProjectile. Using simple sphere visual.");
+        //     // fireballVisual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        //     // fireballVisual.name = "FireballVisual";
+        //     // fireballVisual.transform.SetParent(transform);
+        //     // fireballVisual.transform.localPosition = Vector3.zero;
+        //     // fireballVisual.transform.localScale = Vector3.one * CurrentFireballScale;
+        //     //CreateSimpleFireballVisual();
 
-            // int layer = LayerMask.NameToLayer(FireballVisualLayerName);
-            // if (layer >= 0)
-            //     fireballVisual.layer = layer;
+        //     // int layer = LayerMask.NameToLayer(FireballVisualLayerName);
+        //     // if (layer >= 0)
+        //     //     fireballVisual.layer = layer;
 
-            // var col = fireballVisual.GetComponent<Collider>();
-            // if (col != null)
-            //     DestroyImmediate(col);
+        //     // var col = fireballVisual.GetComponent<Collider>();
+        //     // if (col != null)
+        //     //     DestroyImmediate(col);
 
-            // if (cachedShader == null)
-            //     cachedShader = Shader.Find("Sprites/Default");
+        //     // if (cachedShader == null)
+        //     //     cachedShader = Shader.Find("Sprites/Default");
 
-            // var material = new Material(cachedShader);
-            // material.color = new Color(1f, 0f, 0f, 1f);
+        //     // var material = new Material(cachedShader);
+        //     // material.color = new Color(1f, 0f, 0f, 1f);
 
-            // var renderer = fireballVisual.GetComponent<Renderer>();
-            // if (renderer != null)
-            //     renderer.material = material;
-        }
+        //     // var renderer = fireballVisual.GetComponent<Renderer>();
+        //     // if (renderer != null)
+        //     //     renderer.material = material;
+        // }
 
         int layer = LayerMask.NameToLayer(FireballVisualLayerName);
         if (layer >= 0)
@@ -122,44 +119,6 @@ public class ExplosiveProjectile : Projectile
         var col = fireballVisual.GetComponent<Collider>();
         if (col != null)
             Destroy(col);
-
-        // Keep travel VFX prefab materials untouched.
-        // Only apply the red fallback material to the primitive sphere fallback.
-        if (!usingTravelVFX)
-        {
-            if (cachedShader == null)
-                cachedShader = Shader.Find("Sprites/Default");
-
-            var material = new Material(cachedShader);
-            material.color = new Color(1f, 0f, 0f, 1f);
-
-            var renderer = fireballVisual.GetComponent<Renderer>();
-            if (renderer != null)
-                renderer.material = material;
-        }
-        // fireballVisual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        // fireballVisual.name = "FireballVisual";
-        // fireballVisual.transform.SetParent(transform);
-        // fireballVisual.transform.localPosition = Vector3.zero;
-        // fireballVisual.transform.localScale = Vector3.one * ExplosiveProjectiles.FireballVisualScale;
-
-        // int layer = LayerMask.NameToLayer(FireballVisualLayerName);
-        // if (layer >= 0)
-        //     fireballVisual.layer = layer;
-
-        // var col = fireballVisual.GetComponent<Collider>();
-        // if (col != null)
-        //     DestroyImmediate(col);
-
-        // if (cachedShader == null)
-        //     cachedShader = Shader.Find("Sprites/Default");
-
-        // var material = new Material(cachedShader);
-        // material.color = new Color(1f, 0f, 0f, 1f);
-
-        // var renderer = fireballVisual.GetComponent<Renderer>();
-        // if (renderer != null)
-        //     renderer.material = material;
     }
 
     public override void Update()
