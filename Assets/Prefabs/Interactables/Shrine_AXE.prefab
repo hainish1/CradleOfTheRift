@@ -145,6 +145,14 @@ MonoBehaviour:
   activateVFX: {fileID: 0}
   vfxAnchor: {fileID: 0}
   promptHeightOffset: 4.5
+  activateSound:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: 320c2003a177daa4593bce2b7d916e03, type: 2}
+  cantAffordSound:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: 95cb2131d27671d4dad96bc21b3187b4, type: 2}
 --- !u!65 &5949237812758110766
 BoxCollider:
   m_ObjectHideFlags: 0
