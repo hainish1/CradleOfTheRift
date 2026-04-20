@@ -1,0 +1,61 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "3186595221",
+    "Type": "Event",
+    "GUID": "{227ADAF3-35A4-41E5-ADC9-C44FD424B935}",
+    "Language": "SFX",
+    "Hash": "{4460BAD1-5BAB-8129-8C08-36BD072F5DA6}",
+    "ObjectPath": "Play_Staff_Trail",
+    "ShortName": "Play_Staff_Trail",
+    "Path": "Event/Play_Staff_Trail.bnk",
+    "Media": [
+     {
+      "Id": "132331391",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0277_weapon_smoke_grenade_launcher_003[1].wav",
+      "Path": "Media/132331391.wem",
+      "CachePath": "53/{53271B9C-519E-3CE1-E40A-462AE1B0185D}.wem"
+     },
+     {
+      "Id": "143699886",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0277_weapon_smoke_grenade_launcher_003[1].wav",
+      "Path": "Media/143699886.wem",
+      "CachePath": "9F/{9F818D5C-0126-3EDD-0EEF-A1D008B245CD}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "3186595221",
+      "Name": "Play_Staff_Trail",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Staff\\Play_Staff_Trail",
+      "GUID": "{227ADAF3-35A4-41E5-ADC9-C44FD424B935}",
+      "MaxAttenuation": "300",
+      "DurationType": "OneShot",
+      "DurationMin": "0.9603713",
+      "DurationMax": "3.0972483",
+      "MediaRefs": [
+       {
+        "Id": "132331391"
+       },
+       {
+        "Id": "143699886"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{16523F5C-EC07-20BE-C10B-1B9056EC4B44}"
+ }
+}

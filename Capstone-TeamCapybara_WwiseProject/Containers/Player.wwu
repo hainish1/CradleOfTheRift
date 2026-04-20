@@ -764,6 +764,263 @@
 								</Sound>
 							</ChildrenList>
 						</Folder>
+						<Folder Name="staff" ID="{8B13494F-7190-4AA5-BF9D-47929BAACAC7}" ShortID="663642657">
+							<ChildrenList>
+								<RandomSequenceContainer Name="RandomFireBallLaunch" ID="{27FF8E79-7732-4D9A-9342-A15B66A8EFC0}" ShortID="868538905">
+									<PropertyList>
+										<Property Name="3DSpatialization" Type="int16" Value="2"/>
+										<Property Name="Pitch" Type="int32">
+											<ModifierList>
+												<ModifierInfo>
+													<Modifier Name="" ID="{F216A762-B0F8-485B-A200-DB766500829D}">
+														<PropertyList>
+															<Property Name="Enabled" Type="bool" Value="True"/>
+															<Property Name="Max" Type="Real64" Value="500"/>
+															<Property Name="Min" Type="Real64" Value="-500"/>
+														</PropertyList>
+													</Modifier>
+												</ModifierInfo>
+											</ModifierList>
+										</Property>
+										<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
+										<Property Name="Volume" Type="Real64">
+											<ModifierList>
+												<ModifierInfo>
+													<Modifier Name="" ID="{CB312F16-9503-43B4-9B3E-13BAE9FED2EC}">
+														<PropertyList>
+															<Property Name="Enabled" Type="bool" Value="True"/>
+															<Property Name="Max" Type="Real64" Value="3"/>
+															<Property Name="Min" Type="Real64" Value="-3"/>
+														</PropertyList>
+													</Modifier>
+												</ModifierInfo>
+											</ModifierList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Attenuation">
+											<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+										</Reference>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Staff Bus" ID="{9D700C0E-2197-4DF7-B511-79D7A36AE320}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<Sound Name="Fireball Launch" ID="{E9AE9829-5DF8-4F94-95A2-D1222ED264B8}" ShortID="858136524">
+											<ReferenceList>
+												<Reference Name="Conversion">
+													<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+												</Reference>
+												<Reference Name="OutputBus">
+													<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+												</Reference>
+											</ReferenceList>
+											<ChildrenList>
+												<AudioFileSource Name="Bluezone_BC0277_weapon_smoke_grenade_launcher_003[1]" ID="{3321ACF5-D634-4191-A5BA-A93D42D3102A}">
+													<PropertyList>
+														<Property Name="FadeInDuration" Type="Real64" Value="0.0961456289622774"/>
+														<Property Name="FadeOutDuration" Type="Real64" Value="0.749935905905765"/>
+														<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+														<Property Name="TrimBegin" Type="Real64" Value="1.15374754754733"/>
+														<Property Name="TrimEnd" Type="Real64" Value="3.47406228617566"/>
+													</PropertyList>
+													<Language>SFX</Language>
+													<AudioFile>Bluezone_BC0277_weapon_smoke_grenade_launcher_003[1].wav</AudioFile>
+													<MediaIDList>
+														<MediaID ID="132331391"/>
+													</MediaIDList>
+												</AudioFileSource>
+											</ChildrenList>
+											<ActiveSourceList>
+												<ActiveSource Name="Bluezone_BC0277_weapon_smoke_grenade_launcher_003[1]" ID="{3321ACF5-D634-4191-A5BA-A93D42D3102A}" Platform="Linked"/>
+											</ActiveSourceList>
+										</Sound>
+										<Sound Name="Fireball Launch_01" ID="{C334CC09-5E38-47AD-9A71-7C5C974BCFE2}" ShortID="604731177">
+											<ReferenceList>
+												<Reference Name="Conversion">
+													<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+												</Reference>
+												<Reference Name="OutputBus">
+													<ObjectRef Name="Main Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+												</Reference>
+											</ReferenceList>
+											<ChildrenList>
+												<AudioFileSource Name="Bluezone_BC0277_weapon_smoke_grenade_launcher_003[1]" ID="{547CD187-EE57-4D14-B6D1-B0DBD609674E}">
+													<PropertyList>
+														<Property Name="FadeInDuration" Type="Real64" Value="0.0961456289622774"/>
+														<Property Name="FadeOutDuration" Type="Real64" Value="0.749935905905765"/>
+														<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+														<Property Name="TrimBegin" Type="Real64" Value="1.12810871315739"/>
+														<Property Name="TrimEnd" Type="Real64" Value="2.41005065899313"/>
+													</PropertyList>
+													<Language>SFX</Language>
+													<AudioFile>Bluezone_BC0277_weapon_smoke_grenade_launcher_003[1].wav</AudioFile>
+													<MediaIDList>
+														<MediaID ID="143699886"/>
+													</MediaIDList>
+												</AudioFileSource>
+											</ChildrenList>
+											<ActiveSourceList>
+												<ActiveSource Name="Bluezone_BC0277_weapon_smoke_grenade_launcher_003[1]" ID="{547CD187-EE57-4D14-B6D1-B0DBD609674E}" Platform="Linked"/>
+											</ActiveSourceList>
+										</Sound>
+									</ChildrenList>
+								</RandomSequenceContainer>
+								<Sound Name="FireForever" ID="{9A04E700-89A0-4BEB-BD92-AE32D3294DFF}" ShortID="350853432">
+									<PropertyList>
+										<Property Name="3DSpatialization" Type="int16" Value="2"/>
+										<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+										<Property Name="Pitch" Type="int32">
+											<ValueList>
+												<Value>550</Value>
+											</ValueList>
+											<ModifierList>
+												<ModifierInfo>
+													<Modifier Name="" ID="{21173AE9-8EF5-4BB0-B1C6-A0606A000158}">
+														<PropertyList>
+															<Property Name="Enabled" Type="bool" Value="True"/>
+															<Property Name="Max" Type="Real64" Value="600"/>
+															<Property Name="Min" Type="Real64" Value="-600"/>
+														</PropertyList>
+													</Modifier>
+												</ModifierInfo>
+											</ModifierList>
+										</Property>
+										<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
+										<Property Name="Volume" Type="Real64">
+											<ValueList>
+												<Value>-3</Value>
+											</ValueList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Attenuation">
+											<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+										</Reference>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Staff Bus" ID="{9D700C0E-2197-4DF7-B511-79D7A36AE320}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="Campfire[1]" ID="{7EE54CFF-025C-43CB-B3E5-B7A67ED59292}">
+											<PropertyList>
+												<Property Name="FadeInDuration" Type="Real64" Value="1.20551343866297"/>
+												<Property Name="FadeOutDuration" Type="Real64" Value="1.14810803682187"/>
+												<Property Name="OverrideWavLoop" Type="bool" Value="True"/>
+												<Property Name="TrimBegin" Type="Real64" Value="7.74972924854765"/>
+												<Property Name="TrimEnd" Type="Real64" Value="14.0069172067064"/>
+											</PropertyList>
+											<Language>SFX</Language>
+											<AudioFile>Campfire[1].wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="423541166"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="Campfire[1]" ID="{7EE54CFF-025C-43CB-B3E5-B7A67ED59292}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+								<Sound Name="FireballExplosion" ID="{6677BA3C-48D1-4EFB-B8F1-91CB0EB3E0B1}" ShortID="1042725309">
+									<PropertyList>
+										<Property Name="3DSpatialization" Type="int16" Value="2"/>
+										<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
+										<Property Name="Volume" Type="Real64">
+											<ValueList>
+												<Value>-12</Value>
+											</ValueList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Attenuation">
+											<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+										</Reference>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Staff Bus" ID="{9D700C0E-2197-4DF7-B511-79D7A36AE320}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="Bluezone_BC0277_explosion_urban_004_02[1]" ID="{4054DF10-9EFA-4F74-B0A3-9DCE8FBE3AF8}">
+											<Language>SFX</Language>
+											<AudioFile>Bluezone_BC0277_explosion_urban_004_02[1].wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="565804503"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="Bluezone_BC0277_explosion_urban_004_02[1]" ID="{4054DF10-9EFA-4F74-B0A3-9DCE8FBE3AF8}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+								<Sound Name="StaffWoosh" ID="{9363F9B6-82FF-4F01-B95D-23B3FED7D09D}" ShortID="630816518">
+									<PropertyList>
+										<Property Name="3DSpatialization" Type="int16" Value="2"/>
+										<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Attenuation">
+											<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+										</Reference>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Staff Bus" ID="{9D700C0E-2197-4DF7-B511-79D7A36AE320}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="magefiresound" ID="{082E17D6-992A-45BA-8EA9-38DE8537AEE6}">
+											<Language>SFX</Language>
+											<AudioFile>magefiresound.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="424276914"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="magefiresound" ID="{082E17D6-992A-45BA-8EA9-38DE8537AEE6}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+								<Sound Name="magic_explosion" ID="{D991CC53-2522-4DA9-8B9C-6775E7BD79A4}" ShortID="792465403">
+									<PropertyList>
+										<Property Name="3DSpatialization" Type="int16" Value="2"/>
+										<Property Name="UseGameAuxSends" Type="bool" Value="True"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Attenuation">
+											<ObjectRef Name="Player Attenuation" ID="{24EF9C98-B548-4C2C-93B3-54D789F5AF89}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
+										</Reference>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Staff Bus" ID="{9D700C0E-2197-4DF7-B511-79D7A36AE320}" WorkUnitID="{D78EAFC5-73AE-4397-B1D6-CA2FA207685A}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="magic_explosion" ID="{E89DAB7B-16DD-4894-BF1C-E7B24F10EB11}">
+											<Language>SFX</Language>
+											<AudioFile>magic_explosion.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="86528835"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="magic_explosion" ID="{E89DAB7B-16DD-4894-BF1C-E7B24F10EB11}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
+							</ChildrenList>
+						</Folder>
 					</ChildrenList>
 				</Folder>
 				<Sound Name="player_jump" ID="{A14AA23A-33DC-480B-8E86-CABEB2366C64}" ShortID="654693844">

@@ -1,0 +1,132 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "3027446739",
+    "Type": "Event",
+    "GUID": "{B9BC34F4-D2B2-4C24-8D9A-97D45454261F}",
+    "Language": "SFX",
+    "Hash": "{205A521C-1EB1-81A5-8E2B-9ADC5B4758EE}",
+    "ObjectPath": "Shrine_Open",
+    "ShortName": "Shrine_Open",
+    "Path": "Event/Shrine_Open.bnk",
+    "Media": [
+     {
+      "Id": "4361091",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Chest.wav",
+      "Path": "Media/4361091.wem",
+      "CachePath": "8A/{8A8F0717-CAC2-27C2-5E30-638883B9B5E1}.wem"
+     },
+     {
+      "Id": "120070202",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Chain3.wav",
+      "Path": "Media/120070202.wem",
+      "CachePath": "FA/{FA63F2CA-95B5-50BD-8619-1A3A621E79DC}.wem"
+     },
+     {
+      "Id": "773593140",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Chain2.wav",
+      "Path": "Media/773593140.wem",
+      "CachePath": "04/{04B1B06A-6AE6-BDCF-FFD5-9E220B86BEA8}.wem"
+     },
+     {
+      "Id": "908695156",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Chain1.wav",
+      "Path": "Media/908695156.wem",
+      "CachePath": "A0/{A0AAFAB0-5EA7-9A9A-81E1-9CF350B8C8AB}.wem"
+     },
+     {
+      "Id": "961520638",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Item Pickup.wav",
+      "Path": "Media/961520638.wem",
+      "CachePath": "03/{0324A3BC-B688-2F7E-91D1-23B40CC30AF3}.wem"
+     }
+    ],
+    "Plugins": {
+     "ShareSets": [
+      {
+       "Id": "415841907",
+       "Name": "Space_Garage",
+       "ObjectPath": "\\Effects\\Factory Effects\\RoomVerb\\Huge Spaces\\Space_Garage",
+       "GUID": "{1AF92D84-49DD-4BBC-8F29-6C6D10082B6E}",
+       "LibName": "Wwise RoomVerb",
+       "LibId": "7733251"
+      }
+     ]
+    },
+    "Events": [
+     {
+      "Id": "2728948375",
+      "Name": "Chest_Open",
+      "ObjectPath": "\\Events\\Default Work Unit\\Environment\\Chest\\Chest_Open",
+      "GUID": "{E8ACB5E9-C9AC-4B80-97EF-9A825FC9C893}",
+      "DurationType": "Infinite",
+      "MediaRefs": [
+       {
+        "Id": "4361091"
+       },
+       {
+        "Id": "120070202"
+       },
+       {
+        "Id": "773593140"
+       },
+       {
+        "Id": "908695156"
+       }
+      ],
+      "PluginRefs": {
+       "ShareSets": [
+        {
+         "Id": "415841907"
+        }
+       ]
+      }
+     },
+     {
+      "Id": "3027446739",
+      "Name": "Shrine_Open",
+      "ObjectPath": "\\Events\\Default Work Unit\\Environment\\Shrine\\Shrine_Open",
+      "GUID": "{B9BC34F4-D2B2-4C24-8D9A-97D45454261F}",
+      "DurationType": "OneShot",
+      "DurationMin": "4",
+      "DurationMax": "4",
+      "MediaRefs": [
+       {
+        "Id": "961520638"
+       }
+      ],
+      "ActionPostEvent": [
+       {
+        "Id": "2728948375",
+        "Name": "Chest_Open",
+        "ObjectPath": "\\Events\\Default Work Unit\\Environment\\Chest\\Chest_Open",
+        "GUID": "{E8ACB5E9-C9AC-4B80-97EF-9A825FC9C893}"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{F418E783-44F0-31C6-FE7A-079C654B605C}"
+ }
+}

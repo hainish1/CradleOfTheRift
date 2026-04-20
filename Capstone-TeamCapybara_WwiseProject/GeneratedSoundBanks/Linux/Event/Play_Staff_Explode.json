@@ -1,0 +1,61 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Linux",
+  "BasePlatform": "Linux",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "2646797118",
+    "Type": "Event",
+    "GUID": "{89206CEB-1E69-459B-8692-DE5DB8A9E143}",
+    "Language": "SFX",
+    "Hash": "{65E38F2B-092B-6361-B627-DDE6CCF108C2}",
+    "ObjectPath": "Play_Staff_Explode",
+    "ShortName": "Play_Staff_Explode",
+    "Path": "Event/Play_Staff_Explode.bnk",
+    "Media": [
+     {
+      "Id": "86528835",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "magic_explosion.wav",
+      "Path": "Media/86528835.wem",
+      "CachePath": "A3/{A366B138-7E95-D305-4387-07B4FF677A87}.wem"
+     },
+     {
+      "Id": "565804503",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0277_explosion_urban_004_02[1].wav",
+      "Path": "Media/565804503.wem",
+      "CachePath": "CD/{CD59CCD3-7C81-B164-F69F-84693DC1C644}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "2646797118",
+      "Name": "Play_Staff_Explode",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Staff\\Play_Staff_Explode",
+      "GUID": "{89206CEB-1E69-459B-8692-DE5DB8A9E143}",
+      "MaxAttenuation": "300",
+      "DurationType": "OneShot",
+      "DurationMin": "3.174802",
+      "DurationMax": "5.0396843",
+      "MediaRefs": [
+       {
+        "Id": "86528835"
+       },
+       {
+        "Id": "565804503"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{3AEED353-80C9-6ACF-81A4-828832DD373D}"
+ }
+}

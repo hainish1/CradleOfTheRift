@@ -415,8 +415,9 @@ public class Projectile : MonoBehaviour
     /// </summary>
     protected void PlayDestorySound()
     {
-        if (_destroySoundEvent.IsValid())
-            _destroySoundEvent.Post(gameObject);
+        if(_destroySoundEvent != null)
+            if (_destroySoundEvent.IsValid())
+                _destroySoundEvent.Post(gameObject);
     }
 
     /// <summary>
@@ -426,8 +427,9 @@ public class Projectile : MonoBehaviour
     /// </summary>
     protected void PlayThrowSound()
     {
-        if(_throwSoundEvent.IsValid())
-            _throwSoundEvent.Post(gameObject);
+        if(_throwSoundEvent != null)
+            if(_throwSoundEvent.IsValid())
+                _throwSoundEvent.Post(gameObject);
     }
 
 }

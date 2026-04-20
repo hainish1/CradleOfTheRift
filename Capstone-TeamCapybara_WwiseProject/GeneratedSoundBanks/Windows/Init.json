@@ -10,7 +10,7 @@
     "Type": "User",
     "GUID": "{701ECBBD-9C7B-4030-8CDB-749EE5D1C7B9}",
     "Language": "SFX",
-    "Hash": "{5C38100C-5838-3E55-6CFE-2A3D5286DC79}",
+    "Hash": "{658EFF8E-E567-B2D7-C44A-C433AF24922A}",
     "ObjectPath": "Init",
     "ShortName": "Init",
     "Path": "Init.bnk",
@@ -88,6 +88,12 @@
       "Name": "Lightning Bus",
       "ObjectPath": "\\Busses\\Default Work Unit\\Main Audio Bus\\Player Bus\\Lightning Bus",
       "GUID": "{DDECB7D0-4505-4885-90FA-DFFF8EF0BF0E}"
+     },
+     {
+      "Id": "4168009463",
+      "Name": "Staff Bus",
+      "ObjectPath": "\\Busses\\Default Work Unit\\Main Audio Bus\\Player Bus\\Staff Bus",
+      "GUID": "{9D700C0E-2197-4DF7-B511-79D7A36AE320}"
      }
     ],
     "AuxBusses": [
@@ -236,6 +242,6 @@
     ]
    }
   ],
-  "FileHash": "{7A0A7A8A-1EAF-57EE-F6D6-413D872E5C75}"
+  "FileHash": "{4AFEA873-F638-C68F-F0A1-4F38F6ED1D8A}"
  }
 }

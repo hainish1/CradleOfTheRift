@@ -1,0 +1,73 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Mac",
+  "BasePlatform": "Mac",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "2825878508",
+    "Type": "Event",
+    "GUID": "{44F2075D-C1E6-4E29-8482-58E985B9D144}",
+    "Language": "SFX",
+    "Hash": "{4C1104CD-9B55-E8F8-3709-EB6D61CCF8D7}",
+    "ObjectPath": "Play_Staff_Shoot",
+    "ShortName": "Play_Staff_Shoot",
+    "Path": "Event/Play_Staff_Shoot.bnk",
+    "Media": [
+     {
+      "Id": "132331391",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0277_weapon_smoke_grenade_launcher_003[1].wav",
+      "Path": "Media/132331391.wem",
+      "CachePath": "53/{53271B9C-519E-3CE1-E40A-462AE1B0185D}.wem"
+     },
+     {
+      "Id": "143699886",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0277_weapon_smoke_grenade_launcher_003[1].wav",
+      "Path": "Media/143699886.wem",
+      "CachePath": "9F/{9F818D5C-0126-3EDD-0EEF-A1D008B245CD}.wem"
+     },
+     {
+      "Id": "424276914",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "magefiresound.wav",
+      "Path": "Media/424276914.wem",
+      "CachePath": "D9/{D942FC52-B392-A8A4-F7F8-DECC15542CB7}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "2825878508",
+      "Name": "Play_Staff_Shoot",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Staff\\Play_Staff_Shoot",
+      "GUID": "{44F2075D-C1E6-4E29-8482-58E985B9D144}",
+      "MaxAttenuation": "300",
+      "DurationType": "OneShot",
+      "DurationMin": "0.9603713",
+      "DurationMax": "3.0972483",
+      "MediaRefs": [
+       {
+        "Id": "132331391"
+       },
+       {
+        "Id": "143699886"
+       },
+       {
+        "Id": "424276914"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{0266FDCA-55FE-919F-7E5A-653C22487D30}"
+ }
+}

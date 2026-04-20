@@ -391,6 +391,57 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Folder Name="Staff" ID="{0C07EFF5-7A01-4A64-8A49-1E4686E7D585}" ShortID="557723451">
+					<ChildrenList>
+						<Event Name="Play_Staff_Shoot" ID="{44F2075D-C1E6-4E29-8482-58E985B9D144}">
+							<ChildrenList>
+								<Action Name="" ID="{10C08FD7-3EE8-46FB-A7F6-20014FB59D35}" ShortID="367427267">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RandomFireBallLaunch" ID="{27FF8E79-7732-4D9A-9342-A15B66A8EFC0}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{45C3D813-4AE0-4CFF-B2B1-B1E954B51DC1}" ShortID="843134569">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="StaffWoosh" ID="{9363F9B6-82FF-4F01-B95D-23B3FED7D09D}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+						<Event Name="Play_Staff_Explode" ID="{89206CEB-1E69-459B-8692-DE5DB8A9E143}">
+							<ChildrenList>
+								<Action Name="" ID="{036FC540-F12A-406A-96ED-93D0380D81F5}" ShortID="497515762">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="magic_explosion" ID="{D991CC53-2522-4DA9-8B9C-6775E7BD79A4}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{1A92F649-BBD9-428A-8728-E2172E56F6A5}" ShortID="278080213">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="FireballExplosion" ID="{6677BA3C-48D1-4EFB-B8F1-91CB0EB3E0B1}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+						<Event Name="Play_Staff_Trail" ID="{227ADAF3-35A4-41E5-ADC9-C44FD424B935}">
+							<ChildrenList>
+								<Action Name="" ID="{C3F339C6-157D-4A03-9940-00765A5850CA}" ShortID="655205348">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="RandomFireBallLaunch" ID="{27FF8E79-7732-4D9A-9342-A15B66A8EFC0}" WorkUnitID="{605582EE-B8B1-4FFA-8144-44840D8CF99B}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+					</ChildrenList>
+				</Folder>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

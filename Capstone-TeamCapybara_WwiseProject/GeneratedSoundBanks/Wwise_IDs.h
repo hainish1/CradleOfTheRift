@@ -52,12 +52,17 @@ namespace AK
         static const AkUniqueID PLAY_SONG_CAVE = 332365527U;
         static const AkUniqueID PLAY_SONG_FOREST = 3919329323U;
         static const AkUniqueID PLAY_SONG_ICEY = 3808693238U;
+        static const AkUniqueID PLAY_STAFF_CAST = 2371993326U;
+        static const AkUniqueID PLAY_STAFF_EXPLODE = 2646797118U;
+        static const AkUniqueID PLAY_STAFF_SHOOT = 2825878508U;
+        static const AkUniqueID PLAY_STAFF_TRAIL = 3186595221U;
         static const AkUniqueID PLAY_TELEPORTER_AMBIENCE = 1203559441U;
         static const AkUniqueID PLAY_TUTORIAL = 283731184U;
         static const AkUniqueID PLAY_UI_BUTTON_CLICK = 1661558166U;
         static const AkUniqueID ROCK_BREAK = 756826226U;
         static const AkUniqueID ROCK_FLY = 4000648528U;
         static const AkUniqueID ROCK_FLY_SMALL = 532024140U;
+        static const AkUniqueID SHRINE_OPEN = 3027446739U;
         static const AkUniqueID SKULL_DEATH = 2252982343U;
         static const AkUniqueID SLIME_BOSS_DAMAGE = 804704067U;
         static const AkUniqueID SLIME_BOSS_JUMP = 1864203916U;
@@ -130,6 +135,7 @@ namespace AK
         static const AkUniqueID MAIN_AUDIO_BUS = 2246998526U;
         static const AkUniqueID MUSIC_BUS = 3127962312U;
         static const AkUniqueID PLAYER_BUS = 174537428U;
+        static const AkUniqueID STAFF_BUS = 4168009463U;
     } // namespace BUSSES
 
     namespace AUX_BUSSES

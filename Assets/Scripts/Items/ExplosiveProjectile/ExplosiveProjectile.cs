@@ -38,6 +38,8 @@ public class ExplosiveProjectile : Projectile
 
             if (fireballVisual == null) CreateFireballVisual();
             else fireballVisual.SetActive(true);
+            
+            PlayThrowSound();
         }
     }
 
@@ -135,6 +137,7 @@ public class ExplosiveProjectile : Projectile
                 float dist = Vector3.Distance(startPos, transform.position);
                 if (dist >= maxRange)
                 {
+                    PlayDestorySound();
                     SpawnExplosionEffect();
                     ReturnToSource();
                     return;
@@ -181,6 +184,7 @@ public class ExplosiveProjectile : Projectile
         if (((1 << collision.gameObject.layer) & hitMask) == 0) return;
 
         CreateImpactFX();
+        PlayDestorySound();
 
         var enemy = collision.collider.GetComponentInParent<Enemy>();
         if (enemy != null && IsActive)
