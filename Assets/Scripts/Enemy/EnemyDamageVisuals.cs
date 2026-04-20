@@ -47,9 +47,24 @@ public class EnemyDamageVisuals : MonoBehaviour
     {
         if (takeDamageVFXPrefab == null) return;
         Transform parent = damageVfxAttachPoint != null ? damageVfxAttachPoint : transform;
-        GameObject vfx = Instantiate(takeDamageVFXPrefab, parent.position, parent.rotation, parent);
 
-        Destroy(vfx, 0.5f); // Should prob make the VFX auto destroy instead of doing it here.
+        GameObject vfx;
+        if (ObjectPool.instance != null)
+        {
+            // pool returns detached but thats fine i think
+            vfx = ObjectPool.instance.GetObject(takeDamageVFXPrefab, parent);
+        }
+        else
+        {
+            vfx = Instantiate(takeDamageVFXPrefab, parent.position, parent.rotation, parent);
+        }
+        vfx.transform.position = parent.position;
+        vfx.transform.rotation = parent.rotation;
+
+        if (ObjectPool.instance != null)
+            ObjectPool.instance.ReturnObject(vfx, 0.5f);
+        else
+            Destroy(vfx, 0.5f);
     }
 
     public void ShowDamageVisuals(float damage)
