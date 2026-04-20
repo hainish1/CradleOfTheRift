@@ -1,0 +1,115 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Mac",
+  "BasePlatform": "Mac",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "2371993326",
+    "Type": "Event",
+    "GUID": "{CEA6C90C-9882-499E-BB9C-B6416C01D6E4}",
+    "Language": "SFX",
+    "Hash": "{1ED8386F-7ADE-B729-982A-85213CB94A02}",
+    "ObjectPath": "Play_Staff_Cast",
+    "ShortName": "Play_Staff_Cast",
+    "Path": "Event/Play_Staff_Cast.bnk",
+    "Media": [
+     {
+      "Id": "132331391",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0277_weapon_smoke_grenade_launcher_003[1].wav",
+      "Path": "Media/132331391.wem",
+      "CachePath": "53/{53271B9C-519E-3CE1-E40A-462AE1B0185D}.wem"
+     },
+     {
+      "Id": "143699886",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "Bluezone_BC0277_weapon_smoke_grenade_launcher_003[1].wav",
+      "Path": "Media/143699886.wem",
+      "CachePath": "9F/{9F818D5C-0126-3EDD-0EEF-A1D008B245CD}.wem"
+     },
+     {
+      "Id": "424276914",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "magefiresound.wav",
+      "Path": "Media/424276914.wem",
+      "CachePath": "D9/{D942FC52-B392-A8A4-F7F8-DECC15542CB7}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "2371993326",
+      "Name": "Play_Staff_Cast",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Staff\\Play_Staff_Cast",
+      "GUID": "{CEA6C90C-9882-499E-BB9C-B6416C01D6E4}",
+      "MaxAttenuation": "300",
+      "DurationType": "OneShot",
+      "DurationMin": "0",
+      "DurationMax": "0",
+      "ActionPostEvent": [
+       {
+        "Id": "2825878508",
+        "Name": "Play_Staff_Shoot",
+        "ObjectPath": "\\Events\\Default Work Unit\\Player\\Staff\\Play_Staff_Shoot",
+        "GUID": "{44F2075D-C1E6-4E29-8482-58E985B9D144}"
+       },
+       {
+        "Id": "3186595221",
+        "Name": "Play_Staff_Trail",
+        "ObjectPath": "\\Events\\Default Work Unit\\Player\\Staff\\Play_Staff_Trail",
+        "GUID": "{227ADAF3-35A4-41E5-ADC9-C44FD424B935}"
+       }
+      ]
+     },
+     {
+      "Id": "2825878508",
+      "Name": "Play_Staff_Shoot",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Staff\\Play_Staff_Shoot",
+      "GUID": "{44F2075D-C1E6-4E29-8482-58E985B9D144}",
+      "MaxAttenuation": "300",
+      "DurationType": "OneShot",
+      "DurationMin": "0.9603713",
+      "DurationMax": "3.0972483",
+      "MediaRefs": [
+       {
+        "Id": "132331391"
+       },
+       {
+        "Id": "143699886"
+       },
+       {
+        "Id": "424276914"
+       }
+      ]
+     },
+     {
+      "Id": "3186595221",
+      "Name": "Play_Staff_Trail",
+      "ObjectPath": "\\Events\\Default Work Unit\\Player\\Staff\\Play_Staff_Trail",
+      "GUID": "{227ADAF3-35A4-41E5-ADC9-C44FD424B935}",
+      "MaxAttenuation": "300",
+      "DurationType": "OneShot",
+      "DurationMin": "0.9603713",
+      "DurationMax": "3.0972483",
+      "MediaRefs": [
+       {
+        "Id": "132331391"
+       },
+       {
+        "Id": "143699886"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{4C5F1A2F-4CAA-C628-F79E-5EB8E6B54367}"
+ }
+}
