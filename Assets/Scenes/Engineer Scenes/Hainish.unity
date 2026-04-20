@@ -6484,6 +6484,9 @@ MonoBehaviour:
   singleActivation: 1
   audioData: {fileID: 0}
   lootTable: {fileID: 487428407}
+  closedChestVisual: {fileID: 0}
+  openChestVisual: {fileID: 0}
+  destroyDelay: 2
   OpenSound:
     idInternal: 0
     valueGuidInternal: 
@@ -13780,6 +13783,9 @@ MonoBehaviour:
   singleActivation: 1
   audioData: {fileID: 0}
   lootTable: {fileID: 1047306115}
+  closedChestVisual: {fileID: 0}
+  openChestVisual: {fileID: 0}
+  destroyDelay: 2
   OpenSound:
     idInternal: 0
     valueGuidInternal: 
@@ -14901,6 +14907,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 579890953250092411, guid: 865e351dd5f3d6f43bf406f61705722a, type: 3}
+      propertyPath: dragDuration
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 579890953250092411, guid: 865e351dd5f3d6f43bf406f61705722a, type: 3}
+      propertyPath: elementalProfile.speedMultiplier
+      value: 1.4
+      objectReference: {fileID: 0}
     - target: {fileID: 3718974384298892497, guid: 865e351dd5f3d6f43bf406f61705722a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 132.30206
@@ -21238,6 +21252,9 @@ MonoBehaviour:
   singleActivation: 1
   audioData: {fileID: 0}
   lootTable: {fileID: 1571125219}
+  closedChestVisual: {fileID: 0}
+  openChestVisual: {fileID: 0}
+  destroyDelay: 2
   OpenSound:
     idInternal: 0
     valueGuidInternal: 
@@ -38319,6 +38336,9 @@ MonoBehaviour:
   singleActivation: 1
   audioData: {fileID: 0}
   lootTable: {fileID: 8095773939692875425}
+  closedChestVisual: {fileID: 0}
+  openChestVisual: {fileID: 0}
+  destroyDelay: 2
   OpenSound:
     idInternal: 0
     valueGuidInternal: 
