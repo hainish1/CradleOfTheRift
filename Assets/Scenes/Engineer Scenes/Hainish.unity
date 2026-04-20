@@ -30128,7 +30128,7 @@ PrefabInstance:
       objectReference: {fileID: 1464753340}
     - target: {fileID: 2737880262356001210, guid: d2cad68ad46525e4a91157a32a4535da, type: 3}
       propertyPath: m_VersionIndex
-      value: 2065
+      value: 2068
       objectReference: {fileID: 0}
     - target: {fileID: 5629221932387799761, guid: d2cad68ad46525e4a91157a32a4535da, type: 3}
       propertyPath: m_Mesh
@@ -37403,6 +37403,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5880799857429628871, guid: ef94aee2860b50543adbd86217b57a09, type: 3}
+      propertyPath: destroyVFX
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5880799857429628871, guid: ef94aee2860b50543adbd86217b57a09, type: 3}
+      propertyPath: activateVFX
+      value: 
+      objectReference: {fileID: 9017484664307500583, guid: 55235a7ea8adfee41bbb8c5e7f6fc65d, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -37,6 +38,12 @@ public class Shrine : MonoBehaviour, IInteractable, IPromptHeightOverride
     [Header("VFX")]
     [SerializeField] private GameObject activateVFX;
     [SerializeField] private Transform vfxAnchor;
+    [Tooltip("VFX played when the shrine disappears after being used")]
+    [SerializeField] private GameObject destroyVFX; // just in case but idk
+    [Tooltip("How long the destroy VFX is allowed")]
+    [SerializeField] private float destroyVFXLifetime = 3f;
+    [Tooltip("Delay between using the shrine and the shrine actually disappearing")]
+    [SerializeField] private float destroyDelay = 1f;
 
     [Header("Prompt")]
     [SerializeField] private float promptHeightOffset = 2.5f;
@@ -176,10 +183,25 @@ public class Shrine : MonoBehaviour, IInteractable, IPromptHeightOverride
         {
             canInteract = false;
             PlayCantAffordSound();
-            Destroy(gameObject, 1f);
+            StartCoroutine(DestroyAfterDelay());
         }
         PlayActivateSound();
         return true;
+    }
+
+    private IEnumerator DestroyAfterDelay()
+    {
+        yield return new WaitForSeconds(destroyDelay);
+        PlayDestroyVFX();
+        Destroy(gameObject);
+    }
+
+    private void PlayDestroyVFX()
+    {
+        if (destroyVFX == null) return;
+        Transform anchor = vfxAnchor != null ? vfxAnchor : transform;
+        var fx = Instantiate(destroyVFX, anchor.position, anchor.rotation);
+        Destroy(fx, destroyVFXLifetime);
     }
 
     private void PlayActivateSound()
