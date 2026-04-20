@@ -9,6 +9,12 @@ public class UpgradePanelUI : MonoBehaviour
     private VisualElement choicesContainer;
     private Button rerollButton;
 
+    [Header("Sounds")]
+    [SerializeField]
+    private AK.Wwise.Event clickSFX;
+    [SerializeField]
+    private AK.Wwise.Event purchaseSFX;
+
     void Awake()
     {
         document = GetComponent<UIDocument>();
@@ -155,6 +161,8 @@ public class UpgradePanelUI : MonoBehaviour
 
         card.RegisterCallback<ClickEvent>(evt =>
         {
+            AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX);
+            AUDIO_GlobalAudioPlayer.Instance.PlaySound(purchaseSFX);
             Hide();
             if (UpgradeLevelManager.Instance != null)
                 UpgradeLevelManager.Instance.SelectUpgrade(choiceIndex);
@@ -165,6 +173,7 @@ public class UpgradePanelUI : MonoBehaviour
 
     private void OnRerollClicked(ClickEvent evt)
     {
+        AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX);
         UpgradeLevelManager.Instance.RerollChoices();
         UpdateRerollButtonText();
     }
@@ -195,6 +204,7 @@ public class UpgradePanelUI : MonoBehaviour
 
     private void OnCloseClicked(ClickEvent evt)
     {
+        AUDIO_GlobalAudioPlayer.Instance.PlaySound(clickSFX);
         // idk man ill have jared do that
         UpgradeLevelManager.Instance.CloseUpgradePanel();
     }
