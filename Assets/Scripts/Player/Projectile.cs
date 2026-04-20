@@ -189,8 +189,8 @@ public class Projectile : MonoBehaviour
                 rb.position = savedPosition + savedVelocity.normalized * 0.1f;
             }
 
-            Debug.Log($"[PassThroughSpear] Passed through {collision.gameObject.name} "
-                    + $"({enemiesPassedThrough}/{PassThroughSpear.MaxPassThroughCount})");
+            // Debug.Log($"[PassThroughSpear] Passed through {collision.gameObject.name} "
+            //         + $"({enemiesPassedThrough}/{PassThroughSpear.MaxPassThroughCount})");
             return; // do NOT destroy, keep flying
         }
 
@@ -244,7 +244,7 @@ public class Projectile : MonoBehaviour
             }
 
             if (!passingThrough) hasHit = true;
-            Debug.Log($"Dealt {actualDamage} damage to {collision.gameObject.name}");
+            // Debug.Log($"Dealt {actualDamage} damage to {collision.gameObject.name}");
         }
     }
 
