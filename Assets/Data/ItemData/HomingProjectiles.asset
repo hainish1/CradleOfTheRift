@@ -13,13 +13,12 @@ MonoBehaviour:
   m_Name: HomingProjectiles
   m_EditorClassIdentifier: 
   itemName: Homing Projectiles
-  description: Occasionally send out 3 (+1 per stack) spears automatically which
-    home to attack enemies
+  description: Periodically shoot 3 (+1 per stack) homing bolts
   icon: {fileID: 21300000, guid: 6a87209d1fd51854a834ff8d18a20955, type: 3}
   rarity: 2
   rarityColor: {r: 0.50980395, g: 0.078431375, b: 1, a: 1}
   canStack: 1
-  maxStacks: 2
+  maxStacks: 99
   stackingType: 0
   useMultipleStats: 0
   statMods: []
