@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
   m_Name: LightningStrike Cooldown Upgrade
   m_EditorClassIdentifier: 
-  itemName: Lightning Strike:Cooldown
-  description: Reduces Lightning Strike cooldown by 0.5s
+  itemName: Lightning Strike Cooldown+
+  description: Reduces Lightning Strike cooldown by 0.5s.
   icon: {fileID: 21300000, guid: 54c2e0e1f98cc18448b731de7d4b8117, type: 3}
   rarity: 0
   rarityColor: {r: 1, g: 1, b: 1, a: 1}
@@ -24,7 +24,7 @@ MonoBehaviour:
   statMods: []
   effects:
   - kind: 35
-    description: Strike cooldown -0.5s
+    description: Reduces Lightning Strike cooldown by 0.5s.
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0
@@ -138,6 +138,24 @@ MonoBehaviour:
     orbitingFireballOnKillDuration: 5
     orbitingFireballOnLightningThreshold: 100
     orbitingFireballOnLightningDuration: 5
+    poisonCloudDamagePerTick: 3
+    poisonCloudDamageTickInterval: 1
+    poisonCloudRadius: 3
+    poisonCloudLifetime: 5
+    poisonCloudBehindDistance: 1.25
+    poisonCloudVfxPrefab: {fileID: 0}
+    onLightning:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    onFire:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    onExplosion:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
   statType: 13
   operatorType: 0
   value: 1

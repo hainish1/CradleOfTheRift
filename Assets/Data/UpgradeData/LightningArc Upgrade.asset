@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
   m_Name: LightningArc Upgrade
   m_EditorClassIdentifier: 
-  itemName: Arc Lightning
-  description: Lightning chains from you to damage nearby enemies
+  itemName: Tesla Arc
+  description: Lightning constantly strikes nearby enemies.
   icon: {fileID: 21300000, guid: 54c2e0e1f98cc18448b731de7d4b8117, type: 3}
   rarity: 3
   rarityColor: {r: 1, g: 0.973505, b: 0.15686274, a: 1}
@@ -24,7 +24,7 @@ MonoBehaviour:
   statMods: []
   effects:
   - kind: 15
-    description: Lightning chains from you to damage nearby enemies
+    description: Lightning constantly strikes nearby enemies.
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0

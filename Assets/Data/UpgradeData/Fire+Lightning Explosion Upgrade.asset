@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
   m_Name: Fire+Lightning Explosion Upgrade
   m_EditorClassIdentifier: 
-  itemName: Element explosion
-  description: Dealing both Lightning and Fire damage to an enemy triggers an explosion.
+  itemName: Elemental Overload
+  description: Dealing Lightning and Fire damage to an enemy triggers an explosion.
   icon: {fileID: 21300000, guid: 8fa2a36f5f130804cbc7f3b7f28df1f3, type: 3}
   rarity: 3
   rarityColor: {r: 1, g: 0.2374646, b: 0.08018869, a: 1}
@@ -24,7 +24,7 @@ MonoBehaviour:
   statMods: []
   effects:
   - kind: 16
-    description: Dealing both Lightning and Fire damage to an enemy triggers an explosion.
+    description: Dealing Lightning and Fire damage to an enemy triggers an explosion.
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0
