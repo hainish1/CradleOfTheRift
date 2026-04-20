@@ -313,14 +313,24 @@ public class RevenantBossRange : Enemy
     {
         if (attackIndicator != null)
         {
-            GameObject newFx = Instantiate(attackIndicator);
-            newFx.transform.position = transform.position + Vector3.up * 8f;
-            newFx.transform.rotation = Quaternion.identity;
+            GameObject newFx;
+            if (ObjectPool.instance != null)
+            {
+                newFx = ObjectPool.instance.GetObject(attackIndicator, transform);
+            }
+            else
+            {
+                newFx = Instantiate(attackIndicator);
+            }
+            newFx.transform.SetPositionAndRotation(transform.position + Vector3.up * 8f, Quaternion.identity);
             newFx.transform.localScale = Vector3.one * 6f;
 
             audioController?.PlayAttackIndicatorSound();
 
-            Destroy(newFx, 0.25f); // destroy after a short time
+            if (ObjectPool.instance != null)
+                ObjectPool.instance.ReturnObject(newFx, 0.25f);
+            else
+                Destroy(newFx, 0.25f);
         }
     }
 
