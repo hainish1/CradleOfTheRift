@@ -14,6 +14,78 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Play_Lost_Screen" ID="{13CD271F-D9CC-458B-B842-69E77D41E9E3}">
+					<ChildrenList>
+						<Action Name="" ID="{C7BBD07D-7A87-4264-95BE-AA5EB17A5725}" ShortID="36940211">
+							<PropertyList>
+								<Property Name="ActionType" Type="int16" Value="41"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Stop_All" ID="{E10F8F55-1AD6-48A6-8544-94E10C94EC2E}" WorkUnitID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{2FF93751-47E9-4D49-B4BF-14E63B17980C}" ShortID="916988640">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Tutorial" ID="{1AA39017-FCB0-4FDD-94B6-3D0D00464C8E}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{37C45317-4595-4DEA-A332-151FFE0F099E}" ShortID="645759005">
+							<PropertyList>
+								<Property Name="ActionType" Type="int16" Value="22"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Dead" ID="{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}" WorkUnitID="{D51EFDF0-CE93-44D2-AEF6-831B3064CA87}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_Win_Screen" ID="{1A6363CC-8DA2-4FD5-B9F9-75C4F5395AA6}">
+					<ChildrenList>
+						<Action Name="" ID="{E157D8DD-5505-4045-98AD-005033330AA9}" ShortID="600809345">
+							<PropertyList>
+								<Property Name="ActionType" Type="int16" Value="41"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Stop_All" ID="{E10F8F55-1AD6-48A6-8544-94E10C94EC2E}" WorkUnitID="{E8E2B8D2-1B49-43FB-B7A3-F169A0B50140}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{F0177051-5124-4962-98F3-8B7C22BB5C8A}" ShortID="506168725">
+							<PropertyList>
+								<Property Name="ActionType" Type="int16" Value="22"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Dead" ID="{A8358A68-BF8B-4623-AC82-BC1BA7FBF927}" WorkUnitID="{D51EFDF0-CE93-44D2-AEF6-831B3064CA87}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{FBEF66C6-A058-49F3-A0F7-C6014DFF8040}" ShortID="357339859">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Win" ID="{B2C75CF7-01BC-44F2-ACA0-F8B8A8A969F3}" WorkUnitID="{4A5A4467-9216-44B3-AAAF-211CEB6513D5}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+						<Action Name="" ID="{B3DA13CD-2B0F-4702-8B02-B4D68D81643D}" ShortID="1028142469">
+							<PropertyList>
+								<Property Name="ActionType" Type="int16" Value="38"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="DistanceToExtractionPoint" ID="{07D46845-C40B-40D5-9C40-99C958D0F115}" WorkUnitID="{B719F7EC-DD1A-4EA5-B036-A4820D075031}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

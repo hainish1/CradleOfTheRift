@@ -658,8 +658,9 @@ public class EnemySpawner_2 : MonoBehaviour
     /// <param name="enemy">The enemy to play the sound at.</param>
     private void PlaySpawnSFX(GameObject enemy)
     {
-        if (spawnSFX is null) return;
-        spawnSFX.Post(enemy);
+        if (spawnSFX != null)
+            if(spawnSFX.IsValid())
+                spawnSFX.Post(enemy);
     }
 
     private void EnsurePlayerLocation()
