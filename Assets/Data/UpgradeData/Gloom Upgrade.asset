@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Gloom Upgrade
   m_EditorClassIdentifier: 
   itemName: Gloom
-  description: When dashing you leave a pool of poison on the ground
+  description: Dashing leaves behind a pool of poison.
   icon: {fileID: 21300000, guid: ccf580d366f97034c9d9248f075c5656, type: 3}
   rarity: 4
   rarityColor: {r: 0.6392157, g: 0.15686275, b: 1, a: 1}
@@ -24,7 +24,7 @@ MonoBehaviour:
   statMods: []
   effects:
   - kind: 6
-    description: 
+    description: Dashing leaves behind a pool of poison.
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0

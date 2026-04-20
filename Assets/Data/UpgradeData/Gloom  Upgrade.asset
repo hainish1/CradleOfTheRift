@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Gloom  Upgrade
   m_EditorClassIdentifier: 
   itemName: 'Gloom '
-  description: xxxx
+  description: ???
   icon: {fileID: 21300000, guid: ccf580d366f97034c9d9248f075c5656, type: 3}
   rarity: 3
   rarityColor: {r: 0.42549908, g: 0, b: 0.9245283, a: 1}
@@ -24,7 +24,7 @@ MonoBehaviour:
   statMods: []
   effects:
   - kind: 45
-    description: xxxx
+    description: ???
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0
@@ -136,6 +136,26 @@ MonoBehaviour:
     orbitingFireballBonusDamage: 3
     orbitingFireballBonusSpeed: 15
     orbitingFireballOnKillDuration: 5
+    orbitingFireballOnLightningThreshold: 100
+    orbitingFireballOnLightningDuration: 5
+    poisonCloudDamagePerTick: 3
+    poisonCloudDamageTickInterval: 1
+    poisonCloudRadius: 3
+    poisonCloudLifetime: 5
+    poisonCloudBehindDistance: 1.25
+    poisonCloudVfxPrefab: {fileID: 0}
+    onLightning:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    onFire:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    onExplosion:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
   statType: 13
   operatorType: 0
   value: 1

@@ -16,6 +16,22 @@
     -unity-background-scale-mode: scale-and-crop;
 }
 
+/* Falling Leaves Container */
+.leaves-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Individual leaf element (spawned via C#) */
+.leaf {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
 /* Left panel occupying ~1/3 of the screen */
 .left-panel {
     position: absolute;
