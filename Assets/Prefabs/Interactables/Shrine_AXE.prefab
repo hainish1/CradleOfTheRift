@@ -142,8 +142,11 @@ MonoBehaviour:
   xpPrice: 50
   singleActivation: 1
   blockIfAlreadyEquipped: 1
-  activateVFX: {fileID: 0}
+  activateVFX: {fileID: 9017484664307500583, guid: 55235a7ea8adfee41bbb8c5e7f6fc65d, type: 3}
   vfxAnchor: {fileID: 0}
+  destroyVFX: {fileID: 0}
+  destroyVFXLifetime: 3
+  destroyDelay: 1
   promptHeightOffset: 4.5
   activateSound:
     idInternal: 0
