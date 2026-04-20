@@ -170,6 +170,31 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Folder Name="Shrine" ID="{32013709-F54B-4DB3-9FD1-DF579447DB82}" ShortID="284390695">
+					<ChildrenList>
+						<Event Name="Shrine_Open" ID="{B9BC34F4-D2B2-4C24-8D9A-97D45454261F}">
+							<ChildrenList>
+								<Action Name="" ID="{B70B3CBA-3331-4BD6-9422-F09E04EDB36D}" ShortID="246567806">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="41"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Chest_Open" ID="{E8ACB5E9-C9AC-4B80-97EF-9A825FC9C893}" WorkUnitID="{3965F864-7315-4D51-BF9F-405BFDDB9631}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{052F492B-B9A6-4376-9A0E-899C32BDE7B7}" ShortID="157015612">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Item Pickup" ID="{904BF4B8-3F5C-4045-B2F0-CB304643D46F}" WorkUnitID="{8ADB7485-E0A9-4F0D-A14F-7ED951DF96EF}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+					</ChildrenList>
+				</Folder>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>
