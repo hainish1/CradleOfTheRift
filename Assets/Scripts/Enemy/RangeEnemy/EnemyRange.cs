@@ -620,7 +620,7 @@ public class EnemyRange : Enemy
     {
         // this.projectileDamage = Mathf.CeilToInt(newDamage);
         this.projectileDamage = newDamage;
-        Debug.Log("Projectile Damage: " + this.projectileDamage);
+        // Debug.Log("Projectile Damage: " + this.projectileDamage);
     }
 
     /// <summary>

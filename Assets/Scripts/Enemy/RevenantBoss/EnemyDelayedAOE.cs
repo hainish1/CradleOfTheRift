@@ -54,7 +54,7 @@ public class EnemyDelayedAOE : MonoBehaviour
                     dmg.TakeDamage(damage);
 
                     damagedTargets.Add(dmg);
-                    Debug.Log(damage + " Delayed AOE Damage dealt to " + dmg.ToString() + " by " + this.ToString());
+                    // Debug.Log(damage + " Delayed AOE Damage dealt to " + dmg.ToString() + " by " + this.ToString());
                 }
             }
         }
@@ -66,7 +66,7 @@ public class EnemyDelayedAOE : MonoBehaviour
     {
         if (explosionVFX == null)
         {
-            Debug.LogError("No explosion VFX has been assigned!");
+            Debug.LogWarning("No explosion VFX has been assigned!");
             return;
         }
 

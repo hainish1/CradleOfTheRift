@@ -134,7 +134,7 @@ public class EnemyAOEProjectile : MonoBehaviour
                     dmg.TakeDamage(aoeDamage);
 
                     damagedTargets.Add(dmg);
-                    Debug.Log(aoeDamage + " AOE Damage dealt to " + dmg.ToString() + " by " + this.ToString());
+                    // Debug.Log(aoeDamage + " AOE Damage dealt to " + dmg.ToString() + " by " + this.ToString());
                 }
             }
         }
