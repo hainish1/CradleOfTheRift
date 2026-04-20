@@ -21,8 +21,6 @@ public class MaceProjectile : Projectile
     [Header("Mace Projectile Parameters")]
     [SerializeField] private GameObject _shockwavePrefab;
     [SerializeField]
-    [Tooltip("How much damage the projectile impact shockwave deals.")] private float _projectileShockwaveDamage;
-    [SerializeField]
     [Tooltip("Radius of the projectile impact shockwave.")] private float _projectileShockwaveRadius;
     [SerializeField]
     [Tooltip("Knockback force of the projectile impact shockwave.")] private float _projectileShockwaveKnockback;
@@ -65,7 +63,7 @@ public class MaceProjectile : Projectile
         
         GameObject shockwave = Instantiate(_shockwavePrefab, transform.position, Quaternion.identity);
         Shockwave shockwaveScript = shockwave.GetComponent<Shockwave>();
-        shockwaveScript.Init(transform.position, hitMask, _projectileShockwaveDamage, _projectileShockwaveKnockback, _projectileShockwaveRadius, attacker);
+        shockwaveScript.Init(transform.position, hitMask, actualDamage, _projectileShockwaveKnockback, _projectileShockwaveRadius, attacker);
 
         if (DelayedProjectiles.IsEnabled)
         {
