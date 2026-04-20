@@ -209,7 +209,16 @@ public class PlayerGroundSlam : MonoBehaviour
     protected void CreateImpactFX()
     {
         if (groundImpactFX == null) return;
-        GameObject newFX = Instantiate(groundImpactFX);
+
+        GameObject newFX;
+        if (ObjectPool.instance != null)
+        {
+            newFX = ObjectPool.instance.GetObject(groundImpactFX, transform);
+        }
+        else
+        {
+            newFX = Instantiate(groundImpactFX);
+        }
         if (groundSlamPoint != null)
         {
             newFX.transform.position = groundSlamPoint.position;
@@ -219,7 +228,10 @@ public class PlayerGroundSlam : MonoBehaviour
             newFX.transform.position = transform.position;
         }
 
-        Destroy(newFX, 2);
+        if (ObjectPool.instance != null)
+            ObjectPool.instance.ReturnObject(newFX, 2f);
+        else
+            Destroy(newFX, 2f);
 
         // GameObject newImpacFX = ObjectPool.instance.GetObject(bulletImpactFX, transform);
         // ObjectPool.instance.ReturnObject(newImpacFX, 1f); // return the effect back to the pool after 1 second of delay

@@ -83,7 +83,16 @@ public class PlayerShockwaveController : MonoBehaviour
             _shockwaveCooldownTimer = 0;
             OnShockwaveUsed?.Invoke();
             _playerAnim.SetTrigger("Shockwave");
-            GameObject shockwave = Instantiate(_shockwavePrefab, _playerCenter.position, Quaternion.identity);
+            GameObject shockwave;
+            if (ObjectPool.instance != null)
+            {
+                shockwave = ObjectPool.instance.GetObject(_shockwavePrefab, _playerCenter);
+            }
+            else
+            {
+                shockwave = Instantiate(_shockwavePrefab);
+            }
+            shockwave.transform.SetPositionAndRotation(_playerCenter.position, Quaternion.identity);
             Shockwave shockwaveScript = shockwave.GetComponent<Shockwave>();
             shockwaveScript.Init(_playerCenter.position, _damageableLayerMasks, ShockwaveDamage, ShockwaveKnockback, ShockwaveRadius, _playerEntity);
             

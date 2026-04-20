@@ -208,19 +208,29 @@ public class PlayerMeleeAttack : MonoBehaviour
     protected void CreateImpactFX()
     {
         if (meleeImpactFX == null) return;
-        GameObject newFX = Instantiate(meleeImpactFX);
-        if (meleeFXPoint != null)
+
+        GameObject newFX;
+        if (ObjectPool.instance != null)
         {
-            newFX.transform.position = meleeFXPoint.transform.position;
-            newFX.transform.rotation = meleeFXPoint.transform.rotation;
+            newFX = ObjectPool.instance.GetObject(meleeImpactFX, transform);
         }
         else
         {
-            newFX.transform.position = transform.position;
-            newFX.transform.rotation = transform.rotation;
+            newFX = Instantiate(meleeImpactFX);
+        }
+        if (meleeFXPoint != null)
+        {
+            newFX.transform.SetPositionAndRotation(meleeFXPoint.transform.position, meleeFXPoint.transform.rotation);
+        }
+        else
+        {
+            newFX.transform.SetPositionAndRotation(transform.position, transform.rotation);
         }
 
-        Destroy(newFX, 1);
+        if (ObjectPool.instance != null)
+            ObjectPool.instance.ReturnObject(newFX, 1f);
+        else
+            Destroy(newFX, 1f);
 
         // GameObject newImpacFX = ObjectPool.instance.GetObject(bulletImpactFX, transform);
         // ObjectPool.instance.ReturnObject(newImpacFX, 1f); // return the effect back to the pool after 1 second of delay

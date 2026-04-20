@@ -320,11 +320,15 @@ public class EnemyMelee : Enemy
     // enable body VFX for emelental type
     public void ApplyElementalVisuals()
     {
-        if (elementalProfile == null) return;
-        if (elementalProfile.modelVariant != null && !elementalProfile.modelVariant.activeSelf)
-            elementalProfile.modelVariant.SetActive(true);
-        if (elementalProfile.bodyVFX != null && !elementalProfile.bodyVFX.activeSelf)
-            elementalProfile.bodyVFX.SetActive(true);
+        // Visuals are currently authored directly on the prefab GameObject,
+        // so the elementalProfile.modelVariant / bodyVFX fields aren't used.
+        // Re-enable the block below if you ever go back to profile-driven visuals.
+
+        // if (elementalProfile == null) return;
+        // if (elementalProfile.modelVariant != null && !elementalProfile.modelVariant.activeSelf)
+        //     elementalProfile.modelVariant.SetActive(true);
+        // if (elementalProfile.bodyVFX != null && !elementalProfile.bodyVFX.activeSelf)
+        //     elementalProfile.bodyVFX.SetActive(true);
     }
 
     public ElementalType GetElementalType() => elementalProfile != null ? elementalProfile.type : ElementalType.None;

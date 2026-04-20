@@ -54,7 +54,7 @@ public class EnemyDelayedAOE : MonoBehaviour
                     dmg.TakeDamage(damage);
 
                     damagedTargets.Add(dmg);
-                    Debug.Log(damage + " Delayed AOE Damage dealt to " + dmg.ToString() + " by " + this.ToString());
+                    // Debug.Log(damage + " Delayed AOE Damage dealt to " + dmg.ToString() + " by " + this.ToString());
                 }
             }
         }
@@ -66,14 +66,26 @@ public class EnemyDelayedAOE : MonoBehaviour
     {
         if (explosionVFX == null)
         {
-            Debug.LogError("No explosion VFX has been assigned!");
+            Debug.LogWarning("No explosion VFX has been assigned!");
             return;
         }
-        GameObject newFx = Instantiate(explosionVFX);
-        newFx.transform.position = transform.position;
-        newFx.transform.rotation = Quaternion.identity;
+
+        GameObject newFx;
+        if (ObjectPool.instance != null)
+        {
+            newFx = ObjectPool.instance.GetObject(explosionVFX, transform);
+        }
+        else
+        {
+            newFx = Instantiate(explosionVFX);
+        }
+        newFx.transform.SetPositionAndRotation(transform.position, Quaternion.identity);
         newFx.transform.localScale = Vector3.one * radius * 0.25f;
-        Destroy(newFx, 2f); // destroy after two second
+
+        if (ObjectPool.instance != null)
+            ObjectPool.instance.ReturnObject(newFx, 2f);
+        else
+            Destroy(newFx, 2f);
     }
 
     void OnDrawGizmos()

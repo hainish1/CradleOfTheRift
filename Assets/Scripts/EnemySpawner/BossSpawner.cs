@@ -151,9 +151,23 @@ public class BossSpawner : MonoBehaviour
     private void PlaySpawnVFX(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation)
     {
         if(spawnVFXPrefab == null) return;
-        GameObject vfx = Instantiate(spawnVFXPrefab, position, rotation);
 
-        Destroy(vfx, 4.0f); // Should prob make the VFX auto destroy instead of doing it here.
+        GameObject vfx;
+        if (ObjectPool.instance != null)
+        {
+            vfx = ObjectPool.instance.GetObject(spawnVFXPrefab, transform);
+        }
+        else
+        {
+            vfx = Instantiate(spawnVFXPrefab);
+        }
+        vfx.transform.position = position;
+        vfx.transform.rotation = rotation;
+
+        if (ObjectPool.instance != null)
+            ObjectPool.instance.ReturnObject(vfx, 4.0f);
+        else
+            Destroy(vfx, 4.0f);
     }
 
     private void Reset()

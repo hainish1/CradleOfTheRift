@@ -496,7 +496,6 @@ GameObject:
   - component: {fileID: 1968572520550132971}
   - component: {fileID: 8319483170705975023}
   - component: {fileID: 7934240844938691957}
-  - component: {fileID: 1563781849266918951}
   - component: {fileID: 2958537676532580295}
   - component: {fileID: 627228884536398151}
   - component: {fileID: 4056581679950275586}
@@ -613,6 +612,10 @@ MonoBehaviour:
   healthRegenVFXPrefab: {fileID: 9017484664307500583, guid: 1245b8d2997d5b34fb1637be70a7eb05, type: 3}
   regenVfxAttachPoint: {fileID: 0}
   normalHealVFXDuration: 1
+  hurtSound:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
 --- !u!114 &8678201601994762703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -835,32 +838,10 @@ MonoBehaviour:
   _damageableLayerMasks:
     serializedVersion: 2
     m_Bits: 7168
---- !u!114 &1563781849266918951
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2377490915647840013}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4da4c9032f8888e43863c0e2b5f8e0aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slamStartDelay: 0.02
-  slamDownSpeed: 200
-  minSlamHeight: 7
-  slamKnockbackForce: 30
-  enemyMask:
-    serializedVersion: 2
-    m_Bits: 2048
-  slamImpulseSource: {fileID: 4624131168979302280}
-  shakeForce: 2
-  groundImpactFX: {fileID: 4386588507499592971, guid: 48e196c36363e814bad43a44c92dc11b, type: 3}
-  groundSlamPoint: {fileID: 7626462467039816435}
-  debug: 1
-  slamDamage: 20
-  previewSlamRadius: 10
+  _shockwaveSound:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
 --- !u!114 &2958537676532580295
 MonoBehaviour:
   m_ObjectHideFlags: 0
