@@ -290,14 +290,21 @@ public class Projectile : MonoBehaviour
     {
         if (bulletImpactFX == null) return;
 
-        GameObject newFX = Instantiate(bulletImpactFX);
+        GameObject newFX;
+        if (ObjectPool.instance != null)
+        {
+            newFX = ObjectPool.instance.GetObject(bulletImpactFX, transform);
+        }
+        else
+        {
+            newFX = Instantiate(bulletImpactFX);
+        }
         newFX.transform.position = transform.position;
 
-        Destroy(newFX, 1);
-
-        // GameObject newImpacFX = ObjectPool.instance.GetObject(bulletImpactFX, transform);
-        // ObjectPool.instance.ReturnObject(newImpacFX, 1f); // return the effect back to the pool after 1 second of delay
-
+        if (ObjectPool.instance != null)
+            ObjectPool.instance.ReturnObject(newFX, 1f);
+        else
+            Destroy(newFX, 1f);
     }
 
     public virtual void ReturnToSource()
