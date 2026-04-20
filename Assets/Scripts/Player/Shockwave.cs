@@ -33,9 +33,9 @@ public class Shockwave : MonoBehaviour
 
     [SerializeField] private bool knockbackImmunity = false;
 
-    void Awake()
+    void Start()
     {
-        // awake so the renderer is cached even when the object is reused from the pool
+        gameObject.transform.localScale = Vector3.zero;
         _renderer = gameObject.GetComponent<Renderer>();
     }
 
@@ -44,11 +44,7 @@ public class Shockwave : MonoBehaviour
         if (!_isInitialized) return; // Do nothing if initialization has not occured.
         if (_expansionTimer >= _shockwaveEffectExpansionDuration) // Destroy shockwave when duration is expired.
         {
-            _isInitialized = false;
-            if (ObjectPool.instance != null && GetComponent<PooledObject>() != null)
-                ObjectPool.instance.ReturnObject(gameObject);
-            else
-                Destroy(gameObject);
+            Destroy(gameObject);
             return;
         }
 
@@ -78,17 +74,7 @@ public class Shockwave : MonoBehaviour
     /// <param name="caster"> Entity of the caster. </param>
     public void Init(Vector3 position, LayerMask damageableLayerMasks, float damage, float knockback, float radius, Entity caster)
     {
-        // Reset per use state
         transform.position = position;
-        transform.localScale = Vector3.zero;
-        _expansionTimer = 0f;
-        if (_renderer != null)
-        {
-            Color startColor = _renderer.material.color;
-            startColor.a = 1f;
-            _renderer.material.color = startColor;
-        }
-
         _shockwaveEffectExpansionDuration = radius / _shockEffectExpansionSpeed;
 
         // Apply shockwave effects to all damageables in radius.
