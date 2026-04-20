@@ -37410,11 +37410,19 @@ PrefabInstance:
     - target: {fileID: 5880799857429628871, guid: ef94aee2860b50543adbd86217b57a09, type: 3}
       propertyPath: destroyVFX
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 4658278565933542678, guid: ff5d79a7753d5c84f9208277978247a1, type: 3}
     - target: {fileID: 5880799857429628871, guid: ef94aee2860b50543adbd86217b57a09, type: 3}
       propertyPath: activateVFX
       value: 
       objectReference: {fileID: 9017484664307500583, guid: 55235a7ea8adfee41bbb8c5e7f6fc65d, type: 3}
+    - target: {fileID: 5880799857429628871, guid: ef94aee2860b50543adbd86217b57a09, type: 3}
+      propertyPath: destroyDelay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5880799857429628871, guid: ef94aee2860b50543adbd86217b57a09, type: 3}
+      propertyPath: destroyVFXLifetime
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -87,6 +87,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &3970121890363711677
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2611826996733147086}
+  m_Layer: 7
+  m_Name: VFXPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2611826996733147086
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3970121890363711677}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.51, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4796950993963872410}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4255160037174134715
 GameObject:
   m_ObjectHideFlags: 0
@@ -121,6 +152,7 @@ Transform:
   - {fileID: 4379190173007958630}
   - {fileID: 1171425763531710846}
   - {fileID: 4578441551398829396}
+  - {fileID: 2611826996733147086}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5880799857429628871
@@ -143,9 +175,9 @@ MonoBehaviour:
   singleActivation: 1
   blockIfAlreadyEquipped: 1
   activateVFX: {fileID: 9017484664307500583, guid: 55235a7ea8adfee41bbb8c5e7f6fc65d, type: 3}
-  vfxAnchor: {fileID: 0}
-  destroyVFX: {fileID: 0}
-  destroyVFXLifetime: 3
+  vfxAnchor: {fileID: 2611826996733147086}
+  destroyVFX: {fileID: 8648490843435618807, guid: 65b8eec64b35dce44aef5f48c9ea64d2, type: 3}
+  destroyVFXLifetime: 2
   destroyDelay: 1
   promptHeightOffset: 4.5
   activateSound:
