@@ -3,6 +3,7 @@
     <ui:Template name="DifficultyScaler" src="project://database/Assets/UI/DifficultyScaler/DifficultyScaler.uxml?fileID=9197481963319205126&amp;guid=fff542cd6dada6c459a75e0bfd2de4c9&amp;type=3#DifficultyScaler" />
     <ui:Template name="InventoryUI" src="project://database/Assets/UI/InventoryUI.uxml?fileID=9197481963319205126&amp;guid=9836c162555c40640a3ee2f70b6ac4d6&amp;type=3#InventoryUI" />
     <ui:Template name="HealthBar" src="project://database/Assets/UI/HealthBar/HealthBar.uxml?fileID=9197481963319205126&amp;guid=c62ad0f5596be254dacd6d01d4d62a42&amp;type=3#HealthBar" />
+    <ui:Template name="BossHealthBar" src="project://database/Assets/UI/BossHealthBar.uxml?fileID=9197481963319205126&amp;guid=0acb843fe2b09466593f63f5edf07bdd&amp;type=3#BossHealthBar" />
     <ui:Template name="ChestPrompt" src="project://database/Assets/UI/Inventory/ChestPrompt.uxml?fileID=9197481963319205126&amp;guid=294f913208e76bd44bb9d12c02ee7dc3&amp;type=3#ChestPrompt" />
     <ui:Template name="AbilitySlot" src="project://database/Assets/UI/AbilitySlot.uxml?fileID=9197481963319205126&amp;guid=a8e77727db11c7e40809d6ff565c7ddc&amp;type=3#AbilitySlot" />
     <ui:Template name="Gold" src="project://database/Assets/UI/Gold/Gold.uxml?fileID=9197481963319205126&amp;guid=58e61ad538d08ba4e81b9f3de3ac0614&amp;type=3#Gold" />
@@ -15,12 +16,18 @@
             <ui:Instance template="Timer" name="TimerRoot" />
             <ui:Instance template="DifficultyScaler" name="DifficultyScalerRoot" />
         </ui:VisualElement>
+        <ui:VisualElement name="PassiveInventoryStripRoot" picking-mode="Ignore">
+            <ui:VisualElement name="PassiveInventoryPanel" picking-mode="Ignore">
+                <ui:VisualElement name="PassiveInventoryContent" picking-mode="Ignore" />
+            </ui:VisualElement>
+        </ui:VisualElement>
         <ui:VisualElement name="InventoryGroup" style="flex-grow: 1; top: -34px; left: 1px;">
             <ui:VisualElement name="InventoryContainer" style="flex-grow: 1;">
                 <ui:Instance template="InventoryUI" />
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:Instance template="HealthBar" name="HealthBarRoot" picking-mode="Ignore" />
+        <ui:Instance template="BossHealthBar" name="BossHealthRoot" picking-mode="Ignore" />
         <ui:Instance template="ChestPrompt" name="ChestRoot" />
         <ui:VisualElement name="AbilityBar">
             <ui:Instance template="AbilitySlot" />
