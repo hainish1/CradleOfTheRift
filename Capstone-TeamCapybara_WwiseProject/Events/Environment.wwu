@@ -141,6 +141,16 @@
 										</Reference>
 									</ReferenceList>
 								</Action>
+								<Action Name="" ID="{080E5542-3F71-4267-9B5A-3E4B54816E94}" ShortID="1062725431">
+									<PropertyList>
+										<Property Name="ActionType" Type="int16" Value="41"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Play_player_hurt" ID="{59A0E2CB-AA53-42CF-A929-C61E50C846B4}" WorkUnitID="{691DB035-59FA-42BD-8C22-AF773BE39B09}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
 							</ChildrenList>
 						</Event>
 						<Event Name="Chest_Ambient_Stop" ID="{D6FC8F6B-1389-44AE-B70D-F7AE14754C54}">

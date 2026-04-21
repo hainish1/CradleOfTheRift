@@ -1560,10 +1560,14 @@
 					</ChildrenList>
 				</MusicPlaylistContainer>
 				<MusicSwitchContainer Name="Win" ID="{B2C75CF7-01BC-44F2-ACA0-F8B8A8A969F3}" ShortID="582227284">
+					<PropertyList>
+						<Property Name="EnableAttenuation" Type="bool" Value="False"/>
+					</PropertyList>
 					<ReferenceList>
 						<Reference Name="Attenuation">
 							<ObjectRef Name="Environment Attenuation" ID="{0215F850-5BC9-4893-AC9F-BD3ECA73CEDA}" WorkUnitID="{658E6519-A413-4B5E-B02E-60C064A342B3}"/>
 						</Reference>
+						<Reference Name="Attenuation" Platform="Windows"/>
 						<Reference Name="Conversion">
 							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{8470CC8D-87D7-450E-A2B5-8FDCDDBFB4FC}"/>
 						</Reference>
