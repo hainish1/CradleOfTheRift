@@ -11,6 +11,8 @@ public class TutorialCompleter : MonoBehaviour
     public void CompleteTutorial()
     {
         GameSaveState.HasCompletedTutorial = true;
+        if (UpgradeLevelManager.Instance != null)
+            UpgradeLevelManager.Instance.ResetForNewRun();
         SceneManager.LoadScene(mainSceneName);
     }
 }

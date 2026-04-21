@@ -399,5 +399,6 @@ public class UpgradeLevelManager : MonoBehaviour
         levelUpPending = false;
         panelIsOpen = false;
         _rerollGoldCost = baseRerollGoldCost;
+        allowReroll = true;
     }
 }
