@@ -108,9 +108,20 @@ public class EnemyRange : Enemy
     private bool useNavMode;
     private float navDestTimer;
 
+    // LOS check, cached between updates
+    private float losCheckTimer;
+    private const float LosCheckInterval = 0.15f;
+
+    // wall penetration check
+    private int penetrationFrameCounter;
+    private int penetrationFramePhase;
+
     // un collide with wall
     private Collider selfCollider;
     private readonly Collider[] depBuffer = new Collider[4];
+
+    // shared non alloc buffer used for separation + GetSpreadoutChasePoint
+    private static readonly Collider[] wispNeighborBuffer = new Collider[32];
 
     private void OnEnable()
     {
@@ -201,10 +212,20 @@ public class EnemyRange : Enemy
 
         
         // use navmesh when a wall blocks enemy, switch to manual if clear
+        // SphereCast expensive=BAD so its cached and refreshed every LosCheckInterval seconds
+        losCheckTimer -= Time.deltaTime;
         if (target != null)
-            useNavMode = !HasLineOfSightToTarget();
+        {
+            if (losCheckTimer <= 0f)
+            {
+                losCheckTimer = LosCheckInterval;
+                useNavMode = !HasLineOfSightToTarget();
+            }
+        }
         else
+        {
             useNavMode = false;
+        }
 
         SyncAgentToNavMeshPeriodicaly();
 
@@ -275,19 +296,26 @@ public class EnemyRange : Enemy
         }
 
         // if already inside a wall, push out
+        // every 3 frames per wisp -unstuck
+        // is a safety net and dont need to run each frame at high counts
         if (selfCollider != null)
         {
-            int count = Physics.OverlapSphereNonAlloc(nextPos, 0.5f, depBuffer, obstacleMask, QueryTriggerInteraction.Ignore);
-            for (int i = 0; i < count; i++)
+            bool runPenetrationCheck = (penetrationFrameCounter % 3) == penetrationFramePhase;
+            penetrationFrameCounter++;
+            if (runPenetrationCheck)
             {
-                if (Physics.ComputePenetration(selfCollider, nextPos, transform.rotation,
-                                               depBuffer[i], depBuffer[i].transform.position, depBuffer[i].transform.rotation,
-                                               out Vector3 dir, out float dist))
+                int count = Physics.OverlapSphereNonAlloc(nextPos, 0.5f, depBuffer, obstacleMask, QueryTriggerInteraction.Ignore);
+                for (int i = 0; i < count; i++)
                 {
-                    dir.y = 0f;
-                    nextPos += dir * Mathf.Min(dist, 8f * Time.deltaTime);
-                    float incomingVelocity = Vector3.Dot(currentHorizontalVelocity, -dir);
-                    if (incomingVelocity > 0f) currentHorizontalVelocity += dir * incomingVelocity;
+                    if (Physics.ComputePenetration(selfCollider, nextPos, transform.rotation,
+                                                   depBuffer[i], depBuffer[i].transform.position, depBuffer[i].transform.rotation,
+                                                   out Vector3 dir, out float dist))
+                    {
+                        dir.y = 0f;
+                        nextPos += dir * Mathf.Min(dist, 8f * Time.deltaTime);
+                        float incomingVelocity = Vector3.Dot(currentHorizontalVelocity, -dir);
+                        if (incomingVelocity > 0f) currentHorizontalVelocity += dir * incomingVelocity;
+                    }
                 }
             }
         }
@@ -495,11 +523,15 @@ public class EnemyRange : Enemy
         if (Time.time < nextSpreadUpdateTime) return cachedSpreadPoint;
         nextSpreadUpdateTime = Time.time + Mathf.Max(0.05f, spreadInterval);
 
-        // compute separation and angle adaptation
-        Vector3 rawSep = ComputeWispSeparation();
+        // one non alloc neighbor sweep feeds both separation and angle adaptation
+        int neighborCount = (wispSeparationRadius > 0f)
+            ? Physics.OverlapSphereNonAlloc(transform.position, wispSeparationRadius, wispNeighborBuffer)
+            : 0;
+
+        Vector3 rawSep = ComputeWispSeparation(wispNeighborBuffer, neighborCount);
         smoothedSeparation = Vector3.Lerp(smoothedSeparation, rawSep, 0.35f);
 
-        AdaptSpreadAngle();
+        AdaptSpreadAngle(wispNeighborBuffer, neighborCount);
 
         Vector3 targetPos = target.position;
         float radius = Mathf.Max(0.25f, desiredDistance + spreadRadiusOffset);
@@ -511,12 +543,10 @@ public class EnemyRange : Enemy
         return cachedSpreadPoint;
     }
 
-    void AdaptSpreadAngle()
+    void AdaptSpreadAngle(Collider[] hits, int hitCount)
     {
         if (target == null || angleAdaptSpeed <= 0f) return;
-
-        Collider[] hits = Physics.OverlapSphere(transform.position, wispSeparationRadius);
-        if (hits == null || hits.Length == 0) return;
+        if (hits == null || hitCount == 0) return; // early
 
         Vector3 targetPos = target.position;
         float myAngle = Mathf.Atan2(transform.position.z - targetPos.z, transform.position.x - targetPos.x);
@@ -524,7 +554,7 @@ public class EnemyRange : Enemy
         float angularPush = 0f;
         int count = 0;
 
-        for (int i = 0; i < hits.Length; i++)
+        for (int i = 0; i < hitCount; i++)
         {
             Collider c = hits[i];
             if (c == null) continue;
@@ -555,17 +585,15 @@ public class EnemyRange : Enemy
         }
     }
 
-    Vector3 ComputeWispSeparation()
+    Vector3 ComputeWispSeparation(Collider[] hits, int hitCount)
     {
         if (wispSeparationRadius <= 0f || wispSeparationStrength <= 0f) return Vector3.zero;
-
-        Collider[] hits = Physics.OverlapSphere(transform.position, wispSeparationRadius);
-        if (hits == null || hits.Length == 0) return Vector3.zero;
+        if (hits == null || hitCount == 0) return Vector3.zero;
 
         Vector3 push = Vector3.zero;
         int count = 0;
 
-        for (int i = 0; i < hits.Length; i++)
+        for (int i = 0; i < hitCount; i++)
         {
             Collider c = hits[i];
             if (c == null) continue;
@@ -608,6 +636,10 @@ public class EnemyRange : Enemy
         spreadAngleRad = h1 * Mathf.PI * 2f;
         spreadRadiusOffset = (h2 - 0.5f) * spreadRadiusJitter;
         nextSpreadUpdateTime = 0f;
+
+        // stagger per frame physics work so many wisps dont all hit it on the same frame
+        losCheckTimer = h1 * LosCheckInterval;
+        penetrationFramePhase = Mathf.FloorToInt(h2 * 3f) % 3; // run every third frame
     }
 
 
@@ -620,7 +652,7 @@ public class EnemyRange : Enemy
     {
         // this.projectileDamage = Mathf.CeilToInt(newDamage);
         this.projectileDamage = newDamage;
-        Debug.Log("Projectile Damage: " + this.projectileDamage);
+        // Debug.Log("Projectile Damage: " + this.projectileDamage);
     }
 
     /// <summary>
@@ -644,11 +676,15 @@ public class EnemyRange : Enemy
 
     public void ApplyElementalVisuals()
     {
-        if (elementalProfile == null) return;
-        if (elementalProfile.modelVariant != null && !elementalProfile.modelVariant.activeSelf)
-            elementalProfile.modelVariant.SetActive(true);
-        if (elementalProfile.bodyVFX != null && !elementalProfile.bodyVFX.activeSelf)
-            elementalProfile.bodyVFX.SetActive(true);
+        // Visuals are currently authored directly on the prefab GameObject,
+        // so the elementalProfile.modelVariant / bodyVFX fields aren't used.
+        // Re-enable the block below if you ever go back to profile-driven visuals.
+
+        // if (elementalProfile == null) return;
+        // if (elementalProfile.modelVariant != null && !elementalProfile.modelVariant.activeSelf)
+        //     elementalProfile.modelVariant.SetActive(true);
+        // if (elementalProfile.bodyVFX != null && !elementalProfile.bodyVFX.activeSelf)
+        //     elementalProfile.bodyVFX.SetActive(true);
     }
 
     public ElementalType GetElementalType() => elementalProfile != null ? elementalProfile.type : ElementalType.None;

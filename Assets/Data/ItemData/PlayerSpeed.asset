@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: PlayerSpeed
   m_EditorClassIdentifier: 
   itemName: Player Speed
-  description: Increase movement speed
+  description: Increase movement speed by 13% (+13% per stack).
   icon: {fileID: 21300000, guid: 0ccad3a79cfc7bf4fa6aedbd90253255, type: 3}
   rarity: 0
   rarityColor: {r: 1, g: 1, b: 1, a: 1}
   canStack: 1
-  maxStacks: 3
+  maxStacks: 5
   stackingType: 0
   useMultipleStats: 1
   statMods:
   - statType: 35
     operatorType: 0
-    value: 5
+    value: 3
     duration: -1
   effects: []
   statType: 14

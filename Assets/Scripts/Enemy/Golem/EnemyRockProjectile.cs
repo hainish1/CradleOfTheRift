@@ -173,12 +173,24 @@ public class EnemyRockProjectile : MonoBehaviour
     public void CreateImpactVFX()
     {
         if (impactVFX == null) return;
-        GameObject newFx = Instantiate(impactVFX);
+
+        GameObject newFx;
+        if (ObjectPool.instance != null)
+        {
+            newFx = ObjectPool.instance.GetObject(impactVFX, transform);
+        }
+        else
+        {
+            newFx = Instantiate(impactVFX);
+        }
         newFx.transform.position = transform.position;
         newFx.transform.rotation = Quaternion.identity;
         newFx.transform.localScale = Vector3.one * impactSize;
 
-        Destroy(newFx, effectDuration);
+        if (ObjectPool.instance != null)
+            ObjectPool.instance.ReturnObject(newFx, effectDuration);
+        else
+            Destroy(newFx, effectDuration);
     }
 
     void OnDrawGizmos()

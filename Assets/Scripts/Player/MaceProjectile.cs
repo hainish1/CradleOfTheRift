@@ -61,7 +61,16 @@ public class MaceProjectile : Projectile
         CreateImpactFX();
         PlayDestorySound();
         
-        GameObject shockwave = Instantiate(_shockwavePrefab, transform.position, Quaternion.identity);
+        GameObject shockwave;
+        if (ObjectPool.instance != null)
+        {
+            shockwave = ObjectPool.instance.GetObject(_shockwavePrefab, transform);
+        }
+        else
+        {
+            shockwave = Instantiate(_shockwavePrefab);
+        }
+        shockwave.transform.SetPositionAndRotation(transform.position, Quaternion.identity);
         Shockwave shockwaveScript = shockwave.GetComponent<Shockwave>();
         shockwaveScript.Init(transform.position, hitMask, actualDamage, _projectileShockwaveKnockback, _projectileShockwaveRadius, attacker);
 

@@ -120,10 +120,24 @@ public class EnemyTitan : EnemyGolem
         }
 
         // Play sweep VFX
-        if (sweepVFXPrefab != null)        
+        if (sweepVFXPrefab != null)
         {
-            GameObject sweepVFX = Instantiate(sweepVFXPrefab, sweepTransform.position, sweepTransform.rotation);
-            Destroy(sweepVFX, EstimateParticleLifetime(sweepVFX));
+            GameObject sweepVFX;
+            if (ObjectPool.instance != null)
+            {
+                sweepVFX = ObjectPool.instance.GetObject(sweepVFXPrefab, sweepTransform);
+            }
+            else
+            {
+                sweepVFX = Instantiate(sweepVFXPrefab);
+            }
+            sweepVFX.transform.SetPositionAndRotation(sweepTransform.position, sweepTransform.rotation);
+
+            float sweepLifetime = EstimateParticleLifetime(sweepVFX);
+            if (ObjectPool.instance != null)
+                ObjectPool.instance.ReturnObject(sweepVFX, sweepLifetime);
+            else
+                Destroy(sweepVFX, sweepLifetime);
         }
     }
 

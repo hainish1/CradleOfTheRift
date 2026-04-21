@@ -1,9 +1,9 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/DifficultyScaler/DifficultyScaler.uss?fileID=7433441132597879392&amp;guid=f1b4c772e4942984f9a59db262a62661&amp;type=3#DifficultyScaler" />
-    <engine:VisualElement name="DifficultyContainer" class="difficulty-container" >
+    <engine:VisualElement name="DifficultyContainer" class="difficulty-container">
         <engine:VisualElement name="DifficultyStrip" class="difficulty-strip">
             <engine:VisualElement name="DifficultySegment" class="difficulty-segment">
-                <engine:Label text="Label" name="DifficultyText" class="difficulty-text" />
+                <engine:Label name="DifficultyText" class="difficulty-text" />
             </engine:VisualElement>
         </engine:VisualElement>
         <engine:VisualElement name="DifficultyMarker" class="difficulty-marker">

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dd3870f51642c549a168d3ab0cbe019, type: 3}
   m_Name: Poison Dot Upgrade
   m_EditorClassIdentifier: 
-  itemName: Poison Dot
-  description: All your attacks apply a poison damage over time effect
+  itemName: Venomous Touch
+  description: All your attacks apply a poison DOT.
   icon: {fileID: 21300000, guid: 24d36e96c0661c04f822f6935419e712, type: 3}
   rarity: 1
   rarityColor: {r: 0, g: 0.7372549, b: 0.09411765, a: 1}
@@ -24,7 +24,7 @@ MonoBehaviour:
   statMods: []
   effects:
   - kind: 5
-    description: All your attacks apply a poison damage over time
+    description: All your attacks apply a poison DOT.
     duration: -1
     healOnDamagePercentPerStack: 0
     healOnPoisonRange: 0
@@ -138,6 +138,24 @@ MonoBehaviour:
     orbitingFireballOnKillDuration: 5
     orbitingFireballOnLightningThreshold: 100
     orbitingFireballOnLightningDuration: 5
+    poisonCloudDamagePerTick: 3
+    poisonCloudDamageTickInterval: 1
+    poisonCloudRadius: 3
+    poisonCloudLifetime: 5
+    poisonCloudBehindDistance: 1.25
+    poisonCloudVfxPrefab: {fileID: 0}
+    onLightning:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    onFire:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    onExplosion:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
   statType: 13
   operatorType: 0
   value: 1
